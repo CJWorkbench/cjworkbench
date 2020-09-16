@@ -494,7 +494,7 @@ msgstr "Καρτέλα"
 msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:355
 msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
@@ -503,27 +503,27 @@ msgstr "Πληκτρολογήστε μια σημείωση..."
 msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
 msgstr "περισσότερα"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
 msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
 msgstr "είσοδος σε λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
 msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
 msgstr "έξοδος από λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
 msgid "js.WorkflowEditor.wfmodule.alert.disabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
 msgid "js.WorkflowEditor.wfmodule.alert.enabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
 msgid "js.WorkflowEditor.wfmodule.help.hoverText"
 msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:394
 msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
 
@@ -1739,17 +1739,25 @@ msgstr "Εύρεση συμπλεγμάτων..."
 msgid "js.params.Refine.mergeFacets.button"
 msgstr "Συγχώνευση πτυχών"
 
-#: assets/js/params/Secret/OAuth.js:42
+#: assets/js/params/Secret/OAuth.js:45
 msgid "js.params.Secret.OAuth.connectAccount.button"
 msgstr "Σύνδεση λογαριασμού"
 
-#: assets/js/params/Secret/OAuth.js:37
+#: assets/js/params/Secret/OAuth.js:50
+msgid "js.params.Secret.OAuth.onlyOwnerCanConnect"
+msgstr ""
+
+#: assets/js/params/Secret/OAuth.js:39
 msgid "js.params.Secret.OAuth.signOut.button"
 msgstr "Αποσύνδεση"
 
-#: assets/js/params/Secret/String.js:93
+#: assets/js/params/Secret/String.js:88
 msgid "js.params.Secret.String.StringDisplay.clear.button"
 msgstr "Καθαρισμός"
+
+#: assets/js/params/Secret/String.js:127
+msgid "js.params.Secret.String.onlyOwnerCanEnterSecret"
+msgstr ""
 
 #: assets/js/params/Tab.js:47
 msgid "js.params.Tab.selectTab.placeholder"

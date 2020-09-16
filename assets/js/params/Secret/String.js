@@ -10,7 +10,7 @@ import { Trans } from '@lingui/macro'
  *
  * When the user clicks "submit", the state of this container will change irreversibly.
  */
-function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern, help, helpUrl, helpUrlPrompt, submit }) {
+function StringPrompt ({ label, name, fieldId, placeholder, pattern, help, helpUrl, helpUrlPrompt, submit }) {
   const [value, setValue] = React.useState('')
   const [isValid, setValid] = React.useState(false)
   const [isSubmitted, setSubmitted] = React.useState(false)
@@ -45,31 +45,26 @@ function StringPrompt ({ isReadOnly, label, name, fieldId, placeholder, pattern,
           placeholder={placeholder}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          readOnly={isReadOnly}
           disabled={isSubmitted}
         />
-        {!isReadOnly ? (
-          <button
-            type='button'
-            className='set-secret'
-            onClick={handleSubmit}
-            disabled={isSubmitted || !isValid}
-          >
-            Save
-          </button>
-        ) : null}
+        <button
+          type='button'
+          className='set-secret'
+          onClick={handleSubmit}
+          disabled={isSubmitted || !isValid}
+        >
+          Save
+        </button>
       </div>
-      {!isReadOnly ? (
-        <p className='help'>
-          <span className='text'>{help}</span>
-          <a target='_blank' rel='noopener noreferrer' href={helpUrl}>{helpUrlPrompt}</a>
-        </p>
-      ) : null}
+      <p className='help'>
+        <span className='text'>{help}</span>
+        <a target='_blank' rel='noopener noreferrer' href={helpUrl}>{helpUrlPrompt}</a>
+      </p>
     </>
   )
 }
 
-function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId, deleteSecret }) {
+function StringDisplay ({ i18n, isOwner, secretMetadata, label, name, fieldId, deleteSecret }) {
   const [isSubmitted, setSubmitted] = React.useState(false)
   const handleSubmit = React.useCallback(() => {
     deleteSecret(name)
@@ -83,7 +78,7 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
       <MaybeLabel fieldId={fieldId} label={label} />
       <div className='secret-string-display'>
         <time dateTime={createdAt}>(Secret, saved {timeDifference(Date.parse(createdAt), new Date(), i18n)})</time>
-        {!isReadOnly ? (
+        {isOwner ? (
           <button
             type='button'
             className='clear-secret'
@@ -98,12 +93,12 @@ function StringDisplay ({ i18n, isReadOnly, secretMetadata, label, name, fieldId
   )
 }
 
-const String_ = React.memo(function String_ ({ i18n, secretMetadata, isReadOnly, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
+const String_ = React.memo(function String_ ({ i18n, secretMetadata, isOwner, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
   if (secretMetadata) {
     return (
       <StringDisplay
         i18n={i18n}
-        isReadOnly={isReadOnly}
+        isOwner={isOwner}
         secretMetadata={secretMetadata}
         label={label}
         name={name}
@@ -111,10 +106,10 @@ const String_ = React.memo(function String_ ({ i18n, secretMetadata, isReadOnly,
         deleteSecret={deleteSecret}
       />
     )
-  } else {
+  } else if (isOwner) {
     return (
       <StringPrompt
-        isReadOnly={isReadOnly}
+        isOwner={isOwner}
         label={label}
         name={name}
         fieldId={fieldId}
@@ -126,10 +121,16 @@ const String_ = React.memo(function String_ ({ i18n, secretMetadata, isReadOnly,
         submit={submitSecret}
       />
     )
+  } else {
+    return (
+      <p className='not-owner'>
+        <Trans id='js.params.Secret.String.onlyOwnerCanEnterSecret'>Not authenticated. Only the workflow owner may authenticate.</Trans>
+      </p>
+    )
   }
 })
 String_.propTypes = {
-  isReadOnly: PropTypes.bool.isRequired,
+  isOwner: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // <input name=...>
   fieldId: PropTypes.string.isRequired, // <input id=...>
   secretMetadata: PropTypes.shape({

@@ -554,7 +554,7 @@ msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:354
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:355
 msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
 msgstr ""
 
@@ -565,32 +565,32 @@ msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
 msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:239
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
 msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
 msgid "js.WorkflowEditor.wfmodule.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:371
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
 msgid "js.WorkflowEditor.wfmodule.alert.enabled"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:383
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
 msgid "js.WorkflowEditor.wfmodule.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:393
+#: assets/js/WorkflowEditor/wfmodule/WfModule.js:394
 msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
 msgstr ""
 
@@ -2004,18 +2004,28 @@ msgid "js.params.Refine.mergeFacets.button"
 msgstr ""
 
 #. default-message: Connect account
-#: assets/js/params/Secret/OAuth.js:42
+#: assets/js/params/Secret/OAuth.js:45
 msgid "js.params.Secret.OAuth.connectAccount.button"
 msgstr ""
 
+#. default-message: Not authenticated. Only the workflow owner may authenticate.
+#: assets/js/params/Secret/OAuth.js:50
+msgid "js.params.Secret.OAuth.onlyOwnerCanConnect"
+msgstr ""
+
 #. default-message: Sign out
-#: assets/js/params/Secret/OAuth.js:37
+#: assets/js/params/Secret/OAuth.js:39
 msgid "js.params.Secret.OAuth.signOut.button"
 msgstr ""
 
 #. default-message: Clear
-#: assets/js/params/Secret/String.js:93
+#: assets/js/params/Secret/String.js:88
 msgid "js.params.Secret.String.StringDisplay.clear.button"
+msgstr ""
+
+#. default-message: Not authenticated. Only the workflow owner may authenticate.
+#: assets/js/params/Secret/String.js:127
+msgid "js.params.Secret.String.onlyOwnerCanEnterSecret"
 msgstr ""
 
 #. default-message: Select Tab

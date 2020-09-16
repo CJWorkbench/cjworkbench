@@ -163,6 +163,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
             files={Array []}
             inputDeltaId={null}
             inputWfModuleId={123}
+            isOwner={true}
             isReadOnly={false}
             isWfModuleBusy={false}
             isZenMode={false}

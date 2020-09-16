@@ -9,12 +9,13 @@ const Components = {
   string: String_
 }
 
-export default function Secret ({ isReadOnly, name, fieldId, secretMetadata, secretLogic, submitSecret, deleteSecret, startCreateSecret }) {
+export default function Secret ({ isReadOnly, isOwner, name, fieldId, secretMetadata, secretLogic, submitSecret, deleteSecret, startCreateSecret }) {
   const Component = Components[secretLogic.provider]
 
   return (
     <Component
       isReadOnly={isReadOnly}
+      isOwner={isOwner}
       name={name}
       fieldId={fieldId}
       secretMetadata={secretMetadata}

@@ -69,6 +69,7 @@ describe('WfModule, not read-only mode', () => {
   const wrapper = (extraProps = {}) => {
     return shallowWithI18n(
       <WfModule
+        isOwner
         isReadOnly={false}
         isAnonymous={false}
         isZenMode={false}
@@ -180,7 +181,7 @@ describe('WfModule, not read-only mode', () => {
   })
 
   it('hides notifications when isReadOnly', () => {
-    const w = wrapper({ fetchModuleExists: true, isReadOnly: true, isAnonymous: false })
+    const w = wrapper({ fetchModuleExists: true, isOwner: false, isReadOnly: true, isAnonymous: false })
     expect(w.find('button.notifications').length).toBe(0)
   })
 
@@ -321,6 +322,7 @@ describe('WfModule, not read-only mode', () => {
         id: 99,
         tab_slugs: ['tab-11', 'tab-12'],
         read_only: false,
+        is_owner: true,
         is_anonymous: false,
         selected_tab_position: 0
       },
@@ -351,8 +353,6 @@ describe('WfModule, not read-only mode', () => {
     const w = mountWithI18n(
       <Provider store={store}>
         <ConnectedWfModule
-          isReadOnly={false}
-          isAnonymous={false}
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
@@ -396,6 +396,7 @@ describe('WfModule, not read-only mode', () => {
           id: 99,
           read_only: false,
           is_anonymous: false,
+          is_owner: false,
           tab_slugs: ['tab-11'],
           selected_tab_position: 0
         },
@@ -422,8 +423,6 @@ describe('WfModule, not read-only mode', () => {
       wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedWfModule
-            isReadOnly={false}
-            isAnonymous={false}
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}

@@ -28,6 +28,7 @@ function onDragStartPreventDrag (dragEvent) {
 
 export default class Param extends React.PureComponent {
   static propTypes = {
+    isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and the user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
     api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:

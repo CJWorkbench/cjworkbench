@@ -4,6 +4,7 @@ import { Trans } from '@lingui/macro'
 
 export default class OAuth extends React.PureComponent {
   static propTypes = {
+    isOwner: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     secretMetadata: PropTypes.shape({
       name: PropTypes.string.isRequired
@@ -27,19 +28,27 @@ export default class OAuth extends React.PureComponent {
   }
 
   render () {
-    const { secretMetadata } = this.props
+    const { secretMetadata, isOwner } = this.props
 
     let contents
     if (secretMetadata) {
       contents = (
         <>
           <p className='secret-name'>{secretMetadata.name}</p>
-          <button type='button' className='disconnect' onClick={this.handleClickDisconnect}><Trans id='js.params.Secret.OAuth.signOut.button'>Sign out</Trans></button>
+          {isOwner ? (
+            <button type='button' className='disconnect' onClick={this.handleClickDisconnect}><Trans id='js.params.Secret.OAuth.signOut.button'>Sign out</Trans></button>
+          ) : null}
         </>
+      )
+    } else if (isOwner) {
+      contents = (
+        <button type='button' className='connect' onClick={this.handleClickConnect}><Trans id='js.params.Secret.OAuth.connectAccount.button'>Connect account</Trans></button>
       )
     } else {
       contents = (
-        <button type='button' className='connect' onClick={this.handleClickConnect}><Trans id='js.params.Secret.OAuth.connectAccount.button'>Connect account</Trans></button>
+        <p className='not-owner'>
+          <Trans id='js.params.Secret.OAuth.onlyOwnerCanConnect'>Not authenticated. Only the workflow owner may authenticate.</Trans>
+        </p>
       )
     }
 

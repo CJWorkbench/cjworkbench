@@ -12,6 +12,7 @@ describe('OAuth', () => {
         deleteSecret={jest.fn()}
         secretMetadata={{ name: 'a secret' }}
         secretLogic={{ service: 'google' }}
+        isOwner
         {...extraProps}
       />
     )
@@ -22,11 +23,21 @@ describe('OAuth', () => {
     expect(w).toMatchSnapshot()
   })
 
+  it('does not show "Sign in" link when not owner', () => {
+    const w = wrapper({ secretMetadata: null, isOwner: false })
+    expect(w.find('button.connect')).toHaveLength(0)
+  })
+
   it('renders without a secret', () => {
     const w = wrapper({ secretMetadata: null })
     expect(w.find('button.connect')).toHaveLength(1)
     w.find('button.connect').simulate('click')
     expect(w.prop('startCreateSecret')).toHaveBeenCalledWith('x')
+  })
+
+  it('does not show "Sign out" link when not owner', () => {
+    const w = wrapper({ isOwner: false })
+    expect(w.find('button.disconnect')).toHaveLength(0)
   })
 
   it('disconnects', () => {

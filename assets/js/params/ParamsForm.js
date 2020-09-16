@@ -11,6 +11,7 @@ import { QuickFixPropTypes } from '../WorkflowEditor/wfmodule/QuickFix'
  */
 export default class ParamsForm extends React.PureComponent {
   static propTypes = {
+    isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
     api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
@@ -197,8 +198,8 @@ export default class ParamsForm extends React.PureComponent {
 
   render () {
     const {
-      api, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputErrors, isWfModuleBusy,
-      inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
+      api, isOwner, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputErrors,
+      isWfModuleBusy, inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
       startCreateSecret, deleteSecret, submitSecret, fields, files, secrets
     } = this.props
     const isEditing = this.isEditing
@@ -241,6 +242,7 @@ export default class ParamsForm extends React.PureComponent {
             return (
               <Param
                 api={api}
+                isOwner={isOwner}
                 isReadOnly={isReadOnly}
                 isZenMode={isZenMode}
                 key={field.idName}

@@ -7,7 +7,7 @@ describe('Secret/String', () => {
   const wrapper = (extraProps = {}) => {
     return mountWithI18n(
       <StringParam
-        isReadOnly={false}
+        isOwner
         name='x'
         fieldId='form123[x]'
         submitSecret={jest.fn()}
@@ -89,5 +89,16 @@ describe('Secret/String', () => {
     it('does not render help', () => {
       expect(w.find('p.help')).toHaveLength(0)
     })
+  })
+
+  it('hides clear-secret when not owner', () => {
+    const w = wrapper({ isOwner: false, secretMetadata: { name: '2019-06-10T15:40:12.000Z' } })
+    expect(w.find('button.clear-secret')).toHaveLength(0)
+  })
+
+  it('prevents create-secret when not owner', () => {
+    const w = wrapper({ isOwner: false, secretMetadata: null })
+    expect(w.find('input')).toHaveLength(0)
+    expect(w.find('.not-owner')).toHaveLength(1)
   })
 })

@@ -34,6 +34,7 @@ const numberFormat = new Intl.NumberFormat()
 
 export class WfModule extends React.PureComponent {
   static propTypes = {
+    isOwner: PropTypes.bool.isRequired, // if true, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
@@ -494,6 +495,7 @@ export class WfModule extends React.PureComponent {
                  */
                 <ErrorBoundary>
                   <ParamsForm
+                    isOwner={this.props.isOwner}
                     isReadOnly={this.props.isReadOnly}
                     isZenMode={this.props.isZenMode}
                     api={this.props.api}
@@ -618,6 +620,7 @@ function mapStateToProps (state, ownProps) {
     isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleIdName }),
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleIdName }),
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleIdName }),
+    isOwner: state.workflow.is_owner,
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
     workflowId: state.workflow.id,
