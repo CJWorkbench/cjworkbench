@@ -38,6 +38,7 @@
     "@lingui/loader": "^2.9.2",
     "@lingui/macro": "^2.9.2",
     "@lingui/react": "^2.9.2",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
