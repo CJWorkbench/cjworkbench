@@ -15,6 +15,7 @@ const field = (idName, type, extra = {}) => ({
 describe('ParamsForm', () => {
   const wrapper = (extraProps = {}) => shallow(
     <ParamsForm
+      isOwner
       isReadOnly={false}
       isZenMode={false}
       api={{ createOauthAccessToken: jest.fn(), valueCounts: jest.fn() }}

@@ -27,6 +27,7 @@ describe('List', () => {
      */
     const w = mountWithI18n(
       <List
+        isOwner
         isReadOnly={false}
         label='List'
         fieldId='list'
