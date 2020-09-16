@@ -436,7 +436,7 @@ msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr "Οι ειδοποιήσεις είναι <0>ενεργοποιημένες</0>"
 
 #. This should be all-caps for styling reasons
-#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:26
 msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
 msgstr "ΠΡΟΣΘΗΚΗ ΒΗΜΑΤΟΣ"
 
@@ -793,7 +793,7 @@ msgstr "Πράξεις"
 
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
-#: assets/js/params/Custom/Code/AceEditor.js:79
+#: assets/js/params/String/Code/AceEditor.js:21
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
 "Ορίστε μια συνάρτηση <0>process(table)</0> η οποία δέχεται ένα "
@@ -801,8 +801,12 @@ msgstr ""
 "χρησιμοποιήσετε τις μονάδες (modules) <3> <4>math</4></3>, <5>pd</5> "
 "(<6>Pandas</6>) και <7>np</7> (<8>Numpy</8>)."
 
+#: assets/js/params/String/Code/AceEditor.js:32
+msgid "js.params.Custom.Code.AceEditor.help.sql"
+msgstr ""
+
 #. The parameter will the the name of the custom type
-#: assets/js/params/Custom/index.js:36
+#: assets/js/params/Custom/index.js:34
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Δεν έγινε επεξεργασία του προσαρμοσμένου τύπου {name}"
 
@@ -1545,7 +1549,7 @@ msgstr "Μη αυτόματο"
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr "Προσπαθήστε ξανά"
 
-#: assets/js/params/Custom/Code/index.js:16
+#: assets/js/params/String/Code/index.js:16
 msgid "js.params.Custom.code.loadingEditor"
 msgstr "Φόρτωση επεξεργαστή..."
 
@@ -1779,7 +1783,7 @@ msgstr "Καθαρισμός αναζήτησης"
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
 msgstr "Αναζήτηση πτυχών..."
 
-#: assets/js/params/common/react-select.js:131
+#: assets/js/params/common/react-select.js:123
 msgid "js.params.common.ReactSelect.noOptionsMessage"
 msgstr "Δεν υπάρχουν επιλογές"
 
@@ -1949,7 +1953,7 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:864
+#: cjwkernel/pandas/types.py:866
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 
@@ -2068,29 +2072,29 @@ msgstr ""
 msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
-#: templates/403.html:5
+#: templates/403.html:6
 msgid "py.templates.403.title"
 msgstr "403 Απαγορεύεται η πρόσβαση"
 
-#: templates/403.html:13
+#: templates/403.html:15
 msgid "py.templates.403.description"
 msgstr ""
 "Ο λογαριασμός στον οποίο έχετε συνδεθεί δεν έχει πρόσβαση σε αυτή τη "
 "σελίδα"
 
-#: templates/403.html:14
+#: templates/403.html:16
 msgid "py.templates.403.goBack.link"
 msgstr "Επιστροφή στον χώρο εργασίας μου"
 
-#: templates/404.html:5
+#: templates/404.html:6
 msgid "py.templates.404.title"
 msgstr "404 Η σελίδα δεν βρέθηκε"
 
-#: templates/404.html:13
+#: templates/404.html:15
 msgid "py.templates.404.description"
 msgstr "Όχι ο αριθμός που ψάχνετε"
 
-#: templates/404.html:14
+#: templates/404.html:16
 msgid "py.templates.404.backToWorkspace.link"
 msgstr "Επιστροφή στον χώρο εργασίας"
 
@@ -2110,11 +2114,11 @@ msgstr "Αλλαγή email"
 msgid "py.templates._base.signOut"
 msgstr "Αποσύνδεση"
 
-#: templates/_base.html:30
+#: templates/_base.html:30 templates/account/email_confirm.html:21
 msgid "py.templates._base.signIn"
 msgstr "Σύνδεση"
 
-#: templates/_base.html:31
+#: templates/_base.html:31 templates/account/email_confirm.html:22
 msgid "py.templates._base.signUp"
 msgstr "Εγγραφή"
 
@@ -2178,19 +2182,19 @@ msgstr "Προσθέστε γραφήματα σε καρτέλες και θα 
 msgid "py.templates.workflow.title"
 msgstr "Workbench"
 
-#: templates/workflow.html:34
+#: templates/workflow.html:35
 msgid "py.templates.workflow.widerScreen"
 msgstr "Χρειάζεστε μια ευρύτερη οθόνη για να απολαύσετε το Workbench"
 
-#: templates/workflow.html:35
+#: templates/workflow.html:36
 msgid "py.templates.workflow.minimumRequirement"
 msgstr "Ελάχιστο πλάτος 650px"
 
-#: templates/workflow.html:36
+#: templates/workflow.html:37
 msgid "py.templates.workflow.optimizedForDesktop"
 msgstr "Εμπειρία βελτιστοποιημένη για προγράμματα περιήγησης"
 
-#: templates/workflow.html:37
+#: templates/workflow.html:38
 msgid "py.templates.workflow.signupLink.link"
 msgstr "Εγγραφή"
 
@@ -2213,13 +2217,21 @@ msgstr "Διαγραφή του λογαριασμού μου"
 msgid "py.templates.account.email_confirm.confirmEmail.title"
 msgstr "Επιβεβαίωση email"
 
-#: templates/account/email_confirm.html:9
+#: templates/account/email_confirm.html:10
 msgid "py.templates.account.email_confirm.confirmEmail"
 msgstr "Επιβεβαίωση email"
 
-#: templates/account/email_confirm.html:13
+#: templates/account/email_confirm.html:14
 msgid "py.templates.account.email_confirm.confirm.button"
 msgstr "Επιβεβαίωση"
+
+#: templates/account/email_confirm.html:18
+msgid "py.templates.account.email_confirm.notFound1"
+msgstr ""
+
+#: templates/account/email_confirm.html:19
+msgid "py.templates.account.email_confirm.notFound2"
+msgstr ""
 
 #: templates/account/email_confirmation_sent.html:5
 msgid "py.templates.account.email_confirmation_sent.title"

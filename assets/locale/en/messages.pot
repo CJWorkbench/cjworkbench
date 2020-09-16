@@ -485,7 +485,7 @@ msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: ADD STEP
-#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:26
 msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
 msgstr ""
 
@@ -921,13 +921,18 @@ msgstr ""
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
 #. default-message: Define a <0>process(table)</0> function that accepts a <1>pd.DataFrame</1> and returns a <2>pd.DataFrame</2>. You may use the <3><4>math</4></3>, <5>pd</5> (<6>Pandas</6>) and <7>np</7> (<8>Numpy</8>) modules.
-#: assets/js/params/Custom/Code/AceEditor.js:79
+#: assets/js/params/String/Code/AceEditor.js:21
 msgid "js.params.Custom.Code.AceEditor.help"
+msgstr ""
+
+#. default-message: Write an SQL <0>SELECT</0> query that reads from the <1>"input"</1> table.
+#: assets/js/params/String/Code/AceEditor.js:32
+msgid "js.params.Custom.Code.AceEditor.help.sql"
 msgstr ""
 
 #. The parameter will the the name of the custom type
 #. default-message: Custom type {name} not handled
-#: assets/js/params/Custom/index.js:36
+#: assets/js/params/Custom/index.js:34
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr ""
 
@@ -1765,7 +1770,7 @@ msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr ""
 
 #. default-message: Loading editor...
-#: assets/js/params/Custom/Code/index.js:16
+#: assets/js/params/String/Code/index.js:16
 msgid "js.params.Custom.code.loadingEditor"
 msgstr ""
 
@@ -2053,7 +2058,7 @@ msgid "js.params.common.FacetSearch.searchFacets.placeholder"
 msgstr ""
 
 #. default-message: No options
-#: assets/js/params/common/react-select.js:131
+#: assets/js/params/common/react-select.js:123
 msgid "js.params.common.ReactSelect.noOptionsMessage"
 msgstr ""
 
@@ -2261,7 +2266,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:864
+#: cjwkernel/pandas/types.py:866
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
@@ -2362,32 +2367,32 @@ msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
 #. default-message: 403 Forbidden
-#: templates/403.html:5
+#: templates/403.html:6
 msgid "py.templates.403.title"
 msgstr ""
 
 #. default-message: The account you are logged in does not have access to this page
-#: templates/403.html:13
+#: templates/403.html:15
 msgid "py.templates.403.description"
 msgstr ""
 
 #. default-message: Go back to my workspace
-#: templates/403.html:14
+#: templates/403.html:16
 msgid "py.templates.403.goBack.link"
 msgstr ""
 
 #. default-message: 404 Page not found
-#: templates/404.html:5
+#: templates/404.html:6
 msgid "py.templates.404.title"
 msgstr ""
 
 #. default-message: Not the number you're looking for
-#: templates/404.html:13
+#: templates/404.html:15
 msgid "py.templates.404.description"
 msgstr ""
 
 #. default-message: Back to workspace
-#: templates/404.html:14
+#: templates/404.html:16
 msgid "py.templates.404.backToWorkspace.link"
 msgstr ""
 
@@ -2412,12 +2417,12 @@ msgid "py.templates._base.signOut"
 msgstr ""
 
 #. default-message: Sign In
-#: templates/_base.html:30
+#: templates/_base.html:30 templates/account/email_confirm.html:21
 msgid "py.templates._base.signIn"
 msgstr ""
 
 #. default-message: Sign Up
-#: templates/_base.html:31
+#: templates/_base.html:31 templates/account/email_confirm.html:22
 msgid "py.templates._base.signUp"
 msgstr ""
 
@@ -2494,22 +2499,22 @@ msgid "py.templates.workflow.title"
 msgstr ""
 
 #. default-message: You need a wider screen to enjoy Workbench
-#: templates/workflow.html:34
+#: templates/workflow.html:35
 msgid "py.templates.workflow.widerScreen"
 msgstr ""
 
 #. default-message: Min 650px wide
-#: templates/workflow.html:35
+#: templates/workflow.html:36
 msgid "py.templates.workflow.minimumRequirement"
 msgstr ""
 
 #. default-message: Experience optimized for web browsers
-#: templates/workflow.html:36
+#: templates/workflow.html:37
 msgid "py.templates.workflow.optimizedForDesktop"
 msgstr ""
 
 #. default-message: Signup
-#: templates/workflow.html:37
+#: templates/workflow.html:38
 msgid "py.templates.workflow.signupLink.link"
 msgstr ""
 
@@ -2535,13 +2540,23 @@ msgid "py.templates.account.email_confirm.confirmEmail.title"
 msgstr ""
 
 #. default-message: Confirm Email
-#: templates/account/email_confirm.html:9
+#: templates/account/email_confirm.html:10
 msgid "py.templates.account.email_confirm.confirmEmail"
 msgstr ""
 
 #. default-message: Confirm
-#: templates/account/email_confirm.html:13
+#: templates/account/email_confirm.html:14
 msgid "py.templates.account.email_confirm.confirm.button"
+msgstr ""
+
+#. default-message: This e-mail confirmation link expired or is invalid. Usually, this means you confirmed already. You can sign in now.
+#: templates/account/email_confirm.html:18
+msgid "py.templates.account.email_confirm.notFound1"
+msgstr ""
+
+#. default-message: (If you know you never clicked any confirmation link before, <a0>sign up</a0> to start over.)
+#: templates/account/email_confirm.html:19
+msgid "py.templates.account.email_confirm.notFound2"
 msgstr ""
 
 #. default-message: Confirmation Email Sent

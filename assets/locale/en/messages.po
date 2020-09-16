@@ -416,7 +416,7 @@ msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr "Alerts are <0>on</0>"
 
 #. This should be all-caps for styling reasons
-#: assets/js/WorkflowEditor/ModuleSearch/Button.js:43
+#: assets/js/WorkflowEditor/ModuleSearch/Button.js:26
 msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
 msgstr "ADD STEP"
 
@@ -771,7 +771,7 @@ msgstr "Operations"
 
 #. The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please
 #. keep code and names of libraries untranslated.
-#: assets/js/params/Custom/Code/AceEditor.js:79
+#: assets/js/params/String/Code/AceEditor.js:21
 msgid "js.params.Custom.Code.AceEditor.help"
 msgstr ""
 "Define a <0>process(table)</0> function that accepts a "
@@ -779,8 +779,14 @@ msgstr ""
 "<3><4>math</4></3>, <5>pd</5> (<6>Pandas</6>) and <7>np</7> "
 "(<8>Numpy</8>) modules."
 
+#: assets/js/params/String/Code/AceEditor.js:32
+msgid "js.params.Custom.Code.AceEditor.help.sql"
+msgstr ""
+"Write an SQL <0>SELECT</0> query that reads from the <1>\"input\"</1> "
+"table."
+
 #. The parameter will the the name of the custom type
-#: assets/js/params/Custom/index.js:36
+#: assets/js/params/Custom/index.js:34
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Custom type {name} not handled"
 
@@ -1501,7 +1507,7 @@ msgstr "Manual"
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr "Retry"
 
-#: assets/js/params/Custom/Code/index.js:16
+#: assets/js/params/String/Code/index.js:16
 msgid "js.params.Custom.code.loadingEditor"
 msgstr "Loading editor..."
 
@@ -1735,7 +1741,7 @@ msgstr "Clear Search"
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
 msgstr "Search facets..."
 
-#: assets/js/params/common/react-select.js:131
+#: assets/js/params/common/react-select.js:123
 msgid "js.params.common.ReactSelect.noOptionsMessage"
 msgstr "No options"
 
@@ -1904,7 +1910,7 @@ msgstr "{years}y ago"
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
-#: cjwkernel/pandas/types.py:864
+#: cjwkernel/pandas/types.py:866
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Truncated output from {old_number} rows to {new_number}"
 
@@ -2012,27 +2018,27 @@ msgstr "The chosen tab depends on this one. Please choose another tab."
 msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
-#: templates/403.html:5
+#: templates/403.html:6
 msgid "py.templates.403.title"
 msgstr "403 Forbidden"
 
-#: templates/403.html:13
+#: templates/403.html:15
 msgid "py.templates.403.description"
 msgstr "The account you are logged in does not have access to this page"
 
-#: templates/403.html:14
+#: templates/403.html:16
 msgid "py.templates.403.goBack.link"
 msgstr "Go back to my workspace"
 
-#: templates/404.html:5
+#: templates/404.html:6
 msgid "py.templates.404.title"
 msgstr "404 Page not found"
 
-#: templates/404.html:13
+#: templates/404.html:15
 msgid "py.templates.404.description"
 msgstr "Not the number you're looking for"
 
-#: templates/404.html:14
+#: templates/404.html:16
 msgid "py.templates.404.backToWorkspace.link"
 msgstr "Back to workspace"
 
@@ -2052,11 +2058,11 @@ msgstr "Change E-mail"
 msgid "py.templates._base.signOut"
 msgstr "Sign Out"
 
-#: templates/_base.html:30
+#: templates/_base.html:30 templates/account/email_confirm.html:21
 msgid "py.templates._base.signIn"
 msgstr "Sign In"
 
-#: templates/_base.html:31
+#: templates/_base.html:31 templates/account/email_confirm.html:22
 msgid "py.templates._base.signUp"
 msgstr "Sign Up"
 
@@ -2120,19 +2126,19 @@ msgstr "Add charts to tabs, and they'll appear here."
 msgid "py.templates.workflow.title"
 msgstr "Workbench"
 
-#: templates/workflow.html:34
+#: templates/workflow.html:35
 msgid "py.templates.workflow.widerScreen"
 msgstr "You need a wider screen to enjoy Workbench"
 
-#: templates/workflow.html:35
+#: templates/workflow.html:36
 msgid "py.templates.workflow.minimumRequirement"
 msgstr "Min 650px wide"
 
-#: templates/workflow.html:36
+#: templates/workflow.html:37
 msgid "py.templates.workflow.optimizedForDesktop"
 msgstr "Experience optimized for web browsers"
 
-#: templates/workflow.html:37
+#: templates/workflow.html:38
 msgid "py.templates.workflow.signupLink.link"
 msgstr "Signup"
 
@@ -2155,13 +2161,25 @@ msgstr "Delete My Account"
 msgid "py.templates.account.email_confirm.confirmEmail.title"
 msgstr "Confirm Email"
 
-#: templates/account/email_confirm.html:9
+#: templates/account/email_confirm.html:10
 msgid "py.templates.account.email_confirm.confirmEmail"
 msgstr "Confirm Email"
 
-#: templates/account/email_confirm.html:13
+#: templates/account/email_confirm.html:14
 msgid "py.templates.account.email_confirm.confirm.button"
 msgstr "Confirm"
+
+#: templates/account/email_confirm.html:18
+msgid "py.templates.account.email_confirm.notFound1"
+msgstr ""
+"This e-mail confirmation link expired or is invalid. Usually, this means "
+"you confirmed already. You can sign in now."
+
+#: templates/account/email_confirm.html:19
+msgid "py.templates.account.email_confirm.notFound2"
+msgstr ""
+"(If you know you never clicked any confirmation link before, <a0>sign "
+"up</a0> to start over.)"
 
 #: templates/account/email_confirmation_sent.html:5
 msgid "py.templates.account.email_confirmation_sent.title"
