@@ -19,8 +19,6 @@ class OutputDelta:
     user: User
     workflow: Workflow
     wf_module: WfModule
-    old_result: Optional[RenderResult]
-    new_result: RenderResult
 
     @property
     def workflow_name(self) -> str:

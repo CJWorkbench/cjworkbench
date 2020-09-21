@@ -246,26 +246,6 @@ class ArrowTable:
         except ValidateError as err:
             raise AssertionError("Built invalid ArrowTable: %r" % err)
 
-    def __eq__(self, other: Any) -> bool:
-        """
-        Compare for table equality: same Arrow data and same metadata.
-
-        `path` is not tested. Typical callers will use tempfiles and not care
-        whether they're equal.
-        """
-        return (
-            isinstance(other, type(self))
-            and other.metadata == self.metadata
-            and (
-                (other.table is None and self.table is None)
-                or (
-                    other.table is not None
-                    and self.table is not None
-                    and other.table.equals(self.table)
-                )
-            )
-        )
-
     @property
     def n_bytes_on_disk(self) -> int:
         """

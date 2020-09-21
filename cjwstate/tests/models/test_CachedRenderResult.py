@@ -1,5 +1,6 @@
+from dataclasses import replace
 import pyarrow
-from cjwkernel.tests.util import arrow_table
+from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwstate import minio
 from cjwstate.models import Workflow
@@ -67,8 +68,17 @@ class CachedRenderResultTests(DbTestCase):
         dup = self.wf_module.duplicate_into_new_workflow(tab2)
 
         dup_cached_result = dup.cached_render_result
+        self.assertEqual(
+            dup_cached_result,
+            replace(
+                self.wf_module.cached_render_result,
+                workflow_id=workflow2.id,
+                delta_id=workflow2.last_delta_id,
+                wf_module_id=dup.id,
+            ),
+        )
         with open_cached_render_result(dup_cached_result) as result2:
-            self.assertEqual(result2, result)
+            assert_render_result_equals(result2, result)
 
     def test_duplicate_ignores_stale_cache(self):
         # The cache's filename depends on workflow_id and wf_module_id.

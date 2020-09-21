@@ -20,6 +20,7 @@ from cjwkernel.types import (
     Tab,
 )
 from cjwkernel.util import tempfile_context
+import cjwparquet
 from cjwstate import clientside, minio, rabbitmq, rendercache
 from cjwstate.models import StoredObject, WfModule, Workflow
 import cjwstate.modules
@@ -274,18 +275,17 @@ def _execute_wfmodule_save(
     Raise UnneededExecution if the WfModule has changed in the interim.
     """
     # raises UnneededExecution
-    with locked_wf_module(workflow, wf_module) as safe_wf_module:
+    with contextlib.ExitStack() as exit_stack:
+        safe_wf_module = exit_stack.enter_context(locked_wf_module(workflow, wf_module))
         if safe_wf_module.notifications:
             stale_crr = safe_wf_module.get_stale_cached_render_result()
             if stale_crr is None:
-                stale_result = None
+                stale_parquet_file = None
             else:
                 try:
-                    # Read entire old Parquet file, blocking
-                    with rendercache.open_cached_render_result(
-                        stale_crr
-                    ) as stale_result:
-                        pass  # stale_result is deleted from disk but still mmapped
+                    stale_parquet_file = exit_stack.enter_context(
+                        rendercache.downloaded_parquet_file(stale_crr)
+                    )
                 except rendercache.CorruptCacheError:
                     # No, let's not send an email. Corrupt cache probably means
                     # we've been messing with our codebase.
@@ -294,30 +294,49 @@ def _execute_wfmodule_save(
                         workflow.id,
                         wf_module.id,
                     )
-                    stale_result = None
+                    stale_crr = None
+                    stale_parquet_file = None
         else:
-            stale_result = None
+            stale_crr = None
+            stale_parquet_file = None
 
         rendercache.cache_render_result(
             workflow, safe_wf_module, wf_module.last_relevant_delta_id, result
         )
 
-        if (
-            safe_wf_module.notifications
-            and stale_result is not None
-            and result != stale_result
-        ):
+        is_changed = False  # nothing to email, usually
+        if stale_parquet_file is not None:
+            fresh_crr = safe_wf_module.cached_render_result
+
+            if (
+                fresh_crr.status != stale_crr.status
+                or fresh_crr.errors != stale_crr.errors
+                or fresh_crr.json != stale_crr.json
+                or fresh_crr.table_metadata != stale_crr.table_metadata
+            ):
+                # Output other than table data has changed (e.g., nRows)
+                is_changed = True
+
+            if not is_changed:
+                # Download the new parquet file and compare to the old one
+                fresh_parquet_file = exit_stack.enter_context(
+                    rendercache.downloaded_parquet_file(fresh_crr)
+                )
+                is_changed = not cjwparquet.are_files_equal(
+                    stale_parquet_file, fresh_parquet_file
+                )
+
+        if is_changed:
             safe_wf_module.has_unseen_notification = True
             safe_wf_module.save(update_fields=["has_unseen_notification"])
             maybe_delta = notifications.OutputDelta(
                 safe_wf_module.workflow.owner,
                 safe_wf_module.workflow,
                 safe_wf_module,
-                stale_result,
-                result,
             )
         else:
-            maybe_delta = None  # nothing to email
+            maybe_delta = None
+
         return SaveResult(safe_wf_module.cached_render_result, maybe_delta)
 
 

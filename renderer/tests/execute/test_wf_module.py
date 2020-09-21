@@ -4,6 +4,7 @@ import textwrap
 from unittest.mock import patch
 from django.utils import timezone
 from cjwkernel.chroot import EDITABLE_CHROOT
+from cjwkernel.tests.util import assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
 from cjwkernel.tests.util import arrow_table, parquet_file
 from cjwstate import minio, rabbitmq, rendercache
@@ -60,7 +61,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
         expected = RenderResult(
             errors=[RenderError(I18nMessage("py.renderer.execute.wf_module.noModule"))]
         )
-        self.assertEqual(result, expected)
+        assert_render_result_equals(result, expected)
         wf_module.refresh_from_db()
         self.assertEqual(wf_module.cached_render_result.errors, expected.errors)
 
@@ -109,11 +110,9 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
         self.assertEqual(delta.user, workflow.owner)
         self.assertEqual(delta.workflow, workflow)
         self.assertEqual(delta.wf_module, wf_module)
-        self.assertEqual(delta.old_result, RenderResult(arrow_table({"A": [1]})))
-        self.assertEqual(delta.new_result, RenderResult(arrow_table({"A": [2]})))
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
-    @patch.object(rendercache, "open_cached_render_result")
+    @patch.object(rendercache, "downloaded_parquet_file")
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_ignore_corrupt_cache_error(self, email_delta, read_cache):
         read_cache.side_effect = rendercache.CorruptCacheError
@@ -414,7 +413,7 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
                     self.output_path,
                 )
             )
-        self.assertEqual(
+        assert_render_result_equals(
             result,
             RenderResult(
                 errors=[
