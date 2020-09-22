@@ -18,7 +18,7 @@ function propsForLink (activeSection, name, href) {
 
 export default class Navbar extends React.Component {
   static propTypes = {
-    user: PropTypes.shape({ id: PropTypes.number.isRequired }) // null/undefined if logged out
+    user: PropTypes.object // null/undefined if logged out
   }
 
   render () {
