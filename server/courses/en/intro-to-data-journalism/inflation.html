@@ -61,7 +61,7 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'rowstoheader' &&
+      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'rowstoheader' &amp;&amp;
                         workflow.tabs[0].wfModules[1].params.rows === '1'"
       >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number.
       Then choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says “1 row selected”.
@@ -69,20 +69,26 @@ tabs:
         Because it contained both text and numeric data, the column <kbd>Average salary</kbd> was loaded as text. We need to convert it to numbers to use it in calculations.
       </p>
     </li>
-    <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'converttexttonumber'"
-      >Choose <kbd>Convert to number</kbd> in the <kbd>Average salary</kbd> column menu
+    <li data-test="
+      return (
+        workflow.tabs[0].wfModuleSlugs[2] === 'converttexttonumber'
+        &amp;&amp; workflow.tabs[0].wfModules[2].params.colnames.join('|') === 'Average salary'
+      )
+    ">Choose <kbd>Convert to number</kbd> in the <kbd>Average salary</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span>
+    </li>
+    <li data-test="return workflow.tabs[0].wfModules[2].params.extract">
+      <p>In the <kbd>Convert to number</kbd> step, make sure <kbd>Ignore non-numeric characters</kbd> is checked. This will handle the <tt>$</tt> symbols in the column.</p>
       <p class='instruction-detail'>
         The CPI data, in the other tab, has similar issues.
       </p>
     </li>
     <li
-      data-test="return workflow.tabs[1].wfModuleSlugs[1] === 'rowstoheader' &&
+      data-test="return workflow.tabs[1].wfModuleSlugs[1] === 'rowstoheader' &amp;&amp;
                         workflow.tabs[1].wfModules[1].params.rows === '11'"
-      >In the <Kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well
+      >In the <kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well
     </li>
     <li
       data-test="
@@ -149,7 +155,7 @@ tabs:
         const params = workflow.tabs[0].wfModules[3].params
         return (
           params.right_tab === 'tab-2'
-          && params.join_columns.on.join('|') === 'Year'
+          &amp;&amp; params.join_columns.on.join('|') === 'Year'
         )
       ">Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on
     <li
