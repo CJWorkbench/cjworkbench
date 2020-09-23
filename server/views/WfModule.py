@@ -233,8 +233,8 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
         #
         # values can be either a StringArray or a DictionaryArray. In either case,
         # .to_pylist() converts to a Python List[str].
-        values = pyarrow_value_counts.field('values').to_pylist()
-        counts = pyarrow_value_counts.field('counts').to_pylist()
+        values = pyarrow_value_counts.field("values").to_pylist()
+        counts = pyarrow_value_counts.field("counts").to_pylist()
 
         value_counts = {v: c for v, c in zip(values, counts) if v is not None}
 
