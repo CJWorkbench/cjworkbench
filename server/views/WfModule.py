@@ -228,28 +228,15 @@ def wfmodule_value_counts(request: HttpRequest, wf_module: WfModule):
     if chunked_array.num_chunks == 0:
         value_counts = {}
     else:
-        assert chunked_array.num_chunks == 1
-
+        pyarrow_value_counts = chunked_array.value_counts()
         # Assume type is text. (We checked column.type is ColumnType.Text above.)
-        chunk = chunked_array.chunks[0]
-        if not hasattr(chunk, "dictionary"):
-            chunk = chunk.dictionary_encode()
+        #
+        # values can be either a StringArray or a DictionaryArray. In either case,
+        # .to_pylist() converts to a Python List[str].
+        values = pyarrow_value_counts.field('values').to_pylist()
+        counts = pyarrow_value_counts.field('counts').to_pylist()
 
-        try:
-            max_index = max(v.as_py() for v in chunk.indices if v is not pa.NULL)
-        except ValueError:
-            # all nulls. Hack with "-1" makes the algorithm not-crash.
-            max_index = -1
-
-        counts = np.zeros(
-            max_index + 1, dtype=int
-        )  # if max_index = -1, counts is empty
-        for v in chunk.indices:
-            if v is not pa.NULL:
-                counts[v.as_py()] += 1
-        value_counts = {
-            value.as_py(): int(count) for value, count in zip(chunk.dictionary, counts)
-        }
+        value_counts = {v: c for v, c in zip(values, counts) if v is not None}
 
     return JsonResponse({"values": value_counts})
 

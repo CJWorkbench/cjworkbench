@@ -51,7 +51,7 @@ class ValidateArrowFileTests(unittest.TestCase):
         )
         with arrow_file({"A": array}) as path:
             with self.assertRaisesRegex(
-                InvalidArrowFile, "arrow-validate: --check-utf8 failed on column A"
+                InvalidArrowFile, "arrow-validate: --check-safe failed"
             ):
                 validate_arrow_file(path)
 
