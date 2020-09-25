@@ -161,6 +161,197 @@ class WfModuleTests(DbTestCaseWithModuleRegistry):
         email_delta.assert_not_called()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    @patch.object(notifications, "email_output_delta")
+    def test_email_delta_when_errors_change(self, email_delta):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id - 1,
+            notifications=True,
+        )
+        # We need to actually populate the cache to set up the test. The code
+        # under test will only try to open the render result if the database
+        # says there's something there.
+        rendercache.cache_render_result(
+            workflow,
+            wf_module,
+            workflow.last_delta_id - 1,
+            RenderResult(
+                errors=[
+                    RenderError(I18nMessage("py.renderer.execute.wf_module.noModule"))
+                ]
+            ),
+        )
+        wf_module.last_relevant_delta_id = workflow.last_delta_id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        module_zipfile = create_module_zipfile(
+            "x",
+            # returns different error
+            python_code='import pandas as pd\ndef render(table, params): return [{"id": "err"}]',
+        )
+
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
+                )
+            )
+
+        email_delta.assert_called()  # there's new data
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    @patch.object(notifications, "email_output_delta")
+    def test_email_no_delta_when_errors_stay_the_same(self, email_delta):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id - 1,
+            notifications=True,
+        )
+        # We need to actually populate the cache to set up the test. The code
+        # under test will only try to open the render result if the database
+        # says there's something there.
+        rendercache.cache_render_result(
+            workflow,
+            wf_module,
+            workflow.last_delta_id - 1,
+            RenderResult(
+                errors=[
+                    RenderError(I18nMessage("py.renderer.execute.wf_module.noModule"))
+                ]
+            ),
+        )
+        wf_module.last_relevant_delta_id = workflow.last_delta_id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        self.run_with_async_db(
+            execute_wfmodule(
+                self.chroot_context,
+                workflow,
+                wf_module,
+                None,  # module_zipfile
+                {},
+                Tab(tab.slug, tab.name),
+                RenderResult(),
+                {},
+                self.output_path,
+            )
+        )
+
+        email_delta.assert_not_called()  # error is the same error
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    @patch.object(rendercache, "downloaded_parquet_file")
+    @patch.object(notifications, "email_output_delta")
+    def test_email_delta_when_stale_crr_is_unreachable(self, email_delta, read_cache):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id - 1,
+            notifications=True,
+        )
+        # We need to actually populate the cache to set up the test. The code
+        # under test will only try to open the render result if the database
+        # says there's something there.
+        rendercache.cache_render_result(
+            workflow,
+            wf_module,
+            workflow.last_delta_id - 1,
+            RenderResult(arrow_table({})),  # does not write a Parquet file
+        )
+        wf_module.last_relevant_delta_id = workflow.last_delta_id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        module_zipfile = create_module_zipfile(
+            "x",
+            # returns different data
+            python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
+        )
+
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
+                )
+            )
+
+        read_cache.assert_not_called()  # it would give CorruptCacheError
+        email_delta.assert_called()  # there's new data
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    @patch.object(notifications, "email_output_delta")
+    def test_email_delta_when_fresh_crr_is_unreachable(self, email_delta):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        wf_module = tab.wf_modules.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id - 1,
+            notifications=True,
+        )
+        # We need to actually populate the cache to set up the test. The code
+        # under test will only try to open the render result if the database
+        # says there's something there.
+        rendercache.cache_render_result(
+            workflow,
+            wf_module,
+            workflow.last_delta_id - 1,
+            RenderResult(arrow_table({"A": [1]})),
+        )
+        wf_module.last_relevant_delta_id = workflow.last_delta_id
+        wf_module.save(update_fields=["last_relevant_delta_id"])
+
+        module_zipfile = create_module_zipfile(
+            "x",
+            # returns different data
+            python_code="import pandas as pd\ndef render(table, params): return pd.DataFrame({})",
+        )
+
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_wfmodule(
+                    self.chroot_context,
+                    workflow,
+                    wf_module,
+                    module_zipfile,
+                    {},
+                    Tab(tab.slug, tab.name),
+                    RenderResult(),
+                    {},
+                    self.output_path,
+                )
+            )
+
+        email_delta.assert_called()  # there's new data -- or, well, non-data
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_fetch_result_happy_path(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

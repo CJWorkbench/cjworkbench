@@ -281,7 +281,7 @@ def _execute_wfmodule_save(
             stale_crr = safe_wf_module.get_stale_cached_render_result()
             if stale_crr is None:
                 stale_parquet_file = None
-            else:
+            elif stale_crr.status == "ok":
                 try:
                     stale_parquet_file = exit_stack.enter_context(
                         rendercache.downloaded_parquet_file(stale_crr)
@@ -296,6 +296,9 @@ def _execute_wfmodule_save(
                     )
                     stale_crr = None
                     stale_parquet_file = None
+            else:
+                # status is 'error'/'unreachable'. There's no Parquet file.
+                stale_parquet_file = None
         else:
             stale_crr = None
             stale_parquet_file = None
@@ -305,7 +308,7 @@ def _execute_wfmodule_save(
         )
 
         is_changed = False  # nothing to email, usually
-        if stale_parquet_file is not None:
+        if stale_crr is not None:
             fresh_crr = safe_wf_module.cached_render_result
 
             if (
@@ -317,7 +320,7 @@ def _execute_wfmodule_save(
                 # Output other than table data has changed (e.g., nRows)
                 is_changed = True
 
-            if not is_changed:
+            if not is_changed and fresh_crr.status == "ok":
                 # Download the new parquet file and compare to the old one
                 fresh_parquet_file = exit_stack.enter_context(
                     rendercache.downloaded_parquet_file(fresh_crr)
