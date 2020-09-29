@@ -38,6 +38,7 @@ sentimentanalysis
 sort
 splitcolumn
 startfromtab
+timestampmath
 transpose
 upload
 valuefilter
