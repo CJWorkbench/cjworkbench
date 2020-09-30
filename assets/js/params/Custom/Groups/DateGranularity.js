@@ -8,7 +8,7 @@ export class DateGranularity extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <select name=...>
     colname: PropTypes.string.isRequired,
-    value: PropTypes.oneOf('STHDMQY'.split('')), // or null
+    value: PropTypes.oneOf('STHDWMQY'.split('')), // or null
     onChange: PropTypes.func.isRequired, // func(colname, value) => undefined
     i18n: PropTypes.object
   }
@@ -40,10 +40,14 @@ export class DateGranularity extends React.PureComponent {
           <option value='T'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byMinute.option')`by minute`)}</option>
           <option value='H'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byHour.option')`by hour`)}</option>
           <option value='D'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byDay.option')`by day`)}</option>
+          <option value='W'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byWeek.option')`by week`)}</option>
           <option value='M'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byMonth.option')`by month`)}</option>
           <option value='Q'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byQuarter.option')`by quarter`)}</option>
           <option value='Y'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byYear.option')`by year`)}</option>
         </select>
+        {value === 'W' ? (
+          <p><Trans id='js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday'>Weeks begin Monday at midnight UTC.</Trans></p>
+        ) : null}
       </label>
     )
   }

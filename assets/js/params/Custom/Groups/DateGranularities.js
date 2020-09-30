@@ -25,7 +25,7 @@ export default class DateGranularities extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <select> names
-    value: PropTypes.objectOf(PropTypes.oneOf('STHDMQY'.split('')).isRequired).isRequired,
+    value: PropTypes.objectOf(PropTypes.oneOf('STHDWMQY'.split('')).isRequired).isRequired,
     colnames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     dateColnames: PropTypes.arrayOf(PropTypes.string.isRequired), // null if unknown
     onChange: PropTypes.func.isRequired, // func(newObject) => undefined
