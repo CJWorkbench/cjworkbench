@@ -25,7 +25,7 @@ export default class Filters extends React.PureComponent {
     value: FiltersPropType.isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
     })), // or null if unknown
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired

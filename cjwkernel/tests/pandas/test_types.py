@@ -142,12 +142,12 @@ class ColumnTypeNumberTests(unittest.TestCase):
         )
 
 
-class ColumnTypeDatetimeTests(unittest.TestCase):
+class ColumnTypeTimestampTests(unittest.TestCase):
     def test_format(self):
         series = pd.Series(
             [dt(1999, 2, 3, 4, 5, 6, 7), np.nan, dt(2000, 3, 4, 5, 6, 7, 8)]
         )
-        column_type = ColumnType.DATETIME()
+        column_type = ColumnType.TIMESTAMP()
         result = column_type.format_series(series)
         assert_series_equal(
             result,
@@ -158,11 +158,13 @@ class ColumnTypeDatetimeTests(unittest.TestCase):
 
     def test_from_arrow(self):
         self.assertEqual(
-            ColumnType.from_arrow(atypes.ColumnType.Datetime()), ColumnType.DATETIME()
+            ColumnType.from_arrow(atypes.ColumnType.Timestamp()), ColumnType.TIMESTAMP()
         )
 
     def test_to_arrow(self):
-        self.assertEqual(ColumnType.DATETIME().to_arrow(), atypes.ColumnType.Datetime())
+        self.assertEqual(
+            ColumnType.TIMESTAMP().to_arrow(), atypes.ColumnType.Timestamp()
+        )
 
 
 class ColumnTests(unittest.TestCase):
@@ -603,7 +605,7 @@ class ProcessResultTests(unittest.TestCase):
             [
                 Column("A", ColumnType.NUMBER()),
                 Column("B", ColumnType.TEXT()),
-                Column("C", ColumnType.DATETIME()),
+                Column("C", ColumnType.TIMESTAMP()),
             ],
         )
 
@@ -1312,7 +1314,7 @@ class ProcessResultTests(unittest.TestCase):
             [
                 Column("A", ColumnType.NUMBER()),
                 Column("B", ColumnType.TEXT()),
-                Column("C", ColumnType.DATETIME()),
+                Column("C", ColumnType.TIMESTAMP()),
                 Column("D", ColumnType.TEXT()),
             ],
         )
@@ -1578,7 +1580,7 @@ class ArrowConversionTests(unittest.TestCase):
                 pd.DataFrame(
                     {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
                 ),
-                [Column("A", ColumnType.DATETIME())],
+                [Column("A", ColumnType.TIMESTAMP())],
                 self.path,
             ),
             arrow_table(
@@ -1588,11 +1590,11 @@ class ArrowConversionTests(unittest.TestCase):
                         type=pyarrow.timestamp(unit="ns", tz=None),
                     )
                 },
-                [atypes.Column("A", atypes.ColumnType.Datetime())],
+                [atypes.Column("A", atypes.ColumnType.Timestamp())],
             ),
         )
 
-    def test_arrow_datetime_column(self):
+    def test_arrow_timestamp_column(self):
         dataframe, columns = arrow_table_to_dataframe(
             arrow_table(
                 {
@@ -1601,7 +1603,7 @@ class ArrowConversionTests(unittest.TestCase):
                         type=pyarrow.timestamp(unit="ns", tz=None),
                     )
                 },
-                [atypes.Column("A", atypes.ColumnType.Datetime())],
+                [atypes.Column("A", atypes.ColumnType.Timestamp())],
             )
         )
         assert_frame_equal(
@@ -1610,7 +1612,7 @@ class ArrowConversionTests(unittest.TestCase):
                 {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
             ),
         )
-        self.assertEqual(columns, [Column("A", ColumnType.DATETIME())])
+        self.assertEqual(columns, [Column("A", ColumnType.TIMESTAMP())])
 
     def test_arrow_table_reuse_string_memory(self):
         dataframe, _ = arrow_table_to_dataframe(arrow_table({"A": ["x", "x"]}))

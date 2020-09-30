@@ -251,9 +251,9 @@ class RenderTests(unittest.TestCase):
             Column("A", ColumnType.Number("{:,.3f}")),
             Column("B", ColumnType.Number("{:,.3f}")),
             Column("C", ColumnType.Number("{:,.3f}")),
-            Column("D", ColumnType.Datetime()),
-            Column("E", ColumnType.Datetime()),
-            Column("F", ColumnType.Datetime()),
+            Column("D", ColumnType.Timestamp()),
+            Column("E", ColumnType.Timestamp()),
+            Column("F", ColumnType.Timestamp()),
             Column("G", ColumnType.Text()),
             Column("H", ColumnType.Text()),
             Column("I", ColumnType.Text()),
@@ -299,13 +299,13 @@ class RenderTests(unittest.TestCase):
                 result.table.metadata.columns,
                 [
                     Column("A", ColumnType.Number("{:,.3f}")),  # recalled
-                    Column("B", ColumnType.Datetime()),  # inferred
+                    Column("B", ColumnType.Timestamp()),  # inferred
                     Column("C", ColumnType.Text()),  # inferred
                     Column("D", ColumnType.Number("{:,}")),  # inferred
-                    Column("E", ColumnType.Datetime()),  # recalled
+                    Column("E", ColumnType.Timestamp()),  # recalled
                     Column("F", ColumnType.Text()),  # inferred
                     Column("G", ColumnType.Number("{:,}")),  # inferred
-                    Column("H", ColumnType.Datetime()),  # inferred
+                    Column("H", ColumnType.Timestamp()),  # inferred
                     Column("I", ColumnType.Text()),  # recalled
                 ],
             )
@@ -369,7 +369,7 @@ class RenderTests(unittest.TestCase):
                 {
                     "A": ptypes.RenderColumn("A", "text", None),
                     "B": ptypes.RenderColumn("B", "number", "{:,.3f}"),
-                    "C": ptypes.RenderColumn("C", "datetime", None),
+                    "C": ptypes.RenderColumn("C", "timestamp", None),
                 },
             )
 
@@ -378,7 +378,7 @@ class RenderTests(unittest.TestCase):
             columns=[
                 Column("A", ColumnType.Text()),
                 Column("B", ColumnType.Number("{:,.3f}")),
-                Column("C", ColumnType.Datetime()),
+                Column("C", ColumnType.Timestamp()),
             ],
             dir=self.basedir,
         ) as arrow_table:

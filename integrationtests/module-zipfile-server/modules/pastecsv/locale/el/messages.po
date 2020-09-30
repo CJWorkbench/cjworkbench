@@ -1,0 +1,33 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-04-02 12:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Επικόλληση δεδομένων"
+
+msgid "_spec.description"
+msgstr "Επικόλληση δεδομένων με μη αυτόματο τρόπο ή αντιγραφή και επικόλληση δεδομένων από υπολογιστικό φύλλο ή CSV."
+
+msgid "_spec.parameters.csv.placeholder"
+msgstr "Επικόλλησε δεδομένα από υπολογιστικό φύλλο ή CSV"
+
+msgid "_spec.parameters.has_header_row.name"
+msgstr "Έχει σειρά κεφαλίδας"
+

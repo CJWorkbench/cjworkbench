@@ -69,7 +69,7 @@ export class WfModule extends React.PureComponent {
       cached_render_result_delta_id: PropTypes.number, // or null
       output_columns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
       })) // or null
     }), // or null
     isSelected: PropTypes.bool.isRequired,

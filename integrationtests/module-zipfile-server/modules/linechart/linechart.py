@@ -4,7 +4,8 @@ import json
 from string import Formatter
 from typing import Any, Dict, List
 import pandas as pd
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
+from cjwmodule import i18n
+from pandas.api.types import is_numeric_dtype
 
 
 MaxNAxisLabels = 300
@@ -66,10 +67,16 @@ class GentleValueError(ValueError):
     """
     A ValueError that should not display in red to the user.
 
+    The first argument must be an `i18n.I18nMessage`.
+
     On first load, we don't want to display an error, even though the user
     hasn't selected what to chart. So we'll display the error in the iframe:
     we'll be gentle with the user.
     """
+
+    @property
+    def i18n_message(self):
+        return self.args[0]
 
 
 @dataclass
@@ -84,7 +91,8 @@ class XSeries:
 
     @property
     def vega_data_type(self) -> str:
-        if self.column.type == "datetime":
+        # DELETEME column.type == "datetime" https://www.pivotaltracker.com/story/show/174865394
+        if self.column.type == "datetime" or self.column.type == "timestamp":
             return "temporal"
         elif self.column.type == "number":
             return "quantitative"
@@ -105,7 +113,8 @@ class XSeries:
 
         In particular: datetime64 values will be converted to str.
         """
-        if self.column.type == "datetime":
+        # DELETEME column.type == "datetime" https://www.pivotaltracker.com/story/show/174865394
+        if self.column.type == "datetime" or self.column.type == "timestamp":
             try:
                 utc_series = self.series.dt.tz_convert(None).to_series()
             except TypeError:
@@ -201,18 +210,7 @@ class Chart:
                 "x": {
                     "field": "x",
                     "type": self.x_series.vega_data_type,
-                    "axis": {
-                        "title": self.x_axis_label,
-                        "format": self.x_axis_tick_format,
-                        "tickMinStep": (
-                            1
-                            if (
-                                self.x_axis_tick_format
-                                and self.x_axis_tick_format[-1] == "d"
-                            )
-                            else None
-                        ),
-                    },
+                    "axis": {"title": self.x_axis_label},
                 },
                 "y": {
                     "field": "y",
@@ -220,9 +218,6 @@ class Chart:
                     "axis": {
                         "title": self.y_axis_label,
                         "format": self.y_axis_tick_format,
-                        "tickMinStep": (
-                            1 if self.y_axis_tick_format[-1] == "d" else None
-                        ),
                     },
                 },
                 "color": {
@@ -236,12 +231,20 @@ class Chart:
             },
         }
 
+        if self.x_axis_tick_format is not None:
+            ret["encoding"]["x"]["axis"]["format"] = self.x_axis_tick_format
+
+        if self.x_axis_tick_format and self.x_axis_tick_format[-1] == "d":
+            ret["encoding"]["x"]["axis"]["tickMinStep"] = 1
+
         if self.x_series.vega_data_type == "ordinal":
             ret["encoding"]["x"]["axis"].update(
                 {"labelAngle": 0, "labelOverlap": False}
             )
             ret["encoding"]["x"]["sort"] = None
-            ret["encoding"]["order"] = {"type": None}
+
+        if self.y_axis_tick_format[-1] == "d":
+            ret["encoding"]["y"]["axis"]["tickMinStep"] = 1
 
         if len(self.y_columns) == 1:
             ret["encoding"]["color"]["legend"] = None
@@ -291,7 +294,9 @@ class Form:
         Create an XSeries ready for charting, or raise ValueError.
         """
         if not self.x_column:
-            raise GentleValueError("Please choose an X-axis column")
+            raise GentleValueError(
+                i18n.trans("noXAxisError.message", "Please choose an X-axis column")
+            )
 
         series = table[self.x_column]
         column = input_columns[self.x_column]
@@ -300,23 +305,34 @@ class Form:
         safe_x_values.reset_index(drop=True, inplace=True)
 
         if column.type == "text" and len(safe_x_values) > MaxNAxisLabels:
-            raise ValueError(
-                f'Column "{self.x_column}" has {len(safe_x_values)} '
-                "text values. We cannot fit them all on the X axis. "
-                "Please change the input table to have 10 or fewer rows, or "
-                f'convert "{self.x_column}" to number or date.'
+            raise GentleValueError(
+                i18n.trans(
+                    "tooManyTextValuesError.message",
+                    'Column "{x_column}" has {n_safe_x_values} text values. We cannot fit them all on the X axis. '
+                    'Please change the input table to have 10 or fewer rows, or convert "{x_column}" to number or date.',
+                    {
+                        "x_column": self.x_column,
+                        "n_safe_x_values": len(safe_x_values),
+                    },
+                )
             )
 
         if not len(safe_x_values):
-            raise ValueError(
-                f'Column "{self.x_column}" has no values. '
-                "Please select a column with data."
+            raise GentleValueError(
+                i18n.trans(
+                    "noValuesError.message",
+                    'Column "{column_name}" has no values. Please select a column with data.',
+                    {"column_name": self.x_column},
+                )
             )
 
         if not len(safe_x_values[safe_x_values != safe_x_values[0]]):
-            raise ValueError(
-                f'Column "{self.x_column}" has only 1 value. '
-                "Please select a column with 2 or more values."
+            raise GentleValueError(
+                i18n.trans(
+                    "onlyOneValueError.message",
+                    'Column "{column_name}" has only 1 value. Please select a column with 2 or more values.',
+                    {"column_name": self.x_column},
+                )
             )
 
         return XSeries(series, column)
@@ -341,23 +357,31 @@ class Form:
         """
         x_series = self._make_x_series(table, input_columns)
         if not self.y_columns:
-            raise GentleValueError("Please choose a Y-axis column")
+            raise GentleValueError(
+                i18n.trans("noYAxisError.message", "Please choose a Y-axis column")
+            )
 
         y_columns = []
         for ycolumn in self.y_columns:
             if ycolumn.column == self.x_column:
-                raise ValueError(
-                    f'Cannot plot Y-axis column "{ycolumn.column}" '
-                    "because it is the X-axis column"
+                raise GentleValueError(
+                    i18n.trans(
+                        "sameAxesError.message",
+                        "You cannot plot Y-axis column {column_name} because it is the X-axis column",
+                        {"column_name": ycolumn.column},
+                    )
                 )
 
             series = table[ycolumn.column]
 
             if not is_numeric_dtype(series.dtype):
-                raise ValueError(
-                    f'Cannot plot Y-axis column "{ycolumn.column}" '
-                    "because it is not numeric. "
-                    "Convert it to a number before plotting it."
+                raise GentleValueError(
+                    i18n.trans(
+                        "axisNotNumericError.message",
+                        'Cannot plot Y-axis column "{column_name}" because it is not numeric. '
+                        "Convert it to a number before plotting it.",
+                        {"column_name": ycolumn.column},
+                    )
                 )
 
             # Find how many Y values can actually be plotted on the X axis. If
@@ -365,9 +389,12 @@ class Form:
             # error.
             matches = pd.DataFrame({"X": x_series.series, "Y": series}).dropna()
             if not matches["X"].count():
-                raise ValueError(
-                    f'Cannot plot Y-axis column "{ycolumn.column}" '
-                    "because it has no values"
+                raise GentleValueError(
+                    i18n.trans(
+                        "emptyAxisError.message",
+                        'Cannot plot Y-axis column "{column_name}" because it has no values',
+                        {"column_name": ycolumn.column},
+                    )
                 )
 
             y_columns.append(
@@ -394,9 +421,13 @@ def render(table, params, *, input_columns):
     try:
         chart = form.make_chart(table, input_columns)
     except GentleValueError as err:
-        return (table, "", {"error": str(err)})
-    except ValueError as err:
-        return (table, str(err), {"error": str(err)})
+        return (
+            table,
+            err.i18n_message,
+            {
+                "error": "Please correct the error in this step's data or parameters"
+            },  # TODO_i18n
+        )
 
     json_dict = chart.to_vega()
     return (table, "", json_dict)

@@ -251,7 +251,11 @@ class ParamDTypeColumn(ParamDTypeString):
     def _from_plain_data(cls, *, column_types=None, **kwargs):
         if column_types:
             # column_types comes from JSON as a list. We need a set.
-            kwargs["column_types"] = frozenset(column_types)
+            # DELETEME nix "datetime" alias
+            # https://www.pivotaltracker.com/story/show/174865394
+            kwargs["column_types"] = frozenset(
+                "timestamp" if ct == "datetime" else ct for ct in column_types
+            )
         return cls(**kwargs)
 
 
@@ -278,7 +282,11 @@ class ParamDTypeMulticolumn(ParamDType):
     def _from_plain_data(cls, *, column_types=None, **kwargs):
         if column_types:
             # column_types comes from JSON as a list. We need a set.
-            kwargs["column_types"] = frozenset(column_types)
+            # DELETEME nix "datetime" alias
+            # https://www.pivotaltracker.com/story/show/174865394
+            kwargs["column_types"] = frozenset(
+                "timestamp" if ct == "datetime" else ct for ct in column_types
+            )
         return cls(**kwargs)
 
 

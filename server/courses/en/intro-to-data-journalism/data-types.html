@@ -99,15 +99,15 @@ tabs:
   <p>
     This type is used for whole numbers (such as 8, 22 or 268) and decimals (such as 1.5 or 3.14). Numbers are great for sorting and math.
   </p>
-  <h3>Date &amp; time</h3>
+  <h3>Timestamp</h3>
   <p>
-    This type stores points in time, with nanosecond precision. Dates &amp; times are great for sorting and grouping records.
+    This type stores points in time, with nanosecond precision. Timestamps are great for sorting and grouping records.
   </p>
   <p>
-    A "Date &amp; time" value can be written in many formats, such as “23 January 2019 11:42.” Right now, date &amp; time in Workbench is shown as “2019–01-23 11:42:00”.
+    Timestamps do not have timezones: they are always in UTC.
   </p>
   <p>
-    Workbench does not currently support time zones.
+    Workbench displays timestamps in ISO-8601 format: “2019–01-23 11:42:00”.
   </p>
 </section>
 <section>
@@ -119,7 +119,7 @@ tabs:
     <img alt="Inspect element" src="./type.png">
   </figure>
   <p>
-    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date &amp; time.
+    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to timestamp.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -131,10 +131,10 @@ tabs:
                && wfm.params.input_format === 'auto'"
       >In the column menu<span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to date &amp; time</kbd>.
+      </span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to timestamp</kbd>.
       This will add a conversion step.
       <p class="instruction-detail">
-        Now this column has “Date &amp; Time” type. We'll use this cleaned column in the next lesson.
+        Now this column has “Timestamp” type. We'll use this cleaned column in the next lesson.
       </p>
     </li>
   </ol>

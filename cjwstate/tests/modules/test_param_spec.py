@@ -242,9 +242,31 @@ class ParamSpecTest(unittest.TestCase):
         self.assertEqual(param_spec.column_types, ["text", "number"])
         self.assertEqual(param_spec.dtype.column_types, frozenset(["text", "number"]))
 
+    def test_column_column_type_datetime_is_timestamp(self):
+        # DELETEME nix "datetime" alias
+        # https://www.pivotaltracker.com/story/show/174865394
+        param_spec = ParamSpec.from_dict(
+            dict(id_name="c", type="column", column_types=["text", "datetime"])
+        )
+        self.assertEqual(param_spec.column_types, ["text", "timestamp"])
+        self.assertEqual(
+            param_spec.dtype.column_types, frozenset(["text", "timestamp"])
+        )
+
     def test_multicolumn_column_types(self):
         param_spec = ParamSpec.from_dict(
             dict(id_name="c", type="multicolumn", column_types=["text", "number"])
         )
         self.assertEqual(param_spec.column_types, ["text", "number"])
         self.assertEqual(param_spec.dtype.column_types, frozenset(["text", "number"]))
+
+    def test_multicolumn_column_type_datetime_is_timestamp(self):
+        # DELETEME nix "datetime" alias
+        # https://www.pivotaltracker.com/story/show/174865394
+        param_spec = ParamSpec.from_dict(
+            dict(id_name="c", type="multicolumn", column_types=["text", "datetime"])
+        )
+        self.assertEqual(param_spec.column_types, ["text", "timestamp"])
+        self.assertEqual(
+            param_spec.dtype.column_types, frozenset(["text", "timestamp"])
+        )

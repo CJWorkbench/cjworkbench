@@ -48,18 +48,18 @@ class ThriftConvertersTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
             types.thrift_column_type_to_arrow(thrift_value)
 
-    def test_column_type_datetime_to_thrift(self):
+    def test_column_type_timestamp_to_thrift(self):
         self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Datetime()),
-            ttypes.ColumnType(datetime_type=ttypes.ColumnTypeDatetime()),
+            types.arrow_column_type_to_thrift(types.ColumnType.Timestamp()),
+            ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp()),
         )
 
-    def test_column_type_datetime_from_thrift(self):
+    def test_column_type_timestamp_from_thrift(self):
         self.assertEqual(
             types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(datetime_type=ttypes.ColumnTypeDatetime())
+                ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp())
             ),
-            types.ColumnType.Datetime(),
+            types.ColumnType.Timestamp(),
         )
 
     def test_column_to_thrift(self):

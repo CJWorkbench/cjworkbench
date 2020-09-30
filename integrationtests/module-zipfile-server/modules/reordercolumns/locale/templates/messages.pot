@@ -1,0 +1,12 @@
+#. default-message: Reorder columns
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Change the order of columns in the table.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Drag column headers to reorder columns
+msgid "_spec.parameters.no-param-text.name"
+msgstr ""
+

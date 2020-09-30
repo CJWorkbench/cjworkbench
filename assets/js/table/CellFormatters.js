@@ -85,10 +85,10 @@ export function NumberCellFormatter (format) {
 }
 
 const ZeroEndOfDate = /(?:(?:T00:00)?:00)?\.000Z$/
-export function DatetimeCellFormatter ({ value }) {
+export function TimestampCellFormatter ({ value }) {
   // value is a string: -- ISO8601-formatted date
   if (value === null) {
-    return <div className='cell-null cell-datetime' />
+    return <div className='cell-null cell-timestamp' />
   }
 
   const date = new Date(value)
@@ -104,12 +104,12 @@ export function DatetimeCellFormatter ({ value }) {
   const isoText = date.toISOString()
   const text = isoText.replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
 
-  return <time className='cell-datetime' dateTime={isoText}>{text}</time>
+  return <time className='cell-timestamp' dateTime={isoText}>{text}</time>
 }
 
 const TypeToCellFormatter = {
   text: () => TextCellFormatter,
-  datetime: () => DatetimeCellFormatter,
+  timestamp: () => TimestampCellFormatter,
   number: ({ format }) => NumberCellFormatter(format)
 }
 

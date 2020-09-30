@@ -1,0 +1,30 @@
+#. default-message: Load from URL
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Load a dataset, JSON feed or API via its public URL, and update when new data is available.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: http://…
+msgid "_spec.parameters.url.placeholder"
+msgstr ""
+
+#. default-message: Has header row
+msgid "_spec.parameters.has_header.name"
+msgstr ""
+
+#. default-message: Update
+msgid "_spec.parameters.version_select.name"
+msgstr ""
+
+#. default-message: Please re-download this file to disable header-row handling
+#: loadurl.py:109
+msgid "prompt.disableHeaderHandling"
+msgstr ""
+
+#. default-message: Server responded with unhandled Content-Type {content_type}. Please use a different URL.
+#: loadurl.py:125
+msgid "error.unhandledContentType"
+msgstr ""
+

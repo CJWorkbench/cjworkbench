@@ -1,0 +1,12 @@
+#. default-message: Drop empty rows
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Drop row if the values in specific columns are empty.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Drop row if any of these columns is empty
+msgid "_spec.parameters.colnames.name"
+msgstr ""
+

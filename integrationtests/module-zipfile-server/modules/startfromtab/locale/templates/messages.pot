@@ -1,0 +1,8 @@
+#. default-message: Start from tab
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Copy another tab’s output table.
+msgid "_spec.description"
+msgstr ""
+

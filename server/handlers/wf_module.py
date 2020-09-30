@@ -167,7 +167,7 @@ async def set_stored_data_version(
         version = str(version)
         version = isoparse(version)
     except (ValueError, OverflowError, TypeError):
-        raise HandlerError("BadRequest: version must be an ISO8601 datetime")
+        raise HandlerError("BadRequest: version must be an ISO8601 String")
 
     version = await _find_precise_version(wf_module, version)
 

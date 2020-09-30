@@ -327,7 +327,7 @@
         color: $brand-text--darker;
         border: 0px solid transparent;
 
-        .react-grid-Cell__value>* { // .cell-text, .cell-datetime, .cell-number, .cell-null
+        .react-grid-Cell__value>* { // .cell-text, .cell-timestamp, .cell-number, .cell-null
           @include table-content;
           overflow: hidden;
           white-space: nowrap;
@@ -358,14 +358,14 @@
           padding: 0 .2rem 0 1rem;
         }
 
-        .cell-datetime {
+        .cell-timestamp {
           text-align: left;
           padding: 0 1rem;
         }
 
         // when a cell value cannot be rendered
         .cell-null {
-          // .cell-null is sometimes added to .cell-text, .cell-datetime and .cell-number
+          // .cell-null is sometimes added to .cell-text, .cell-timestamp and .cell-number
           &::before {
             // Add 'null' text in CSS, not React, so copy/paste won't copy it
             @include font-sans-light;

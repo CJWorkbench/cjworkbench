@@ -45,13 +45,13 @@ class TestQuickFix(LoggedInIntegrationTest):
         b = self.browser
         b.assert_element(
             ".wf-module-error-msg",
-            text="The column “A” must be converted from Text to Dates & Times.",
+            text="The column “A” must be converted from Text to Timestamps.",
             wait=True,
         )
-        b.click_button("Convert Text to Dates & Times")
+        b.click_button("Convert Text to Timestamps")
 
         # Wait for module to appear
-        b.assert_element(".module-name", text="Convert to date & time", wait=True)
+        b.assert_element(".module-name", text="Convert to timestamp", wait=True)
 
         # Click back to "Group by date" to see its output
         b.click_whatever(".module-name", text="Group by date")
@@ -107,13 +107,13 @@ class TestQuickFix(LoggedInIntegrationTest):
             expected_colnames_and_types=["Num1 text", "Num2 text"],
         )
 
-        # 'Accidentally' convert 'Num2' to Date & Time.
+        # 'Accidentally' convert 'Num2' to Timestamp
         self.import_module("convert-date")
-        self.add_wf_module("Convert to date & time")
-        self.select_column("Convert to date & time", "colnames", "Num2")
+        self.add_wf_module("Convert to timestamp")
+        self.select_column("Convert to timestamp", "colnames", "Num2")
         self.submit_wf_module()
 
-        # Try to format numbers. (It won't work because the inputs are text and datetime.)
+        # Try to format numbers. (It won't work because the inputs are text and timestamp.)
         self.import_module("formatnumbers")
         self.add_wf_module("Format numbers")
         self.select_column("Format numbers", "colnames", "Num1")
@@ -130,7 +130,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         b.assert_element("button", text="Convert Text to Numbers")
         b.assert_element(
             ".wf-module-error-msg",
-            text="The column “Num2” must be converted from Dates & Times to Numbers.",
+            text="The column “Num2” must be converted from Timestamps to Numbers.",
             wait=True,
         )
-        b.assert_element("button", "Convert Dates & Times to Numbers")
+        b.assert_element("button", "Convert Timestamps to Numbers")

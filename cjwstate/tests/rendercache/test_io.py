@@ -89,7 +89,7 @@ class RendercacheIoTests(DbTestCase):
     def test_metadata_comes_from_db_columns(self):
         columns = [
             Column("A", ColumnType.Number(format="{:,.2f}")),
-            Column("B", ColumnType.Datetime()),
+            Column("B", ColumnType.Timestamp()),
             Column("C", ColumnType.Text()),
         ]
         result = RenderResult(
@@ -121,11 +121,11 @@ class RendercacheIoTests(DbTestCase):
             with self.assertRaises(CorruptCacheError):
                 load_cached_render_result(crr, arrow_path)
 
-    def test_read_cached_render_result_slice_as_text_datetime(self):
+    def test_read_cached_render_result_slice_as_text_timestamp(self):
         result = RenderResult(
             arrow_table(
                 {"A": pa.array([2134213412341232967, None], pa.timestamp("ns"))},
-                columns=[Column("A", ColumnType.Datetime())],
+                columns=[Column("A", ColumnType.Timestamp())],
             )
         )
         cache_render_result(self.workflow, self.wf_module, self.delta.id, result)

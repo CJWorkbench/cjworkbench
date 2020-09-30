@@ -1,0 +1,89 @@
+#. default-message: Group by date
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Group rows by dates and times within columns (also called pivot table). Calculate sum, averages, Min, Max and more between columns for each group.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Select date column
+msgid "_spec.parameters.column.placeholder"
+msgstr ""
+
+#. default-message: Group by
+msgid "_spec.parameters.groupby.name"
+msgstr ""
+
+#. default-message: Second
+msgid "_spec.parameters.groupby.options.second.label"
+msgstr ""
+
+#. default-message: Minute
+msgid "_spec.parameters.groupby.options.minute.label"
+msgstr ""
+
+#. default-message: Hour
+msgid "_spec.parameters.groupby.options.hour.label"
+msgstr ""
+
+#. default-message: Day
+msgid "_spec.parameters.groupby.options.day.label"
+msgstr ""
+
+#. default-message: Month
+msgid "_spec.parameters.groupby.options.month.label"
+msgstr ""
+
+#. default-message: Quarter - Calendar
+msgid "_spec.parameters.groupby.options.quarter.label"
+msgstr ""
+
+#. default-message: Year
+msgid "_spec.parameters.groupby.options.year.label"
+msgstr ""
+
+#. default-message: Second (time-of-day)
+msgid "_spec.parameters.groupby.options.second_of_day.label"
+msgstr ""
+
+#. default-message: Minute (time-of-day)
+msgid "_spec.parameters.groupby.options.minute_of_day.label"
+msgstr ""
+
+#. default-message: Hour (time-of-day)
+msgid "_spec.parameters.groupby.options.hour_of_day.label"
+msgstr ""
+
+#. default-message: Operation
+msgid "_spec.parameters.operation.name"
+msgstr ""
+
+#. default-message: Count
+msgid "_spec.parameters.operation.options.size.label"
+msgstr ""
+
+#. default-message: Average
+msgid "_spec.parameters.operation.options.mean.label"
+msgstr ""
+
+#. default-message: Sum
+msgid "_spec.parameters.operation.options.sum.label"
+msgstr ""
+
+#. default-message: Minimum
+msgid "_spec.parameters.operation.options.min.label"
+msgstr ""
+
+#. default-message: Maximum
+msgid "_spec.parameters.operation.options.max.label"
+msgstr ""
+
+#. default-message: Include missing dates
+msgid "_spec.parameters.include_missing_dates.name"
+msgstr ""
+
+#. default-message: Including missing dates would create {n_rows} rows, but the maximum allowed is {max_rows_per_table}
+#: countbydate.py:153
+msgid "error.tooManyRows"
+msgstr ""
+

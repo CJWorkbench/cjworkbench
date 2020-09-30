@@ -1,6 +1,16 @@
 import itertools
 import json
-from typing import Dict, List
+from typing import Dict, List, Tuple
+from cjwmodule import i18n
+from cjwmodule.util.colnames import Settings, gen_unique_clean_colnames_and_warn
+
+
+class UserVisibleError(Exception):
+    """An error that has an `i18n.I18nMessage` as its first argument"""
+
+    @property
+    def i18n_message(self):
+        return self.args[0]
 
 
 def _uniquify(colnames: List[str]):
@@ -28,9 +38,11 @@ def _uniquify(colnames: List[str]):
     return ret
 
 
-def _parse_renames(renames: Dict[str, str], table_colnames: List[str]):
+def _parse_renames(
+    renames: Dict[str, str], table_columns: List[str], *, settings: Settings
+) -> Tuple[Dict[str, str], List[i18n.I18nMessage]]:
     """
-    Convert `renames` into a valid mapping for `table_colnames`.
+    Convert `renames` into a valid mapping for `table_columns`, plus warnings.
 
     Ignore any renames to "". That column name is not allowed.
 
@@ -40,20 +52,29 @@ def _parse_renames(renames: Dict[str, str], table_colnames: List[str]):
     missing origin column names and it may duplicate destination column names.
     The logic to handle this: do _all_ the user's renames at once, and then
     queue extra renames for columns that end up with duplicate names. Those
-    extra renames are handled left-to-right (the order of `table_colnames`
+    extra renames are handled left-to-right (the order of `table_columns`
     matters).
     """
     # "renames.get(c) or c" means:
     # * If renames[c] exists and is "", return c
     # * If renames[c] does not exist, return c
     # * If renames[c] exists and is _not_ "", return renames[c]
-    new_colnames = _uniquify([(renames.get(c) or c) for c in table_colnames])
-    return {o: n for o, n in zip(table_colnames, new_colnames) if o != n}
+    nix_colnames = [c for c in table_columns if (renames.get(c) or c) != c]
+    nix_colnames_set = frozenset(nix_colnames)
+    existing_colnames = [c for c in table_columns if c not in nix_colnames_set]
+    try_new_colnames = [renames[c] for c in table_columns if c in nix_colnames_set]
+
+    new_colnames, errors = gen_unique_clean_colnames_and_warn(
+        try_new_colnames, existing_names=existing_colnames, settings=settings
+    )
+    return {k: v for k, v in zip(nix_colnames, new_colnames)}, errors
 
 
-def _parse_custom_list(custom_list: str, table_columns: List[str]):
+def _parse_custom_list(
+    custom_list: str, table_columns: List[str], *, settings: Settings
+) -> Tuple[Dict[str, str], List[i18n.I18nMessage]]:
     """
-    Convert `custom_list` into a valid mapping for `table_colnames`.
+    Convert `custom_list` into a valid mapping for `table_columns`.
 
     Return a minimal and valid dict from old colname to new colname.
 
@@ -64,7 +85,7 @@ def _parse_custom_list(custom_list: str, table_columns: List[str]):
     comma-separated list we use commas.) The logic to handle this: do _all_
     the user's renames at once, and then queue extra renames for columns
     that end up with duplicate names. Those extra renames are handled
-    left-to-right (the order of `table_colnames` matters).
+    left-to-right (the order of `table_columns` matters).
     """
     # Chomp trailing newline, in case the user enters "A,B,C\n".
     custom_list = custom_list.rstrip()
@@ -80,13 +101,17 @@ def _parse_custom_list(custom_list: str, table_columns: List[str]):
     try:
         renames = {table_columns[i]: s for i, s in enumerate(rename_list) if s}
     except IndexError:
-        raise ValueError(
-            f"You supplied {len(rename_list)} column names, "
-            f"but the table has {len(table_columns)} columns."
+        raise UserVisibleError(
+            i18n.trans(
+                "badParam.custom_list.wrongNumberOfNames",
+                "You supplied {n_names, plural, other {# column names} one {# column name}}, "
+                "but the table has {n_columns, plural, other {# columns} one {# column}}.",
+                {"n_names": len(rename_list), "n_columns": len(table_columns)},
+            )
         )
 
     # Use _parse_renames() logic to consider missing columns and uniquify
-    return _parse_renames(renames, table_columns)
+    return _parse_renames(renames, table_columns, settings=settings)
 
 
 def _do_renames(table, input_columns, renames):
@@ -101,20 +126,25 @@ def _do_renames(table, input_columns, renames):
     }
 
 
-def render(table, params, *, input_columns):
+def render(table, params, *, settings: Settings, input_columns):
     columns = list(table.columns)
     if params["custom_list"]:
         try:
-            renames = _parse_custom_list(params["list_string"], columns)
-        except ValueError as err:
-            return str(err)
+            renames, errors = _parse_custom_list(
+                params["list_string"], columns, settings=settings
+            )
+        except UserVisibleError as err:
+            return [err.i18n_message]
     else:
-        renames = _parse_renames(params["renames"], columns)
+        renames, errors = _parse_renames(params["renames"], columns, settings=settings)
 
     if not renames:
         return table  # no-op
 
-    return _do_renames(table, input_columns, renames)
+    return {
+        **_do_renames(table, input_columns, renames),
+        "errors": errors,
+    }
 
 
 def _migrate_params_v0_to_v1(params):

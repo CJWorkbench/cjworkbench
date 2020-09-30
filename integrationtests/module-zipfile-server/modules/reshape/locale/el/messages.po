@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-23 14:34+0000\n"
+"POT-Creation-Date: 2020-09-22 15:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -63,79 +63,56 @@ msgstr ""
 #: reshape.py:67
 msgid "wide_to_long.badColumns.mixedTypes.message"
 msgstr ""
-"Έγινε αυτόματη μετατροπή {n_columns, plural, other{# στηλών (δείτε "
-"\"{first_colname}\")} one {της στήλης \"{first_colname}\"}} σε κείμενο "
-"επειδή η στήλη τιμής δεν μπορεί να έχει διαφορετικούς τύπους."
 
 #: reshape.py:74
 msgid "wide_to_long.badColumns.mixedTypes.quick_fix.text"
-msgstr "Μετατροπή {n_columns, plural, one {# στήλης} other {# στηλών}} σε κείμενο"
+msgstr ""
 
 #: reshape.py:106
 msgid "long_to_wide.badColumn.notText.message"
 msgstr ""
-"Έγινε αυτόματη μετατροπή της στήλης \"{column_name}\" σε κείμενο επειδή "
-"τα ονόματα στηλών πρέπει να είναι κείμενο."
 
 #: reshape.py:114
 msgid "long_to_wide.badColumn.notText.quick_fix.text"
-msgstr "Μετατροπή της στήλης \"{column_name}\" σε κείμενο"
+msgstr ""
 
 #: reshape.py:136
 msgid "long_to_wide.badRows.emptyColumnHeaders.warning"
 msgstr ""
-"{n_rows, plural,   one {# σειρά με κενή στήλη \"{column_name}\" "
-"αφαιρέθηκε.}  other {# σειρές με κενή στήλη \"{column_name}\" "
-"αφαιρέθηκαν.}}"
 
 #: reshape.py:150
-#, fuzzy
 msgid "long_to_wide.error.repeatedVariables"
-msgstr "Δεν είναι δυνατή η αναδιαμόρφωση: μερικές μεταβλητές επαναλαμβάνονται"
+msgstr ""
 
 #: reshape.py:156
 msgid "long_to_wide.error.noValueColumn"
 msgstr ""
-"Δεν υπάρχει στήλη τιμής. Όλες οι στήλες του πίνακα εκτός από μία πρέπει "
-"να είναι μεταβλητή σειράς ή στήλης."
 
 #: reshape.py:162
 msgid "long_to_wide.error.tooManyValueColumns"
 msgstr ""
-"Υπάρχουν πολλές στήλες τιμής. Όλες οι στήλες του πίνακα εκτός από μία "
-"πρέπει να είναι μεταβλητή σειράς ή στήλης. Αφαιρέστε τις επιπλέον στήλες "
-"πριν από την αναδιαμόρφωση."
 
-#: reshape.py:204
+#: reshape.py:209
 msgid "error.sameColumnAndRowVariables"
 msgstr ""
-"Δεν είναι δυνατή η αναδιαμόρφωση: οι μεταβλητές στηλών και σειρών πρέπει "
-"να είναι διαφορετικές"
 
-#: reshape.py:325
+#: reshape.py:330
 msgid "transpose.warnings.tooManyRows"
 msgstr ""
-"Περικόψαμε την είσοδο σε {max_columns} σειρές έτσι ώστε ο "
-"αντιμετατιθέμενος πίνακας να έχει λογικό αριθμό στηλών."
 
-#: reshape.py:344
+#: reshape.py:349
 msgid "transpose.warnings.headersConvertedToText.message"
 msgstr ""
-"Έγινε αυτόματη μετατροπή των κεφαλίδων στη στήλη \"{column_name}\" σε "
-"κείμενο."
 
-#: reshape.py:351
+#: reshape.py:356
 msgid "transpose.warnings.headersConvertedToText.quickFix.text"
-msgstr "Μετατροπή της στήλης {column_name} σε κείμενο"
+msgstr ""
 
-#: reshape.py:386
+#: reshape.py:394
 msgid "transpose.warnings.differentColumnTypes.message"
 msgstr ""
-"Έγινε αυτόματη μετατροπή {n_columns, plural, other {# στηλών (δείτε "
-"\"{first_colname}\")} one {της στήλης \"{first_colname}\"}} σε κείμενο "
-"επειδή όλες οι στήλες πρέπει να ανήκουν στον ίδιο τύπο."
 
-#: reshape.py:393
+#: reshape.py:401
 msgid "transpose.warnings.differentColumnTypes.quickFix.text"
-msgstr "Μετατροπή {n_columns, plural, other {# στηλών} one {# στήλης}} σε κείμενο"
+msgstr ""
 

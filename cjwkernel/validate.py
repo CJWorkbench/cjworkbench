@@ -59,7 +59,7 @@ class WrongColumnType(ValidateError):
         )
 
 
-class DatetimeTimezoneNotAllowed(ValidateError):
+class TimestampTimezoneNotAllowed(ValidateError):
     def __init__(self, name: str, dtype: pyarrow.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has a time zone, but Workbench does not support time zones"
@@ -67,7 +67,7 @@ class DatetimeTimezoneNotAllowed(ValidateError):
         )
 
 
-class DatetimeUnitNotAllowed(ValidateError):
+class TimestampUnitNotAllowed(ValidateError):
     def __init__(self, name: str, dtype: pyarrow.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has unit '%s', but Workbench only supports 'ns'"
@@ -144,7 +144,7 @@ def validate_table_metadata(
     * table column names do not match metadata column names
     * table column names have duplicates
     * table column types are not compatible with metadata column types
-      (e.g., Numbers column in metadata, Datetime table type)
+      (e.g., Numbers column in metadata, Timestamp table type)
 
     Be sure the Arrow file backing the table was validated with
     `validate_arrow_file()` first. Otherwise, you may experience a
@@ -190,12 +190,12 @@ def validate_table_metadata(
                     or pyarrow.types.is_integer(actual.type)
                 ):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
-            elif isinstance(expected.type, ColumnType.Datetime):
+            elif isinstance(expected.type, ColumnType.Timestamp):
                 if not pyarrow.types.is_timestamp(actual.type):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
                 if actual.type.tz is not None:
-                    raise DatetimeTimezoneNotAllowed(actual_name, actual.type)
+                    raise TimestampTimezoneNotAllowed(actual_name, actual.type)
                 if actual.type.unit != "ns":
-                    raise DatetimeUnitNotAllowed(actual_name, actual.type)
+                    raise TimestampUnitNotAllowed(actual_name, actual.type)
             else:
                 raise NotImplementedError

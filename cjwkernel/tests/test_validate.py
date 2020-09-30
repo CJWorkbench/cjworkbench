@@ -6,8 +6,8 @@ from cjwkernel.util import tempfile_context
 from cjwkernel.validate import (
     validate_arrow_file,
     validate_table_metadata,
-    DatetimeTimezoneNotAllowed,
-    DatetimeUnitNotAllowed,
+    TimestampTimezoneNotAllowed,
+    TimestampUnitNotAllowed,
     DuplicateColumnName,
     InvalidArrowFile,
     TableHasTooManyRecordBatches,
@@ -28,8 +28,8 @@ def Number(name: str, format: str = "{:,.2f}") -> Column:
     return Column(name, ColumnType.Number(format=format))
 
 
-def Datetime(name: str) -> Column:
-    return Column(name, ColumnType.Datetime())
+def Timestamp(name: str) -> Column:
+    return Column(name, ColumnType.Timestamp())
 
 
 class ValidateArrowFileTests(unittest.TestCase):
@@ -127,14 +127,14 @@ class ValidateTableMetadataTests(unittest.TestCase):
                 pyarrow.table({"A": ["x"]}), TableMetadata(1, [Number("A")])
             )
 
-    def test_column_str_should_be_datetime(self):
+    def test_column_str_should_be_timestamp(self):
         with self.assertRaises(WrongColumnType):
             validate_table_metadata(
-                pyarrow.table({"A": ["x"]}), TableMetadata(1, [Datetime("A")])
+                pyarrow.table({"A": ["x"]}), TableMetadata(1, [Timestamp("A")])
             )
 
-    def test_column_datetime_should_be_tz_naive(self):
-        with self.assertRaises(DatetimeTimezoneNotAllowed):
+    def test_column_timestamp_should_be_tz_naive(self):
+        with self.assertRaises(TimestampTimezoneNotAllowed):
             validate_table_metadata(
                 pyarrow.table(
                     {
@@ -144,13 +144,13 @@ class ValidateTableMetadataTests(unittest.TestCase):
                         )
                     }
                 ),
-                TableMetadata(1, [Datetime("A")]),
+                TableMetadata(1, [Timestamp("A")]),
             )
 
-    def test_column_datetime_must_be_ns_resolution(self):
+    def test_column_timestamp_must_be_ns_resolution(self):
         # [2019-09-17] Pandas only supports datetime64[ns]
         # https://github.com/pandas-dev/pandas/issues/7307#issuecomment-224180563
-        with self.assertRaises(DatetimeUnitNotAllowed):
+        with self.assertRaises(TimestampUnitNotAllowed):
             validate_table_metadata(
                 pyarrow.table(
                     {
@@ -159,7 +159,7 @@ class ValidateTableMetadataTests(unittest.TestCase):
                         )
                     }
                 ),
-                TableMetadata(1, [Datetime("A")]),
+                TableMetadata(1, [Timestamp("A")]),
             )
 
     def test_text_zero_chunks_valid(self):

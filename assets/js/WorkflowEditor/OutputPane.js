@@ -18,7 +18,7 @@ export class OutputPane extends React.Component {
       status: PropTypes.oneOf(['ok', 'busy', 'unreachable']).isRequired, // can't be 'error'
       columns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
       }).isRequired), // or null
       nRows: PropTypes.number // or null
     }), // or null if no error
@@ -29,7 +29,7 @@ export class OutputPane extends React.Component {
       deltaId: PropTypes.number, // or null if not yet rendered
       columns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
       }).isRequired), // or null
       nRows: PropTypes.number // or null
     }), // or null if no selection

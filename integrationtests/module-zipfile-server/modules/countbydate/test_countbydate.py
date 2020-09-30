@@ -7,6 +7,7 @@ import pandas
 from countbydate import migrate_params, render
 from pandas.testing import assert_frame_equal
 
+from cjwmodule.testing.i18n import i18n_message
 
 class Settings(NamedTuple):
     MAX_ROWS_PER_TABLE: int = 1000
@@ -441,9 +442,12 @@ class CountByDateTests(unittest.TestCase):
         result = render(count_table, params, settings=Settings(MAX_ROWS_PER_TABLE=100))
         self.assertEqual(
             result,
-            (
-                "Including missing dates would create 174787201 rows, "
-                "but the maximum allowed is 100"
+            i18n_message(
+                "error.tooManyRows",
+                {
+                    'n_rows': 174787201,
+                    'max_rows_per_table': 100,
+                }
             ),
         )
 

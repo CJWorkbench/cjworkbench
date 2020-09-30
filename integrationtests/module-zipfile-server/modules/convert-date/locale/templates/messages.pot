@@ -1,0 +1,33 @@
+#. default-message: Convert to timestamp
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Convert text columns to timestamp
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Input format
+msgid "_spec.parameters.input_format.name"
+msgstr ""
+
+#. default-message: AUTO
+msgid "_spec.parameters.input_format.options.auto.label"
+msgstr ""
+
+#. default-message: Date (U.S.) MM/DD/YYYY
+msgid "_spec.parameters.input_format.options.us.label"
+msgstr ""
+
+#. default-message: Date (E.U.) DD/MM/YYYY
+msgid "_spec.parameters.input_format.options.eu.label"
+msgstr ""
+
+#. default-message: Convert non-dates to null
+msgid "_spec.parameters.error_means_null.name"
+msgstr ""
+
+#. default-message: “{a_value}” in row {a_row} of “{a_column}” cannot be converted. {n_errors, plural,   one {Overall, there is # error in {n_columns, plural, other {# columns} one {# column}}.}   other {Overall, there are # errors in {n_columns, plural, other {# columns} one {# column}}.} } Select 'non-dates to null' to set these values to null.
+#: convert-date.py:52
+msgid "ErrorCount.message"
+msgstr ""
+

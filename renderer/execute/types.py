@@ -69,8 +69,8 @@ class PromptingError(Exception):
                 return "text"
             elif "number" in self.wanted_types:
                 return "number"
-            elif "datetime" in self.wanted_types:
-                return "datetime"
+            elif "timestamp" in self.wanted_types:
+                return "timestamp"
             else:
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
 
@@ -94,13 +94,13 @@ class PromptingError(Exception):
             if self.should_be_text:
                 message = I18nMessage.trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText",
-                    default="Convert to Text.",
+                    default="Convert to Text",
                 )
             else:
-                # i18n: The parameters {found_type} and {best_wanted_type} will have values among "text", "number", "datetime"; however, including an (possibly empty) "other" case is mandatory.
+                # i18n: The parameters {found_type} and {best_wanted_type} will have values among "text", "number", "timestamp"; however, including an (possibly empty) "other" case is mandatory.
                 message = I18nMessage.trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
-                    default="Convert { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.",
+                    default="Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}",
                     args={
                         "found_type": self.found_type,
                         "best_wanted_type": self.best_wanted_type_id,
@@ -113,7 +113,7 @@ class PromptingError(Exception):
                 module_id = "converttotext"
             elif "number" in self.wanted_types:
                 module_id = "converttexttonumber"
-            elif "datetime" in self.wanted_types:
+            elif "timestamp" in self.wanted_types:
                 module_id = "convert-date"
             else:
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
@@ -153,14 +153,14 @@ class PromptingError(Exception):
             else:
                 icu_args["found_type"] = self.found_type
                 icu_args["best_wanted_type"] = self.best_wanted_type_id
-                # i18n: The parameter {columns} will contain the total number of columns that need to be converted; you will also receive the column names: {0}, {1}, {2}, etc. The parameters {found_type} and {best_wanted_type} will have values among "text", "number", "datetime"; however, including a (possibly empty) "other" case is mandatory.
+                # i18n: The parameter {columns} will contain the total number of columns that need to be converted; you will also receive the column names: {0}, {1}, {2}, etc. The parameters {found_type} and {best_wanted_type} will have values among "text", "number", "timestamp"; however, including a (possibly empty) "other" case is mandatory.
                 return I18nMessage.trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general",
                     default="{ columns, plural, offset:2"
-                    " =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}}.}"
-                    " =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times}  other{}}.}"
-                    " =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}"
-                    " other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}",
+                    " =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.}"
+                    " =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.}"
+                    " =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}"
+                    " other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}",
                     args=icu_args,
                 )
 

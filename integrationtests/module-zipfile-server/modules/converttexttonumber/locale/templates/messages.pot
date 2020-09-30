@@ -1,0 +1,53 @@
+#. default-message: Convert to number
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Convert text columns to number columns.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Integer or decimal
+msgid "_spec.parameters.input_number_type.name"
+msgstr ""
+
+#. default-message: Any number
+msgid "_spec.parameters.input_number_type.options.any.label"
+msgstr ""
+
+#. default-message: Only integer
+msgid "_spec.parameters.input_number_type.options.int.label"
+msgstr ""
+
+#. default-message: Only decimal
+msgid "_spec.parameters.input_number_type.options.float.label"
+msgstr ""
+
+#. default-message: Thousand and decimal separators
+msgid "_spec.parameters.input_locale.name"
+msgstr ""
+
+#. default-message: United States: 1,500.00
+msgid "_spec.parameters.input_locale.options.us.label"
+msgstr ""
+
+#. default-message: Europe: 1.500,00
+msgid "_spec.parameters.input_locale.options.eu.label"
+msgstr ""
+
+#. default-message: Ignore non-numeric characters
+msgid "_spec.parameters.extract.name"
+msgstr ""
+
+#. default-message: Convert errors to null
+msgid "_spec.parameters.error_means_null.name"
+msgstr ""
+
+#. default-message: Display as
+msgid "_spec.parameters.output_format.name"
+msgstr ""
+
+#. default-message: “{a_value}” in row {a_row} of “{a_column}” cannot be converted. {n_errors, plural,   one {Overall, there is # error in {n_columns, plural, other {# columns} one {# column}}.}   other {Overall, there are # errors in {n_columns, plural, other {# columns} one {# column}}.} } Select 'non-numbers to null' to set these values to null.
+#: converttexttonumber.py:109
+msgid "ErrorCount.message"
+msgstr ""
+

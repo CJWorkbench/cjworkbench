@@ -111,8 +111,8 @@ describe('TextCellFormatter', () => {
   })
 })
 
-describe('DatetimeCellFormatter', () => {
-  const Formatter = columnToCellFormatter({ type: 'datetime' })
+describe('TimestampCellFormatter', () => {
+  const Formatter = columnToCellFormatter({ type: 'timestamp' })
   const wrapper = (value) => shallow(<Formatter value={value} />)
 
   it('renders with millisecond precision', () => {
@@ -135,14 +135,14 @@ describe('DatetimeCellFormatter', () => {
     expect(w.text()).toEqual('2018-08-29')
   })
 
-  it('renders className=cell-datetime', () => {
+  it('renders className=cell-timestamp', () => {
     const w = wrapper('2018-08-29T00:00:00.000Z')
-    expect(w.find('.cell-datetime')).toHaveLength(1)
+    expect(w.find('.cell-timestamp')).toHaveLength(1)
   })
 
   it('renders null as null', () => {
     const w = wrapper(null)
-    expect(w.find('.cell-null.cell-datetime')).toHaveLength(1)
+    expect(w.find('.cell-null.cell-timestamp')).toHaveLength(1)
   })
 
   it('does not crash on string input', () => {

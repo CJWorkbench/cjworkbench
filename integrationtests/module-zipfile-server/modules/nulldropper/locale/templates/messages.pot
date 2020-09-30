@@ -1,0 +1,12 @@
+#. default-message: Drop empty columns
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Drop all columns that contain no values
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Drop columns with no values
+msgid "_spec.parameters.nulldropper_statictext.name"
+msgstr ""
+

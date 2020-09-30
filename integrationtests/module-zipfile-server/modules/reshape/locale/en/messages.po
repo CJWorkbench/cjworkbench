@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-23 14:36+0000\n"
+"POT-Creation-Date: 2020-09-22 15:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -109,32 +109,32 @@ msgstr ""
 "There are too many Value columns. All but one table column must be a Row "
 "or Column variable. Please drop extra columns before reshaping."
 
-#: reshape.py:204
+#: reshape.py:209
 msgid "error.sameColumnAndRowVariables"
 msgstr "Cannot reshape: column and row variables must be different"
 
-#: reshape.py:325
+#: reshape.py:330
 msgid "transpose.warnings.tooManyRows"
 msgstr ""
 "We truncated the input to {max_columns} rows so the transposed table "
 "would have a reasonable number of columns."
 
-#: reshape.py:344
+#: reshape.py:349
 msgid "transpose.warnings.headersConvertedToText.message"
 msgstr "Headers in column \"{column_name}\" were auto-converted to text."
 
-#: reshape.py:351
+#: reshape.py:356
 msgid "transpose.warnings.headersConvertedToText.quickFix.text"
 msgstr "Convert {column_name} to text"
 
-#: reshape.py:386
+#: reshape.py:394
 msgid "transpose.warnings.differentColumnTypes.message"
 msgstr ""
 "{n_columns, plural, other {# columns (see \"{first_colname}\") were} one "
 "{Column \"{first_colname}\" was}} auto-converted to Text because all "
 "columns must have the same type."
 
-#: reshape.py:393
+#: reshape.py:401
 msgid "transpose.warnings.differentColumnTypes.quickFix.text"
 msgstr "Convert {n_columns, plural, other {# columns} one {# column}} to text"
 

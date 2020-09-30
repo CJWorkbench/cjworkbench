@@ -197,9 +197,9 @@ class ColumnTypeNumber(object):
         return not (self == other)
 
 
-class ColumnTypeDatetime(object):
+class ColumnTypeTimestamp(object):
     """
-    A "datetime"-typed column.
+    A "timestamp"-typed column.
 
     """
 
@@ -225,7 +225,7 @@ class ColumnTypeDatetime(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('ColumnTypeDatetime')
+        oprot.writeStructBegin('ColumnTypeTimestamp')
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 
@@ -261,21 +261,21 @@ class ColumnType(object):
     Attributes:
      - text_type
      - number_type
-     - datetime_type
+     - timestamp_type
 
     """
 
     __slots__ = (
         'text_type',
         'number_type',
-        'datetime_type',
+        'timestamp_type',
     )
 
 
-    def __init__(self, text_type=None, number_type=None, datetime_type=None,):
+    def __init__(self, text_type=None, number_type=None, timestamp_type=None,):
         self.text_type = text_type
         self.number_type = number_type
-        self.datetime_type = datetime_type
+        self.timestamp_type = timestamp_type
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -300,8 +300,8 @@ class ColumnType(object):
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.STRUCT:
-                    self.datetime_type = ColumnTypeDatetime()
-                    self.datetime_type.read(iprot)
+                    self.timestamp_type = ColumnTypeTimestamp()
+                    self.timestamp_type.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -322,9 +322,9 @@ class ColumnType(object):
             oprot.writeFieldBegin('number_type', TType.STRUCT, 2)
             self.number_type.write(oprot)
             oprot.writeFieldEnd()
-        if self.datetime_type is not None:
-            oprot.writeFieldBegin('datetime_type', TType.STRUCT, 3)
-            self.datetime_type.write(oprot)
+        if self.timestamp_type is not None:
+            oprot.writeFieldBegin('timestamp_type', TType.STRUCT, 3)
+            self.timestamp_type.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2167,15 +2167,15 @@ ColumnTypeNumber.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'format', 'UTF8', "{:,}", ),  # 1
 )
-all_structs.append(ColumnTypeDatetime)
-ColumnTypeDatetime.thrift_spec = (
+all_structs.append(ColumnTypeTimestamp)
+ColumnTypeTimestamp.thrift_spec = (
 )
 all_structs.append(ColumnType)
 ColumnType.thrift_spec = (
     None,  # 0
     (1, TType.STRUCT, 'text_type', [ColumnTypeText, None], None, ),  # 1
     (2, TType.STRUCT, 'number_type', [ColumnTypeNumber, None], None, ),  # 2
-    (3, TType.STRUCT, 'datetime_type', [ColumnTypeDatetime, None], None, ),  # 3
+    (3, TType.STRUCT, 'timestamp_type', [ColumnTypeTimestamp, None], None, ),  # 3
 )
 all_structs.append(Column)
 Column.thrift_spec = (

@@ -6,7 +6,8 @@ name = "pypi"
 [packages]
 numpy = "*"
 pandas = "~=0.25.0"
-fb-re2 = "*"
+cjwmodule = ">=1.4.0"
+google-re2 = "*"
 
 [dev-packages]
 

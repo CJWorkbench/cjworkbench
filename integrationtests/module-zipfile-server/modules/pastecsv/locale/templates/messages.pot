@@ -1,0 +1,16 @@
+#. default-message: Paste data
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Enter data manually, or copy and paste data from a spreadsheet or CSV.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Paste data from a spreadsheet or CSV
+msgid "_spec.parameters.csv.placeholder"
+msgstr ""
+
+#. default-message: Has header row
+msgid "_spec.parameters.has_header_row.name"
+msgstr ""
+

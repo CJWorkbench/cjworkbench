@@ -21,7 +21,17 @@ def _i18n_message_to_dict(value: I18nMessage) -> Dict[str, Any]:
 
 
 def _dict_to_i18n_message(value: Dict[str, Any]) -> I18nMessage:
-    return I18nMessage(value["id"], value["arguments"], value.get("source"))
+    arguments = value["arguments"]
+    # Compatibility for https://www.pivotaltracker.com/story/show/174865394
+    # DELETEME when there are no CachedRenderResults from before 2020-10-01
+    if not value.get("source") and value["id"] in (
+        "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+        "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general",
+    ):
+        for key in ("found_type", "best_wanted_type"):
+            if arguments.get(key) == "datetime":
+                arguments = {**arguments, key: "timestamp"}
+    return I18nMessage(value["id"], arguments, value.get("source"))
 
 
 def _quick_fix_action_to_dict(value: QuickFixAction) -> Dict[str, Any]:
@@ -82,7 +92,8 @@ def _dict_to_column(value: Dict[str, Any]) -> ColumnType:
         type_cls = {
             "text": ColumnType.Text,
             "number": ColumnType.Number,
-            "datetime": ColumnType.Datetime,
+            "timestamp": ColumnType.Timestamp,
+            "datetime": ColumnType.Timestamp,
         }[type_name]
     except KeyError:
         raise ValueError("Invalid type: %r" % type_name)

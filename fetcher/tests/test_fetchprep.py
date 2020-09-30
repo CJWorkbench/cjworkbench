@@ -93,7 +93,7 @@ class CleanValueTests(unittest.TestCase):
         schema = ParamDType.Dict(
             {
                 "col1": ParamDType.Column(column_types=frozenset({"number"})),
-                "col2": ParamDType.Column(column_types=frozenset({"datetime"})),
+                "col2": ParamDType.Column(column_types=frozenset({"timestamp"})),
             }
         )
         with self.assertRaises(PromptingError) as cm:
@@ -103,7 +103,7 @@ class CleanValueTests(unittest.TestCase):
             cm.exception.errors,
             [
                 PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
-                PromptingError.WrongColumnType(["B"], "text", frozenset({"datetime"})),
+                PromptingError.WrongColumnType(["B"], "text", frozenset({"timestamp"})),
             ],
         )
 
@@ -133,7 +133,7 @@ class CleanValueTests(unittest.TestCase):
             3,
             [
                 Column("A", ColumnType.Number()),
-                Column("B", ColumnType.Datetime()),
+                Column("B", ColumnType.Timestamp()),
                 Column("C", ColumnType.Text()),
             ],
         )

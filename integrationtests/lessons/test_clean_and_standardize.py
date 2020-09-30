@@ -75,8 +75,8 @@ class TestLesson(LessonTest):
 
         # 3. Convert types
         self.expect_highlight(0, ".in-between-modules:last-child button.search")
-        self.add_wf_module("Convert to date & time")
-        self.select_column("Convert to date & time", "colnames", "Date")
+        self.add_wf_module("Convert to timestamp")
+        self.select_column("Convert to timestamp", "colnames", "Date")
         self.submit_wf_module()
 
         self.expect_highlight(

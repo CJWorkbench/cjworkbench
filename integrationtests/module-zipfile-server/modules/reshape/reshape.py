@@ -129,7 +129,7 @@ def long_to_wide(
 
     # Remove empty values, in-place. Empty column headers aren't allowed.
     # https://www.pivotaltracker.com/story/show/162648330
-    empty = varcol.isin([np.nan, pd.NaT, None, ""])
+    empty = varcol.isin([np.nan, None, ""])
     n_empty = np.count_nonzero(empty)
     if n_empty:
         warnings.append(
@@ -169,6 +169,11 @@ def long_to_wide(
     table = table.unstack()
     table.columns = [col[-1] for col in table.columns.values]
     table.reset_index(inplace=True)
+    for colname in list(table.columns):
+        series = table[colname]
+        if hasattr(series, "cat"):
+            # Remove unused categories
+            series.cat.remove_unused_categories(inplace=True)
 
     if warnings:
         return (table, warnings)
@@ -354,7 +359,10 @@ def transpose(table, params, *, input_columns):
                             {"column_name": '"%s"' % column},
                         ),
                         "action": "prependModule",
-                        "args": ["converttotext", {"colnames": [column]},],
+                        "args": [
+                            "converttotext",
+                            {"colnames": [column]},
+                        ],
                     }
                 ],
             }
@@ -393,7 +401,10 @@ def transpose(table, params, *, input_columns):
                                 {"n_columns": len(to_convert)},
                             ),
                             "action": "prependModule",
-                            "args": ["converttotext", {"colnames": to_convert},],
+                            "args": [
+                                "converttotext",
+                                {"colnames": to_convert},
+                            ],
                         }
                     ],
                 }

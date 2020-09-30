@@ -954,11 +954,11 @@ msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
 msgstr "Convert columns"
 
 #: assets/js/params/Custom/Groups/DateGranularities.js:65
-msgid "js.params.Custom.Groups.DateGranularities.noDateAndTimeToGroup"
+msgid "js.params.Custom.Groups.DateGranularities.noTimestampToGroup"
 msgstr "There are no Date and Time columns to group by date"
 
 #: assets/js/params/Custom/Groups/DateGranularities.js:76
-msgid "js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup"
+msgid "js.params.Custom.Groups.DateGranularities.selectTimestampToGroup"
 msgstr "Select a Date and Time column to group it by date"
 
 #: assets/js/params/Custom/Groups/DateGranularity.js:38
@@ -1777,10 +1777,6 @@ msgstr "If"
 msgid "js.table.ColumnContextMenu.cleanText"
 msgstr "Clean Text"
 
-#: assets/js/table/ColumnContextMenu.js:54
-msgid "js.table.ColumnContextMenu.convertToDateTime"
-msgstr "Convert to date & time"
-
 #: assets/js/table/ColumnContextMenu.js:55
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr "Convert to number"
@@ -1788,6 +1784,10 @@ msgstr "Convert to number"
 #: assets/js/table/ColumnContextMenu.js:56
 msgid "js.table.ColumnContextMenu.convertToText"
 msgstr "Convert to text"
+
+#: assets/js/table/ColumnContextMenu.js:54
+msgid "js.table.ColumnContextMenu.convertToTimestamp"
+msgstr "Convert to timestamp"
 
 #: assets/js/table/ColumnContextMenu.js:60
 msgid "js.table.ColumnContextMenu.deleteColumn"
@@ -1817,10 +1817,6 @@ msgstr "Sort ascending"
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Sort descending"
 
-#: assets/js/table/ColumnHeader.js:13
-msgid "js.table.ColumnHeader.types.dateAndtime"
-msgstr "date & time"
-
 #: assets/js/table/ColumnHeader.js:12
 msgid "js.table.ColumnHeader.types.number"
 msgstr "number"
@@ -1828,6 +1824,10 @@ msgstr "number"
 #: assets/js/table/ColumnHeader.js:11
 msgid "js.table.ColumnHeader.types.text"
 msgstr "text"
+
+#: assets/js/table/ColumnHeader.js:13
+msgid "js.table.ColumnHeader.types.timestamp"
+msgstr "timestamp"
 
 #: assets/js/table/SelectedRowsActions.js:105
 msgid "js.table.SelectedRowsActions.menu"
@@ -1962,17 +1962,17 @@ msgstr "HTTP error during OAuth2 token refresh: {error}"
 
 #: renderer/execute/types.py:95
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
-msgstr "Convert to Text."
+msgstr "Convert to Text"
 
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
-#. among "text", "number", "datetime"; however, including an (possibly empty)
+#. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
 #: renderer/execute/types.py:101
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
-"Convert { found_type, select, text {Text} number {Numbers} datetime "
-"{Dates & Times} other {}} to {best_wanted_type, select, text {Text} "
-"number {Numbers} datetime {Dates & Times} other{}}."
+"Convert {found_type, select, text {Text} number {Numbers} timestamp "
+"{Timestamps} other {}} to {best_wanted_type, select, text {Text} number "
+"{Numbers} timestamp {Timestamps} other{}}"
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
@@ -1988,41 +1988,41 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names: {0}, {1}, {2},
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
-#. among "text", "number", "datetime"; however, including a (possibly empty)
+#. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
 #: renderer/execute/types.py:157
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 "{ columns, plural, offset:2 =1 {The column “{0}” must be converted from {"
-" found_type, select, text {Text} number {Numbers} datetime {Dates & "
-"Times} other {}} to {best_wanted_type, select, text {Text} number "
-"{Numbers} datetime {Dates & Times} other {}}.} =2 {The columns “{0}” and "
-"“{1}” must be converted from { found_type, select, text {Text} number "
-"{Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, "
-"select, text {Text} number {Numbers} datetime {Dates & Times}  other{}}.}"
-" =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { "
-"found_type, select, text {Text} number {Numbers} datetime {Dates & Times}"
-" other {}} to {best_wanted_type, select, text {Text} number {Numbers} "
-"datetime {Dates & Times} other{}}.} other {The columns “{0}”, “{1}” and #"
-" others must be converted from { found_type, select, text {Text} number "
-"{Numbers} datetime {Dates & Times} other {}} to {best_wanted_type, "
-"select, text {Text} number {Numbers} datetime {Dates & Times} other{}}.}}"
+" found_type, select, text {Text} number {Numbers} timestamp {Timestamps} "
+"other {}} to {best_wanted_type, select, text {Text} number {Numbers} "
+"timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must "
+"be converted from { found_type, select, text {Text} number {Numbers} "
+"timestamp {Timestamps} other {}} to {best_wanted_type, select, text "
+"{Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The "
+"columns “{0}”, “{1}” and “{2}” must be converted from { found_type, "
+"select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to "
+"{best_wanted_type, select, text {Text} number {Numbers} timestamp "
+"{Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must"
+" be converted from { found_type, select, text {Text} number {Numbers} "
+"timestamp {Timestamps} other {}} to {best_wanted_type, select, text "
+"{Text} number {Numbers} timestamp {Timestamps} other{}}.}}"
 
-#: renderer/execute/wf_module.py:140
+#: renderer/execute/wf_module.py:141
 msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "
 "fix it. If this persists, contact us. Error code: {message}"
 
-#: renderer/execute/wf_module.py:350
+#: renderer/execute/wf_module.py:372
 msgid "py.renderer.execute.wf_module.noModule"
 msgstr "Please delete this step: an administrator uninstalled its code."
 
-#: renderer/execute/wf_module.py:377
+#: renderer/execute/wf_module.py:399
 msgid "py.renderer.execute.wf_module.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
-#: renderer/execute/wf_module.py:388
+#: renderer/execute/wf_module.py:410
 msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 

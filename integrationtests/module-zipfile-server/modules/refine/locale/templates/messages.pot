@@ -1,0 +1,12 @@
+#. default-message: Refine
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Clean inconsistencies and typos across values in seconds using algorithms, or standardize values manually.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Select column
+msgid "_spec.parameters.column.placeholder"
+msgstr ""
+

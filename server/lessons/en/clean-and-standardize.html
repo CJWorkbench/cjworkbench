@@ -47,7 +47,7 @@
 </section>
 <section>
   <h2>Convert types</h2>
-  <p>Data types are used to tell computers how to interpret and use values. The columns <kbd>Date</kbd> and <kbd>Population</kbd> are text, so Workbench can't do math with them. They should be <kbd>Date &amp; Time</kbd> and <kbd>Number</kbd>, respectively.</p>
+  <p>Data types are used to tell computers how to interpret and use values. The columns <kbd>Date</kbd> and <kbd>Population</kbd> are text, so Workbench can't do math with them. They should be <kbd>Timestamp</kbd> and <kbd>Number</kbd>, respectively.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -55,7 +55,7 @@
       data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}; return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'Date'"
       > In the table header, click open the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span> of the column <kbd>Date</kbd> and select <kbd>Convert to date & time</kbd>.
+      </span> of the column <kbd>Date</kbd> and select <kbd>Convert to timestamp</kbd>.
     </li>
     <li
       data-highlight='[{"type": "WfModule", "moduleIdName":"converttexttonumber"},{"type":"Module","index":4,"id_name":"converttexttonumber"}]'

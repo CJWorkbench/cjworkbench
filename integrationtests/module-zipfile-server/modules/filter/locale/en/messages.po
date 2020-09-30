@@ -1,0 +1,59 @@
+# English translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-02-18 17:27+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Filter by condition"
+
+msgid "_spec.description"
+msgstr ""
+"Filter rows by combining simple conditions such as 'if text contains...' "
+"or 'if number is greater than...'"
+
+msgid "_spec.parameters.keep.options.True.label"
+msgstr "Keep"
+
+msgid "_spec.parameters.keep.options.False.label"
+msgstr "Delete"
+
+#: filter.py:31
+msgid "regexParseError.message"
+msgstr "Regex parse error: {error}"
+
+#: filter.py:69
+msgid "columnNotTextError.message"
+msgstr "Column is not text. Please convert to text."
+
+#: filter.py:84
+msgid "columnNotNumbersError.message"
+msgstr "Column is not numbers. Please convert to numbers."
+
+#: filter.py:97
+msgid "valueNotNumberError.message"
+msgstr "Value is not a number. Please enter a valid number."
+
+#: filter.py:117
+msgid "columnNotDatesError.message"
+msgstr "Column is not dates. Please convert to dates."
+
+#: filter.py:130
+msgid "valueNotDateError.message"
+msgstr "Value is not a date. Please enter a date and time."
+

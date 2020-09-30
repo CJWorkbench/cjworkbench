@@ -1,0 +1,39 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-09-14 19:40+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Μετονομασία στηλών"
+
+msgid "_spec.description"
+msgstr "Μετονομασία στηλών και καταγραφή όλων των αλλαγών"
+
+msgid "_spec.parameters.custom_list.name"
+msgstr "Επικολλήστε τη λίστα με τα νέα ονόματα"
+
+msgid "_spec.parameters.list_string.placeholder"
+msgstr ""
+"Επικολλήστε τις τιμές των ονομάτων στηλών (διαχωρισμένες με κόμμα ή "
+"αλλαγή γραμμής)"
+
+#: renamecolumns.py:109
+msgid "badParam.custom_list.wrongNumberOfNames"
+msgstr ""
+

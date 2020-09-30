@@ -32,7 +32,7 @@ function buildEmptyRow (columns) {
     switch (column.type) {
       case 'text': value = ''; break
       case 'number': value = null; break
-      case 'datetime': value = null; break
+      case 'timestamp': value = null; break
       default: value = null; break
     }
 
@@ -99,7 +99,7 @@ export default class DataGrid extends React.PureComponent {
     deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
     }).isRequired), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
     editCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined

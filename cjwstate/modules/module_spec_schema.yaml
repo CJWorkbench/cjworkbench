@@ -85,7 +85,8 @@ definitions:
                     oneOf:
                       - const: text
                       - const: number
-                      - const: datetime
+                      - const: timestamp
+                      - const: datetime  # alias for timestamp
         # _common: use Yaml "anchors" so we can reuse common JSON in all our types.
         # (They tend to use many similar properties, but not all.) JSON Schema has
         # its own '$ref' syntax, but that doesn't let us "extend" an object -- i.e.,

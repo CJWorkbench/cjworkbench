@@ -221,7 +221,7 @@ class CleanValueTests(DbTestCase):
             [
                 PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
                 PromptingError.WrongColumnType(
-                    ["B"], "datetime", frozenset({"number"})
+                    ["B"], "timestamp", frozenset({"number"})
                 ),
             ],
         )
@@ -250,7 +250,7 @@ class CleanValueTests(DbTestCase):
         schema = ParamDType.Dict(
             {
                 "col1": ParamDType.Column(column_types=frozenset({"number"})),
-                "col2": ParamDType.Column(column_types=frozenset({"datetime"})),
+                "col2": ParamDType.Column(column_types=frozenset({"timestamp"})),
             }
         )
         with self.assertRaises(PromptingError) as cm:
@@ -260,7 +260,7 @@ class CleanValueTests(DbTestCase):
             cm.exception.errors,
             [
                 PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
-                PromptingError.WrongColumnType(["B"], "text", frozenset({"datetime"})),
+                PromptingError.WrongColumnType(["B"], "text", frozenset({"timestamp"})),
             ],
         )
 
@@ -302,7 +302,7 @@ class CleanValueTests(DbTestCase):
             [
                 PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
                 PromptingError.WrongColumnType(
-                    ["B"], "datetime", frozenset({"number"})
+                    ["B"], "timestamp", frozenset({"number"})
                 ),
             ],
         )
@@ -375,7 +375,7 @@ class CleanValueTests(DbTestCase):
             [
                 PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
                 PromptingError.WrongColumnType(
-                    ["B"], "datetime", frozenset({"number"})
+                    ["B"], "timestamp", frozenset({"number"})
                 ),
             ],
         )

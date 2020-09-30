@@ -140,7 +140,7 @@ class WfModuleTests(LoggedInTestCase):
             },
         )
 
-    def test_wf_module_render_null_datetime(self):
+    def test_wf_module_render_null_timestamp(self):
         # Ran into problems 2019-09-06, when switching to Arrow
         cache_render_result(
             self.workflow,

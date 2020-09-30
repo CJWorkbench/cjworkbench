@@ -60,7 +60,11 @@ class TestReshape(unittest.TestCase):
             **DefaultKwargs
         )
         self.assertEqual(
-            out, (None, [i18n_message("wide_to_long.badColumns.varcolname.conflict")],),
+            out,
+            (
+                None,
+                [i18n_message("wide_to_long.badColumns.varcolname.conflict")],
+            ),
         )
 
     def test_wide_to_long_valcolname_conflict(self):
@@ -70,7 +74,8 @@ class TestReshape(unittest.TestCase):
             **DefaultKwargs
         )
         self.assertEqual(
-            out, (None, [i18n_message("wide_to_long.badColumns.valcolname.conflict")]),
+            out,
+            (None, [i18n_message("wide_to_long.badColumns.valcolname.conflict")]),
         )
 
     def test_wide_to_long_mixed_value_types(self):
@@ -146,11 +151,51 @@ class TestReshape(unittest.TestCase):
             pd.DataFrame(
                 {
                     "x": pd.Series(["1", "2", "3"], dtype="category"),
-                    "A": ["a", "b", "c"],
-                    "B": ["d", "e", "f"],
+                    "A": pd.Series(["a", "b", "c"], dtype="category"),
+                    "B": pd.Series(["d", "e", "f"], dtype="category"),
                 }
             ),
         )
+
+    def test_long_to_wide_nix_unused_category(self):
+        # https://www.pivotaltracker.com/story/show/174929299
+        in_table = pd.DataFrame(
+            {
+                "A": list("aab"),
+                "B": pd.Series([None, None, "c"], dtype="category"),
+                "value": list("abc"),
+            },
+        )
+        out = render(
+            in_table, P("longtowide", ["A"], ltw_varcolname="B"), **DefaultKwargs
+        )
+        assert_frame_equal(
+            out[0],
+            pd.DataFrame(
+                {
+                    "A": ["b"],
+                    "c": ["c"],
+                }
+            ),
+        )
+        # There's also a long_to_wide.badRows.emptyColumnHeaders.warning, but that's
+        # not under test here
+
+    def test_long_to_wide_treat_empty_string_category_as_empty_string(self):
+        # https://www.pivotaltracker.com/story/show/174929289
+        in_table = pd.DataFrame(
+            {
+                "A": ["a", "b"],
+                "B": pd.Series(["", ""], dtype="category"),
+                "C": [1, 2],
+            }
+        )
+        out = render(
+            in_table, P("longtowide", ["A"], ltw_varcolname="B"), **DefaultKwargs
+        )
+        assert_frame_equal(out[0], pd.DataFrame({"A": pd.Series([], dtype=object)}))
+        # there's also a long_to_wide.badRows.emptyColumnHeaders.warning, but that's
+        # not under test here
 
     def test_long_to_wide_missing_varcol(self):
         out = render(

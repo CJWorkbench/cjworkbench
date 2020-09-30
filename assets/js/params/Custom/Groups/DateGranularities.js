@@ -62,7 +62,7 @@ export default class DateGranularities extends React.PureComponent {
           <div className='no-date-selected'>
             {(dateColnames !== null && dateColnames.length === 0) ? (
               <>
-                <p><Trans id='js.params.Custom.Groups.DateGranularities.noDateAndTimeToGroup'>There are no Date and Time columns to group by date </Trans></p>
+                <p><Trans id='js.params.Custom.Groups.DateGranularities.noTimestampToGroup'>There are no Date and Time columns to group by date </Trans></p>
                 <button
                   type='button'
                   name={`${name}[add-module]`}
@@ -73,7 +73,7 @@ export default class DateGranularities extends React.PureComponent {
                 </button>
               </>
             ) : (
-              <p><Trans id='js.params.Custom.Groups.DateGranularities.selectDateAndTimeToGroup'>Select a Date and Time column to group it by date</Trans></p>
+              <p><Trans id='js.params.Custom.Groups.DateGranularities.selectTimestampToGroup'>Select a Date and Time column to group it by date</Trans></p>
             )}
           </div>
         )}

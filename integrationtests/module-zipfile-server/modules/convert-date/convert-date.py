@@ -1,7 +1,9 @@
 from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Optional
+
 import pandas as pd
+from cjwmodule import i18n
 from pandas.api.types import is_numeric_dtype
 
 
@@ -45,22 +47,23 @@ class ErrorCount:
                 n_columns=self.n_columns + rhs.n_columns,
             )
 
-    def __str__(self):
-        if self.total == 1:
-            n_errors_str = "is 1 error"
-        else:
-            n_errors_str = f"are {self.total} errors"
-
-        if self.n_columns == 1:
-            n_columns_str = "1 column"
-        else:
-            n_columns_str = f"{self.n_columns} columns"
-
-        return (
-            f"'{self.a_value}' in row {self.a_row + 1} of "
-            f"'{self.a_column}' cannot be converted. Overall, there "
-            f"{n_errors_str} in {n_columns_str}. Select 'non-dates "
-            "to null' to set these values to null"
+    @property
+    def i18n_message(self):
+        return i18n.trans(
+            "ErrorCount.message",
+            "“{a_value}” in row {a_row} of “{a_column}” cannot be converted. "
+            "{n_errors, plural, "
+            "  one {Overall, there is # error in {n_columns, plural, other {# columns} one {# column}}.} "
+            "  other {Overall, there are # errors in {n_columns, plural, other {# columns} one {# column}}.} "
+            "} "
+            "Select 'non-dates to null' to set these values to null.",
+            {
+                "a_value": self.a_value,
+                "a_row": self.a_row + 1,
+                "a_column": self.a_column,
+                "n_errors": self.total,
+                "n_columns": self.n_columns,
+            },
         )
 
     def __len__(self):
@@ -79,7 +82,7 @@ class ErrorCount:
             return ErrorCount()
         else:
             column = in_series.name
-            row = out_errors[0]
+            row = int(out_errors[0])
             value = in_series[row]
             return ErrorCount(column, row, value, len(out_errors), 1)
 
@@ -139,7 +142,7 @@ def render(table, params):
         table[column] = out_series
 
     if error_count:
-        return str(error_count)
+        return error_count.i18n_message
 
     return table
 

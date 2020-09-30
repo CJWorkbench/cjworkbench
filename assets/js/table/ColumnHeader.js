@@ -10,7 +10,7 @@ import { withI18n } from '@lingui/react'
 const columnTypeDisplay = {
   text: t('js.table.ColumnHeader.types.text')`text`,
   number: t('js.table.ColumnHeader.types.number')`number`,
-  datetime: t('js.table.ColumnHeader.types.dateAndtime')`date & time`
+  timestamp: t('js.table.ColumnHeader.types.timestamp')`timestamp`
 }
 
 class ReorderColumnDropZone extends React.PureComponent {

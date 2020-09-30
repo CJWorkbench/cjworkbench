@@ -25,11 +25,11 @@ format, which is more akin to actual HTTP traffic.
 import asyncio
 import re
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import cjwparquet
 from cjwmodule.http import HttpError, httpfile
-from cjwmodule.i18n import I18nMessage
+from cjwmodule.i18n import I18nMessage, trans
 from cjwparse.api import MimeType, parse_file
 
 ExtensionMimeTypes = {
@@ -51,7 +51,24 @@ NonstandardMimeTypes = {
 }
 
 
-def guess_mime_type_or_none(content_type: str, url: str) -> MimeType:
+def _parse_content_disposition_filename(s: Optional[str]) -> Optional[str]:
+    if s is None:
+        return None
+
+    import email.message
+
+    part = email.message.MIMEPart()
+    part["Content-Disposition"] = s
+    return part.get_filename()
+
+
+def _parse_url_filename(url: str) -> str:
+    return url.split("?", 1)[0].split("/")[-1]
+
+
+def guess_mime_type_or_none(
+    content_type: str, content_disposition: Optional[str], url: str
+) -> MimeType:
     """Infer MIME type from Content-Type header or URL, or return None."""
     # First, accept "Content-Type" but clean it: "text/csv; charset=utf-8"
     # becomes "text/csv"
@@ -65,11 +82,17 @@ def guess_mime_type_or_none(content_type: str, url: str) -> MimeType:
         if content_type.startswith(nonstandard_mime_type):
             return mime_type
 
+    # No match? Check the filename. This comes from Content-Disposition or,
+    # as a fallback, from the URL.
+    filename = _parse_content_disposition_filename(
+        content_disposition
+    ) or _parse_url_filename(url)
+    for extension, mime_type in ExtensionMimeTypes.items():
+        if filename.endswith(extension):
+            return mime_type
+
     # No match? Check for a known extension in the URL.
     # ".csv" becomes "text/csv".
-    for extension, mime_type in ExtensionMimeTypes.items():
-        if url.split("?", 1)[0].endswith(extension):
-            return mime_type
 
     # We ignored MimeType.TXT before. Check for it now.
     if content_type.startswith(MimeType.TXT.value):
@@ -106,10 +129,9 @@ def _render_deprecated_parquet(
         # was broken by design (what about types???) and it was rarely used.
         # Let's not maintain it any longer.
         errors += [
-            I18nMessage(
-                "TODO_i18n",
-                {"text": "Please re-download this file to disable header-row handling"},
-                None,
+            trans(
+                "prompt.disableHeaderHandling",
+                "Please re-download this file to disable header-row handling",
             )
         ]
 
@@ -118,21 +140,21 @@ def _render_deprecated_parquet(
 
 def _render_file(path: Path, output_path: Path, params: Dict[str, Any]):
     with httpfile.read(path) as (parameters, status_line, headers, body_path):
-        content_type = httpfile.extract_first_header(headers, "Content-Type")
+        content_type = httpfile.extract_first_header(headers, "Content-Type") or ""
+        content_disposition = httpfile.extract_first_header(
+            headers, "Content-Disposition"
+        )
 
-        mime_type = guess_mime_type_or_none(content_type, parameters["url"])
+        mime_type = guess_mime_type_or_none(
+            content_type, content_disposition, parameters["url"]
+        )
         if not mime_type:
             return [
-                (
-                    "TODO_i18n",
-                    {
-                        "text": (
-                            "Server responded with unhandled Content-Type %r. "
-                            "Please use a different URL."
-                        )
-                        % content_type
-                    },
-                    None,
+                trans(
+                    "error.unhandledContentType",
+                    "Server responded with unhandled Content-Type {content_type}. "
+                    "Please use a different URL.",
+                    {"content_type": content_type},
                 )
             ]
         maybe_charset = guess_charset_or_none(content_type)

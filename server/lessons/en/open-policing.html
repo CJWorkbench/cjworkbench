@@ -50,7 +50,7 @@ tabs:
   <h2>2. Finding the date range</h2>
   <p>
       Let’s see what time period the data covers. The <kbd>date</kbd> column has been imported as <kbd>text</kbd>, so first we'll
-      need to convert it to 'date & time' format. Then we can sort the data to see what the earliest and latest dates are.
+      need to convert it to 'timestamp'. Then we can sort the data to see what the earliest and latest dates are.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
@@ -60,7 +60,7 @@ tabs:
       return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'date'"
       > In the table header, click open the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span> of the column <kbd>date</kbd> and select <kbd>Convert to date & time</kbd>.
+      </span> of the column <kbd>date</kbd> and select <kbd>Convert to timestamp</kbd>.
     </li>
     <li
       data-highlight='[{"type": "WfModule", "moduleIdName": "sort"},{"type":"Module","index":3,"id_name":"sort"}]'

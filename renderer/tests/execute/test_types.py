@@ -9,7 +9,7 @@ class PromptingErrorTest(unittest.TestCase):
             [
                 PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
                 PromptingError.WrongColumnType(
-                    ["B", "C"], "datetime", frozenset({"number"})
+                    ["B", "C"], "timestamp", frozenset({"number"})
                 ),
             ]
         )
@@ -46,7 +46,7 @@ class PromptingErrorTest(unittest.TestCase):
                             "columns": 2,
                             "0": "B",
                             "1": "C",
-                            "found_type": "datetime",
+                            "found_type": "timestamp",
                             "best_wanted_type": "number",
                         },
                     ),
@@ -55,7 +55,7 @@ class PromptingErrorTest(unittest.TestCase):
                             I18nMessage(
                                 "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
                                 {
-                                    "found_type": "datetime",
+                                    "found_type": "timestamp",
                                     "best_wanted_type": "number",
                                 },
                             ),

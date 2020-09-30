@@ -1,8 +1,13 @@
+import importlib
 import unittest
+
 import numpy as np
 import pandas as pd
+from cjwmodule.testing.i18n import i18n_message
 from pandas.testing import assert_frame_equal
-from converttodate import render, migrate_params
+
+render = importlib.import_module("convert-date").render
+migrate_params = importlib.import_module("convert-date").migrate_params
 
 
 class MigrateParamsTests(unittest.TestCase):
@@ -188,10 +193,15 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table.copy(), P(["A", "B"], "auto", False))
         self.assertEqual(
             result,
-            (
-                "'not a date' in row 1 of 'B' cannot be converted. Overall, there "
-                "are 3 errors in 1 column. Select 'non-dates to null' to set "
-                "these values to null"
+            i18n_message(
+                "ErrorCount.message",
+                {
+                    "a_value": "not a date",
+                    "a_row": 1,
+                    "a_column": "B",
+                    "n_errors": 3,
+                    "n_columns": 1,
+                }
             ),
         )
 
@@ -207,10 +217,15 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table, P(["null"], "auto", False))
         self.assertEqual(
             result,
-            (
-                "'99' in row 3 of 'null' cannot be converted. Overall, there "
-                "is 1 error in 1 column. Select 'non-dates to null' to set "
-                "these values to null"
+            i18n_message(
+                "ErrorCount.message",
+                {
+                    "a_value": "99",
+                    "a_row": 3,
+                    "a_column": "null",
+                    "n_errors": 1,
+                    "n_columns": 1,
+                }
             ),
         )
 
@@ -219,10 +234,15 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table, P(["null"], "auto", False))
         self.assertEqual(
             result,
-            (
-                "'99' in row 2 of 'null' cannot be converted. Overall, there "
-                "are 2 errors in 1 column. Select 'non-dates to null' to set "
-                "these values to null"
+            i18n_message(
+                "ErrorCount.message",
+                {
+                    "a_value": "99",
+                    "a_row": 2,
+                    "a_column": "null",
+                    "n_errors": 2,
+                    "n_columns": 1,
+                }
             ),
         )
 
@@ -233,10 +253,15 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table, P(["null", "number"], "auto", False))
         self.assertEqual(
             result,
-            (
-                "'99' in row 2 of 'null' cannot be converted. Overall, there "
-                "are 3 errors in 2 columns. Select 'non-dates to null' to set "
-                "these values to null"
+            i18n_message(
+                "ErrorCount.message",
+                {
+                    "a_value": "99",
+                    "a_row": 2,
+                    "a_column": "null",
+                    "n_errors": 3,
+                    "n_columns": 2,
+                }
             ),
         )
 
@@ -247,10 +272,15 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table, P(["A", "B"], "auto", False))
         self.assertEqual(
             result,
-            (
-                "'bad' in row 1 of 'A' cannot be converted. Overall, there "
-                "is 1 error in 1 column. Select 'non-dates to null' to set "
-                "these values to null"
+            i18n_message(
+                "ErrorCount.message",
+                {
+                    "a_value": "bad",
+                    "a_row": 1,
+                    "a_column": "A",
+                    "n_errors": 1,
+                    "n_columns": 1,
+                },
             ),
         )
 

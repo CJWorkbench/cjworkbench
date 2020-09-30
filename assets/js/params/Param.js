@@ -58,14 +58,14 @@ export default class Param extends React.PureComponent {
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
     }).isRequired), // null while rendering
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       outputColumns: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
       }).isRequired) // null while rendering
     }).isRequired).isRequired,
     currentTab: PropTypes.string.isRequired, // "tab-slug" this form appears in

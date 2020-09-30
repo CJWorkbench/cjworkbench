@@ -1,0 +1,90 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-04-02 12:57+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Ομαδοποιήστε κατά ημερομηνία"
+
+msgid "_spec.description"
+msgstr ""
+"Ομαδοποίηση σειρών κατά ημερομηνία και ώρα. Πλήθος σειρών και υπολογισμός"
+" ποσοτήτων, μέσων όρων, μέγιστων και ελάχιστων τιμών σε κάθε ομάδα."
+
+msgid "_spec.parameters.column.placeholder"
+msgstr "Επιλογή στήλης ημερομηνίας"
+
+msgid "_spec.parameters.groupby.name"
+msgstr "Ομαδοποίηση κατά"
+
+msgid "_spec.parameters.groupby.options.second.label"
+msgstr "Δευτερόλεπτο"
+
+msgid "_spec.parameters.groupby.options.minute.label"
+msgstr "Λεπτό"
+
+msgid "_spec.parameters.groupby.options.hour.label"
+msgstr "Ώρα"
+
+msgid "_spec.parameters.groupby.options.day.label"
+msgstr "Ημέρα"
+
+msgid "_spec.parameters.groupby.options.month.label"
+msgstr "Μήνας"
+
+msgid "_spec.parameters.groupby.options.quarter.label"
+msgstr "Τρίμηνο"
+
+msgid "_spec.parameters.groupby.options.year.label"
+msgstr "Έτος"
+
+msgid "_spec.parameters.groupby.options.second_of_day.label"
+msgstr "Δευτερόλεπτο (ώρα της ημέρας)"
+
+msgid "_spec.parameters.groupby.options.minute_of_day.label"
+msgstr "Λεπτό (ώρα της ημέρας)"
+
+msgid "_spec.parameters.groupby.options.hour_of_day.label"
+msgstr "Ώρα (ώρα της ημέρας)"
+
+msgid "_spec.parameters.operation.name"
+msgstr "Πράξη"
+
+msgid "_spec.parameters.operation.options.size.label"
+msgstr "Πλήθος"
+
+msgid "_spec.parameters.operation.options.mean.label"
+msgstr "Μέσος όρος"
+
+msgid "_spec.parameters.operation.options.sum.label"
+msgstr "Αθροισμα"
+
+msgid "_spec.parameters.operation.options.min.label"
+msgstr "Ελάχιστο"
+
+msgid "_spec.parameters.operation.options.max.label"
+msgstr "Μέγιστο"
+
+msgid "_spec.parameters.include_missing_dates.name"
+msgstr "Να συμπεριληφθούν ημερομηνίες που λείπουν"
+
+#: countbydate.py:153
+msgid "error.tooManyRows"
+msgstr "Η συμπερίληψη των ημερομηνιών που λείπουν θα δημιουργούσε {n_rows} σειρές, αλλά ο μέγιστος επιτρεπόμενος αριθμός είναι {max_rows} σειρές"
+

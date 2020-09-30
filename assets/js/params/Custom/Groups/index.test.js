@@ -11,7 +11,7 @@ describe('Groups', () => {
       name='groups'
       fieldId='groups'
       value={{ colnames: [], group_dates: false, date_granularities: {} }}
-      inputColumns={[{ name: 'A', type: 'text' }, { name: 'B', type: 'datetime' }]}
+      inputColumns={[{ name: 'A', type: 'text' }, { name: 'B', type: 'timestamp' }]}
       onChange={jest.fn()}
       applyQuickFix={jest.fn()}
       {...extraProps}
@@ -33,7 +33,7 @@ describe('Groups', () => {
     const w = wrapper({
       name: 'w',
       value: { colnames: ['A'], group_dates: true, date_granularities: {} },
-      inputColumns: [{ name: 'A', type: 'text' }, { name: 'B', type: 'datetime' }]
+      inputColumns: [{ name: 'A', type: 'text' }, { name: 'B', type: 'timestamp' }]
     })
 
     expect(w.find('.no-date-selected')).toHaveLength(1)
@@ -44,7 +44,7 @@ describe('Groups', () => {
     const w = wrapper({
       name: 'w',
       value: { colnames: ['A'], group_dates: true, date_granularities: { A: 'H', B: 'H' } },
-      inputColumns: [{ name: 'A', type: 'datetime' }, { name: 'B', type: 'datetime' }]
+      inputColumns: [{ name: 'A', type: 'timestamp' }, { name: 'B', type: 'timestamp' }]
     })
 
     expect(w.find('.no-date-selected')).toHaveLength(0)
@@ -56,7 +56,7 @@ describe('Groups', () => {
     const w = wrapper({
       name: 'w',
       value: { colnames: ['A'], group_dates: true, date_granularities: {} },
-      inputColumns: [{ name: 'A', type: 'datetime' }, { name: 'B', type: 'text' }]
+      inputColumns: [{ name: 'A', type: 'timestamp' }, { name: 'B', type: 'text' }]
     })
 
     w.find('select[name="w[date_granularities][A]"]').simulate('change', { target: { value: 'H' } })
@@ -67,7 +67,7 @@ describe('Groups', () => {
     const w = wrapper({
       name: 'w',
       value: { colnames: ['A'], group_dates: true, date_granularities: { A: 'H' } },
-      inputColumns: [{ name: 'A', type: 'datetime' }, { name: 'B', type: 'text' }]
+      inputColumns: [{ name: 'A', type: 'timestamp' }, { name: 'B', type: 'text' }]
     })
 
     expect(w.find('select[name="w[date_granularities][A]"]').prop('value')).toEqual('H')

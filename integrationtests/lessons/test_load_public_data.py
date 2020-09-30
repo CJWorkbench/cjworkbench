@@ -75,17 +75,23 @@ class TestLesson(LessonTest):
         time.sleep(1)  # TODO prevent reloads, then nix
         with b.iframe(".outputpane-iframe iframe", wait=True):
             b.assert_element(
-                "g.role-title text", text="Please choose an X-axis column", wait=True
+                "g.role-title text", text="Please correct the error", wait=True
             )
+        b.assert_element(
+            ".wf-module-error-msg", text="Please choose an X-axis column", wait=True
+        )
         self.select_column("Column Chart", "x_column", "city_neighborhood")
         self.submit_wf_module()
 
         # Second wait: for the Y-axis column selector to load
         time.sleep(1)  # TODO prevent reloads, then nix
-        with b.iframe(".outputpane-iframe iframe"):
+        with b.iframe(".outputpane-iframe iframe", wait=True):
             b.assert_element(
-                "g.role-title text", text="Please choose a Y-axis column", wait=True
+                "g.role-title text", text="Please correct the error", wait=True
             )
+        b.assert_element(
+            ".wf-module-error-msg", text="Please choose a Y-axis column", wait=True
+        )
         self.select_column("Column Chart", "y_columns", "affordable_units")
         self.submit_wf_module()
 

@@ -1,13 +1,14 @@
 id_name: 'convert-date'
-name: 'Convert to date & time'
+name: 'Convert to timestamp'
 category: Clean
 help_url: modules/convert-to-date-time
 icon: calendar
-description: 'Convert text columns to date & time.'
+description: 'Convert text columns to timestamp'
 parameters:
 - id_name: colnames
   name: ''
   type: multicolumn
+  column_types: [ datetime, text ]
 - id_name: input_format
   name: 'Input format'
   type: menu

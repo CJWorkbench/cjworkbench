@@ -139,9 +139,9 @@ class ErrorCount:
             return ErrorCount()
         else:
             column = in_series.name
-            row = out_errors[0]
-            value = in_series[row]
-            return ErrorCount(column, int(row), str(value), len(out_errors), 1)
+            row = int(out_errors[0])  # np.int64 => int
+            value = in_series[row]  # always str
+            return ErrorCount(column, row, value, len(out_errors), 1)
 
 
 @dataclass(frozen=True)

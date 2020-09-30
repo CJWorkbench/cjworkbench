@@ -14,7 +14,7 @@ const ValidConditions = {
     { name: 'text_does_not_contain_regex', label: t('js.params.Custom.Filters.Condition.textDoesntContainRegex')`Text does not contain regex` },
     { name: 'text_is_exactly_regex', label: t('js.params.Custom.Filters.Condition.textMatchesRegexExactly')`Text matches regex exactly` }
   ],
-  datetime: [
+  timestamp: [
     { name: 'date_is', label: t('js.params.Custom.Filters.Condition.dateIs')`Date is` },
     { name: 'date_is_not', label: t('js.params.Custom.Filters.Condition.dateIsNot')`Date is not` },
     { name: 'date_is_before', label: t('js.params.Custom.Filters.Condition.dateIsBefore')`Date is before` },
@@ -45,7 +45,7 @@ export class Condition extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     value: ConditionPropType.isRequired, // may be ''
-    dtype: PropTypes.oneOf(['text', 'datetime', 'number']).isRequired,
+    dtype: PropTypes.oneOf(['text', 'timestamp', 'number']).isRequired,
     onChange: PropTypes.func.isRequired // func('text_is_exactly' or other) => undefined
   }
 

@@ -324,7 +324,7 @@ class WfModuleTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             version=["not a date"],
         )
         self.assertResponse(
-            response, error="BadRequest: version must be an ISO8601 datetime"
+            response, error="BadRequest: version must be an ISO8601 String"
         )
 
     def test_set_stored_data_version_viewer_access_denied(self):

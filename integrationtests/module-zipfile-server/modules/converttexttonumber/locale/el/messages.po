@@ -1,0 +1,61 @@
+# Greek translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-02-18 15:17+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+msgid "_spec.name"
+msgstr "Μετατροπή σε αριθμούς"
+
+msgid "_spec.description"
+msgstr "Μετατροπή κειμένου σε αριθμούς."
+
+msgid "_spec.parameters.input_number_type.name"
+msgstr ""
+
+msgid "_spec.parameters.input_number_type.options.any.label"
+msgstr "Οποιοσδηποτε αριθμός"
+
+msgid "_spec.parameters.input_number_type.options.int.label"
+msgstr "Οποιοσδήποτε ακέραιος"
+
+msgid "_spec.parameters.input_number_type.options.float.label"
+msgstr "Οποιοσδήποτε δεκαδικός"
+
+msgid "_spec.parameters.input_locale.name"
+msgstr "Μορφή αριθμών προς μετατροπή"
+
+msgid "_spec.parameters.input_locale.options.us.label"
+msgstr "ΗΠΑ: 1,500.00"
+
+msgid "_spec.parameters.input_locale.options.eu.label"
+msgstr "Ευρώπη: 1.500,00"
+
+msgid "_spec.parameters.extract.name"
+msgstr "Βρείτε αριθμούς στο κείμενο"
+
+msgid "_spec.parameters.error_means_null.name"
+msgstr "Μετατροπή μη αριθμών σε κενό"
+
+msgid "_spec.parameters.output_format.name"
+msgstr "Εμφάνιση ως"
+
+#: converttexttonumber.py:109
+msgid "ErrorCount.message"
+msgstr ""
+

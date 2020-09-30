@@ -37,7 +37,7 @@ class ColumnType(ABC):
     @abstractmethod
     def name(self) -> str:
         """
-        The name of the type: 'text', 'number' or 'datetime'.
+        The name of the type: 'text', 'number' or 'timestamp'.
         """
 
     @abstractmethod
@@ -54,7 +54,7 @@ class ColumnType(ABC):
         if is_numeric_dtype(dtype):
             return ColumnType.NUMBER
         elif is_datetime64_dtype(dtype):
-            return ColumnType.DATETIME
+            return ColumnType.TIMESTAMP
         elif dtype == object or dtype == "category":
             return ColumnType.TEXT
         else:
@@ -65,7 +65,7 @@ class ColumnType(ABC):
         """
         Build a ColumnType based on pandas/numpy `dtype`.
 
-        If the type is Number or Datetime, it will have an "empty"
+        If the type is Number or Timestamp, it will have an "empty"
         (auto-generated) format.
         """
         return cls.class_from_dtype(dtype)()
@@ -79,8 +79,8 @@ class ColumnType(ABC):
             return ColumnType.TEXT()
         elif isinstance(value, atypes.ColumnType.Number):
             return ColumnType.NUMBER(value.format)
-        elif isinstance(value, atypes.ColumnType.Datetime):
-            return ColumnType.DATETIME()
+        elif isinstance(value, atypes.ColumnType.Timestamp):
+            return ColumnType.TIMESTAMP()
         else:
             raise RuntimeError("Unhandled value %r" % value)
 
@@ -227,7 +227,7 @@ class ColumnTypeNumber(ColumnType):
 
 
 @dataclass(frozen=True)
-class ColumnTypeDatetime(ColumnType):
+class ColumnTypeTimestamp(ColumnType):
     # # https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
     # format: str = '{}'  # Python format() string
 
@@ -242,11 +242,11 @@ class ColumnTypeDatetime(ColumnType):
     # override
     @property
     def name(self) -> str:
-        return "datetime"
+        return "timestamp"
 
     # override
-    def to_arrow(self) -> atypes.ColumnType.Datetime:
-        return atypes.ColumnType.Datetime()
+    def to_arrow(self) -> atypes.ColumnType.Timestamp:
+        return atypes.ColumnType.Timestamp()
 
 
 # Aliases to help with import. e.g.:
@@ -254,12 +254,12 @@ class ColumnTypeDatetime(ColumnType):
 # column = Column('A', ColumnType.NUMBER('{:,.2f}'))
 ColumnType.TEXT = ColumnTypeText
 ColumnType.NUMBER = ColumnTypeNumber
-ColumnType.DATETIME = ColumnTypeDatetime
+ColumnType.TIMESTAMP = ColumnTypeTimestamp
 
 ColumnType.TypeLookup = {
     "text": ColumnType.TEXT,
     "number": ColumnType.NUMBER,
-    "datetime": ColumnType.DATETIME,
+    "timestamp": ColumnType.TIMESTAMP,
 }
 
 
@@ -335,14 +335,14 @@ class RenderColumn:
     Column presented to a render() function in its `input_columns` argument.
 
     A column has a `name` and a `type`. The `type` is one of "number", "text"
-    or "datetime".
+    or "timestamp".
     """
 
     name: str
     """Column name in the DataFrame."""
 
     type: str
-    """'number', 'text' or 'datetime'."""
+    """'number', 'text' or 'timestamp'."""
 
     format: Optional[str]
     """

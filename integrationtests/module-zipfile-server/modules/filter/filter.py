@@ -1,36 +1,38 @@
 from collections import namedtuple
 import functools
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Match, Optional, Pattern
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
 import re2
+from cjwmodule import i18n
 
 
 class UserVisibleError(Exception):
-    """A message for the user. Use str(err) to see it."""
+    """An exception that has a `i18n.I18nMessage` as its first argument. Use `err.i18n_message` to see it."""
 
-    pass
+    @property
+    def i18n_message(self):
+        return self.args[0]
+    
 
-
-def str_to_regex(s: str, case_sensitive: bool):
+def str_to_regex(s: str, case_sensitive: bool) -> Pattern:
     """
     Convert to regexp, or raise UserVisibleError.
     """
+    options = re2.Options()
+    options.log_errors = False
+    options.never_capture = True  # we don't capture anything: we filter
     try:
         # Compile the actual regex, to generate the actual error message.
-        r = re2.compile(s)
+        r = re2.compile(s, options)
     except re2.error as err:
-        # Handle https://github.com/facebook/pyre2/pull/16
-        # Sometimes err.msg is an integer and err.pattern is the actual error
-        # message.
-        #
-        # Nix this when upstream is fixed.
-        if isinstance(err.msg, int):
-            msg = err.pattern
-        else:
-            msg = str(err)
-        raise UserVisibleError("Regex parse error: %s" % msg)
+        msg = str(err.args[0], encoding="utf-8", errors="replace")
+        raise UserVisibleError(i18n.trans(
+            "regexParseError.message", 
+            "Regex parse error: {error}", 
+            {"error": msg}
+        ))
 
     if not case_sensitive:
         # case-insensitive: compile _again_ (fb-re2 doesn't support
@@ -64,7 +66,10 @@ def series_to_text(series, strict=False):
     if hasattr(series, "cat") or series.dtype == object:
         return series
     else:
-        raise UserVisibleError("Column is not text. Please convert to text.")
+        raise UserVisibleError(i18n.trans(
+            "columnNotTextError.message", 
+            "Column is not text. Please convert to text."
+        ))
 
 
 def series_to_number(series):
@@ -76,7 +81,10 @@ def series_to_number(series):
     try:
         return pd.to_numeric(series, errors="raise")
     except ValueError:
-        raise UserVisibleError("Column is not numbers. Please convert to numbers.")
+        raise UserVisibleError(i18n.trans(
+            "columnNotNumbersError.message", 
+            "Column is not numbers. Please convert to numbers."
+        ))
 
 
 def value_to_number(value):
@@ -86,7 +94,10 @@ def value_to_number(value):
     try:
         return pd.to_numeric(value, errors="raise")
     except ValueError:
-        raise UserVisibleError("Value is not a number. Please enter a valid number.")
+        raise UserVisibleError(i18n.trans(
+            "valueNotNumberError.message", 
+            "Value is not a number. Please enter a valid number."
+        ))
 
 
 def series_to_datetime(series):
@@ -103,7 +114,10 @@ def series_to_datetime(series):
 
         return pd.to_datetime(series, utc=True)
     except ValueError:
-        raise UserVisibleError("Column is not dates. Please convert to dates.")
+        raise UserVisibleError(i18n.trans(
+            "columnNotDatesError.message", 
+            "Column is not dates. Please convert to dates."
+        ))
 
 
 def value_to_datetime(value):
@@ -113,7 +127,10 @@ def value_to_datetime(value):
     try:
         return pd.to_datetime(value, utc=True)
     except ValueError:
-        raise UserVisibleError("Value is not a date. Please enter a date and time.")
+        raise UserVisibleError(i18n.trans(
+            "valueNotDateError.message", 
+            "Value is not a date. Please enter a date and time."
+        ))
 
 
 def type_text(f, strict=False):
@@ -152,10 +169,22 @@ def mask_text_contains(series, text, case_sensitive):
     return contains == True  # noqa: E712
 
 
+def _test_re2_match(f: Callable[[str], Match], maybe_s: Optional[str]) -> bool:
+    # optimization over pd.isna(): just check if it's a str. Any non-str is
+    # NA, because this is a str column. And this is faster than pd.isna()
+    # because it pd.isna() does ~5 isinstance() tests.
+    if isinstance(maybe_s, str):
+        return bool(f(maybe_s))
+    else:
+        return False
+
+
 @type_text
 def mask_text_contains_regex(series, text, case_sensitive):
     r = str_to_regex(text, case_sensitive)
-    contains = series_map_predicate(series, r.test_search)
+    contains = series_map_predicate(
+        series, functools.partial(_test_re2_match, r.search)
+    )
     return contains == True  # noqa: E712
 
 
@@ -170,7 +199,9 @@ def mask_text_does_not_contain(series, text, case_sensitive):
 def mask_text_does_not_contain_regex(series, text, case_sensitive):
     # keeprows = not matching, allow NaN
     r = str_to_regex(text, case_sensitive)
-    contains = series_map_predicate(series, r.test_search)
+    contains = series_map_predicate(
+        series, functools.partial(_test_re2_match, r.search)
+    )
     return contains != True  # noqa: E712
 
 
@@ -193,7 +224,9 @@ def mask_text_is_not_exactly(series, text, case_sensitive):
 @type_text
 def mask_text_is_exactly_regex(series, text, case_sensitive):
     r = str_to_regex(text, case_sensitive)
-    contains = series_map_predicate(series, r.test_fullmatch)
+    contains = series_map_predicate(
+        series, functools.partial(_test_re2_match, r.fullmatch)
+    )
     return contains == True  # noqa: E712
 
 
@@ -539,7 +572,7 @@ def render(table, params):
     try:
         mask = _mask_filters(table, filters)
     except UserVisibleError as err:
-        return str(err)
+        return err.i18n_message
 
     if not params["keep"]:
         mask = ~mask

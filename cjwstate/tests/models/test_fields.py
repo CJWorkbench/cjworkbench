@@ -16,6 +16,44 @@ class DictConvertersTest(unittest.TestCase):
             types.I18nMessage("modules.x.y", {"foo": "bar"}, "cjwmodule"),
         )
 
+    def test_i18n_message_from_dict_found_type_datetime_becomes_timestamp(self):
+        # Compatibility for https://www.pivotaltracker.com/story/show/174865394
+        # DELETEME when there are no CachedRenderResults from before 2020-10-01
+        self.assertEqual(
+            fields._dict_to_i18n_message(
+                {
+                    "id": "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+                    "arguments": {
+                        "found_type": "datetime",
+                        "best_wanted_type": "number",
+                    },
+                }
+            ),
+            types.I18nMessage(
+                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+                {"found_type": "timestamp", "best_wanted_type": "number"},
+            ),
+        )
+
+    def test_i18n_message_from_dict_best_wanted_type_datetime_becomes_timestamp(self):
+        # Compatibility for https://www.pivotaltracker.com/story/show/174865394
+        # DELETEME when there are no CachedRenderResults from before 2020-10-01
+        self.assertEqual(
+            fields._dict_to_i18n_message(
+                {
+                    "id": "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+                    "arguments": {
+                        "found_type": "text",
+                        "best_wanted_type": "datetime",
+                    },
+                }
+            ),
+            types.I18nMessage(
+                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
+                {"found_type": "text", "best_wanted_type": "timestamp"},
+            ),
+        )
+
     def test_i18n_message_to_dict_source_library(self):
         self.assertEqual(
             fields._i18n_message_to_dict(
@@ -178,4 +216,10 @@ class DictConvertersTest(unittest.TestCase):
                     }
                 ],
             },
+        )
+
+    def test_column_from_dict(self):
+        self.assertEqual(
+            fields._dict_to_column({"name": "A", "type": "number", "format": "{:d}"}),
+            types.Column("A", types.ColumnType.Number("{:d}")),
         )

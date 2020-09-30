@@ -101,7 +101,7 @@ class ColumnType(ABC):
     @abstractmethod
     def name(self) -> str:
         """
-        The name of the type: 'text', 'number' or 'datetime'.
+        The name of the type: 'text', 'number' or 'timestamp'.
         """
         pass
 
@@ -132,7 +132,7 @@ class ColumnTypeNumber(ColumnType):
 
 
 @dataclass(frozen=True)
-class ColumnTypeDatetime(ColumnType):
+class ColumnTypeTimestamp(ColumnType):
     # # https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
     # format: str = '{}'  # Python format() string
 
@@ -143,7 +143,7 @@ class ColumnTypeDatetime(ColumnType):
     # override
     @property
     def name(self) -> str:
-        return "datetime"
+        return "timestamp"
 
 
 # Aliases to help with import. e.g.:
@@ -151,7 +151,7 @@ class ColumnTypeDatetime(ColumnType):
 # column = Column('A', ColumnType.Number('{:,.2f}'))
 ColumnType.Text = ColumnTypeText
 ColumnType.Number = ColumnTypeNumber
-ColumnType.Datetime = ColumnTypeDatetime
+ColumnType.Timestamp = ColumnTypeTimestamp
 
 
 class Column(NamedTuple):
@@ -189,7 +189,7 @@ def _pyarrow_type_to_column_type(
     ):
         return ColumnTypeText()
     elif pyarrow.types.is_timestamp(dtype):
-        return ColumnTypeDatetime()
+        return ColumnTypeTimestamp()
     else:
         return ValueError("Unknown pyarrow type %r" % dtype)
 
@@ -597,8 +597,8 @@ class RenderResult:
 def arrow_column_type_to_thrift(value: ColumnType) -> ttypes.ColumnType:
     if isinstance(value, ColumnTypeText):
         return ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-    elif isinstance(value, ColumnTypeDatetime):
-        return ttypes.ColumnType(datetime_type=ttypes.ColumnTypeDatetime())
+    elif isinstance(value, ColumnTypeTimestamp):
+        return ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp())
     elif isinstance(value, ColumnTypeNumber):
         return ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber(value.format))
     else:
@@ -731,8 +731,8 @@ def thrift_column_type_to_arrow(value: ttypes.ColumnType) -> ColumnType:
     elif value.number_type is not None:
         format = value.number_type.format
         return ColumnTypeNumber(format)  # raise ValueError on invalid format
-    elif value.datetime_type is not None:
-        return ColumnTypeDatetime()
+    elif value.timestamp_type is not None:
+        return ColumnTypeTimestamp()
     else:
         raise ValueError("Unhandled Thrift object: %r" % value)
 

@@ -72,7 +72,7 @@ di = SimpleNamespace(spooled_data_from_url=spooled_data_from_url)
 
 def autocast_series_dtype(series: pd.Series) -> pd.Series:
     """
-    Cast any sane Series to str/category[str]/number/datetime.
+    Cast any sane Series to str/category[str]/number/timestamp.
 
     This is appropriate when parsing CSV data or Excel data. It _seems_
     appropriate when a search-and-replace produces numeric columns like

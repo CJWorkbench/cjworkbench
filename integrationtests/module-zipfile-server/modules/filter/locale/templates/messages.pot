@@ -1,0 +1,46 @@
+#. default-message: Filter by condition
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Filter rows by combining simple conditions such as 'if text contains...' or 'if number is greater than...'
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Keep
+msgid "_spec.parameters.keep.options.True.label"
+msgstr ""
+
+#. default-message: Delete
+msgid "_spec.parameters.keep.options.False.label"
+msgstr ""
+
+#. default-message: Regex parse error: {error}
+#: filter.py:31
+msgid "regexParseError.message"
+msgstr ""
+
+#. default-message: Column is not text. Please convert to text.
+#: filter.py:69
+msgid "columnNotTextError.message"
+msgstr ""
+
+#. default-message: Column is not numbers. Please convert to numbers.
+#: filter.py:84
+msgid "columnNotNumbersError.message"
+msgstr ""
+
+#. default-message: Value is not a number. Please enter a valid number.
+#: filter.py:97
+msgid "valueNotNumberError.message"
+msgstr ""
+
+#. default-message: Column is not dates. Please convert to dates.
+#: filter.py:117
+msgid "columnNotDatesError.message"
+msgstr ""
+
+#. default-message: Value is not a date. Please enter a date and time.
+#: filter.py:130
+msgid "valueNotDateError.message"
+msgstr ""
+

@@ -34,7 +34,7 @@ def _arrow_column_to_column(name: str, column: pyarrow.ChunkedArray) -> Column:
     if pyarrow.types.is_floating(column.type) or pyarrow.types.is_integer(column.type):
         column_type = ColumnType.Number("{:,}")
     elif pyarrow.types.is_timestamp(column.type):
-        column_type = ColumnType.Datetime()
+        column_type = ColumnType.Timestamp()
     elif pyarrow.types.is_string(column.type) or pyarrow.types.is_dictionary(
         column.type
     ):

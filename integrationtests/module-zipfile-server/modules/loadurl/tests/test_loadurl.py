@@ -16,6 +16,7 @@ import cjwparquet
 import pyarrow
 from cjwmodule.http import httpfile
 from cjwmodule.i18n import I18nMessage
+from cjwmodule.testing.i18n import cjwmodule_i18n_message, i18n_message
 
 from .. import loadurl
 
@@ -238,10 +239,9 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage(
+                        cjwmodule_i18n_message(
                             "http.errors.HttpErrorNotSuccess",
                             {"status_code": 404, "reason": "Not Found"},
-                            "cjwmodule",
                         )
                     )
                 ],
@@ -254,7 +254,7 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage("http.errors.HttpErrorInvalidUrl", {}, "cjwmodule")
+                        cjwmodule_i18n_message("http.errors.HttpErrorInvalidUrl")
                     )
                 ],
             )
@@ -294,9 +294,7 @@ class FetchTests(unittest.TestCase):
                 result.errors,
                 [
                     RenderError(
-                        I18nMessage(
-                            "http.errors.HttpErrorTooManyRedirects", {}, "cjwmodule"
-                        )
+                        cjwmodule_i18n_message("http.errors.HttpErrorTooManyRedirects")
                     )
                 ],
             )
@@ -344,16 +342,7 @@ class RenderTests(unittest.TestCase):
             table, errors = call_render(P(has_header=False), FetchResult(fetched_path))
             assert_arrow_table_equals(table, {"A": [1, 2], "B": [3, 4]})
             self.assertEqual(
-                errors,
-                [
-                    I18nMessage(
-                        "TODO_i18n",
-                        {
-                            "text": "Please re-download this file to disable header-row handling"
-                        },
-                        None,
-                    )
-                ],
+                errors, [i18n_message("prompt.disableHeaderHandling",)],
             )
 
     def test_render_has_header_true(self):
@@ -400,10 +389,49 @@ class RenderTests(unittest.TestCase):
                 # bytes will prove we used "csv" explicitly -- we didn't
                 # take "text/plain" and decide to use a CSV sniffer to
                 # find the delimiter.
-                io.BytesIO(b"A;B\na;b"),
+                io.BytesIO(b"A;B;C,D\na;b;c,d"),
             )
             table, errors = call_render(P(has_header=True), FetchResult(http_path))
-            assert_arrow_table_equals(table, {"A;B": ["a;b"]})
+            assert_arrow_table_equals(table, {"A;B;C": ["a;b;c"], "D": ["d"]})
+            self.assertEqual(errors, [])
+
+    def test_render_csv_use_content_disposition_given_bad_content_type(self):
+        with tempfile_context(prefix="fetch-") as http_path:
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/file"},
+                "200 OK",
+                [
+                    ("content-type", "application/octet-stream"),
+                    (
+                        "content-disposition",
+                        'attachment; filename="file.csv"; size=4405',
+                    ),
+                ],
+                # bytes will prove we used "file.csv", not a sniffer.
+                io.BytesIO(b"A;B;C,D\na;b;c,d"),
+            )
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A;B;C": ["a;b;c"], "D": ["d"]})
+            self.assertEqual(errors, [])
+
+    def test_render_prefer_content_disposition_to_url_ext(self):
+        # When content-disposition uses a different name, prefer that name.
+        with tempfile_context(prefix="fetch-") as http_path:
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/file.csv"},
+                "200 OK",
+                [
+                    # Wrong MIME type -- so we detect from filename
+                    ("content-type", "application/octet-stream"),
+                    ("content-disposition", 'attachment; filename="file.tsv"',),
+                ],
+                # bytes will prove we used "file.tsv", not "file.csv".
+                io.BytesIO(b"A,B\tC,D\na,b\tc,d"),
+            )
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A,B": ["a,b"], "C,D": ["c,d"]})
             self.assertEqual(errors, [])
 
     def test_render_text_plain(self):

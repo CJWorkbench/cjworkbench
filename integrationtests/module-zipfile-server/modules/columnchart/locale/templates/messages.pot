@@ -1,0 +1,61 @@
+#. default-message: Column Chart
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Visualize categorical data with bars proportional to the values they represent.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Chart title
+msgid "_spec.parameters.title.placeholder"
+msgstr ""
+
+#. default-message: X axis
+msgid "_spec.parameters.x_axis_label.name"
+msgstr ""
+
+#. default-message: Label
+msgid "_spec.parameters.x_axis_label.placeholder"
+msgstr ""
+
+#. default-message: Select column
+msgid "_spec.parameters.x_column.placeholder"
+msgstr ""
+
+#. default-message: Y axis
+msgid "_spec.parameters.y_axis_label.name"
+msgstr ""
+
+#. default-message: Label
+msgid "_spec.parameters.y_axis_label.placeholder"
+msgstr ""
+
+#. default-message: Columns
+msgid "_spec.parameters.y_columns.name"
+msgstr ""
+
+#. default-message: Column chart can visualize a maximum of {MaxNBars} bars
+#: columnchart.py:361
+msgid "tooManyBarsError.message"
+msgstr ""
+
+#. default-message: Please choose an X-axis column
+#: columnchart.py:370
+msgid "noXAxisError.message"
+msgstr ""
+
+#. default-message: Please choose a Y-axis column
+#: columnchart.py:375
+msgid "noYAxisError.message"
+msgstr ""
+
+#. default-message: You cannot plot Y-axis column {column_name} because it is the X-axis column
+#: columnchart.py:385
+msgid "sameAxesError.message"
+msgstr ""
+
+#. default-message: no records to plot
+#: columnchart.py:395
+msgid "nothingToPlotError.message"
+msgstr ""
+

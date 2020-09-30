@@ -1,0 +1,21 @@
+#. default-message: Rename columns
+msgid "_spec.name"
+msgstr ""
+
+#. default-message: Edit column names.
+msgid "_spec.description"
+msgstr ""
+
+#. default-message: Paste list of new names
+msgid "_spec.parameters.custom_list.name"
+msgstr ""
+
+#. default-message: Paste column names (comma- or newline-separated)
+msgid "_spec.parameters.list_string.placeholder"
+msgstr ""
+
+#. default-message: You supplied {n_names, plural, other {# column names} one {# column name}}, but the table has {n_columns, plural, other {# columns} one {# column}}.
+#: renamecolumns.py:109
+msgid "badParam.custom_list.wrongNumberOfNames"
+msgstr ""
+

@@ -16,7 +16,7 @@ export default class Groups extends React.PureComponent {
     }).isRequired,
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'datetime']).isRequired
+      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
     })), // or null if unknown
     onChange: PropTypes.func.isRequired, // func(value) => undefined
     applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
@@ -43,7 +43,7 @@ export default class Groups extends React.PureComponent {
 
   render () {
     const { isReadOnly, name, fieldId, value, inputColumns } = this.props
-    const dateColnames = inputColumns ? inputColumns.filter(c => c.type === 'datetime').map(c => c.name) : null
+    const dateColnames = inputColumns ? inputColumns.filter(c => c.type === 'timestamp').map(c => c.name) : null
 
     return (
       <div className='groups'>

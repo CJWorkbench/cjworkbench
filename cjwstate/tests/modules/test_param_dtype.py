@@ -63,10 +63,26 @@ class DTypeColumnTest(unittest.TestCase):
     def test_coerce_str_to_column(self):
         self.assertEqual(DT.Column().coerce("blah"), "blah")
 
+    def test_column_parse_datetime_as_timestamp(self):
+        # DELETEME nix "datetime" alias -- and this test!
+        # https://www.pivotaltracker.com/story/show/174865394
+        self.assertEqual(
+            DT.Column._from_plain_data(column_types=["datetime", "number"]),
+            DT.Column(column_types=frozenset(["timestamp", "number"])),
+        )
+
 
 class DTypeMulticolumnTest(unittest.TestCase):
     def test_multicolumn_default(self):
         self.assertEqual(DT.Multicolumn().coerce(None), [])
+
+    def test_multicolumn_parse_datetime_as_timestamp(self):
+        # DELETEME nix "datetime" alias -- and this test!
+        # https://www.pivotaltracker.com/story/show/174865394
+        self.assertEqual(
+            DT.Multicolumn._from_plain_data(column_types=["datetime", "number"]),
+            DT.Multicolumn(column_types=frozenset(["timestamp", "number"])),
+        )
 
     def test_multicolumn_coerce_list_of_str(self):
         self.assertEqual(DT.Multicolumn().coerce(["x", "y"]), ["x", "y"])

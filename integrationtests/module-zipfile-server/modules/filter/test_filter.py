@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from filter import render, migrate_params
+from cjwmodule.testing.i18n import i18n_message
 
 
 def simple_params(
@@ -174,14 +175,24 @@ class TestRender(unittest.TestCase):
         params = simple_params("A", "text_contains_regex", "*", case_sensitive=True)
         result = render(table, params)
         self.assertEqual(
-            result, "Regex parse error: no argument for repetition operator: *"
+            result, 
+            i18n_message(
+                "regexParseError.message",
+                {"error": "no argument for repetition operator: *"}
+            )
         )
 
     def test_contains_regex_parse_error_case_insensitive(self):
         table = pd.DataFrame({"A": ["a"]})
         params = simple_params("A", "text_contains_regex", "(", case_sensitive=False)
         result = render(table, params)
-        self.assertEqual(result, "Regex parse error: missing ): (")
+        self.assertEqual(
+            result, 
+            i18n_message(
+                "regexParseError.message",
+                {"error": "missing ): ("}
+            )
+        )
 
     def test_contains_regex_nan(self):
         table = pd.DataFrame({"A": ["a", np.nan]})
@@ -293,7 +304,7 @@ class TestRender(unittest.TestCase):
     def test_exactly_non_text_column(self):
         params = simple_params("b", "text_is_exactly", "5")
         result = render(self.table, params)
-        self.assertEqual(result, "Column is not text. Please convert to text.")
+        self.assertEqual(result, i18n_message("columnNotTextError.message"))
 
     def test_null(self):
         params = simple_params("c", "cell_is_empty", "nonsense")
@@ -345,17 +356,17 @@ class TestRender(unittest.TestCase):
         # non-numeric column should return error message
         params = simple_params("a", "number_equals", "3")
         result = render(self.table, params)
-        self.assertEqual(result, "Column is not numbers. Please convert to numbers.")
+        self.assertEqual(result, i18n_message("columnNotNumbersError.message"))
 
         # non-numeric column should return error message
         params = simple_params("date", "number_equals", "3")
         result = render(self.table, params)
-        self.assertEqual(result, "Column is not numbers. Please convert to numbers.")
+        self.assertEqual(result, i18n_message("columnNotNumbersError.message"))
 
         # non-numeric value should return error message
         params = simple_params("c", "number_equals", "gibberish")
         result = render(self.table, params)
-        self.assertEqual(result, "Value is not a number. Please enter a valid number.")
+        self.assertEqual(result, i18n_message("valueNotNumberError.message"))
 
     def test_not_equals(self):
         params = simple_params("c", "number_does_not_equal", "3")
@@ -417,16 +428,16 @@ class TestRender(unittest.TestCase):
         # columns that aren't dates -> error
         params = simple_params("a", "date_is", "2015-7-31")
         result = render(self.table, params)
-        self.assertEqual(result, "Column is not dates. Please convert to dates.")
+        self.assertEqual(result, i18n_message("columnNotDatesError.message"))
 
         params = simple_params("b", "date_is", "2015-7-31")
         result = render(self.table, params)
-        self.assertEqual(result, "Column is not dates. Please convert to dates.")
+        self.assertEqual(result, i18n_message("columnNotDatesError.message"))
 
         # string that isn't a date -> error
         params = simple_params("date", "date_is", "gibberish")
         result = render(self.table, params)
-        self.assertEqual(result, "Value is not a date. Please enter a date and time.")
+        self.assertEqual(result, i18n_message("valueNotDateError.message"))
 
     def test_date_before(self):
         params = simple_params("date", "date_is_before", "2016-07-31")
@@ -454,7 +465,7 @@ class TestRender(unittest.TestCase):
     def test_compare_int_with_str_condition(self):
         params = simple_params("A", "text_is_exactly", " ")
         result = render(pd.DataFrame({"A": []}), params)
-        self.assertEqual(result, "Column is not text. Please convert to text.")
+        self.assertEqual(result, i18n_message("columnNotTextError.message"))
 
     def test_two_filters_and(self):
         table = pd.DataFrame({"A": [1, 2, 3], "B": [2, 3, 4]})

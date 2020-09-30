@@ -26,8 +26,8 @@ struct ColumnTypeNumber {
   1: string format = "{:,}"
 }
 
-/** A "datetime"-typed column. */
-struct ColumnTypeDatetime {
+/** A "timestamp"-typed column. */
+struct ColumnTypeTimestamp {
   /* TODO add a `format` */
 }
 
@@ -40,7 +40,7 @@ struct ColumnTypeDatetime {
 union ColumnType {
   1: ColumnTypeText text_type,
   2: ColumnTypeNumber number_type,
-  3: ColumnTypeDatetime datetime_type
+  3: ColumnTypeTimestamp timestamp_type
 }
 
 /** Description of a column in a table. */
