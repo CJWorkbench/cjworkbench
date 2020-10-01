@@ -5,8 +5,7 @@ import PropTypes from 'prop-types'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
 import { connect } from 'react-redux'
-import { withI18n } from '@lingui/react'
-import { t } from '@lingui/macro'
+import { Trans } from '@lingui/react'
 
 export class OutputPane extends React.Component {
   static propTypes = {
@@ -101,7 +100,7 @@ export class OutputPane extends React.Component {
           key='error'
           className='showing-input-because-error'
         >
-          {this.props.i18n._(t('js.WorkflowEditor.OutputPane.showingInput.becauseError')`This was the data that led to an error. Please correct the error in the left pane.`)}
+          <Trans id='js.WorkflowEditor.OutputPane.showingInput.becauseError'>This was the data that led to an error. Please correct the error in the left pane.</Trans>
         </p>
       )
     } else {
@@ -223,4 +222,4 @@ function mapDispatchToProps (dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withI18n()(OutputPane))
+)(OutputPane)
