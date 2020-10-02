@@ -9,7 +9,6 @@ from cjwstate.modules.param_dtype import ParamDType
 VisibleIf = Optional[Dict[str, Dict[str, Any]]]
 EnumOptions = List[Union[str, Dict[str, str]]]
 ColumnTypeString = Literal["text", "number", "timestamp"]
-MaybeDeprecatedColumnTypeString = Literal["text", "number", "timestamp", "datetime"]
 
 
 _lookup = {}  # dict of e.g., {'column': ParamSpecColumn}
@@ -291,14 +290,6 @@ class ParamSpecCustom(_RegisterType("custom"), _HasName, ParamSpec):
         return ParamDType.String(self.default)  # dunno why
 
 
-def _migrate_maybe_deprecated_column_types(
-    column_types: Optional[List[MaybeDeprecatedColumnTypeString]],
-) -> Optional[List[ColumnTypeString]]:
-    if column_types is None:
-        return None
-    return ["timestamp" if ct == "datetime" else ct for ct in column_types]
-
-
 @dataclass(frozen=True)
 class ParamSpecColumn(_RegisterType("column"), _HasPlaceholder, _HasName, ParamSpec):
     """
@@ -319,19 +310,6 @@ class ParamSpecColumn(_RegisterType("column"), _HasPlaceholder, _HasName, ParamS
 
     The default `None` means, "this tab."
     """
-
-    # override
-    @classmethod
-    def _from_kwargs(
-        cls,
-        *,
-        column_types: Optional[List[MaybeDeprecatedColumnTypeString]] = None,
-        **kwargs,
-    ):
-        # DELETEME when all module specs use "timestamp" instead of "datetime"
-        # https://www.pivotaltracker.com/story/show/174865394
-        column_types = _migrate_maybe_deprecated_column_types(column_types)
-        return cls(column_types=column_types, **kwargs)
 
     # override
     @property
@@ -364,19 +342,6 @@ class ParamSpecMulticolumn(
 
     The default `None` means, "this tab."
     """
-
-    # override
-    @classmethod
-    def _from_kwargs(
-        cls,
-        *,
-        column_types: Optional[List[MaybeDeprecatedColumnTypeString]] = None,
-        **kwargs,
-    ):
-        # DELETEME when all module specs use "timestamp" instead of "datetime"
-        # https://www.pivotaltracker.com/story/show/174865394
-        column_types = _migrate_maybe_deprecated_column_types(column_types)
-        return cls(column_types=column_types, **kwargs)
 
     # override
     @property
