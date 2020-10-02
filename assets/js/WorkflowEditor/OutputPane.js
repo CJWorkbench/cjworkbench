@@ -133,21 +133,24 @@ export class OutputPane extends React.Component {
 }
 
 function stepStatus (step) {
-  // TODO don't copy/paste from OutputPane.js
-  if (step.nClientRequests > 0) {
-    // When we've just sent an HTTP request and not received a response,
-    // mark ourselves "busy". This is great for when the user clicks "fetch"
-    // and then is waiting for the server to set the status.
-    //
-    // The state stores server data separately than client data, so there's
-    // no race when setting status and so if the "fetch" does nothing and the
-    // server doesn't change step.status, the client still resets its
-    // perceived status.
-    return 'busy'
-  } else if (step.is_busy) {
-    return 'busy'
-  } else if (!step.output_status) {
-    // placeholder? TODO verify this can actually happen
+  // TODO don't copy/paste from Step.js
+  if (!step) {
+    return null
+  } else if (
+    // We've just sent an HTTP request and not received a response.
+    // (This happens after the user clicks to change something -- or clicks
+    // "fetch" -- and before the server updates the status.)
+    step.nClientRequests > 0 ||
+
+    // The module is performing a fetch
+    step.is_busy ||
+
+    // Step is a placeholder? TODO verify this can actually happen
+    !step.output_status ||
+
+    // Step is rendering
+    step.last_relevant_delta_id !== step.cached_render_result_delta_id
+  ) {
     return 'busy'
   } else {
     return step.output_status

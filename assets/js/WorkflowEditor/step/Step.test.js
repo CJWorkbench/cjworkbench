@@ -33,6 +33,8 @@ describe('Step, not read-only mode', () => {
     notes: '',
     is_collapsed: false, // false because we render more, so better test
     is_busy: false,
+    last_relevant_delta_id: 11,
+    cached_render_result_delta_id: 11,
     output_status: 'ok',
     params: {
       url: 'http://some.URL.me',
@@ -108,14 +110,19 @@ describe('Step, not read-only mode', () => {
     expect(wrapper()).toMatchSnapshot()
   })
 
-  it('is has .status-busy', () => {
-    const w = wrapper({ step: { ...step, output_status: 'busy' } })
+  it('has .status-busy when cached result is stale', () => {
+    const busyStep = {
+      ...step,
+      output_status: 'ok',
+      last_relevant_delta_id: 12,
+      cached_render_result_delta_id: 11
+    }
+    const w = wrapper({ step: busyStep })
     expect(w.hasClass('status-busy')).toBe(true)
     expect(w.find('ParamsForm').prop('isStepBusy')).toBe(true)
     expect(w.find(StatusLine).prop('status')).toEqual('busy')
 
-    w.setProps({ step: { ...step, output_status: 'ok' } })
-    w.update()
+    w.setProps({ step: { ...busyStep, cached_render_result_delta_id: 12 } })
     expect(w.hasClass('status-busy')).toBe(false)
     expect(w.hasClass('status-ok')).toBe(true)
 

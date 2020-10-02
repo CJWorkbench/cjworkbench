@@ -697,7 +697,7 @@ def jsonize_clientside_step(
                     "cached_render_result_delta_id": None,
                     "output_columns": [],
                     "output_errors": [],
-                    "output_status": "busy",  # TODO derive this on the client
+                    "output_status": None,
                     "output_n_rows": 0,
                 }
             )

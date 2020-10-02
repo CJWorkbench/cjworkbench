@@ -61,7 +61,10 @@ export class Step extends React.PureComponent {
     step: PropTypes.shape({
       id: PropTypes.number.isRequired,
       params: PropTypes.object.isRequired,
-      secrets: PropTypes.object.isRequired
+      secrets: PropTypes.object.isRequired,
+      last_relevant_delta_id: PropTypes.number,
+      cached_render_result_delta_id: PropTypes.number, // or null
+      output_status: PropTypes.oneOf(['ok', 'unreachable', 'error']) // or null
     }), // null if loading
     inputStep: PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -317,20 +320,21 @@ export class Step extends React.PureComponent {
     const { step } = this.props
     if (!step) {
       return null
-    } else if (step.nClientRequests > 0) {
-      // When we've just sent an HTTP request and not received a response,
-      // mark ourselves "busy". This is great for when the user clicks "fetch"
-      // and then is waiting for the server to set the status.
-      //
-      // The state stores server data separately than client data, so there's
-      // no race when setting status and so if the "fetch" does nothing and the
-      // server doesn't change step.status, the client still resets its
-      // perceived status.
-      return 'busy'
-    } else if (step.is_busy) {
-      return 'busy'
-    } else if (!step.output_status) {
-      // placeholder? TODO verify this can actually happen
+    } else if (
+      // We've just sent an HTTP request and not received a response.
+      // (This happens after the user clicks to change something -- or clicks
+      // "fetch" -- and before the server updates the status.)
+      step.nClientRequests > 0 ||
+
+      // The module is performing a fetch
+      step.is_busy ||
+
+      // Step is rendering
+      step.last_relevant_delta_id !== step.cached_render_result_delta_id ||
+
+      // Step is a placeholder? TODO verify this can actually happen
+      !step.output_status
+    ) {
       return 'busy'
     } else {
       return step.output_status

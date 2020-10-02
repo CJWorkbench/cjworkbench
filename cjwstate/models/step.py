@@ -245,22 +245,6 @@ class Step(models.Model):
             tab__workflow_id=workflow_id, tab__is_deleted=False, is_deleted=False
         )
 
-    @property
-    def output_status(self):
-        """
-        Return 'ok', 'busy', 'error' or 'unreachable'.
-
-        'busy': render is pending
-        'error': render produced an error and no table
-        'unreachable': a previous module had 'error' so we will not run this
-        'ok': render produced a table
-        """
-        crr = self.cached_render_result
-        if crr is None:
-            return "busy"
-        else:
-            return crr.status
-
     # ---- Authorization ----
     # User can access step if they can access workflow
     def request_authorized_read(self, request):
