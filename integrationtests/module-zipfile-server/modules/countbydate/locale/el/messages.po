@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-04-02 12:57+0000\n"
+"POT-Creation-Date: 2020-10-02 16:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -27,6 +27,7 @@ msgstr ""
 "Ομαδοποίηση σειρών κατά ημερομηνία και ώρα. Πλήθος σειρών και υπολογισμός"
 " ποσοτήτων, μέσων όρων, μέγιστων και ελάχιστων τιμών σε κάθε ομάδα."
 
+#, fuzzy
 msgid "_spec.parameters.column.placeholder"
 msgstr "Επιλογή στήλης ημερομηνίας"
 
@@ -86,5 +87,7 @@ msgstr "Να συμπεριληφθούν ημερομηνίες που λείπ
 
 #: countbydate.py:153
 msgid "error.tooManyRows"
-msgstr "Η συμπερίληψη των ημερομηνιών που λείπουν θα δημιουργούσε {n_rows} σειρές, αλλά ο μέγιστος επιτρεπόμενος αριθμός είναι {max_rows} σειρές"
+msgstr ""
+"Η συμπερίληψη των ημερομηνιών που λείπουν θα δημιουργούσε {n_rows} "
+"σειρές, αλλά ο μέγιστος επιτρεπόμενος αριθμός είναι {max_rows} σειρές"
 

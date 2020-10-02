@@ -11,8 +11,8 @@
       "name": "",
       "id_name" : "column",
       "type": "column",
-      "placeholder": "Select date column",
-      "column_types": [ "datetime" ]
+      "placeholder": "Select timestamp column",
+      "column_types": [ "timestamp" ]
     },
     {
       "name": "Group by",

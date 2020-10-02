@@ -35,42 +35,42 @@ msgid "_spec.parameters.y_columns.name"
 msgstr ""
 
 #. default-message: Please choose an X-axis column
-#: linechart.py:298
+#: linechart.py:296
 msgid "noXAxisError.message"
 msgstr ""
 
 #. default-message: Column "{x_column}" has {n_safe_x_values} text values. We cannot fit them all on the X axis. Please change the input table to have 10 or fewer rows, or convert "{x_column}" to number or date.
-#: linechart.py:315
+#: linechart.py:313
 msgid "tooManyTextValuesError.message"
 msgstr ""
 
 #. default-message: Column "{column_name}" has no values. Please select a column with data.
-#: linechart.py:322
+#: linechart.py:320
 msgid "noValuesError.message"
 msgstr ""
 
 #. default-message: Column "{column_name}" has only 1 value. Please select a column with 2 or more values.
-#: linechart.py:331
+#: linechart.py:329
 msgid "onlyOneValueError.message"
 msgstr ""
 
 #. default-message: Please choose a Y-axis column
-#: linechart.py:361
+#: linechart.py:359
 msgid "noYAxisError.message"
 msgstr ""
 
 #. default-message: You cannot plot Y-axis column {column_name} because it is the X-axis column
-#: linechart.py:368
+#: linechart.py:366
 msgid "sameAxesError.message"
 msgstr ""
 
 #. default-message: Cannot plot Y-axis column "{column_name}" because it is not numeric. Convert it to a number before plotting it.
-#: linechart.py:379
+#: linechart.py:377
 msgid "axisNotNumericError.message"
 msgstr ""
 
 #. default-message: Cannot plot Y-axis column "{column_name}" because it has no values
-#: linechart.py:393
+#: linechart.py:391
 msgid "emptyAxisError.message"
 msgstr ""
 

@@ -101,10 +101,6 @@ def render(table, params):
 
         kwargs = {**input_format.kwargs}
 
-        if is_numeric_dtype(in_series):
-            # For now, assume value is year and cast to string
-            kwargs["format"] = "%Y"
-
         # Build `out_series`, a pd.Series of datetime64[ns]
         if hasattr(in_series, "cat"):
             # Pandas `to_datetime()` sometimes converts to Categorical; and

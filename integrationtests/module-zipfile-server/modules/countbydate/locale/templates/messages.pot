@@ -6,7 +6,7 @@ msgstr ""
 msgid "_spec.description"
 msgstr ""
 
-#. default-message: Select date column
+#. default-message: Select timestamp column
 msgid "_spec.parameters.column.placeholder"
 msgstr ""
 

@@ -123,22 +123,6 @@ class ConverttodateTests(unittest.TestCase):
         result = render(table, P(["A"], "auto"))
         assert_frame_equal(result, expected)
 
-    def test_numbers(self):
-        # For now, assume value is year and cast to string
-        table = pd.DataFrame({"number": [2018, 1960, 99999]})
-        expected = pd.DataFrame(
-            {
-                "number": [
-                    np.datetime64("2018-01-01T00:00:00.000000000"),
-                    np.datetime64("1960-01-01T00:00:00.000000000"),
-                    pd.NaT,
-                ]
-            }
-        )
-
-        result = render(table.copy(), P(["number"], "auto", True))
-        assert_frame_equal(result, expected)
-
     def test_iso8601_tz_aware_plus_non_tz_aware(self):
         table = pd.DataFrame(
             {"A": ["2019-01-01T00:00:00.000", "2019-03-02T12:02:13.000Z"]},
@@ -201,7 +185,7 @@ class ConverttodateTests(unittest.TestCase):
                     "a_column": "B",
                     "n_errors": 3,
                     "n_columns": 1,
-                }
+                },
             ),
         )
 
@@ -213,7 +197,7 @@ class ConverttodateTests(unittest.TestCase):
         assert_frame_equal(result, expected)
 
     def test_null_input_is_not_error(self):
-        table = pd.DataFrame({"null": ["08/07/2018", None, 99]})
+        table = pd.DataFrame({"null": ["08/07/2018", None, "99"]})
         result = render(table, P(["null"], "auto", False))
         self.assertEqual(
             result,
@@ -225,7 +209,7 @@ class ConverttodateTests(unittest.TestCase):
                     "a_column": "null",
                     "n_errors": 1,
                     "n_columns": 1,
-                }
+                },
             ),
         )
 
@@ -242,13 +226,13 @@ class ConverttodateTests(unittest.TestCase):
                     "a_column": "null",
                     "n_errors": 2,
                     "n_columns": 1,
-                }
+                },
             ),
         )
 
     def test_error_multicolumn(self):
         table = pd.DataFrame(
-            {"null": ["08/07/2018", "99", "99"], "number": [1960, 2018, 99999]}
+            {"null": ["08/07/2018", "99", "99"], "number": ["1960", "2018", "99999"]}
         )
         result = render(table, P(["null", "number"], "auto", False))
         self.assertEqual(
@@ -261,7 +245,7 @@ class ConverttodateTests(unittest.TestCase):
                     "a_column": "null",
                     "n_errors": 3,
                     "n_columns": 2,
-                }
+                },
             ),
         )
 

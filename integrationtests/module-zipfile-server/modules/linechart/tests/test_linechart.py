@@ -269,30 +269,6 @@ class FormTest(unittest.TestCase):
             ),
         )
 
-    def test_x_datetime(self):
-        form = self.build_form(x_column="A")
-        t1 = datetime.datetime(2018, 8, 29, 13, 39)
-        t2 = datetime.datetime(2018, 8, 29, 13, 40)
-        table = pd.DataFrame({"A": [t1, t2], "B": [3, 4]})
-        chart = form.make_chart(
-            table,
-            # TODO use datetime format
-            {"A": Column("A", "datetime", None), "B": Column("B", "number", "{:}")},
-        )
-        assert np.array_equal(
-            chart.x_series.series, np.array([t1, t2], dtype="datetime64[ms]")
-        )
-
-        vega = chart.to_vega()
-        self.assertEqual(vega["encoding"]["x"]["type"], "temporal")
-        self.assertEqual(
-            vega["data"]["values"],
-            [
-                {"x": "2018-08-29T13:39:00Z", "line": "B", "y": 3},
-                {"x": "2018-08-29T13:40:00Z", "line": "B", "y": 4},
-            ],
-        )
-
     def test_x_timestamp(self):
         form = self.build_form(x_column="A")
         t1 = datetime.datetime(2018, 8, 29, 13, 39)
@@ -300,7 +276,7 @@ class FormTest(unittest.TestCase):
         table = pd.DataFrame({"A": [t1, t2], "B": [3, 4]})
         chart = form.make_chart(
             table,
-            # TODO use datetime format
+            # TODO use timestamp format
             {"A": Column("A", "timestamp", None), "B": Column("B", "number", "{:}")},
         )
         assert np.array_equal(
@@ -324,7 +300,7 @@ class FormTest(unittest.TestCase):
         table = pd.DataFrame({"A": [t1, None, t2], "B": [3, 4, 5]})
         chart = form.make_chart(
             table,
-            # TODO use datetime format
+            # TODO use timestamp format
             {"A": Column("A", "timestamp", None), "B": Column("B", "number", "{:}")},
         )
 
