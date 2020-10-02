@@ -19,7 +19,7 @@ class TestLessons(WorkbenchBase):
         b.visit("/lessons/")
         b.click_whatever("h2", text="1. Load public data and make a chart", wait=True)
 
-        b.assert_element(".module-stack")
+        b.assert_element(".step-list")
         b.assert_element("h2", text="Overview")
         b.assert_element(".current-and-total", text="1 of 4")
         b.click_button("Next")
@@ -32,7 +32,7 @@ class TestLessons(WorkbenchBase):
         b.visit("/lessons/")
         b.click_whatever("h2", text="1. Load public data and make a chart", wait=True)
 
-        b.assert_element(".module-stack")
+        b.assert_element(".step-list")
         b.assert_element("h2", text="Overview")
         b.assert_element(".current-and-total", text="1 of 4")
         b.click_button("Next")

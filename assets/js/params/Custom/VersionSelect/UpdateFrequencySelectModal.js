@@ -34,7 +34,7 @@ function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
 class UpdateFrequencySelectModal extends React.PureComponent {
   static propTypes = {
     workflowId: PropTypes.number.isRequired,
-    wfModuleId: PropTypes.number.isRequired,
+    stepId: PropTypes.number.isRequired,
     isAutofetch: PropTypes.bool.isRequired,
     fetchInterval: PropTypes.number.isRequired,
     isEmailUpdates: PropTypes.bool.isRequired,
@@ -131,7 +131,7 @@ class UpdateFrequencySelectModal extends React.PureComponent {
   }
 
   render () {
-    const { isEmailUpdates, onClose, workflowId, wfModuleId, i18n } = this.props
+    const { isEmailUpdates, onClose, workflowId, stepId, i18n } = this.props
     const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, timeUnit } = this.state
 
     return (
@@ -205,7 +205,7 @@ class UpdateFrequencySelectModal extends React.PureComponent {
               {quotaExceeded ? (
                 <QuotaExceeded
                   workflowId={workflowId}
-                  wfModuleId={wfModuleId}
+                  stepId={stepId}
                   {...quotaExceeded}
                 />
               ) : null}

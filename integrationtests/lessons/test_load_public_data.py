@@ -30,7 +30,7 @@ class TestLesson(LessonTest):
         self.expect_highlight(0)
         self.add_data_step("Load from URL")
 
-        self.expect_highlight(1, '.wf-module[data-module-name="Load from URL"]')
+        self.expect_highlight(1, '.step[data-module-name="Load from URL"]')
         b.fill_in("url", DataUrl, wait=True)  # wait for module to load
         b.click_button("Update")
 
@@ -49,14 +49,14 @@ class TestLesson(LessonTest):
 
         # 3. 2. Make a column chart
         self.expect_highlight(0)
-        self.add_wf_module("Column Chart")
+        self.add_step("Column Chart")
 
-        self.expect_highlight(1, '.wf-module[data-module-name="Column Chart"]')
+        self.expect_highlight(1, '.step[data-module-name="Column Chart"]')
         # Multi-phased waits. Workbench will:
         # 1. Execute the module
         # 2. Send a WebSockets message
         # 3. Update redux state with a new workflow.revision
-        # 4a. Re-render the WfModule (reloading column names)
+        # 4a. Re-render the Step (reloading column names)
         # 4b. Re-render the OutputIframe (reloading chart)
         # 5 or 6. Finish reloading column names
         # 6 or 5. Finish reloading chart
@@ -78,10 +78,10 @@ class TestLesson(LessonTest):
                 "g.role-title text", text="Please correct the error", wait=True
             )
         b.assert_element(
-            ".wf-module-error-msg", text="Please choose an X-axis column", wait=True
+            ".step-error-msg", text="Please choose an X-axis column", wait=True
         )
         self.select_column("Column Chart", "x_column", "city_neighborhood")
-        self.submit_wf_module()
+        self.submit_step()
 
         # Second wait: for the Y-axis column selector to load
         time.sleep(1)  # TODO prevent reloads, then nix
@@ -90,38 +90,37 @@ class TestLesson(LessonTest):
                 "g.role-title text", text="Please correct the error", wait=True
             )
         b.assert_element(
-            ".wf-module-error-msg", text="Please choose a Y-axis column", wait=True
+            ".step-error-msg", text="Please choose a Y-axis column", wait=True
         )
         self.select_column("Column Chart", "y_columns", "affordable_units")
-        self.submit_wf_module()
+        self.submit_step()
 
-        self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
+        self.expect_highlight(2, '.step[data-module-name="Column Chart"]')
         b.fill_in("title", "a title")
         b.fill_in("x_axis_label", "Area")
         b.fill_in("y_axis_label", "Number of Affordable Houses")
-        self.submit_wf_module()
+        self.submit_step()
 
         self.expect_highlight_next(wait=True)
         self.click_next()
 
         # 4. 3. Filter with a condition
         self.expect_highlight(0)
-        self.add_wf_module("Filter by condition", position=1)
+        self.add_step("Filter by condition", position=1)
 
-        self.expect_highlight(1, '.wf-module[data-module-name="Filter by condition"]')
+        self.expect_highlight(1, '.step[data-module-name="Filter by condition"]')
         # wait for module load
         self.select_column(
             "Filter by condition", "filters", "affordable_units", wait=True
         )
         b.select("filters[0][0][condition]", "Number is greater than")
         b.fill_in("filters[0][0][value]", "200", wait=True)  # wait for field to appear
-        self.submit_wf_module()
+        self.submit_step()
 
-        self.expect_highlight(
-            2, '.wf-module[data-module-name="Column Chart"]', wait=True
-        )  # wait for lesson to update
+        # wait for lesson to update
+        self.expect_highlight(2, '.step[data-module-name="Column Chart"]', wait=True)
         # Select the Column Chart
-        b.click_whatever('.wf-module[data-module-name="Column Chart"] .module-name')
+        b.click_whatever('.step[data-module-name="Column Chart"] .module-name')
 
         # Navigate to footer
         self.expect_highlight_next(wait=True)

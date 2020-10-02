@@ -24,11 +24,11 @@ describe('ParamsForm', () => {
       value={{ }}
       edits={{ }}
       workflowId={99}
-      wfModuleId={1}
-      wfModuleSlug='step-1'
-      wfModuleOutputErrors={[]}
-      isWfModuleBusy={false}
-      inputWfModuleId={null}
+      stepId={1}
+      stepSlug='step-1'
+      stepOutputErrors={[]}
+      isStepBusy={false}
+      inputStepId={null}
       inputDeltaId={null}
       inputColumns={[]}
       tabs={[]}
@@ -66,7 +66,7 @@ describe('ParamsForm', () => {
     })
 
     it('should delete edits in onChange instead of sending original values', () => {
-      // The smaller we keep WfModule.state.edits, the better: that way when
+      // The smaller we keep Step.state.edits, the better: that way when
       // a change comes from the server the user will see it because the edits
       // won't overwrite it.
       const w = wrapper({

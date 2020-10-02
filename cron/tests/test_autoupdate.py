@@ -42,10 +42,10 @@ class UpdatesTests(DbTestCase):
         tab = workflow.tabs.create(position=0)
 
         # step1 does not auto-update
-        step1 = tab.wf_modules.create(order=0, slug="step-1", auto_update_data=False)
+        step1 = tab.steps.create(order=0, slug="step-1", auto_update_data=False)
 
         # step2 is ready to update
-        step2 = tab.wf_modules.create(
+        step2 = tab.steps.create(
             order=1,
             slug="step-2",
             auto_update_data=True,
@@ -55,7 +55,7 @@ class UpdatesTests(DbTestCase):
         )
 
         # step3 has a few more minutes before it should update
-        step3 = tab.wf_modules.create(
+        step3 = tab.steps.create(
             order=2,
             slug="step-3",
             auto_update_data=True,

@@ -21,8 +21,8 @@ def _init_module(id_name, param_id_name="file", param_type="file"):
     )
 
 
-class LoadsWfModuleForApiTest(DbTestCaseWithModuleRegistry):
-    # All these tests _test_ loads_wf_module_for_api_upload, but the mechanism
+class LoadsStepForApiTest(DbTestCaseWithModuleRegistry):
+    # All these tests _test_ loads_step_for_api_upload, but the mechanism
     # is UploadList.put() -- which we assume uses the decorator.
     def test_authorization_header_missing(self):
         response = self.client.post("/api/v1/workflows/999/steps/step-123/uploads")
@@ -67,7 +67,7 @@ class LoadsWfModuleForApiTest(DbTestCaseWithModuleRegistry):
     def test_step_has_no_api_token(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0, slug="step-123", module_id_name="x", params={"file": None}
         )
         response = self.client.post(
@@ -81,7 +81,7 @@ class LoadsWfModuleForApiTest(DbTestCaseWithModuleRegistry):
 
     def test_step_has_no_module_version(self):
         workflow = Workflow.create_and_init()
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
@@ -100,7 +100,7 @@ class LoadsWfModuleForApiTest(DbTestCaseWithModuleRegistry):
     def test_step_module_has_no_file_param(self):
         _init_module("x", param_type="string")
         workflow = Workflow.create_and_init()
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
@@ -119,7 +119,7 @@ class LoadsWfModuleForApiTest(DbTestCaseWithModuleRegistry):
     def test_authorization_bearer_token_invalid(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
@@ -141,7 +141,7 @@ class UploadListTest(DbTestCaseWithModuleRegistry):
     def test_create_in_progress_upload(self):
         workflow = Workflow.create_and_init()
         _init_module("x")
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
@@ -154,7 +154,7 @@ class UploadListTest(DbTestCaseWithModuleRegistry):
         )
         self.assertEqual(response.status_code, 200)
         # Upload is created in the database
-        upload = wf_module.in_progress_uploads.first()
+        upload = step.in_progress_uploads.first()
         self.assertIsNotNone(upload)
         # Useful information is returned
         data = json.loads(response.content)
@@ -166,14 +166,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_abort_missing_upload_is_404(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         key = upload.get_upload_key()
         minio.put_bytes(upload.Bucket, key, b"1234567")
         response = self.client.delete(
@@ -188,14 +188,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_abort_completed_upload_is_404(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create(is_completed=True)
+        upload = step.in_progress_uploads.create(is_completed=True)
         response = self.client.delete(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
             HTTP_AUTHORIZATION="Bearer abc123",
@@ -208,14 +208,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_abort(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         key = upload.get_upload_key()
         minio.put_bytes(upload.Bucket, key, b"1234567")
         response = self.client.delete(
@@ -231,14 +231,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_complete_invalid_utf8(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
             '{"café": "latté"}'.encode("latin1"),
@@ -252,14 +252,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_complete_invalid_json(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
             b"{",
@@ -273,14 +273,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_complete_json_form_error(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         key = upload.get_upload_key()
         minio.put_bytes(upload.Bucket, key, b"1234567")
         response = self.client.post(
@@ -297,7 +297,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_complete_upload_not_found(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
@@ -318,14 +318,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_complete_completed_upload(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create(is_completed=True)
+        upload = step.in_progress_uploads.create(is_completed=True)
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
             {"filename": "test.csv"},
@@ -340,14 +340,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_complete_file_not_found(self):
         _init_module("x")
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         response = self.client.post(
             f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
             {"filename": "test.csv"},
@@ -366,14 +366,14 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         _init_module("x")
         self.kernel.migrate_params.side_effect = lambda m, p: p
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-123",
             module_id_name="x",
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        upload = wf_module.in_progress_uploads.create()
+        upload = step.in_progress_uploads.create()
         uuid = str(upload.id)
         key = upload.get_upload_key()
         minio.put_bytes(upload.Bucket, key, b"1234567")
@@ -391,9 +391,9 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         upload.refresh_from_db()
         self.assertTrue(upload.is_completed)
         # Final upload was created
-        uploaded_file = wf_module.uploaded_files.first()
+        uploaded_file = step.uploaded_files.first()
         self.assertEqual(
-            uploaded_file.key, f"wf-{workflow.id}/wfm-{wf_module.id}/{uuid}.csv"
+            uploaded_file.key, f"wf-{workflow.id}/wfm-{step.id}/{uuid}.csv"
         )
         self.assertEqual(
             minio.get_object_with_data(minio.UserFilesBucket, uploaded_file.key)[
@@ -408,8 +408,8 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(data["name"], "test.csv")
         self.assertEqual(data["size"], 7)
         # ChangeParametersCommand ran
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.params, {"file": uuid})
+        step.refresh_from_db()
+        self.assertEqual(step.params, {"file": uuid})
         # Send deltas
         send_update.assert_called()
         queue_render.assert_called()

@@ -52,7 +52,7 @@ function notifySize () {
   window.parent.postMessage({
     from: 'outputIframe',
     type: 'resize',
-    wfModuleId: parseInt(/(\d+)\/output/.exec(String(window.location))[1], 10),
+    stepId: parseInt(/(\d+)\/output/.exec(String(window.location))[1], 10),
     height: pre.clientHeight,
   }, window.location.origin)
 }

@@ -27,7 +27,7 @@ class AddTabCommand(Delta):
     # you _must_ delete the Delta first; after deleting the Delta, you _may_
     # delete the Tab.
     #
-    # TODO nix soft-deleting Tabs and WfModules; instead, give DeleteTabCommand
+    # TODO nix soft-deleting Tabs and Steps; instead, give DeleteTabCommand
     # all the info it needs to undo itself. Change this field to `tab_slug`.
 
     class Meta:

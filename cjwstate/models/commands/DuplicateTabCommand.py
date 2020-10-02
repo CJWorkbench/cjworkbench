@@ -4,8 +4,7 @@ from cjwstate.models import Delta, Tab, Workflow
 
 
 class DuplicateTabCommand(Delta):
-    """
-    Create a `Tab` copying the contents of another Tab.
+    """Create a `Tab` copying the contents of another Tab.
 
     Our "backwards()" logic is to "soft-delete": set `tab.is_deleted=True`.
     Most facets of Workbench's API should pretend a sort-deleted Tab does not
@@ -31,7 +30,7 @@ class DuplicateTabCommand(Delta):
     # you _must_ delete the Delta first; after deleting the Delta, you _may_
     # delete the Tab.
     #
-    # TODO nix soft-deleting Tabs and WfModules; instead, give DeleteTabCommand
+    # TODO nix soft-deleting Tabs and Steps; instead, give DeleteTabCommand
     # all the info it needs to undo itself. Change this field to `tab_slug`.
     tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
     old_selected_tab_position = models.IntegerField()
@@ -47,15 +46,15 @@ class DuplicateTabCommand(Delta):
         )
         if self.tab.is_deleted:
             step_ids = list(
-                # tab.live_wf_modules can be nonempty even when tab.is_deleted
-                self.tab.live_wf_modules.values_list("id", flat=True)
+                # tab.live_steps can be nonempty even when tab.is_deleted
+                self.tab.live_steps.values_list("id", flat=True)
             )
             return data.clear_tab(self.tab.slug).clear_steps(step_ids)
         else:
             return data.replace_tab(
                 self.tab.slug, self.tab.to_clientside()
             ).replace_steps(
-                {step.id: step.to_clientside() for step in self.tab.live_wf_modules}
+                {step.id: step.to_clientside() for step in self.tab.live_steps}
             )
 
     def forward(self):
@@ -83,8 +82,7 @@ class DuplicateTabCommand(Delta):
 
     # override
     def get_modifies_render_output(self) -> bool:
-        """
-        Execute if we added a module that isn't rendered.
+        """Execute if we added a module that isn't rendered.
 
         The common case -- duplicating an already-rendered tab, or possibly an
         empty tab -- doesn't require an execute because all modules are
@@ -97,16 +95,14 @@ class DuplicateTabCommand(Delta):
         """
         return not self.tab.is_deleted and any(
             step.last_relevant_delta_id != step.cached_render_result_delta_id
-            for step in self.tab.live_wf_modules.all()
+            for step in self.tab.live_steps.all()
         )
 
     @classmethod
     def amend_create_kwargs(
         cls, *, workflow: Workflow, from_tab: Tab, slug: str, name: str
     ):
-        """
-        Create a duplicate of `from_tab`.
-        """
+        """Create a duplicate of `from_tab`."""
         # tab starts off "deleted" and appears at end of tabs list; we
         # un-delete in forward().
         try:
@@ -114,29 +110,28 @@ class DuplicateTabCommand(Delta):
                 slug=slug,
                 name=name,
                 position=from_tab.position + 1,
-                selected_wf_module_position=from_tab.selected_wf_module_position,
+                selected_step_position=from_tab.selected_step_position,
                 is_deleted=True,
             )
         except IntegrityError:
             raise ValueError('tab slug "%s" is already used' % slug)
-        for wf_module in from_tab.live_wf_modules:
-            wf_module.duplicate_into_same_workflow(tab)
+        for step in from_tab.live_steps:
+            step.duplicate_into_same_workflow(tab)
 
-        # A note on the last_relevant_delta_id of the new WfModules:
+        # A note on the last_relevant_delta_id of the new Steps:
         #
-        # WfModule.duplicate_into_same_workflow() will set all
+        # Step.duplicate_into_same_workflow() will set all
         # `last_relevant_delta_id` to `workflow.last_delta_id`, which doesn't
         # consider this DuplicateTabCommand. That's "incorrect", but it doesn't
         # matter: `last_relevant_delta_id` is really a "cache ID", not "Delta
         # ID" (it isn't even a foreign key), and workflow.last_delta_id is fine
         # for that use.
         #
-        # After duplicate, we don't need to invalidate any WfModules in any
-        # other Tabs. (They can't depend on the steps this Command creates,
-        # since the steps don't exist yet.) And during undo, likewise, we don't
-        # need to re-render because no other Tabs can depend on this one at the
-        # time we Undo (since after .forward(), no other Tabs depend on this
-        # one).
+        # After duplicate, we don't need to invalidate any Steps in any other
+        # Tabs. (They can't depend on the steps this Command creates, since the
+        # steps don't exist yet.) And during undo, likewise, we don't need to
+        # re-render because no other Tabs can depend on this one at the time we
+        # Undo (since after .forward(), no other Tabs depend on this one).
         #
         # TL;DR do nothing. Undo/redo will sort itself out.
 

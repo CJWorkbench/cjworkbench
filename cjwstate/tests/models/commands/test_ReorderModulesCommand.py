@@ -19,28 +19,22 @@ class ReorderModulesCommandTest(DbTestCase):
         self.delta = InitWorkflowCommand.create(self.workflow)
         self.tab = self.workflow.tabs.create(position=0, slug="tab-1")
 
-    def assertWfModuleVersions(self, expected_versions):
-        positions = list(self.tab.live_wf_modules.values_list("order", flat=True))
+    def assertStepVersions(self, expected_versions):
+        positions = list(self.tab.live_steps.values_list("order", flat=True))
         self.assertEqual(positions, list(range(0, len(expected_versions))))
 
         versions = list(
-            self.tab.live_wf_modules.values_list("last_relevant_delta_id", flat=True)
+            self.tab.live_steps.values_list("last_relevant_delta_id", flat=True)
         )
         self.assertEqual(versions, expected_versions)
 
     def test_reorder_modules(self):
-        all_modules = self.tab.live_wf_modules
+        all_modules = self.tab.live_steps
         v1 = self.delta.id
 
-        step1 = self.tab.wf_modules.create(
-            last_relevant_delta_id=v1, order=0, slug="step-1"
-        )
-        step2 = self.tab.wf_modules.create(
-            last_relevant_delta_id=v1, order=1, slug="step-2"
-        )
-        step3 = self.tab.wf_modules.create(
-            last_relevant_delta_id=v1, order=2, slug="step-3"
-        )
+        step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
+        step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
+        step3 = self.tab.steps.create(last_relevant_delta_id=v1, order=2, slug="step-3")
 
         cmd = self.run_with_async_db(
             commands.do(
@@ -51,7 +45,7 @@ class ReorderModulesCommandTest(DbTestCase):
             )
         )
         v2 = cmd.id
-        self.assertWfModuleVersions([v1, v2, v2])
+        self.assertStepVersions([v1, v2, v2])
         step2.refresh_from_db()
         step3.refresh_from_db()
         self.assertEqual(
@@ -61,7 +55,7 @@ class ReorderModulesCommandTest(DbTestCase):
 
         # undo
         self.run_with_async_db(commands.undo(cmd))
-        self.assertWfModuleVersions([v1, v1, v1])
+        self.assertStepVersions([v1, v1, v1])
         step2.refresh_from_db()
         step3.refresh_from_db()
         self.assertEqual(
@@ -71,7 +65,7 @@ class ReorderModulesCommandTest(DbTestCase):
 
         # redo
         self.run_with_async_db(commands.redo(cmd))
-        self.assertWfModuleVersions([v1, v2, v2])
+        self.assertStepVersions([v1, v2, v2])
         step2.refresh_from_db()
         step3.refresh_from_db()
         self.assertEqual(
@@ -83,22 +77,16 @@ class ReorderModulesCommandTest(DbTestCase):
         """
         User cannot game the system: only one tab is allowed.
 
-        (A user should not be able to affect WfModules outside of his/her
+        (A user should not be able to affect Steps outside of his/her
         workflow. There's nothing in the architecture that could lead us there,
         but let's be absolutely sure by testing.)
         """
         v1 = self.delta.id
-        step1 = self.tab.wf_modules.create(
-            last_relevant_delta_id=v1, order=0, slug="step-1"
-        )
-        step2 = self.tab.wf_modules.create(
-            last_relevant_delta_id=v1, order=1, slug="step-2"
-        )
+        step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
+        step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
 
         tab2 = self.workflow.tabs.create(position=1, slug="tab-2")
-        step3 = tab2.wf_modules.create(
-            last_relevant_delta_id=v1, order=2, slug="step-3"
-        )
+        step3 = tab2.steps.create(last_relevant_delta_id=v1, order=2, slug="step-3")
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
@@ -110,8 +98,8 @@ class ReorderModulesCommandTest(DbTestCase):
                 )
             )
 
-    def test_missing_wf_module_valueerror(self):
-        step1 = self.tab.wf_modules.create(
+    def test_missing_step_valueerror(self):
+        step1 = self.tab.steps.create(
             last_relevant_delta_id=self.delta.id, order=0, slug="step-1"
         )
         with self.assertRaises(ValueError):
@@ -135,11 +123,11 @@ class ReorderModulesCommandTest(DbTestCase):
                 )
             )
 
-    def test_not_enough_wfmodules_valueerror(self):
-        step1 = self.tab.wf_modules.create(
+    def test_not_enough_steps_valueerror(self):
+        step1 = self.tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
-        self.tab.wf_modules.create(
+        self.tab.steps.create(
             order=1, slug="step-2", last_relevant_delta_id=self.delta.id
         )
 
@@ -153,11 +141,11 @@ class ReorderModulesCommandTest(DbTestCase):
                 )
             )
 
-    def test_repeated_wfmodules_valueerror(self):
-        step1 = self.tab.wf_modules.create(
+    def test_repeated_steps_valueerror(self):
+        step1 = self.tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
-        self.tab.wf_modules.create(
+        self.tab.steps.create(
             order=1, slug="step-2", last_relevant_delta_id=self.delta.id
         )
 
@@ -172,10 +160,10 @@ class ReorderModulesCommandTest(DbTestCase):
             )
 
     def test_no_change_does_nothing(self):
-        step1 = self.tab.wf_modules.create(
+        step1 = self.tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id
         )
-        step2 = self.tab.wf_modules.create(
+        step2 = self.tab.steps.create(
             order=1, slug="step-2", last_relevant_delta_id=self.delta.id
         )
 

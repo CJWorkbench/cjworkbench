@@ -15,7 +15,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -32,23 +32,23 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'calculate'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'calculate'"
       >Add a <kbd>Calculate</kbd> step.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[1].params.operation === 'maximum'"
+      data-test="return workflow.tabs[0].steps[1].params.operation === 'maximum'"
       >Set the operation to <kbd>Maximum</kbd>
     </li>
     <li
       data-test="
         const want_cols = '2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016'
-        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
+        const have_cols = workflow.tabs[0].steps[1].params.colnames
 
         return have_cols.sort().join(',') === want_cols"
       >Select all available year columns
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[1].params.outcolname.toLowerCase() === 'maximum 2000-2016'"
+      data-test="return workflow.tabs[0].steps[1].params.outcolname.toLowerCase() === 'maximum 2000-2016'"
       >Set the output column name to <kbd>Maximum 2000-2016</kbd>
       <p class="instruction-detail">
         A new column appears at the far right of the table. It shows the maximum within each row, so that you can read off the maximum for each country.
@@ -72,17 +72,17 @@ tabs:
       data-test="
         const tab = workflow.tabs[0]
         return (
-          tab.wfModuleSlugs[2] === 'selectcolumns'
-          && tab.wfModules[2].params.colnames.sort().join('|').toLowerCase() === 'continent|country|maximum 2000-2016'
+          tab.stepModuleIds[2] === 'selectcolumns'
+          && tab.steps[2].params.colnames.sort().join('|').toLowerCase() === 'continent|country|maximum 2000-2016'
         )
       ">Add <kbd>Select columns</kbd>. Keep the columns <kbd>Country</kbd>, <kbd>Continent</kbd> and <kbd>Maximum 2000-2016</kbd>
     </li>
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[3] !== 'sort')
+        if (workflow.tabs[0].stepModuleIds[3] !== 'sort')
           return false
 
-        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        const sort_columns = workflow.tabs[0].steps[3].params.sort_columns
         return sort_columns.length >= 1 &&
                !sort_columns[0].is_ascending"
       >Using the column menu
@@ -101,20 +101,20 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        const sort_columns = workflow.tabs[0].steps[3].params.sort_columns
         return sort_columns[0] && sort_columns[0].colname === 'Continent'"
       >In the existing Sort in step 4, edit your setting to sort by <kbd>Continent</kbd>
     </li>
     <li
       data-test="
-        const sort_columns = workflow.tabs[0].wfModules[3].params.sort_columns
+        const sort_columns = workflow.tabs[0].steps[3].params.sort_columns
         return sort_columns.length > 1 &&
                sort_columns[1].colname.toLowerCase() === 'maximum 2000-2016' &&
                !sort_columns[1].is_ascending"
       >Add a secondary sort by clicking +ADD, and this time sort by <kbd>Maximum 2000-2016</kbd> in descending order
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.keep_top === '1'"
+      data-test="return workflow.tabs[0].steps[3].params.keep_top === '1'"
       >Keep <kbd>top 1 row</kbd> under the second sort in order to keep one country per continent
     </li>
   </ol>

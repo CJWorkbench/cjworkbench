@@ -51,7 +51,7 @@ describe('ModuleSearch Popup', () => {
         isLessonHighlight={false}
         modules={modulesArray}
         onClose={jest.fn()}
-        addModule={jest.fn()}
+        addStep={jest.fn()}
         onUpdate={jest.fn()}
         {...extraProps}
       />
@@ -95,20 +95,20 @@ describe('ModuleSearch Popup', () => {
     const w = wrapper()
     w.find('form').simulate('reset')
     expect(w.prop('onClose')).toHaveBeenCalled()
-    expect(w.prop('addModule')).not.toHaveBeenCalled()
+    expect(w.prop('addStep')).not.toHaveBeenCalled()
   })
 
   it('calls onCancel on pressing Escape', () => {
     const w = wrapper()
     w.find('input[type="search"]').simulate('keyDown', { keyCode: 27 })
     expect(w.prop('onClose')).toHaveBeenCalled()
-    expect(w.prop('addModule')).not.toHaveBeenCalled()
+    expect(w.prop('addStep')).not.toHaveBeenCalled()
   })
 
-  it('calls addModule and closes on click', () => {
+  it('calls addStep and closes on click', () => {
     const w = wrapper()
     w.find('button[data-module-slug="enigma"]').simulate('click')
-    expect(w.prop('addModule')).toHaveBeenCalledWith('tab-1', 2, 'enigma')
+    expect(w.prop('addStep')).toHaveBeenCalledWith('tab-1', 2, 'enigma')
     expect(w.prop('onClose')).toHaveBeenCalled()
   })
 
@@ -206,16 +206,16 @@ describe('ModuleSearch Popup', () => {
       expect(w.text()).not.toMatch(/BBB/)
     })
 
-    it('dispatches addModule', async () => {
-      const api = { addModule: jest.fn(() => new Promise(() => {})) } // never resolves
+    it('dispatches addStep', async () => {
+      const api = { addStep: jest.fn(() => new Promise(() => {})) } // never resolves
       generateSlug.mockImplementation(prefix => prefix + 'X')
       const store = mockStore({
         tabs: {
           'tab-1': {
-            wf_module_ids: [1, 2]
+            step_ids: [1, 2]
           }
         },
-        wfModules: {
+        steps: {
           1: {},
           2: {}
         },
@@ -227,7 +227,7 @@ describe('ModuleSearch Popup', () => {
       const onClose = jest.fn()
       const w = await wrapper(store, { tabSlug: 'tab-1', index: 2, onClose })
       w.find('button[data-module-slug="a"]').simulate('click')
-      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'a', 2, {})
+      expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'a', 2, {})
       expect(onClose).toHaveBeenCalled()
     })
 
@@ -250,7 +250,7 @@ describe('ModuleSearch Popup', () => {
           selected_tab_position: 0
         },
         tabs: {
-          'tab-1': { wf_module_ids: [] }
+          'tab-1': { step_ids: [] }
         },
         modules: {
           a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },

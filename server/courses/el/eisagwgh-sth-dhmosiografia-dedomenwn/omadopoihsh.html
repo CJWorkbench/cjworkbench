@@ -9,7 +9,7 @@
 </section><!-- Section 1 --><script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -39,7 +39,7 @@ tabs:
             case_sensitive: false
     collapsed: true
 - name: Data dictionary
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -55,15 +55,15 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'groupby' && workflow.tabs[0].wfModules[3].params.groups.colnames.join('|') === 'Planning Neighborhood'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'groupby' && workflow.tabs[0].steps[3].params.groups.colnames.join('|') === 'Planning Neighborhood'"
       >Ας προσθέσουμε την &quot;Ομαδοποίηση&quot; στην 4η θέση και ας επιλέξουμε τη στήλη <kbd>Planning Neighborhood</kbd></li>
     <li
-      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length === 0 /* no aggregations means 'count' */ || aggs[0].operation === 'size'"
+      data-test="const aggs = workflow.tabs[0].steps[3].params.aggregations; return aggs.length === 0 /* no aggregations means 'count' */ || aggs[0].operation === 'size'"
       >Διατηρήστε την πρώτη λειτουργία στο <kbd>Πλήθος</kbd>. Θα μετρήσει όλες τις σειρές που βρίσκονται σε κάθε ομάδα.<p class ="instruction-detail">Δεδομένου ότι κάθε σειρά αντιστοιχεί σε ένα έργο και οι σειρές ομαδοποιούνται σε συνοικίες, ο πίνακας αποτελεσμάτων αποτελεί μια μέτρηση έργων ανά συνοικία.</p>
     </li>
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations;
+        const aggs = workflow.tabs[0].steps[3].params.aggregations;
         return aggs.length > 0 && aggs[0].outname.toLowerCase() === 'number of projects'"
       >Ονομάστε τη νέα στήλη <kbd>Number of projects</kbd> (Αριθμός έργων)</li>
   </ol>
@@ -76,25 +76,25 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations
+        const aggs = workflow.tabs[0].steps[3].params.aggregations
         return aggs.length > 1"
       >Στο υπάρχον βήμα Ομαδοποίηση, προσθέστε άλλη μια λειτουργία κάτω από το <kbd>Πλήθος</kbd> κάνοντας κλικ στην +ΠΡΟΣΘΗΚΗ<li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations
+        const aggs = workflow.tabs[0].steps[3].params.aggregations
         return aggs[1].operation === 'sum' && aggs[1].colname === 'Affordable Units'"
       >Επιλέξτε <kbd>Άθροισμα:</kbd> για τη νέα λειτουργία και επιλέξτε τη στήλη <kbd>Affordable Units</kbd> .</li>
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations;
+        const aggs = workflow.tabs[0].steps[3].params.aggregations;
         return aggs[1].outname.toLowerCase() === 'number of affordable units'"
       >Ονομάστε τη νέα στήλη <kbd>Number of affordable units</kbd> (Αριθμός κατοικιών σε προσιτή τιμή)<p class="instruction-detail">Εκτός από τη μέτρηση έργων ανά συνοικία, υπολογίζουμε τώρα τον συνολικό αριθμό κατοικιών σε προσιτή τιμή σε καθεμιά από αυτές. Ας οπτικοποιήσουμε αυτά τα δεδομένα.</p>
     </li>
     <li
       data-test="
-        const wfm = workflow.tabs[0].wfModules[4]
-        if (!wfm || wfm.moduleSlug !== 'columnchart')
+        const step = workflow.tabs[0].steps[4]
+        if (!step || step.moduleSlug !== 'columnchart')
           return false
-        const p = wfm.params
+        const p = step.params
         return p.x_column === 'Planning Neighborhood' &&
                p.y_columns[0] &&
                p.y_columns[0].column.toLowerCase() === 'number of affordable units'"

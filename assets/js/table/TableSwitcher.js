@@ -17,7 +17,7 @@ const NoStepTable = () => (
   <TableView
     loadRows={NoStepLoadRows}
     isReadOnly
-    wfModuleId={null}
+    stepId={null}
     deltaId={null}
     columns={NoStepTableColumns}
     nRows={10}
@@ -33,7 +33,7 @@ const BusyStepTable = () => (
 const UnreachableStepTable = () => (
   <TableView
     isReadOnly
-    wfModuleId={null}
+    stepId={null}
     deltaId={null}
     columns={NoStepTableColumns}
     loadRows={NoStepLoadRows}
@@ -41,13 +41,13 @@ const UnreachableStepTable = () => (
   />
 )
 
-const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, wfModuleId, deltaId, columns, nRows, loadRows }) {
+const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, stepId, deltaId, columns, nRows, loadRows }) {
   return (
     <>
       <TableView
         isReadOnly={isReadOnly}
         loadRows={loadRows}
-        wfModuleId={wfModuleId}
+        stepId={stepId}
         deltaId={deltaId}
         columns={columns}
         nRows={nRows}
@@ -84,10 +84,10 @@ const TableSwitcherContents = React.memo(function TableSwitcherContents ({ statu
  */
 export default class TableSwitcher extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
-    wfModuleId: PropTypes.number, // or null, if no selection
+    stepId: PropTypes.number, // or null, if no selection
     deltaId: PropTypes.number, // or null, if status!=ok
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
     columns: PropTypes.arrayOf(PropTypes.shape({

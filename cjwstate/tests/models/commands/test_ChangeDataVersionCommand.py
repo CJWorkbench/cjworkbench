@@ -21,12 +21,12 @@ class ChangeDataVersionCommandTests(DbTestCase):
         super().setUp()
 
         self.workflow = Workflow.create_and_init()
-        self.wf_module = self.workflow.tabs.first().wf_modules.create(
+        self.step = self.workflow.tabs.first().steps.create(
             order=0, slug="step-1", last_relevant_delta_id=self.workflow.last_delta_id
         )
 
     def _store_fetched_table(self) -> timezone.datetime:
-        return self.wf_module.stored_objects.create(key="fake", size=10).stored_at
+        return self.step.stored_objects.create(key="fake", size=10).stored_at
 
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_change_data_version(self):
@@ -34,8 +34,8 @@ class ChangeDataVersionCommandTests(DbTestCase):
         date1 = self._store_fetched_table()
         date2 = self._store_fetched_table()
 
-        self.wf_module.stored_data_version = date2
-        self.wf_module.save()
+        self.step.stored_data_version = date2
+        self.step.save()
 
         self.workflow.refresh_from_db()
         v1 = self.workflow.last_delta_id
@@ -45,26 +45,26 @@ class ChangeDataVersionCommandTests(DbTestCase):
             commands.do(
                 ChangeDataVersionCommand,
                 workflow_id=self.workflow.id,
-                wf_module=self.wf_module,
+                step=self.step,
                 new_version=date1,
             )
         )
-        self.assertEqual(self.wf_module.stored_data_version, date1)
+        self.assertEqual(self.step.stored_data_version, date1)
 
         self.workflow.refresh_from_db()
         v2 = cmd.id
         # workflow revision should have been incremented
-        self.assertEqual(self.wf_module.last_relevant_delta_id, v2)
+        self.assertEqual(self.step.last_relevant_delta_id, v2)
 
         # undo
         self.run_with_async_db(commands.undo(cmd))
-        self.assertEqual(self.wf_module.last_relevant_delta_id, v1)
-        self.assertEqual(self.wf_module.stored_data_version, date2)
+        self.assertEqual(self.step.last_relevant_delta_id, v1)
+        self.assertEqual(self.step.stored_data_version, date2)
 
         # redo
         self.run_with_async_db(commands.redo(cmd))
-        self.assertEqual(self.wf_module.last_relevant_delta_id, v2)
-        self.assertEqual(self.wf_module.stored_data_version, date1)
+        self.assertEqual(self.step.last_relevant_delta_id, v2)
+        self.assertEqual(self.step.stored_data_version, date1)
 
     @patch.object(rabbitmq, "queue_render")
     def test_change_version_queue_render_if_notifying(self, queue_render):
@@ -73,20 +73,20 @@ class ChangeDataVersionCommandTests(DbTestCase):
         date1 = self._store_fetched_table()
         date2 = self._store_fetched_table()
 
-        self.wf_module.notifications = True
-        self.wf_module.stored_data_version = date1
-        self.wf_module.save()
+        self.step.notifications = True
+        self.step.stored_data_version = date1
+        self.step.save()
 
         delta = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
                 workflow_id=self.workflow.id,
-                wf_module=self.wf_module,
+                step=self.step,
                 new_version=date2,
             )
         )
 
-        queue_render.assert_called_with(self.wf_module.workflow_id, delta.id)
+        queue_render.assert_called_with(self.step.workflow_id, delta.id)
 
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
@@ -100,28 +100,28 @@ class ChangeDataVersionCommandTests(DbTestCase):
         date1 = self._store_fetched_table()
         date2 = self._store_fetched_table()
 
-        self.wf_module.notifications = False
-        self.wf_module.stored_data_version = date1
-        self.wf_module.save()
+        self.step.notifications = False
+        self.step.stored_data_version = date1
+        self.step.save()
 
         delta = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
                 workflow_id=self.workflow.id,
-                wf_module=self.wf_module,
+                step=self.step,
                 new_version=date2,
             )
         )
 
-        self.wf_module.stored_objects.get(stored_at=date1).delete()
+        self.step.stored_objects.get(stored_at=date1).delete()
 
         self.run_with_async_db(commands.undo(delta))
-        self.wf_module.refresh_from_db()
-        self.assertEqual(self.wf_module.stored_data_version, date1)
+        self.step.refresh_from_db()
+        self.assertEqual(self.step.stored_data_version, date1)
 
         self.run_with_async_db(commands.redo(delta))
-        self.wf_module.refresh_from_db()
-        self.assertEqual(self.wf_module.stored_data_version, date2)
+        self.step.refresh_from_db()
+        self.assertEqual(self.step.stored_data_version, date2)
 
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening")
     @patch.object(rabbitmq, "queue_render")
@@ -133,20 +133,18 @@ class ChangeDataVersionCommandTests(DbTestCase):
         date1 = self._store_fetched_table()
         date2 = self._store_fetched_table()
 
-        self.wf_module.notifications = False
-        self.wf_module.stored_data_version = date1
-        self.wf_module.save()
+        self.step.notifications = False
+        self.step.stored_data_version = date1
+        self.step.save()
 
         delta = self.run_with_async_db(
             commands.do(
                 ChangeDataVersionCommand,
                 workflow_id=self.workflow.id,
-                wf_module=self.wf_module,
+                step=self.step,
                 new_version=date2,
             )
         )
 
         queue_render.assert_not_called()
-        queue_render_if_listening.assert_called_with(
-            self.wf_module.workflow_id, delta.id
-        )
+        queue_render_if_listening.assert_called_with(self.step.workflow_id, delta.id)

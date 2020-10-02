@@ -15,14 +15,14 @@ describe('AceEditor', () => {
 
   it('matches snapshot', () => {
     const wrapper = shallow(
-      <WorkbenchAceEditor {...defaultProps} save={jest.fn()} wfModuleOutputErrors={[]} />
+      <WorkbenchAceEditor {...defaultProps} save={jest.fn()} stepOutputErrors={[]} />
     )
     expect(wrapper).toMatchSnapshot()
   })
 
   it('annotates an error', () => {
     const wrapper = shallow(
-      <WorkbenchAceEditor {...defaultProps} save={jest.fn()} wfModuleOutputErrors={[{ message: 'Line 1: Foo happened', quickFixes: [] }]} />
+      <WorkbenchAceEditor {...defaultProps} save={jest.fn()} stepOutputErrors={[{ message: 'Line 1: Foo happened', quickFixes: [] }]} />
     )
     expect(wrapper.find(AceEditor).prop('annotations'))
       .toEqual([{ row: 0, type: 'error', text: 'Foo happened' }])

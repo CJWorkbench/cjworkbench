@@ -50,8 +50,8 @@ export class File extends React.PureComponent {
       createdAt: PropTypes.string.isRequired // ISO8601-formatted date
     }).isRequired).isRequired,
     workflowId: PropTypes.number.isRequired,
-    wfModuleId: PropTypes.number.isRequired,
-    wfModuleSlug: PropTypes.string.isRequired,
+    stepId: PropTypes.number.isRequired,
+    stepSlug: PropTypes.string.isRequired,
     inProgressUpload: PropTypes.shape({
       name: PropTypes.string.isRequired,
       size: PropTypes.number.isRequired,
@@ -60,8 +60,8 @@ export class File extends React.PureComponent {
     fieldId: PropTypes.string.isRequired,
     value: PropTypes.string, // String-encoded UUID or null
     upstreamValue: PropTypes.string, // String-encoded UUID or null
-    uploadFile: PropTypes.func.isRequired, // func(wfModuleId, file) => Promise(<{uuid: ...}, or null if aborted>)
-    cancelUpload: PropTypes.func.isRequired // func(wfModuleId) => undefined
+    uploadFile: PropTypes.func.isRequired, // func(stepId, file) => Promise(<{uuid: ...}, or null if aborted>)
+    cancelUpload: PropTypes.func.isRequired // func(stepId) => undefined
   }
 
   state = {
@@ -72,15 +72,15 @@ export class File extends React.PureComponent {
   handleClickCloseUploadApiModal = () => this.setState({ isUploadApiModalOpen: false })
 
   _upload = (file) => {
-    const { name, uploadFile, setWfModuleParams, wfModuleId } = this.props
-    uploadFile(wfModuleId, file)
+    const { name, uploadFile, setStepParams, stepId } = this.props
+    uploadFile(stepId, file)
       .then(result => {
         // The upload completed; now change the param server-side. That way
         // the user won't need to click the Go button after upload.
         //
         // Assumes ChangeParametersCommand allows partial params.
         if (result.value && result.value.uuid) { // ignore abort, which wouldn't set value/uuid
-          setWfModuleParams(wfModuleId, { [name]: result.value.uuid })
+          setStepParams(stepId, { [name]: result.value.uuid })
         }
       })
   }
@@ -143,8 +143,8 @@ export class File extends React.PureComponent {
   }
 
   handleChange = (value) => {
-    const { setWfModuleParams, wfModuleId, name } = this.props
-    setWfModuleParams(wfModuleId, { [name]: value })
+    const { setStepParams, stepId, name } = this.props
+    setStepParams(stepId, { [name]: value })
   }
 
   handleChangeFileInput = (ev) => {
@@ -153,12 +153,12 @@ export class File extends React.PureComponent {
   }
 
   handleClickCancelUpload = () => {
-    const { wfModuleId, cancelUpload } = this.props
-    cancelUpload(wfModuleId)
+    const { stepId, cancelUpload } = this.props
+    cancelUpload(stepId)
   }
 
   render () {
-    const { workflowId, wfModuleId, wfModuleSlug, name, value, files, inProgressUpload, fieldId, isReadOnly, i18n } = this.props
+    const { workflowId, stepId, stepSlug, name, value, files, inProgressUpload, fieldId, isReadOnly, i18n } = this.props
     const { isUploadApiModalOpen } = this.state
     const file = files.find(f => f.uuid === value)
 
@@ -167,8 +167,8 @@ export class File extends React.PureComponent {
         {isUploadApiModalOpen ? (
           <UploadApiModal
             workflowId={workflowId}
-            wfModuleId={wfModuleId}
-            wfModuleSlug={wfModuleSlug}
+            stepId={stepId}
+            stepSlug={stepSlug}
             onClickClose={this.handleClickCloseUploadApiModal}
           />
         ) : null}

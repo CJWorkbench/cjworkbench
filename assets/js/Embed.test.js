@@ -10,7 +10,7 @@ describe('Embed', () => {
     beforeEach(() => {
       wrapper = shallowWithI18n(
         <Embed
-          wf_module={{
+          step={{
             id: 1
           }}
           workflow={{
@@ -37,7 +37,7 @@ describe('Embed', () => {
     beforeEach(() => {
       wrapper = shallowWithI18n(
         <Embed
-          wf_module={null}
+          step={null}
           workflow={null}
         />
       )

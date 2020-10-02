@@ -393,7 +393,7 @@ definitions:
             oneOf: [
                 { $ref: '#/definitions/param_specs/_nestable' },
                 { $ref: '#/definitions/param_specs/secret' },  # secrets don't follow schema rules
-                { $ref: '#/definitions/param_specs/file' },  # one WfModule can only have one file field
+                { $ref: '#/definitions/param_specs/file' },  # one Step can only have one file field
                 { $ref: '#/definitions/param_specs/gdrivefile' },  # files aren't styled to appear within lists
                 { $ref: '#/definitions/param_specs/list' },  # lists aren't styled to appear within lists
                 { $ref: '#/definitions/param_specs/multichartseries' },  # not styled to appear within lists

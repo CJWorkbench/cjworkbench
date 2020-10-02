@@ -1,11 +1,11 @@
 import json
 from django.db import models
 from cjwstate.models import Delta
-from .util import ChangesWfModuleOutputs
+from .util import ChangesStepOutputs
 
 
-class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
-    """Overwrite wf_module.order for all wf_modules in a tab."""
+class ReorderModulesCommand(ChangesStepOutputs, Delta):
+    """Overwrite step.order for all steps in a tab."""
 
     class Meta:
         app_label = "server"
@@ -15,7 +15,7 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
     # We use a bizarre legacy data format: JSON [ { id: x, order: y}, ... ]
     old_order = models.TextField()
     new_order = models.TextField()
-    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+    step_delta_ids = ChangesStepOutputs.step_delta_ids
 
     # override
     def load_clientside_update(self):
@@ -24,14 +24,14 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
             .load_clientside_update()
             .update_tab(
                 self.tab.slug,
-                step_ids=list(self.tab.live_wf_modules.values_list("id", flat=True)),
+                step_ids=list(self.tab.live_steps.values_list("id", flat=True)),
             )
         )
 
     def apply_order(self, order):
         # We validated Workflow IDs back in `.amend_create_args()`
         for record in order:
-            self.tab.wf_modules.filter(pk=record["id"]).update(order=record["order"])
+            self.tab.steps.filter(pk=record["id"]).update(order=record["order"])
 
     def forward(self):
         new_order = json.loads(self.new_order)
@@ -47,7 +47,7 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, tab, new_order, **kwargs):
-        old_order = tab.live_wf_modules.values_list("id", flat=True)
+        old_order = tab.live_steps.values_list("id", flat=True)
 
         try:
             if sorted(new_order) != sorted(old_order):
@@ -55,8 +55,8 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
         except NameError:
             raise ValueError("new_order is not a list of numbers")
 
-        # Find first _order_ that gets a new WfModule. Only this and subsequent
-        # WfModules will produce new output
+        # Find first _order_ that gets a new Step. Only this and subsequent
+        # Steps will produce new output
         for position in range(len(new_order)):
             if new_order[position] != old_order[position]:
                 min_diff_order = position
@@ -74,13 +74,13 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
             {"id": id, "order": order} for order, id in enumerate(new_order)
         ]
 
-        # wf_module_delta_ids of affected WfModules will be all modules in the
+        # step_delta_ids of affected Steps will be all modules in the
         # database _before update_, starting at `order=min_diff_order`.
         #
-        # This list of WfModule IDs will be the same (in a different order --
+        # This list of Step IDs will be the same (in a different order --
         # order doesn't matter) _after_ update.
-        wf_module = tab.live_wf_modules.get(order=min_diff_order)
-        wf_module_delta_ids = cls.affected_wf_module_delta_ids(wf_module)
+        step = tab.live_steps.get(order=min_diff_order)
+        step_delta_ids = cls.affected_step_delta_ids(step)
 
         return {
             **kwargs,
@@ -88,7 +88,7 @@ class ReorderModulesCommand(ChangesWfModuleOutputs, Delta):
             "tab": tab,
             "old_order": json.dumps(old_order_dicts),
             "new_order": json.dumps(new_order_dicts),
-            "wf_module_delta_ids": wf_module_delta_ids,
+            "step_delta_ids": step_delta_ids,
         }
 
     @property

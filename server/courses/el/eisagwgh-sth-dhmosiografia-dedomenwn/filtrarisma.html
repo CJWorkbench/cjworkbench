@@ -10,14 +10,14 @@
 </section><!-- Section 1 --><script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
       url: ./affordable-housing-pipeline.csv
     collapsed: true
 - name: Λεξικό δεδομένων
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -52,16 +52,16 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"notes"}]'
-      data-test="return !!workflow.tabs[0].wfModules[0].note"
+      data-highlight='[{"type":"StepContextButton","moduleIdName":"loadurl","button":"notes"}]'
+      data-test="return !!workflow.tabs[0].steps[0].note"
       >Στο 1ο βήμα, προσθέστε μια σημείωση <span><img class="icon-insert" src="images/lesson-icons/note.svg"></span> για να καθορίσετε την προέλευση των δεδομένων:<div class="copy-txt">Πηγή: Πόλη του Σαν Φρανσίσκο</div>
     </li>
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
+        if (workflow.tabs[0].stepModuleIds[1] !== 'selectcolumns' || !workflow.tabs[0].steps[1].params.keep) return false
 
         const want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
-        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
+        const have_cols = workflow.tabs[0].steps[1].params.colnames
 
         return have_cols.sort().join(',') === want_cols"
     >Προσθέστε ένα βήμα <kbd>Επιλογή στηλών</kbd> και διατηρήστε τις ακόλουθες στήλες (Αρχίστε να γράφετε τα ονόματα των στηλών για να τις βρείτε πιο γρήγορα)<p><kbd>Planning Neighborhood</kbd><br> <kbd>Project Status</kbd><br> <kbd>Project Units</kbd><br> <kbd>Affordable Units</kbd><br> <kbd>% Affordable</kbd><br></p>
@@ -75,11 +75,11 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'filter'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'filter'"
       >Προσθέστε <kbd>Φιλτράρισμα βάσει συνθήκης</kbd></li>
     <li
       data-test="
-        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        const filter = workflow.tabs[0].steps[2].params.filters.filters[0]
         return (
           filter
           && filter.subfilters[0]
@@ -88,7 +88,7 @@ tabs:
       ">Επιλέξτε τη στήλη <kbd>% Affordable</kbd></li>
     <li
       data-test="
-        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        const filter = workflow.tabs[0].steps[2].params.filters.filters[0]
         const subfilter = filter.subfilters[0]
         return (
           subfilter.condition === 'number_is_greater_than'
@@ -110,7 +110,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const filters = workflow.tabs[0].wfModules[2].params.filters
+        const filters = workflow.tabs[0].steps[2].params.filters
 
         // true if user added AND inside the first subfilter
         return (
@@ -129,7 +129,7 @@ tabs:
       ">Στο Φιλτράρισμα του 3ου βήματος, κάντε κλικ στο <kbd>ΚΑΙ</kbd> για να προσθέσετε μια νέα συνθήκη στο φίλτρο.</li>
     <li
       data-test="
-        const filters = workflow.tabs[0].wfModules[2].params.filters.filters
+        const filters = workflow.tabs[0].steps[2].params.filters.filters
         // Accept condition either at subfilter or main filter level
         const subfilter = filters[1] ? filters[1].subfilters[0] : filters[0].subfilters[1]
         return (
@@ -148,17 +148,17 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'valuefilter'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'valuefilter'"
       >Προσθέστε το βήμα <kbd>Φιλτράρισμα βάσει τιμής</kbd></li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.column === 'Project Status'"
+      data-test="return workflow.tabs[0].steps[3].params.column === 'Project Status'"
       >Επιλέξτε τη στήλη <kbd>Project Status</kbd><p class ="instruction-detail">Όλες οι μοναδικές τιμές στη στήλη <kbd>Project Status</kbd> απαριθμούνται στο βήμα, καθώς και πόσες σειρές χρησιμοποιούν κάθε τιμή.</p>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
+      data-test="return workflow.tabs[0].steps[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
       >Στο &quot;Φιλτράρισμα βάσει τιμής&quot; επιλέξτε <kbd>(3) Design with Entitlements Approved</kbd> για να δείτε μόνο τα έργα που έχουν πάρει έγκριση μελέτης αλλά δεν έχει ακόμα αρχίσει η κατασκευή τους.</li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(4) Site Work Permit Issued')"
+      data-test="return workflow.tabs[0].steps[3].params.valueselect.includes('(4) Site Work Permit Issued')"
       >Επιλέξτε επίσης <kbd>(4) Site Work Permit Issued</kbd> για να προσθέσετε έργα μετά την έκδοση της οικοδομικής άδειας.<p class ="instruction-detail">Αλλάζοντας τις επιλεγμένες τιμές στο <kbd>Φιλτράρισμα βάσει τιμής</kbd> μπορείτε να αντιληφθείτε γρήγορα ποια έργα βρίσκονται σε ποιο στάδιο εξέλιξης.</p>
     </li>
   </ol>

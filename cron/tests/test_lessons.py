@@ -17,7 +17,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             lesson_slug="analyze-live-twitter",
         )
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="fetcher",
@@ -26,17 +26,17 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.auto_update_data, False)
-        self.assertIsNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertEqual(step.auto_update_data, False)
+        self.assertIsNone(step.next_update)
 
-    def test_ignore_non_auto_update_wfmodule(self):
+    def test_ignore_non_auto_update_step(self):
         workflow = Workflow.create_and_init(
             last_viewed_at=(timezone.now() - StaleTimedelta),
             lesson_slug="analyze-live-twitter",
         )
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="fetcher",
@@ -45,17 +45,17 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.auto_update_data, False)
-        self.assertIsNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertEqual(step.auto_update_data, False)
+        self.assertIsNone(step.next_update)
 
-    def test_ignore_deleted_wfmodule(self):
+    def test_ignore_deleted_step(self):
         workflow = Workflow.create_and_init(
             last_viewed_at=(timezone.now() - StaleTimedelta),
             lesson_slug="analyze-live-twitter",
         )
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="fetcher",
@@ -65,9 +65,9 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.auto_update_data, True)
-        self.assertIsNotNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertEqual(step.auto_update_data, True)
+        self.assertIsNotNone(step.next_update)
 
     def test_ignore_deleted_tab(self):
         workflow = Workflow.create_and_init(
@@ -75,7 +75,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             lesson_slug="analyze-live-twitter",
         )
         tab = workflow.tabs.create(position=1, slug="tab-deleted", is_deleted=True)
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="fetcher",
@@ -84,9 +84,9 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.auto_update_data, True)
-        self.assertIsNotNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertEqual(step.auto_update_data, True)
+        self.assertIsNotNone(step.next_update)
 
     def test_ignore_fresh_lesson(self):
         workflow = Workflow.create_and_init(
@@ -94,7 +94,7 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             lesson_slug="analyze-live-twitter",
         )
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="fetcher",
@@ -104,16 +104,16 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.auto_update_data, True)
-        self.assertIsNotNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertEqual(step.auto_update_data, True)
+        self.assertIsNotNone(step.next_update)
 
     def test_ignore_stale_non_lesson(self):
         workflow = Workflow.create_and_init(
             last_viewed_at=(timezone.now() - StaleTimedelta), lesson_slug=None
         )
         tab = workflow.tabs.first()
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="fetcher",
@@ -123,6 +123,6 @@ class DisableStaleAutoUpdateTests(DbTestCase):
         )
         with self.assertLogs(lessons.__name__, logging.INFO):
             self.run_with_async_db(lessons.disable_stale_auto_update())
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.auto_update_data, True)
-        self.assertIsNotNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertEqual(step.auto_update_data, True)
+        self.assertIsNotNone(step.next_update)

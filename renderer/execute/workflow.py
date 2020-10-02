@@ -4,7 +4,7 @@ from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleError
 from cjwkernel.types import RenderResult, Tab
-from cjwstate.models import WfModule, Workflow
+from cjwstate.models import Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.params import get_migrated_params
@@ -15,11 +15,8 @@ from .types import UnneededExecution
 logger = logging.getLogger(__name__)
 
 
-def _get_migrated_params(
-    wf_module: WfModule, module_zipfile: ModuleZipfile
-) -> Dict[str, Any]:
-    """
-    Build the Params dict which will be passed to render().
+def _get_migrated_params(step: Step, module_zipfile: ModuleZipfile) -> Dict[str, Any]:
+    """Build the Params dict which will be passed to render().
 
     Call LoadedModule.migrate_params() to ensure the params are up-to-date.
 
@@ -41,7 +38,7 @@ def _get_migrated_params(
     param_schema = module_spec.get_param_schema()
 
     try:
-        result = get_migrated_params(wf_module, module_zipfile=module_zipfile)
+        result = get_migrated_params(step, module_zipfile=module_zipfile)
     except ModuleError:
         # LoadedModule logged this error; no need to log it again.
         return param_schema.coerce(None)
@@ -61,7 +58,7 @@ def _get_migrated_params(
 
 
 def _build_execute_step(
-    step: WfModule, *, module_zipfiles: Dict[str, ModuleZipfile]
+    step: Step, *, module_zipfiles: Dict[str, ModuleZipfile]
 ) -> ExecuteStep:
     try:
         module_zipfile = module_zipfiles[step.module_id_name]
@@ -72,7 +69,7 @@ def _build_execute_step(
         step,
         module_zipfile,
         # We need to invoke the kernel and migrate _all_ modules'
-        # params (WfModule.get_params), because we can only check
+        # params (Step.get_params), because we can only check
         # for tab cycles after migrating (and before calling any
         # render()).
         _get_migrated_params(step, module_zipfile=module_zipfile),
@@ -81,8 +78,7 @@ def _build_execute_step(
 
 @database_sync_to_async
 def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
-    """
-    Query `workflow` for each tab's `TabFlow` (ordered by tab position).
+    """Query `workflow` for each tab's `TabFlow` (ordered by tab position).
 
     Raise `ModuleError` or `ValueError` if migrate_params() fails. Failed
     migration means the whole execute can't happen.
@@ -97,7 +93,7 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
         for tab_model in workflow.live_tabs.all():
             steps = [
                 _build_execute_step(step, module_zipfiles=module_zipfiles)
-                for step in tab_model.live_wf_modules.all()
+                for step in tab_model.live_steps.all()
             ]
             ret.append(TabFlow(Tab(tab_model.slug, tab_model.name), steps))
     return ret
@@ -106,8 +102,7 @@ def _load_tab_flows(workflow: Workflow, delta_id: int) -> List[TabFlow]:
 def partition_ready_and_dependent(
     flows: List[TabFlow],
 ) -> Tuple[List[TabFlow], List[TabFlow]]:
-    """
-    Find `(ready_flows, dependent_flows)` from `flows`.
+    """Find `(ready_flows, dependent_flows)` from `flows`.
 
     "Ready" TabFlows are TabFlows that don't depend on not-yet-rendered Tabs.
 
@@ -132,13 +127,12 @@ def partition_ready_and_dependent(
 
 
 async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
-    """
-    Ensure all `workflow.tabs[*].live_wf_modules` cache fresh render results.
+    """Ensure all `workflow.tabs[*].live_steps` cache fresh render results.
 
     Raise UnneededExecution if the inputs become stale (at which point we don't
     care about results any more).
 
-    WEBSOCKET NOTES: each wf_module is executed in turn. After each execution,
+    WEBSOCKET NOTES: each step is executed in turn. After each execution,
     we notify clients of its new columns and status.
     """
     # raises UnneededExecution
@@ -146,7 +140,7 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
 
     # tab_shapes: keep track of outputs of each tab. (Outputs are used as
     # inputs into other tabs.) Before render begins, all outputs are `None`.
-    # We'll execute tabs dependencies-first; if a WfModule depends on a
+    # We'll execute tabs dependencies-first; if a Step depends on a
     # `tab_shape` we haven't rendered yet, that's because it _couldn't_ be
     # rendered first -- prompting a `TabCycleError`.
     #

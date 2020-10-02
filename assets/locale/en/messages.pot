@@ -410,13 +410,13 @@ msgid "js.Workflow.suggestion.signInToSaveChanges"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/WorkflowEditor/AddData/Modal.js:26
+#: assets/js/WorkflowEditor/AddData/Modal.js:27
 msgid "js.WorkflowEditor.AddData.Modal.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: CHOOSE A DATA SOURCE
-#: assets/js/WorkflowEditor/AddData/Modal.js:21
+#: assets/js/WorkflowEditor/AddData/Modal.js:22
 msgid "js.WorkflowEditor.AddData.Modal.header.title"
 msgstr ""
 
@@ -499,13 +499,8 @@ msgstr ""
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr ""
 
-#. default-message: This Tab has no Steps.
-#: assets/js/WorkflowEditor/ModuleStack.js:138
-msgid "js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack"
-msgstr ""
-
 #. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:104
+#: assets/js/WorkflowEditor/OutputPane.js:103
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
@@ -518,6 +513,11 @@ msgstr ""
 #. default-message: Report
 #: assets/js/WorkflowEditor/PaneSelect.js:15
 msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
+msgstr ""
+
+#. default-message: This Tab has no Steps.
+#: assets/js/WorkflowEditor/StepList.js:138
+msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
 msgstr ""
 
 #. default-message: Create tab
@@ -549,59 +549,59 @@ msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr ""
 
 #. default-message: Learn how to replace this step
-#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
-msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
+#: assets/js/WorkflowEditor/step/DeprecationNotice.js:12
+msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:355
-msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
+#: assets/js/WorkflowEditor/step/Step.js:355
+msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
 #. When clicked, this opens a menu with more actions.
 #. default-message: more
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
-msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
+#: assets/js/WorkflowEditor/step/StepContextMenu.js:17
+msgid "js.WorkflowEditor.step.StepContextMenu.more.hoverText"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
-msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
+#: assets/js/WorkflowEditor/step/Step.js:240
+msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
-msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
+#: assets/js/WorkflowEditor/step/Step.js:240
+msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
-msgid "js.WorkflowEditor.wfmodule.alert.disabled"
+#: assets/js/WorkflowEditor/step/Step.js:372
+msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
-msgid "js.WorkflowEditor.wfmodule.alert.enabled"
+#: assets/js/WorkflowEditor/step/Step.js:372
+msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
-msgid "js.WorkflowEditor.wfmodule.help.hoverText"
+#: assets/js/WorkflowEditor/step/Step.js:384
+msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:394
-msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
+#: assets/js/WorkflowEditor/step/Step.js:394
+msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
-msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
+#: assets/js/WorkflowEditor/step/StepContextMenu.js:22
+msgid "js.WorkflowEditor.step.stepContextMenu.delete"
 msgstr ""
 
 #. default-message: Export data
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
-msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
+#: assets/js/WorkflowEditor/step/StepContextMenu.js:21
+msgid "js.WorkflowEditor.step.stepContextMenu.exportData"
 msgstr ""
 
 #. default-message: Training
@@ -1169,12 +1169,12 @@ msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
 msgstr ""
 
 #. default-message: by month
-#: assets/js/params/Custom/Groups/DateGranularity.js:43
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
 msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
 msgstr ""
 
 #. default-message: by quarter
-#: assets/js/params/Custom/Groups/DateGranularity.js:44
+#: assets/js/params/Custom/Groups/DateGranularity.js:45
 msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
 msgstr ""
 
@@ -1183,8 +1183,18 @@ msgstr ""
 msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
 msgstr ""
 
+#. default-message: by week
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
+msgid "js.params.Custom.Groups.DateGranularity.byWeek.option"
+msgstr ""
+
+#. default-message: Weeks begin Monday at midnight UTC.
+#: assets/js/params/Custom/Groups/DateGranularity.js:49
+msgid "js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday"
+msgstr ""
+
 #. default-message: by year
-#: assets/js/params/Custom/Groups/DateGranularity.js:45
+#: assets/js/params/Custom/Groups/DateGranularity.js:46
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr ""
 
@@ -2291,12 +2301,12 @@ msgid "py.forms.signup.lastName.placeholder"
 msgstr ""
 
 #. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
-#: fetcher/fetch.py:185
+#: fetcher/fetch.py:177
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 
 #. default-message: Cannot fetch: module was deleted
-#: fetcher/fetch.py:281
+#: fetcher/fetch.py:271
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr ""
 
@@ -2306,23 +2316,43 @@ msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr ""
 
 #. default-message: Token server responded with {status_code}: {error} ({description})
-#: fetcher/secrets.py:177
+#: fetcher/secrets.py:173
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 
 #. default-message: {service_id} responded with HTTP {status_code} {reason}: {description}
-#: fetcher/secrets.py:184
+#: fetcher/secrets.py:180
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr ""
 
 #. default-message: Timeout during OAuth2 token refresh
-#: fetcher/secrets.py:201
+#: fetcher/secrets.py:197
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr ""
 
 #. default-message: HTTP error during OAuth2 token refresh: {error}
-#: fetcher/secrets.py:211
+#: fetcher/secrets.py:207
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
+msgstr ""
+
+#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
+#: renderer/execute/step.py:137
+msgid "py.renderer.execute.step.user_visible_bug_during_render"
+msgstr ""
+
+#. default-message: Please delete this step: an administrator uninstalled its code.
+#: renderer/execute/step.py:364
+msgid "py.renderer.execute.step.noModule"
+msgstr ""
+
+#. default-message: The chosen tab depends on this one. Please choose another tab.
+#: renderer/execute/step.py:391
+msgid "py.renderer.execute.step.TabCycleError"
+msgstr ""
+
+#. default-message: The chosen tab has no output. Please select another one.
+#: renderer/execute/step.py:402
+msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr ""
 
 #. default-message: Convert to Text
@@ -2354,26 +2384,6 @@ msgstr ""
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}
 #: renderer/execute/types.py:157
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
-msgstr ""
-
-#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
-#: renderer/execute/wf_module.py:141
-msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
-msgstr ""
-
-#. default-message: Please delete this step: an administrator uninstalled its code.
-#: renderer/execute/wf_module.py:372
-msgid "py.renderer.execute.wf_module.noModule"
-msgstr ""
-
-#. default-message: The chosen tab depends on this one. Please choose another tab.
-#: renderer/execute/wf_module.py:399
-msgid "py.renderer.execute.wf_module.TabCycleError"
-msgstr ""
-
-#. default-message: The chosen tab has no output. Please select another one.
-#: renderer/execute/wf_module.py:410
-msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
 msgstr ""
 
 #. default-message: 403 Forbidden

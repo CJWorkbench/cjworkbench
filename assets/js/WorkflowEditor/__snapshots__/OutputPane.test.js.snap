@@ -8,8 +8,8 @@ exports[`OutputPane matches snapshot 1`] = `
     deltaId={1}
     isPublic={false}
     key="iframe"
+    stepId={987}
     visible={false}
-    wfModuleId={987}
     workflowId={123}
   />
   <DelayedTableSwitcher
@@ -18,7 +18,7 @@ exports[`OutputPane matches snapshot 1`] = `
     key="table"
     loadRows={[MockFunction]}
     status="ok"
-    wfModuleId={987}
+    stepId={987}
   />
 </div>
 `;
@@ -31,8 +31,8 @@ exports[`OutputPane renders when no module id 1`] = `
     deltaId={null}
     isPublic={false}
     key="iframe"
+    stepId={null}
     visible={false}
-    wfModuleId={null}
     workflowId={123}
   />
   <DelayedTableSwitcher
@@ -43,7 +43,7 @@ exports[`OutputPane renders when no module id 1`] = `
     loadRows={[MockFunction]}
     nRows={null}
     status={null}
-    wfModuleId={null}
+    stepId={null}
   />
 </div>
 `;

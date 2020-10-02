@@ -54,7 +54,7 @@ describe('DataGrid', () => {
         <DataGrid
           loadRows={defaultLoadRows}
           isReadOnly={false}
-          wfModuleId={1}
+          stepId={1}
           deltaId={2}
           columns={testColumns}
           nRows={nRows}

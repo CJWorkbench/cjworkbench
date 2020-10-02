@@ -111,7 +111,7 @@ export class Workflow extends React.PureComponent {
   }
 }
 
-// Handles addModule (and any other actions that change top level workflow state)
+// Handles addStep (and any other actions that change top level workflow state)
 const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,

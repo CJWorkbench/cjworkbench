@@ -9,7 +9,7 @@
 </section><!-- Section 1 --><script id="initialWorkflow">
 tabs:
 - name: Μισθοί
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -17,7 +17,7 @@ tabs:
     collapsed: true
     note: "Source: National Center for Education Statistics"
 - name: Δεδομένα ΔΤΚ
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -38,26 +38,26 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'rowstoheader' &&
-                        workflow.tabs[0].wfModules[1].params.rows === '1'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'rowstoheader' &&
+                        workflow.tabs[0].steps[1].params.rows === '1'"
       >Στην καρτέλα <Kbd>Μισθοί</kbd> , διαλέξτε, με κλικ στον αριθμό σειράς, τη σειρά 1 με τις πραγματικές τιμές κεφαλίδας. Στη συνέχεια διαλέξτε <kbd>Μετακίνηση σειρών στην κεφαλίδα του πίνακα</kbd> στο μενού ενεργειών της κεφαλίδας του πίνακα, όπου λέει &quot;Επιλέχτηκε 1 στήλη&quot;.<p class='instruction-detail'>Επειδή περιείχε δεδομένα τόσο με τη μορφή κειμένου όσο και αριθμητικά, η στήλη <kbd>Average salary (Μέσος μισθός)</kbd> έχει φορτωθεί σαν κείμενο. Θα πρέπει να τη μετατρέψουμε σε αριθμούς για να τους χρησιμοποιήσουμε σε υπολογισμούς.</p>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'converttexttonumber'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'converttexttonumber'"
       >Διαλέξτε την επιλογή <kbd>Μετατροπή σε αριθμούς</kbd> στο μενού της στήλης <kbd>Average Salary</kbd> . <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span><p class='instruction-detail'>Τα δεδομένα ΔΤΚ στην άλλη καρτέλα έχουν παρόμοια προβλήματα.</p>
     </li>
     <li
-      data-test="return workflow.tabs[1].wfModuleSlugs[1] === 'rowstoheader' &&
-                        workflow.tabs[1].wfModules[1].params.rows === '11'"
+      data-test="return workflow.tabs[1].stepModuleIds[1] === 'rowstoheader' &&
+                        workflow.tabs[1].steps[1].params.rows === '11'"
       >Στην καρτέλα <Kbd>Δεδομένα ΔΤΚ</kbd> , διαλέξτε τη σειρά 11, η οποία περιέχει τις ονομασίες των στηλών, και μετακινήστε κι εκείνη τη σειρά στην κεφαλίδα.</li>
     <li
       data-test="
-        if (workflow.tabs[1].wfModuleSlugs[2] !== 'selectcolumns') return false
-        const colnames = workflow.tabs[1].wfModules[2].params.colnames
+        if (workflow.tabs[1].stepModuleIds[2] !== 'selectcolumns') return false
+        const colnames = workflow.tabs[1].steps[2].params.colnames
         return colnames.sort().join('|') === 'Annual|Year'"
       >Ενώ βρίσκεστε ακόμα σε αυτή την καρτέλα, προσθέστε το <kbd>Επιλογή στηλών</kbd> και κρατήστε μόνο τις στήλες <kbd>Year (Έτος)</kbd> και <kbd>Annual (Ετήσιος)</kbd></li>
     <li
-      data-test="return workflow.tabs[1].wfModuleSlugs[3] === 'converttexttonumber'"
+      data-test="return workflow.tabs[1].stepModuleIds[3] === 'converttexttonumber'"
       >Διαλέξτε την επιλογή <kbd>Μετατροπή σε αριθμούς</kbd> από το μενού της στήλης <kbd>Annual</kbd> . <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span></li>
   </ol>
 </section>
@@ -82,17 +82,17 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'jointab'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'jointab'"
       >Επιστρέψτε στην καρτέλα <kbd>Μισθοί</kbd> και προσθέστε ένα βήμα <kbd>Ένωση καρτελών</kbd> .</li>
     <li
       data-test="
-        const params = workflow.tabs[0].wfModules[3].params
+        const params = workflow.tabs[0].steps[3].params
         return (
           params.right_tab === 'tab-2'
           && params.join_columns.on.join('|') === 'Year'
         )
       ">Επιλέξτε την καρτέλα <kbd>Δεδομένα ΔΤΚ</kbd> για την ένωση, και τη στήλη <kbd>Year</kbd> σαν κοινή στήλη στην ένωση.<li
-      data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right.includes('Annual')"
+      data-test="return workflow.tabs[0].steps[3].params.join_columns.right.includes('Annual')"
       >Το τελικό βήμα είναι να διαλέξετε ποιες στήλες να μεταφέρετε από την καρτέλα ΔΤΚ. Επιλέξτε τη στήλη <kbd>Annual</kbd><p class=instruction-detail>Τώρα έχουμε έναν πίνακα που περιέχει όλες τις πληροφορίες που χρειαζόμαστε για την ανάλυσή μας</p>
     </li>
   </ol>
@@ -107,8 +107,8 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula') return false
-        const params = workflow.tabs[0].wfModules[4].params
+        if (workflow.tabs[0].stepModuleIds[4] !== 'formula') return false
+        const params = workflow.tabs[0].steps[4].params
         if (params.syntax !== 'excel' || !params.all_rows) return false
         const f = params.formula_excel.replace(/ /g, '')
         return (
@@ -119,7 +119,7 @@ tabs:
       ">Προσθέστε ένα βήμα Τύπος και πληκτρολογήστε τον τύπο:<div class="copy-txt">=(B1/C1)*240.007</div>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[4].params.out_column.toLowerCase() === 'adjusted salaries'"
+      data-test="return workflow.tabs[0].steps[4].params.out_column.toLowerCase() === 'adjusted salaries'"
       >Ονομάστε τη νέα στήλη <kbd>Adjusted salaries</kbd> (Προσαρμοσμένοι μισθοί)<p class="instruction-detail">Οι τιμές δολαρίων που έχουν προσαρμοστεί τιμαριθμικά ονομάζονται και &quot;πραγματικά&quot; δολάρια, ενώ τα μη προσαρμοσμένα ποσά αποκαλούνται και &quot;ονομαστικά&quot; δολάρια.</p>
       <p class="instruction-detail">Μπορούμε να δούμε ότι οι μισθοί των εκπαιδευτικών στα δημόσια σχολεία πρωτοβάθμιας και δευτεροβάθμιας εκπαίδευσης στις ΗΠΑ μειώθηκαν από το 2009 έως το 2016 σε πραγματικά δολάρια, γεγονός που δεν φαίνεται στα μη προσαρμοσμένα στοιχεία.</p>
     </li>

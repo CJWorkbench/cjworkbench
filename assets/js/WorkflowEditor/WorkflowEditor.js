@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ModuleStack from './ModuleStack'
+import StepList from './StepList'
 import OutputPane from './OutputPane'
 import PaneSelect from './PaneSelect'
 import * as propTypes from './propTypes'
@@ -31,7 +31,7 @@ const WorkflowEditor = React.memo(function WorkflowEditor ({ api, selectedPane, 
 
       {selectedPane.pane === 'tab' ? (
         <div className='workflow-columns' ref={paneRef}>
-          <ModuleStack api={api} paneRef={paneRef} />
+          <StepList api={api} paneRef={paneRef} />
           <OutputPane />
         </div>
       ) : (

@@ -31,7 +31,7 @@ exports[`DataVersionSelect should match snapshot 1`] = `
   }
   isReadOnly={false}
   nVersions={7}
-  wfModuleId={123}
+  stepId={123}
 >
   <div
     className="version-item"

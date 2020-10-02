@@ -19,13 +19,13 @@ class TestReport(LoggedInIntegrationTest):
         self.add_data_step("Paste data")
         b = self.browser
         b.fill_in("csv", "Category,Number\nA,2,\nB,3", wait=True)
-        self.submit_wf_module()
+        self.submit_step()
 
         self.import_module("columnchart")
-        self.add_wf_module("Column Chart")
+        self.add_step("Column Chart")
         self.select_column("Column Chart", "x_column", "Category")
         self.select_column("Column Chart", "y_columns", "Number")
-        self.submit_wf_module()
+        self.submit_step()
 
     def test_report_appears(self):
         self._create_workflow(title="Example Workflow")

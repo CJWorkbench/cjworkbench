@@ -4,7 +4,7 @@ import { ModulePropType } from '../ModuleSearch/PropTypes'
 import Module from './Module'
 import { Trans } from '@lingui/macro'
 
-export default function Modules ({ modules, addModule, search }) {
+export default function Modules ({ modules, addStep, search }) {
   const searchKey = search.trim().toLowerCase()
   const foundModules = modules
     .filter(m => `${m.id_name}\n${m.name}\n${m.description}`.toLowerCase().includes(searchKey))
@@ -18,13 +18,13 @@ export default function Modules ({ modules, addModule, search }) {
   } else {
     return (
       <div className='modules'>
-        {foundModules.map(m => <Module key={m.idName} onClick={addModule} {...m} />)}
+        {foundModules.map(m => <Module key={m.idName} onClick={addStep} {...m} />)}
       </div>
     )
   }
 }
 Modules.propTypes = {
-  addModule: PropTypes.func.isRequired, // func(idName) => undefined
+  addStep: PropTypes.func.isRequired, // func(idName) => undefined
   modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
   search: PropTypes.string.isRequired // filter by search -- may be empty
 }

@@ -48,7 +48,7 @@ class AutoupdateTest(DbTestCase):
         workflow = Workflow.create_and_init(
             owner=user, name="W1", last_viewed_at=IsoDate1
         )
-        step1 = workflow.tabs.first().wf_modules.create(
+        step1 = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -59,7 +59,7 @@ class AutoupdateTest(DbTestCase):
         workflow2 = Workflow.create_and_init(
             owner=user, name="W2", last_viewed_at=IsoDate2
         )
-        step2 = workflow2.tabs.first().wf_modules.create(
+        step2 = workflow2.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -83,7 +83,7 @@ class AutoupdateTest(DbTestCase):
                             "lastViewedAt": IsoDate1,
                         },
                         "tab": {"slug": "tab-1", "name": "Tab 1"},
-                        "wfModule": {"id": step1.id, "fetchInterval": 600, "order": 0},
+                        "step": {"id": step1.id, "fetchInterval": 600, "order": 0},
                     },
                     {
                         "workflow": {
@@ -93,7 +93,7 @@ class AutoupdateTest(DbTestCase):
                             "lastViewedAt": IsoDate2,
                         },
                         "tab": {"slug": "tab-1", "name": "Tab 1"},
-                        "wfModule": {"id": step2.id, "fetchInterval": 1200, "order": 0},
+                        "step": {"id": step2.id, "fetchInterval": 1200, "order": 0},
                     },
                 ],
             },
@@ -102,7 +102,7 @@ class AutoupdateTest(DbTestCase):
     def test_list_autofetches_ignore_non_auto_update(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, name="W1")
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -112,10 +112,10 @@ class AutoupdateTest(DbTestCase):
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(result["autofetches"], [])
 
-    def test_list_autofetches_ignore_deleted_wf_module(self):
+    def test_list_autofetches_ignore_deleted_step(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, name="W1")
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -131,7 +131,7 @@ class AutoupdateTest(DbTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, name="W1")
         tab = workflow.tabs.create(position=1, slug="tab-deleted", is_deleted=True)
-        tab.wf_modules.create(
+        tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -148,7 +148,7 @@ class AutoupdateTest(DbTestCase):
 
         user2 = User.objects.create(username="b", email="b@example.org")
         workflow2 = Workflow.create_and_init(owner=user2)
-        workflow2.tabs.first().wf_modules.create(
+        workflow2.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -164,7 +164,7 @@ class AutoupdateTest(DbTestCase):
         user = AnonymousUser()
         session = Session(session_key="foo")
         workflow = Workflow.create_and_init(anonymous_owner_session_key="foo")
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -187,7 +187,7 @@ class AutoupdateTest(DbTestCase):
         session = Session(session_key="foo")
         Workflow.create_and_init(anonymous_owner_session_key="foo")
         workflow2 = Workflow.create_and_init(anonymous_owner_session_key="bar")
-        workflow2.tabs.first().wf_modules.create(
+        workflow2.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -202,7 +202,7 @@ class AutoupdateTest(DbTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         session = Session(session_key="foo")
         workflow = Workflow.create_and_init(owner_id=user.id)
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -211,7 +211,7 @@ class AutoupdateTest(DbTestCase):
             update_interval=1200,
         )
         workflow2 = Workflow.create_and_init(anonymous_owner_session_key="foo")
-        workflow2.tabs.first().wf_modules.create(
+        workflow2.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",

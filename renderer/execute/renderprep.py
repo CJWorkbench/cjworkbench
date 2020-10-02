@@ -64,7 +64,7 @@ class _TabData:
 class RenderContext:
     def __init__(
         self,
-        wf_module_id: int,
+        step_id: int,
         input_table: ArrowTable,
         # assume tab_results keys are ordered the way the user ordered the tabs.
         tab_results: Dict[Tab, Optional[RenderResult]],
@@ -80,7 +80,7 @@ class RenderContext:
         # get_param_values(), and get_param_values() also takes `params`. Ugh.
         params: Dict[str, Any],
     ):
-        self.wf_module_id = wf_module_id
+        self.step_id = step_id
         self.input_table = input_table
         self.tabs: Dict[str, _TabData] = {
             k.slug: _TabData(k, v) for k, v in tab_results.items()
@@ -115,8 +115,7 @@ class RenderContext:
 def get_param_values(
     schema: ParamDType.Dict, params: Dict[str, Any], context: RenderContext
 ) -> Params:
-    """
-    Convert `params` to a dict we'll pass to a module `render()` function.
+    """Convert `params` to a dict we'll pass to a module `render()` function.
 
     Concretely:
 
@@ -145,8 +144,7 @@ def get_param_values(
 # written in just one place.
 @singledispatch
 def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
-    """
-    Ensure `value` fits the Params dict `render()` expects.
+    """Ensure `value` fits the Params dict `render()` expects.
 
     The most basic implementation is to just return `value`: it looks a lot
     like the dict we pass `render()`. But we have special-case implementations
@@ -175,8 +173,7 @@ def _(
 def _(
     dtype: ParamDType.File, value: Optional[str], context: RenderContext
 ) -> Optional[Path]:
-    """
-    Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
+    """Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
 
     The return value:
 
@@ -189,9 +186,7 @@ def _(
     if value is None:
         return None
     try:
-        uploaded_file = UploadedFile.objects.get(
-            uuid=value, wf_module_id=context.wf_module_id
-        )
+        uploaded_file = UploadedFile.objects.get(uuid=value, step_id=context.step_id)
     except UploadedFile.DoesNotExist:
         return None
 

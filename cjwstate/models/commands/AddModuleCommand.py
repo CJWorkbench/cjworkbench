@@ -1,40 +1,40 @@
 from django.db import models
 from django.db.models import F
-from cjwstate.models import Delta, WfModule
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from .util import ChangesWfModuleOutputs
+from ..delta import Delta
+from ..step import Step
+from .util import ChangesStepOutputs
 
 
-class AddModuleCommand(ChangesWfModuleOutputs, Delta):
-    """
-    Create a `WfModule` and insert it into the Workflow.
+class AddModuleCommand(ChangesStepOutputs, Delta):
+    """Create a `Step` and insert it into the Workflow.
 
     Our "backwards()" logic is to "soft-delete": set
-    `wfmodule.is_deleted=True`. Most facets of Workbench's API should pretend a
-    soft-deleted WfModules does not exist.
+    `step.is_deleted=True`. Most facets of Workbench's API should pretend a
+    soft-deleted Steps does not exist.
     """
 
     # Foreign keys can get a bit confusing. Here we go:
     #
-    # * AddModuleCommand can only exist if its WfModule exists.
-    # * WfModule depends on Workflow.
+    # * AddModuleCommand can only exist if its Step exists.
+    # * Step depends on Workflow.
     # * AddModuleCommand depends on Workflow.
     #
     # So it's safe to delete Commands from a Workflow (as long as the workflow
-    # has at least one delta). But it's not safe to delete WfModules from a
+    # has at least one delta). But it's not safe to delete Steps from a
     # workflow -- unless one clears the Deltas first.
     #
     # We set on_delete=PROTECT because if we set on_delete=CASCADE we'd be
-    # ambiguous: should one delete the WfModule first, or the Delta? The answer
+    # ambiguous: should one delete the Step first, or the Delta? The answer
     # is: you _must_ delete the Delta first; after deleting the Delta, you
-    # _may_ delete the WfModule.
+    # _may_ delete the Step.
 
     class Meta:
         app_label = "server"
         db_table = "server_addmodulecommand"
 
-    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
-    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+    step = models.ForeignKey(Step, on_delete=models.PROTECT)
+    step_delta_ids = ChangesStepOutputs.step_delta_ids
 
     # override
     def load_clientside_update(self):
@@ -42,75 +42,67 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
             super()
             .load_clientside_update()
             .update_tab(
-                self.wf_module.tab_slug,
-                step_ids=list(
-                    self.wf_module.tab.live_wf_modules.values_list("id", flat=True)
-                ),
+                self.step.tab_slug,
+                step_ids=list(self.step.tab.live_steps.values_list("id", flat=True)),
             )
         )
-        if self.wf_module.is_deleted:
-            data = data.clear_step(self.wf_module.id)
+        if self.step.is_deleted:
+            data = data.clear_step(self.step.id)
         else:
-            data = data.replace_step(self.wf_module.id, self.wf_module.to_clientside())
+            data = data.replace_step(self.step.id, self.step.to_clientside())
         return data
 
     @classmethod
-    def affected_wf_modules_in_tab(cls, wf_module) -> models.Q:
-        # We don't need to change self.wf_module's delta_id: just the others.
+    def affected_steps_in_tab(cls, step) -> models.Q:
+        # We don't need to change self.step's delta_id: just the others.
         #
-        # At the time this method is called, `wf_module` is "deleted" (well,
+        # At the time this method is called, `step` is "deleted" (well,
         # not yet created).
-        return models.Q(
-            tab_id=wf_module.tab_id, order__gte=wf_module.order, is_deleted=False
-        )
+        return models.Q(tab_id=step.tab_id, order__gte=step.order, is_deleted=False)
 
     def forward(self):
-        if not self.wf_module.last_relevant_delta_id:
-            # We couldn't set self.wf_module.last_relevant_delta_id during
+        if not self.step.last_relevant_delta_id:
+            # We couldn't set self.step.last_relevant_delta_id during
             # creation because `self` (the delta in question) wasn't created.
             # Set it now, before .forward_affected_delta_ids(). After this
             # first write, this Delta should never modify it.
-            self.wf_module.last_relevant_delta_id = self.id
-            self.wf_module.save(update_fields=["last_relevant_delta_id"])
+            self.step.last_relevant_delta_id = self.id
+            self.step.save(update_fields=["last_relevant_delta_id"])
 
         # Move subsequent modules over to make way for this one.
-        tab = self.wf_module.tab
-        tab.live_wf_modules.filter(order__gte=self.wf_module.order).update(
-            order=F("order") + 1
-        )
+        tab = self.step.tab
+        tab.live_steps.filter(order__gte=self.step.order).update(order=F("order") + 1)
 
-        self.wf_module.is_deleted = False
-        self.wf_module.save(update_fields=["is_deleted"])
+        self.step.is_deleted = False
+        self.step.save(update_fields=["is_deleted"])
 
-        tab.selected_wf_module_position = self.wf_module.order
-        tab.save(update_fields=["selected_wf_module_position"])
+        tab.selected_step_position = self.step.order
+        tab.save(update_fields=["selected_step_position"])
 
         self.forward_affected_delta_ids()
 
     def backward(self):
-        self.wf_module.is_deleted = True
-        self.wf_module.save(update_fields=["is_deleted"])
+        self.step.is_deleted = True
+        self.step.save(update_fields=["is_deleted"])
 
         # Move subsequent modules back to fill the gap created by deleting
-        tab = self.wf_module.tab
-        tab.live_wf_modules.filter(order__gt=self.wf_module.order).update(
-            order=F("order") - 1
-        )
+        tab = self.step.tab
+        tab.live_steps.filter(order__gt=self.step.order).update(order=F("order") - 1)
 
-        # Prevent tab.selected_wf_module_position from becoming invalid
+        # Prevent tab.selected_step_position from becoming invalid
         #
         # We can't make this exactly what the user has selected -- that's hard,
         # and it isn't worth the effort. But we _can_ make sure it's valid.
-        n_modules = tab.live_wf_modules.count()
+        n_modules = tab.live_steps.count()
         if (
-            tab.selected_wf_module_position is None
-            or tab.selected_wf_module_position >= n_modules
+            tab.selected_step_position is None
+            or tab.selected_step_position >= n_modules
         ):
             if n_modules == 0:
-                tab.selected_wf_module_position = None
+                tab.selected_step_position = None
             else:
-                tab.selected_wf_module_position = n_modules - 1
-            tab.save(update_fields=["selected_wf_module_position"])
+                tab.selected_step_position = n_modules - 1
+            tab.save(update_fields=["selected_step_position"])
 
         self.backward_affected_delta_ids()
 
@@ -119,12 +111,12 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         """
         Force a render.
 
-        Adding a module to an empty workflow, self._changed_wf_module_versions
+        Adding a module to an empty workflow, self._changed_step_versions
         will be None -- and yet we need a render!
 
         TODO brainstorm other solutions to the original race -- that we can't
         know this delta's ID until after we save it to the database, yet we
-        need to save its own ID in self._changed_wf_module_versions.
+        need to save its own ID in self._changed_step_versions.
         """
         return True
 
@@ -142,7 +134,7 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         Raise ValueError if `param_values` do not match the module's spec.
         """
         # ensure slug is unique, or raise ValueError
-        if WfModule.objects.filter(tab__workflow_id=workflow.id, slug=slug).count() > 0:
+        if Step.objects.filter(tab__workflow_id=workflow.id, slug=slug).count() > 0:
             raise ValueError("slug is not unique. Please pass a unique slug.")
 
         # raise KeyError, RuntimeError
@@ -156,8 +148,8 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
 
         module_spec.get_param_schema().validate(params)  # raises ValueError
 
-        # wf_module starts off "deleted" and gets un-deleted in forward().
-        wf_module = tab.wf_modules.create(
+        # step starts off "deleted" and gets un-deleted in forward().
+        step = tab.steps.create(
             module_id_name=module_id_name,
             order=position,
             slug=slug,
@@ -171,10 +163,10 @@ class AddModuleCommand(ChangesWfModuleOutputs, Delta):
         return {
             **kwargs,
             "workflow": workflow,
-            "wf_module": wf_module,
-            "wf_module_delta_ids": cls.affected_wf_module_delta_ids(wf_module),
+            "step": step,
+            "step_delta_ids": cls.affected_step_delta_ids(step),
         }
 
     @property
     def command_description(self):
-        return f"Add WfModule {self.wf_module}"
+        return f"Add Step {self.step}"

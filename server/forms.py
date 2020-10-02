@@ -6,4 +6,4 @@ from cjwstate.models.UploadedFile import UploadedFile
 class UploadedFileForm(ModelForm):
     class Meta:
         model = UploadedFile
-        fields = ["wf_module", "bucket", "key", "name", "uuid"]
+        fields = ["step", "bucket", "key", "name", "uuid"]

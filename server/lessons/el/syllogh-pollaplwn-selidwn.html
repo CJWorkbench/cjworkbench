@@ -18,15 +18,15 @@
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"urlscraper"}]'
       data-test="
-        const wfm = workflow.tabs[0].wfModules[0]
+        const step = workflow.tabs[0].steps[0]
         return (
-          !!wfm
-          && wfm.moduleSlug === 'urlscraper'
-          && wfm.params.urlsource === 'paged'
-          && wfm.params.pagedurl === 'https://leg.colorado.gov/audit-search?page='
-          && wfm.params.addpagenumbers
-          && wfm.params.startpage === 0
-          && wfm.params.endpage === 9
+          !!step
+          && step.moduleSlug === 'urlscraper'
+          && step.params.urlsource === 'paged'
+          && step.params.pagedurl === 'https://leg.colorado.gov/audit-search?page='
+          && step.params.addpagenumbers
+          && step.params.startpage === 0
+          && step.params.endpage === 9
         )
       "
     >Προσθέστε τον <kbd>Συλλέκτη HTML</kbd> και επικολλήστε τη διεύθυνση URL χωρίς τον αριθμό σελίδας στο πεδίο  <kbd>URL</kbd> . Τσεκάρετε το κουτάκι με την ένδειξη <kbd>Σειρά αριθμημένων σελίδων</kbd> και συλλέξτε τις σελίδες από <kbd>0</kbd> έως <kbd>9</kbd> (Το όριο είναι 10 σελίδες.) Πατήστε  <kbd>Συλλογή</kbd>.<figure><img alt="Εξέταση στοιχείου" src="./url-numbers.svg"></figure>

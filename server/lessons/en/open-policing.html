@@ -7,7 +7,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -37,11 +37,11 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"selectcolumns"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'selectcolumns'"
       >Add the step ‘Select columns’ using the search</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
-      data-test="const colnames = workflow.tabs[0].wfModules[1].params.colnames.sort().join('|'); return colnames === 'date|subject_race'"
+      data-highlight='[{"type":"Step","moduleIdName":"dropna"}]'
+      data-test="const colnames = workflow.tabs[0].steps[1].params.colnames.sort().join('|'); return colnames === 'date|subject_race'"
       >Select columns <kbd>date</kbd> and <kbd>subject_race</kbd>.
     </li>
   </ol>
@@ -55,23 +55,23 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type": "WfModule","moduleIdName": "convert-date"},{"type":"Module","index":2,"id_name":"convert-date"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[2] || {};
-      return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'date'"
+      data-highlight='[{"type": "Step","moduleIdName": "convert-date"},{"type":"Module","index":2,"id_name":"convert-date"}]'
+      data-test="const step = workflow.tabs[0].steps[2] || {};
+      return step.moduleSlug === 'convert-date' && step.params.colnames.join('|') === 'date'"
       > In the table header, click open the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span> of the column <kbd>date</kbd> and select <kbd>Convert to timestamp</kbd>.
     </li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "sort"},{"type":"Module","index":3,"id_name":"sort"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'sort'
+      data-highlight='[{"type": "Step", "moduleIdName": "sort"},{"type":"Module","index":3,"id_name":"sort"}]'
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'sort'
       ">Let's see the earliest date. Use the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
     </span> of the column <kbd>date</kbd> to select <kbd>Sort ascending</kbd>. The earliest date should be <kbd>2010-05-16</kbd>.
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "sort"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}
-        const params = wfModule.params || {}
+      data-highlight='[{"type": "Step", "moduleIdName": "sort"}]'
+      data-test="const step = workflow.tabs[0].steps[3] || {}
+        const params = step.params || {}
         const sort_columns = params.sort_columns || []
         const is_ascending = sort_columns[0].is_ascending || false
         return is_ascending === false"
@@ -88,21 +88,21 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":4,"id_name":"filter"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'filter'"
+      data-test="return workflow.tabs[0].stepModuleIds[4] === 'filter'"
       >Add the step ‘Filter by condition’.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "filter"}]'
+      data-highlight='[{"type": "Step", "moduleIdName": "filter"}]'
       data-test="
-        const p = workflow.tabs[0].wfModules[4].params;
+        const p = workflow.tabs[0].steps[4].params;
         if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
         const sf1 = p.filters.filters[0].subfilters[0];
         return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2010-05-31' && p.keep"
       >Select the column <kbd>date</kbd>, choose the condition <kbd>Date is after</kbd><br/> and enter the value <kbd>2010-05-31</kbd>.
     </li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "filter"}]'
+      data-highlight='[{"type": "Step", "moduleIdName": "filter"}]'
       data-test="
-        const p = workflow.tabs[0].wfModules[4].params
+        const p = workflow.tabs[0].steps[4].params
         if (!p.keep) return false
         const filters = p.filters.filters
 
@@ -142,17 +142,17 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":5,"id_name":"groupby"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'groupby'"
+      data-test="return workflow.tabs[0].stepModuleIds[5] === 'groupby'"
       >Add the step ‘Group’.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "groupby"}]'
-      data-test="return workflow.tabs[0].wfModules[5].params.groups.colnames.join('|') === 'date|subject_race'"
+      data-highlight='[{"type": "Step", "moduleIdName": "groupby"}]'
+      data-test="return workflow.tabs[0].steps[5].params.groups.colnames.join('|') === 'date|subject_race'"
       >Select the columns <kbd>date</kbd> and <kbd>subject_race</kbd>.
     </li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "groupby"}]'
+      data-highlight='[{"type": "Step", "moduleIdName": "groupby"}]'
       data-test="
-        const groups = workflow.tabs[0].wfModules[5].params.groups
+        const groups = workflow.tabs[0].steps[5].params.groups
         return groups.group_dates &&
         ['M'].includes(groups.date_granularities['date'])"
       >Check <kbd>Group dates</kbd> and under <kbd>Granularity of "date"</kbd> select <kbd>by month</kbd>.
@@ -168,12 +168,12 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":6,"id_name":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'reshape'"
+      data-test="return workflow.tabs[0].stepModuleIds[6] === 'reshape'"
       >Add the step <kbd>Reshape</kbd>.</li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName": "reshape"}]'
+      data-highlight='[{"type": "Step", "moduleIdName": "reshape"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[6].params
+        const params = workflow.tabs[0].steps[6].params
         return params.operation === 'longtowide' && params.key_colnames.join(',') === 'date' && params.ltw_varcolname === 'subject_race'"
       >
         Select <kbd>Long to wide</kbd>, set the <kbd>Row variable</kbd> to the column <kbd>date</kbd>
@@ -181,19 +181,19 @@ tabs:
     </li>
     <li
       data-highlight='[{"type":"Module","index":7,"id_name":"linechart"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[7] === 'linechart'"
+      data-test="return workflow.tabs[0].stepModuleIds[7] === 'linechart'"
       >Now add the step <kbd>Line Chart</kbd>.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"linechart"}]'
       data-test="
-        const wfModule = workflow.tabs[0].wfModules[7]; const p = wfModule.params;
+        const step = workflow.tabs[0].steps[7]; const p = step.params;
         return p.x_column === 'date' && p.y_columns.map(c => c.column).sort().join('|') === 'NA|asian/pacific islander|black|other|unknown|white'
         "
       >
       Select <kbd>date</kbd> for the X axis and add the rest of the columns as lines on the Y axis.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
-      data-test="const p = workflow.tabs[0].wfModules[7].params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
+      data-highlight='[{"type":"Step","moduleIdName":"linechart"}]'
+      data-test="const p = workflow.tabs[0].steps[7].params; return !!p.title && !!p.x_axis_label && !!p.y_axis_label"
       >Add a title, X-axis label and Y-axis label to the chart.</li>
   </ol>
 </section>

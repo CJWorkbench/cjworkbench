@@ -14,19 +14,19 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"scrapetable"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'scrapetable'"
+      data-test="return workflow.tabs[0].stepModuleIds[0] === 'scrapetable'"
       >Add the data source 'Scrape table'
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"scrapetable"}]'
-      data-test="const url = workflow.tabs[0].wfModules[0].params.url; return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
+      data-highlight='[{"type":"Step","moduleIdName":"scrapetable"}]'
+      data-test="const url = workflow.tabs[0].steps[0].params.url; return url === 'https://en.wikipedia.org/wiki/Global_Gender_Gap_Report' || url === 'https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)'"
       >Paste in the URL of the webpage where the table is published:
       <div class="copy-txt">https://en.wikipedia.org/wiki/Global_Gender_Gap_Report</div>
       <p class="instruction-detail">There are multiple tables displayed on the page. The one we want to scrape is <code>WEF Global Gender Gap Index rankings</code>, which is the third one from the top.</p>
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"scrapetable"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.tablenum === 3"
+      data-highlight='[{"type":"Step","moduleIdName":"scrapetable"}]'
+      data-test="return workflow.tabs[0].steps[0].params.tablenum === 3"
       >Set the table's position on the page to <code>3</code>, and click <kbd>Scrape</kbd>
       <p class="instruction-detail">Once loaded, the data is saved as a version in the scraper. It will stay accessible even if the webpage with the original table goes offline.</p>
     </li>
@@ -44,7 +44,7 @@
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'renamecolumns'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'renamecolumns'"
       >Click one column name in the header of the table to give it a legible name.
       <p>For example: Edit <code>Year[note 1] - 2006</code> into <code>2006</code>.</p>
     </li>

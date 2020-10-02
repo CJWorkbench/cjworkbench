@@ -15,7 +15,7 @@ describe('Renames', () => {
   const wrapper = (extraProps = {}) => mount(
     <Renames
       inputColumns={inputColumns}
-      wfModuleId={1}
+      stepId={1}
       onChange={jest.fn()}
       value={testEntries}
       isReadOnly={false}

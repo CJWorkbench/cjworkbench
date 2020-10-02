@@ -16,12 +16,12 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":0,"id_name":"twitter"}]'
-    data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'twitter'"
+    data-test="return workflow.tabs[0].stepModuleIds[0] === 'twitter'"
     >Add the data source 'Twitter'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","id_name":"twitter"}]'
-    data-test="const cred = workflow.tabs[0].wfModules[0].secrets.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
+    data-highlight='[{"type":"Step","id_name":"twitter"}]'
+    data-test="const cred = workflow.tabs[0].steps[0].secrets.twitter_credentials; return cred && cred.name && cred.name.indexOf('@') !== -1;"
     >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app</kbd>.
   </li>
 
@@ -33,14 +33,14 @@
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
-    data-test="const params = workflow.tabs[0].wfModules[0].params; return params.querytype === 'user_timeline' && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
+    data-highlight='[{"type":"Step","moduleIdName":"twitter"}]'
+    data-test="const params = workflow.tabs[0].steps[0].params; return params.querytype === 'user_timeline' && ['neiltyson', '@neiltyson'].indexOf(params.username) !== -1"
     >Select 'User tweets' in the first drop down, and paste in the following user name.
     <div class="copy-txt">neiltyson</div>
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
-    data-test="const param = workflow.tabs[0].wfModules[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
+    data-highlight='[{"type":"Step","moduleIdName":"twitter"}]'
+    data-test="const param = workflow.tabs[0].steps[0].params.username; return (param || '').toLowerCase() === 'neiltyson'"
     >Click 'Update' to load tweets from that account.
   <p class="instruction-detail">Because of the limits of the <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, the number of past Tweets you can collect from a specific user is capped. You should be able to load about 3,000 of them, which is a good way to start.</p>
   </li>
@@ -56,13 +56,13 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":1,"id_name":"filter"}]'
-    data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'filter'"
+    data-test="return workflow.tabs[0].stepModuleIds[1] === 'filter'"
     >Add the step 'Filter by condition'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
+    data-highlight='[{"type":"Step","moduleIdName":"filter"}]'
     data-test="
-      const filters = workflow.tabs[0].wfModules[1].params.filters.filters
+      const filters = workflow.tabs[0].steps[1].params.filters.filters
       if (filters.length !== 1 || filters[0].subfilters.length !== 1) return false
       const subfilter = filters[0].subfilters[0]
       return (
@@ -78,12 +78,12 @@
   </li>
   <li
     data-highlight='[{"type":"Module","index":2,"id_name":"groupby"}]'
-    data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'groupby'"
+    data-test="return workflow.tabs[0].stepModuleIds[2] === 'groupby'"
     >Add the step 'Group'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleIdName":"groupby"}]'
-    data-test="const params = workflow.tabs[0].wfModules[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    data-highlight='[{"type":"Step","moduleIdName":"groupby"}]'
+    data-test="const params = workflow.tabs[0].steps[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
     >Choose <kbd>created_at</kbd> as the date column. Check <kbd>Group dates</kbd> and group rows <kbd>by year</kbd>. Set the "Count" output column name to <code>Number of tweets</code>
   </li>
 </ol>
@@ -95,17 +95,17 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":3,"id_name":"linechart"}]'
-    data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'linechart'"
+    data-test="return workflow.tabs[0].stepModuleIds[3] === 'linechart'"
     >Add the step 'Line Chart'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
-    data-test="const p = workflow.tabs[0].wfModules[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
+    data-highlight='[{"type":"Step","moduleIdName":"linechart"}]'
+    data-test="const p = workflow.tabs[0].steps[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
     >Select <kbd>created_at</kbd> for the X axis and <kbd>Number of tweets</kbd> for the Y axis.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleIdName":"linechart"}]'
-    data-test="const p = workflow.tabs[0].wfModules[3].params; return !!p.title"
+    data-highlight='[{"type":"Step","moduleIdName":"linechart"}]'
+    data-test="const p = workflow.tabs[0].steps[3].params; return !!p.title"
     >Add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail">
       Next, let's make this chart update every time our user tweets contain the word we chose.
@@ -119,13 +119,13 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.updateInterval === '5h'"
+      data-highlight='[{"type":"Step","moduleIdName":"twitter"}]'
+      data-test="const step = workflow.tabs[0].steps[0]; return step.updateInterval === '5h'"
       >Back in the 'Twitter' module, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to<kbd>Auto</kbd>, set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"twitter"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.accumulate === true"
+      data-highlight='[{"type":"Step","moduleIdName":"twitter"}]'
+      data-test="return workflow.tabs[0].steps[0].params.accumulate === true"
       >Make sure the option <kbd>Accumulate tweets</kbd> is checked so that new data gets added to the existing table.
     </li>
   </ol>

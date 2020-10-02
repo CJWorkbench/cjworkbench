@@ -15,10 +15,10 @@ class DuplicateTest(LoggedInIntegrationTest):
         self.import_module("pastecsv")
         self.add_data_step("Paste data")
         b.fill_in("csv", "foo,bar,baz\n1,2,\n2,3,\n3,4,", wait=True)
-        self.submit_wf_module()
+        self.submit_step()
 
         self.import_module("nulldropper")
-        self.add_wf_module("Drop empty columns")
+        self.add_step("Drop empty columns")
 
         # Wait for _any_ output to load
         b.assert_element(".column-key", text="bar", wait=True)

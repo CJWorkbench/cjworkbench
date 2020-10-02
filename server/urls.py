@@ -67,11 +67,11 @@ urlpatterns = [
     ),
     # API
     path(
-        "api/v1/workflows/<int:workflow_id>/steps/<slug:wf_module_slug>/uploads",
+        "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/uploads",
         uploads.UploadList.as_view(),
     ),
     path(
-        "api/v1/workflows/<int:workflow_id>/steps/<slug:wf_module_slug>/uploads/<uuid:uuid>",
+        "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/uploads/<uuid:uuid>",
         uploads.Upload.as_view(),
     ),
     # Not-really-an-API API endpoints
@@ -88,22 +88,22 @@ urlpatterns = [
         acl.Entry.as_view(),
     ),
     url(r"^api/importfromgithub/?$", views.import_from_github),
-    # WfModules (Modules applied in a workflow)
+    # Steps
     # TODO: "render" and "output" are bad names. Differentiate them.
-    path("api/wfmodules/<int:wf_module_id>/render", views.wfmodule_render),
-    path("api/wfmodules/<int:wf_module_id>/output", views.wfmodule_output),
-    path("api/wfmodules/<int:wf_module_id>/embeddata", views.wfmodule_embeddata),
-    path("api/wfmodules/<int:wf_module_id>/value-counts", views.wfmodule_value_counts),
-    path("public/moduledata/live/<int:wf_module_id>.csv", views.wfmodule_public_csv),
-    path("public/moduledata/live/<int:wf_module_id>.json", views.wfmodule_public_json),
+    path("api/wfmodules/<int:step_id>/render", views.step_render),
+    path("api/wfmodules/<int:step_id>/output", views.step_output),
+    path("api/wfmodules/<int:step_id>/embeddata", views.step_embeddata),
+    path("api/wfmodules/<int:step_id>/value-counts", views.step_value_counts),
+    path("public/moduledata/live/<int:step_id>.csv", views.step_public_csv),
+    path("public/moduledata/live/<int:step_id>.json", views.step_public_json),
     # Parameters
     url(
-        r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<wf_module_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",
+        r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<step_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",
         oauth.start_authorize,
     ),
     url(r"^oauth/?$", oauth.finish_authorize),
     # Embeds
-    url(r"^embed/(?P<wfmodule_id>[0-9]+)/?$", views.embed),
+    url(r"^embed/(?P<step_id>[0-9]+)/?$", views.embed),
     url(r"^healthz$", health.healthz),
     # 404
     url(r"^404/$", TemplateView.as_view(template_name="404.html")),

@@ -7,8 +7,8 @@ class TestUpload(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Create Workflow")
 
-        # Empty module stack
-        b.wait_for_element(".module-stack")
+        # Empty step list
+        b.wait_for_element(".step-list")
 
         self.import_module("upload")
         self.add_data_step("Upload")
@@ -26,8 +26,8 @@ class TestUpload(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Create Workflow")
 
-        # Empty module stack
-        b.wait_for_element(".module-stack")
+        # Empty step list
+        b.wait_for_element(".step-list")
 
         self.import_module("upload")
         self.add_data_step("Upload")

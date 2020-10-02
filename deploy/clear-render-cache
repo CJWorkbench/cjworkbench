@@ -15,7 +15,7 @@ echo "Locking all workflows and clearing all steps' cached output..."
 
 DATABASE_POD="$(kubectl -n "$ENV" get pods -lapp=database-app -oname)"
 
-kubectl -n "$ENV" exec -it "$DATABASE_POD" -- psql -Ucjworkbench -c "BEGIN; SELECT id FROM server_workflow FOR UPDATE; UPDATE server_wfmodule SET cached_render_result_delta_id=NULL, cached_render_result_errors='[]'::JSONB, cached_render_result_json='null'::BYTEA, cached_render_result_status=NULL, cached_render_result_columns=NULL, cached_render_result_nrows=NULL; COMMIT"
+kubectl -n "$ENV" exec -it "$DATABASE_POD" -- psql -Ucjworkbench -c "BEGIN; SELECT id FROM workflow FOR UPDATE; UPDATE step SET cached_render_result_delta_id=NULL, cached_render_result_errors='[]'::JSONB, cached_render_result_json='null'::BYTEA, cached_render_result_status=NULL, cached_render_result_columns=NULL, cached_render_result_nrows=NULL; COMMIT"
 
 echo "Deleting files created before [FIXME] from minio..."
 echo "TODO. This step isn't done. That means we're wasting disk space with files we'll never read."

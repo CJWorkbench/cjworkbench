@@ -28,14 +28,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
+      data-test="return workflow.tabs[0].stepModuleIds[0] === 'loadurl'"
     >
       Add the step <kbd>Load from URL</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"loadurl"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[0].params
+        const params = workflow.tabs[0].steps[0].params
         return (
           params.url === 'https://apiv3.iucnredlist.org/api/v3/country/getspecies/US?token=bd5b440306cb5309d4d178a0b42ce5fa15a4df70f205cbab3e670bea5836f83b'
           &amp;&amp; params.has_header
@@ -60,14 +60,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"selectcolumns"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'selectcolumns'"
     >
       Add the step <kbd>Select columns</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"selectcolumns"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"selectcolumns"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[1].params
+        const params = workflow.tabs[0].steps[1].params
         return (
           params.colnames.sort().join('|') === 'rank|subpopulation'
           &amp;&amp; !params.select_range
@@ -93,14 +93,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":2,"id_name":"splitcolumn"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'splitcolumn'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'splitcolumn'"
     >
       Add the step <kbd>split column</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"splitcolumn"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"splitcolumn"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[2].params
+        const params = workflow.tabs[0].steps[2].params
         return (
           params.column === 'scientific_name'
           &amp;&amp; params.method === 'delimiter'
@@ -124,13 +124,13 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":3,"id_name":"selectcolumns"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'selectcolumns'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'selectcolumns'"
     >
       Add the step <kbd>Select columns</kbd>.
     </li>
     <li
       data-test="
-        const params = workflow.tabs[0].wfModules[3].params
+        const params = workflow.tabs[0].steps[3].params
         return (
           params.colnames.sort().join('|') === [3, 4, 5, 6, 7, 8, 9].map(i =&gt; `scientific_name ${i}`).join('|')
           &amp;&amp; !params.select_range
@@ -151,14 +151,14 @@
     </li>
     <li
       data-highlight='[{"type":"Module","index":4,"id_name":"renamecolumns"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'renamecolumns'"
+      data-test="return workflow.tabs[0].stepModuleIds[4] === 'renamecolumns'"
     >
       Add the step <kbd>Rename columns</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"renamecolumns"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"renamecolumns"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[4].params
+        const params = workflow.tabs[0].steps[4].params
         return (
           !params.custom_list
           &amp;&amp; params.renames['scientific_name 1'] === 'genus'
@@ -187,14 +187,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":5,"id_name":"valuefilter"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'valuefilter'"
+      data-test="return workflow.tabs[0].stepModuleIds[5] === 'valuefilter'"
     >
       Add the step <kbd>Filter by value</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"valuefilter"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"valuefilter"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[5].params
+        const params = workflow.tabs[0].steps[5].params
         return (
           params.column === 'IUCN category'
           &amp;&amp; params.valueselect.join('|') === 'CR'
@@ -217,14 +217,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":6,"id_name":"wordcloud"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'wordcloud'"
+      data-test="return workflow.tabs[0].stepModuleIds[6] === 'wordcloud'"
     >
       Add the step <kbd>Word cloud</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"wordcloud"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"wordcloud"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[6].params
+        const params = workflow.tabs[0].steps[6].params
         return (
           params.column === 'genus'
         )

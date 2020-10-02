@@ -373,12 +373,12 @@ msgstr "Δημιουργία αντιγράφου για αποθήκευση τ
 msgid "js.Workflow.suggestion.signInToSaveChanges"
 msgstr "<0>Συνδεθείτε</0> για να αποθηκεύσετε τις αλλαγές σας"
 
-#: assets/js/WorkflowEditor/AddData/Modal.js:26
+#: assets/js/WorkflowEditor/AddData/Modal.js:27
 msgid "js.WorkflowEditor.AddData.Modal.closeButton.hoverText"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
-#: assets/js/WorkflowEditor/AddData/Modal.js:21
+#: assets/js/WorkflowEditor/AddData/Modal.js:22
 msgid "js.WorkflowEditor.AddData.Modal.header.title"
 msgstr "ΕΠΙΛΕΞΤΕ ΠΗΓΗ ΔΕΔΟΜΕΝΩΝ"
 
@@ -448,11 +448,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/ModuleStack.js:138
-msgid "js.WorkflowEditor.ModuleStack.EmptyReadOnlyModuleStack"
-msgstr "Αυτή η καρτέλα δεν έχει βήματα."
-
-#: assets/js/WorkflowEditor/OutputPane.js:104
+#: assets/js/WorkflowEditor/OutputPane.js:103
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -466,6 +462,10 @@ msgstr "Αναφορά"
 #: assets/js/WorkflowEditor/PaneSelect.js:15
 msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
 msgstr "Αναφορά"
+
+#: assets/js/WorkflowEditor/StepList.js:138
+msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
+msgstr "Αυτή η καρτέλα δεν έχει βήματα."
 
 #: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:14
 msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
@@ -490,49 +490,49 @@ msgstr "Μετονομασία"
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr "Καρτέλα"
 
-#: assets/js/WorkflowEditor/wfmodule/DeprecationNotice.js:12
-msgid "js.WorkflowEditor.wfmodule.DeprecationNotice.learnHowToReplace"
+#: assets/js/WorkflowEditor/step/DeprecationNotice.js:12
+msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:355
-msgid "js.WorkflowEditor.wfmodule.EditableNotes.placeholder"
+#: assets/js/WorkflowEditor/step/Step.js:355
+msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
 #. When clicked, this opens a menu with more actions.
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:17
-msgid "js.WorkflowEditor.wfmodule.WfModuleContextMenu.more.hoverText"
+#: assets/js/WorkflowEditor/step/StepContextMenu.js:17
+msgid "js.WorkflowEditor.step.StepContextMenu.more.hoverText"
 msgstr "περισσότερα"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
-msgid "js.WorkflowEditor.wfmodule.ZenMode.enter"
+#: assets/js/WorkflowEditor/step/Step.js:240
+msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "είσοδος σε λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:240
-msgid "js.WorkflowEditor.wfmodule.ZenMode.exit"
+#: assets/js/WorkflowEditor/step/Step.js:240
+msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "έξοδος από λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
-msgid "js.WorkflowEditor.wfmodule.alert.disabled"
+#: assets/js/WorkflowEditor/step/Step.js:372
+msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:372
-msgid "js.WorkflowEditor.wfmodule.alert.enabled"
+#: assets/js/WorkflowEditor/step/Step.js:372
+msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:384
-msgid "js.WorkflowEditor.wfmodule.help.hoverText"
+#: assets/js/WorkflowEditor/step/Step.js:384
+msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModule.js:394
-msgid "js.WorkflowEditor.wfmodule.notes.edit.hoverText"
+#: assets/js/WorkflowEditor/step/Step.js:394
+msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:22
-msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.delete"
+#: assets/js/WorkflowEditor/step/StepContextMenu.js:22
+msgid "js.WorkflowEditor.step.stepContextMenu.delete"
 msgstr "Διαγραφή"
 
-#: assets/js/WorkflowEditor/wfmodule/WfModuleContextMenu.js:21
-msgid "js.WorkflowEditor.wfmodule.wfModuleContextMenu.exportData"
+#: assets/js/WorkflowEditor/step/StepContextMenu.js:21
+msgid "js.WorkflowEditor.step.stepContextMenu.exportData"
 msgstr "Εξαγωγή δεδομένων"
 
 #: assets/js/WorkflowNavBar.js:22
@@ -997,11 +997,11 @@ msgstr "κατά ώρα"
 msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
 msgstr "κατά λεπτό"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:43
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
 msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
 msgstr "κατά μήνα"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:44
+#: assets/js/params/Custom/Groups/DateGranularity.js:45
 msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
 msgstr "κατά τρίμηνο"
 
@@ -1009,7 +1009,15 @@ msgstr "κατά τρίμηνο"
 msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
 msgstr "κατά δευτερόλεπτο"
 
-#: assets/js/params/Custom/Groups/DateGranularity.js:45
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
+msgid "js.params.Custom.Groups.DateGranularity.byWeek.option"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:49
+msgid "js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday"
+msgstr ""
+
+#: assets/js/params/Custom/Groups/DateGranularity.js:46
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr "κατά έτος"
 
@@ -1973,14 +1981,14 @@ msgstr "Όνομα"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
-#: fetcher/fetch.py:185
+#: fetcher/fetch.py:177
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
 "προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
 "Κωδικός σφάλματος: {message}"
 
-#: fetcher/fetch.py:281
+#: fetcher/fetch.py:271
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) διαγράφηκε"
 
@@ -1988,23 +1996,46 @@ msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) δ�
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr "Η υπηρεσία \"{service}\" έχει πάψει να είναι διαμορφωμένη"
 
-#: fetcher/secrets.py:177
+#: fetcher/secrets.py:173
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 "Ο διακομιστής διακριτικών (τεκμηρίων) απάντησε με {status_code}: {error} "
 "({description})"
 
-#: fetcher/secrets.py:184
+#: fetcher/secrets.py:180
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr "Η {service_id} απάντησε με HTTP {status_code} {reason}: {description}"
 
-#: fetcher/secrets.py:201
+#: fetcher/secrets.py:197
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr "Λήξη χρονικού ορίου κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2"
 
-#: fetcher/secrets.py:211
+#: fetcher/secrets.py:207
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
+
+#: renderer/execute/step.py:137
+msgid "py.renderer.execute.step.user_visible_bug_during_render"
+msgstr ""
+"Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
+"προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
+"Κωδικός σφάλματος: {message}"
+
+#: renderer/execute/step.py:364
+msgid "py.renderer.execute.step.noModule"
+msgstr ""
+"Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
+"βήματος."
+
+#: renderer/execute/step.py:391
+msgid "py.renderer.execute.step.TabCycleError"
+msgstr ""
+"Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
+"καρτέλα."
+
+#: renderer/execute/step.py:402
+msgid "py.renderer.execute.step.TabOutputUnreachableError"
+msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
 #: renderer/execute/types.py:95
 #, fuzzy
@@ -2059,29 +2090,6 @@ msgstr ""
 "{αριθμούς} timestamp {ημερομηνίες & ώρες} other {}} σε {best_wanted_type,"
 " select, text {κείμενο} number {αριθμούς} timestamp {ημερομηνίες & ώρες} "
 "other{}}.}}"
-
-#: renderer/execute/wf_module.py:141
-msgid "py.renderer.execute.wf_module.user_visible_bug_during_render"
-msgstr ""
-"Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
-"προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
-"Κωδικός σφάλματος: {message}"
-
-#: renderer/execute/wf_module.py:372
-msgid "py.renderer.execute.wf_module.noModule"
-msgstr ""
-"Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
-"βήματος."
-
-#: renderer/execute/wf_module.py:399
-msgid "py.renderer.execute.wf_module.TabCycleError"
-msgstr ""
-"Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
-"καρτέλα."
-
-#: renderer/execute/wf_module.py:410
-msgid "py.renderer.execute.wf_module.TabOutputUnreachableError"
-msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
 #: templates/403.html:6
 msgid "py.templates.403.title"

@@ -175,7 +175,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
                     [
                         {
                             "name": "Tab X",
-                            "wfModules": [
+                            "steps": [
                                 {
                                     "module": "amodule",
                                     "slug": "step-X",
@@ -209,8 +209,8 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         tab1 = list(tabs.values())[0]
         self.assertEqual(tab1["slug"], "tab-1")
         self.assertEqual(tab1["name"], "Tab X")
-        wf_modules = state["wfModules"]
-        step1 = list(wf_modules.values())[0]
+        steps = state["steps"]
+        step1 = list(steps.values())[0]
         self.assertEqual(step1["module"], "amodule")
         self.assertEqual(step1["slug"], "step-X")
         self.assertEqual(step1["params"], {"foo": "bar"})
@@ -235,7 +235,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
                     [
                         {
                             "name": "Tab X",
-                            "wfModules": [
+                            "steps": [
                                 {
                                     "module": "amodule",
                                     "slug": "step-X",
@@ -263,9 +263,9 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs("cjwstate.params"):
             response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
-        wf_module = next(iter(state["wfModules"].values()))
+        step = next(iter(state["steps"].values()))
         self.assertEqual(
-            wf_module["params"],
+            step["params"],
             {"url": "http://localhost:8000/static/lessons/en/a-lesson/foo.txt"},
         )
 
@@ -282,7 +282,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
                     [
                         {
                             "name": "Tab X",
-                            "wfModules": [
+                            "steps": [
                                 {
                                     "module": "amodule",
                                     "slug": "step-X",
@@ -311,8 +311,8 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs("cjwstate.params"):
             response = self.client.get("/lessons/en/a-lesson")
         state = response.context_data["initState"]
-        wf_modules = state["wfModules"]
-        step1 = list(wf_modules.values())[0]
+        steps = state["steps"]
+        step1 = list(steps.values())[0]
         self.assertEqual(step1["is_busy"], True)  # because we sent a fetch
 
         # We should be rendering the modules
@@ -330,7 +330,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
                     [
                         {
                             "name": "Tab X",
-                            "wfModules": [
+                            "steps": [
                                 {
                                     "module": "amodule",  # does not exist
                                     "slug": "step-X",
@@ -361,7 +361,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
                     [
                         {
                             "name": "Tab X",
-                            "wfModules": [
+                            "steps": [
                                 {
                                     "slug": "step-X",
                                     "module": "amodule",

@@ -2,17 +2,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Button from './Button'
-import WfModule from '../wfmodule/WfModule'
+import Step from '../step/Step'
 
-const AddData = React.memo(function AddData ({ tabSlug, isLessonHighlight, isReadOnly, wfModule, isZenMode, removeModule, isSelected, api, setZenMode, paneRef }) {
-  if (wfModule) {
+const AddData = React.memo(function AddData ({ tabSlug, isLessonHighlight, isReadOnly, step, isZenMode, deleteStep, isSelected, api, setZenMode, paneRef }) {
+  if (step) {
     return (
-      <WfModule
+      <Step
         isReadOnly={isReadOnly}
         isZenMode={isZenMode}
-        wfModule={wfModule}
-        removeModule={removeModule}
-        inputWfModule={null}
+        step={step}
+        deleteStep={deleteStep}
+        inputStep={null}
         isSelected={isSelected}
         isAfterSelected={false}
         api={api}
@@ -38,7 +38,7 @@ AddData.propTypes = {
   tabSlug: PropTypes.string.isRequired,
   isLessonHighlight: PropTypes.bool.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
-  wfModule: PropTypes.object, // or null if no WfModule
+  step: PropTypes.object, // or null if no Step
   /** <WorkflowEditor/Pane> container, where the dialog will open */
   paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
 }

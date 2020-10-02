@@ -14,8 +14,8 @@ export const NMaxColumns = 100
 
 export class TableView extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    wfModuleId: PropTypes.number, // immutable; null for placeholder table
+    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    stepId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -23,8 +23,8 @@ export class TableView extends React.PureComponent {
     }).isRequired), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
     isReadOnly: PropTypes.bool.isRequired,
-    ensureSelectColumnsModule: PropTypes.func.isRequired, // func(wfModuleId) => undefined
-    reorderColumn: PropTypes.func.isRequired // func(wfModuleId, colname, fromIndex, toIndex) => undefined
+    ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
+    reorderColumn: PropTypes.func.isRequired // func(stepId, colname, fromIndex, toIndex) => undefined
   }
 
   // componentDidMount will trigger first load
@@ -38,21 +38,21 @@ export class TableView extends React.PureComponent {
 
   // When a cell is edited we need to 1) update our own state 2) add this edit to an Edit Cells module
   editCell = (rowIndex, colname, newValue) => {
-    this.props.editCell(this.props.wfModuleId, rowIndex, colname, newValue)
+    this.props.editCell(this.props.stepId, rowIndex, colname, newValue)
   }
 
   handleClickSelectColumns = () => {
-    this.props.ensureSelectColumnsModule(this.props.wfModuleId)
+    this.props.ensureSelectColumnsModule(this.props.stepId)
   }
 
   reorderColumn = (column, fromIndex, toIndex) => {
-    this.props.reorderColumn(this.props.wfModuleId, column, fromIndex, toIndex)
+    this.props.reorderColumn(this.props.stepId, column, fromIndex, toIndex)
   }
 
   render () {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
-    const { loadRows, wfModuleId, deltaId, isReadOnly, columns, nRows } = this.props
+    const { loadRows, stepId, deltaId, isReadOnly, columns, nRows } = this.props
     const tooWide = columns.length > NMaxColumns
 
     let gridView
@@ -73,7 +73,7 @@ export class TableView extends React.PureComponent {
         <DataGrid
           loadRows={loadRows}
           isReadOnly={isReadOnly}
-          wfModuleId={wfModuleId}
+          stepId={stepId}
           deltaId={deltaId}
           columns={columns}
           nRows={nRows}
@@ -81,7 +81,7 @@ export class TableView extends React.PureComponent {
           reorderColumn={this.reorderColumn}
           selectedRowIndexes={selectedRowIndexes}
           onSetSelectedRowIndexes={this.handleSetSelectedRowIndexes}
-          key={wfModuleId + '-' + deltaId}
+          key={stepId + '-' + deltaId}
         />
       )
     }
@@ -90,9 +90,9 @@ export class TableView extends React.PureComponent {
       <div className='outputpane-table'>
         <TableInfo
           isReadOnly={isReadOnly}
-          wfModuleId={wfModuleId}
-          nRows={wfModuleId ? nRows : null}
-          nColumns={(wfModuleId && columns) ? columns.length : null}
+          stepId={stepId}
+          nRows={stepId ? nRows : null}
+          nColumns={(stepId && columns) ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />
         <div className='outputpane-data'>
@@ -105,18 +105,18 @@ export class TableView extends React.PureComponent {
 
 function mapDispatchToProps (dispatch) {
   return {
-    ensureSelectColumnsModule: (wfModuleId) => {
-      dispatch(updateTableAction(wfModuleId, 'selectcolumns', false, {}))
+    ensureSelectColumnsModule: (stepId) => {
+      dispatch(updateTableAction(stepId, 'selectcolumns', false, {}))
     },
-    reorderColumn: (wfModuleId, colname, fromIndex, toIndex) => {
-      dispatch(updateTableAction(wfModuleId, 'reordercolumns', false, {
+    reorderColumn: (stepId, colname, fromIndex, toIndex) => {
+      dispatch(updateTableAction(stepId, 'reordercolumns', false, {
         column: colname,
         from: fromIndex,
         to: toIndex
       }))
     },
-    editCell: (wfModuleId, rowIndex, colname, newValue) => {
-      dispatch(updateTableAction(wfModuleId, 'editcells', false, {
+    editCell: (stepId, rowIndex, colname, newValue) => {
+      dispatch(updateTableAction(stepId, 'editcells', false, {
         row: rowIndex,
         col: colname,
         value: newValue

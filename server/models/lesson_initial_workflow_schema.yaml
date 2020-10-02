@@ -8,17 +8,17 @@ properties:
     items:
       type: object
       description: a tab
-      required: [name, wfModules]
+      required: [name, steps]
       properties:
         name:
           type: string
           description: User-visible name of tab
-        wfModules:
+        steps:
           type: array
           description: Modules applied in this tab
           items:
             type: object
-            description: A single WfModule
+            description: A single Step
             required: [module, params]
             properties:
               module:

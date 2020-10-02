@@ -1,8 +1,8 @@
 import React from 'react'
 
-export function generateFieldId (wfModuleId, name) {
+export function generateFieldId (stepId, name) {
   const cleanName = name.replace(/[^0-9a-zA-Z_-]/g, '-')
-  return `field-${wfModuleId}-${cleanName}`
+  return `field-${stepId}-${cleanName}`
 }
 
 /**

@@ -30,18 +30,18 @@ describe('LessonHighlight', () => {
     expect(isValid([{ type: 'Module', foo: 'bar', index: 1 }])).toBe(false)
   })
 
-  it('should allow WfModule', () => {
-    const valid = { type: 'WfModule', moduleIdName: 'Foo' }
+  it('should allow Step', () => {
+    const valid = { type: 'Step', moduleIdName: 'Foo' }
     expect(isValid([valid])).toBe(true)
     expect(isValid([{ ...valid, index: 2 }])).toBe(true)
-    expect(isValid([{ type: 'WfModule', foo: 'bar' }])).toBe(false)
+    expect(isValid([{ type: 'Step', foo: 'bar' }])).toBe(false)
   })
 
-  it('should allow WfModuleContextButton', () => {
-    const valid = { type: 'WfModuleContextButton', moduleIdName: 'Foo', button: 'notes' }
+  it('should allow StepContextButton', () => {
+    const valid = { type: 'StepContextButton', moduleIdName: 'Foo', button: 'notes' }
     expect(isValid([valid])).toBe(true)
-    expect(isValid([{ type: 'WfModuleContextButton', moduleIdName: 'Foo', button: 'x' }])).toBe(false)
-    expect(isValid([{ type: 'WfModuleContextButton', xoduleName: 'Foo', button: 'notes' }])).toBe(false)
+    expect(isValid([{ type: 'StepContextButton', moduleIdName: 'Foo', button: 'x' }])).toBe(false)
+    expect(isValid([{ type: 'StepContextButton', xoduleName: 'Foo', button: 'notes' }])).toBe(false)
   })
 
   it('should allow EditableNotes', () => {

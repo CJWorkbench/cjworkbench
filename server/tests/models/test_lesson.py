@@ -386,7 +386,7 @@ class LessonTests(SimpleTestCase):
             "tabs": [
                 {
                     "name": "Tab 1",
-                    "wfModules": [
+                    "steps": [
                         {
                             "module": "loadurl",
                             "params": {"url": "http://foo.com", "has_header": True},
@@ -424,7 +424,7 @@ class LessonTests(SimpleTestCase):
                 """
                 tabs:
                   - name: Tab 1
-                    wfModules:
+                    steps:
                       - module: loadurl
                         params:
                             url: 'http://foo.com'
@@ -438,7 +438,7 @@ class LessonTests(SimpleTestCase):
                 [
                     {
                         "name": "Tab 1",
-                        "wfModules": [
+                        "steps": [
                             {
                                 "module": "loadurl",
                                 "params": {"url": "http://foo.com", "has_header": True},

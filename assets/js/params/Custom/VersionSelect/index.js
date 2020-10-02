@@ -11,15 +11,15 @@ import UpdateFrequencySelect from './UpdateFrequencySelect'
  */
 export default class VersionSelect extends React.PureComponent {
   static propTypes = {
-    wfModuleId: PropTypes.number.isRequired,
-    isWfModuleBusy: PropTypes.bool.isRequired,
+    stepId: PropTypes.number.isRequired,
+    isStepBusy: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // e.g., "version_select"
     label: PropTypes.string.isRequired // e.g., "Update"
   }
 
   renderMaybeButton () {
-    const { isReadOnly, name, label, isWfModuleBusy } = this.props
+    const { isReadOnly, name, label, isStepBusy } = this.props
 
     if (isReadOnly) return null
 
@@ -27,25 +27,25 @@ export default class VersionSelect extends React.PureComponent {
       <button
         name={name}
         type='submit'
-        disabled={isWfModuleBusy}
+        disabled={isStepBusy}
       >
-        {isWfModuleBusy ? <i className='spinner' /> : null}
+        {isStepBusy ? <i className='spinner' /> : null}
         {label}
       </button>
     )
   }
 
   render () {
-    const { wfModuleId, isReadOnly } = this.props
+    const { stepId, isReadOnly } = this.props
 
     return (
       <div className='version-select'>
         <UpdateFrequencySelect
-          wfModuleId={wfModuleId}
+          stepId={stepId}
           isReadOnly={isReadOnly}
         />
         <div className='version-row'>
-          <DataVersionSelect wfModuleId={wfModuleId} />
+          <DataVersionSelect stepId={stepId} />
           {this.renderMaybeButton()}
         </div>
       </div>
@@ -53,10 +53,10 @@ export default class VersionSelect extends React.PureComponent {
   }
 }
 
-export function VersionSelectSimpler ({ wfModuleId }) {
+export function VersionSelectSimpler ({ stepId }) {
   return (
     <div className='version-select-simpler'>
-      <DataVersionSelect wfModuleId={wfModuleId} />
+      <DataVersionSelect stepId={stepId} />
     </div>
   )
 }

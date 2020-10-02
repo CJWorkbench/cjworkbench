@@ -335,7 +335,7 @@ class ChannelTests(DbTestCase):
         queue_render.side_effect = do_queue
 
         # Make it so the workflow needs a render
-        self.workflow.tabs.first().wf_modules.create(
+        self.workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="whatever",

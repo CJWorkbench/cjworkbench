@@ -40,7 +40,7 @@ describe('TableView', () => {
       store = mockStore({
         modules: {},
         workflow: {
-          wf_modules: [99, 100, 101]
+          steps: [99, 100, 101]
         }
       })
     }
@@ -49,7 +49,7 @@ describe('TableView', () => {
       <ConnectedTableView
         store={store}
         isReadOnly={false}
-        wfModuleId={100}
+        stepId={100}
         deltaId={1}
         status='ok'
         loadRows={makeRenderResponse(0, 3, 5)}
@@ -78,7 +78,7 @@ describe('TableView', () => {
   it('reorders columns', async () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
-    const api = { addModule: jest.fn(() => Promise.resolve(null)) }
+    const api = { addStep: jest.fn(() => Promise.resolve(null)) }
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
@@ -86,9 +86,9 @@ describe('TableView', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [2, 3], selected_wf_module_position: 0 }
+        'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
       },
-      wfModules: {
+      steps: {
         2: { tab_slug: 'tab-1' },
         3: {}
       },
@@ -97,12 +97,12 @@ describe('TableView', () => {
       }
     }, api)
 
-    const tree = wrapper(store, { wfModuleId: 2 })
+    const tree = wrapper(store, { stepId: 2 })
     tree.find('DataGrid').instance().handleDropColumnIndexAtIndex(0, 2)
 
     await tick()
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'reordercolumns', 1, {
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'reordercolumns', 1, {
       'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
     })
 
@@ -112,7 +112,7 @@ describe('TableView', () => {
   it('edits cells', async () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
-    const api = { addModule: jest.fn().mockImplementation(() => Promise.resolve(null)) }
+    const api = { addStep: jest.fn().mockImplementation(() => Promise.resolve(null)) }
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
@@ -120,9 +120,9 @@ describe('TableView', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [2, 3], selected_wf_module_position: 0 }
+        'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
       },
-      wfModules: {
+      steps: {
         2: { tab_slug: 'tab-1' },
         3: {}
       },
@@ -131,7 +131,7 @@ describe('TableView', () => {
       }
     }, api)
 
-    const tree = wrapper(store, { wfModuleId: 2 })
+    const tree = wrapper(store, { stepId: 2 })
     await tick() // load data
     tree.find('DataGrid').instance().handleGridRowsUpdated({
       fromRow: 0,
@@ -141,7 +141,7 @@ describe('TableView', () => {
       updated: { b: 'b2' }
     })
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'editcells', 1, {
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'editcells', 1, {
       celledits: [{ row: 0, col: 'b', value: 'b2' }]
     })
 
@@ -149,7 +149,7 @@ describe('TableView', () => {
   })
 
   it('blanks table when no module id', () => {
-    const tree = wrapper(null, {}, { wfModuleId: undefined })
+    const tree = wrapper(null, {}, { stepId: undefined })
     expect(tree.find('.outputpane-header')).toHaveLength(1)
     expect(tree.find('.outputpane-data')).toHaveLength(1)
     // And we can see it did not call api.render, because that does not exist

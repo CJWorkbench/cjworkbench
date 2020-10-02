@@ -8,8 +8,8 @@ class TestPythonCode(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Create Workflow")
 
-        # Empty module stack
-        b.wait_for_element(".module-stack", wait=True)
+        # Empty step list
+        b.wait_for_element(".step-list", wait=True)
         self.add_data_step("Python")
 
         # Wait for dynamically-loaded editor component
@@ -24,7 +24,7 @@ class TestPythonCode(LoggedInIntegrationTest):
         b.click_whatever("#code-editor")
 
         # Code set. Run it!
-        self.submit_wf_module()
+        self.submit_step()
 
     def test_return_dataframe(self):
         self._execute_code(
@@ -49,7 +49,7 @@ def process(table):
 
         b = self.browser
         b.assert_element(
-            ".wf-module-error-msg",
+            ".step-error-msg",
             text="Line 3: NameError: name 'p' is not defined",
             wait=True,  # wait for error to arrive from server
         )

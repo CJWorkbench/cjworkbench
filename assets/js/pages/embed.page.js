@@ -7,7 +7,7 @@ ReactDOM.render(
   <InternationalizedPage>
     <Embed
       workflow={window.initState.workflow}
-      wf_module={window.initState.wf_module}
+      step={window.initState.step}
     />
   </InternationalizedPage>,
   document.getElementById('root')

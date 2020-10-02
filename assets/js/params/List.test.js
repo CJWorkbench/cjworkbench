@@ -49,10 +49,10 @@ describe('List', () => {
         applyQuickFix={jest.fn()}
         startCreateSecret={jest.fn()}
         deleteSecret={jest.fn()}
-        wfModuleOutputErrors={[]}
+        stepOutputErrors={[]}
         currentTab=''
         tabs={[]}
-        isWfModuleBusy={false}
+        isStepBusy={false}
         isZenMode={false}
         onDelete={jest.fn()}
       />

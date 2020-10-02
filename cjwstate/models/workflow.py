@@ -18,8 +18,7 @@ class WorkflowCooperativeLock:
         self._after_commit_callbacks = []
 
     def after_commit(self, fn: Callable[[], None]):
-        """
-        Register `fn` to be called after database commit.
+        """Register `fn` to be called after database commit.
 
         Specifically, in the following example:
 
@@ -87,30 +86,30 @@ def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
     )
 
 
-def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
-    from cjwstate.models import Delta, WfModule
+def _find_orphan_soft_deleted_steps(workflow_id: int) -> models.QuerySet:
+    from cjwstate.models import Delta, Step
 
-    # all Delta subclasses that have a wf_module_id
+    # all Delta subclasses that have a step_id
     relations = [
         f
-        for f in WfModule._meta.get_fields()
+        for f in Step._meta.get_fields()
         if f.is_relation and issubclass(f.related_model, Delta)
     ]
 
-    wf_module_table_alias = WfModule._meta.db_table  # Django auto-name
+    step_table_alias = Step._meta.db_table  # Django auto-name
 
     conditions = [
         f"""
         NOT EXISTS (
             SELECT TRUE
             FROM {r.related_model._meta.db_table}
-            WHERE {r.get_joining_columns()[0][1]} = {wf_module_table_alias}.id
+            WHERE {r.get_joining_columns()[0][1]} = {step_table_alias}.id
         )
         """
         for r in relations
     ]
 
-    return WfModule.objects.filter(tab__workflow_id=workflow_id, is_deleted=True).extra(
+    return Step.objects.filter(tab__workflow_id=workflow_id, is_deleted=True).extra(
         where=conditions
     )
 
@@ -118,7 +117,7 @@ def _find_orphan_soft_deleted_wf_modules(workflow_id: int) -> models.QuerySet:
 class Workflow(models.Model):
     class Meta:
         app_label = "server"
-        db_table = "server_workflow"
+        db_table = "workflow"
 
     # TODO when we upgrade to Django 2.2, uncomment this and figure out
     # how to migrate our previous RunSQL(CREATE UNIQUE INDEX) code to use it.
@@ -172,8 +171,7 @@ class Workflow(models.Model):
     name = models.CharField("name", max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
     last_viewed_at = models.DateTimeField(default=timezone.now)
-    """
-    Most recent timestamp when _any user_ viewed the workflow.
+    """Most recent timestamp when _any user_ viewed the workflow.
 
     This was added 2019-06-18, so that's the minimum last_viewed_at value.
     """
@@ -185,8 +183,7 @@ class Workflow(models.Model):
     anonymous_owner_session_key = models.CharField(
         "anonymous_owner_session_key", max_length=40, null=True, blank=True
     )
-    """
-    Non-NULL when this is a copy of a of an example workflow.
+    """Non-NULL when this is a copy of a of an example workflow.
 
     Anybody who is not the owner can open an "anonymous" _duplicate_ of the
     workflow, whether that person is logged in or not. An anonymous workflow
@@ -199,8 +196,7 @@ class Workflow(models.Model):
     """
 
     original_workflow_id = models.IntegerField(null=True, blank=True)
-    """
-    If this is a duplicate, the Workflow it is based on.
+    """If this is a duplicate, the Workflow it is based on.
 
     TODO add last_delta_id? Currently, we only use this field for `url_id`.
     """
@@ -214,8 +210,7 @@ class Workflow(models.Model):
     """If true, all users will see this (you may also want example=True)."""
 
     lesson_slug = models.CharField("lesson_slug", max_length=100, null=True, blank=True)
-    """
-    A string like 'a-lesson' or 'a-course/a-lesson', or NULL.
+    """A string like 'a-lesson' or 'a-course/a-lesson', or NULL.
 
     If set, this Workflow is the user's journey through a lesson in
     `server/lessons/` or `server/courses/`.
@@ -304,8 +299,7 @@ class Workflow(models.Model):
 
     @property
     def is_anonymous(self) -> bool:
-        """
-        True if the owner is an anonymous session, not a User.
+        """True if the owner is an anonymous session, not a User.
 
         With an anonymous workflow:
 
@@ -375,8 +369,7 @@ class Workflow(models.Model):
     @classmethod
     @contextmanager
     def lookup_and_cooperative_lock(cls, **kwargs):
-        """
-        Efficiently lookup and lock a Workflow in one operation.
+        """Efficiently lookup and lock a Workflow in one operation.
 
         Usage:
 
@@ -408,8 +401,7 @@ class Workflow(models.Model):
     @classmethod
     @contextmanager
     def authorized_lookup_and_cooperative_lock(cls, level, user, session, **kwargs):
-        """
-        Efficiently lookup and lock a Workflow in one operation.
+        """Efficiently lookup and lock a Workflow in one operation.
 
         Usage:
 
@@ -476,8 +468,7 @@ class Workflow(models.Model):
         return self._duplicate(new_name, owner=owner, session_key=None)
 
     def duplicate_anonymous(self, session_key: str) -> "Workflow":
-        """
-        Save and return a new Workflow with the same contents as this one.
+        """Save and return a new Workflow with the same contents as this one.
 
         The duplicate will have no undo history.
         """
@@ -490,11 +481,11 @@ class Workflow(models.Model):
         return self.name + " - id: " + str(self.id)
 
     def are_all_render_results_fresh(self):
-        """Query whether all live WfModules are rendered."""
-        from .WfModule import WfModule
+        """Query whether all live Steps are rendered."""
+        from .Step import Step
 
-        for wf_module in WfModule.live_in_workflow(self):
-            if wf_module.cached_render_result is None:
+        for step in Step.live_in_workflow(self):
+            if step.cached_render_result is None:
                 return False
         return True
 
@@ -533,21 +524,20 @@ class Workflow(models.Model):
     def delete_orphan_soft_deleted_tabs(self):
         _find_orphan_soft_deleted_tabs(self.id).delete()
 
-    def delete_orphan_soft_deleted_wf_modules(self):
-        _find_orphan_soft_deleted_wf_modules(self.id).delete()
+    def delete_orphan_soft_deleted_steps(self):
+        _find_orphan_soft_deleted_steps(self.id).delete()
 
     def delete_orphan_soft_deleted_models(self):
-        """
-        Delete soft-deleted Tabs and WfModules that have no Delta.
+        """Delete soft-deleted Tabs and Steps that have no Delta.
 
         (The tests for this are in test_Delta.py, for legacy reasons.)
         """
         self.delete_orphan_soft_deleted_tabs()
-        self.delete_orphan_soft_deleted_wf_modules()
+        self.delete_orphan_soft_deleted_steps()
 
     def delete(self, *args, **kwargs):
-        # Clear delta history. Deltas can reference WfModules: if we don't
-        # clear the deltas, Django may decide to CASCADE to WfModule first and
+        # Clear delta history. Deltas can reference Steps: if we don't
+        # clear the deltas, Django may decide to CASCADE to Step first and
         # we'll raise a ProtectedError.
         self.clear_deltas()
 
@@ -595,15 +585,14 @@ class Workflow(models.Model):
 
 @dataclass(frozen=True)
 class DependencyGraph:
-    """
-    A graph illustrating which WfModules depend on which WfModules' output.
+    """A graph illustrating which Steps depend on which Steps' output.
 
     Here are the data structures:
 
-        * `.tabs` List of (slug, [WfModuleIds])
+        * `.tabs` List of (slug, [StepIds])
         * `.steps` Dict (keyed by id) of (depends_on_tab_slugs:Set(...))
 
-    We strive for consistent output order given the same inputs. WfModule IDs
+    We strive for consistent output order given the same inputs. Step IDs
     are always ordered first by tab, then by order within the tab. This makes
     code easier to test and debug.
     """
@@ -611,19 +600,18 @@ class DependencyGraph:
     @dataclass(frozen=True)
     class Tab:
         slug: str
-        wf_module_ids: List[int]
-        """
-        List of WfModules that depend on one another.
+        step_ids: List[int]
+        """List of Steps that depend on one another.
 
-        A WfModule with a `tab` param depends on the last value in this list.
+        A Step with a `tab` param depends on the last value in this list.
         """
 
     @dataclass(frozen=True)
     class Step:
         """
-        Metadata we track about a single WfModule.
+        Metadata we track about a single Step.
 
-        (This is stored in `steps`, which is keyed by wf_module_id.)
+        (This is stored in `steps`, which is keyed by step_id.)
         """
 
         depends_on_tab_slugs: FrozenSet[str]
@@ -632,12 +620,11 @@ class DependencyGraph:
         """
 
     tabs: List[DependencyGraph.Tab]
-    steps: Dict[int, Step]  # keyed by wf_module_id
+    steps: Dict[int, Step]  # keyed by step_id
 
     @classmethod
     def load_from_workflow(cls, workflow: Workflow) -> DependencyGraph:
-        """
-        Create a DependencyGraph using the database.
+        """Create a DependencyGraph using the database.
 
         Must be called within a `workflow.cooperative_lock()`.
 
@@ -651,14 +638,14 @@ class DependencyGraph:
         steps = {}
 
         for tab in workflow.live_tabs:
-            tab_wf_module_ids = []
+            tab_step_ids = []
 
-            for wf_module in tab.live_wf_modules:
-                tab_wf_module_ids.append(wf_module.id)
+            for step in tab.live_steps:
+                tab_step_ids.append(step.id)
                 try:
-                    module_zipfile = module_zipfiles[wf_module.module_id_name]
+                    module_zipfile = module_zipfiles[step.module_id_name]
                 except KeyError:
-                    steps[wf_module.id] = cls.Step(set())
+                    steps[step.id] = cls.Step(set())
                     continue
 
                 module_spec = module_zipfile.get_spec()
@@ -673,12 +660,12 @@ class DependencyGraph:
                     )
                 ):
                     # There are no tab params.
-                    steps[wf_module.id] = cls.Step(set())
+                    steps[step.id] = cls.Step(set())
                     continue
 
                 from cjwstate.params import get_migrated_params
 
-                params = get_migrated_params(wf_module)
+                params = get_migrated_params(step)
 
                 # raises ValueError (and we don't handle that right now)
                 schema.validate(params)
@@ -687,42 +674,40 @@ class DependencyGraph:
                     for dtype, v in schema.iter_dfs_dtype_values(params)
                     if isinstance(dtype, ParamDType.Tab)
                 )
-                steps[wf_module.id] = cls.Step(tab_slugs)
+                steps[step.id] = cls.Step(tab_slugs)
 
-            tabs.append(cls.Tab(tab.slug, tab_wf_module_ids))
+            tabs.append(cls.Tab(tab.slug, tab_step_ids))
 
         return cls(tabs, steps)
 
     def _get_dependent_ids_step(self, tab_slugs: Set[str]) -> Tuple[Set[int], Set[str]]:
-        """
-        Find `(set(new_wf_module_ids), set(tab_slugs_of_new_wf_module_ids))`.
-        """
-        wf_module_ids = set()
+        """Find `(set(new_step_ids), set(tab_slugs_of_new_step_ids))`."""
+        step_ids = set()
         new_tab_slugs = set()
         for tab in self.tabs:
             dependent = False
-            for wf_module_id in tab.wf_module_ids:
-                step = self.steps[wf_module_id]
+            for step_id in tab.step_ids:
+                step = self.steps[step_id]
                 if not dependent:
-                    step = self.steps[wf_module_id]
+                    step = self.steps[step_id]
                     if step.depends_on_tab_slugs & tab_slugs:
                         dependent = True
                         if tab.slug not in tab_slugs:
                             new_tab_slugs.add(tab.slug)
                 if dependent:
-                    wf_module_ids.add(wf_module_id)
-        return (wf_module_ids, new_tab_slugs)
+                    step_ids.add(step_id)
+        return (step_ids, new_tab_slugs)
 
     def get_step_ids_depending_on_tab_slug(self, tab_slug: str) -> List[int]:
         return self.get_step_ids_depending_on_tab_slugs(set([tab_slug]))
 
     def get_step_ids_depending_on_tab_slugs(self, tab_slugs: Set[str]) -> List[int]:
-        wf_module_ids = set()
+        step_ids = set()
         tab_slugs = set(tab_slugs)  # don't mutate input
 
         while True:
-            new_wf_module_ids, new_tab_slugs = self._get_dependent_ids_step(tab_slugs)
-            wf_module_ids = wf_module_ids | new_wf_module_ids
+            new_step_ids, new_tab_slugs = self._get_dependent_ids_step(tab_slugs)
+            step_ids = step_ids | new_step_ids
             # Every step, we must add new tabs to inspect. If we don't have any
             # new tabs to inspect, that's because we've inspected all the tabs;
             # we're done.
@@ -730,9 +715,9 @@ class DependencyGraph:
                 break
             tab_slugs.update(new_tab_slugs)
 
-        ret = []  # sort wf_module_ids
+        ret = []  # sort step_ids
         for tab in self.tabs:
-            for wf_module_id in tab.wf_module_ids:
-                if wf_module_id in wf_module_ids:
-                    ret.append(wf_module_id)
+            for step_id in tab.step_ids:
+                if step_id in step_ids:
+                    ret.append(step_id)
         return ret

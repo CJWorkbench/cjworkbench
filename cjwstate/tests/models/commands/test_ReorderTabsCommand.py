@@ -80,17 +80,17 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
-    def test_change_dependent_wf_modules(self):
+    def test_change_dependent_steps(self):
         # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
         workflow.tabs.create(position=1, slug="tab-2")
         workflow.tabs.create(position=2, slug="tab-3")
 
-        # Create `wf_module` depending on tabs 2+3 (and their order)
+        # Create `step` depending on tabs 2+3 (and their order)
         module_zipfile = create_module_zipfile(
             "x", spec_kwargs={"parameters": [{"id_name": "tabs", "type": "multitab"}]}
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -107,8 +107,8 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
+        step.refresh_from_db()
+        self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
     @patch.object(commands, "websockets_notify")
     @patch.object(commands, "queue_render", async_noop)

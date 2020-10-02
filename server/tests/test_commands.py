@@ -1,13 +1,13 @@
 import asyncio
 from unittest.mock import patch
-from cjwstate.models import Delta, Tab, Workflow, WfModule
+from cjwstate.models import Delta, Tab, Workflow, Step
 
-# We'll use ChangeWorkflowTitleCommand and ChangeWfModuleNotes as "canonical"
-# deltas -- one requiring WfModule, one not.
+# We'll use ChangeWorkflowTitleCommand and ChangeStepNotes as "canonical"
+# deltas -- one requiring Step, one not.
 from cjwstate import commands
 from cjwstate.models.commands import (
     ChangeWorkflowTitleCommand,
-    ChangeWfModuleNotesCommand,
+    ChangeStepNotesCommand,
     AddTabCommand,
 )
 from cjwstate.tests.utils import DbTestCase
@@ -57,7 +57,7 @@ class DeltaTest(DbTestCase):
         Don't delete a new AddTabCommand's new orphan Tab during creation.
 
         We delete orphans Deltas during creation, and we should delete their
-        Tabs/WfModules. But we shouldn't delete _new_ Tabs/WfModules. (We need
+        Tabs/Steps. But we shouldn't delete _new_ Tabs/Steps. (We need
         to order creation and deletion carefully to avoid doing so.)
         """
         workflow = Workflow.create_and_init()
@@ -107,10 +107,10 @@ class DeltaTest(DbTestCase):
 
         delta2.refresh_from_db()  # do not crash
 
-    def test_delete_deletes_soft_deleted_wfmodule(self):
+    def test_delete_deletes_soft_deleted_step(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
@@ -123,14 +123,14 @@ class DeltaTest(DbTestCase):
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
-        with self.assertRaises(WfModule.DoesNotExist):
-            wf_module.refresh_from_db()
+        with self.assertRaises(Step.DoesNotExist):
+            step.refresh_from_db()
 
     def test_delete_deletes_soft_deleted_tab(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.create(position=1, is_deleted=True)
-        # create a wf_module -- it needs to be deleted, too!
-        wf_module = tab.wf_modules.create(
+        # create a step -- it needs to be deleted, too!
+        step = tab.steps.create(
             order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
@@ -143,15 +143,15 @@ class DeltaTest(DbTestCase):
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
-        with self.assertRaises(WfModule.DoesNotExist):
-            wf_module.refresh_from_db()
+        with self.assertRaises(Step.DoesNotExist):
+            step.refresh_from_db()
         with self.assertRaises(Tab.DoesNotExist):
             tab.refresh_from_db()
 
-    def test_delete_protects_non_deleted_wfmodule(self):
+    def test_delete_protects_non_deleted_step(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foo", is_deleted=False
         )
 
@@ -165,21 +165,21 @@ class DeltaTest(DbTestCase):
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
-        wf_module.refresh_from_db()  # no DoesNotExist: it's not deleted
+        step.refresh_from_db()  # no DoesNotExist: it's not deleted
 
-    def test_delete_protects_soft_deleted_wfmodule_with_reference(self):
+    def test_delete_protects_soft_deleted_step_with_reference(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
         # "protect" it: here's a delta we _aren't_ deleting
         self.run_with_async_db(
             commands.do(
-                ChangeWfModuleNotesCommand,
+                ChangeStepNotesCommand,
                 workflow_id=workflow.id,
-                wf_module=wf_module,
+                step=step,
                 new_value="1",
             )
         )
@@ -194,14 +194,14 @@ class DeltaTest(DbTestCase):
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
-        wf_module.refresh_from_db()  # no DoesNotExist -- a delta depends on it
+        step.refresh_from_db()  # no DoesNotExist -- a delta depends on it
 
-    def test_delete_scopes_wf_module_delete_by_workflow(self):
+    def test_delete_scopes_step_delete_by_workflow(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()
         # Here's a soft-deleted module on workflow2. Nothing references it. It
         # "shouldn't" exist.
-        wf_module = workflow2.tabs.first().wf_modules.create(
+        step = workflow2.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
@@ -215,7 +215,7 @@ class DeltaTest(DbTestCase):
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
-        wf_module.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
+        step.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
 
     def test_delete_scopes_tab_delete_by_workflow(self):
         workflow = Workflow.create_and_init()

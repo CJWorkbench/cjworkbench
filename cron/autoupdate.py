@@ -4,19 +4,19 @@ from django.utils import timezone
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import WfModule
+from cjwstate.models import Step
 
 
 logger = logging.getLogger(__name__)
 
 
 @database_sync_to_async
-def load_pending_steps() -> List[Tuple[int, WfModule]]:
+def load_pending_steps() -> List[Tuple[int, Step]]:
     """Return list of (workflow_id, step_id) with pending fetches."""
     now = timezone.now()
-    # WfModule.workflow_id is a database operation
+    # Step.workflow_id is a database operation
     return list(
-        WfModule.objects.filter(
+        Step.objects.filter(
             is_deleted=False,
             tab__is_deleted=False,
             is_busy=False,  # not already scheduled
@@ -28,9 +28,9 @@ def load_pending_steps() -> List[Tuple[int, WfModule]]:
 
 
 @database_sync_to_async
-def set_wf_module_busy(step_id):
+def set_step_busy(step_id):
     # Database writes can't be on the event-loop thread
-    WfModule.objects.filter(id=step_id).update(is_busy=True)
+    Step.objects.filter(id=step_id).update(is_busy=True)
 
 
 async def queue_fetches(pg_render_locker: PgRenderLocker):
@@ -58,14 +58,14 @@ async def queue_fetches(pg_render_locker: PgRenderLocker):
                 # through and queue the fetch.
                 await lock.stall_others()  # required by the PgRenderLocker API
 
-            logger.info("Queue fetch of wf_module(%d, %d)", workflow_id, step_id)
-            await set_wf_module_busy(step_id)
+            logger.info("Queue fetch of step(%d, %d)", workflow_id, step_id)
+            await set_step_busy(step_id)
             await rabbitmq.send_update_to_workflow_clients(
                 workflow_id,
                 clientside.Update(steps={step_id: clientside.StepUpdate(is_busy=True)}),
             )
             await rabbitmq.queue_fetch(workflow_id, step_id)
         except WorkflowAlreadyLocked:
-            # Don't queue a fetch. We'll revisit this WfModule next time we
+            # Don't queue a fetch. We'll revisit this Step next time we
             # query for pending fetches.
             pass

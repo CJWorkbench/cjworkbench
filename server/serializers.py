@@ -489,8 +489,8 @@ def jsonize_clientside_tab(tab: clientside.TabUpdate) -> Dict[str, Any]:
     for k, v in (
         ("slug", tab.slug),
         ("name", tab.name),
-        ("wf_module_ids", tab.step_ids),
-        ("selected_wf_module_position", tab.selected_step_index),
+        ("step_ids", tab.step_ids),
+        ("selected_step_position", tab.selected_step_index),
     ):
         _maybe_set(d, k, v)
     return d
@@ -749,7 +749,7 @@ def jsonize_clientside_init(
             k: jsonize_clientside_module(v, ctx) for k, v in state.modules.items()
         },
         "tabs": {k: jsonize_clientside_tab(v) for k, v in state.tabs.items()},
-        "wfModules": {
+        "steps": {
             str(k): jsonize_clientside_step(v, ctx) for k, v in state.steps.items()
         },
         "workflowId": state.workflow.id,
@@ -776,7 +776,7 @@ def jsonize_clientside_update(
             k: jsonize_clientside_module(v, ctx) for k, v in update.modules.items()
         }
     if update.steps:
-        r["updateWfModules"] = {
+        r["updateSteps"] = {
             str(k): jsonize_clientside_step(v, ctx) for k, v in update.steps.items()
         }
     if update.tabs:
@@ -784,5 +784,5 @@ def jsonize_clientside_update(
     if update.clear_tab_slugs:
         r["clearTabSlugs"] = list(update.clear_tab_slugs)
     if update.clear_step_ids:
-        r["clearWfModuleIds"] = list(str(id) for id in update.clear_step_ids)
+        r["clearStepIds"] = list(str(id) for id in update.clear_step_ids)
     return r

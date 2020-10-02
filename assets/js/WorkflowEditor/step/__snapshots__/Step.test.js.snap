@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Step, not read-only mode matches snapshot 1`] = `
+<div
+  className="step status-ok selected"
+  data-module-name="Load from URL"
+  data-module-slug="loadurl"
+  onMouseDown={[Function]}
+>
+  <div
+    className="step-notes"
+  >
+    <EditableNotes
+      inputRef={
+        Object {
+          "current": null,
+        }
+      }
+      isReadOnly={false}
+      onBlur={[Function]}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      placeholder="Type a note..."
+      value=""
+    />
+  </div>
+  <h3>
+    3
+  </h3>
+  <div
+    className="module-card-and-link"
+  >
+    <div
+      className="module-card"
+      draggable={true}
+      onDragEnd={[Function]}
+      onDragStart={[Function]}
+    >
+      <div
+        className="module-card-header"
+      >
+        <div
+          className="controls"
+        >
+          <StepCollapseButton
+            isCollapsed={false}
+            isLessonHighlight={false}
+            onCollapse={[Function]}
+            onExpand={[Function]}
+          />
+          <i
+            className="icon-icon module-icon"
+          />
+          <div
+            className="module-name"
+          >
+            Load from URL
+          </div>
+          <div
+            className="context-buttons"
+          >
+            <a
+              className="help-button"
+              href="http://help-url"
+              rel="noopener noreferrer"
+              target="_blank"
+              title="Help for this module"
+            >
+              <i
+                className="icon-help"
+              />
+            </a>
+            <button
+              className="btn edit-note"
+              onClick={[Function]}
+              title="Edit Note"
+            >
+              <i
+                className="icon-note"
+              />
+            </button>
+            <WithI18n
+              deleteStep={[Function]}
+              id={999}
+            />
+          </div>
+        </div>
+        <DeprecationMessage
+          helpUrl="http://help-url"
+          message={null}
+        />
+      </div>
+      <div
+        className="module-card-details expanded"
+      >
+        <Memo(StatusLine)
+          applyQuickFix={[Function]}
+          errors={Array []}
+          isReadOnly={false}
+          module={
+            Object {
+              "help_url": "http://help-url",
+              "icon": "icon",
+              "id_name": "loadurl",
+              "name": "Load from URL",
+              "param_fields": Array [
+                Object {
+                  "idName": "url",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "string",
+                  "visibleIf": null,
+                },
+                Object {
+                  "idName": "menu_select",
+                  "items": "Mango|Banana",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "menu",
+                  "visibleIf": null,
+                },
+              ],
+            }
+          }
+          status="ok"
+        />
+        <ErrorBoundary>
+          <ParamsForm
+            api={
+              Object {
+                "createOauthAccessToken": [MockFunction],
+                "valueCounts": [MockFunction],
+              }
+            }
+            applyQuickFix={[Function]}
+            currentTab="tab-1"
+            deleteSecret={[Function]}
+            edits={Object {}}
+            fields={
+              Array [
+                Object {
+                  "idName": "url",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "string",
+                  "visibleIf": null,
+                },
+                Object {
+                  "idName": "menu_select",
+                  "items": "Mango|Banana",
+                  "multiline": false,
+                  "name": "",
+                  "placeholder": "",
+                  "type": "menu",
+                  "visibleIf": null,
+                },
+              ]
+            }
+            files={Array []}
+            inputDeltaId={null}
+            inputStepId={123}
+            isOwner={true}
+            isReadOnly={false}
+            isStepBusy={false}
+            isZenMode={false}
+            onChange={[Function]}
+            onSubmit={[Function]}
+            secrets={Object {}}
+            startCreateSecret={[Function]}
+            stepId={999}
+            stepOutputErrors={Array []}
+            stepSlug="step-1"
+            submitSecret={[Function]}
+            tabs={Array []}
+            value={
+              Object {
+                "menu_select": 1,
+                "url": "http://some.URL.me",
+              }
+            }
+            workflowId={99}
+          />
+        </ErrorBoundary>
+      </div>
+    </div>
+  </div>
+</div>
+`;

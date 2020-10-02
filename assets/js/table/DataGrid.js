@@ -93,9 +93,9 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
 
 export default class DataGrid extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
-    wfModuleId: PropTypes.number, // immutable; null for placeholder table
+    stepId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -162,7 +162,7 @@ export default class DataGrid extends React.PureComponent {
   load () {
     const min = this.firstMissingRowIndex
     const max = min + NRowsPerPage
-    const { loadRows, deltaId, wfModuleId } = this.props
+    const { loadRows, deltaId, stepId } = this.props
     const { loadedRows } = this.state
 
     if (this.unmounted) return
@@ -182,7 +182,7 @@ export default class DataGrid extends React.PureComponent {
       }
     }
 
-    loadRows(wfModuleId, deltaId, min, max)
+    loadRows(stepId, deltaId, min, max)
       .then(json => {
         if (this.unmounted) return
 
@@ -206,7 +206,7 @@ export default class DataGrid extends React.PureComponent {
   }
 
   componentDidMount () {
-    if (this.props.wfModuleId && this.props.nRows > 0) {
+    if (this.props.stepId && this.props.nRows > 0) {
       this.load()
     }
 
@@ -294,7 +294,7 @@ export default class DataGrid extends React.PureComponent {
       // We'll return an empty row for now. But what _else_ will we do?
       if (this.unmounted) {
         // Don't load
-      } else if (!this.props.wfModuleId) {
+      } else if (!this.props.stepId) {
         // This is a placeholder table, not a real data table. Don't load.
       } else if (!this.scheduleLoadTimeout) {
         this.firstMissingRowIndex = i
@@ -313,7 +313,7 @@ export default class DataGrid extends React.PureComponent {
   // Add row number col and make all cols resizeable
   makeFormattedCols = memoize(draggingColumnIndex => {
     // immutable props
-    const { isReadOnly, columns, wfModuleId } = this.props
+    const { isReadOnly, columns, stepId } = this.props
 
     return columns.map((column, index) => ({
       key: column.name,
@@ -327,7 +327,7 @@ export default class DataGrid extends React.PureComponent {
       maybeTriggerRenderIfChangeDraggingColumnIndex: draggingColumnIndex,
       headerRenderer: (
         <ColumnHeader
-          wfModuleId={wfModuleId}
+          stepId={stepId}
           columnKey={column.name}
           columnType={column.type}
           index={index}

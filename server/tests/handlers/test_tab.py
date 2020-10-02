@@ -51,10 +51,10 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertResponse(response, data=None)
 
         command = AddModuleCommand.objects.first()
-        self.assertEquals(command.wf_module.order, 3)
-        self.assertEquals(command.wf_module.module_id_name, "amodule")
-        self.assertEquals(command.wf_module.params["foo"], "bar")
-        self.assertEquals(command.wf_module.tab.slug, "tab-1")
+        self.assertEquals(command.step.order, 3)
+        self.assertEquals(command.step.module_id_name, "amodule")
+        self.assertEquals(command.step.params["foo"], "bar")
+        self.assertEquals(command.step.tab.slug, "tab-1")
         self.assertEquals(command.workflow_id, workflow.id)
 
     def test_add_module_viewer_access_denied(self):
@@ -184,15 +184,15 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         tab = workflow.tabs.first()  # tab-1
-        step1 = tab.wf_modules.create(order=0, slug="step-1")
-        step2 = tab.wf_modules.create(order=1, slug="step-2")
+        step1 = tab.steps.create(order=0, slug="step-1")
+        step2 = tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
-            wfModuleIds=[step2.id, step1.id],
+            stepIds=[step2.id, step1.id],
         )
         self.assertResponse(response, data=None)
 
@@ -203,30 +203,30 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     def test_reorder_modules_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)
         tab = workflow.tabs.first()  # tab-1
-        step1 = tab.wf_modules.create(order=0, slug="step-1")
-        step2 = tab.wf_modules.create(order=1, slug="step-2")
+        step1 = tab.steps.create(order=0, slug="step-1")
+        step2 = tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
             workflow=workflow,
             tabSlug="tab-1",
-            wfModuleIds=[step2.id, step1.id],
+            stepIds=[step2.id, step1.id],
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    def test_reorder_modules_invalid_wf_module_ids(self):
+    def test_reorder_modules_invalid_step_ids(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()  # tab-1
-        step1 = tab.wf_modules.create(order=0, slug="step-1")
-        step2 = tab.wf_modules.create(order=1, slug="step-2")
+        step1 = tab.steps.create(order=0, slug="step-1")
+        step2 = tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_modules,
             user=user,
             workflow=workflow,
             tabSlug="tab-1",
-            wfModuleIds=[step2.id, step1.id, 2],
+            stepIds=[step2.id, step1.id, 2],
         )
         self.assertResponse(
             response, error="new_order does not have the expected elements"

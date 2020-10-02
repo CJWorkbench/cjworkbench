@@ -8,38 +8,38 @@ const API_TOKEN_NO_OP = 'API_TOKEN_NO_OP'
  *
  * File docs: https://developer.mozilla.org/en-US/docs/Web/API/File
  */
-export function upload (wfModuleId, file) {
+export function upload (stepId, file) {
   return (dispatch, getState, api) => {
-    const onProgress = (nBytesUploaded) => dispatch(setProgress(wfModuleId, nBytesUploaded))
+    const onProgress = (nBytesUploaded) => dispatch(setProgress(stepId, nBytesUploaded))
     return dispatch({
       type: FILE_UPLOAD,
       payload: {
         // `api.uploadFile` will never error. At worst, it will retry indefinitely.
-        promise: api.uploadFile(wfModuleId, file, onProgress)
+        promise: api.uploadFile(stepId, file, onProgress)
           .then(result => ({
-            wfModuleId,
+            stepId,
             uuid: result === null ? null : result.uuid
           })),
-        data: { wfModuleId, name: file.name, size: file.size }
+        data: { stepId, name: file.name, size: file.size }
       }
     })
   }
 }
 
 /**
- * Modify wfModule.inProgressUpload in `state`.
+ * Modify step.inProgressUpload in `state`.
  */
-function updateWfModuleInProgressFileUpload (state, wfModuleId, updateOrNull) {
-  const { wfModules } = state
-  const wfModule = wfModules[String(wfModuleId)]
+function updateStepInProgressFileUpload (state, stepId, updateOrNull) {
+  const { steps } = state
+  const step = steps[String(stepId)]
   return {
     ...state,
-    wfModules: {
-      ...wfModules,
-      [wfModuleId]: {
-        ...wfModule,
+    steps: {
+      ...steps,
+      [stepId]: {
+        ...step,
         inProgressUpload: updateOrNull === null ? null : {
-          ...(wfModule.inProgressUpload || {}),
+          ...(step.inProgressUpload || {}),
           ...updateOrNull
         }
       }
@@ -48,56 +48,56 @@ function updateWfModuleInProgressFileUpload (state, wfModuleId, updateOrNull) {
 }
 
 function reduceUploadPending (state, action) {
-  const { wfModuleId, name, size } = action.payload
+  const { stepId, name, size } = action.payload
   // `nBytesUploaded === null` will render as an "indeterminate" progressbar.
-  return updateWfModuleInProgressFileUpload(state, wfModuleId, { name, size, nBytesUploaded: null })
+  return updateStepInProgressFileUpload(state, stepId, { name, size, nBytesUploaded: null })
 }
 
 function reduceUploadFulfilled (state, action) {
-  const { wfModuleId } = action.payload
-  return updateWfModuleInProgressFileUpload(state, wfModuleId, null)
+  const { stepId } = action.payload
+  return updateStepInProgressFileUpload(state, stepId, null)
 }
 
 /**
- * Cancel any upload on `wfModule`.
+ * Cancel any upload on `step`.
  */
-export function cancel (wfModuleId) {
+export function cancel (stepId) {
   return (dispatch, getState, api) => {
-    const hasUpload = !!getState().wfModules[String(wfModuleId)].inProgressUpload
+    const hasUpload = !!getState().steps[String(stepId)].inProgressUpload
     return dispatch({
       type: FILE_UPLOAD_CANCEL,
       payload: {
-        promise: (hasUpload ? api.cancelFileUpload(wfModuleId) : Promise.resolve(null)).then(() => ({ wfModuleId })),
-        data: { wfModuleId }
+        promise: (hasUpload ? api.cancelFileUpload(stepId) : Promise.resolve(null)).then(() => ({ stepId })),
+        data: { stepId }
       }
     })
   }
 }
 
 function reduceCancelPending (state, action) {
-  const { wfModuleId } = action.payload
+  const { stepId } = action.payload
   // `nBytesUploaded === null` will render as an "indeterminate" progressbar.
-  return updateWfModuleInProgressFileUpload(state, wfModuleId, { nBytesUploaded: null })
+  return updateStepInProgressFileUpload(state, stepId, { nBytesUploaded: null })
 }
 
 function reduceCancelFulfilled (state, action) {
-  const { wfModuleId } = action.payload
-  return updateWfModuleInProgressFileUpload(state, wfModuleId, null)
+  const { stepId } = action.payload
+  return updateStepInProgressFileUpload(state, stepId, null)
 }
 
 /**
  * Mark a File upload as progressing.
  */
-export function setProgress (wfModuleId, nBytesUploaded) {
+export function setProgress (stepId, nBytesUploaded) {
   return {
     type: FILE_UPLOAD_PROGRESS,
-    payload: { wfModuleId, nBytesUploaded }
+    payload: { stepId, nBytesUploaded }
   }
 }
 
 function reduceSetProgress (state, action) {
-  const { wfModuleId, nBytesUploaded } = action.payload
-  return updateWfModuleInProgressFileUpload(state, wfModuleId, { nBytesUploaded })
+  const { stepId, nBytesUploaded } = action.payload
+  return updateStepInProgressFileUpload(state, stepId, { nBytesUploaded })
 }
 
 /**
@@ -108,12 +108,12 @@ function reduceSetProgress (state, action) {
  *
  * Return a url-safe string.
  */
-export function getApiToken (wfModuleId) {
+export function getApiToken (stepId) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: API_TOKEN_NO_OP,
       payload: {
-        promise: api.getWfModuleFileUploadApiToken(wfModuleId)
+        promise: api.getStepFileUploadApiToken(stepId)
       }
     })
   }
@@ -127,12 +127,12 @@ export function getApiToken (wfModuleId) {
  *
  * Return a url-safe string.
  */
-export function resetApiToken (wfModuleId) {
+export function resetApiToken (stepId) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: API_TOKEN_NO_OP,
       payload: {
-        promise: api.resetWfModuleFileUploadApiToken(wfModuleId)
+        promise: api.resetStepFileUploadApiToken(stepId)
       }
     })
   }
@@ -144,12 +144,12 @@ export function resetApiToken (wfModuleId) {
  * API token is not stored in Redux state because Redux state is the same for
  * all users, even users without write permission.
  */
-export function clearApiToken (wfModuleId) {
+export function clearApiToken (stepId) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: API_TOKEN_NO_OP,
       payload: {
-        promise: api.clearWfModuleFileUploadApiToken(wfModuleId)
+        promise: api.clearStepFileUploadApiToken(stepId)
       }
     })
   }

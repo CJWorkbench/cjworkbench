@@ -7,30 +7,30 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
 from cjwkernel.types import RenderResult
-from cjwstate.models import WfModule, Workflow
+from cjwstate.models import Step, Workflow
 from server.utils import get_absolute_url
 from cjworkbench.i18n.templates import get_i18n_context
 
 
 @dataclass
 class OutputDelta:
-    """Description of changes between two versions of WfModule output."""
+    """Description of changes between two versions of Step output."""
 
     user: User
     workflow: Workflow
-    wf_module: WfModule
+    step: Step
 
     @property
     def workflow_name(self) -> str:
         return self.workflow.name
 
     @property
-    def wf_module_id(self) -> int:
-        return self.wf_module.id
+    def step_id(self) -> int:
+        return self.step.id
 
     @property
     def module_name(self) -> str:
-        return self.wf_module.module_id_name
+        return self.step.module_id_name
 
     @property
     def workflow_url(self) -> str:

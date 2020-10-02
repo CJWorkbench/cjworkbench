@@ -169,7 +169,7 @@ export const EditableColumnName = withI18n({ withRef: true /* so parent can call
 // Sort arrows, A-Z letter identifiers
 export class ColumnHeader extends React.PureComponent {
   static propTypes = {
-    wfModuleId: PropTypes.number,
+    stepId: PropTypes.number,
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -178,7 +178,7 @@ export class ColumnHeader extends React.PureComponent {
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
-    dispatchTableAction: PropTypes.func.isRequired // func(wfModuleId, moduleIdName, forceNewModule, params)
+    dispatchTableAction: PropTypes.func.isRequired // func(stepId, moduleIdName, forceNewModule, params)
   }
 
   inputRef = React.createRef()
@@ -194,7 +194,7 @@ export class ColumnHeader extends React.PureComponent {
       columnKey: this.props.columnKey
     }
 
-    this.props.dispatchTableAction(this.props.wfModuleId, idName, forceNewModule, params)
+    this.props.dispatchTableAction(this.props.stepId, idName, forceNewModule, params)
   }
 
   startRename = () => {
@@ -202,7 +202,7 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   handleRename = ({ prevName, newName }) => {
-    this.props.dispatchTableAction(this.props.wfModuleId, 'renamecolumns', false, { prevName, newName })
+    this.props.dispatchTableAction(this.props.stepId, 'renamecolumns', false, { prevName, newName })
   }
 
   handleMouseEnter = () => {

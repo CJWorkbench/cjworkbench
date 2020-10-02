@@ -18,29 +18,29 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
+      data-test="return workflow.tabs[0].stepModuleIds[0] === 'loadurl'"
       >Add the data source 'Load from URL'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === '{{LESSON_FILES_URL}}/population_growth_data.csv' && wfModule.selectedVersion"
+      data-highlight='[{"type":"Step","moduleIdName":"loadurl"}]'
+      data-test="const step = workflow.tabs[0].steps[0]; return step.params.url === '{{LESSON_FILES_URL}}/population_growth_data.csv' && step.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt">{{LESSON_FILES_URL}}/population_growth_data.csv</div>
       <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"nulldropper"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'nulldropper'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'nulldropper'"
       >Add the step 'Drop empty columns.'
     </li>
     <li
       data-highlight='[{"type":"Module","index":2,"id_name":"dropna"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'dropna'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'dropna'"
       >Add the step 'Drop empty rows'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
-      data-test="const colnames = workflow.tabs[0].wfModules[2].params.colnames.sort().join('|'); return colnames === 'MetroArea|Population'"
+      data-highlight='[{"type":"Step","moduleIdName":"dropna"}]'
+      data-test="const colnames = workflow.tabs[0].steps[2].params.colnames.sort().join('|'); return colnames === 'MetroArea|Population'"
       >In Drop empty rows, select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
     </li>
   </ol>
@@ -51,19 +51,19 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type": "WfModule","moduleIdName": "convert-date"},{"type":"Module","index":3,"id_name":"convert-date"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[3] || {}; return wfModule.moduleSlug === 'convert-date' && wfModule.params.colnames.join('|') === 'Date'"
+      data-highlight='[{"type": "Step","moduleIdName": "convert-date"},{"type":"Module","index":3,"id_name":"convert-date"}]'
+      data-test="const step = workflow.tabs[0].steps[3] || {}; return step.moduleSlug === 'convert-date' && step.params.colnames.join('|') === 'Date'"
       > In the table header, click open the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span> of the column <kbd>Date</kbd> and select <kbd>Convert to timestamp</kbd>.
     </li>
     <li
-      data-highlight='[{"type": "WfModule", "moduleIdName":"converttexttonumber"},{"type":"Module","index":4,"id_name":"converttexttonumber"}]'
+      data-highlight='[{"type": "Step", "moduleIdName":"converttexttonumber"},{"type":"Module","index":4,"id_name":"converttexttonumber"}]'
       data-test="
-        const wfModule = workflow.tabs[0].wfModules[4] || {}
-        const params = wfModule.params || {}
+        const step = workflow.tabs[0].steps[4] || {}
+        const params = step.params || {}
         const colnames = params.colnames || []
-        return wfModule.moduleSlug === 'converttexttonumber' && colnames.join('|') === 'Population'
+        return step.moduleSlug === 'converttexttonumber' && colnames.join('|') === 'Population'
       ">Likewise, use the menu <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span> of the column <kbd>Population</kbd> to select <kbd>Convert to number</kbd>.
@@ -76,11 +76,11 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":5,"id_name":"refine"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'refine'"
+      data-test="return workflow.tabs[0].stepModuleIds[5] === 'refine'"
       >Add the step 'Refine' using the search.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"refine"}]'
-      data-test="const params = workflow.tabs[0].wfModules[5].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
+      data-highlight='[{"type":"Step","moduleIdName":"refine"}]'
+      data-test="const params = workflow.tabs[0].steps[5].params; if (params.column !== 'MetroArea') return false; const renames = params.refine.renames; return (renames['Austin'] && renames['DallasFORTHWorth'])"
       >Select the column <kbd>MetroArea</kbd>. Edit values in the list until there are five left.
       <figure>
         <img alt="Inspect element" src="./1_refine_row.png">
@@ -106,21 +106,21 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":6,"id_name":"reshape" }]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'reshape'"
+      data-test="return workflow.tabs[0].stepModuleIds[6] === 'reshape'"
       >Add the step ‘Reshape’.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.operation === 'longtowide'"
+      data-highlight='[{"type":"Step","moduleIdName":"reshape"}]'
+      data-test="return workflow.tabs[0].steps[6].params.operation === 'longtowide'"
       >Select <kbd>Long to wide</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.key_colnames.join(',') == 'Date'"
+      data-highlight='[{"type":"Step","moduleIdName":"reshape"}]'
+      data-test="return workflow.tabs[0].steps[6].params.key_colnames.join(',') == 'Date'"
       >Choose <kbd>Date</kbd> as the Row variable. Those values will be displayed in leftmost column in the wide table.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"reshape"}]'
-      data-test="return workflow.tabs[0].wfModules[6].params.ltw_varcolname == 'MetroArea'"
+      data-highlight='[{"type":"Step","moduleIdName":"reshape"}]'
+      data-test="return workflow.tabs[0].steps[6].params.ltw_varcolname == 'MetroArea'"
       >Choose <kbd>MetroArea</kbd> as the Column variable. Those values will be used in the column header in the wide table.
     </li>
   </ol>

@@ -9,7 +9,7 @@ describe('UpdateFrequencySelectModal', () => {
     return mountWithI18n(
       <UpdateFrequencySelectModal
         workflowId={123}
-        wfModuleId={234}
+        stepId={234}
         isAutofetch={false}
         fetchInterval={3600}
         isEmailUpdates={false}

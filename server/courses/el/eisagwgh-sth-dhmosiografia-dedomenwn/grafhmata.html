@@ -10,7 +10,7 @@
 </section><!-- Section 1 --><script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -45,22 +45,22 @@ tabs:
     <li
       data-test="
         return (
-          workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'
-          && workflow.tabs[0].wfModules[1].params.colnames.join('|') === 'Continent'
-          && !workflow.tabs[0].wfModules[1].params.keep
+          workflow.tabs[0].stepModuleIds[1] === 'selectcolumns'
+          && workflow.tabs[0].steps[1].params.colnames.join('|') === 'Continent'
+          && !workflow.tabs[0].steps[1].params.keep
         )
       ">Κάντε κλικ στο μενού της στήλης<kbd>Continent</kbd><span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> και επιλέξτε<kbd>Διαγραφή στήλης</kbd></li>
     <li
-      data-test="return (workflow.tabs[0].wfModuleSlugs[2] === 'transpose') &&
-                        (workflow.tabs[0].wfModules[2].params.firstcolname.toLowerCase() ==='year')"
+      data-test="return (workflow.tabs[0].stepModuleIds[2] === 'transpose') &&
+                        (workflow.tabs[0].steps[2].params.firstcolname.toLowerCase() ==='year')"
       >Προσθέστε ένα βήμα Αντιμετάθεση και ονομάστε τη νέα στήλη αριστερά<kbd>Year</kbd> (Έτος)<p class="instruction-detail">Τώρα μπορείτε να δημιουργήσετε γράφημα των εκπομπών αερίων της Κίνας.</p>
     </li>
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[3] !== 'columnchart')
+        if (workflow.tabs[0].stepModuleIds[3] !== 'columnchart')
           return false
 
-        const params = workflow.tabs[0].wfModules[3].params
+        const params = workflow.tabs[0].steps[3].params
         return (
           params.x_column.toLowerCase() === 'year'
           && params.y_columns.length >= 1
@@ -81,11 +81,11 @@ tabs:
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'linechart'"
+      data-test="return workflow.tabs[0].stepModuleIds[4] === 'linechart'"
       >Μετά το γράφημα στηλών, προσθέστε ένα βήμα Γραμμικό Γράφημα.</li>
     <li
       data-test="
-        const params = workflow.tabs[0].wfModules[4].params
+        const params = workflow.tabs[0].steps[4].params
         return (
           params.x_column.toLowerCase() === 'year'
           && params.y_columns[0]
@@ -94,7 +94,7 @@ tabs:
       ">Επιλέξτε τη μεταβλητή <kbd>Year</kbd>για τον άξονα Χ και<kbd>China</kbd>για τον άξονα Y.<p class="instruction-detail">Ας συγκρίνουμε τώρα την ποσότητα CO<sub>2</sub> που εκπέμπει η Κίνα με την ποσότητα που εκπέμπουν άλλες χώρες.</p>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length > 1"
+      data-test="return workflow.tabs[0].steps[4].params.y_columns.length > 1"
       >Κατά το βήμα του Γραμμικού Γραφήματος, επιλέξτε και άλλες χώρες που θέλετε στον άξονα Y κάνοντας κλικ στο κουμπί προσθήκης <span><img class="icon-insert" src="images/lesson-icons/add.svg"></span></li>
   </ol>
 </section>

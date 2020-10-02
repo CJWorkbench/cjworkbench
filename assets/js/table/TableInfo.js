@@ -11,7 +11,7 @@ export default class TableInfo extends React.PureComponent {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown
     isReadOnly: PropTypes.bool.isRequired,
-    wfModuleId: PropTypes.number, // or null if none selected
+    stepId: PropTypes.number, // or null if none selected
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired
   }
 
@@ -28,7 +28,7 @@ export default class TableInfo extends React.PureComponent {
   }
 
   render () {
-    const { nRows, nColumns, wfModuleId, selectedRowIndexes, isReadOnly } = this.props
+    const { nRows, nColumns, stepId, selectedRowIndexes, isReadOnly } = this.props
     const { isExportModalOpen } = this.state
 
     const nRowsString = nRows === null ? '' : numberFormat.format(nRows)
@@ -48,12 +48,12 @@ export default class TableInfo extends React.PureComponent {
           {isReadOnly ? null : (
             <SelectedRowsActions
               selectedRowIndexes={selectedRowIndexes}
-              wfModuleId={wfModuleId}
+              stepId={stepId}
             />
           )}
         </div>
 
-        {!wfModuleId ? null : (
+        {!stepId ? null : (
           <>
             <div className='export-table' onClick={this.handleClickExport}>
               <i className='icon-download' />
@@ -61,7 +61,7 @@ export default class TableInfo extends React.PureComponent {
             </div>
             <ExportModal
               open={isExportModalOpen}
-              wfModuleId={wfModuleId}
+              stepId={stepId}
               toggle={this.closeExportModal}
             />
           </>

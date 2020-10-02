@@ -26,7 +26,7 @@ class ModuleVersion(models.Model):
 
     class Meta:
         app_label = "server"
-        db_table = "server_moduleversion"
+        db_table = "module_version"
         ordering = ["last_update_time"]
         unique_together = ("id_name", "last_update_time")
 

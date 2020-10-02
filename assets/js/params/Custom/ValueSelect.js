@@ -375,6 +375,6 @@ export class ValueSelect extends React.PureComponent {
 export default withFetchedData(
   ValueSelect,
   'valueCounts',
-  ({ api, inputWfModuleId, selectedColumn }) => selectedColumn === null ? Promise.resolve(null) : api.valueCounts(inputWfModuleId, selectedColumn),
+  ({ api, inputStepId, selectedColumn }) => selectedColumn === null ? Promise.resolve(null) : api.valueCounts(inputStepId, selectedColumn),
   ({ inputDeltaId, selectedColumn }) => selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
 )

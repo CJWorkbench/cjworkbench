@@ -21,8 +21,8 @@ export class StateWithHelpers {
     return this.workflow.selectedTab
   }
 
-  get selectedWfModule () {
-    return this.selectedTab.selectedWfModule
+  get selectedStep () {
+    return this.selectedTab.selectedStep
   }
 }
 
@@ -49,8 +49,8 @@ export class WorkflowWithHelpers {
     return new TabWithHelpers(tab, this.state)
   }
 
-  get selectedWfModule () {
-    return this.selectedTab.selectedWfModule
+  get selectedStep () {
+    return this.selectedTab.selectedStep
   }
 }
 
@@ -60,51 +60,51 @@ export class TabWithHelpers {
     this.state = state
   }
 
-  get wfModules () {
-    return this.tab.wf_module_ids.map(stepId => {
-      const wfModule = this.state.wfModules[String(stepId)] || null
-      return new WorkflowModuleWithHelpers(wfModule, this.state)
+  get steps () {
+    return this.tab.step_ids.map(stepId => {
+      const step = this.state.steps[String(stepId)] || null
+      return new WorkflowModuleWithHelpers(step, this.state)
     })
   }
 
-  get wfModuleNames () {
-    return this.wfModules.map(step => step.moduleName)
+  get stepNames () {
+    return this.steps.map(step => step.moduleName)
   }
 
-  get wfModuleSlugs () {
-    return this.wfModules.map(step => step.moduleSlug)
+  get stepModuleIds () {
+    return this.steps.map(step => step.moduleSlug)
   }
 
-  get selectedWfModule () {
-    const { wfModules } = this.state
-    const position = this.tab.selected_wf_module_position
+  get selectedStep () {
+    const { steps } = this.state
+    const position = this.tab.selected_step_position
     if (position === null || position === undefined) return null
 
-    const wfModule = wfModules[String(this.tab.wf_module_ids[position])] || null
-    return new WorkflowModuleWithHelpers(wfModule, this.state)
+    const step = steps[String(this.tab.step_ids[position])] || null
+    return new WorkflowModuleWithHelpers(step, this.state)
   }
 }
 
 export class WorkflowModuleWithHelpers {
-  constructor (wfModule, state) {
-    this.wfModule = wfModule // may be null, if WfModule is being created
+  constructor (step, state) {
+    this.step = step // may be null, if Step is being created
     this.state = state
   }
 
   get id () {
-    if (!this.wfModule) return null
-    return this.wfModule.id
+    if (!this.step) return null
+    return this.step.id
   }
 
   get isCollapsed () {
-    if (!this.wfModule) return false
-    return this.wfModule.is_collapsed
+    if (!this.step) return false
+    return this.step.is_collapsed
   }
 
   get module () {
-    if (!this.wfModule) return null
-    if (!this.wfModule.module) return null
-    return this.state.modules[this.wfModule.module] || null
+    if (!this.step) return null
+    if (!this.step.module) return null
+    return this.state.modules[this.step.module] || null
   }
 
   get moduleName () {
@@ -113,53 +113,53 @@ export class WorkflowModuleWithHelpers {
   }
 
   get moduleSlug () {
-    if (!this.wfModule) return null
-    return this.wfModule.module || null
+    if (!this.step) return null
+    return this.step.module || null
   }
 
   get note () {
-    if (!this.wfModule) return null
-    return this.wfModule.notes
+    if (!this.step) return null
+    return this.step.notes
   }
 
   get params () {
-    if (!this.wfModule) return {}
-    return this.wfModule.params
+    if (!this.step) return {}
+    return this.step.params
   }
 
   get secrets () {
-    if (!this.wfModule) return {}
-    return this.wfModule.secrets
+    if (!this.step) return {}
+    return this.step.secrets
   }
 
   get selectedVersion () {
-    if (!this.wfModule) return null
-    const versions = this.wfModule.versions
+    if (!this.step) return null
+    const versions = this.step.versions
     return (versions && versions.selected) || null
   }
 
   get isEmailUpdates () {
-    if (!this.wfModule) return false
-    return !!this.wfModule.notifications
+    if (!this.step) return false
+    return !!this.step.notifications
   }
 
   /**
    * The update interval, in seconds. Null if not auto-update.
    */
   get updateInterval () {
-    const wfModule = this.wfModule
-    if (!wfModule) return null
-    if (!wfModule.auto_update_data) return null
+    const step = this.step
+    if (!step) return null
+    if (!step.auto_update_data) return null
 
-    return wfModule.update_interval
+    return step.update_interval
   }
 
   /**
    * Date the server says is the last time it checked an upstream website.
    */
   get lastFetchCheckAt () {
-    if (!this.wfModule) return null
-    const s = this.wfModule.last_update_check
+    if (!this.step) return null
+    const s = this.step.last_update_check
     return s ? new Date(s) : null
   }
 }

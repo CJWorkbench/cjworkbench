@@ -16,7 +16,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -41,8 +41,8 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[2] !== 'groupby') return false
-        const params = workflow.tabs[0].wfModules[2].params
+        if (workflow.tabs[0].stepModuleIds[2] !== 'groupby') return false
+        const params = workflow.tabs[0].steps[2].params
         return (
           params.groups.colnames.sort().join('|') === 'Borough|Complaint date'
           && params.aggregations[0]
@@ -94,17 +94,17 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        return workflow.tabs[0].wfModuleSlugs[3] === 'reshape' &&
-               workflow.tabs[0].wfModules[3].params.operation === 'longtowide'
+        return workflow.tabs[0].stepModuleIds[3] === 'reshape' &&
+               workflow.tabs[0].steps[3].params.operation === 'longtowide'
       ">Add a <kbd>Reshape</kbd> step and select <kbd>Long to wide</kbd>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.key_colnames.join(',') === 'Complaint date'"
+      data-test="return workflow.tabs[0].steps[3].params.key_colnames.join(',') === 'Complaint date'"
       >Select <kbd>Complaint date</kbd> as the <kbd>Row variable</kbd>
     </li>
     <li
       data-test="
-        return workflow.tabs[0].wfModules[3].params.ltw_varcolname == 'Borough'"
+        return workflow.tabs[0].steps[3].params.ltw_varcolname == 'Borough'"
       >Select <kbd>Borough</kbd>for the <kbd>Column variable</kbd>
     </li>
   </ol>
@@ -121,15 +121,15 @@ tabs:
     <li
       data-test="
         return (
-          workflow.tabs[0].wfModuleSlugs[4] === 'linechart'
-          && workflow.tabs[0].wfModules[4].params.x_column === 'Complaint date'
-          && workflow.tabs[0].wfModules[4].params.y_columns[0]
-          && workflow.tabs[0].wfModules[4].params.y_columns[0].column
+          workflow.tabs[0].stepModuleIds[4] === 'linechart'
+          && workflow.tabs[0].steps[4].params.x_column === 'Complaint date'
+          && workflow.tabs[0].steps[4].params.y_columns[0]
+          && workflow.tabs[0].steps[4].params.y_columns[0].column
         )
       ">Add a <kbd>Line Chart</kbd> step. Choose <kbd>Complaint date</kbd> for the X axis and any borough for the Y axis.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[4].params.y_columns.length >= 2"
+      data-test="return workflow.tabs[0].steps[4].params.y_columns.length >= 2"
       >Click <span><img class="icon-insert" src="images/lesson-icons/add.svg" alt="add"></span> to add one column on the Y axis for each additional borough you want to compare
     </li>
   </ol>

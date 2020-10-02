@@ -3,7 +3,7 @@ from django.utils import timezone
 from cjwkernel.types import FetchResult, I18nMessage, RenderError
 from cjwkernel.tests.util import parquet_file
 from cjwstate import clientside, rabbitmq, storedobjects
-from cjwstate.models import WfModule, Workflow
+from cjwstate.models import Step, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
 from cjwstate.tests.utils import DbTestCase
 from fetcher import save
@@ -20,7 +20,7 @@ class SaveTests(DbTestCase):
         send_update.side_effect = async_noop
 
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             is_busy=True,
@@ -30,27 +30,23 @@ class SaveTests(DbTestCase):
 
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
-                save.create_result(
-                    workflow.id, wf_module, FetchResult(parquet_path), now
-                )
+                save.create_result(workflow.id, step, FetchResult(parquet_path), now)
             )
-        self.assertEqual(wf_module.stored_objects.count(), 1)
+        self.assertEqual(step.stored_objects.count(), 1)
 
-        self.assertEqual(wf_module.fetch_errors, [])
-        self.assertEqual(wf_module.is_busy, False)
-        self.assertEqual(wf_module.last_update_check, now)
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.fetch_errors, [])
-        self.assertEqual(wf_module.is_busy, False)
-        self.assertEqual(wf_module.last_update_check, now)
+        self.assertEqual(step.fetch_errors, [])
+        self.assertEqual(step.is_busy, False)
+        self.assertEqual(step.last_update_check, now)
+        step.refresh_from_db()
+        self.assertEqual(step.fetch_errors, [])
+        self.assertEqual(step.is_busy, False)
+        self.assertEqual(step.last_update_check, now)
 
         send_update.assert_called_with(
             workflow.id,
             clientside.Update(
                 steps={
-                    wf_module.id: clientside.StepUpdate(
-                        is_busy=False, last_fetched_at=now
-                    )
+                    step.id: clientside.StepUpdate(is_busy=False, last_fetched_at=now)
                 }
             ),
         )
@@ -62,7 +58,7 @@ class SaveTests(DbTestCase):
     def test_mark_result_unchanged(self, send_update):
         send_update.side_effect = async_noop
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             is_busy=True,
@@ -70,28 +66,26 @@ class SaveTests(DbTestCase):
         )
         now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
 
-        self.run_with_async_db(save.mark_result_unchanged(workflow.id, wf_module, now))
-        self.assertEqual(wf_module.stored_objects.count(), 0)
+        self.run_with_async_db(save.mark_result_unchanged(workflow.id, step, now))
+        self.assertEqual(step.stored_objects.count(), 0)
 
         self.assertEqual(
-            wf_module.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
+            step.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
         )
-        self.assertEqual(wf_module.is_busy, False)
-        self.assertEqual(wf_module.last_update_check, now)
-        wf_module.refresh_from_db()
+        self.assertEqual(step.is_busy, False)
+        self.assertEqual(step.last_update_check, now)
+        step.refresh_from_db()
         self.assertEqual(
-            wf_module.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
+            step.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
         )
-        self.assertEqual(wf_module.is_busy, False)
-        self.assertEqual(wf_module.last_update_check, now)
+        self.assertEqual(step.is_busy, False)
+        self.assertEqual(step.last_update_check, now)
 
         send_update.assert_called_with(
             workflow.id,
             clientside.Update(
                 steps={
-                    wf_module.id: clientside.StepUpdate(
-                        is_busy=False, last_fetched_at=now
-                    )
+                    step.id: clientside.StepUpdate(is_busy=False, last_fetched_at=now)
                 }
             ),
         )
@@ -100,19 +94,19 @@ class SaveTests(DbTestCase):
     @patch.object(storedobjects, "enforce_storage_limits")
     def test_storage_limits(self, limit):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
+        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
 
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow.id, wf_module, FetchResult(parquet_path), timezone.now()
+                    workflow.id, step, FetchResult(parquet_path), timezone.now()
                 )
             )
-        limit.assert_called_with(wf_module)
+        limit.assert_called_with(step)
 
     def test_race_deleted_workflow(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
+        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
         workflow_id = workflow.id
         workflow.delete()
 
@@ -120,13 +114,13 @@ class SaveTests(DbTestCase):
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow_id, wf_module, FetchResult(parquet_path), timezone.now()
+                    workflow_id, step, FetchResult(parquet_path), timezone.now()
                 )
             )
 
-    def test_race_soft_deleted_wf_module(self):
+    def test_race_soft_deleted_step(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", is_deleted=True
         )
         workflow_id = workflow.id
@@ -136,20 +130,20 @@ class SaveTests(DbTestCase):
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow_id, wf_module, FetchResult(parquet_path), timezone.now()
+                    workflow_id, step, FetchResult(parquet_path), timezone.now()
                 )
             )
-        self.assertEqual(wf_module.stored_objects.count(), 0)
+        self.assertEqual(step.stored_objects.count(), 0)
 
-    def test_race_hard_deleted_wf_module(self):
+    def test_race_hard_deleted_step(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
-        WfModule.objects.filter(id=wf_module.id).delete()
+        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
+        Step.objects.filter(id=step.id).delete()
 
         # Don't crash
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow.id, wf_module, FetchResult(parquet_path), timezone.now()
+                    workflow.id, step, FetchResult(parquet_path), timezone.now()
                 )
             )

@@ -1,5 +1,5 @@
 from cjworkbench.models.userprofile import UserProfile
-from cjwstate.models import Workflow, WfModule
+from cjwstate.models import Workflow, Step
 
 
 def isoformat(dt) -> str:
@@ -13,7 +13,7 @@ def list_autofetches_json(scope):
     This runs a database query. Use @database_sync_to_async around it.
     """
     autofetches = list(
-        WfModule.objects.filter(
+        Step.objects.filter(
             auto_update_data=True,
             is_deleted=False,
             tab__is_deleted=False,
@@ -59,7 +59,7 @@ def list_autofetches_json(scope):
                     "lastViewedAt": (isoformat(row["tab__workflow__last_viewed_at"])),
                 },
                 "tab": {"slug": row["tab__slug"], "name": row["tab__name"]},
-                "wfModule": {
+                "step": {
                     "id": row["id"],
                     "order": row["order"],
                     "fetchInterval": row["update_interval"],

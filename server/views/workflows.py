@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Workflow, WfModule, Tab
+from cjwstate.models import Workflow, Step, Tab
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 from server.models.course import CourseLookup
@@ -35,8 +35,7 @@ from cjworkbench.i18n import default_locale
 def make_init_state(
     request, workflow: Workflow, modules: Dict[str, ModuleZipfile]
 ) -> Dict[str, Any]:
-    """
-    Build a dict to embed as JSON in `window.initState` in HTML.
+    """Build a dict to embed as JSON in `window.initState` in HTML.
 
     Raise Http404 if the workflow disappeared.
 
@@ -52,7 +51,7 @@ def make_init_state(
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
                     step.id: step.to_clientside()
-                    for step in WfModule.live_in_workflow(workflow)
+                    for step in Step.live_in_workflow(workflow)
                 },
                 modules={
                     module_id: clientside.Module(
@@ -111,8 +110,7 @@ class Index(View):
 
 
 def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Workflow:
-    """
-    If not owner, return a cached duplicate of `workflow`.
+    """If not owner, return a cached duplicate of `workflow`.
 
     The duplicate will be married to `request.session.session_key`, and its
     `.is_anonymous` will return `True`.
@@ -150,9 +148,7 @@ def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Wor
 
 
 def visible_modules(request) -> Dict[str, ModuleZipfile]:
-    """
-    Load all ModuleZipfiles the user may use.
-    """
+    """Load all ModuleZipfiles the user may use."""
     ret = dict(MODULE_REGISTRY.all_latest())  # shallow copy
 
     if not request.user.is_authenticated:
@@ -207,9 +203,9 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
 
         if any(
             step["last_relevant_delta_id"] != step["cached_render_result_delta_id"]
-            for step in init_state["wfModules"].values()
+            for step in init_state["steps"].values()
         ):
-            # We're returning a Workflow that may have stale WfModules. That's
+            # We're returning a Workflow that may have stale Steps. That's
             # fine, but are we _sure_ the renderer is about to render them?
             # Let's double-check. This will handle edge cases such as "we wiped
             # our caches" or maybe some bugs we haven't thought of.
@@ -306,38 +302,37 @@ class Report(View):
     """Render all the charts in a workflow."""
 
     @dataclass
-    class WfModuleWithIframe:
+    class StepWithIframe:
         id: int
         delta_id: int
 
         @classmethod
-        def from_wf_module(cls, wf_module: WfModule) -> Report.WfModuleWithIframe:
-            return cls(id=wf_module.id, delta_id=wf_module.last_relevant_delta_id)
+        def from_step(cls, step: Step) -> Report.StepWithIframe:
+            return cls(id=step.id, delta_id=step.last_relevant_delta_id)
 
     @dataclass
     class TabWithIframes:
         slug: str
         name: str
-        wf_modules: List[Report.WfModuleWithIframe]
+        steps: List[Report.StepWithIframe]
 
         @classmethod
         def from_tab(
             cls, tab: Tab, module_zipfiles: Dict[str, ModuleZipfile]
         ) -> Report.TabWithIframes:
-            all_wf_modules = tab.live_wf_modules.only(
+            all_steps = tab.live_steps.only(
                 "id", "last_relevant_delta_id", "module_id_name"
             )
 
-            wf_modules = [
-                Report.WfModuleWithIframe.from_wf_module(wf_module)
-                for wf_module in all_wf_modules
-                if wf_module.module_id_name in module_zipfiles
+            steps = [
+                Report.StepWithIframe.from_step(step)
+                for step in all_steps
+                if step.module_id_name in module_zipfiles
                 and (
-                    module_zipfiles[wf_module.module_id_name].get_optional_html()
-                    is not None
+                    module_zipfiles[step.module_id_name].get_optional_html() is not None
                 )
             ]
-            return cls(slug=tab.slug, name=tab.name, wf_modules=wf_modules)
+            return cls(slug=tab.slug, name=tab.name, steps=steps)
 
     @dataclass
     class ReportWorkflow:
@@ -358,7 +353,7 @@ class Report(View):
                 Report.TabWithIframes.from_tab(tab, module_zipfiles)
                 for tab in workflow.live_tabs
             ]
-            tabs = [tab for tab in all_tabs if tab.wf_modules]
+            tabs = [tab for tab in all_tabs if tab.steps]
             return cls(
                 id=workflow.id,
                 name=workflow.name,

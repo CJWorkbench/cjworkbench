@@ -1,4 +1,4 @@
-from cjwstate.models.CachedRenderResult import CachedRenderResult
+from cjwstate.models.cached_render_result import CachedRenderResult
 from .io import (
     cache_render_result,
     downloaded_parquet_file,

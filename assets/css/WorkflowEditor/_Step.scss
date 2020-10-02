@@ -1,0 +1,463 @@
+.step {
+  position: relative;
+  z-index: 0; // HACK create a stacking context, so .param-radio can set z-index: 1 without leaping out of the module
+
+  // numbers at the left-hand side
+  h3 {
+    position: absolute;
+    @include font-sans-regular;
+    font-size: 2.25rem;
+    width: 4rem;
+    text-align: center;
+    padding-top: .7rem; // center with collapsed .wf-card
+    padding-bottom: .6rem; // so vertical line's distance is same above as below
+    color: darken($module-color-unreachable,15%); // a little darker to be visible when unreachable
+    background-color: $WF-background; // appear atop vertical line
+    z-index: 1;
+  }
+
+  // Show a vertical line to the left of the step list
+  &.status-ok:not(.after-selected) {
+    &:not(.selected) .module-card-and-link::before,
+    &:not(.selected) + .in-between-steps::before,
+    &:not(:first-child) .step-notes::before {
+      content: '';
+      display: block;
+      width: 2px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: $module-color-ok;
+      left: 2rem;
+      margin-left: -1px;
+    }
+
+    &:not(.selected) .module-card-and-link::before {
+      left: -2rem;
+    }
+  }
+
+  // ... but don't show the vertical line to the left of the first note,
+  // which is above the number 1
+  &:nth-child(1) .step-notes::before {
+    content: '';
+    display: block;
+    width: 3rem;
+    position: absolute;
+    top: 0;
+    bottom: -1rem;
+    left: 0;
+    background: $WF-background;
+  }
+
+  .module-card-and-link {
+    margin: 0 $module-margin-right 0 $module-margin-left; // most of the in-between margin comes from .add-module-in-between-search
+    position: relative;
+    border-radius: 5px;
+    background-color: $module-background;
+    width: $module-width;
+
+    .module-card {
+      border-radius: 5px;
+      border: 2px solid $item-border;
+
+      .module-card-details.collapsed {
+        display: none;
+      }
+
+      &:hover .context-buttons {
+        a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+
+  @mixin module-colors($card-border-color, $number-color, $line-color) {
+    // Color card border
+    &.selected .module-card {
+      border-color: $card-border-color;
+    }
+
+    // Color number
+    &:not(.after-selected) h3 {
+      color: $number-color;
+    }
+
+    &.status-unreachable h3 {color:darken($number-color,15%);}
+
+    // Color line to the left of the step list
+    &::before, & + .in-between-steps::before {
+      background-color: $line-color;
+    }
+  }
+
+  &.status-ok {
+    @include module-colors($module-color-ok, $module-color-ok, $module-color-ok);
+  }
+
+  &.status-unreachable {
+    @include module-colors($module-color-unreachable, $module-color-unreachable, transparent);
+  }
+
+  &.status-busy {
+    @include module-colors($module-color-busy, $module-color-busy, transparent);
+    .module-card {
+      border-color: $module-color-busy;
+    }
+  }
+
+  &.status-error {
+    @include module-colors($module-color-error, $module-color-error, transparent);
+    .module-card {
+      border-color: $module-color-error;
+    }
+    &.after-selected h3 {
+      // even when .after-selected, we want the error to stand out.
+      color: $module-color-error;
+    }
+  }
+
+  // Coloring. Keep the cascade in mind: if a module matches multiple
+  // selectors, the most-precise selector (greatest number of classes)
+  // wins; in case of a tie the last one wins.
+  &.selected {
+    .module-card {
+      background-color: white;
+    }
+
+    // Show line to the right of module card
+    &.status-ok .module-card-and-link::after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      margin-top: -1px;
+      margin-left: 0px;
+      height: 2px;
+      width: $module-margin-right;
+      background-color: $module-color-ok;
+    }
+  }
+
+  .module-card-params {
+    padding: 0 $module-padding $module-padding $module-padding;
+
+    .label {
+      cursor: default;
+    }
+
+    // Search bar within a module
+    .in-module--search {
+      color: $input-alt;
+      position: relative;
+      margin-bottom: 1.5rem;
+      margin-top: 1rem;
+
+      input {
+        height: 3.5rem;
+        padding: .5rem 3.4rem .4rem; // left padding for "search" icon; right padding for "close" button
+        display: block;
+        width: 100%;
+        color: $brand-text--dark;
+        @include content-1;
+        background: $Vlight-gray;
+        border-radius: 2.5rem;
+        border: 2px solid transparent;
+        &:hover {
+          border-color: $dark-accent--soft;
+        }
+
+        &:focus {
+          border-color: $brand-orange;
+        }
+
+        //search placeholder when empty
+        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: $brand-text--dark;
+          opacity: .8;
+        }
+        :-ms-input-placeholder { /* IE 10+ */
+          color: $brand-text--dark;
+          opacity: .8;
+        }
+        :-moz-placeholder { /* Firefox 18- */
+          color: $brand-text--dark;
+          opacity: .8;
+        }
+
+      }
+
+      &::before {
+        // "search" icon
+        display: inline-block;
+        position: absolute;
+        top: .8rem;
+        left: 1.5rem;
+        font-size: 1.4rem;
+        font-family: 'Workbench';
+        content: "\e91a "; // .icon-search
+        color: $brand-text--dark;
+        opacity:.9;
+      }
+
+      button.close {
+        border: 0;
+        position: absolute;
+        right: 1.5rem;
+        top: 1.1rem;
+        font-size: 1.3rem;
+        margin: 0;
+        padding: 0;
+        text-shadow: none;
+        color: $brand-text--medium;
+        &:hover {
+          color: $brand-orange;
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // Header of module in stack. Includes everything shown when collapsed.
+  .module-card-header {
+    .controls {
+      display: flex;
+      align-items: center;
+
+      a {
+        text-decoration:none;
+        color: inherit;
+      }
+
+      .module-icon {
+        margin-right: .6rem;
+        font-size: 1.4rem;
+      }
+
+      .module-name {
+        @include title-3;
+        color: $brand-text--dark;
+      }
+
+      button.workflow-step-collapse {
+        // Make it big and clickable! Lots of padding.
+        // This button dictates the height of the entire header.
+        margin: 0;
+        border: 0;
+        background: transparent;
+        font-size: 1.2rem;
+        padding: .75rem .3rem .75rem 1.2rem;
+        cursor: pointer;
+        opacity: 1;
+        &:hover {
+            .context-collapse-button {
+              opacity: 1;
+            }
+          }
+
+        i.icon-caret-right {font-size:1rem;}
+
+        i.icon-caret-down {font-size:.6rem;}
+
+        i {color:$brand-text--dark}
+      }
+
+      .context-collapse-button {
+        border: 0;
+        width: 1rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        color:$light-gray;
+        border-radius: 5rem;
+        margin-right:.5rem;
+        opacity: 0.5;
+
+        &.lesson-highlight {
+          color: $brand-learn;
+          font-weight: bold;
+          opacity: 1;
+        }
+      }
+
+      .context-buttons {
+        align-items: center;
+        flex: 1 0 auto; // grow to the right
+        text-align: right;
+        white-space: nowrap;
+        margin-right: .5rem;
+
+        &>a, &>button, &>label, &>.dropdown>button {
+          // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
+          // sure these rules don't conflict when nested. (e.g., no `opacity`)
+          display: inline-block;
+          font-size: 1.2rem;
+          width: 2.2rem;
+          height: 2.2rem;
+          border-radius: 5rem;
+          line-height: 1;
+          text-align: center;
+          vertical-align: middle;
+          padding: 0;
+          margin: 0;
+          border: 0;
+          background: transparent;
+          color: $medium-gray;
+          &:hover {
+            color: $brand-text--dark;
+            background-color: $dark-accent--soft;
+          }
+        }
+        //menu button when focused and menu visisble
+        .btn-secondary:focus {
+          background-color:$Vlight-gray;
+          color:$dark-gray;
+        }
+
+        button.notifications {
+          cursor: pointer;
+          color: $medium-gray;
+
+          &.enabled {
+            color: $workspace-action;
+          }
+        }
+
+        label.toggle-zen-mode {
+          cursor: pointer;
+
+          input[type="checkbox"] {
+            display: none;
+          }
+
+          i.icon-full-screen {
+            vertical-align: -.6rem; // icky glyph sizing in the font?
+            font-size: 1.25rem;
+          }
+
+          &.is-zen-mode {
+            color: $brand-text--dark;
+            background-color: $dark-accent--soft;
+          }
+        }
+
+        a.help-button, button.edit-note, button.context-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
+          opacity: 0; // only show context buttons when hovering over wf-card
+        }
+
+        i.icon-help {
+          vertical-align: -.6rem; // icky glyph sizing in the font?
+          font-size: 1.25rem;
+        }
+
+        .edit-note {
+          margin-left: .1rem;
+          margin-right:.2rem;
+          i.icon-note {
+            margin-left: .2rem;
+          }
+        }
+
+        .dropdown {
+          margin-top: .2rem;
+          display: inline-block;
+          margin-left: -.3rem;
+
+          i.icon-more {
+            position: relative;
+          }
+        }
+
+        i.icon-notification, .has-unseen {
+          position: relative;
+          font-size: 1.35rem;
+          top: .1rem;
+        }
+      }
+    }
+  }
+
+  .module-deprecated {
+    @include content-1;
+    padding: 1.5rem;
+    background-color: $brand-workspace--light;
+    color: $brand-workspace;
+    margin-bottom: 1.5rem;
+
+    a {
+      color: $brand-workspace;
+      text-decoration: underline;
+    }
+  }
+
+  .step-error-msg  {
+    padding: 1.5rem;
+    background-color: $error-prompt--Vlight;
+    color: $brand-red;
+    @include content-1;
+    text-align: left;
+    word-wrap: break-word;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0;
+      margin-bottom: .5rem;
+      white-space: pre-wrap; // double-newlines in HTML should make "paragraph" for https://www.pivotaltracker.com/story/show/165588183
+    }
+
+    ul.quick-fixes {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin-top: 1rem;
+      }
+
+      button {
+        @include button-red;
+      }
+    }
+  }
+
+  // prompt that isn't an error (module working as expected)
+  &.status-ok .step-error-msg {
+    background-color: $brand-workspace--light;
+    color: $brand-workspace;
+    border-color: $brand-workspace--light
+  }
+
+  //module being dragged (old position)
+  &.selected.dragging .module-card-and-link {
+    .module-card {
+      opacity: .6;
+      border-color: $brand-orange;
+    }
+
+    &::after {
+      background-color: transparent;
+    }
+  }
+
+  &.zen-mode {
+    .module-card-and-link {
+      width: 50rem;
+    }
+  }
+}
+
+// margin top to compensate for the absence of in-between module button
+.workflow-root.read-only {
+  .step-notes {
+      margin-top: 1.5rem;
+  }
+}
+
+.step.lesson-highlight .module-content {
+  outline: 2px solid $brand-learn;
+}

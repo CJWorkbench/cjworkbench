@@ -8,7 +8,7 @@ import { Trans } from '@lingui/macro'
 export default class ExportModal extends React.PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
-    wfModuleId: PropTypes.number.isRequired, // to build download URLs
+    stepId: PropTypes.number.isRequired, // to build download URLs
     toggle: PropTypes.func.isRequired
   }
 
@@ -18,7 +18,7 @@ export default class ExportModal extends React.PureComponent {
   }
 
   buildUrlString (ext) {
-    const path = `/public/moduledata/live/${this.props.wfModuleId}.${ext}`
+    const path = `/public/moduledata/live/${this.props.stepId}.${ext}`
     if (window.location.href === 'about:blank') {
       // allowing an out for testing (there is no window.location.href during test)
       return path

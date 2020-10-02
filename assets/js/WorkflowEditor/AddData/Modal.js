@@ -3,14 +3,15 @@ import PropTypes from 'prop-types'
 import { createSelector } from 'reselect'
 import { ModulePropType } from '../ModuleSearch/PropTypes'
 import lessonSelector from '../../lessons/lessonSelector'
-import { addModuleAction } from '../../workflow-reducer'
+import { addStepAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
 import Modules from './Modules'
 import Search from './Search'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
-export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close, addModule }) {
-  const onSelectModule = React.useCallback(moduleIdName => addModule(tabSlug, moduleIdName))
+
+export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close, addStep }) {
+  const onSelectModule = React.useCallback(moduleIdName => addStep(tabSlug, moduleIdName))
   const [search, setSearch] = React.useState('')
 
   return (
@@ -19,7 +20,7 @@ export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close,
         <div className='title'>
           <h5>
             <Trans id='js.WorkflowEditor.AddData.Modal.header.title' description='This should be all-caps for styling reasons'>
-                CHOOSE A DATA SOURCE
+              CHOOSE A DATA SOURCE
             </Trans>
           </h5>
 
@@ -29,7 +30,7 @@ export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close,
         <Search value={search} onChange={setSearch} />
       </header>
       <div className='body'>
-        <Modules modules={modules} addModule={onSelectModule} search={search} />
+        <Modules modules={modules} addStep={onSelectModule} search={search} />
       </div>
     </section>
   )
@@ -37,7 +38,7 @@ export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close,
 Modal.propTypes = {
   modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
   close: PropTypes.func.isRequired, // func() => undefined
-  addModule: PropTypes.func.isRequired // func(tabSlug, moduleIdName) => undefined
+  addStep: PropTypes.func.isRequired // func(tabSlug, moduleIdName) => undefined
 }
 
 const NameCollator = new Intl.Collator()
@@ -61,8 +62,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  addModule: (tabSlug, moduleIdName) => {
-    dispatch(addModuleAction(moduleIdName, { tabSlug, index: 0 }, {}))
+  addStep: (tabSlug, moduleIdName) => {
+    dispatch(addStepAction(moduleIdName, { tabSlug, index: 0 }, {}))
   }
 })
 

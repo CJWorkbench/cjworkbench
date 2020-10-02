@@ -5,7 +5,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -42,10 +42,10 @@ tabs:
     <li
       data-highlight='[]'
       data-test="
-        const wfm = workflow.tabs[0].wfModules[1];
-        if (!wfm || wfm.moduleSlug !== 'editcells')
+        const step = workflow.tabs[0].steps[1];
+        if (!step || step.moduleSlug !== 'editcells')
           return false;
-        const edits = wfm.params.celledits;
+        const edits = step.params.celledits;
         return edits.find((e) => e.row === 3 && e.col === 'Continent' && e.value === 'AS')"
       >Στον πίνακα κάντε διπλό κλικ στο κενό κελί δίπλα στην <kbd>India</kbd> και πληκτρολογήστε τον κωδικό για την Ασία, που είναι <kbd>AS</kbd> σε αυτό το σύνολο δεδομένων.<p class="instruction-detail">Σημειώστε ότι το νέο βήμα προστέθηκε στη ροή εργασίας σας στη θέση 2, με καταγραφή των τροποποιήσεων που κάνατε.</p>
     <p class="instruction-detail">Το Workbench καταγράφει κάθε τροποποίηση που γίνεται για να μπορείτε να επαναφέρετε μια προηγούμενη έκδοση. Για να δείτε τα δεδομένα πριν από την πρόσφατη τροποποίηση, κάντε κλικ στο βήμα 1.</p>
@@ -64,20 +64,20 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'calculate'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'calculate'"
       >Κάνε κλικ στην <kbd>Προσθήκη βήματος</kbd>, πληκτρολογήστε <kbd>Υπολογισμός</kbd> στο πλαίσιο αναζήτησης και επιλέξτε το βήμα</li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[2].params.operation === 'mean'"
+      data-test="return workflow.tabs[0].steps[2].params.operation === 'mean'"
       >Ορίστε τη λειτουργία στην επιλογή <kbd>Μέσος όρος:</kbd><p class="instruction-detail">Κάντε κλικ στο κουμπί <span><img class="icon-insert" src="images/lesson-icons/play.svg"></span> για να εφαρμόσετε τις αλλαγές όταν χρειάζεται.</p>
     </li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[2].params.colnames.sort().join(',') === '2013,2014,2015,2016'"
+      data-test="return workflow.tabs[0].steps[2].params.colnames.sort().join(',') === '2013,2014,2015,2016'"
       >Κατά το βήμα Υπολογισμός επιλέξετε τις στήλες <kbd>2013</kbd>, <kbd>2014</kbd>,<kbd>2015</kbd> και <kbd>2016</kbd>.</li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[2].params.outcolname.toLowerCase() === 'μέσος όρος 2013-2016'"
+      data-test="return workflow.tabs[0].steps[2].params.outcolname.toLowerCase() === 'μέσος όρος 2013-2016'"
       >Ονομάστε τη στήλη εξόδου <kbd>Μέσος όρος 2013-2016</kbd><p class="instruction-detail">Η νέα στήλη θα εμφανιστεί στο δεξιό άκρο του πίνακα.</p>
     </li>
   </ol>
@@ -90,15 +90,15 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'columnchart'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'columnchart'"
       >Κάνε κλικ στο <kbd>Προσθήκη βήματος</kbd> και επιλέξτε <kbd>Γράφημα στηλών</kbd></li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[3].params.x_column === 'Country'"
+      data-test="return workflow.tabs[0].steps[3].params.x_column === 'Country'"
       >Επιλέξτε τη στήλη <kbd>Country</kbd> για τον άξονα X.</li>
     <li
       data-highlight='[]'
-      data-test="return (workflow.tabs[0].wfModules[3].params.y_columns[0] || {column:''}).column.toLowerCase() === 'μέσος όρος 2013-2016'"
+      data-test="return (workflow.tabs[0].steps[3].params.y_columns[0] || {column:''}).column.toLowerCase() === 'μέσος όρος 2013-2016'"
       >Επιλέξτε τη στήλη <kbd>Μέσος όρος 2013-2016</kbd> για τον άξονα Y.</li>
   </ol>
 </section>

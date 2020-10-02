@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
-import { setWfModuleParamsAction } from './workflow-reducer'
+import { setStepParamsAction } from './workflow-reducer'
 import { setWorkflowPublicAction } from './ShareModal/actions'
 import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
@@ -12,7 +12,7 @@ export class OutputIframe extends React.PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired, // false means, "zero height"
     deltaId: PropTypes.number, // null if added to empty workflow
-    wfModuleId: PropTypes.number, // null if no wfmodule
+    stepId: PropTypes.number, // null if no step
     isPublic: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired
   }
@@ -23,7 +23,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (prevProps.wfModuleId !== this.props.wfModuleId) {
+    if (prevProps.stepId !== this.props.stepId) {
       this.setState({
         heightFromIframe: null
       })
@@ -47,7 +47,7 @@ export class OutputIframe extends React.PureComponent {
   handleMessage = (ev) => {
     const data = ev.data
     if (data && data.from === 'outputIframe') {
-      if (data.wfModuleId !== this.props.wfModuleId) {
+      if (data.stepId !== this.props.stepId) {
         // This message isn't from the iframe we created.
         //
         // This check works around a race:
@@ -69,7 +69,7 @@ export class OutputIframe extends React.PureComponent {
           this.setState({ heightFromIframe: data.height })
           break
         case 'set-params':
-          this.props.setWfModuleParams(data.wfModuleId, data.params)
+          this.props.setStepParams(data.stepId, data.params)
           break
         default:
           console.error('Unhandled message from iframe', data)
@@ -131,7 +131,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   renderEmbedModal () {
-    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.wfModuleId + '" width="560" height="315" frameborder="0"></iframe>')
+    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.stepId + '" width="560" height="315" frameborder="0"></iframe>')
 
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
@@ -162,9 +162,9 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, deltaId, visible, i18n } = this.props
+    const { stepId, deltaId, visible, i18n } = this.props
     const { heightFromIframe } = this.state
-    const src = `/api/wfmodules/${wfModuleId}/output#revision=${deltaId}`
+    const src = `/api/wfmodules/${stepId}/output#revision=${deltaId}`
 
     const defaultHeight = visible ? '100%' : '0'
     const height = heightFromIframe === null ? defaultHeight : `${Math.ceil(heightFromIframe)}px`
@@ -195,8 +195,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     setWorkflowPublic: () => {
       dispatch(setWorkflowPublicAction(true))
     },
-    setWfModuleParams: (wfModuleId, params) => {
-      dispatch(setWfModuleParamsAction(wfModuleId, params))
+    setStepParams: (stepId, params) => {
+      dispatch(setStepParamsAction(stepId, params))
     }
   }
 }

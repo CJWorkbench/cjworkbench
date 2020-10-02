@@ -9,7 +9,7 @@ describe('UpdateFrequencySelect', () => {
   describe('shallow', () => {
     const defaultProps = {
       workflowId: 123,
-      wfModuleId: 212,
+      stepId: 212,
       isReadOnly: false,
       isAnonymous: false,
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
@@ -73,9 +73,9 @@ describe('UpdateFrequencySelect', () => {
         tab_slugs: ['tab-11', 'tab-12']
       },
       tabs: {
-        'tab-11': { wf_modules: [1, 212] }
+        'tab-11': { steps: [1, 212] }
       },
-      wfModules: {
+      steps: {
         1: { id: 1, tab_slug: 'tab-11', name: 'Ignore this one' },
         212: { id: 212, tab_slug: 'tab-11', auto_update_data: true, update_interval: 3600, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
       }
@@ -90,7 +90,7 @@ describe('UpdateFrequencySelect', () => {
       wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
-            wfModuleId={212}
+            stepId={212}
             lastCheckDate={null}
           />
         </Provider>
@@ -107,8 +107,8 @@ describe('UpdateFrequencySelect', () => {
       // can this even happen?
       const store = {
         getState: () => ({
-          workflow: { id: 123, read_only: false, is_anonymous: false, wf_modules: ['nonce_212'] },
-          wfModules: {}
+          workflow: { id: 123, read_only: false, is_anonymous: false, steps: ['nonce_212'] },
+          steps: {}
         }),
         dispatch: jest.fn(),
         subscribe: jest.fn()
@@ -116,7 +116,7 @@ describe('UpdateFrequencySelect', () => {
       wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
-            wfModuleId={212}
+            stepId={212}
           />
         </Provider>
       )
@@ -126,13 +126,13 @@ describe('UpdateFrequencySelect', () => {
 
     it('should set autofetch (calling API method)', () => {
       const api = {
-        trySetWfModuleAutofetch: jest.fn(() => Promise.resolve({ isAutofetch: true, fetchInterval: 7200 }))
+        trySetStepAutofetch: jest.fn(() => Promise.resolve({ isAutofetch: true, fetchInterval: 7200 }))
       }
       const store = mockStore(sampleState, api)
       wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
-            wfModuleId={212}
+            stepId={212}
             lastCheckDate={null}
           />
         </Provider>
@@ -140,18 +140,18 @@ describe('UpdateFrequencySelect', () => {
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
       modal.prop('trySetAutofetch')(true, 7600)
-      expect(api.trySetWfModuleAutofetch).toHaveBeenCalledWith(212, true, 7600)
+      expect(api.trySetStepAutofetch).toHaveBeenCalledWith(212, true, 7600)
     })
 
     it('should dispatch setNotifications (and call the API method)', () => {
       const api = {
-        setWfModuleNotifications: jest.fn(() => Promise.resolve(null))
+        setStepNotifications: jest.fn(() => Promise.resolve(null))
       }
       const store = mockStore(sampleState, api)
       wrapper = mountWithI18n(
         <Provider store={store}>
           <ConnectedUpdateFrequencySelect
-            wfModuleId={212}
+            stepId={212}
             lastCheckDate={null}
           />
         </Provider>
@@ -159,7 +159,7 @@ describe('UpdateFrequencySelect', () => {
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
       modal.prop('setEmailUpdates')(false)
-      expect(api.setWfModuleNotifications).toHaveBeenCalledWith(212, false)
+      expect(api.setStepNotifications).toHaveBeenCalledWith(212, false)
     })
   })
 })

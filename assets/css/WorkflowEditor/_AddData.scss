@@ -1,7 +1,7 @@
 // Relies on @mixin module-search-input from _ModuleSearch.scss
 
 .add-data {
-  // This is the "+ ADD DATA" button or <WfModule>. .add-data-modal isn't
+  // This is the "+ ADD DATA" button or <Step>. .add-data-modal isn't
   // styled here because it's in a portal.
   .add-data-button {
     @include add-module-button-container;

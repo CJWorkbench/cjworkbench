@@ -14,7 +14,7 @@ describe('lessonSelector', () => {
         html: '<p>Section One HTML</p>',
         steps: [
           { html: 'Step One-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleIdName: 'foo' }], testJs: 'return false' }
+          { html: 'Step One-<strong>Bee</strong>', highlight: [{ type: 'Step', moduleIdName: 'foo' }], testJs: 'return false' }
         ]
       },
       {
@@ -22,7 +22,7 @@ describe('lessonSelector', () => {
         html: '<p>Section Two HTML</p>',
         steps: [
           { html: 'Step Two-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleIdName: 'foo' }], testJs: 'return false' }
+          { html: 'Step Two-<strong>Bee</strong>', highlight: [{ type: 'Step', moduleIdName: 'foo' }], testJs: 'return false' }
         ]
       },
       {
@@ -30,7 +30,7 @@ describe('lessonSelector', () => {
         html: '<p>Section Three HTML</p>',
         steps: [
           { html: 'Step Three-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [{ type: 'WfModule', moduleIdName: 'foo' }], testJs: 'return false' }
+          { html: 'Step Three-<strong>Bee</strong>', highlight: [{ type: 'Step', moduleIdName: 'foo' }], testJs: 'return false' }
         ]
       }
     ]
@@ -53,9 +53,9 @@ describe('lessonSelector', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_modules: [] }
+        'tab-1': { steps: [] }
       },
-      wfModules: {}
+      steps: {}
     }
     const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
     expect(activeSectionIndex).toBe(0)
@@ -82,7 +82,7 @@ describe('lessonSelector', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [] }
+        'tab-1': { step_ids: [] }
       }
     }
     const { testHighlight } = lessonSelector(state)
@@ -115,7 +115,7 @@ describe('lessonSelector', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [] }
+        'tab-1': { step_ids: [] }
       }
     }
     const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
@@ -168,8 +168,8 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return workflow.selectedTab.wfModuleSlugs[0] === "foo"' },
-              { testJs: 'return workflow.selectedTab.wfModuleSlugs[1] === "foo"' }
+              { testJs: 'return workflow.selectedTab.stepModuleIds[0] === "foo"' },
+              { testJs: 'return workflow.selectedTab.stepModuleIds[1] === "foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -180,10 +180,10 @@ describe('lessonSelector', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [3, 4] },
-        'tab-2': { wf_module_ids: [] }
+        'tab-1': { step_ids: [3, 4] },
+        'tab-2': { step_ids: [] }
       },
-      wfModules: {
+      steps: {
         3: { module: 'foo' },
         4: { module: 'bar' }
       },
@@ -202,8 +202,8 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return state.selectedTab.wfModuleSlugs[0] === "foo"' },
-              { testJs: 'return state.selectedTab.wfModuleSlugs[1] === "foo"' }
+              { testJs: 'return state.selectedTab.stepModuleIds[0] === "foo"' },
+              { testJs: 'return state.selectedTab.stepModuleIds[1] === "foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -214,10 +214,10 @@ describe('lessonSelector', () => {
         selected_tab_position: 0
       },
       tabs: {
-        'tab-1': { wf_module_ids: [3, 4], selected_wf_module_position: 1 },
-        'tab-2': { wf_module_ids: [] }
+        'tab-1': { step_ids: [3, 4], selected_step_position: 1 },
+        'tab-2': { step_ids: [] }
       },
-      wfModules: {
+      steps: {
         3: { module: 'foo' },
         4: { module: 'bar' }
       },
@@ -245,7 +245,7 @@ describe('lessonSelector', () => {
           sections: [
             {
               steps: [
-                { testJs: 'return state.selectedWfModule.moduleSlug === "foo"' }
+                { testJs: 'return state.selectedStep.moduleSlug === "foo"' }
               ]
             }
           ]
@@ -255,7 +255,7 @@ describe('lessonSelector', () => {
           selected_tab_position: 0
         },
         tabs: {
-          'tab-1': { wf_module_ids: [], selected_wf_module_position: null }
+          'tab-1': { step_ids: [], selected_step_position: null }
         }
       }
       expect(lessonSelector(state).activeStepIndex).toBe(0)

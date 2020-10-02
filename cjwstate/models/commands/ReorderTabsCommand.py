@@ -3,10 +3,10 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from cjwstate.models import Delta, Workflow
 from cjwstate.models.workflow import DependencyGraph
-from .util import ChangesWfModuleOutputs
+from .util import ChangesStepOutputs
 
 
-class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
+class ReorderTabsCommand(ChangesStepOutputs, Delta):
     """Overwrite tab.position for all tabs in a workflow."""
 
     class Meta:
@@ -15,7 +15,7 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
     old_order = ArrayField(models.IntegerField())
     new_order = ArrayField(models.IntegerField())
-    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+    step_delta_ids = ChangesStepOutputs.step_delta_ids
 
     # override
     def load_clientside_update(self):
@@ -60,24 +60,24 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
         self._update_selected_position(self.new_order, self.old_order)
 
     @classmethod
-    def affected_wf_module_delta_ids(
+    def affected_step_delta_ids(
         cls, workflow: Workflow, old_slugs: List[str], new_slugs: List[str]
     ) -> List[Tuple[int, int]]:
         """
-        Find WfModule+Delta IDs whose output may change with this reordering.
+        Find Step+Delta IDs whose output may change with this reordering.
 
-        Reordering tabs changes the ordering of 'Multitab' params. Any WfModule
+        Reordering tabs changes the ordering of 'Multitab' params. Any Step
         with a 'Multitab' param can change as a result of this delta.
 
         There are very few 'Multitab' params in the wild: as of 2019-02-12, the
         only one is in "concattabs". TODO optimize this method to look one
         level deep for _only_ 'Multitab' params that depend on the changed
         ordering, not 'Tab' params, essentially making ReorderTabsCommand _not_
-        change any WfModules unless there's a "concattabs" module.
+        change any Steps unless there's a "concattabs" module.
         """
         # Calculate `moved_slugs`: just the slugs whose `position` changed.
         #
-        # There's no need to re-render a WfModule that only depends on tabs
+        # There's no need to re-render a Step that only depends on tabs
         # whose `position`s _haven't_ changed: its input tab order certainly
         # hasn't changed.
         first_change_index = None
@@ -92,9 +92,9 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
         # Figure out which params depend on those.
         graph = DependencyGraph.load_from_workflow(workflow)
-        wf_module_ids = graph.get_step_ids_depending_on_tab_slugs(moved_slugs)
-        q = models.Q(id__in=wf_module_ids)
-        return cls.q_to_wf_module_delta_ids(q)
+        step_ids = graph.get_step_ids_depending_on_tab_slugs(moved_slugs)
+        q = models.Q(id__in=step_ids)
+        return cls.q_to_step_delta_ids(q)
 
     @classmethod
     def amend_create_kwargs(cls, *, workflow, new_order):
@@ -118,13 +118,11 @@ class ReorderTabsCommand(ChangesWfModuleOutputs, Delta):
 
         old_slugs = [tab_slugs_by_id[id] for id in old_order]
         new_slugs = [tab_slugs_by_id[id] for id in new_order]
-        wf_module_delta_ids = cls.affected_wf_module_delta_ids(
-            workflow, old_slugs, new_slugs
-        )
+        step_delta_ids = cls.affected_step_delta_ids(workflow, old_slugs, new_slugs)
 
         return {
             "workflow": workflow,
             "new_order": new_order,
             "old_order": old_order,
-            "wf_module_delta_ids": wf_module_delta_ids,
+            "step_delta_ids": step_delta_ids,
         }

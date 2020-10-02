@@ -8,8 +8,8 @@ class TestRefine(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Create Workflow")
 
-        # Empty module stack
-        b.wait_for_element(".module-stack")
+        # Empty step list
+        b.wait_for_element(".step-list")
 
         self.import_module("refine")
 
@@ -31,9 +31,9 @@ yxxx,1
 yxyx,1
 """,
         )
-        self.submit_wf_module()
+        self.submit_step()
 
-        self.add_wf_module("Refine")
+        self.add_step("Refine")
         self.select_column("Refine", "column", "A")
         b.wait_for_element('input[value="xxxy"]')
 
@@ -49,7 +49,7 @@ yxyx,1
         b.fill_in(*args, **kwargs)
         # Blur, so the commit gets rendered and the 'submit' button is enabled
         b.click_whatever(".module-name", text="Refine")
-        self.submit_wf_module()  # actually submit
+        self.submit_step()  # actually submit
 
     def _wait_for_table_value(self, row, column, value):
         """
@@ -95,7 +95,7 @@ yxyx,1
         b.assert_element(".refine-modal td.new-value textarea", text="a b")
         b.fill_in("value-0", "yxyx")  # a twist: input into the next algo
         b.click_button("Merge selected")
-        self.submit_wf_module()
+        self.submit_step()
 
         # Now the UI lets you see the change
         b.assert_element('.refine-group:nth-child(5) input[value="yxyx"]')
@@ -114,7 +114,7 @@ yxyx,1
         b.fill_in("value-0", "YYYY")
         b.uncheck("selected-1")  # Deselect the group, 'a aa => a'
         b.click_button("Merge selected")
-        self.submit_wf_module()
+        self.submit_step()
 
         self._wait_for_table_value(0, 0, "a")
         self._wait_for_table_value(1, 0, "aa")  # deselected - not clustered

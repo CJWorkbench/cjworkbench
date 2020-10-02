@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Delta, WfModule, Workflow
+from cjwstate.models import Delta, Step, Workflow
 from cjwstate.models.commands import ChangeDataVersionCommand
 
 
@@ -26,7 +26,7 @@ async def queue_render(workflow_id: int, delta_id: int) -> None:
 @database_sync_to_async
 def _workflow_has_notifications(workflow_id: int) -> bool:
     """Detect whether a workflow sends email on changes."""
-    return WfModule.live_in_workflow(workflow_id).filter(notifications=True).exists()
+    return Step.live_in_workflow(workflow_id).filter(notifications=True).exists()
 
 
 async def _maybe_queue_render(
@@ -118,7 +118,7 @@ def _first_forward_and_save_returning_clientside_update(
 
         if orphan_delta:
             # We just deleted deltas; now we can garbage-collect Tabs and
-            # WfModules that are soft-deleted and have no deltas referring
+            # Steps that are soft-deleted and have no deltas referring
             # to them.
             workflow.delete_orphan_soft_deleted_models()
 
@@ -175,8 +175,8 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
     Example:
 
         delta = await commands.do(
-            ChangeWfModuleNotesCommand,
-            workflow_id=wf_module.workflow_id,
+            ChangeStepNotesCommand,
+            workflow_id=step.workflow_id,
             # ... other kwargs
         )
         # now delta has been applied and committed to the database, and

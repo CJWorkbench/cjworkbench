@@ -20,7 +20,7 @@ class TestTable(LoggedInIntegrationTest):
         self.import_module("pastecsv")
         self.add_data_step("Paste data")
         b.fill_in("csv", "string,int\nfoo,1\nbar,3\nbaz,2", wait=True)
-        self.submit_wf_module()
+        self.submit_step()
 
         # Wait for table to load
         b.assert_element(".column-key", text="string", wait=True)
@@ -37,9 +37,7 @@ class TestTable(LoggedInIntegrationTest):
         b.send_keys("new-column-key", Keys.ENTER)
 
         # Wait for rename module to appear, selected and set
-        b.assert_element(
-            '.wf-module[data-module-name="Rename columns"].selected', wait=True
-        )
+        b.assert_element('.step[data-module-name="Rename columns"].selected', wait=True)
         b.assert_element(
             '.rename-entry[data-column-name="string"] input[value="Column A"]',
             wait=True,
@@ -101,7 +99,7 @@ class TestTable(LoggedInIntegrationTest):
     #     self._blur()  # commit
     #
     #     # Wait for edit module to appear, selected and set
-    #     b.assert_element('.wf-module[data-module-name="Edit Cells"].selected', wait=True)
+    #     b.assert_element('.step[data-module-name="Edit Cells"].selected', wait=True)
     #     b.assert_no_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1', wait=True)
     #     b.assert_element('.react-grid-Cell', text='4', wait=True)
     #

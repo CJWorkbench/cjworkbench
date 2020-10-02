@@ -9,7 +9,7 @@ import lessonSelector from '../../lessons/lessonSelector'
 import { ModulePropType } from './PropTypes'
 import Prompt from './Prompt'
 import SearchResults from './SearchResults'
-import { addModuleAction } from '../../workflow-reducer'
+import { addStepAction } from '../../workflow-reducer'
 import { PopperSameWidth } from '../../components/PopperHelpers'
 
 const KeyCodes = {
@@ -32,7 +32,7 @@ const KeyCodes = {
  *
  * TEST: DROPUP RESIZES
  *
- * 1. Open a workflow with a few modules
+ * 1. Open a workflow with a few steps
  * 2. Click an "add-step" slot near the bottom of the page
  *    -- popup should open, with scrollbar; search field should be where it
  *       would have been had we gotten a dropdown instead of a dropup
@@ -54,9 +54,9 @@ const KeyCodes = {
  * 3. Scroll through the popup
  *    -- you should see a scrollbar; scrolling should affect the scrollbar.
  *
- * TEST: SCROLL MODULE STACK SO BUTTON IS OFFSCREEN
+ * TEST: SCROLL STEP LIST SO BUTTON IS OFFSCREEN
  *
- * 1. Open a workflow with a few modules
+ * 1. Open a workflow with a few steps
  * 2. Click a middle add-step slot
  *    -- popup appears
  * 3. Scroll all the way up and down in the step stack (_outside_ the
@@ -262,7 +262,7 @@ export class Popup extends React.PureComponent {
     isLessonHighlight: PropTypes.bool.isRequired,
     modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
     onClose: PropTypes.func.isRequired, // func() => undefined
-    addModule: PropTypes.func.isRequired, // func(tabSlug, index, moduleIdName) => undefined
+    addStep: PropTypes.func.isRequired, // func(tabSlug, index, moduleIdName) => undefined
     onUpdate: PropTypes.func // func() => undefined -- for Popper.scheduleUpdate()
   }
 
@@ -280,8 +280,8 @@ export class Popup extends React.PureComponent {
   }
 
   handleClickModule = (moduleIdName) => {
-    const { tabSlug, index, addModule, onClose } = this.props
-    addModule(tabSlug, index, moduleIdName)
+    const { tabSlug, index, addStep, onClose } = this.props
+    addStep(tabSlug, index, moduleIdName)
     onClose()
   }
 
@@ -310,7 +310,7 @@ export function PopperPopup (props) {
     isLessonHighlight,
     modules,
     onClose,
-    addModule
+    addStep
   } = props
   const [popperElement, setPopperElement] = React.useState(null)
   const popperOptions = React.useMemo(() => {
@@ -361,7 +361,7 @@ export function PopperPopup (props) {
         isLessonHighlight={isLessonHighlight}
         modules={modules}
         onClose={onClose}
-        addModule={addModule}
+        addStep={addStep}
         onUpdate={scheduleUpdate}
       />
     </div>
@@ -375,7 +375,7 @@ PopperPopup.propTypes = {
   isLessonHighlight: PropTypes.bool.isRequired,
   modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,
   onClose: PropTypes.func.isRequired, // func() => undefined
-  addModule: PropTypes.func.isRequired // func(tabSlug, index, moduleIdName) => undefined
+  addStep: PropTypes.func.isRequired // func(tabSlug, index, moduleIdName) => undefined
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -400,8 +400,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule (tabSlug, index, moduleIdName) {
-      const action = addModuleAction(moduleIdName, { tabSlug, index }, {})
+    addStep (tabSlug, index, moduleIdName) {
+      const action = addStepAction(moduleIdName, { tabSlug, index }, {})
       dispatch(action)
     }
   }

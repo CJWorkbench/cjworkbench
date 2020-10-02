@@ -11,14 +11,14 @@ function Shape (type, propTypes) {
 
 const LessonHighlightType = P.oneOfType([
   Shape('Module', {
-    index: P.number.isRequired, // index in ModuleStack where we want to add the module
+    index: P.number.isRequired, // index in StepList where we want to add the module
     id_name: P.string.isRequired // slug of the Module
   }),
-  Shape('WfModule', {
+  Shape('Step', {
     moduleIdName: P.string.isRequired,
     index: P.number
   }),
-  Shape('WfModuleContextButton', {
+  Shape('StepContextButton', {
     moduleIdName: P.string.isRequired,
     button: P.oneOf(['notes', 'collapse']).isRequired,
     index: P.number
@@ -53,13 +53,13 @@ const matchOneLessonHighlight = (lessonHighlight, test) => {
  * // What we're saying we want to highlight
  * // (e.g., from redux store)
  * const lessonHighlight = [
- *   { type: 'WfModule', moduleName: 'Load from URL' },
+ *   { type: 'Step', moduleName: 'Load from URL' },
  *   { type: 'Module', name: 'Filter', index: 0 },
  * ]
  *
  * // What we're rendering
- * // (e.g., within WfModule.js)
- * const test = { type: 'WfModule', moduleName: 'Load from URL' }
+ * // (e.g., within Step.js)
+ * const test = { type: 'Step', moduleName: 'Load from URL' }
  *
  * matchLessonHighlight(lessonHighlight, test) // true
  * ```

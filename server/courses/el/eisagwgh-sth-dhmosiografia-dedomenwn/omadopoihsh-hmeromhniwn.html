@@ -11,7 +11,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -34,7 +34,7 @@ tabs:
       colnames: [ "Complaint date" ]
     collapsed: true
 - name: Data dictionary
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -52,16 +52,16 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[4] !== 'groupby') return false
+        if (workflow.tabs[0].stepModuleIds[4] !== 'groupby') return false
 
         // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
         // the 'add Borough' step in the last section doesn't undo this test.
         // (Every test for the entire lesson is evaluated in order)
-        return workflow.tabs[0].wfModules[4].params.groups.colnames.includes('Complaint date')
+        return workflow.tabs[0].steps[4].params.groups.colnames.includes('Complaint date')
       ">Προσθέστε την <kbd>Ομαδοποίηση</kbd> και επιλέξτε τη στήλη <kbd>Complaint date</kbd></li>
     <li
       data-test="
-        const groups = workflow.tabs[0].wfModules[4].params.groups
+        const groups = workflow.tabs[0].steps[4].params.groups
         // You would think we'd want to check for month granularity here, but we can't
         // because it will break in the next section where we ask user to switch to day granularity.
         // (Every test for the entire lesson is evaluated in order)
@@ -72,7 +72,7 @@ tabs:
       ">Στο βήμα <kbd>Ομαδοποίηση</kbd> , τσεκάρετε την επιλογή <kbd>Ομαδοποίηση ημερομηνιών</kbd> και επιλέξτε <kbd>ανά μήνα</kbd> ως προς τη λεπτομέρεια</li>
     <li
       data-test="
-        const agg = workflow.tabs[0].wfModules[4].params.aggregations
+        const agg = workflow.tabs[0].steps[4].params.aggregations
         return (
           agg[0]
           && agg[0].operation === 'size'
@@ -88,9 +88,9 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[5] !== 'linechart') return false
+        if (workflow.tabs[0].stepModuleIds[5] !== 'linechart') return false
 
-        const params = workflow.tabs[0].wfModules[5].params
+        const params = workflow.tabs[0].steps[5].params
         return (
           params.x_column === 'Complaint date'
           && params.y_columns[0]
@@ -100,7 +100,7 @@ tabs:
     </li>
     <li
       data-test="
-        const params = workflow.tabs[0].wfModules[4].params
+        const params = workflow.tabs[0].steps[4].params
         return (
           params.groups.date_granularities['Complaint date'] === 'D'
           // We test for day granularity ... _BUT_ later in the lesson we'll ask the

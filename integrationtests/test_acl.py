@@ -62,7 +62,7 @@ class TestExampleWorkflow(WorkbenchBase):
         b.visit(url)
 
         # We see things
-        b.assert_element('.wf-module[data-module-name="Paste data"]', wait=True)
+        b.assert_element('.step[data-module-name="Paste data"]', wait=True)
 
         # We can't edit them
         b.assert_no_element("button", text="ADD STEP")
@@ -87,11 +87,11 @@ class TestExampleWorkflow(WorkbenchBase):
         b.visit(url)
 
         # We see things
-        b.assert_element('.wf-module[data-module-name="Paste data"]', wait=True)
+        b.assert_element('.step[data-module-name="Paste data"]', wait=True)
 
         # We can edit them
         b.fill_in("csv", "A,B\n1,2")
-        self.submit_wf_module()
+        self.submit_step()
         b.assert_element(".column-key", text="A", wait=True)
 
         # We can view collaborators, read-only

@@ -89,7 +89,7 @@ class LessonInitialWorkflow:
     """
 
     tabs: List[Dict[str, Any]] = field(
-        default_factory=lambda: [{"name": "Tab 1", "wfModules": []}]
+        default_factory=lambda: [{"name": "Tab 1", "steps": []}]
     )
 
     @classmethod
@@ -118,7 +118,7 @@ class LessonSectionStep:
     with the lesson-files URL. So you can write a test like:
 
         return (
-            workflow.tabs[0].wfModules[0].params.url
+            workflow.tabs[0].steps[0].params.url
             === '{{LESSON_FILES_URL}}/x.csv'
         )
 

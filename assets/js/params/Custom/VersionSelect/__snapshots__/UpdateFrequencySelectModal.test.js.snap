@@ -33,8 +33,8 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
   isEmailUpdates={false}
   onClose={[MockFunction]}
   setEmailUpdates={[MockFunction]}
+  stepId={234}
   trySetAutofetch={[MockFunction]}
-  wfModuleId={234}
   workflowId={123}
 >
   <I18n
@@ -73,8 +73,8 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
       isEmailUpdates={false}
       onClose={[MockFunction]}
       setEmailUpdates={[MockFunction]}
+      stepId={234}
       trySetAutofetch={[MockFunction]}
-      wfModuleId={234}
       workflowId={123}
     >
       <Modal

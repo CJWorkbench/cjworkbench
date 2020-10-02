@@ -31,7 +31,7 @@ class CleanValueTests(DbTestCase):
     def _render_context(
         self,
         *,
-        wf_module_id=None,
+        step_id=None,
         input_table=None,
         tab_results={},
         params={},
@@ -40,7 +40,7 @@ class CleanValueTests(DbTestCase):
         if exit_stack is None:
             exit_stack = self.exit_stack
         return RenderContext(
-            wf_module_id=wf_module_id,
+            step_id=step_id,
             input_table=input_table,
             tab_results=tab_results,
             basedir=self.basedir,
@@ -68,17 +68,15 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_happy_path(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        step = tab.wf_modules.create(
-            module_id_name="uploadfile", order=0, slug="step-1"
-        )
+        step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234")
         UploadedFile.objects.create(
-            wf_module=step, name="x.csv.gz", size=4, uuid=id, key=key
+            step=step, name="x.csv.gz", size=4, uuid=id, key=key
         )
         with ExitStack() as inner_stack:
-            context = self._render_context(wf_module_id=step.id, exit_stack=inner_stack)
+            context = self._render_context(step_id=step.id, exit_stack=inner_stack)
             result: Path = clean_value(ParamDType.File(), id, context)
             self.assertIsInstance(result, Path)
             self.assertEqual(result.read_bytes(), b"1234")
@@ -90,10 +88,8 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_no_uploaded_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        step = tab.wf_modules.create(
-            module_id_name="uploadfile", order=0, slug="step-1"
-        )
-        context = self._render_context(wf_module_id=step.id)
+        step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
+        context = self._render_context(step_id=step.id)
         result = clean_value(ParamDType.File(), str(uuid.uuid4()), context)
         self.assertIsNone(result)
         # Assert that if a temporary file was created to house the download, it
@@ -103,42 +99,34 @@ class CleanValueTests(DbTestCase):
     def test_clean_file_no_minio_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        step = tab.wf_modules.create(
-            module_id_name="uploadfile", order=0, slug="step-1"
-        )
-        step2 = tab.wf_modules.create(
-            module_id_name="uploadfile", order=1, slug="step-2"
-        )
+        step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
+        step2 = tab.steps.create(module_id_name="uploadfile", order=1, slug="step-2")
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         # Oops -- let's _not_ put the file!
         # minio.put_bytes(minio.UserFilesBucket, key, b'1234')
         UploadedFile.objects.create(
-            wf_module=step2, name="x.csv.gz", size=4, uuid=id, key=key
+            step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
-        context = self._render_context(wf_module_id=step.id)
+        context = self._render_context(step_id=step.id)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsNone(result)
         # Assert that if a temporary file was created to house the download, it
         # no longer exists.
         self.assertListEqual(list(self.basedir.iterdir()), [])
 
-    def test_clean_file_wrong_wf_module(self):
+    def test_clean_file_wrong_step(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        step = tab.wf_modules.create(
-            module_id_name="uploadfile", order=0, slug="step-1"
-        )
-        step2 = tab.wf_modules.create(
-            module_id_name="uploadfile", order=1, slug="step-2"
-        )
+        step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
+        step2 = tab.steps.create(module_id_name="uploadfile", order=1, slug="step-2")
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         minio.put_bytes(minio.UserFilesBucket, key, b"1234")
         UploadedFile.objects.create(
-            wf_module=step2, name="x.csv.gz", size=4, uuid=id, key=key
+            step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
-        context = self._render_context(wf_module_id=step.id)
+        context = self._render_context(step_id=step.id)
         result = clean_value(ParamDType.File(), id, context)
         self.assertIsNone(result)
         # Assert that if a temporary file was created to house the download, it

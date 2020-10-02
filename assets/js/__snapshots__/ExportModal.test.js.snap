@@ -30,8 +30,8 @@ exports[`ExportModal should match snapshot 1`] = `
     }
   }
   open={true}
+  stepId={415}
   toggle={[MockFunction]}
-  wfModuleId={415}
 >
   <Modal
     className="menu-test-class"

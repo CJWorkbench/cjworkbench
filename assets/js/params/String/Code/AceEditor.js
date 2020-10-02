@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
 import { Trans } from '@lingui/macro'
-import { QuickFixPropTypes } from '../../../WorkflowEditor/wfmodule/QuickFix'
+import { QuickFixPropTypes } from '../../../WorkflowEditor/step/QuickFix'
 
 import 'ace-builds/src-noconflict/mode-python'
 import 'ace-builds/src-noconflict/mode-sql'
@@ -40,7 +40,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
   static propTypes = {
     // When isZenMode changes, we'll call componentDidUpdate()
     isZenMode: PropTypes.bool.isRequired,
-    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may (hopefully) be empty
+    stepOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may (hopefully) be empty
     name: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired // func(value) => undefined
@@ -77,8 +77,8 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     })
   }
 
-  getAnnotations = memoize(wfModuleOutputErrors => {
-    return wfModuleOutputErrors.map(error => {
+  getAnnotations = memoize(stepOutputErrors => {
+    return stepOutputErrors.map(error => {
       const m = /^Line (\d+): (.*)/.exec(error.message)
       if (m) {
         return {
@@ -94,7 +94,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
 
   // Render editor
   render () {
-    const { value, onChange, isZenMode, wfModuleOutputErrors, placeholder, syntax } = this.props
+    const { value, onChange, isZenMode, stepOutputErrors, placeholder, syntax } = this.props
 
     return (
       <div className='ace-wrapper-outer'>
@@ -109,7 +109,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               placeholder={placeholder}
               theme='xcode'
               wrapEnabled
-              annotations={this.getAnnotations(wfModuleOutputErrors)}
+              annotations={this.getAnnotations(stepOutputErrors)}
               showGutter={isZenMode /* false hides annotations */}
               name='code-editor'
               onChange={onChange}

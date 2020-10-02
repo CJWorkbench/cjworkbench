@@ -32,7 +32,7 @@ class ParamSpec(ABC):
 
     A ParamSpec defines ParamDTypes, the "data type": how values are stored in
     JSON and selected by JavaScript components. The DType is the schema of
-    `WfModule.params`. The ParamSpec is what the module author writes in the
+    `Step.params`. The ParamSpec is what the module author writes in the
     module specification, and it describes the JavaScript component.
     """
 

@@ -17,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def _workflow_group_name(workflow_id: int) -> str:
-    """
-    Build a channel_layer group name, given a workflow ID.
+    """Build a channel_layer group name, given a workflow ID.
 
     Messages sent to this group will be sent to all clients connected to
     this workflow.
@@ -30,16 +29,14 @@ def _workflow_group_name(workflow_id: int) -> str:
 class DeclaredQueueConsume:
     name: str
     callback: Optional[Callable] = None
-    """
-    Function to run on every queue element.
+    """Function to run on every queue element.
 
     If `None`, just _declare_ the queue but never consume from it.
     """
 
 
 class RetryingConnection:
-    """
-    A connection that will retry connecting.
+    """A connection that will retry connecting.
 
     Usage:
 
@@ -64,8 +61,7 @@ class RetryingConnection:
         self._processing_messages = set()
 
     async def connect(self) -> None:
-        """
-        Ensure we are connected, setting `self._connection` to a value.
+        """Ensure we are connected, setting `self._connection` to a value.
 
         Await this return value to test that the initial connection succeeds
         (within `attempts` retries).
@@ -76,8 +72,7 @@ class RetryingConnection:
         await self._connected  # raise if connection fails
 
     async def connect_forever(self) -> None:
-        """
-        Connect and then reconnect forever, until `self.close()`.
+        """Connect and then reconnect forever, until `self.close()`.
 
         In the event that RabbitMQ closes the connection, we'll set
         self._connected to unfinished and retry connecting. Any current
@@ -141,8 +136,7 @@ class RetryingConnection:
                 raise
 
     def _make_callback_not_block(self, callback) -> Callable:
-        """
-        Make `callback` return right away and manage it in the event loop.
+        """Make `callback` return right away and manage it in the event loop.
 
         This is complex, so hold on.
 
@@ -169,8 +163,7 @@ class RetryingConnection:
         return inner
 
     async def _attempt_connect(self) -> None:
-        """
-        Set self._channel, self._transport and self._protocol, or raise.
+        """Set self._channel, self._transport and self._protocol, or raise.
 
         Known errors:
 
@@ -220,8 +213,7 @@ class RetryingConnection:
         logger.info("Connected to RabbitMQ")
 
     async def close(self) -> None:
-        """
-        Close the connection.
+        """Close the connection.
 
         Currently, closing a connection means waiting for it to open first.
         """
@@ -243,8 +235,7 @@ class RetryingConnection:
         self._closed_event.set()  # we're finished closing.
 
     def declare_queue_consume(self, queue: str, callback: Callable) -> None:
-        """
-        Declare a queue to be consumed after connect.
+        """Declare a queue to be consumed after connect.
 
         Call this only during initialization. Do not call it after connect.
 
@@ -253,8 +244,7 @@ class RetryingConnection:
         self._declared_queues.append(DeclaredQueueConsume(queue, callback))
 
     def declare_queue(self, queue: str) -> None:
-        """
-        Declare a queue; do not consume from it.
+        """Declare a queue; do not consume from it.
 
         Call this only during initialization. Do not call it after connect.
 
@@ -265,8 +255,7 @@ class RetryingConnection:
     async def publish(
         self, queue: str, message: Dict[str, Any], *, exchange: str = ""
     ) -> None:
-        """
-        Publish `message` onto `queue`, reconnecting if needed.
+        """Publish `message` onto `queue`, reconnecting if needed.
 
         (`queue` is really a "routing_key" in AMQP lingo. One can't publish
         directly to a queue. See
@@ -317,10 +306,8 @@ class RetryingConnection:
     async def queue_render(self, workflow_id: int, delta_id: int) -> None:
         await self.publish("render", {"workflow_id": workflow_id, "delta_id": delta_id})
 
-    async def queue_fetch(self, workflow_id: int, wf_module_id: int) -> None:
-        await self.publish(
-            "fetch", {"workflow_id": workflow_id, "wf_module_id": wf_module_id}
-        )
+    async def queue_fetch(self, workflow_id: int, step_id: int) -> None:
+        await self.publish("fetch", {"workflow_id": workflow_id, "step_id": step_id})
 
     async def send_update_to_workflow_clients(
         self, workflow_id: int, update: clientside.Update
@@ -333,8 +320,7 @@ class RetryingConnection:
     async def queue_render_if_consumers_are_listening(
         self, workflow_id: int, delta_id: int
     ) -> None:
-        """
-        Tell workflow consumers to call `queue_render(workflow_id, delta_id)`.
+        """Tell workflow consumers to call `queue_render(workflow_id, delta_id)`.
 
         In other words: "queue a render, but only if somebody has this workflow
         open in a web browser."
@@ -350,8 +336,7 @@ class RetryingConnection:
 
 
 def get_connection(loop=None):
-    """
-    Create or lookup a singleton connection to RabbitMQ.
+    """Create or lookup a singleton connection to RabbitMQ.
 
     Usage:
 

@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from cjwstate import minio
+from .step import Step
 
 
 class InProgressUpload(models.Model):
@@ -31,7 +32,7 @@ class InProgressUpload(models.Model):
 
     class Meta:
         app_label = "server"
-        db_table = "server_inprogressupload"
+        db_table = "in_progress_upload"
 
     Bucket = minio.UserFilesBucket
     """
@@ -68,8 +69,8 @@ class InProgressUpload(models.Model):
     Primary key and filename stem.
     """
 
-    wf_module = models.ForeignKey(
-        "WfModule", related_name="in_progress_uploads", on_delete=models.CASCADE
+    step = models.ForeignKey(
+        Step, related_name="in_progress_uploads", on_delete=models.CASCADE
     )
 
     updated_at = models.DateTimeField(default=timezone.now, db_index=True)
@@ -100,7 +101,7 @@ class InProgressUpload(models.Model):
 
         This takes a database query.
         """
-        return self.wf_module.uploaded_file_prefix + "upload_" + str(self.id)
+        return self.step.uploaded_file_prefix + "upload_" + str(self.id)
 
     @classmethod
     def upload_key_to_uuid(cls, key: str) -> uuid.UUID:
@@ -132,11 +133,11 @@ class InProgressUpload(models.Model):
         minio.abort_multipart_uploads_by_prefix(self.Bucket, key)
         minio.remove(self.Bucket, key)
 
-        if not self.wf_module.uploaded_files.filter(uuid=str(self.id)).count():
+        if not self.step.uploaded_files.filter(uuid=str(self.id)).count():
             # If there's no UploadedFile even though we copied this file to where the
             # UploadedFile _should_ point, then we've leaked that copy. Delete. See
             # "tricky leak here" in convert_to_uploaded_file().
-            final_key_prefix = self.wf_module.uploaded_file_prefix + str(self.id)
+            final_key_prefix = self.step.uploaded_file_prefix + str(self.id)
             # no ".xlsx"-type suffix
             minio.remove_by_prefix(minio.UserFilesBucket, final_key_prefix)
 
@@ -193,7 +194,7 @@ class InProgressUpload(models.Model):
 
         key = self.get_upload_key()
         suffix = PurePath(filename).suffix
-        final_key = self.wf_module.uploaded_file_prefix + str(self.id) + suffix
+        final_key = self.step.uploaded_file_prefix + str(self.id) + suffix
         try:
             minio.copy(
                 minio.UserFilesBucket,
@@ -210,7 +211,7 @@ class InProgressUpload(models.Model):
         # is in S3 but nothing in the database refers to it. Careful coding of
         # delete_s3_data() solves this.
         size = minio.stat(minio.UserFilesBucket, final_key).size
-        uploaded_file = self.wf_module.uploaded_files.create(
+        uploaded_file = self.step.uploaded_files.create(
             name=filename, size=size, uuid=str(self.id), key=final_key
         )
         self.is_completed = True

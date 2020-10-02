@@ -28,9 +28,9 @@ export class RenameEntry extends React.PureComponent {
   }
 
   render () {
-    const { wfModuleId, name, colname, isReadOnly, value } = this.props
+    const { stepId, name, colname, isReadOnly, value } = this.props
 
-    const fieldId = generateFieldId(wfModuleId, name)
+    const fieldId = generateFieldId(stepId, name)
 
     // The class names below are used in testing.
     // Changing them would require updating the tests accordingly.
@@ -110,13 +110,13 @@ export default class RenameEntries extends React.PureComponent {
   renderEntries () {
     const entries = this.saneValue
     const fieldName = this.props.name
-    const { wfModuleId, isReadOnly } = this.props
+    const { stepId, isReadOnly } = this.props
 
     return (this.props.inputColumns || [])
       .filter(({ name }) => name in entries)
       .map(({ name }) => (
         <RenameEntry
-          wfModuleId={wfModuleId}
+          stepId={stepId}
           key={name}
           name={`${fieldName}[${name}]`}
           colname={name}

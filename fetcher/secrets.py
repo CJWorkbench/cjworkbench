@@ -22,8 +22,7 @@ def _service_no_longer_configured_error(service: str):
 async def prepare_secrets(
     fields: List[ParamSpec], values: Dict[str, UserProvidedSecret]
 ) -> Dict[str, ModuleSecret]:
-    """
-    Given secrets set by the user, build secrets for a module's `fetch()` call.
+    """Given secrets set by the user, build secrets for a module's `fetch()` call.
 
     The logic varies by SecretLogic. If you're trying to understand how a
     particular secret's value will appear, read the docs of logic-specific
@@ -63,8 +62,7 @@ def _secret_error(user_secret: Dict[str, Any], message: I18nMessage) -> Dict[str
 async def prepare_secret(
     logic: ParamSpecSecret.Logic, value: UserProvidedSecret
 ) -> ModuleSecret:
-    """
-    Convert the user-provided value in `wf_module.secrets` to module format.
+    """Convert the user-provided value in `step.secrets` to module format.
 
     The logic varies by SecretLogic. If you're trying to understand how a
     particular secret's value will appear, read the docs of logic-specific
@@ -77,8 +75,7 @@ async def prepare_secret(
 async def prepare_secret_oauth1a(
     logic: ParamSpecSecret.Logic.Oauth1a, value: UserProvidedSecret
 ) -> ModuleSecret:
-    """
-    Prepare an OAuth1a secret for a module fetch() call.
+    """Prepare an OAuth1a secret for a module fetch() call.
 
     SECURITY: beware: we provide the module with our consumer secret. The
     module can masquerade as Workbench. The module will be able to authenticate
@@ -134,8 +131,7 @@ class _RefreshOauth2TokenError(Exception):
 async def _refresh_oauth2_token(
     service: oauth.OAuth2, refresh_token: str
 ) -> Dict[str, Any]:
-    """
-    Exchange a "refresh_token" for an "access_token" and "token_type".
+    """Exchange a "refresh_token" for an "access_token" and "token_type".
 
     This involves an HTTP request to an OAuth2 token server.
 
@@ -217,8 +213,7 @@ async def _refresh_oauth2_token(
 async def prepare_secret_oauth2(
     logic: ParamSpecSecret.Logic.Oauth2, value: UserProvidedSecret
 ) -> ModuleSecret:
-    """
-    Prepare an OAuth2 secret for a module fetch() call.
+    """Prepare an OAuth2 secret for a module fetch() call.
 
     SECURITY: the module will get an access token to authenticate as the user.
     Some services (Google) support refresh tokens: for those, the module will
@@ -277,8 +272,7 @@ async def prepare_secret_oauth2(
 async def prepare_secret_string(
     logic: ParamSpecSecret.Logic.String, value: UserProvidedSecret
 ) -> ModuleSecret:
-    """
-    Prepare a String secret for a module fetch() call.
+    """Prepare a String secret for a module fetch() call.
 
     SECURITY: the module will get the user-input value.
 

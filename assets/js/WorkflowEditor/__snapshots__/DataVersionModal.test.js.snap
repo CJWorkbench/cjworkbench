@@ -2,6 +2,8 @@
 
 exports[`DataVersionModal matches snapshot 1`] = `
 <DataVersionModal
+  fetchStepId={123}
+  fetchStepName="fetch"
   fetchVersions={
     Array [
       Object {
@@ -16,8 +18,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
       },
     ]
   }
-  fetchWfModuleId={123}
-  fetchWfModuleName="fetch"
   i18n={
     Object {
       "_": [Function],
@@ -50,7 +50,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
   onChangeNotificationsEnabled={[MockFunction]}
   onClose={[MockFunction]}
   selectedFetchVersionId="1000"
-  wfModuleId={124}
+  stepId={124}
 >
   <Modal
     className="data-versions-modal"

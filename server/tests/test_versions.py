@@ -6,7 +6,7 @@ from cjwstate.models.commands import (
     AddModuleCommand,
     ChangeParametersCommand,
     ChangeWorkflowTitleCommand,
-    ChangeWfModuleNotesCommand,
+    ChangeStepNotesCommand,
 )
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
@@ -24,10 +24,8 @@ async def async_noop(*args, **kwargs):
 class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
     # Be careful, in these tests, not to run database queries in async blocks.
 
-    def assertWfModuleVersions(self, tab, expected_versions):
-        result = list(
-            tab.live_wf_modules.values_list("last_relevant_delta_id", flat=True)
-        )
+    def assertStepVersions(self, tab, expected_versions):
+        result = list(tab.live_steps.values_list("last_relevant_delta_id", flat=True))
         self.assertEqual(result, expected_versions)
 
     # Many things tested here:
@@ -47,7 +45,7 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
 
-        all_modules = tab.live_wf_modules  # beginning state: nothing
+        all_modules = tab.live_steps  # beginning state: nothing
 
         v0 = workflow.last_delta_id
 
@@ -74,21 +72,21 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(all_modules.count(), 1)
         self.assertGreater(v1, v0)
         self.assertEqual(workflow.last_delta_id, v1)
-        self.assertWfModuleVersions(tab, [v1])
+        self.assertStepVersions(tab, [v1])
 
         # Undo, ensure we are back at start
         self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(all_modules.count(), 0)
         self.assertEqual(workflow.last_delta_id, v0)
-        self.assertWfModuleVersions(tab, [])
+        self.assertStepVersions(tab, [])
 
         # Redo, ensure we are back at v1
         self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(workflow.last_delta_id, v1)
-        self.assertWfModuleVersions(tab, [v1])
+        self.assertStepVersions(tab, [v1])
 
         # Change a parameter
         with self.assertLogs(level=logging.INFO):
@@ -96,39 +94,39 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ChangeParametersCommand,
                     workflow_id=workflow.id,
-                    wf_module=tab.live_wf_modules.first(),
+                    step=tab.live_steps.first(),
                     new_values={"csv": "some value"},
                 )
             )
         v2 = cmd2.id
         workflow.refresh_from_db()
-        self.assertEqual(tab.live_wf_modules.first().params["csv"], "some value")
+        self.assertEqual(tab.live_steps.first().params["csv"], "some value")
         self.assertEqual(workflow.last_delta_id, v2)
         self.assertGreater(v2, v1)
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertStepVersions(tab, [v2])
 
         # Undo parameter change
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v1)
-        self.assertEqual(tab.live_wf_modules.first().params["csv"], "")
-        self.assertWfModuleVersions(tab, [v1])
+        self.assertEqual(tab.live_steps.first().params["csv"], "")
+        self.assertStepVersions(tab, [v1])
 
         # Redo
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v2)
-        self.assertEqual(tab.live_wf_modules.first().params["csv"], "some value")
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertEqual(tab.live_steps.first().params["csv"], "some value")
+        self.assertStepVersions(tab, [v2])
 
         # Redo again should do nothing
         self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta_id, v2)
-        self.assertEqual(tab.live_wf_modules.first().params["csv"], "some value")
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertEqual(tab.live_steps.first().params["csv"], "some value")
+        self.assertStepVersions(tab, [v2])
 
         # Add one more command so the stack is 3 deep
         cmd3 = self.run_with_async_db(
@@ -140,29 +138,29 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         v3 = cmd3.id
         self.assertGreater(v3, v2)
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertStepVersions(tab, [v2])
 
         # Undo twice
         self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd2)
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertStepVersions(tab, [v2])
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(WorkflowUndo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd1)
-        self.assertWfModuleVersions(tab, [v1])
+        self.assertStepVersions(tab, [v1])
 
         # Redo twice
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd2)
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertStepVersions(tab, [v2])
         self.run_with_async_db(WorkflowRedo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.last_delta, cmd3)
-        self.assertWfModuleVersions(tab, [v2])
+        self.assertStepVersions(tab, [v2])
 
         # Undo again to get to a place where we have two commands to redo
         self.run_with_async_db(WorkflowUndo(workflow.id))
@@ -176,9 +174,9 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         step = all_modules.first()
         cmd4 = self.run_with_async_db(
             commands.do(
-                ChangeWfModuleNotesCommand,
+                ChangeStepNotesCommand,
                 workflow_id=workflow.id,
-                wf_module=step,
+                step=step,
                 new_value="Note of no note",
             )
         )
@@ -196,9 +194,9 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(workflow.last_delta_id, v1)
         cmd5 = self.run_with_async_db(
             commands.do(
-                ChangeWfModuleNotesCommand,
+                ChangeStepNotesCommand,
                 workflow_id=workflow.id,
-                wf_module=cmd1.wf_module,
+                step=cmd1.step,
                 new_value="Note of some note",
             )
         )
@@ -208,4 +206,4 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(
             set(Delta.objects.values_list("id", flat=True)), {v0, v1, v5}
         )  # v1, v4 deleted
-        self.assertWfModuleVersions(tab, [v1])
+        self.assertStepVersions(tab, [v1])

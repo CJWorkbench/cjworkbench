@@ -2,7 +2,7 @@ import logging
 import time
 from typing import Any, Dict
 from cjwkernel.errors import ModuleError
-from cjwstate.models import WfModule
+from cjwstate.models import Step
 from cjwstate.models.module_registry import MODULE_REGISTRY
 import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
@@ -12,16 +12,15 @@ logger = logging.getLogger(__name__)
 
 
 def get_migrated_params(
-    wf_module: WfModule, *, module_zipfile: ModuleZipfile = None
+    step: Step, *, module_zipfile: ModuleZipfile = None
 ) -> Dict[str, Any]:
-    """
-    Read `wf_module.params`, calling migrate_params() or using cache fields.
+    """Read `step.params`, calling migrate_params() or using cache fields.
 
     Call this within a `Workflow.cooperative_lock()`.
 
     If migrate_params() was already called for this version of the module,
-    return the cached value. See `wf_module.cached_migrated_params`,
-    `wf_module.cached_migrated_params_module_version`.
+    return the cached value. See `step.cached_migrated_params`,
+    `step.cached_migrated_params_module_version`.
 
     Raise `ModuleError` if migration fails.
 
@@ -40,35 +39,35 @@ def get_migrated_params(
     """
     if module_zipfile is None:
         # raise KeyError
-        module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+        module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
 
     stale = (
         module_zipfile.version == "develop"
         # works if cached version (and thus cached _result_) is None
         or (
             module_zipfile.get_param_schema_version()
-            != wf_module.cached_migrated_params_module_version
+            != step.cached_migrated_params_module_version
         )
     )
 
     if not stale:
-        return wf_module.cached_migrated_params
+        return step.cached_migrated_params
     else:
         # raise ModuleError
-        params = invoke_migrate_params(module_zipfile, wf_module.params)
-        wf_module.cached_migrated_params = params
-        wf_module.cached_migrated_params_module_version = (
+        params = invoke_migrate_params(module_zipfile, step.params)
+        step.cached_migrated_params = params
+        step.cached_migrated_params_module_version = (
             module_zipfile.get_param_schema_version()
         )
         try:
-            wf_module.save(
+            step.save(
                 update_fields=[
                     "cached_migrated_params",
                     "cached_migrated_params_module_version",
                 ]
             )
         except ValueError:
-            # WfModule was deleted, so we get:
+            # Step was deleted, so we get:
             # "ValueError: Cannot force an update in save() with no primary key."
             pass
         return params
@@ -77,8 +76,7 @@ def get_migrated_params(
 def invoke_migrate_params(
     module_zipfile: ModuleZipfile, raw_params: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """
-    Call module `migrate_params()` using (global) kernel.
+    """Call module `migrate_params()` using (global) kernel.
 
     Raise ModuleError if module code did not execute.
 

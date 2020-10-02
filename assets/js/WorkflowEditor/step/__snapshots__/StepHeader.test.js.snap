@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StepHeader Mounts selected 1`] = `
+<StepHeader
+  isSelected={true}
+  moduleIcon="some-icon"
+  moduleName="Some module name"
+  status="busy"
+>
+  <div
+    className="step--placeholder mx-auto"
+  >
+    <div
+      className="module-content"
+    >
+      <div
+        className="module-card-header"
+      >
+        <div
+          className="d-flex justify-content-start align-items-center"
+        >
+          <div
+            className="icon-some-icon module-icon t-vl-gray mr-2"
+          />
+          <div
+            className="t-vl-gray module-name"
+          >
+            Some module name
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</StepHeader>
+`;
+
+exports[`StepHeader Mounts unselected 1`] = `
+<StepHeader
+  isSelected={false}
+  moduleIcon="some-icon"
+  moduleName="Some module name"
+  status="busy"
+>
+  <div
+    className="step--placeholder mx-auto"
+  >
+    <div
+      className="module-content"
+    >
+      <div
+        className="module-card-header"
+      >
+        <div
+          className="d-flex justify-content-start align-items-center"
+        >
+          <div
+            className="icon-some-icon module-icon t-vl-gray mr-2"
+          />
+          <div
+            className="t-vl-gray module-name"
+          >
+            Some module name
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</StepHeader>
+`;

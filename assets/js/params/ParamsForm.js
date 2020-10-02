@@ -4,7 +4,7 @@ import Param from './Param'
 import ParamsFormFooter from './ParamsFormFooter'
 import deepEqual from 'fast-deep-equal'
 import { paramFieldToParamProps } from './util'
-import { QuickFixPropTypes } from '../WorkflowEditor/wfmodule/QuickFix'
+import { QuickFixPropTypes } from '../WorkflowEditor/step/QuickFix'
 
 /**
  * Displays Params and user's "edits".
@@ -48,11 +48,11 @@ export default class ParamsForm extends React.PureComponent {
     secrets: PropTypes.object, // upstream secrets. `null` if the server hasn't been contacted; otherwise, keys set only when params are filled in
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
     workflowId: PropTypes.number.isRequired,
-    wfModuleId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
-    wfModuleSlug: PropTypes.string, // should be .isRequired but WfModule.js does not handle placeholders yet
-    wfModuleOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
-    isWfModuleBusy: PropTypes.bool.isRequired,
-    inputWfModuleId: PropTypes.number, // or `null`
+    stepId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
+    stepSlug: PropTypes.string, // should be .isRequired but Step.js does not handle placeholders yet
+    stepOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
+    isStepBusy: PropTypes.bool.isRequired,
+    inputStepId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -121,7 +121,7 @@ export default class ParamsForm extends React.PureComponent {
    *
    * The parent sets our `value` and `edits` prop. _We_ set our `Param`
    * childrens' values as `upstreamValue` (redux state) and `value`
-   * (WfModule state).
+   * (Step state).
    */
   get value () {
     if (this.props.value === null) return this.props.value
@@ -198,8 +198,8 @@ export default class ParamsForm extends React.PureComponent {
 
   render () {
     const {
-      api, isOwner, isReadOnly, isZenMode, workflowId, wfModuleId, wfModuleSlug, wfModuleOutputErrors,
-      isWfModuleBusy, inputWfModuleId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
+      api, isOwner, isReadOnly, isZenMode, workflowId, stepId, stepSlug, stepOutputErrors,
+      isStepBusy, inputStepId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
       startCreateSecret, deleteSecret, submitSecret, fields, files, secrets
     } = this.props
     const isEditing = this.isEditing
@@ -252,11 +252,11 @@ export default class ParamsForm extends React.PureComponent {
                 value={value ? value[field.idName] : null}
                 files={files}
                 workflowId={workflowId}
-                wfModuleId={wfModuleId}
-                wfModuleSlug={wfModuleSlug}
-                wfModuleOutputErrors={wfModuleOutputErrors}
-                isWfModuleBusy={isWfModuleBusy}
-                inputWfModuleId={inputWfModuleId}
+                stepId={stepId}
+                stepSlug={stepSlug}
+                stepOutputErrors={stepOutputErrors}
+                isStepBusy={isStepBusy}
+                inputStepId={inputStepId}
                 inputDeltaId={inputDeltaId}
                 inputColumns={inputColumns}
                 tabs={tabs}
@@ -274,8 +274,8 @@ export default class ParamsForm extends React.PureComponent {
           })}
         </div>
         <ParamsFormFooter
-          wfModuleId={wfModuleId}
-          isWfModuleBusy={isWfModuleBusy}
+          stepId={stepId}
+          isStepBusy={isStepBusy}
           isEditing={isEditing}
           isReadOnly={isReadOnly}
           fields={fields}

@@ -35,8 +35,8 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
   isReadOnly={false}
   lastCheckDate={2018-05-28T19:00:54.154Z}
   setEmailUpdates={[MockFunction]}
+  stepId={212}
   trySetAutofetch={[MockFunction]}
-  wfModuleId={212}
   workflowId={123}
 >
   <I18n
@@ -77,8 +77,8 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
       isReadOnly={false}
       lastCheckDate={2018-05-28T19:00:54.154Z}
       setEmailUpdates={[MockFunction]}
+      stepId={212}
       trySetAutofetch={[MockFunction]}
-      wfModuleId={212}
       workflowId={123}
     >
       <div

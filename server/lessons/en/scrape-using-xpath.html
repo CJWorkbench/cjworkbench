@@ -24,12 +24,12 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"urlscraper"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'urlscraper'"
+      data-test="return workflow.tabs[0].stepModuleIds[0] === 'urlscraper'"
     >Start with the <kbd>HTML scraper</kbd> data source.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"urlscraper"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
+      data-highlight='[{"type":"Step","moduleIdName":"urlscraper"}]'
+      data-test="return workflow.tabs[0].steps[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
       >Paste in the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
       <p class="instruction-detail">Next, let's extract our data.</p>
@@ -48,7 +48,7 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"xpathextractor"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'xpathextractor'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'xpathextractor'"
     >Add the <kbd>HTML to Table</kbd> step.
     </li>
   </ol>
@@ -95,9 +95,9 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"xpathextractor"}]'
       data-test="
-        const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+        const cols = workflow.tabs[0].steps[1].params.colselectors;
         return (
           cols.length >= 1
           && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
@@ -154,9 +154,9 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"xpathextractor"}]'
       data-test="
-        const cols = workflow.tabs[0].wfModules[1].params.colselectors;
+        const cols = workflow.tabs[0].steps[1].params.colselectors;
         return (
           cols.length == 2
           && cols[1].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a/@href'
@@ -175,13 +175,13 @@
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
-      data-test="return workflow.tabs[0].wfModules[0].updateInterval !== null"
+      data-highlight='[{"type":"Step","moduleIdName":"xpathextractor"}]'
+      data-test="return workflow.tabs[0].steps[0].updateInterval !== null"
       >In the HTML scraper, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to <kbd>Auto</kbd>. Click <kbd>Apply</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"xpathextractor"}]'
-      data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
+      data-highlight='[{"type":"Step","moduleIdName":"xpathextractor"}]'
+      data-test="return workflow.tabs[0].steps[1].isEmailUpdates"
       >In the HTML to Table, click the alert icon
       <span>
         <img class="icon-insert" src="images/lesson-icons/notification.svg">

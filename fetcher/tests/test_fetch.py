@@ -29,7 +29,7 @@ from cjwkernel.tests.util import (
     parquet_file,
 )
 from cjwstate import minio, rabbitmq, rendercache, storedobjects
-from cjwstate.models import CachedRenderResult, ModuleVersion, WfModule, Workflow
+from cjwstate.models import CachedRenderResult, ModuleVersion, Step, Workflow
 import cjwstate.modules
 from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import (
@@ -59,44 +59,40 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
     def test_load_simple(self):
         workflow = Workflow.create_and_init()
         module_zipfile = create_module_zipfile("foo")
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foo"
         )
         with self.assertLogs("cjwstate.params", level=logging.INFO):
             result = self.run_with_async_db(
-                fetch.load_database_objects(workflow.id, wf_module.id)
+                fetch.load_database_objects(workflow.id, step.id)
             )
-        self.assertEqual(result.wf_module, wf_module)
+        self.assertEqual(result.step, step)
         self.assertEqual(result.module_zipfile, module_zipfile)
         self.assertEqual(result.migrated_params_or_error, {})
         self.assertIsNone(result.stored_object)
         self.assertIsNone(result.input_cached_render_result)
 
-    def test_load_deleted_wf_module_raises(self):
+    def test_load_deleted_step_raises(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", is_deleted=True
         )
-        with self.assertRaises(WfModule.DoesNotExist):
-            self.run_with_async_db(
-                fetch.load_database_objects(workflow.id, wf_module.id)
-            )
+        with self.assertRaises(Step.DoesNotExist):
+            self.run_with_async_db(fetch.load_database_objects(workflow.id, step.id))
 
     def test_load_deleted_tab_raises(self):
         workflow = Workflow.create_and_init()
         tab2 = workflow.tabs.create(position=1, is_deleted=True)
-        wf_module = tab2.wf_modules.create(order=0, slug="step-1")
-        with self.assertRaises(WfModule.DoesNotExist):
-            self.run_with_async_db(
-                fetch.load_database_objects(workflow.id, wf_module.id)
-            )
+        step = tab2.steps.create(order=0, slug="step-1")
+        with self.assertRaises(Step.DoesNotExist):
+            self.run_with_async_db(fetch.load_database_objects(workflow.id, step.id))
 
     def test_load_deleted_workflow_raises(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
+        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
         with self.assertRaises(Workflow.DoesNotExist):
             self.run_with_async_db(
-                fetch.load_database_objects(workflow.id + 1, wf_module.id)
+                fetch.load_database_objects(workflow.id + 1, step.id)
             )
 
     def test_load_migrate_params_even_when_invalid(self):
@@ -111,12 +107,12 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
                 """
             ),
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="mod", params={"a": "b"}
         )
         with self.assertLogs("cjwstate.params", level=logging.INFO):
             result = self.run_with_async_db(
-                fetch.load_database_objects(workflow.id, wf_module.id)
+                fetch.load_database_objects(workflow.id, step.id)
             )
         self.assertEqual(result.migrated_params_or_error, {"x": "y"})
 
@@ -132,42 +128,42 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
                 """
             ),
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="mod", params={"a": "b"}
         )
         with self.assertLogs("cjwstate.params", level=logging.INFO):
             result = self.run_with_async_db(
-                fetch.load_database_objects(workflow.id, wf_module.id)
+                fetch.load_database_objects(workflow.id, step.id)
             )
         self.assertIsInstance(result.migrated_params_or_error, ModuleExitedError)
         self.assertRegex(result.migrated_params_or_error.log, ".*RuntimeError: bad")
 
     def test_load_deleted_module_version_is_none(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foodeleted", params={"a": "b"}
         )
         result = self.run_with_async_db(
-            fetch.load_database_objects(workflow.id, wf_module.id)
+            fetch.load_database_objects(workflow.id, step.id)
         )
         self.assertIsNone(result.module_zipfile)
         self.assertEqual(result.migrated_params_or_error, {})
 
     def test_load_selected_stored_object(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="foodeleted"
         )
         with parquet_file({"A": [1]}) as path1:
-            storedobjects.create_stored_object(workflow.id, wf_module.id, path1)
+            storedobjects.create_stored_object(workflow.id, step.id, path1)
         with parquet_file({"A": [2]}) as path2:
-            so2 = storedobjects.create_stored_object(workflow.id, wf_module.id, path2)
+            so2 = storedobjects.create_stored_object(workflow.id, step.id, path2)
         with parquet_file({"A": [3]}) as path3:
-            storedobjects.create_stored_object(workflow.id, wf_module.id, path3)
-        wf_module.stored_data_version = so2.stored_at
-        wf_module.save(update_fields=["stored_data_version"])
+            storedobjects.create_stored_object(workflow.id, step.id, path3)
+        step.stored_data_version = so2.stored_at
+        step.save(update_fields=["stored_data_version"])
         result = self.run_with_async_db(
-            fetch.load_database_objects(workflow.id, wf_module.id)
+            fetch.load_database_objects(workflow.id, step.id)
         )
         self.assertEqual(result[3], so2)
         self.assertEqual(result.stored_object, so2)
@@ -177,10 +173,10 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
             input_render_result = RenderResult(atable)
 
             workflow = Workflow.create_and_init()
-            step1 = workflow.tabs.first().wf_modules.create(
+            step1 = workflow.tabs.first().steps.create(
                 order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
             )
-            step2 = workflow.tabs.first().wf_modules.create(order=1, slug="step-2")
+            step2 = workflow.tabs.first().steps.create(order=1, slug="step-2")
             rendercache.cache_render_result(
                 workflow, step1, workflow.last_delta_id, input_render_result
             )
@@ -196,10 +192,10 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
         # Most of these tests assume the fetch is at step 0. This one tests
         # step 1, when step 2 has no cached render result.
         workflow = Workflow.create_and_init()
-        workflow.tabs.first().wf_modules.create(
+        workflow.tabs.first().steps.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        step2 = workflow.tabs.first().wf_modules.create(order=1, slug="step-2")
+        step2 = workflow.tabs.first().steps.create(order=1, slug="step-2")
         result = self.run_with_async_db(
             fetch.load_database_objects(workflow.id, step2.id)
         )
@@ -230,7 +226,7 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
             )
         )
 
-    def test_deleted_wf_module(self):
+    def test_deleted_step(self):
         with self.assertLogs(level=logging.INFO):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,
@@ -445,17 +441,17 @@ class FetchTests(DbTestCaseWithModuleRegistry):
                 "import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table"
             ),
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="mod"
         )
         cjwstate.modules.init_module_system()
         now = timezone.now()
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
-                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id, now=now)
+                fetch.fetch(workflow_id=workflow.id, step_id=step.id, now=now)
             )
-        wf_module.refresh_from_db()
-        so = wf_module.stored_objects.get(stored_at=wf_module.stored_data_version)
+        step.refresh_from_db()
+        so = step.stored_objects.get(stored_at=step.stored_data_version)
         with minio.temporarily_download(
             minio.StoredObjectsBucket, so.key
         ) as parquet_path:
@@ -476,13 +472,13 @@ class FetchTests(DbTestCaseWithModuleRegistry):
                 "import pandas as pd\ndef fetch(params): return pd.DataFrame({'A': [1]})\ndef render(table, params): return table"
             ),
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="mod"
         )
         with self.assertLogs(level=logging.INFO):
             cjwstate.modules.init_module_system()
             self.run_with_async_db(
-                fetch.fetch(workflow_id=workflow.id, wf_module_id=wf_module.id)
+                fetch.fetch(workflow_id=workflow.id, step_id=step.id)
             )
         create_result.assert_called()
         saved_result: FetchResult = create_result.call_args[0][2]
@@ -492,7 +488,7 @@ class FetchTests(DbTestCaseWithModuleRegistry):
 class UpdateNextUpdateTimeTests(DbTestCase):
     def test_update_on_schedule(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             auto_update_data=True,
@@ -501,18 +497,16 @@ class UpdateNextUpdateTimeTests(DbTestCase):
         )
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, wf_module, parser.parse("2001-01-01T01:00:01Z")
+                workflow.id, step, parser.parse("2001-01-01T01:00:01Z")
             )
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(
-            wf_module.last_update_check, parser.parse("2001-01-01T01:00:01Z")
-        )
-        self.assertEqual(wf_module.next_update, parser.parse("2001-01-01T02:00Z"))
+        step.refresh_from_db()
+        self.assertEqual(step.last_update_check, parser.parse("2001-01-01T01:00:01Z"))
+        self.assertEqual(step.next_update, parser.parse("2001-01-01T02:00Z"))
 
     def test_update_skip_missed_updates(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             auto_update_data=True,
@@ -521,15 +515,15 @@ class UpdateNextUpdateTimeTests(DbTestCase):
         )
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, wf_module, parser.parse("2001-01-01T03:59Z")
+                workflow.id, step, parser.parse("2001-01-01T03:59Z")
             )
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.next_update, parser.parse("2001-01-01T04:00Z"))
+        step.refresh_from_db()
+        self.assertEqual(step.next_update, parser.parse("2001-01-01T04:00Z"))
 
     def test_update_race_auto_update_disabled(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             auto_update_data=False,
@@ -538,32 +532,32 @@ class UpdateNextUpdateTimeTests(DbTestCase):
         )
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, wf_module, parser.parse("2001-01-01T02:59Z")
+                workflow.id, step, parser.parse("2001-01-01T02:59Z")
             )
         )
-        wf_module.refresh_from_db()
-        self.assertIsNone(wf_module.next_update)
+        step.refresh_from_db()
+        self.assertIsNone(step.next_update)
 
-    def test_update_race_wf_module_deleted(self):
+    def test_update_race_step_deleted(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             auto_update_data=True,
             update_interval=3600,
             next_update=parser.parse("2000-01-01T01:00Z"),
         )
-        WfModule.objects.filter(id=wf_module.id).delete()
+        Step.objects.filter(id=step.id).delete()
         # does not crash
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, wf_module, parser.parse("2001-01-01T02:59Z")
+                workflow.id, step, parser.parse("2001-01-01T02:59Z")
             )
         )
 
     def test_update_race_workflow_deleted(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             auto_update_data=True,
@@ -574,6 +568,6 @@ class UpdateNextUpdateTimeTests(DbTestCase):
         # does not crash
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, wf_module, parser.parse("2001-01-01T02:59Z")
+                workflow.id, step, parser.parse("2001-01-01T02:59Z")
             )
         )

@@ -41,7 +41,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
             "version_select": "",
         }
 
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             module_id_name="loadurl",
             order=0,
             slug="step-1",
@@ -58,38 +58,38 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ChangeParametersCommand,
                     workflow_id=workflow.id,
-                    wf_module=wf_module,
+                    step=step,
                     new_values={"url": "http://example.com/foo", "has_header": False},
                 )
             )
-        wf_module.refresh_from_db()
+        step.refresh_from_db()
 
         params2 = {
             "url": "http://example.com/foo",
             "has_header": False,
             "version_select": "",
         }
-        self.assertEqual(wf_module.params, params2)
+        self.assertEqual(step.params, params2)
 
         # undo
         with self.assertLogs(level=logging.INFO):
             # building clientside.Update will migrate_params(), so we need
             # to capture logs.
             self.run_with_async_db(commands.undo(cmd))
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.params, params1)
+        step.refresh_from_db()
+        self.assertEqual(step.params, params1)
 
         # redo
         with self.assertLogs(level=logging.INFO):
             # building clientside.Update will migrate_params(), so we need
             # to capture logs.
             self.run_with_async_db(commands.redo(cmd))
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.params, params2)
+        step.refresh_from_db()
+        self.assertEqual(step.params, params2)
 
-    def test_change_parameters_on_soft_deleted_wf_module(self):
+    def test_change_parameters_on_soft_deleted_step(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -102,7 +102,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
             commands.do(
                 ChangeParametersCommand,
                 workflow_id=workflow.id,
-                wf_module=wf_module,
+                step=step,
                 new_values={"url": "https://example.com"},
             )
         )
@@ -113,7 +113,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         delta = InitWorkflowCommand.create(workflow)
         tab = workflow.tabs.create(position=0, is_deleted=True)
 
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
@@ -125,30 +125,30 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
             commands.do(
                 ChangeParametersCommand,
                 workflow_id=workflow.id,
-                wf_module=wf_module,
+                step=step,
                 new_values={"url": "https://example.com"},
             )
         )
         self.assertIsNone(cmd)
 
-    def test_change_parameters_on_hard_deleted_wf_module(self):
+    def test_change_parameters_on_hard_deleted_step(self):
         workflow = Workflow.create_and_init()
         create_module_zipfile("loadurl")
 
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
             last_relevant_delta_id=workflow.last_delta_id,
             params={"url": ""},
         )
-        wf_module.delete()
+        step.delete()
 
         cmd = self.run_with_async_db(
             commands.do(
                 ChangeParametersCommand,
                 workflow_id=workflow.id,
-                wf_module=wf_module,
+                step=step,
                 new_values={"url": "https://example.com"},
             )
         )
@@ -157,10 +157,10 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_change_parameters_across_module_versions(self):
         workflow = Workflow.create_and_init()
 
-        # Initialize a WfModule that used module 'x' version '1' (which we
+        # Initialize a Step that used module 'x' version '1' (which we
         # don't need to write in code -- after all, that version might be long
         # gone when ChangeParametersCommand is called.
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -188,7 +188,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         # Now the user requests to change params.
         #
         # The user was _viewing_ version '2' of module 'x', though
-        # `wf_module.params` was at version 1. (Workbench ran
+        # `step.params` was at version 1. (Workbench ran
         # `migrate_params()` without saving the result when it
         # presented `params` to the user.) So the changes should apply atop
         # _migrated_ params.
@@ -197,12 +197,12 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ChangeParametersCommand,
                     workflow_id=workflow.id,
-                    wf_module=wf_module,
+                    step=step,
                     new_values={"x": 2},
                 )
             )
         self.assertEqual(
-            wf_module.params,
+            step.params,
             {
                 "version": "v2",  # migrate_params() ran
                 "x": 2,  # and we applied changes on top of its output
@@ -214,12 +214,12 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
             # to capture logs.
             self.run_with_async_db(commands.undo(cmd))
         self.assertEqual(
-            wf_module.params, {"version": "v1", "x": 1}  # exactly what we had before
+            step.params, {"version": "v1", "x": 1}  # exactly what we had before
         )
 
     def test_change_parameters_deny_invalid_params(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -238,7 +238,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ChangeParametersCommand,
                     workflow_id=workflow.id,
-                    wf_module=wf_module,
+                    step=step,
                     new_values={"x": "Threeve"},
                 )
             )
@@ -256,7 +256,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.kernel.migrate_params.side_effect = lambda m, p: p
 
         # tab1's step1 depends on tab2's step2
-        step1 = workflow.tabs.first().wf_modules.create(
+        step1 = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="tabby",
@@ -264,7 +264,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
             params={"tab": "tab-2"},
         )
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
-        step2 = tab2.wf_modules.create(
+        step2 = tab2.steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -277,7 +277,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ChangeParametersCommand,
                     workflow_id=workflow.id,
-                    wf_module=step2,
+                    step=step2,
                     new_values={"x": 2},
                 )
             )

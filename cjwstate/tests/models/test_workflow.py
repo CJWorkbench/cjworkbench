@@ -51,10 +51,10 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.bob = User.objects.create(username="b", email="b@example.org")
 
     def test_workflow_duplicate(self):
-        # Create workflow with two WfModules
+        # Create workflow with two Steps
         wf1 = Workflow.create_and_init(name="Foo")
         tab = wf1.tabs.first()
-        tab.wf_modules.create(order=0, slug="step-1", module_id_name="x")
+        tab.steps.create(order=0, slug="step-1", module_id_name="x")
 
         wf2 = wf1.duplicate(self.bob)
 
@@ -64,9 +64,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(wf2.deltas.all().count(), 1)
         self.assertIsInstance(wf2.last_delta, InitWorkflowCommand)
         self.assertFalse(wf2.public)
-        self.assertEqual(
-            wf1.tabs.first().wf_modules.count(), wf2.tabs.first().wf_modules.count()
-        )
+        self.assertEqual(wf1.tabs.first().steps.count(), wf2.tabs.first().steps.count())
 
     def test_auth_shared_workflow(self):
         wf = Workflow.objects.create(owner=self.alice, public=True)
@@ -159,20 +157,20 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # Workflow, make sure all data gets deleted.
         #
         # TODO fix all other bugs that leak data.
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="x"
         )
 
         # "Leak" a StoredObject by writing its file to S3 but neglecting to
         # write an accompanying StoredObject record.
-        stored_object_key = f"{workflow.id}/{wf_module.id}/1234.dat"
+        stored_object_key = f"{workflow.id}/{step.id}/1234.dat"
         minio.put_bytes(minio.StoredObjectsBucket, stored_object_key, b"1234")
 
         # Add UploadedFile, missing a DB entry. (Even if we fix all bugs that
         # leak an S3 object after deleting a DB entry [and 2019-06-03 there are
         # still more] we'll still need to handle missing DB entries from legacy
         # code.)
-        uploaded_file_key = f"{wf_module.uploaded_file_prefix}{uuid.uuid4()}.csv"
+        uploaded_file_key = f"{step.uploaded_file_prefix}{uuid.uuid4()}.csv"
         minio.put_bytes(minio.UserFilesBucket, uploaded_file_key, b"A\nb")
         workflow.delete()
         self.assertFalse(minio.exists(minio.StoredObjectsBucket, stored_object_key))
@@ -254,13 +252,13 @@ class DependencyGraphTests(DbTestCaseWithModuleRegistryAndMockKernel):
             "tabby", spec_kwargs={"parameters": [{"id_name": "tab", "type": "tab"}]}
         )
 
-        step1 = tab1.wf_modules.create(
+        step1 = tab1.steps.create(
             order=0, slug="step-1", module_id_name="simple", params={"str": "A"}
         )
-        step2 = tab1.wf_modules.create(
+        step2 = tab1.steps.create(
             order=1, slug="step-2", module_id_name="tabby", params={"tab": "tab-2"}
         )
-        step3 = tab2.wf_modules.create(
+        step3 = tab2.steps.create(
             order=0, slug="step-3", module_id_name="simple", params={"str": "B"}
         )
 

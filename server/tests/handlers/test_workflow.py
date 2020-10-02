@@ -55,45 +55,41 @@ class WorkflowTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab2 = workflow.tabs.create(position=1)
-        tab2.wf_modules.create(order=0, slug="step-1")
-        tab2.wf_modules.create(order=1, slug="step-2")
-        wf_module = tab2.wf_modules.create(order=2, slug="step-3")
+        tab2.steps.create(order=0, slug="step-1")
+        tab2.steps.create(order=1, slug="step-2")
+        step = tab2.steps.create(order=2, slug="step-3")
 
         response = self.run_handler(
-            set_position, user=user, workflow=workflow, wfModuleId=wf_module.id
+            set_position, user=user, workflow=workflow, stepId=step.id
         )
         self.assertResponse(response, data=None)
 
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 1)
         tab2.refresh_from_db()
-        self.assertEqual(tab2.selected_wf_module_position, 2)
+        self.assertEqual(tab2.selected_step_position, 2)
 
     def test_set_position_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
-        wf_module = workflow.tabs.first().wf_modules.create(order=0, slug="step-1")
+        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
 
-        response = self.run_handler(
-            set_position, workflow=workflow, wfModuleId=wf_module.id
-        )
+        response = self.run_handler(set_position, workflow=workflow, stepId=step.id)
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
     def test_set_position_ignore_other_workflow(self):
-        # (Also tests "ignore missing WfModule")
+        # (Also tests "ignore missing Step")
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
 
         workflow2 = Workflow.create_and_init(owner=user)
         tab2 = workflow2.tabs.first()
-        tab2.wf_modules.create(order=0, slug="step-1")  # dummy first module (selected)
-        wf_module = tab2.wf_modules.create(
-            order=1, slug="step-2"
-        )  # module we'll "select"
-        tab2.selected_wf_module_position = 0
-        tab2.save(update_fields=["selected_wf_module_position"])
+        tab2.steps.create(order=0, slug="step-1")  # dummy first step (selected)
+        step = tab2.steps.create(order=1, slug="step-2")  # step we'll "select"
+        tab2.selected_step_position = 0
+        tab2.save(update_fields=["selected_step_position"])
 
         response = self.run_handler(
-            set_position, user=user, workflow=workflow, wfModuleId=wf_module.id
+            set_position, user=user, workflow=workflow, stepId=step.id
         )
         self.assertResponse(response, data=None)  # we ignore missing steps
         # Nothing should be written to workflow2. Also, there's nothing to
@@ -103,7 +99,7 @@ class WorkflowTest(HandlerTestCase):
         # module, and Bob clicks it as Alice is deleting it. We want to ignore
         # Bob's action in that case.
         tab2.refresh_from_db()
-        self.assertEqual(tab2.selected_wf_module_position, 0)
+        self.assertEqual(tab2.selected_step_position, 0)
 
     def test_set_selected_tab(self):
         user = User.objects.create(username="a", email="a@example.org")

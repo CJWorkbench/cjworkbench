@@ -6,7 +6,7 @@ function areSameTable (props1, props2) {
   if (props1 === null && props2 === null) return true // both null => true
   if ((props1 === null) !== (props2 === null)) return false // one null => false
 
-  return props1.wfModuleId === props2.wfModuleId &&
+  return props1.stepId === props2.stepId &&
     props1.deltaId === props2.deltaId
 }
 
@@ -16,23 +16,23 @@ function areSameTable (props1, props2) {
  * This forces React to re-render new tables and saves React from re-rendering
  * when switching from "loading" to "loaded".
  */
-function tableKey ({ wfModuleId, deltaId }) {
-  return `table-${wfModuleId}-${deltaId}`
+function tableKey ({ stepId, deltaId }) {
+  return `table-${stepId}-${deltaId}`
 }
 
 /**
  * Given props, return the props we'll pass to <TableSwitcher>.
  */
-function tableProps ({ wfModuleId, deltaId, columns, nRows, status }) {
-  return { wfModuleId, deltaId, columns, nRows, status }
+function tableProps ({ stepId, deltaId, columns, nRows, status }) {
+  return { stepId, deltaId, columns, nRows, status }
 }
 
 /**
- * Shows a <TableSwitcher> for the given wfModule+deltaId -- and transitions
+ * Shows a <TableSwitcher> for the given step+deltaId -- and transitions
  * when those props change.
  *
- * The transition is: this.state maintains a "last-loaded" wfModule+deltaId.
- * When we switch to a new wfModule+deltaId that has not yet loaded (or has
+ * The transition is: this.state maintains a "last-loaded" step+deltaId.
+ * When we switch to a new step+deltaId that has not yet loaded (or has
  * nRows===null), we keep that stale table visible atop the new, unloaded one
  * and we show a spinner.
  *
@@ -61,9 +61,9 @@ function tableProps ({ wfModuleId, deltaId, columns, nRows, status }) {
  */
 export default class DelayedTableSwitcher extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
-    wfModuleId: PropTypes.number, // or null, if no selection
+    stepId: PropTypes.number, // or null, if no selection
     deltaId: PropTypes.number, // or null, if status!=ok
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
     columns: PropTypes.arrayOf(PropTypes.shape({
@@ -74,8 +74,8 @@ export default class DelayedTableSwitcher extends React.PureComponent {
   }
 
   state = {
-    loaded: null, // { wfModuleId, deltaId, status, nRows, columns } of a table that has rendered something, sometime
-    oneTickFromLoaded: null // { wfModuleId, deltaId, status, nRows, columns } of a table for which data is already loaded, but we need to render it for a tick otherwise <DataGrid> will flicker
+    loaded: null, // { stepId, deltaId, status, nRows, columns } of a table that has rendered something, sometime
+    oneTickFromLoaded: null // { stepId, deltaId, status, nRows, columns } of a table for which data is already loaded, but we need to render it for a tick otherwise <DataGrid> will flicker
   }
 
   _afterOneTickFromLoaded = () => {
@@ -114,11 +114,11 @@ export default class DelayedTableSwitcher extends React.PureComponent {
   /**
    * Call this.prop.loadRows() and ensure state.loaded is set after it returns.
    */
-  loadRows = (wfModuleId, deltaId, startRow, endRow) => {
-    return this.props.loadRows(wfModuleId, deltaId, startRow, endRow)
+  loadRows = (stepId, deltaId, startRow, endRow) => {
+    return this.props.loadRows(stepId, deltaId, startRow, endRow)
       .finally(() => {
         if (
-          wfModuleId === this.props.wfModuleId &&
+          stepId === this.props.stepId &&
           deltaId === this.props.deltaId &&
           !areSameTable(this.props, this.state.loaded)
         ) {
@@ -136,7 +136,7 @@ export default class DelayedTableSwitcher extends React.PureComponent {
 
     // Show the last table that has data visible (from state)
     //
-    // If input props have wfModuleId=null, that's a "loaded" table -- an
+    // If input props have stepId=null, that's a "loaded" table -- an
     // empty-looking one.
     if (loaded) className += ' has-loaded'
 

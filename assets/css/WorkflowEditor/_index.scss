@@ -1,8 +1,8 @@
 @import 'EditableNotes';
-@import 'Modules';
+@import 'Step';
 @import 'ModuleSearch';
 @import 'AddData'; // depends on @mixin module-search-field from ModuleSearch
-@import 'ModuleStack';
+@import 'StepList';
 @import 'PaneSelect';
 @import 'Tabs';
 @import 'WorkflowPage';

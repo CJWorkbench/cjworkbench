@@ -7,7 +7,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -51,10 +51,10 @@ tabs:
     <li
       data-highlight='[]'
       data-test="
-        const wfm = workflow.tabs[0].wfModules[1];
-        if (!wfm || wfm.moduleSlug !== 'editcells')
+        const step = workflow.tabs[0].steps[1];
+        if (!step || step.moduleSlug !== 'editcells')
           return false;
-        const edits = wfm.params.celledits;
+        const edits = step.params.celledits;
         return edits.find((e) => e.row === 3 && e.col === 'Continent' && e.value === 'AS')"
       >In the table, double click on the empty cell next to <kbd>India</kbd> enter the code for "Asia", which is
       <kbd>AS</kbd> in this data set
@@ -84,12 +84,12 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'calculate'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'calculate'"
       >Click <kbd>Add Step</kbd>, type <kbd>Calculate</kbd> into the search box, and select the step
     </li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[2].params.operation === 'mean'"
+      data-test="return workflow.tabs[0].steps[2].params.operation === 'mean'"
       >Set the operation to <kbd>Average</kbd>
       <p class="instruction-detail">Click the play button
         <span>
@@ -98,12 +98,12 @@ tabs:
     </li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[2].params.colnames.sort().join(',') === '2013,2014,2015,2016'"
+      data-test="return workflow.tabs[0].steps[2].params.colnames.sort().join(',') === '2013,2014,2015,2016'"
       >Within the Calculate step, select columns <kbd>2013</kbd>, <kbd>2014</kbd>,<kbd>2015</kbd> and <kbd>2016</kbd>.
     </li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[2].params.outcolname.toLowerCase() === '2013-2016 average'"
+      data-test="return workflow.tabs[0].steps[2].params.outcolname.toLowerCase() === '2013-2016 average'"
       >Name the output column <kbd>2013-2016 average</kbd>
       <p class="instruction-detail">The new column will appear at the far right of the table.</p>
     </li>
@@ -121,17 +121,17 @@ tabs:
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'columnchart'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'columnchart'"
       >Click <kbd>Add Step</kbd> and choose <kbd>Column Chart</kbd>
     </li>
     <li
       data-highlight='[]'
-      data-test="return workflow.tabs[0].wfModules[3].params.x_column === 'Country'"
+      data-test="return workflow.tabs[0].steps[3].params.x_column === 'Country'"
       >Select the <kbd>Country</kbd> column for the X axis
     </li>
     <li
       data-highlight='[]'
-      data-test="return (workflow.tabs[0].wfModules[3].params.y_columns[0] || {column:''}).column.toLowerCase() === '2013-2016 average'"
+      data-test="return (workflow.tabs[0].steps[3].params.y_columns[0] || {column:''}).column.toLowerCase() === '2013-2016 average'"
       >Select the <kbd>2013-2016 average</kbd> column for the Y axis
     </li>
   </ol>

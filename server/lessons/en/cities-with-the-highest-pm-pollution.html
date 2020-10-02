@@ -20,13 +20,13 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"upload"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'upload'"
+      data-test="return workflow.tabs[0].stepModuleIds[0] === 'upload'"
     >
       Add the step <kbd>Upload</kbd> as your data source.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
-      data-test="return workflow.tabs[0].wfModules[0].params.file !== null"
+      data-highlight='[{"type":"Step","moduleIdName":"loadurl"}]'
+      data-test="return workflow.tabs[0].steps[0].params.file !== null"
     >
       <p>Navigate to the EPA's <a class="highlight" href='https://www.epa.gov/outdoor-air-quality-data/air-quality-statistics-report' target="_blank" className="info-1">Air Quality Statistics Report Data</a> feature.
       <p>Select <kbd>2019</kbd> and <kbd>United States</kbd>.</p>
@@ -47,14 +47,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"selectcolumns"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'selectcolumns'"
     >
       Add the step <kbd>Select columns</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"selectcolumns"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"selectcolumns"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[1].params;
+        const params = workflow.tabs[0].steps[1].params;
         return (
           params.colnames.join('|') === 'CBSA Code|CBSA|PM2.5 98th Percentile 24-hr|PM2.5 Weighted Mean 24-hr|PM10 2nd Max 24-hr|PM10 Mean 24-hr'
           &amp;&amp; params.keep
@@ -82,14 +82,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":2,"id_name":"splitcolumn"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'splitcolumn'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'splitcolumn'"
     >
       Add the step <kbd>Split column</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"splitcolumn"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"splitcolumn"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[2].params
+        const params = workflow.tabs[0].steps[2].params
         return (
           params.column === 'CBSA'
           &amp;&amp; params.method === 'delimiter'
@@ -100,9 +100,9 @@
       Split the column <code>CBSA</code>, using a <code>delimiter</code> (a specific character that will identify the end of each value), and make the delimiter a comma: <code>,</code>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"renamecolumns"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"renamecolumns"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[3].params
+        const params = workflow.tabs[0].steps[3].params
         return (
           !params.custom_list
           &amp;&amp; Object.keys(params.renames).length === 2
@@ -115,14 +115,14 @@
     </li>
     <li
       data-highlight='[{"type":"Module","index":4,"id_name":"converttexttonumber"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[4] === 'converttexttonumber'"
+      data-test="return workflow.tabs[0].stepModuleIds[4] === 'converttexttonumber'"
     >
       Add the step <kbd>Convert to number</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"converttexttonumber"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"converttexttonumber"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[4].params
+        const params = workflow.tabs[0].steps[4].params
         return (
           params.colnames.join('|') === 'PM2.5 98th Percentile 24-hr|PM2.5 Weighted Mean 24-hr|PM10 2nd Max 24-hr|PM10 Mean 24-hr'
           &amp;&amp; params.input_number_type === 'any'
@@ -152,28 +152,28 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":5,"id_name":"dropna"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[5] === 'dropna'"
+      data-test="return workflow.tabs[0].stepModuleIds[5] === 'dropna'"
     >
       Add the step <kbd>Drop empty rows</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"dropna"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"dropna"}]'
       data-test="
-        return workflow.tabs[0].wfModules[5].params.colnames.join('|') === 'PM2.5 98th Percentile 24-hr|PM10 2nd Max 24-hr'
+        return workflow.tabs[0].steps[5].params.colnames.join('|') === 'PM2.5 98th Percentile 24-hr|PM10 2nd Max 24-hr'
       "
     >
       Select the columns <code>PM2.5 98th Percentile 24-hr</code> and <code>PM10 2nd Max 24-hr</code>.
     </li>
     <li
       data-highlight='[{"type":"Module","index":6,"id_name":"filter"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[6] === 'filter'"
+      data-test="return workflow.tabs[0].stepModuleIds[6] === 'filter'"
     >
       Add the step <kbd>Filter by condition</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"filter"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"filter"}]'
       data-test="
-        const filters = workflow.tabs[0].wfModules[6].params.filters
+        const filters = workflow.tabs[0].steps[6].params.filters
         let filter1 = null
         let filter2 = null
         if (
@@ -217,14 +217,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":7,"id_name":"sort"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[7] === 'sort'"
+      data-test="return workflow.tabs[0].stepModuleIds[7] === 'sort'"
     >
       Add the step <kbd>Sort</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"sort"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"sort"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[7].params
+        const params = workflow.tabs[0].steps[7].params
         return (
           params.sort_columns.length === 2
           &amp;&amp; params.sort_columns[0].colname === 'PM2.5 98th Percentile 24-hr'
@@ -255,14 +255,14 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":8,"id_name":"columnchart"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[8] === 'columnchart'"
+      data-test="return workflow.tabs[0].stepModuleIds[8] === 'columnchart'"
     >
       Add the step <kbd>Column chart</kbd>.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"columnchart"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"columnchart"}]'
       data-test="
-        const params = workflow.tabs[0].wfModules[8].params
+        const params = workflow.tabs[0].steps[8].params
         return (
           params.x_column === 'City'
           &amp;&amp; params.y_columns.length === 2

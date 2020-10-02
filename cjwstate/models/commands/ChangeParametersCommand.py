@@ -1,30 +1,31 @@
 import logging
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from .. import Delta, WfModule
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.params import invoke_migrate_params
-from .util import ChangesWfModuleOutputs
+from ..delta import Delta
+from ..step import Step
+from .util import ChangesStepOutputs
 
 
 logger = logging.getLogger(__name__)
 
 
-class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
+class ChangeParametersCommand(ChangesStepOutputs, Delta):
     class Meta:
         app_label = "server"
         db_table = "server_changeparameterscommand"
 
-    wf_module = models.ForeignKey(WfModule, on_delete=models.PROTECT)
+    step = models.ForeignKey(Step, on_delete=models.PROTECT)
     old_values = JSONField("old_values")  # _all_ params
     new_values = JSONField("new_values")  # only _changed_ params
-    wf_module_delta_ids = ChangesWfModuleOutputs.wf_module_delta_ids
+    step_delta_ids = ChangesStepOutputs.step_delta_ids
 
     def forward(self):
-        self.wf_module.params = self.new_values
-        self.wf_module.cached_migrated_params = None
-        self.wf_module.cached_migrated_params_module_version = None
-        self.wf_module.save(
+        self.step.params = self.new_values
+        self.step.cached_migrated_params = None
+        self.step.cached_migrated_params_module_version = None
+        self.step.save(
             update_fields=[
                 "params",
                 "cached_migrated_params",
@@ -34,10 +35,10 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
         self.forward_affected_delta_ids()
 
     def backward(self):
-        self.wf_module.params = self.old_values
-        self.wf_module.cached_migrated_params = None
-        self.wf_module.cached_migrated_params_module_version = None
-        self.wf_module.save(
+        self.step.params = self.old_values
+        self.step.cached_migrated_params = None
+        self.step.cached_migrated_params_module_version = None
+        self.step.save(
             update_fields=[
                 "params",
                 "cached_migrated_params",
@@ -47,40 +48,40 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
         self.backward_affected_delta_ids()
 
     @classmethod
-    def wf_module_is_deleted(self, wf_module):
-        """Return True iff we cannot add commands to `wf_module`."""
+    def step_is_deleted(self, step):
+        """Return True iff we cannot add commands to `step`."""
         try:
-            wf_module.refresh_from_db()
-        except WfModule.DoesNotExist:
+            step.refresh_from_db()
+        except Step.DoesNotExist:
             return True
 
-        if wf_module.is_deleted:
+        if step.is_deleted:
             return True
 
-        wf_module.tab.refresh_from_db()
-        if wf_module.tab.is_deleted:
+        step.tab.refresh_from_db()
+        if step.tab.is_deleted:
             return True
 
         return False
 
     @classmethod
-    def amend_create_kwargs(cls, *, wf_module, new_values, **kwargs):
+    def amend_create_kwargs(cls, *, step, new_values, **kwargs):
         """
         Prepare `old_values` and `new_values`.
 
         Raise ValueError if `new_values` won't be valid according to the module
         spec.
         """
-        if cls.wf_module_is_deleted(wf_module):  # refreshes from DB
+        if cls.step_is_deleted(step):  # refreshes from DB
             return None
 
         try:
-            module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+            module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
         except KeyError:
-            raise ValueError("Module %s does not exist" % wf_module.module_id_name)
+            raise ValueError("Module %s does not exist" % step.module_id_name)
 
         # Old values: store exactly what we had
-        old_values = wf_module.params
+        old_values = step.params
 
         module_spec = module_zipfile.get_spec()
         param_schema = module_spec.get_param_schema()
@@ -104,10 +105,10 @@ class ChangeParametersCommand(ChangesWfModuleOutputs, Delta):
 
         return {
             **kwargs,
-            "wf_module": wf_module,
+            "step": step,
             "new_values": new_values,
             "old_values": old_values,
-            "wf_module_delta_ids": cls.affected_wf_module_delta_ids(wf_module),
+            "step_delta_ids": cls.affected_step_delta_ids(step),
         }
 
     @property

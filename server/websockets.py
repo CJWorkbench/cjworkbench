@@ -11,7 +11,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import WfModule, Workflow
+from cjwstate.models import Step, Workflow
 from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -58,7 +58,7 @@ def _get_workflow_as_clientside_update(
             tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
             steps={
                 step.id: step.to_clientside()
-                for step in WfModule.live_in_workflow(workflow)
+                for step in Step.live_in_workflow(workflow)
             },
         )
         return WorkflowUpdateData(update, workflow.last_delta_id)

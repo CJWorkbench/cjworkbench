@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
-import { trySetWfModuleAutofetchAction, setWfModuleNotificationsAction } from '../../../workflow-reducer'
+import { trySetStepAutofetchAction, setStepNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
@@ -14,15 +14,15 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
       _: PropTypes.func.isRequired
     }),
     workflowId: PropTypes.number.isRequired,
-    wfModuleId: PropTypes.number.isRequired,
+    stepId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
     isAutofetch: PropTypes.bool.isRequired,
     fetchInterval: PropTypes.number.isRequired,
     isEmailUpdates: PropTypes.bool.isRequired,
-    setEmailUpdates: PropTypes.func.isRequired, // func(wfModuleId, isEmailUpdates) => undefined
-    trySetAutofetch: PropTypes.func.isRequired // func(wfModuleId, isAutofetch, fetchInterval) => Promise[response]
+    setEmailUpdates: PropTypes.func.isRequired, // func(stepId, isEmailUpdates) => undefined
+    trySetAutofetch: PropTypes.func.isRequired // func(stepId, isAutofetch, fetchInterval) => Promise[response]
   }
 
   state = {
@@ -47,17 +47,17 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
   }
 
   setEmailUpdates = (isEmailUpdates) => {
-    const { setEmailUpdates, wfModuleId } = this.props
-    setEmailUpdates(wfModuleId, isEmailUpdates)
+    const { setEmailUpdates, stepId } = this.props
+    setEmailUpdates(stepId, isEmailUpdates)
   }
 
   trySetAutofetch = (isAutofetch, fetchInterval) => {
-    const { trySetAutofetch, wfModuleId } = this.props
-    return trySetAutofetch(wfModuleId, isAutofetch, fetchInterval)
+    const { trySetAutofetch, stepId } = this.props
+    return trySetAutofetch(stepId, isAutofetch, fetchInterval)
   }
 
   render () {
-    const { i18n, lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, wfModuleId } = this.props
+    const { i18n, lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, stepId } = this.props
     const { isModalOpen } = this.state
 
     return (
@@ -85,7 +85,7 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
         {isModalOpen ? (
           <UpdateFrequencySelectModal
             workflowId={workflowId}
-            wfModuleId={wfModuleId}
+            stepId={stepId}
             isEmailUpdates={isEmailUpdates}
             isAutofetch={isAutofetch}
             fetchInterval={fetchInterval}
@@ -101,10 +101,10 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
 
 const mapStateToProps = (state, ownProps) => {
   const workflow = state.workflow || {}
-  const wfModule = state.wfModules[String(ownProps.wfModuleId)] || {}
-  // We need a "default" value for everything: wfModule might be a placeholder
+  const step = state.steps[String(ownProps.stepId)] || {}
+  // We need a "default" value for everything: step might be a placeholder
 
-  const lastCheckString = wfModule.last_update_check // JSON has no date -- that's a STring
+  const lastCheckString = step.last_update_check // JSON has no date -- that's a STring
   const lastCheckDate = lastCheckString ? new Date(Date.parse(lastCheckString)) : null
 
   return {
@@ -112,15 +112,15 @@ const mapStateToProps = (state, ownProps) => {
     workflowId: workflow.id,
     isReadOnly: workflow.read_only,
     isAnonymous: workflow.is_anonymous,
-    isEmailUpdates: wfModule.notifications || false,
-    isAutofetch: wfModule.auto_update_data || false,
-    fetchInterval: wfModule.update_interval || 86400
+    isEmailUpdates: step.notifications || false,
+    isAutofetch: step.auto_update_data || false,
+    fetchInterval: step.update_interval || 86400
   }
 }
 
 const mapDispatchToProps = {
-  trySetAutofetch: trySetWfModuleAutofetchAction,
-  setEmailUpdates: setWfModuleNotificationsAction
+  trySetAutofetch: trySetStepAutofetchAction,
+  setEmailUpdates: setStepNotificationsAction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateFrequencySelect)

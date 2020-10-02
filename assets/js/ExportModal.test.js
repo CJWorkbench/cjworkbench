@@ -10,7 +10,7 @@ describe('ExportModal', () => {
     // mount not shallow as we are looking for components down in the tree, e.g. the input fields inside FormGroup
     wrapper = mountWithI18n(
       <ExportModal
-        wfModuleId={415}
+        stepId={415}
         open
         toggle={jest.fn()}
         className='menu-test-class'

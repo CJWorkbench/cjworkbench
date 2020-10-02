@@ -145,7 +145,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_addmodulecommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),
@@ -199,7 +199,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_changedataversioncommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),
@@ -241,7 +241,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_changeparameterscommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),
@@ -311,7 +311,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_deletemodulecommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),
@@ -398,7 +398,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_reordermodulescommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),
@@ -440,7 +440,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_reordertabscommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),
@@ -472,7 +472,7 @@ class Migration(migrations.Migration):
             ],
             options={"db_table": "server_settabnamecommand"},
             bases=(
-                cjwstate.models.commands.util.ChangesWfModuleOutputs,
+                cjwstate.models.commands.util.ChangesStepOutputs,
                 "server.delta",
             ),
         ),

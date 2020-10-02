@@ -7,8 +7,8 @@ class TestNewWorkflow(LoggedInIntegrationTest):
 
         b.click_button("Create Workflow")
 
-        # Empty module stack
-        b.wait_for_element(".module-stack", wait=True)
+        # Empty step list
+        b.wait_for_element(".step-list", wait=True)
 
         # nav bar
         with b.scope(".navbar"):

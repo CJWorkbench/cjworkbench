@@ -11,7 +11,7 @@ from django.http import (
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from cjwstate import clientside, oauth, rabbitmq
-from cjwstate.models import ModuleVersion, WfModule, Workflow
+from cjwstate.models import ModuleVersion, Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.param_spec import ParamSpec
 
@@ -19,9 +19,7 @@ from cjwstate.modules.param_spec import ParamSpec
 logger = logging.getLogger(__name__)
 
 
-Scope = namedtuple(
-    "Scope", ("service_id", "state", "workflow_id", "wf_module_id", "param")
-)
+Scope = namedtuple("Scope", ("service_id", "state", "workflow_id", "step_id", "param"))
 
 
 class OauthServiceNotConfigured(Exception):
@@ -32,26 +30,25 @@ class SecretDoesNotExist(Exception):
     pass
 
 
-def _load_wf_module_and_service(
-    workflow: Workflow, wf_module_id: int, param: str
-) -> Tuple[WfModule, oauth.OAuthService]:
-    """
-    Load WfModule and OAuthService from the database, or raise.
+def _load_step_and_service(
+    workflow: Workflow, step_id: int, param: str
+) -> Tuple[Step, oauth.OAuthService]:
+    """Load Step and OAuthService from the database, or raise.
 
-    Raise WfModule.DoesNotExist if the WfModule is deleted or missing.
+    Raise Step.DoesNotExist if the Step is deleted or missing.
 
-    Raise SecretDoesNotExist if the WfModule does not have the given param.
+    Raise SecretDoesNotExist if the Step does not have the given param.
 
     Invoke this within a Workflow.cooperative_lock().
     """
-    # raises WfModule.DoesNotExist
-    wf_module = WfModule.live_in_workflow(workflow).get(pk=wf_module_id)
+    # raises Step.DoesNotExist
+    step = Step.live_in_workflow(workflow).get(pk=step_id)
 
     # raises KeyError, RuntimeError
     try:
-        module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+        module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
     except KeyError:
-        raise SecretDoesNotExist(f"Module {wf_module.module_id_name} does not exist")
+        raise SecretDoesNotExist(f"Module {step.module_id_name} does not exist")
     module_spec = module_zipfile.get_spec()
     for field in module_spec.param_fields:
         if (
@@ -68,16 +65,13 @@ def _load_wf_module_and_service(
                 raise OauthServiceNotConfigured(
                     f'OAuth not configured for "{service_name}" service'
                 )
-            return wf_module, service
+            return step, service
     else:
         raise SecretDoesNotExist(f"Param {param} does not point to an OAuth secret")
 
 
-def start_authorize(
-    request: HttpRequest, workflow_id: int, wf_module_id: int, param: str
-):
-    """
-    Redirect to the external service's authentication page and write session.
+def start_authorize(request: HttpRequest, workflow_id: int, step_id: int, param: str):
+    """Redirect to the external service's authentication page and write session.
 
     Return 404 if id_name is not configured (e.g., user asked for
     'google' but OAUTH_SERVICES['google'] does not exist).
@@ -88,10 +82,10 @@ def start_authorize(
     """
     # Type conversions are guaranteed to work because we used URL regexes
     workflow_id = int(workflow_id)
-    wf_module_id = int(wf_module_id)
+    step_id = int(step_id)
     param = str(param)
 
-    # Validate workflow_id, wf_module_id and param, and return
+    # Validate workflow_id, step_id and param, and return
     # HttpResponseForbidden if they do not match up
     try:
         with Workflow.authorized_lookup_and_cooperative_lock(
@@ -101,14 +95,14 @@ def start_authorize(
             pk=workflow_id,
         ) as workflow_lock:
             workflow = workflow_lock.workflow
-            # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
-            _, service = _load_wf_module_and_service(workflow, wf_module_id, param)
+            # raises Step.DoesNotExist, ModuleVersion.DoesNotExist
+            _, service = _load_step_and_service(workflow, step_id, param)
     except Workflow.DoesNotExist as err:
         # Possibilities:
         # str(err) = 'owner access denied'
         # str(err) = 'Workflow matching query does not exist'
         return HttpResponseForbidden(str(err))
-    except (WfModule.DoesNotExist, ModuleVersion.DoesNotExist):
+    except (Step.DoesNotExist, ModuleVersion.DoesNotExist):
         return HttpResponseForbidden("Step or parameter was deleted.")
     except SecretDoesNotExist as err:
         return HttpResponseForbidden(str(err))
@@ -124,7 +118,7 @@ def start_authorize(
         service_id=service.service_id,
         state=state,
         workflow_id=workflow_id,
-        wf_module_id=wf_module_id,
+        step_id=step_id,
         param=param,
     )._asdict()
 
@@ -176,25 +170,23 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             pk=scope.workflow_id,
         ) as workflow_lock:
             workflow = workflow_lock.workflow
-            # raises WfModule.DoesNotExist, ModuleVersion.DoesNotExist
-            wf_module, _ = _load_wf_module_and_service(
-                workflow, scope.wf_module_id, scope.param
-            )
-            wf_module.secrets = {
-                **wf_module.secrets,
+            # raises Step.DoesNotExist, ModuleVersion.DoesNotExist
+            step, _ = _load_step_and_service(workflow, scope.step_id, scope.param)
+            step.secrets = {
+                **step.secrets,
                 scope.param: {"name": username, "secret": offline_token},
             }
-            wf_module.save(update_fields=["secrets"])
+            step.save(update_fields=["secrets"])
     except Workflow.DoesNotExist as err:
         # Possibilities:
         # str(err) = 'owner access denied'
         # str(err) = 'Workflow matching query does not exist'
         return HttpResponseForbidden(str(err))
-    except (ModuleVersion.DoesNotExist, WfModule.DoesNotExist):
+    except (ModuleVersion.DoesNotExist, Step.DoesNotExist):
         return HttpResponseNotFound("Step or parameter was deleted.")
 
     update = clientside.Update(
-        steps={wf_module.id: clientside.StepUpdate(secrets=wf_module.secret_metadata)}
+        steps={step.id: clientside.StepUpdate(secrets=step.secret_metadata)}
     )
     async_to_sync(rabbitmq.send_update_to_workflow_clients)(workflow.id, update)
 

@@ -26,7 +26,7 @@
 
   }
 
-  /* Contains Navbar, Modulestack, and Outputpane */
+  /* Contains Navbar, StepList, and Outputpane */
   .workflow-container {
     display: flex;
     flex-direction: column;
@@ -38,7 +38,7 @@
     }
   }
 
-  /* Contains Modulestack and Outputpane */
+  /* Contains StepList and Outputpane */
   .workflow-columns {
     flex: 1 1 auto;
     display: flex;

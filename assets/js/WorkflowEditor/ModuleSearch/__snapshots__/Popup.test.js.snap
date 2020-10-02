@@ -2,7 +2,7 @@
 
 exports[`ModuleSearch Popup matches snapshot 1`] = `
 <Popup
-  addModule={[MockFunction]}
+  addStep={[MockFunction]}
   i18n={
     Object {
       "_": [Function],

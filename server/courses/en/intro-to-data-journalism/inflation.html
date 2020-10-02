@@ -20,7 +20,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Salaries
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -28,7 +28,7 @@ tabs:
     collapsed: true
     note: "Source: National Center for Education Statistics"
 - name: CPI data
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -61,8 +61,8 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'rowstoheader' &amp;&amp;
-                        workflow.tabs[0].wfModules[1].params.rows === '1'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'rowstoheader' &amp;&amp;
+                        workflow.tabs[0].steps[1].params.rows === '1'"
       >In the <Kbd>Salaries</kbd> tab, select row 1 which contain the real header values, by clicking on the row number.
       Then choose <kbd>Move rows to table header</kbd> in the action menu above the table, where it says “1 row selected”.
       <p class='instruction-detail'>
@@ -71,34 +71,34 @@ tabs:
     </li>
     <li data-test="
       return (
-        workflow.tabs[0].wfModuleSlugs[2] === 'converttexttonumber'
-        &amp;&amp; workflow.tabs[0].wfModules[2].params.colnames.join('|') === 'Average salary'
+        workflow.tabs[0].stepModuleIds[2] === 'converttexttonumber'
+        &amp;&amp; workflow.tabs[0].steps[2].params.colnames.join('|') === 'Average salary'
       )
     ">Choose <kbd>Convert to number</kbd> in the <kbd>Average salary</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
       </span>
     </li>
-    <li data-test="return workflow.tabs[0].wfModules[2].params.extract">
+    <li data-test="return workflow.tabs[0].steps[2].params.extract">
       <p>In the <kbd>Convert to number</kbd> step, make sure <kbd>Ignore non-numeric characters</kbd> is checked. This will handle the <tt>$</tt> symbols in the column.</p>
       <p class='instruction-detail'>
         The CPI data, in the other tab, has similar issues.
       </p>
     </li>
     <li
-      data-test="return workflow.tabs[1].wfModuleSlugs[1] === 'rowstoheader' &amp;&amp;
-                        workflow.tabs[1].wfModules[1].params.rows === '11'"
+      data-test="return workflow.tabs[1].stepModuleIds[1] === 'rowstoheader' &amp;&amp;
+                        workflow.tabs[1].steps[1].params.rows === '11'"
       >In the <kbd>CPI data</kbd> tab, select row 11 which contains the column names, and move that row to the header as well
     </li>
     <li
       data-test="
-        if (workflow.tabs[1].wfModuleSlugs[2] !== 'selectcolumns') return false
-        const colnames = workflow.tabs[1].wfModules[2].params.colnames
+        if (workflow.tabs[1].stepModuleIds[2] !== 'selectcolumns') return false
+        const colnames = workflow.tabs[1].steps[2].params.colnames
         return colnames.sort().join('|') === 'Annual|Year'"
       >Still in that tab, add <kbd>Select Columns</kbd> and only keep the columns <kbd>Year</kbd> and <kbd>Annual</kbd>
     </li>
     <li
-      data-test="return workflow.tabs[1].wfModuleSlugs[3] === 'converttexttonumber'"
+      data-test="return workflow.tabs[1].stepModuleIds[3] === 'converttexttonumber'"
       >Choose <kbd>Convert to number</kbd> from the <kbd>Annual</kbd> column menu
       <span>
         <img class="icon-insert" src="images/lesson-icons/menu.svg">
@@ -147,19 +147,19 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'jointab'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'jointab'"
       >Switch back to the <kbd>Salaries</kbd> tab and add a <kbd>Join tab</kbd> step
     </li>
     <li
       data-test="
-        const params = workflow.tabs[0].wfModules[3].params
+        const params = workflow.tabs[0].steps[3].params
         return (
           params.right_tab === 'tab-2'
           &amp;&amp; params.join_columns.on.join('|') === 'Year'
         )
       ">Select the <kbd>CPI data</kbd> tab to join with, and the <kbd>Year</kbd> column to join on
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.join_columns.right.includes('Annual')"
+      data-test="return workflow.tabs[0].steps[3].params.join_columns.right.includes('Annual')"
       >The final step is to choose which columns to bring in from the CPI tab. Select <kbd>Annual</kbd>
       <p class=instruction-detail>
         We now have one table containing all the information we need for our analysis
@@ -184,8 +184,8 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[4] !== 'formula') return false
-        const params = workflow.tabs[0].wfModules[4].params
+        if (workflow.tabs[0].stepModuleIds[4] !== 'formula') return false
+        const params = workflow.tabs[0].steps[4].params
         if (params.syntax !== 'excel' || !params.all_rows) return false
         const f = params.formula_excel.replace(/ /g, '')
         return (
@@ -197,7 +197,7 @@ tabs:
       <div class="copy-txt">=(B1/C1)*240.007</div>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[4].params.out_column.toLowerCase() === 'adjusted salaries'"
+      data-test="return workflow.tabs[0].steps[4].params.out_column.toLowerCase() === 'adjusted salaries'"
       >Name this new column <kbd>Adjusted salaries</kbd>
       <p class="instruction-detail">
         Dollar values which are adjusted for inflation are also called “real” dollars, while non-adjusted amounts

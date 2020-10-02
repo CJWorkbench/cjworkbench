@@ -156,8 +156,8 @@ function reduceCreatePending (state, action) {
       [slug]: {
         slug,
         name,
-        wf_module_ids: [],
-        selected_wf_module_position: null
+        step_ids: [],
+        selected_step_position: null
       }
     }
   }

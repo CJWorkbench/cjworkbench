@@ -9,9 +9,9 @@ import { Trans } from '@lingui/react'
 
 export class OutputPane extends React.Component {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(wfModuleId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowId: PropTypes.number.isRequired,
-    wfModuleBeforeError: PropTypes.shape({
+    stepBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
       deltaId: PropTypes.number, // or null -- it may not be rendered
       status: PropTypes.oneOf(['ok', 'busy', 'unreachable']).isRequired, // can't be 'error'
@@ -21,7 +21,7 @@ export class OutputPane extends React.Component {
       }).isRequired), // or null
       nRows: PropTypes.number // or null
     }), // or null if no error
-    wfModule: PropTypes.shape({
+    step: PropTypes.shape({
       id: PropTypes.number.isRequired,
       htmlOutput: PropTypes.bool.isRequired,
       status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
@@ -41,23 +41,23 @@ export class OutputPane extends React.Component {
   }
 
   /**
-   * Return the WfModule we want to render for the user.
+   * Return the Step we want to render for the user.
    *
-   * This will _never_ be an "error"-status WfModule. If there's an error, we
+   * This will _never_ be an "error"-status Step. If there's an error, we
    * want the user to see the input. (This component will also render a notice
    * saying it's showing the input.)
    */
-  get wfModuleForTable () {
-    const { wfModuleBeforeError, wfModule } = this.props
+  get stepForTable () {
+    const { stepBeforeError, step } = this.props
 
-    if (wfModuleBeforeError) {
+    if (stepBeforeError) {
       // We're focused on an error module. The user wants to see its _input_ to
       // debug it.
-      return wfModuleBeforeError
-    } else if (wfModule && wfModule.status !== 'error') {
-      return wfModule
+      return stepBeforeError
+    } else if (step && step.status !== 'error') {
+      return step
     } else {
-      // Either there's no selected WfModule, or the selected WfModule has
+      // Either there's no selected Step, or the selected Step has
       // status === 'error' and it's the first in the tab. Either way, we want
       // to render a "placeholder" table.
       return null
@@ -70,11 +70,11 @@ export class OutputPane extends React.Component {
     // we showed the _input_ module's iframe we wouldn't render the stack
     // trace.
 
-    const { wfModule, workflowId, isPublic } = this.props
+    const { step, workflowId, isPublic } = this.props
 
-    const wfModuleId = wfModule ? wfModule.id : null
-    const deltaId = wfModule ? wfModule.deltaId : null
-    const htmlOutput = wfModule ? wfModule.htmlOutput : false
+    const stepId = step ? step.id : null
+    const deltaId = step ? step.deltaId : null
+    const htmlOutput = step ? step.htmlOutput : false
 
     // This iframe holds the module HTML output, e.g. a visualization.
     // We leave the component around even when there is no HTML because of
@@ -87,14 +87,14 @@ export class OutputPane extends React.Component {
         visible={htmlOutput}
         workflowId={workflowId}
         isPublic={isPublic}
-        wfModuleId={wfModuleId}
+        stepId={stepId}
         deltaId={deltaId}
       />
     )
   }
 
   renderShowingInput () {
-    if (this.props.wfModuleBeforeError) {
+    if (this.props.stepBeforeError) {
       return (
         <p
           key='error'
@@ -109,9 +109,9 @@ export class OutputPane extends React.Component {
   }
 
   render () {
-    const { isReadOnly, loadRows, wfModule } = this.props
-    const step = this.wfModuleForTable
-    const className = 'outputpane module-' + (wfModule ? wfModule.status : 'unreachable')
+    const { isReadOnly, loadRows, step } = this.props
+    const stepForTable = this.stepForTable
+    const className = 'outputpane module-' + (step ? step.status : 'unreachable')
 
     return (
       <div className={className}>
@@ -119,11 +119,11 @@ export class OutputPane extends React.Component {
         {this.renderShowingInput()}
         <DelayedTableSwitcher
           key='table'
-          wfModuleId={step ? step.id : null}
-          status={step ? step.status : null}
-          deltaId={step ? step.deltaId : null}
-          columns={step ? step.columns : null}
-          nRows={step ? step.nRows : null}
+          stepId={stepForTable ? stepForTable.id : null}
+          status={stepForTable ? stepForTable.status : null}
+          deltaId={stepForTable ? stepForTable.deltaId : null}
+          columns={stepForTable ? stepForTable.columns : null}
+          nRows={stepForTable ? stepForTable.nRows : null}
           isReadOnly={isReadOnly}
           loadRows={loadRows}
         />
@@ -132,45 +132,45 @@ export class OutputPane extends React.Component {
   }
 }
 
-function wfModuleStatus (wfModule) {
+function stepStatus (step) {
   // TODO don't copy/paste from OutputPane.js
-  if (wfModule.nClientRequests > 0) {
+  if (step.nClientRequests > 0) {
     // When we've just sent an HTTP request and not received a response,
     // mark ourselves "busy". This is great for when the user clicks "fetch"
     // and then is waiting for the server to set the status.
     //
     // The state stores server data separately than client data, so there's
     // no race when setting status and so if the "fetch" does nothing and the
-    // server doesn't change wfModule.status, the client still resets its
+    // server doesn't change step.status, the client still resets its
     // perceived status.
     return 'busy'
-  } else if (wfModule.is_busy) {
+  } else if (step.is_busy) {
     return 'busy'
-  } else if (!wfModule.output_status) {
+  } else if (!step.output_status) {
     // placeholder? TODO verify this can actually happen
     return 'busy'
   } else {
-    return wfModule.output_status
+    return step.output_status
   }
 }
 
 function mapStateToProps (state) {
-  const { workflow, wfModules, tabs, modules } = state
+  const { workflow, steps, tabs, modules } = state
   const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
   const tab = tabs[tabSlug]
-  const wfModuleArray = tab.wf_module_ids.map(id => wfModules[String(id)])
+  const stepArray = tab.step_ids.map(id => steps[String(id)])
 
-  const wfModuleIndex = tab.selected_wf_module_position
-  let wfModule = wfModuleArray[wfModuleIndex] || null
-  let wfModuleBeforeError
+  const stepIndex = tab.selected_step_position
+  let step = stepArray[stepIndex] || null
+  let stepBeforeError
 
-  const status = wfModule ? wfModuleStatus(wfModule) : 'busy'
+  const status = step ? stepStatus(step) : 'busy'
 
-  if (wfModule === null && tab.wf_module_ids[wfModuleIndex]) {
-    // We're pointing at a "placeholder" module: its id isn't in wfModules.
+  if (step === null && tab.step_ids[stepIndex]) {
+    // We're pointing at a "placeholder" module: its id isn't in steps.
     // HACK: for now, we want OutputPane to render something different (it needs
-    // to give TableSwitcher a "busy"-status WfModule).
-    wfModule = {
+    // to give TableSwitcher a "busy"-status Step).
+    step = {
       id: -1,
       module_id_name: '',
       status: 'busy',
@@ -182,12 +182,12 @@ function mapStateToProps (state) {
 
   // If we're pointing at a module that output an error, we'll want to display
   // its _input_ (the previous module's output) to help the user fix things.
-  if (status === 'error' && tab.selected_wf_module_position > 0) {
-    const lastGood = wfModuleArray[wfModuleIndex - 1]
-    wfModuleBeforeError = {
+  if (status === 'error' && tab.selected_step_position > 0) {
+    const lastGood = stepArray[stepIndex - 1]
+    stepBeforeError = {
       id: lastGood.id,
       deltaId: lastGood.cached_render_result_delta_id,
-      status: wfModuleStatus(lastGood),
+      status: stepStatus(lastGood),
       columns: lastGood.output_columns,
       nRows: lastGood.output_n_rows
     }
@@ -195,15 +195,15 @@ function mapStateToProps (state) {
 
   return {
     workflowId: workflow.id,
-    wfModule: wfModule ? {
-      id: wfModule.id,
-      htmlOutput: modules[wfModule.module] ? modules[wfModule.module].has_html_output : false,
+    step: step ? {
+      id: step.id,
+      htmlOutput: modules[step.module] ? modules[step.module].has_html_output : false,
       status,
-      deltaId: wfModule.cached_render_result_delta_id,
-      columns: wfModule.output_columns,
-      nRows: wfModule.output_n_rows
+      deltaId: step.cached_render_result_delta_id,
+      columns: step.output_columns,
+      nRows: step.output_n_rows
     } : null,
-    wfModuleBeforeError,
+    stepBeforeError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only
   }
@@ -211,9 +211,9 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    loadRows: (wfModuleId, deltaId, startRow, endRow) => {
+    loadRows: (stepId, deltaId, startRow, endRow) => {
       return dispatch((_, __, api) => {
-        return api.render(wfModuleId, startRow, endRow) // ignore deltaId -- for now
+        return api.render(stepId, startRow, endRow) // ignore deltaId -- for now
       })
     }
   }

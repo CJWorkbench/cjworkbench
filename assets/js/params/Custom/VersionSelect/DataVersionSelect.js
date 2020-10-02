@@ -11,7 +11,7 @@ export class DataVersionSelect extends React.PureComponent {
       // i18n object injected by LinguiJS withI18n()
       _: PropTypes.func.isRequired
     }),
-    wfModuleId: PropTypes.number.isRequired,
+    stepId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version
     nVersions: PropTypes.number.isRequired, // may be 0
     isReadOnly: PropTypes.bool.isRequired
@@ -25,7 +25,7 @@ export class DataVersionSelect extends React.PureComponent {
   handleCloseModal = () => this.setState({ isDataVersionModalOpen: false })
 
   render () {
-    const { wfModuleId, currentVersionIndex, nVersions, isReadOnly, i18n } = this.props
+    const { stepId, currentVersionIndex, nVersions, isReadOnly, i18n } = this.props
     const { isDataVersionModalOpen } = this.state
 
     let inner
@@ -68,7 +68,7 @@ export class DataVersionSelect extends React.PureComponent {
           </button>
           {isDataVersionModalOpen ? (
             <DataVersionModal
-              wfModuleId={wfModuleId}
+              stepId={stepId}
               onClose={this.handleCloseModal}
             />
           ) : null}
@@ -84,11 +84,11 @@ export class DataVersionSelect extends React.PureComponent {
   }
 }
 
-function mapStateToProps (state, { wfModuleId }) {
+function mapStateToProps (state, { stepId }) {
   const isReadOnly = state.workflow.read_only
 
-  const wfModule = state.wfModules[String(wfModuleId)]
-  if (!wfModule || !wfModule.versions || !wfModule.versions.selected) {
+  const step = state.steps[String(stepId)]
+  if (!step || !step.versions || !step.versions.selected) {
     return {
       currentVersionIndex: null,
       nVersions: 0,
@@ -96,7 +96,7 @@ function mapStateToProps (state, { wfModuleId }) {
     }
   }
 
-  const { versions, selected } = wfModule.versions
+  const { versions, selected } = step.versions
   const index = versions.findIndex(arr => arr[0] === selected) || null
 
   return {

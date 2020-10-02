@@ -350,8 +350,8 @@ describe('Tabs.actions', () => {
         'tab-X': {
           slug: 'tab-X',
           name: 'Tab 1',
-          wf_module_ids: [],
-          selected_wf_module_position: null
+          step_ids: [],
+          selected_step_position: null
         }
       })
       endDelay()
@@ -363,8 +363,8 @@ describe('Tabs.actions', () => {
         'tab-X': {
           slug: 'tab-X',
           name: 'Tab 1',
-          wf_module_ids: [],
-          selected_wf_module_position: null
+          step_ids: [],
+          selected_step_position: null
         }
       })
     })
@@ -438,8 +438,8 @@ describe('Tabs.actions', () => {
         'tab-X': {
           slug: 'tab-X',
           name: 'A (1)',
-          wf_module_ids: [],
-          selected_wf_module_position: null
+          step_ids: [],
+          selected_step_position: null
         }
       })
       endDelay()
@@ -451,8 +451,8 @@ describe('Tabs.actions', () => {
         'tab-X': {
           slug: 'tab-X',
           name: 'A (1)',
-          wf_module_ids: [],
-          selected_wf_module_position: null
+          step_ids: [],
+          selected_step_position: null
         }
       })
     })

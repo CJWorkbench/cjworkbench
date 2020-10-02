@@ -13,7 +13,7 @@ from cjwkernel.chroot import EDITABLE_CHROOT, ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
 from cjworkbench.sync import database_sync_to_async
-from cjwstate.models import CachedRenderResult, StoredObject, WfModule, Workflow
+from cjwstate.models import CachedRenderResult, StoredObject, Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 import cjwstate.params
@@ -36,8 +36,7 @@ def invoke_fetch(
     input_parquet_filename: Optional[str],
     output_filename: str,
 ) -> FetchResult:
-    """
-    Use kernel to invoke module `fetch(...)` method and build a `FetchResult`.
+    """Use kernel to invoke module `fetch(...)` method and build a `FetchResult`.
 
     Raise `ModuleError` on error. (This is usually the module author's fault.)
 
@@ -82,7 +81,7 @@ def invoke_fetch(
 DatabaseObjects = NamedTuple(
     "DatabaseObjects",
     [
-        ("wf_module", WfModule),
+        ("step", Step),
         ("module_zipfile", Optional[ModuleZipfile]),
         ("migrated_params_or_error", Union[Dict[str, Any], ModuleError]),
         ("stored_object", Optional[StoredObject]),
@@ -92,25 +91,22 @@ DatabaseObjects = NamedTuple(
 
 
 @database_sync_to_async
-def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObjects:
-    """
-    Query WfModule info.
+def load_database_objects(workflow_id: int, step_id: int) -> DatabaseObjects:
+    """Query Step info.
 
-    Raise `WfModule.DoesNotExist` or `Workflow.DoesNotExist` if the step was
+    Raise `Step.DoesNotExist` or `Workflow.DoesNotExist` if the step was
     deleted.
 
     Catch a `ModuleError` from migrate_params() and return it as part of the
     `DatabaseObjects`.
     """
     with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-        # raise WfModule.DoesNotExist
-        wf_module = WfModule.live_in_workflow(workflow_lock.workflow).get(
-            id=wf_module_id
-        )
+        # raise Step.DoesNotExist
+        step = Step.live_in_workflow(workflow_lock.workflow).get(id=step_id)
 
         # module_zipfile
         try:
-            module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+            module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
         except KeyError:
             module_zipfile = None
 
@@ -120,29 +116,27 @@ def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObject
         else:
             try:
                 migrated_params_or_error = cjwstate.params.get_migrated_params(
-                    wf_module, module_zipfile=module_zipfile
+                    step, module_zipfile=module_zipfile
                 )  # raise ModuleError
             except ModuleError as err:
                 migrated_params_or_error = err
 
         # stored_object
         try:
-            stored_object = wf_module.stored_objects.get(
-                stored_at=wf_module.stored_data_version
-            )
+            stored_object = step.stored_objects.get(stored_at=step.stored_data_version)
         except StoredObject.DoesNotExist:
             stored_object = None
 
         # input_crr
         try:
-            # raise WfModule.DoesNotExist -- but we'll catch this one
-            prev_module = wf_module.tab.live_wf_modules.get(order=wf_module.order - 1)
+            # raise Step.DoesNotExist -- but we'll catch this one
+            prev_module = step.tab.live_steps.get(order=step.order - 1)
             input_crr = prev_module.cached_render_result  # may be None
-        except WfModule.DoesNotExist:
+        except Step.DoesNotExist:
             input_crr = None
 
         return DatabaseObjects(
-            wf_module,
+            step,
             module_zipfile,
             migrated_params_or_error,
             stored_object,
@@ -151,28 +145,26 @@ def load_database_objects(workflow_id: int, wf_module_id: int) -> DatabaseObject
 
 
 @database_sync_to_async
-def update_next_update_time(workflow_id, wf_module, now):
+def update_next_update_time(workflow_id, step, now):
     """Schedule next update, skipping missed updates if any."""
 
-    tick = timedelta(
-        seconds=max(wf_module.update_interval, settings.MIN_AUTOFETCH_INTERVAL)
-    )
+    tick = timedelta(seconds=max(step.update_interval, settings.MIN_AUTOFETCH_INTERVAL))
 
     try:
         with Workflow.lookup_and_cooperative_lock(id=workflow_id):
-            wf_module.refresh_from_db()
-            next_update = wf_module.next_update
+            step.refresh_from_db()
+            next_update = step.next_update
             if next_update:
                 while next_update <= now:
                     next_update += tick
 
-            WfModule.objects.filter(id=wf_module.id).update(
+            Step.objects.filter(id=step.id).update(
                 last_update_check=now, next_update=next_update
             )
-    except (WfModule.DoesNotExist, Workflow.DoesNotExist):
-        # [2019-05-27] `wf_module.workflow` throws `Workflow.DoesNotExist` if
-        # the WfModule is deleted. This handler is for deleted-Workflow _and_
-        # deleted-WfModule.
+    except (Step.DoesNotExist, Workflow.DoesNotExist):
+        # [2019-05-27] `step.workflow` throws `Workflow.DoesNotExist` if
+        # the Step is deleted. This handler is for deleted-Workflow _and_
+        # deleted-Step.
         pass
 
 
@@ -220,11 +212,10 @@ def _download_cached_render_result(
 def _stored_object_to_fetch_result(
     ctx: contextlib.ExitStack,
     stored_object: Optional[StoredObject],
-    wf_module_fetch_errors: List[RenderError],
+    step_fetch_errors: List[RenderError],
     dir: Path,
 ) -> Optional[FetchResult]:
-    """
-    Given a StoredObject (or None), return a FetchResult (or None).
+    """Given a StoredObject (or None), return a FetchResult (or None).
 
     This cannot error. Any errors lead to a `None` return value.
     """
@@ -235,7 +226,7 @@ def _stored_object_to_fetch_result(
             last_fetch_path = ctx.enter_context(
                 storedobjects.downloaded_file(stored_object, dir=dir)
             )
-            return FetchResult(last_fetch_path, wf_module_fetch_errors)
+            return FetchResult(last_fetch_path, step_fetch_errors)
         except FileNotFoundError:
             return None
 
@@ -252,8 +243,7 @@ def fetch_or_wrap_error(
     maybe_input_crr: Optional[CachedRenderResult],
     output_path: Path,
 ):
-    """
-    Fetch, and do not raise any exceptions worth catching.
+    """Fetch, and do not raise any exceptions worth catching.
 
     Exceptions are wrapped -- the result is a FetchResult with `.errors`.
 
@@ -346,8 +336,7 @@ def fetch_or_wrap_error(
 
 @contextlib.contextmanager
 def crash_on_database_error() -> ContextManager[None]:
-    """
-    Yield, and if the inner block crashes, sys._exit(1).
+    """Yield, and if the inner block crashes, sys._exit(1).
 
     DatabaseError and InterfaceError from Django can mean:
 
@@ -377,10 +366,10 @@ def crash_on_database_error() -> ContextManager[None]:
 
 
 async def fetch(
-    *, workflow_id: int, wf_module_id: int, now: Optional[timezone.datetime] = None
+    *, workflow_id: int, step_id: int, now: Optional[timezone.datetime] = None
 ) -> None:
     # 1. Load database objects
-    #    - missing WfModule? Return prematurely
+    #    - missing Step? Return prematurely
     #    - database error? _exit(1)
     #    - module_zipfile missing/invalid? user-visible error
     #    - migrate_params() fails? user-visible error
@@ -390,25 +379,21 @@ async def fetch(
     # 3. Save result (and send delta)
     #    - database errors? _exit(1)
     #    - other error (bug in `save`)? Log exception and ignore
-    # 4. Update WfModule last-fetch time
+    # 4. Update Step last-fetch time
     #    - database errors? _exit(1)
     with crash_on_database_error():
-        logger.info(
-            "begin fetch(workflow_id=%d, wf_module_id=%d)", workflow_id, wf_module_id
-        )
+        logger.info("begin fetch(workflow_id=%d, step_id=%d)", workflow_id, step_id)
 
         try:
             (
-                wf_module,
+                step,
                 module_zipfile,
                 migrated_params,
                 stored_object,
                 input_crr,
-            ) = await load_database_objects(workflow_id, wf_module_id)
-        except (Workflow.DoesNotExist, WfModule.DoesNotExist):
-            logger.info(
-                "Skipping fetch of deleted WfModule %d-%d", workflow_id, wf_module_id
-            )
+            ) = await load_database_objects(workflow_id, step_id)
+        except (Workflow.DoesNotExist, Step.DoesNotExist):
+            logger.info("Skipping fetch of deleted Step %d-%d", workflow_id, step_id)
             return
 
     # Prepare secrets -- mangle user values so modules have all they need.
@@ -421,7 +406,7 @@ async def fetch(
     else:
         module_spec = module_zipfile.get_spec()
         secrets = await fetcher.secrets.prepare_secrets(
-            module_spec.param_fields, wf_module.secrets
+            module_spec.param_fields, step.secrets
         )
 
     if now is None:
@@ -435,7 +420,7 @@ async def fetch(
         )
         # get last_fetch_result (This can't error.)
         last_fetch_result = _stored_object_to_fetch_result(
-            ctx, stored_object, wf_module.fetch_errors, dir=basedir
+            ctx, stored_object, step.fetch_errors, dir=basedir
         )
         result = await asyncio.get_event_loop().run_in_executor(
             None,
@@ -443,7 +428,7 @@ async def fetch(
             ctx,
             chroot_context,
             basedir,
-            wf_module.module_id_name,
+            step.module_id_name,
             module_zipfile,
             migrated_params,
             secrets,
@@ -457,19 +442,19 @@ async def fetch(
                 if last_fetch_result is not None and versions.are_fetch_results_equal(
                     last_fetch_result, result
                 ):
-                    await save.mark_result_unchanged(workflow_id, wf_module, now)
+                    await save.mark_result_unchanged(workflow_id, step, now)
                 else:
-                    await save.create_result(workflow_id, wf_module, result, now)
+                    await save.create_result(workflow_id, step, result, now)
         except asyncio.CancelledError:
             raise
         except Exception:
             # Log exceptions but keep going.
             # TODO [adamhooper, 2019-09-12] really? I think we don't want this.
             # Make `fetch.save() robust, then nix this handler
-            logger.exception(f"Error fetching {wf_module}")
+            logger.exception(f"Error fetching {step}")
 
     with crash_on_database_error():
-        await update_next_update_time(workflow_id, wf_module, now)
+        await update_next_update_time(workflow_id, step, now)
 
 
 async def handle_fetch(message):

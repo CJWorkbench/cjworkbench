@@ -168,7 +168,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_workflow_view_triggers_render_if_stale_cache(self):
-        step = self.tab1.wf_modules.create(
+        step = self.tab1.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=self.delta.id,
@@ -188,7 +188,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.queue_render.assert_called_with(self.workflow1.id, delta2.id)
 
     def test_workflow_view_triggers_render_if_no_cache(self):
-        self.tab1.wf_modules.create(
+        self.tab1.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=self.delta.id,

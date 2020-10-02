@@ -18,7 +18,7 @@ describe('Reducer actions', () => {
     }
   }
 
-  const testWfModules = {
+  const testSteps = {
     10: {
       id: 10,
       tab_slug: 'tab-91',
@@ -47,8 +47,8 @@ describe('Reducer actions', () => {
   const testTabs = {
     'tab-91': {
       slug: 'tab-91',
-      wf_module_ids: [10, 20, 30],
-      selected_wf_module_position: 1
+      step_ids: [10, 20, 30],
+      selected_step_position: 1
     }
   }
 
@@ -62,7 +62,7 @@ describe('Reducer actions', () => {
   const testState = {
     workflow: testWorkflow,
     tabs: testTabs,
-    wfModules: testWfModules,
+    steps: testSteps,
     modules: testModules
   }
 
@@ -94,7 +94,7 @@ describe('Reducer actions', () => {
   // ADD_MODULE
   it('adds a module by index', async () => {
     const api = {
-      addModule: jest.fn(() => Promise.resolve(null))
+      addStep: jest.fn(() => Promise.resolve(null))
     }
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
 
@@ -104,11 +104,11 @@ describe('Reducer actions', () => {
       },
       tabs: {
         'tab-1': {
-          wf_module_ids: [2, 3],
-          selected_wf_module_position: 1
+          step_ids: [2, 3],
+          selected_step_position: 1
         }
       },
-      wfModules: {
+      steps: {
         2: {},
         3: {}
       },
@@ -117,17 +117,17 @@ describe('Reducer actions', () => {
       }
     }, api)
 
-    await store.dispatch(wfr.addModuleAction('module2', { tabSlug: 'tab-1', index: 0 }, { x: 'y' }))
+    await store.dispatch(wfr.addStepAction('module2', { tabSlug: 'tab-1', index: 0 }, { x: 'y' }))
 
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'module2', 0, { x: 'y' })
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'module2', 0, { x: 'y' })
     const state = store.getState()
-    expect(state.tabs['tab-1'].selected_wf_module_position).toEqual(0)
-    expect(state.tabs['tab-1'].wf_module_ids).toEqual(['nonce-module2-0', 2, 3])
+    expect(state.tabs['tab-1'].selected_step_position).toEqual(0)
+    expect(state.tabs['tab-1'].step_ids).toEqual(['nonce-module2-0', 2, 3])
   })
 
   it('adds a module before another', async () => {
     const api = {
-      addModule: jest.fn(() => Promise.resolve(null))
+      addStep: jest.fn(() => Promise.resolve(null))
     }
     generateSlug.mockImplementation(prefix => prefix + 'X')
 
@@ -137,11 +137,11 @@ describe('Reducer actions', () => {
       },
       tabs: {
         'tab-1': {
-          wf_module_ids: [2, 3],
-          selected_wf_module_position: 1
+          step_ids: [2, 3],
+          selected_step_position: 1
         }
       },
-      wfModules: {
+      steps: {
         2: {},
         3: { tab_slug: 'tab-1' }
       },
@@ -150,13 +150,13 @@ describe('Reducer actions', () => {
       }
     }, api)
 
-    await store.dispatch(wfr.addModuleAction('mod', { beforeWfModuleId: 3 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
+    await store.dispatch(wfr.addStepAction('mod', { beforeStepId: 3 }, { x: 'y' }))
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
   })
 
   it('adds a module after another', async () => {
     const api = {
-      addModule: jest.fn(() => Promise.resolve(null))
+      addStep: jest.fn(() => Promise.resolve(null))
     }
     generateSlug.mockImplementation(prefix => prefix + 'X')
 
@@ -166,11 +166,11 @@ describe('Reducer actions', () => {
       },
       tabs: {
         'tab-1': {
-          wf_module_ids: [2, 3],
-          selected_wf_module_position: 1
+          step_ids: [2, 3],
+          selected_step_position: 1
         }
       },
-      wfModules: {
+      steps: {
         2: { tab_slug: 'tab-1' },
         3: {}
       },
@@ -179,39 +179,39 @@ describe('Reducer actions', () => {
       }
     }, api)
 
-    await store.dispatch(wfr.addModuleAction('mod', { afterWfModuleId: 2 }, { x: 'y' }))
-    expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
+    await store.dispatch(wfr.addStepAction('mod', { afterStepId: 2 }, { x: 'y' }))
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
   })
 
   it('deletes a module', async () => {
     const api = {
-      deleteModule: jest.fn().mockImplementation(_ => Promise.resolve(null))
+      deleteStep: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
     const store = mockStore(testState, api)
-    await store.dispatch(wfr.deleteModuleAction(20))
+    await store.dispatch(wfr.deleteStepAction(20))
 
-    expect(api.deleteModule).toHaveBeenCalledWith(20)
+    expect(api.deleteStep).toHaveBeenCalledWith(20)
     const state = store.getState()
-    expect(state.tabs['tab-91'].wf_module_ids).toEqual([10, 30])
-    expect(state.wfModules['20']).not.toBeDefined()
+    expect(state.tabs['tab-91'].step_ids).toEqual([10, 30])
+    expect(state.steps['20']).not.toBeDefined()
   })
 
   it('sets the selected module to a module in state', async () => {
     const api = {
-      setSelectedWfModule: jest.fn().mockImplementation(_ => Promise.resolve(null))
+      setSelectedStep: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
     const store = mockStore(testState, api)
-    await store.dispatch(wfr.setSelectedWfModuleAction(20))
+    await store.dispatch(wfr.setSelectedStepAction(20))
 
-    expect(api.setSelectedWfModule).toHaveBeenCalledWith(20)
+    expect(api.setSelectedStep).toHaveBeenCalledWith(20)
     const { workflow, tabs } = store.getState()
     expect(workflow.selected_tab_position).toEqual(0)
-    expect(tabs['tab-91'].selected_wf_module_position).toEqual(1)
+    expect(tabs['tab-91'].selected_step_position).toEqual(1)
   })
 
   it('sets the selected module without an API request, when read-only', async () => {
     const api = {
-      setSelectedWfModule: jest.fn().mockImplementation(_ => Promise.resolve(null))
+      setSelectedStep: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
     const store = mockStore({
       ...testState,
@@ -220,57 +220,57 @@ describe('Reducer actions', () => {
         read_only: true
       }
     }, api)
-    await store.dispatch(wfr.setSelectedWfModuleAction(20))
+    await store.dispatch(wfr.setSelectedStepAction(20))
 
-    expect(api.setSelectedWfModule).not.toHaveBeenCalled()
+    expect(api.setSelectedStep).not.toHaveBeenCalled()
     const { workflow, tabs } = store.getState()
     expect(workflow.selected_tab_position).toEqual(0)
-    expect(tabs['tab-91'].selected_wf_module_position).toEqual(1)
+    expect(tabs['tab-91'].selected_step_position).toEqual(1)
   })
 
-  it('sets a wfModule notes', async () => {
+  it('sets a step notes', async () => {
     const api = {
-      setWfModuleNotes: jest.fn().mockImplementation(() => Promise.resolve(null))
+      setStepNotes: jest.fn().mockImplementation(() => Promise.resolve(null))
     }
     const store = mockStore({
-      wfModules: {
+      steps: {
         1: { x: 'a', notes: 'foo' },
         2: { x: 'b', notes: 'bar' }
       }
     }, api)
 
-    await store.dispatch(wfr.setWfModuleNotesAction(2, 'baz'))
+    await store.dispatch(wfr.setStepNotesAction(2, 'baz'))
 
-    expect(api.setWfModuleNotes).toHaveBeenCalledWith(2, 'baz')
+    expect(api.setStepNotes).toHaveBeenCalledWith(2, 'baz')
     const state = store.getState()
     expect(state).toEqual({
-      wfModules: {
+      steps: {
         1: { x: 'a', notes: 'foo' },
         2: { x: 'b', notes: 'baz' }
       }
     })
   })
 
-  it('does nothing if we setWfModuleNotifications on a nonexistent module', async () => {
-    const api = { setWfModuleNotifications: jest.fn() }
+  it('does nothing if we setStepNotifications on a nonexistent module', async () => {
+    const api = { setStepNotifications: jest.fn() }
     const store = mockStore(testState, api)
-    await store.dispatch(wfr.setWfModuleNotificationsAction(40, false))
-    expect(api.setWfModuleNotifications).not.toHaveBeenCalled()
+    await store.dispatch(wfr.setStepNotificationsAction(40, false))
+    expect(api.setStepNotifications).not.toHaveBeenCalled()
     expect(store.getState()).toEqual(testState)
   })
 
-  it('sets wfModule.notifications', async () => {
-    expect(testWfModules['10'].notifications).toBe(false)
-    const api = { setWfModuleNotifications: jest.fn(() => Promise.resolve(null)) }
+  it('sets step.notifications', async () => {
+    expect(testSteps['10'].notifications).toBe(false)
+    const api = { setStepNotifications: jest.fn(() => Promise.resolve(null)) }
     const store = mockStore(testState, api)
-    await store.dispatch(wfr.setWfModuleNotificationsAction(10, true))
-    expect(api.setWfModuleNotifications).toHaveBeenCalledWith(10, true)
-    expect(store.getState().wfModules['10'].notifications).toBe(true)
+    await store.dispatch(wfr.setStepNotificationsAction(10, true))
+    expect(api.setStepNotifications).toHaveBeenCalledWith(10, true)
+    expect(store.getState().steps['10'].notifications).toBe(true)
   })
 
   it('reorders modules', async () => {
     const api = {
-      reorderWfModules: jest.fn().mockImplementation(() => Promise.resolve(null))
+      reorderSteps: jest.fn().mockImplementation(() => Promise.resolve(null))
     }
     const store = mockStore({
       workflow: {
@@ -278,58 +278,58 @@ describe('Reducer actions', () => {
       },
       tabs: {
         'tab-1': {
-          wf_module_ids: [2, 4, 6],
-          selected_wf_module_position: 2
+          step_ids: [2, 4, 6],
+          selected_step_position: 2
         }
       }
     }, api)
-    await store.dispatch(wfr.moveModuleAction('tab-1', 2, 0))
+    await store.dispatch(wfr.moveStepAction('tab-1', 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
-    expect(api.reorderWfModules).toHaveBeenCalledWith('tab-1', [6, 2, 4])
-    expect(store.getState().tabs['tab-1'].wf_module_ids).toEqual([6, 2, 4])
-    expect(store.getState().tabs['tab-1'].selected_wf_module_position).toEqual(0)
+    expect(api.reorderSteps).toHaveBeenCalledWith('tab-1', [6, 2, 4])
+    expect(store.getState().tabs['tab-1'].step_ids).toEqual([6, 2, 4])
+    expect(store.getState().tabs['tab-1'].selected_step_position).toEqual(0)
   })
 
   it('applies delta to a Workflow', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
       updateWorkflow: { foo: 'bar' }
     }))
-    expect(state.workflow.wf_modules).toBe(testState.workflow.wf_modules) // old property
+    expect(state.workflow.steps).toBe(testState.workflow.steps) // old property
     expect(state.workflow.foo).toEqual('bar') // new property
   })
 
-  it('applies delta to a WfModule', () => {
+  it('applies delta to a Step', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateWfModules: { 10: { foo: 'bar' } }
+      updateSteps: { 10: { foo: 'bar' } }
     }))
-    expect(state.wfModules['10'].foo).toEqual('bar') // new property
-    expect(state.wfModules['10'].params).toBe(testState.wfModules['10'].params) // old property
-    expect(state.wfModules['20']).toBe(testState.wfModules['20']) // old WfModule
-    expect(state.wfModules).not.toBe(testState.wfModules) // immutable
+    expect(state.steps['10'].foo).toEqual('bar') // new property
+    expect(state.steps['10'].params).toBe(testState.steps['10'].params) // old property
+    expect(state.steps['20']).toBe(testState.steps['20']) // old Step
+    expect(state.steps).not.toBe(testState.steps) // immutable
   })
 
-  it('applies delta to clearing a WfModule', () => {
+  it('applies delta to clearing a Step', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateWorkflow: { wf_modules: [10, 30] },
-      clearWfModuleIds: [20]
+      updateWorkflow: { steps: [10, 30] },
+      clearStepIds: [20]
     }))
-    expect(state.wfModules).not.toBe(testState.wfModules) // immutable
-    expect(state.wfModules['10']).toBe(testState.wfModules['10']) // leave uncleared modules unchanged
-    expect(state.wfModules['20']).not.toBeDefined()
+    expect(state.steps).not.toBe(testState.steps) // immutable
+    expect(state.steps['10']).toBe(testState.steps['10']) // leave uncleared modules unchanged
+    expect(state.steps['20']).not.toBeDefined()
   })
 
   it('applies delta to a Tab', () => {
     const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
       updateTabs: {
-        'tab-91': { foo: 'bar', selected_wf_module_position: 0 },
+        'tab-91': { foo: 'bar', selected_step_position: 0 },
         'tab-92': { foo: 'baz' }
       }
     }))
     expect(state.tabs['tab-91'].foo).toEqual('bar') // new property
     expect(state.tabs['tab-92'].foo).toEqual('baz')
-    expect(state.tabs['tab-91'].wf_module_ids).toEqual([10, 20, 30]) // old property
-    expect(state.tabs['tab-91'].selected_wf_module_position).toEqual(1) // immutable
+    expect(state.tabs['tab-91'].step_ids).toEqual([10, 20, 30]) // old property
+    expect(state.tabs['tab-91'].selected_step_position).toEqual(1) // immutable
   })
 
   it('applies delta to clearing a Tab', () => {
@@ -345,8 +345,8 @@ describe('Reducer actions', () => {
     // haven't been applied on the server yet. TODO nix pendingTabs when we
     // have a sane way of doing that.
     const oldTab = { slug: 'tab-1', name: 'Old' }
-    const newTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [], selected_wf_module_position: null }
-    const realNewTab = { slug: 'tab-NEW', name: 'New', wf_module_ids: [1, 2], selected_wf_module_position: 1 } // e.g., from 'duplicate'
+    const newTab = { slug: 'tab-NEW', name: 'New', step_ids: [], selected_step_position: null }
+    const realNewTab = { slug: 'tab-NEW', name: 'New', step_ids: [1, 2], selected_step_position: 1 } // e.g., from 'duplicate'
 
     const state = wfr.workflowReducer({
       workflow: {
@@ -368,22 +368,22 @@ describe('Reducer actions', () => {
 
   it('sets the module collapse state', () => {
     const state = wfr.workflowReducer(testState, {
-      type: 'SET_WF_MODULE_COLLAPSED_PENDING',
+      type: 'SET_STEP_COLLAPSED_PENDING',
       payload: {
-        wfModuleId: 20,
+        stepId: 20,
         isCollapsed: true
       }
     })
-    expect(state.wfModules['20'].is_collapsed).toBe(true)
+    expect(state.steps['20'].is_collapsed).toBe(true)
   })
 
-  it('should setWfModuleParams', async () => {
+  it('should setStepParams', async () => {
     const api = {
-      setWfModuleParams: jest.fn(() => Promise.resolve(null))
+      setStepParams: jest.fn(() => Promise.resolve(null))
     }
 
     const store = mockStore({
-      wfModules: {
+      steps: {
         10: {
           params: {
             a: 'x',
@@ -392,22 +392,22 @@ describe('Reducer actions', () => {
         }
       }
     }, api)
-    const done = store.dispatch(wfr.setWfModuleParamsAction(10, { a: 'z' }))
+    const done = store.dispatch(wfr.setStepParamsAction(10, { a: 'z' }))
 
     // should set value immediately
-    expect(store.getState().wfModules['10'].params).toEqual({ a: 'z', b: 'y' })
+    expect(store.getState().steps['10'].params).toEqual({ a: 'z', b: 'y' })
 
     // should send HTTP request
     await done
-    expect(api.setWfModuleParams).toHaveBeenCalledWith(10, { a: 'z' })
+    expect(api.setStepParams).toHaveBeenCalledWith(10, { a: 'z' })
   })
 
-  it('requests fetch in maybeRequestWfModuleFetchAction', async () => {
+  it('requests fetch in maybeRequestStepFetchAction', async () => {
     const api = {
       requestFetch: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
     const store = mockStore({
-      wfModules: {
+      steps: {
         10: {
           module: 'mod'
         }
@@ -421,35 +421,35 @@ describe('Reducer actions', () => {
         }
       }
     }, api)
-    const done = store.dispatch(wfr.maybeRequestWfModuleFetchAction(10))
+    const done = store.dispatch(wfr.maybeRequestStepFetchAction(10))
 
     // should set nClientRequests immediately.
-    expect(store.getState().wfModules['10'].nClientRequests).toEqual(1)
+    expect(store.getState().steps['10'].nClientRequests).toEqual(1)
     expect(api.requestFetch).toHaveBeenCalledWith(10)
 
     await done
-    expect(store.getState().wfModules['10'].nClientRequests).toEqual(0)
+    expect(store.getState().steps['10'].nClientRequests).toEqual(0)
   })
 
   it('sets the data version', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'SET_DATA_VERSION_PENDING',
       payload: {
-        wfModuleId: 10,
+        stepId: 10,
         selectedVersion: '2018-02-21T03:09:10.214054Z'
       }
     })
-    expect(state.wfModules['10'].versions.selected).toBe('2018-02-21T03:09:10.214054Z')
+    expect(state.steps['10'].versions.selected).toBe('2018-02-21T03:09:10.214054Z')
   })
 
   it('clears the notification count', () => {
     const state = wfr.workflowReducer(testState, {
       type: 'CLEAR_NOTIFICATIONS_PENDING',
       payload: {
-        wfModuleId: 10
+        stepId: 10
       }
     })
-    expect(state.wfModules['10'].has_unseen_notification).toBe(false)
+    expect(state.steps['10'].has_unseen_notification).toBe(false)
   })
 
   it('sets an error with the default error handler', async () => {

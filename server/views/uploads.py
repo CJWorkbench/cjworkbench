@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from cjwstate import commands
-from cjwstate.models import InProgressUpload, Workflow, WfModule
+from cjwstate.models import InProgressUpload, Workflow, Step
 from cjwstate.models.commands import ChangeParametersCommand
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.workflow import WorkflowCooperativeLock
@@ -26,23 +26,22 @@ def ErrorResponse(status_code: int, error_code: str, extra_data: Dict[str, Any] 
     )
 
 
-def loads_wf_module_for_api_upload(f):
-    """
-    Provide `wf_module` to a Django view if HTTP Authorization header matches.
+def loads_step_for_api_upload(f):
+    """Provide `step` to a Django view if HTTP Authorization header matches.
 
-    Calls `f(request, workflow_lock, wf_module, file_param_id_name, *args, **kwargs)`
+    Calls `f(request, workflow_lock, step, file_param_id_name, *args, **kwargs)`
 
     The HTTP Authorization header must look like:
 
-        Authorization: Bearer <WF_MODULE_FILE_UPLOAD_API_TOKEN>
+        Authorization: Bearer <STEP_FILE_UPLOAD_API_TOKEN>
 
     The inner function is wrapped in `workflow.cooperative_lock()`.
 
     Return 400 Bad Request if the Authorization header looks wrong.
 
-    Return 404 Not Found on missing/deleted Workflow+WfModule.
+    Return 404 Not Found on missing/deleted Workflow+Step.
 
-    Return 403 Forbidden on missing/deleted Workflow+WfModule or on incorrect
+    Return 403 Forbidden on missing/deleted Workflow+Step or on incorrect
     API token.
 
     A hash of the token is compared, to prevent leaking the token through a
@@ -51,7 +50,7 @@ def loads_wf_module_for_api_upload(f):
 
     @wraps(f)
     def wrapper(
-        request: HttpRequest, workflow_id: int, wf_module_slug: str, *args, **kwargs
+        request: HttpRequest, workflow_id: int, step_slug: str, *args, **kwargs
     ):
         auth_header = request.headers.get("Authorization", "")
         auth_header_match = AuthTokenHeaderRegex.match(auth_header)
@@ -63,14 +62,12 @@ def loads_wf_module_for_api_upload(f):
             with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
                 workflow = workflow_lock.workflow
                 try:
-                    wf_module = WfModule.live_in_workflow(workflow).get(
-                        slug=wf_module_slug
-                    )
-                except WfModule.DoesNotExist:
+                    step = Step.live_in_workflow(workflow).get(slug=step_slug)
+                except Step.DoesNotExist:
                     return ErrorResponse(404, "step-not-found")
 
                 try:
-                    module_zipfile = MODULE_REGISTRY.latest(wf_module.module_id_name)
+                    module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
                 except KeyError:
                     return ErrorResponse(400, "step-module-deleted")
 
@@ -85,7 +82,7 @@ def loads_wf_module_for_api_upload(f):
                 except StopIteration:
                     return ErrorResponse(400, "step-has-no-file-param")
 
-                api_token = wf_module.file_upload_api_token
+                api_token = step.file_upload_api_token
                 if not api_token:
                     return ErrorResponse(403, "step-has-no-api-token")
 
@@ -99,7 +96,7 @@ def loads_wf_module_for_api_upload(f):
                 return f(
                     request,
                     workflow_lock,
-                    wf_module,
+                    step,
                     file_param_id_name,
                     *args,
                     **kwargs,
@@ -112,21 +109,20 @@ def loads_wf_module_for_api_upload(f):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class UploadList(View):
-    @method_decorator(loads_wf_module_for_api_upload)
+    @method_decorator(loads_step_for_api_upload)
     def post(
         self,
         request: HttpRequest,
         workflow_lock: WorkflowCooperativeLock,
-        wf_module: WfModule,
+        step: Step,
         file_param_id_name: str,
     ):
-        """
-        Create a new InProgressUpload for the given WfModule.
+        """Create a new InProgressUpload for the given Step.
 
-        Authenticate request as documented in `loads_wf_module_for_api_upload`.
+        Authenticate request as documented in `loads_step_for_api_upload`.
         (That means respond with 400, 403 or 404 on error.)
         """
-        in_progress_upload = wf_module.in_progress_uploads.create()
+        in_progress_upload = step.in_progress_uploads.create()
         params = in_progress_upload.generate_upload_parameters()
         return JsonResponse(
             {
@@ -144,23 +140,22 @@ class CompleteUploadForm(forms.Form):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class Upload(View):
-    @method_decorator(loads_wf_module_for_api_upload)
+    @method_decorator(loads_step_for_api_upload)
     def delete(
         self,
         request: HttpRequest,
         workflow_lock: WorkflowCooperativeLock,
-        wf_module: WfModule,
+        step: Step,
         file_param_id_name: str,
         uuid: UUID,
     ):
-        """
-        Abort an upload, or no-op if there is no upload with the given UUID.
+        """Abort an upload, or no-op if there is no upload with the given UUID.
 
-        Authenticate request as documented in `loads_wf_module_for_api_upload`.
+        Authenticate request as documented in `loads_step_for_api_upload`.
         (That means respond with 400, 403 or 404 on error.)
         """
         try:
-            in_progress_upload = wf_module.in_progress_uploads.get(
+            in_progress_upload = step.in_progress_uploads.get(
                 id=uuid, is_completed=False
             )
         except InProgressUpload.DoesNotExist:
@@ -170,19 +165,18 @@ class Upload(View):
         in_progress_upload.save(update_fields=["is_completed"])
         return JsonResponse({})
 
-    @method_decorator(loads_wf_module_for_api_upload)
+    @method_decorator(loads_step_for_api_upload)
     def post(
         self,
         request: HttpRequest,
         workflow_lock: WorkflowCooperativeLock,
-        wf_module: WfModule,
+        step: Step,
         file_param_id_name: str,
         uuid: UUID,
     ):
-        """
-        Create an UploadedFile and delete the InProgressUpload.
+        """Create an UploadedFile and delete the InProgressUpload.
 
-        Authenticate request as documented in `loads_wf_module_for_api_upload`.
+        Authenticate request as documented in `loads_step_for_api_upload`.
         (That means respond with 400, 403 or 404 on error.)
 
         Return 400 Bad Request unless the JSON body looks like:
@@ -203,7 +197,7 @@ class Upload(View):
         filename = form.cleaned_data["filename"]
 
         try:
-            in_progress_upload = wf_module.in_progress_uploads.get(
+            in_progress_upload = step.in_progress_uploads.get(
                 id=uuid, is_completed=False
             )
         except InProgressUpload.DoesNotExist:
@@ -213,7 +207,7 @@ class Upload(View):
         except FileNotFoundError:
             return ErrorResponse(409, "file-not-uploaded")
 
-        # After the cooperative lock ends, update the WfModule.
+        # After the cooperative lock ends, update the Step.
         want_params = {file_param_id_name: uploaded_file.uuid}
 
         def create_change_parameters_command():
@@ -222,7 +216,7 @@ class Upload(View):
             async_to_sync(commands.do)(
                 ChangeParametersCommand,
                 workflow_id=workflow.id,
-                wf_module=wf_module,
+                step=step,
                 new_values=want_params,
             )
 

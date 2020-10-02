@@ -60,9 +60,8 @@ class WorkbenchBase(unittest.TestCase):
         import_workbench_module(self.browser, slug)
 
     # TODO move to a helper .py file
-    def add_wf_module(self, name: str, position=None) -> None:
-        """
-        Add module with name 'name' to the workflow.
+    def add_step(self, name: str, position=None) -> None:
+        """Add module with name 'name' to the workflow.
 
         Keyword arguments:
         position -- if set, add after the 'position'th existing module.
@@ -70,12 +69,12 @@ class WorkbenchBase(unittest.TestCase):
         b = self.browser
 
         if position is None:
-            with b.scope(".in-between-modules:last-child"):
+            with b.scope(".in-between-steps:last-child"):
                 b.click_button("ADD STEP")
         else:
             assert position > 0  # for 0, use add_data_step().
             i = position * 2
-            with b.scope(f".in-between-modules:nth-child({i})"):
+            with b.scope(f".in-between-steps:nth-child({i})"):
                 b.click_button("ADD STEP")
 
         # Search. That way, we won't need to worry about overflow:auto
@@ -84,13 +83,12 @@ class WorkbenchBase(unittest.TestCase):
         b.click_whatever("button.module-search-result", text=name)
 
         b.assert_element(
-            f'.wf-module[data-module-name="{name}"]:not(.status-busy)', wait=True
+            f'.step[data-module-name="{name}"]:not(.status-busy)', wait=True
         )
 
     # TODO move to a helper .py file
     def add_data_step(self, name: str) -> None:
-        """
-        Add module with name 'name' to the workflow.
+        """Add module with name 'name' to the workflow.
 
         Assumes the 'Add Data' modal is open.
         """
@@ -100,19 +98,18 @@ class WorkbenchBase(unittest.TestCase):
 
         # Wait for module to appear and render
         b.assert_element(
-            f'.wf-module[data-module-name="{name}"]:not(.status-busy)', wait=True
+            f'.step[data-module-name="{name}"]:not(.status-busy)', wait=True
         )
 
     # TODO move to a helper .py file
-    def delete_wf_module(self, position: int) -> None:
-        """
-        Delete module at index `position` from the workflow.
+    def delete_step(self, position: int) -> None:
+        """Delete module at index `position` from the workflow.
 
         The first module has `position == 0`.
         """
         b = self.browser
 
-        with b.scope(f".wf-module:nth-child({position * 2 + 1})"):
+        with b.scope(f".step:nth-child({position * 2 + 1})"):
             b.click_button("more", visible="all")
 
         # Dropdown menu is at root of document (in a <Portal>)
@@ -121,8 +118,7 @@ class WorkbenchBase(unittest.TestCase):
 
     # TODO move to a helper .py file
     def add_csv_data_module(self, csv=None):
-        """
-        Adds Paste Data module to the workflow with given data
+        """Add Paste Data module to the workflow with given data
 
         csv -- Text of csv. If not set, use default data.
         """
@@ -138,11 +134,11 @@ class WorkbenchBase(unittest.TestCase):
         self.import_module("pastecsv")
         self.add_data_step("Paste data")
         self.browser.fill_in("csv", csv)
-        self.submit_wf_module()
+        self.submit_step()
 
     # TODO move to a helper .py file
     def select_column(self, module_name: str, name: str, text: str, **kwargs) -> None:
-        """Selects 'text' in the ColumnSelect box with name 'name'.
+        """Select 'text' in the ColumnSelect box with name 'name'.
 
         Waits for '.loading' to disappear before filling in the text.
 
@@ -153,10 +149,7 @@ class WorkbenchBase(unittest.TestCase):
         wait -- True or number of seconds to wait until element appears
         """
         with self.browser.scope(
-            (
-                f'.wf-module[data-module-name="{module_name}"] '
-                f'.param[data-name="{name}"]'
-            ),
+            f'.step[data-module-name="{module_name}"] .param[data-name="{name}"]',
             **kwargs,
         ):
             self.browser.assert_element(f".react-select:not(.loading)", wait=True)
@@ -168,8 +161,7 @@ class WorkbenchBase(unittest.TestCase):
     def select_tab_param(
         self, module_name: str, name: str, text: str, **kwargs
     ) -> None:
-        """
-        Select 'text' in the TabParam box with name 'name'.
+        """Select 'text' in the TabParam box with name 'name'.
 
         Note: unlike browser.select(), this does _not_ handle id or
         label locators.
@@ -178,19 +170,15 @@ class WorkbenchBase(unittest.TestCase):
         wait -- True or number of seconds to wait until element appears
         """
         with self.browser.scope(
-            (
-                f'.wf-module[data-module-name="{module_name}"] '
-                f'.param[data-name="{name}"]'
-            ),
+            f'.step[data-module-name="{module_name}"] .param[data-name="{name}"]',
             **kwargs,
         ):
             self.browser.click_whatever(".react-select__dropdown-indicator")
 
         self.browser.click_whatever(".react-select__option", text=text)
 
-    def submit_wf_module(self, **kwargs):
-        """
-        Click the submit button of the active WfModule.
+    def submit_step(self, **kwargs):
+        """Click the submit button of the active Step.
 
         Keyword arguments:
         wait -- True or number of seconds to wait until element is ready

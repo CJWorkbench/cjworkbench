@@ -1,0 +1,543 @@
+import asyncio
+import datetime
+import functools
+import secrets
+from typing import Any, Dict, List, Optional
+from dateutil.parser import isoparse
+from django.conf import settings
+from django.db import transaction
+from django.utils import timezone
+from cjworkbench.sync import database_sync_to_async
+from cjwstate import clientside, commands, oauth, rabbitmq
+from cjwstate.models import Workflow, Step
+from cjwstate.models.commands import (
+    ChangeParametersCommand,
+    DeleteModuleCommand,
+    ChangeDataVersionCommand,
+    ChangeStepNotesCommand,
+)
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjwstate.modules.param_spec import ParamSpec
+import server.utils
+from . import autofetch
+from .types import HandlerError
+from .decorators import register_websockets_handler, websockets_handler
+
+
+class AutofetchQuotaExceeded(Exception):
+    def __init__(self, autofetches):
+        self.autofetches = autofetches
+
+
+def _postgresize_dict_in_place(d: Dict[str, Any]) -> None:
+    """Modify `d` so it's ready to be inserted in a Postgres JSONB column.
+
+    Modifications:
+        * `"\u0000"` is replaced with `""`
+    """
+    # modify in iterator -- scary, but not wrong since order is guaranteed and
+    # we aren't inserting or deleting items. ref:
+    # https://docs.python.org/3/library/stdtypes.html#dictionary-view-objects
+    for key, value in d.items():
+        if isinstance(value, list):
+            _postgresize_list_in_place(value)
+        elif isinstance(value, dict):
+            _postgresize_dict_in_place(value)
+        elif isinstance(value, str):
+            d[key] = _postgresize_str(value)
+        # else don't modify it
+
+
+def _postgresize_list_in_place(l: List[Any]) -> None:
+    """Modify `l` so it's ready to be inserted in a Postgres JSONB column.
+
+    Modifications:
+        * `"\u0000"` is replaced with `""`
+    """
+    # modify in iterator -- scary, but not wrong since order is guaranteed and
+    # we aren't inserting or deleting items.
+    for i, value in enumerate(l):
+        if isinstance(value, list):
+            _postgresize_list_in_place(value)
+        elif isinstance(value, dict):
+            _postgresize_dict_in_place(value)
+        elif isinstance(value, str):
+            l[i] = _postgresize_str(value)
+        # else don't modify it
+
+
+def _postgresize_str(s: str) -> str:
+    """Modify `l` so it's ready to be inserted in a Postgres JSONB column.
+
+    Modifications:
+        * `"\u0000"` is replaced with `""`
+    """
+    return s.replace("\x00", "")
+
+
+@database_sync_to_async
+def _load_step(workflow: Workflow, step_id: int) -> Step:
+    """Return a Step or raises HandlerError."""
+    try:
+        return Step.live_in_workflow(workflow).get(id=step_id)
+    except Step.DoesNotExist:
+        raise HandlerError("DoesNotExist: Step not found")
+
+
+def _loading_step(func):
+    @functools.wraps(func)
+    async def inner(workflow: Workflow, stepId: int, **kwargs):
+        step = await _load_step(workflow, stepId)
+        return await func(workflow=workflow, step=step, **kwargs)
+
+    return inner
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def set_params(workflow: Workflow, step: Step, values: Dict[str, Any], **kwargs):
+    if not isinstance(values, dict):
+        raise HandlerError("BadRequest: values must be an Object")
+
+    # Mangle user data by removing '\u0000' recursively: Postgres `JSONB`
+    # doesn't support \u0000, and it's too expensive (and questionable) to move
+    # to `JSON`. https://www.pivotaltracker.com/story/show/164634811
+    _postgresize_dict_in_place(values)
+
+    try:
+        await commands.do(
+            ChangeParametersCommand,
+            workflow_id=workflow.id,
+            step=step,
+            new_values=values,
+        )
+    except ValueError as err:
+        raise HandlerError("ValueError: " + str(err))
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def delete(workflow: Workflow, step: Step, **kwargs):
+    await commands.do(DeleteModuleCommand, workflow_id=workflow.id, step=step)
+
+
+@database_sync_to_async
+def _find_precise_version(step: Step, version: datetime.datetime) -> datetime.datetime:
+    # TODO maybe let's not use microsecond-precision numbers as
+    # StoredObject IDs and then send the client
+    # millisecond-precision identifiers. We _could_ just pass
+    # clients the IDs, for instance.
+    #
+    # Select a version within 1ms of the (rounded _or_ truncated)
+    # version we sent the client.
+    #
+    # (Let's not change the way we JSON-format dates just to avoid
+    # this hack. That would be even worse.)
+    try:
+        return step.stored_objects.filter(
+            stored_at__gte=version - datetime.timedelta(microseconds=500),
+            stored_at__lt=version + datetime.timedelta(milliseconds=1),
+        ).values_list("stored_at", flat=True)[0]
+    except IndexError:
+        return version
+
+
+@database_sync_to_async
+def _mark_stored_object_read(step: Step, version: datetime.datetime) -> None:
+    step.stored_objects.filter(stored_at=version).update(read=True)
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def set_stored_data_version(
+    workflow: Workflow, step: Step, version: str, **kwargs
+):
+    try:
+        # cast to str: dateutil.parser may have vulnerability with non-str
+        version = str(version)
+        version = isoparse(version)
+    except (ValueError, OverflowError, TypeError):
+        raise HandlerError("BadRequest: version must be an ISO8601 String")
+
+    version = await _find_precise_version(step, version)
+
+    await commands.do(
+        ChangeDataVersionCommand,
+        workflow_id=workflow.id,
+        step=step,
+        new_version=version,
+    )
+
+    await _mark_stored_object_read(step, version)
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def set_notes(workflow: Workflow, step: Step, notes: str, **kwargs):
+    notes = str(notes)  # cannot error from JSON input
+    await commands.do(
+        ChangeStepNotesCommand,
+        workflow_id=workflow.id,
+        step=step,
+        new_value=notes,
+    )
+
+
+@database_sync_to_async
+def _do_set_collapsed(step: Step, is_collapsed: bool):
+    step.is_collapsed = is_collapsed
+    step.save(update_fields=["is_collapsed"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def set_collapsed(workflow: Workflow, step: Step, isCollapsed: bool, **kwargs):
+    is_collapsed = bool(isCollapsed)  # cannot error from JSON input
+    await _do_set_collapsed(step, is_collapsed)
+
+
+@database_sync_to_async
+def _do_set_notifications(scope, step: Step, notifications: bool):
+    step.notifications = notifications
+    step.save(update_fields=["notifications"])
+    if notifications:
+        server.utils.log_user_event_from_scope(
+            scope, "Enabled email notifications", {"stepId": step.id}
+        )
+
+
+@register_websockets_handler
+@websockets_handler("owner")
+@_loading_step
+async def set_notifications(
+    workflow: Workflow, step: Step, notifications: bool, scope, **kwargs
+):
+    notifications = bool(notifications)  # cannot error from JSON input
+    await _do_set_notifications(scope, step, notifications)
+
+
+@database_sync_to_async
+def _do_clear_unseen_notification(step: Step):
+    step.has_unseen_notification = False
+    step.save(update_fields=["has_unseen_notification"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def clear_unseen_notifications(step: Step, **kwargs):
+    await _do_clear_unseen_notification(step)
+
+
+@database_sync_to_async
+def _do_try_set_autofetch(
+    scope, step: Step, auto_update_data: bool, update_interval: int
+):
+    # We may ROLLBACK; if we do, we need to remember the old values
+    old_auto_update_data = step.auto_update_data
+    old_update_interval = step.update_interval
+
+    check_quota = (
+        auto_update_data
+        and step.auto_update_data
+        and update_interval < step.update_interval
+    ) or (auto_update_data and not step.auto_update_data)
+
+    quota_exceeded = None
+    try:
+        with transaction.atomic():
+            step.auto_update_data = auto_update_data
+            step.update_interval = update_interval
+            if auto_update_data:
+                step.next_update = timezone.now() + datetime.timedelta(
+                    seconds=update_interval
+                )
+            else:
+                step.next_update = None
+            step.save(
+                update_fields=["auto_update_data", "update_interval", "next_update"]
+            )
+
+            # Now before we commit, let's see if we've surpassed the user's limit;
+            # roll back if we have.
+            #
+            # Only rollback if we're _increasing_ our fetch count. If we're
+            # lowering it, allow that -- even if the user is over limit, we still
+            # want to commit because it's an improvement.
+            if check_quota:
+                autofetches = autofetch.list_autofetches_json(scope)
+                if autofetches["nFetchesPerDay"] > autofetches["maxFetchesPerDay"]:
+                    raise AutofetchQuotaExceeded(autofetches)
+    except AutofetchQuotaExceeded as err:
+        step.auto_update_data = old_auto_update_data
+        step.update_interval = old_update_interval
+        quota_exceeded = err.autofetches
+
+    retval = {
+        "isAutofetch": step.auto_update_data,
+        "fetchInterval": step.update_interval,
+    }
+    if quota_exceeded is not None:
+        retval["quotaExceeded"] = quota_exceeded  # a dict
+    return retval
+
+
+@register_websockets_handler
+@websockets_handler("owner")
+@_loading_step
+async def try_set_autofetch(
+    step: Step, isAutofetch: bool, fetchInterval: int, scope, **kwargs
+):
+    auto_update_data = bool(isAutofetch)
+    try:
+        update_interval = max(settings.MIN_AUTOFETCH_INTERVAL, int(fetchInterval))
+    except (ValueError, TypeError):
+        return HandlerError("BadRequest: fetchInterval must be an integer")
+    return await _do_try_set_autofetch(scope, step, auto_update_data, update_interval)
+
+
+@database_sync_to_async
+def _set_step_busy(step):
+    step.is_busy = True
+    step.save(update_fields=["is_busy"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def fetch(workflow: Workflow, step: Step, **kwargs):
+    await _set_step_busy(step)
+    await rabbitmq.queue_fetch(workflow.id, step.id)
+    await rabbitmq.send_update_to_workflow_clients(
+        workflow.id,
+        clientside.Update(steps={step.id: clientside.StepUpdate(is_busy=True)}),
+    )
+
+
+@database_sync_to_async
+def _lookup_service(step: Step, param: str) -> oauth.OAuthService:
+    """Find the OAuthService that manages `param` on `step`.
+
+    Raise `HandlerError` if we cannot.
+    """
+    module_id = step.module_id_name
+    try:
+        module_zipfile = MODULE_REGISTRY.latest(module_id)
+    except KeyError:
+        raise HandlerError(f"BadRequest: module {module_id} not found")
+    module_spec = module_zipfile.get_spec()
+    for field in module_spec.param_fields:
+        if (
+            field.id_name == param
+            and isinstance(field, ParamSpec.Secret)
+            and (
+                isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth1a)
+                or isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth2)
+            )
+        ):
+            service_name = field.secret_logic.service
+            service = oauth.OAuthService.lookup_or_none(service_name)
+            if not service:
+                allowed_services = ", ".join(settings.OAUTH_SERVICES.keys())
+                raise HandlerError(f"AuthError: we only support {allowed_services}")
+            return service
+    else:
+        raise HandlerError(f"Module {module_id} has no oauth {param} parameter")
+
+
+@register_websockets_handler
+@websockets_handler("owner")
+@_loading_step
+async def generate_secret_access_token(
+    workflow: Workflow, step: Step, param: str, **kwargs
+):
+    """Return a temporary access_token the client can use.
+
+    Only the owner can generate an access token: we must keep the secret away
+    from prying eyes. This access token lets the client read all the owner's
+    documents on GDrive.
+
+    The response will look like:
+
+        { "token": "asldkjfhalskdjfhas..." } -- success
+        { "token": null } -- no value (or no param, even)
+        { "error": "AuthError: ..." } -- access denied
+
+    A typical caller should accept `null` but log other errors.
+    """
+    param = str(param)  # cannot generate an error from JSON params
+    secrets = step.secrets
+    try:
+        offline_token = secrets[param]["secret"]
+    except TypeError:
+        # secrets[param] is None
+        return {"token": None}
+    except KeyError:
+        # There is no such secret param, or it is unset
+        return {"token": None}
+    except ValueError:
+        # The param has the wrong type
+        return {"token": None}
+    if not offline_token:
+        # Empty JSON -- no value has been set
+        return {"token": None}
+
+    service = await _lookup_service(step, param)  # raise HandlerError
+    # TODO make oauth async. In the meantime, move these HTTP requests to a
+    # background thread.
+    loop = asyncio.get_event_loop()
+    func = functools.partial(service.generate_access_token_or_str_error, offline_token)
+    token = await loop.run_in_executor(None, func)
+    if isinstance(token, str):
+        raise HandlerError(f"AuthError: {token}")
+
+    # token['access_token'] is short-term (1hr). token['refresh_token'] is
+    # super-private and we should never transmit it.
+    return {"token": token["access_token"]}
+
+
+@database_sync_to_async
+def _step_delete_secret_and_build_delta(
+    workflow: Workflow, step: Step, param: str
+) -> Optional[clientside.Update]:
+    """Write a new secret (or `None`) to `step`, or raise.
+
+    Return a `clientside.Update`, or `None` if the database is not modified.
+
+    Raise Workflow.DoesNotExist if the Workflow was deleted.
+    """
+    with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
+        try:
+            step.refresh_from_db()
+        except Step.DoesNotExist:
+            return None  # no-op
+
+        if step.secrets.get(param) is None:
+            return None  # no-op
+
+        step.secrets = dict(step.secrets)  # shallow copy
+        del step.secrets[param]
+        step.save(update_fields=["secrets"])
+
+        return clientside.Update(
+            steps={step.id: clientside.StepUpdate(secrets=step.secret_metadata)}
+        )
+
+
+@register_websockets_handler
+@websockets_handler("owner")
+@_loading_step
+async def delete_secret(workflow: Workflow, step: Step, param: str, **kwargs):
+    update = await _step_delete_secret_and_build_delta(workflow, step, param)
+    if update:
+        await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
+
+
+@database_sync_to_async
+def _step_set_secret_and_build_delta(
+    workflow: Workflow, step: Step, param: str, secret: str
+) -> Optional[clientside.Update]:
+    """Write a new secret to `step`, or raise.
+
+    Return a `clientside.Update`, or `None` if the database is not modified.
+
+    Raise Workflow.DoesNotExist if the Workflow was deleted.
+    """
+    with workflow.cooperative_lock():  # raises Workflow.DoesNotExist
+        try:
+            step.refresh_from_db()
+        except Step.DoesNotExist:
+            return None  # no-op
+
+        if step.secrets.get(param, {}).get("secret") == secret:
+            return None  # no-op
+
+        try:
+            module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
+        except KeyError:
+            raise HandlerError(
+                f"BadRequest: ModuleZipfile {step.module_id_name} does not exist"
+            )
+        module_spec = module_zipfile.get_spec()
+        if not any(
+            p.type == "secret" and p.secret_logic.provider == "string"
+            for p in module_spec.param_fields
+        ):
+            raise HandlerError(f"BadRequest: param is not a secret string parameter")
+
+        created_at = timezone.now()
+        created_at_str = (
+            created_at.strftime("%Y-%m-%dT%H:%M:%S")
+            + "."
+            + created_at.strftime("%f")[0:3]  # milliseconds
+            + "Z"
+        )
+
+        step.secrets = {
+            **step.secrets,
+            param: {"name": created_at_str, "secret": secret},
+        }
+        step.save(update_fields=["secrets"])
+
+        return clientside.Update(
+            steps={step.id: clientside.StepUpdate(secrets=step.secret_metadata)}
+        )
+
+
+@register_websockets_handler
+@websockets_handler("owner")
+@_loading_step
+async def set_secret(workflow: Workflow, step: Step, param: str, secret: str, **kwargs):
+    """Set a secret value `secret` on param `param`.
+
+    `param` must point to a `secret` parameter with
+    `secret_logic.provider == 'string'`. The server will set the `name` to
+    the ISO8601-formatted representation of the current time, if `secret` is
+    set to something new.
+    """
+    # Be safe with types
+    param = str(param)
+    secret = str(secret)
+    update = await _step_set_secret_and_build_delta(workflow, step, param, secret)
+
+    if update:
+        await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
+
+
+@database_sync_to_async
+def _do_set_file_upload_api_token(step: Step, api_token: Optional[str]):
+    step.file_upload_api_token = api_token
+    step.save(update_fields=["file_upload_api_token"])
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def get_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
+    """Query the file-upload API token.
+
+    We do not pass this token in Deltas, since only writers can see it. (As of
+    [2019-08-05], Deltas aren't tailored to individual listeners' permissions.)
+    """
+    return {"apiToken": step.file_upload_api_token}
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def reset_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
+    api_token = secrets.token_urlsafe()
+    await _do_set_file_upload_api_token(step, api_token)
+    return {"apiToken": api_token}
+
+
+@register_websockets_handler
+@websockets_handler("write")
+@_loading_step
+async def clear_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
+    await _do_set_file_upload_api_token(step, None)

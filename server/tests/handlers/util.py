@@ -29,8 +29,7 @@ class HandlerTestCase(DbTestCase):
             except KeyError:
                 pass
 
-        # Turn other params, like `wf_module_id=123`, into
-        # `arguments={'wf_module_id':123}`
+        # Turn other params like `step_id=123`, into `arguments={'step_id':123}`
         request_kwargs["arguments"].update(kwargs)
 
         return HandlerRequest(**request_kwargs)

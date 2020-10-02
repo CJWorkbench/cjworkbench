@@ -16,9 +16,9 @@ ApiTokenState.OK = 0
 ApiTokenState.LOADING = 1
 ApiTokenState.SENDING = 2
 
-function ApiToken ({ workflowId, wfModuleSlug, apiTokenState, clearApiToken, resetApiToken }) {
+function ApiToken ({ workflowId, stepSlug, apiTokenState, clearApiToken, resetApiToken }) {
   switch (apiTokenState.flag) {
-    case ApiTokenState.OK: return <ApiTokenOk workflowId={workflowId} wfModuleSlug={wfModuleSlug} apiToken={apiTokenState.apiToken} clearApiToken={clearApiToken} resetApiToken={resetApiToken} />
+    case ApiTokenState.OK: return <ApiTokenOk workflowId={workflowId} stepSlug={stepSlug} apiToken={apiTokenState.apiToken} clearApiToken={clearApiToken} resetApiToken={resetApiToken} />
     case ApiTokenState.LOADING: return <ApiTokenLoading />
     case ApiTokenState.SENDING: return <ApiTokenSending />
   }
@@ -32,7 +32,7 @@ function ApiTokenSending () {
   return <div className='state-sending'>…</div>
 }
 
-function ApiTokenOk ({ workflowId, wfModuleSlug, apiToken, clearApiToken, resetApiToken }) {
+function ApiTokenOk ({ workflowId, stepSlug, apiToken, clearApiToken, resetApiToken }) {
   return (
     <div className='state-ok'>
       {apiToken ? (
@@ -49,7 +49,7 @@ function ApiTokenOk ({ workflowId, wfModuleSlug, apiToken, clearApiToken, resetA
           </p>
           <p className='step-slug'>
             <strong><Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.stepId'>Step ID</Trans></strong>:
-            <code>{wfModuleSlug}</code>
+            <code>{stepSlug}</code>
           </p>
         </>
       ) : (
@@ -62,10 +62,10 @@ function ApiTokenOk ({ workflowId, wfModuleSlug, apiToken, clearApiToken, resetA
   )
 }
 
-function Instructions ({ workflowId, wfModuleSlug, apiToken }) {
+function Instructions ({ workflowId, stepSlug, apiToken }) {
   const varsCode = [
     `WorkflowId = "${workflowId}"`,
-    `StepId = "${wfModuleSlug}"`,
+    `StepId = "${stepSlug}"`,
     `ApiToken = "${apiToken}"`,
     'FileToUpload = "/path/to/test.csv"',
     'Filename = "test.csv"  # name that appears in Workbench'
@@ -200,19 +200,19 @@ function Instructions ({ workflowId, wfModuleSlug, apiToken }) {
   )
 }
 
-export const UploadApiModal = React.memo(function UploadApiModal ({ wfModuleId, wfModuleSlug, workflowId, onClickClose, getApiToken, resetApiToken, clearApiToken }) {
+export const UploadApiModal = React.memo(function UploadApiModal ({ stepId, stepSlug, workflowId, onClickClose, getApiToken, resetApiToken, clearApiToken }) {
   const [apiTokenState, setApiTokenState] = React.useState(new ApiTokenState(ApiTokenState.LOADING, null))
   const { apiToken } = apiTokenState
   React.useEffect(() => {
-    getApiToken(wfModuleId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
-  }, [wfModuleId])
+    getApiToken(stepId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
+  }, [stepId])
   const doResetApiToken = React.useCallback(() => {
     setApiTokenState(new ApiTokenState(ApiTokenState.SENDING, apiTokenState.apiToken))
-    resetApiToken(wfModuleId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
+    resetApiToken(stepId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
   })
   const doClearApiToken = React.useCallback(() => {
     setApiTokenState(new ApiTokenState(ApiTokenState.SENDING, null))
-    clearApiToken(wfModuleId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, null)))
+    clearApiToken(stepId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, null)))
   })
 
   return (
@@ -228,13 +228,13 @@ export const UploadApiModal = React.memo(function UploadApiModal ({ wfModuleId, 
         )}
         <ApiToken
           workflowId={workflowId}
-          wfModuleSlug={wfModuleSlug}
+          stepSlug={stepSlug}
           apiTokenState={apiTokenState}
           resetApiToken={doResetApiToken}
           clearApiToken={doClearApiToken}
         />
         {apiToken ? (
-          <Instructions workflowId={workflowId} wfModuleSlug={wfModuleSlug} apiToken={apiToken} />
+          <Instructions workflowId={workflowId} stepSlug={stepSlug} apiToken={apiToken} />
         ) : null}
       </ModalBody>
       <ModalFooter>
@@ -252,8 +252,8 @@ export const UploadApiModal = React.memo(function UploadApiModal ({ wfModuleId, 
 })
 UploadApiModal.propTypes = {
   workflowId: PropTypes.number.isRequired,
-  wfModuleId: PropTypes.number.isRequired,
-  wfModuleSlug: PropTypes.string.isRequired,
+  stepId: PropTypes.number.isRequired,
+  stepSlug: PropTypes.string.isRequired,
   onClickClose: PropTypes.func.isRequired // () => undefined
 }
 

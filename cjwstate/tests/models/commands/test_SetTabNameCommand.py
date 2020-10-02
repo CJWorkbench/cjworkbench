@@ -39,17 +39,17 @@ class SetTabNameCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
-    def test_change_last_relevant_delta_ids_of_dependent_wf_modules(self):
+    def test_change_last_relevant_delta_ids_of_dependent_steps(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
         tab1 = workflow.tabs.first()
         tab2 = workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
 
-        # Add a WfModule that depends on tab1
+        # Add a Step that depends on tab1
         module_zipfile = create_module_zipfile(
             "x", spec_kwargs={"parameters": [{"id_name": "tab", "type": "tab"}]}
         )
-        wf_module = tab2.wf_modules.create(
+        step = tab2.steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -67,18 +67,18 @@ class SetTabNameCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 new_name=tab1.name + "X",
             )
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
+        step.refresh_from_db()
+        self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
-    def test_change_last_relevant_delta_ids_of_self_wf_modules(self):
+    def test_change_last_relevant_delta_ids_of_self_steps(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
 
         # Pretend module "x"'s render() relies on tab.name
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0, slug="step-1", module_id_name="x", last_relevant_delta_id=delta_id
         )
 
@@ -90,8 +90,8 @@ class SetTabNameCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 new_name=tab.name + "X",
             )
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.last_relevant_delta_id, cmd.id)
+        step.refresh_from_db()
+        self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
     @patch.object(commands, "websockets_notify")
     @patch.object(commands, "queue_render", async_noop)

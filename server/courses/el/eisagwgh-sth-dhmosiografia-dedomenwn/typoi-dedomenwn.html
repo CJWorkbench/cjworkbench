@@ -10,7 +10,7 @@
 </section><!-- Section 1 --><script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -18,7 +18,7 @@ tabs:
     collapsed: true
     note: "Source: City of New York."
 - name: Data dictionary
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -47,16 +47,16 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        return workflow.tabs[0].wfModuleSlugs[1] === 'selectcolumns' &&
-               workflow.tabs[0].wfModules[1].params.colnames.sort().join('|') === 'boro_nm|cmplnt_fr_dt'"
+        return workflow.tabs[0].stepModuleIds[1] === 'selectcolumns' &&
+               workflow.tabs[0].steps[1].params.colnames.sort().join('|') === 'boro_nm|cmplnt_fr_dt'"
     >Προσθέστε την <kbd>Επιλογή στηλών</kbd>, και κρατήστε μόνο τις στήλες <kbd>boro_nm</kbd> και <kbd>cmplnt_fr_dt</kbd></li>
     <li
       data-test="
-        const wfm = workflow.tabs[0].wfModules[2]
-        return wfm && wfm.moduleSlug === 'renamecolumns' &&
-               !wfm.params.custom_list &&
-               wfm.params.renames.boro_nm.toLowerCase() === 'borough' &&
-               wfm.params.renames.cmplnt_fr_dt.toLowerCase() === 'complaint date'"
+        const step = workflow.tabs[0].steps[2]
+        return step && step.moduleSlug === 'renamecolumns' &&
+               !step.params.custom_list &&
+               step.params.renames.boro_nm.toLowerCase() === 'borough' &&
+               step.params.renames.cmplnt_fr_dt.toLowerCase() === 'complaint date'"
       >Μετονομάστε αυτές τις δύο στήλες αντίστοιχα σε <kbd>Borough</kbd> (Δήμος) και <kbd>Complaint date</kbd> (Ημερομηνία καταγγελίας).<p class="instruction-detail">Πριν προχωρήσουμε, ας μάθουμε λίγα πράγματα ακόμα για τους τύπους δεδομένων.</p>
     </li>
   </ol>
@@ -83,10 +83,10 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const wfm = workflow.tabs[0].wfModules[3]
-        return wfm && wfm.moduleSlug === 'convert-date' &&
-               wfm.params.colnames.join('|').toLowerCase() === 'complaint date'
-               && wfm.params.input_format === 'auto'"
+        const step = workflow.tabs[0].steps[3]
+        return step && step.moduleSlug === 'convert-date' &&
+               step.params.colnames.join('|').toLowerCase() === 'complaint date'
+               && step.params.input_format === 'auto'"
       >Στο μενού στήλης<span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> για τη στήλη <kbd>Complaint date</kbd> επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>. Αυτό θα προσθέσει ένα ακόμα βήμα μετατροπής.<p class="instruction-detail">Τώρα η στήλη αυτή είναι του τύπου &quot;Ημερομηνία &amp; ώρα&quot;. Θα χρησιμοποιήσουμε αυτή την τακτοποιημένη στήλη στο επόμενο μάθημα.</p>
     </li>
   </ol>

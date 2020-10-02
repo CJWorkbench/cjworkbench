@@ -21,7 +21,7 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
@@ -51,7 +51,7 @@ tabs:
             case_sensitive: false
     collapsed: true
 - name: Data dictionary
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -69,11 +69,11 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'groupby' && workflow.tabs[0].wfModules[3].params.groups.colnames.join('|') === 'Planning Neighborhood'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'groupby' && workflow.tabs[0].steps[3].params.groups.colnames.join('|') === 'Planning Neighborhood'"
       >Add 'Group' in position 4 and select the column <kbd>Planning Neighborhood</kbd>
     </li>
     <li
-      data-test="const aggs = workflow.tabs[0].wfModules[3].params.aggregations; return aggs.length === 0 /* no aggregations means 'count' */ || aggs[0].operation === 'size'"
+      data-test="const aggs = workflow.tabs[0].steps[3].params.aggregations; return aggs.length === 0 /* no aggregations means 'count' */ || aggs[0].operation === 'size'"
       >Keep the first operation set to <kbd>count</kbd>. It will count all rows within each group
       <p class ="instruction-detail">
         Since each row is one project and rows are grouped by neighborhood, the output table is a count of projects per neighborhood.
@@ -81,7 +81,7 @@ tabs:
     </li>
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations;
+        const aggs = workflow.tabs[0].steps[3].params.aggregations;
         return aggs.length > 0 && aggs[0].outname.toLowerCase() === 'number of projects'"
       >Name the new  column <kbd>Number of projects</kbd>
     </li>
@@ -99,19 +99,19 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations
+        const aggs = workflow.tabs[0].steps[3].params.aggregations
         return aggs.length > 1"
       >
       In the existing Group step, add another operation below <kbd>Count</kbd> by clicking +ADD
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations
+        const aggs = workflow.tabs[0].steps[3].params.aggregations
         return aggs[1].operation === 'sum' && aggs[1].colname === 'Affordable Units'"
       >Select <kbd>Sum</kbd> for the new operation and select the <kbd>Affordable Units</kbd> column
     </li>
     <li
       data-test="
-        const aggs = workflow.tabs[0].wfModules[3].params.aggregations;
+        const aggs = workflow.tabs[0].steps[3].params.aggregations;
         return aggs[1].outname.toLowerCase() === 'number of affordable units'"
       >Name the new column <kbd>Number of affordable units</kbd>
       <p class="instruction-detail">
@@ -120,10 +120,10 @@ tabs:
     </li>
     <li
       data-test="
-        const wfm = workflow.tabs[0].wfModules[4]
-        if (!wfm || wfm.moduleSlug !== 'columnchart')
+        const step = workflow.tabs[0].steps[4]
+        if (!step || step.moduleSlug !== 'columnchart')
           return false
-        const p = wfm.params
+        const p = step.params
         return p.x_column === 'Planning Neighborhood' &&
                p.y_columns[0] &&
                p.y_columns[0].column.toLowerCase() === 'number of affordable units'"

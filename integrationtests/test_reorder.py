@@ -22,7 +22,7 @@
 #
 #        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson\n'
 #
-#        # wait for wfmodule to appear
+#        # wait for step to appear
 #        b.fill_in('csv', csv, wait=True)
 #        # blur, to begin saving result to server
 #        b.click_whatever('ul.WF-meta span', text='by')

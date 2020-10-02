@@ -16,14 +16,14 @@ function groupAutofetches (autofetches) {
       }
     }
     const group = groups[groupId]
-    group.nFetchesPerDay += 86400 / autofetch.wfModule.fetchInterval
+    group.nFetchesPerDay += 86400 / autofetch.step.fetchInterval
     group.autofetches.push(autofetch)
   }
 
   return Object.values(groups).sort((a, b) => b.nFetchesPerDay - a.nFetchesPerDay || a.workflow.name.localeCompare(b.workflow.name))
 }
 
-const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleId, maxFetchesPerDay, nFetchesPerDay, autofetches }) {
+const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, maxFetchesPerDay, nFetchesPerDay, autofetches }) {
   const autofetchGroups = groupAutofetches(autofetches)
 
   return (
@@ -71,12 +71,12 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, wfModuleI
                   )}
                 </div>
                 <ul className='steps'>
-                  {autofetches.map(({ tab, wfModule }) => (
-                    <li key={wfModule.id}>
-                      {workflowId === workflow.id && wfModuleId === wfModule.id ? (
-                        <>(<Trans id='js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay'>You asked for this step to make {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>)</>
+                  {autofetches.map(({ tab, step }) => (
+                    <li key={step.id}>
+                      {workflowId === workflow.id && stepId === step.id ? (
+                        <>(<Trans id='js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay'>You asked for this step to make {numberFormatter.format(86400 / step.fetchInterval)} updates per day.</Trans>)</>
                       ) : (
-                        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay' description='The {1} argument is a tab name'>Step {wfModule.order + 1} on {tab.name} makes {numberFormatter.format(86400 / wfModule.fetchInterval)} updates per day.</Trans>
+                        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay' description='The {1} argument is a tab name'>Step {step.order + 1} on {tab.name} makes {numberFormatter.format(86400 / step.fetchInterval)} updates per day.</Trans>
                       )}
                     </li>
                   ))}
@@ -106,7 +106,7 @@ QuotaExceeded.propTypes = {
     tab: PropTypes.shape({
       name: PropTypes.string.isRequired
     }).isRequired,
-    wfModule: PropTypes.shape({
+    step: PropTypes.shape({
       id: PropTypes.number.isRequired,
       fetchInterval: PropTypes.number.isRequired
     })

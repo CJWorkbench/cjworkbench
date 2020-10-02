@@ -15,7 +15,7 @@ describe('SelectedRowsActions', () => {
       return mountWithI18n(
         <SelectedRowsActions
           selectedRowIndexes={[3, 1, 4]}
-          wfModuleId={99}
+          stepId={99}
           rowActionModules={[
             { idName: 'dofoo', title: 'Foo these rows' },
             { idName: 'dobar', title: 'Bar these rows' }
@@ -45,9 +45,9 @@ describe('SelectedRowsActions', () => {
 
     beforeEach(() => {
       api = {
-        addModule: jest.fn(() => Promise.resolve(null)),
-        setWfModuleParams: jest.fn(() => Promise.resolve(null)),
-        setSelectedWfModule: jest.fn(() => Promise.resolve(null))
+        addStep: jest.fn(() => Promise.resolve(null)),
+        setStepParams: jest.fn(() => Promise.resolve(null)),
+        setSelectedStep: jest.fn(() => Promise.resolve(null))
       }
     })
 
@@ -57,7 +57,7 @@ describe('SelectedRowsActions', () => {
         <Provider store={store}>
           <ConnectedSelectedRowsActions
             selectedRowIndexes={[3, 1, 4]}
-            wfModuleId={2}
+            stepId={2}
             onClickRowsAction={jest.fn()}
             {...extraProps}
           />
@@ -91,12 +91,12 @@ describe('SelectedRowsActions', () => {
       expect(w.find('button')).toHaveLength(1)
     })
 
-    it('should use addModuleAction', async () => {
+    it('should use addStepAction', async () => {
       generateSlug.mockImplementation(prefix => prefix + 'X')
 
       const w = wrapper({
-        tabs: { 'tab-1': { wf_module_ids: [2] } },
-        wfModules: {
+        tabs: { 'tab-1': { step_ids: [2] } },
+        steps: {
           2: { module: 'dofoo', tab_slug: 'tab-1' }
         },
         modules: {
@@ -104,7 +104,7 @@ describe('SelectedRowsActions', () => {
             row_action_menu_entry_title: 'Bar these rows'
           }
         }
-      }, { wfModuleId: 2 })
+      }, { stepId: 2 })
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Bar these rows/)
@@ -115,14 +115,14 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.addModule).toHaveBeenCalledWith('tab-1', 'step-X', 'dobar', 1, { rows: '2, 4-5' })
+      expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'dobar', 1, { rows: '2, 4-5' })
     })
 
-    it('should use setWfModuleParams action, fromInput', async () => {
+    it('should use setStepParams action, fromInput', async () => {
       const w = wrapper({
         workflow: { tab_slugs: ['tab-1'] },
-        tabs: { 'tab-1': { wf_module_ids: [2, 3] } },
-        wfModules: {
+        tabs: { 'tab-1': { step_ids: [2, 3] } },
+        steps: {
           2: { module: 'dofoo', tab_slug: 'tab-1' },
           3: { module: 'dobaz', tab_slug: 'tab-1', params: { foo20: 'bar20' } }
         },
@@ -132,7 +132,7 @@ describe('SelectedRowsActions', () => {
             js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
           }
         }
-      }, { wfModuleId: 2 }) // selected module is the input
+      }, { stepId: 2 }) // selected module is the input
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
@@ -143,18 +143,18 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.setSelectedWfModule).toHaveBeenCalledWith(3)
-      expect(api.setWfModuleParams).toHaveBeenCalledWith(
+      expect(api.setSelectedStep).toHaveBeenCalledWith(3)
+      expect(api.setStepParams).toHaveBeenCalledWith(
         3,
         { oldParams: { foo20: 'bar20' }, rows: '2, 4-5', fromInput: true }
       )
     })
 
-    it('should use setWfModuleParams action, fromInput=false (from output)', async () => {
+    it('should use setStepParams action, fromInput=false (from output)', async () => {
       const w = wrapper({
         workflow: { tab_slugs: ['tab-1'] },
-        tabs: { 'tab-1': { wf_module_ids: [2, 3] } },
-        wfModules: {
+        tabs: { 'tab-1': { step_ids: [2, 3] } },
+        steps: {
           2: { module: 'dobaz', tab_slug: 'tab-1', params: { foo10: 'bar10' } },
           3: { module: 'dofoo', tab_slug: 'tab-1' }
         },
@@ -164,7 +164,7 @@ describe('SelectedRowsActions', () => {
             js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
           }
         }
-      }, { wfModuleId: 2 }) // selected module is what's we're editing
+      }, { stepId: 2 }) // selected module is what's we're editing
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
@@ -175,7 +175,7 @@ describe('SelectedRowsActions', () => {
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.setWfModuleParams).toHaveBeenCalledWith(
+      expect(api.setStepParams).toHaveBeenCalledWith(
         2,
         { oldParams: { foo10: 'bar10' }, rows: '2, 4-5', fromInput: false }
       )

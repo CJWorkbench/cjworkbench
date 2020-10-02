@@ -1,8 +1,8 @@
-.module-notes {
+.step-notes {
   // By default, notes aren't shown. We only show them if they are in focused or
   // if they are non-empty. But we cannot set display:none, because the user
   // may call notesInputRef.current.focus() before they become visible.
-  position: relative; // so we can position `.wf-module .module-notes::before`
+  position: relative; // so we can position `.step .step-notes::before`
 
   .editable-notes {
     position: relative;

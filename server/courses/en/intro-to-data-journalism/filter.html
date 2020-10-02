@@ -21,14 +21,14 @@
 <script id="initialWorkflow">
 tabs:
 - name: Lesson
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loadurl
     params:
       url: ./affordable-housing-pipeline.csv
     collapsed: true
 - name: Data dictionary
-  wfModules:
+  steps:
   - module: loadurl
     slug: step-loaddictionary
     params:
@@ -74,8 +74,8 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleIdName":"loadurl","button":"notes"}]'
-      data-test="return !!workflow.tabs[0].wfModules[0].note"
+      data-highlight='[{"type":"StepContextButton","moduleIdName":"loadurl","button":"notes"}]'
+      data-test="return !!workflow.tabs[0].steps[0].note"
       >In step 1, add a note <span>
         <img class="icon-insert" src="images/lesson-icons/note.svg">
       </span> to specify the provenance of the data:
@@ -83,10 +83,10 @@ tabs:
     </li>
     <li
       data-test="
-        if (workflow.tabs[0].wfModuleSlugs[1] !== 'selectcolumns' || !workflow.tabs[0].wfModules[1].params.keep) return false
+        if (workflow.tabs[0].stepModuleIds[1] !== 'selectcolumns' || !workflow.tabs[0].steps[1].params.keep) return false
 
         const want_cols = '% Affordable,Affordable Units,Planning Neighborhood,Project Status,Project Units'
-        const have_cols = workflow.tabs[0].wfModules[1].params.colnames
+        const have_cols = workflow.tabs[0].steps[1].params.colnames
 
         return have_cols.sort().join(',') === want_cols"
     >Add a <kbd>Select columns</kbd> step and keep the following columns (Start typing column names to pick them faster)
@@ -109,12 +109,12 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[2] === 'filter'"
+      data-test="return workflow.tabs[0].stepModuleIds[2] === 'filter'"
       >Add <kbd>Filter by condition</kbd>
     </li>
     <li
       data-test="
-        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        const filter = workflow.tabs[0].steps[2].params.filters.filters[0]
         return (
           filter
           && filter.subfilters[0]
@@ -124,7 +124,7 @@ tabs:
     </li>
     <li
       data-test="
-        const filter = workflow.tabs[0].wfModules[2].params.filters.filters[0]
+        const filter = workflow.tabs[0].steps[2].params.filters.filters[0]
         const subfilter = filter.subfilters[0]
         return (
           subfilter.condition === 'number_is_greater_than'
@@ -156,7 +156,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const filters = workflow.tabs[0].wfModules[2].params.filters
+        const filters = workflow.tabs[0].steps[2].params.filters
 
         // true if user added AND inside the first subfilter
         return (
@@ -176,7 +176,7 @@ tabs:
     </li>
     <li
       data-test="
-        const filters = workflow.tabs[0].wfModules[2].params.filters.filters
+        const filters = workflow.tabs[0].steps[2].params.filters.filters
         // Accept condition either at subfilter or main filter level
         const subfilter = filters[1] ? filters[1].subfilters[0] : filters[0].subfilters[1]
         return (
@@ -200,22 +200,22 @@ tabs:
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-test="return workflow.tabs[0].wfModuleSlugs[3] === 'valuefilter'"
+      data-test="return workflow.tabs[0].stepModuleIds[3] === 'valuefilter'"
       >Add the step <kbd>Filter by Value</kbd>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.column === 'Project Status'"
+      data-test="return workflow.tabs[0].steps[3].params.column === 'Project Status'"
       >Select the column <kbd>Project status</kbd>
       <p class ="instruction-detail">
         All unique values in the column <kbd>Project Status</kbd> are listed in the step, as well as how many rows use each value.
       </p>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
+      data-test="return workflow.tabs[0].steps[3].params.valueselect.includes('(3) Design with Entitlements Approved')"
       >In ‘Filter by value’, select <kbd>(3) Design with entitlement Approved</kbd> to see only projects that are approved for construction, but not yet started
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[3].params.valueselect.includes('(4) Site Work Permit Issued')"
+      data-test="return workflow.tabs[0].steps[3].params.valueselect.includes('(4) Site Work Permit Issued')"
       >Also select <kbd>(4) Site Work Permit Issued</kbd> to add in projects at this later stage
       <p class ="instruction-detail">
         By changing the selected values in <kbd>Filter by value</kbd> you can quickly get insight into the projects at any combination of development stages.

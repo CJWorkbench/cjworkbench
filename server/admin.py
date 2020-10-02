@@ -1,13 +1,5 @@
 from django.contrib import admin
-from cjwstate.models import (
-    ModuleVersion,
-    WfModule,
-    StoredObject,
-    Delta,
-    Workflow,
-    Tab,
-    WfModule,
-)
+from cjwstate.models import ModuleVersion, Step, StoredObject, Delta, Workflow, Tab
 
 admin.site.register(ModuleVersion)
 admin.site.register(Delta)
@@ -25,8 +17,7 @@ class WorkflowAdmin(admin.ModelAdmin):
     list_filter = ("owner",)
 
     def get_deleted_objects(self, objs, request):
-        """
-        Allow deleting Workflows by hiding Delta from confirmation page.
+        """Allow deleting Workflows by hiding Delta from confirmation page.
 
         Deltas depend on workflows which depend on Deltas -- a circular
         dependency. `workflow.delete()` resolves the conflict; so let's not
@@ -38,7 +29,7 @@ class WorkflowAdmin(admin.ModelAdmin):
         tabs = (
             objs[0]
             .tabs.only("id", "slug", "name", "is_deleted")
-            .prefetch_related("wf_modules")
+            .prefetch_related("steps")
         )
         to_delete = []
         step_count = 0
@@ -46,7 +37,7 @@ class WorkflowAdmin(admin.ModelAdmin):
             tab_to_delete = f"Tab {tab.id} [{tab.slug}: {tab.name}]"
             steps_to_delete = [
                 f"Step {tab.slug}-{step.order} [{step.module_id_name}]"
-                for step in tab.wf_modules.all()
+                for step in tab.steps.all()
             ]
             to_delete.append([tab_to_delete, steps_to_delete])
             step_count += len(steps_to_delete)
@@ -55,7 +46,7 @@ class WorkflowAdmin(admin.ModelAdmin):
             to_delete,
             {
                 Tab._meta.verbose_name_plural: len(tabs),
-                WfModule._meta.verbose_name_plural: step_count,
+                Step._meta.verbose_name_plural: step_count,
             },
             set(),
             [],

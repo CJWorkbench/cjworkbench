@@ -10,7 +10,7 @@ describe('File.actions', () => {
         uploadFile: jest.fn(() => new Promise(resolve => { setUploadComplete = resolve }))
       }
       const store = mockStore({
-        wfModules: {
+        steps: {
           1: { foo: 'bar' },
           2: { foo: 'baz' }
         }
@@ -22,7 +22,7 @@ describe('File.actions', () => {
       expect(api.uploadFile).toHaveBeenCalled()
       expect(api.uploadFile.mock.calls[0].slice(0, 2)).toEqual([2, file])
       const setProgress = api.uploadFile.mock.calls[0][2]
-      expect(store.getState().wfModules['2']).toEqual({
+      expect(store.getState().steps['2']).toEqual({
         foo: 'baz',
         inProgressUpload: {
           name: 't.csv',
@@ -33,12 +33,12 @@ describe('File.actions', () => {
 
       // setProgress (callback invoked by the API)
       setProgress(3)
-      expect(store.getState().wfModules['2'].inProgressUpload.nBytesUploaded).toEqual(3)
+      expect(store.getState().steps['2'].inProgressUpload.nBytesUploaded).toEqual(3)
 
       // completion
       setUploadComplete({ uuid: '1234' })
       const result = await done
-      expect(store.getState().wfModules['2']).toEqual({
+      expect(store.getState().steps['2']).toEqual({
         foo: 'baz',
         inProgressUpload: null
       })
@@ -51,10 +51,10 @@ describe('File.actions', () => {
   describe('cancel', () => {
     it('should no-op when there is no upload', async () => {
       const api = { cancel: jest.fn() }
-      const store = mockStore({ wfModules: { 1: {} } }, api)
+      const store = mockStore({ steps: { 1: {} } }, api)
       await store.dispatch(actions.cancel(1))
       expect(api.cancel).not.toHaveBeenCalled()
-      expect(store.getState().wfModules['1'].inProgressUpload).toBe(null)
+      expect(store.getState().steps['1'].inProgressUpload).toBe(null)
     })
 
     it('should cancel an upload through the API', async () => {
@@ -63,7 +63,7 @@ describe('File.actions', () => {
         cancelFileUpload: jest.fn(() => cancelled)
       }
       const store = mockStore({
-        wfModules: {
+        steps: {
           1: { foo: 'bar' },
           2: { foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
         }
@@ -72,7 +72,7 @@ describe('File.actions', () => {
       // Begin the cancellation (sending a message to the server)
       const done = store.dispatch(actions.cancel(2))
       expect(api.cancelFileUpload).toHaveBeenCalledWith(2)
-      expect(store.getState().wfModules['2']).toEqual({
+      expect(store.getState().steps['2']).toEqual({
         foo: 'baz',
         inProgressUpload: {
           name: 't.csv',
@@ -84,7 +84,7 @@ describe('File.actions', () => {
       // Server says cancellation succeeded
       setCancelled()
       await done
-      expect(store.getState().wfModules['2']).toEqual({ foo: 'baz', inProgressUpload: null })
+      expect(store.getState().steps['2']).toEqual({ foo: 'baz', inProgressUpload: null })
     })
   })
 })

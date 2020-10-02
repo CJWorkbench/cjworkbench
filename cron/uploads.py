@@ -1,7 +1,7 @@
 import logging
 from cjworkbench.sync import database_sync_to_async
 from django.utils import timezone
-from cjwstate.models import InProgressUpload, Tab, WfModule, Workflow
+from cjwstate.models import InProgressUpload, Tab, Step, Workflow
 
 
 logger = logging.getLogger(__name__)
@@ -26,10 +26,10 @@ def delete_stale_inprogress_file_uploads_sync() -> None:
 
     for ipu in InProgressUpload.objects.filter(updated_at__lt=expire_at):
         try:
-            wf_module = ipu.wf_module
-            with wf_module.workflow.cooperative_lock():
+            step = ipu.step
+            with step.workflow.cooperative_lock():
                 ipu.delete_s3_data()
                 ipu.delete()
-        except (WfModule.DoesNotExist, Tab.DoesNotExist, Workflow.DoesNotExist):
-            # The Workflow or WfModule was deleted during our loop
+        except (Step.DoesNotExist, Tab.DoesNotExist, Workflow.DoesNotExist):
+            # The Workflow or Step was deleted during our loop
             pass

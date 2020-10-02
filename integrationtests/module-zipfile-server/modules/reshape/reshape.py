@@ -336,7 +336,7 @@ def transpose(table, params, *, input_columns):
         )
 
     if not len(table.columns):
-        # happens if we're the first module in the module stack
+        # happens if we're the first step in the step list
         return pd.DataFrame()
 
     column = table.columns[0]

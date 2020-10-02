@@ -69,7 +69,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         module_zipfile = create_module_zipfile("mod")
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        step1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
         rendercache.cache_render_result(
@@ -78,7 +78,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
             workflow.last_delta_id,
             RenderResult(arrow_table({"A": [1]})),
         )
-        step2 = tab.wf_modules.create(
+        step2 = tab.steps.create(
             order=1, slug="step-2", last_relevant_delta_id=workflow.last_delta_id
         )
         rendercache.cache_render_result(
@@ -107,13 +107,13 @@ class TabTests(DbTestCaseWithModuleRegistry):
         module_zipfile = create_module_zipfile("mod")
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        step1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",
             last_relevant_delta_id=workflow.last_delta_id,
         )
-        step2 = tab.wf_modules.create(
+        step2 = tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="mod",
@@ -146,7 +146,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         # step1: cached result is fresh. Should not render.
-        step1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",
@@ -159,7 +159,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
             RenderResult(arrow_table({"A": [1]})),
         )
         # step2: cached result is stale, so must be re-rendered
-        step2 = tab.wf_modules.create(
+        step2 = tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="mod",
@@ -201,7 +201,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         # step1: cached result is fresh -- but CORRUPT
-        step1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",
@@ -220,7 +220,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
             b"CORRUPT",
         )
         # step2: no cached result -- must re-render
-        step2 = tab.wf_modules.create(order=1, slug="step-2", module_id_name="mod")
+        step2 = tab.steps.create(order=1, slug="step-2", module_id_name="mod")
 
         tab_flow = TabFlow(
             tab.to_arrow(),

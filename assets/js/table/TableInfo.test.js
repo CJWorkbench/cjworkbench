@@ -18,7 +18,7 @@ describe('TableInfo', () => {
           nRows={10}
           nColumns={3}
           isReadOnly={false}
-          selectedWfModuleId={99}
+          selectedStepId={99}
           selectedRowIndexes={[]}
           onClickRowsAction={jest.fn()}
           {...extraProps}

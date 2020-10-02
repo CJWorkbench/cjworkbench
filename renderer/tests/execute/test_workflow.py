@@ -49,7 +49,7 @@ def mock_render(arrow_table_dict):
 
 def cached_render_result_revision_list(workflow):
     return list(
-        workflow.tabs.first().live_wf_modules.values_list(
+        workflow.tabs.first().live_steps.values_list(
             "cached_render_result_delta_id", flat=True
         )
     )
@@ -69,7 +69,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"B": [2]})',
         )
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id,
@@ -77,17 +77,17 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         )
 
         result1 = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(workflow, wf_module, delta1.id, result1)
+        cache_render_result(workflow, step, delta1.id, result1)
 
         delta2 = InitWorkflowCommand.create(workflow)
-        wf_module.last_relevant_delta_id = delta2.id
-        wf_module.save(update_fields=["last_relevant_delta_id"])
+        step.last_relevant_delta_id = delta2.id
+        step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
 
-        wf_module.refresh_from_db()
+        step.refresh_from_db()
 
-        with open_cached_render_result(wf_module.cached_render_result) as result:
+        with open_cached_render_result(step.cached_render_result) as result:
             assert_render_result_equals(result, RenderResult(arrow_table({"B": [2]})))
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
@@ -97,7 +97,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.first()
         delta1 = workflow.last_delta
         create_module_zipfile("mod")
-        tab.wf_modules.create(
+        tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id - 1,
@@ -112,13 +112,13 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         create_module_zipfile("mod")
-        tab.wf_modules.create(
+        tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=workflow.last_delta_id,
             module_id_name="mod",
         )
-        tab.wf_modules.create(
+        tab.steps.create(
             order=1,
             slug="step-2",
             last_relevant_delta_id=workflow.last_delta_id,
@@ -150,19 +150,19 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         create_module_zipfile(
             "mod", python_code='def render(table, params): return "error, not warning"'
         )
-        wf_module1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta_id,
             module_id_name="mod",
         )
-        wf_module2 = tab.wf_modules.create(
+        step2 = tab.steps.create(
             order=1,
             slug="step-2",
             last_relevant_delta_id=delta_id,
             module_id_name="mod",
         )
-        wf_module3 = tab.wf_modules.create(
+        step3 = tab.steps.create(
             order=2,
             slug="step-3",
             last_relevant_delta_id=delta_id,
@@ -175,27 +175,27 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         self._execute(workflow)
 
-        wf_module1.refresh_from_db()
-        self.assertEqual(wf_module1.cached_render_result.status, "error")
-        with open_cached_render_result(wf_module1.cached_render_result) as result:
+        step1.refresh_from_db()
+        self.assertEqual(step1.cached_render_result.status, "error")
+        with open_cached_render_result(step1.cached_render_result) as result:
             assert_render_result_equals(result, error_result)
 
-        wf_module2.refresh_from_db()
-        self.assertEqual(wf_module2.cached_render_result.status, "unreachable")
-        with open_cached_render_result(wf_module2.cached_render_result) as result:
+        step2.refresh_from_db()
+        self.assertEqual(step2.cached_render_result.status, "unreachable")
+        with open_cached_render_result(step2.cached_render_result) as result:
             assert_render_result_equals(result, RenderResult())
 
-        wf_module3.refresh_from_db()
-        self.assertEqual(wf_module3.cached_render_result.status, "unreachable")
-        with open_cached_render_result(wf_module3.cached_render_result) as result:
+        step3.refresh_from_db()
+        self.assertEqual(step3.cached_render_result.status, "unreachable")
+        with open_cached_render_result(step3.cached_render_result) as result:
             assert_render_result_equals(result, RenderResult())
 
         send_update.assert_called_with(
             workflow.id,
             clientside.Update(
                 steps={
-                    wf_module3.id: clientside.StepUpdate(
-                        render_result=wf_module3.cached_render_result, module_slug="mod"
+                    step3.id: clientside.StepUpdate(
+                        render_result=step3.cached_render_result, module_slug="mod"
                     )
                 }
             ),
@@ -217,7 +217,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
                 """
             ),
         )
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id,
@@ -226,9 +226,9 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         self._execute(workflow)
 
-        wf_module.refresh_from_db()
+        step.refresh_from_db()
         self.assertEqual(
-            wf_module.cached_render_result_errors,
+            step.cached_render_result_errors,
             [RenderError(I18nMessage.TODO_i18n('params: {"x": "2"}'))],
         )
 
@@ -250,7 +250,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
                 """
             ),
         )
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id,
@@ -260,9 +260,9 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         self._execute(workflow)
 
-        wf_module.refresh_from_db()
+        step.refresh_from_db()
         self.assertEqual(
-            wf_module.cached_render_result_errors,
+            step.cached_render_result_errors,
             [RenderError(I18nMessage.TODO_i18n('params: {"x": "def"}'))],
         )
 
@@ -272,23 +272,23 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         create_module_zipfile("mod")
         tab = workflow.tabs.create(position=0)
         delta = InitWorkflowCommand.create(workflow)
-        wf_module1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",
             last_relevant_delta_id=delta.id,
         )
         cache_render_result(
-            workflow, wf_module1, delta.id, RenderResult(arrow_table({"A": [1]}))
+            workflow, step1, delta.id, RenderResult(arrow_table({"A": [1]}))
         )
-        wf_module2 = tab.wf_modules.create(
+        step2 = tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="mod",
             last_relevant_delta_id=delta.id,
         )
         cache_render_result(
-            workflow, wf_module2, delta.id, RenderResult(arrow_table({"B": [2]}))
+            workflow, step2, delta.id, RenderResult(arrow_table({"B": [2]}))
         )
 
         with patch.object(Kernel, "render", return_value=None):
@@ -301,27 +301,27 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.first()
         delta_id = workflow.last_delta_id
         create_module_zipfile(
-            # If this runs on wf_module1, it'll return pd.DataFrame().
-            # If this runs on wf_module2, it'll return wf_module1-output * 2.
-            # ... wf_module2's output depends on whether we run this on
-            # wf_module1.
+            # If this runs on step1, it'll return pd.DataFrame().
+            # If this runs on step2, it'll return step1-output * 2.
+            # ... step2's output depends on whether we run this on
+            # step1.
             "mod",
             python_code="def render(table, params): return table * 2",
         )
 
-        # wf_module1: has a valid, cached result
-        wf_module1 = tab.wf_modules.create(
+        # step1: has a valid, cached result
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta_id,
             module_id_name="mod",
         )
         cache_render_result(
-            workflow, wf_module1, delta_id, RenderResult(arrow_table({"A": [1]}))
+            workflow, step1, delta_id, RenderResult(arrow_table({"A": [1]}))
         )
 
-        # wf_module2: has no cached result (must be rendered)
-        wf_module2 = tab.wf_modules.create(
+        # step2: has no cached result (must be rendered)
+        step2 = tab.steps.create(
             order=1,
             slug="step-2",
             last_relevant_delta_id=delta_id,
@@ -330,8 +330,8 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         self._execute(workflow)
 
-        wf_module2.refresh_from_db()
-        with open_cached_render_result(wf_module2.cached_render_result) as actual:
+        step2.refresh_from_db()
+        with open_cached_render_result(step2.cached_render_result) as actual:
             assert_render_result_equals(actual, RenderResult(arrow_table({"A": [2]})))
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
@@ -344,7 +344,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
         )
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id,
@@ -352,13 +352,13 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             notifications=True,
         )
         cache_render_result(
-            workflow, wf_module, delta1.id, RenderResult(arrow_table({"A": [1]}))
+            workflow, step, delta1.id, RenderResult(arrow_table({"A": [1]}))
         )
 
         # Make a new delta, so we need to re-render.
         delta2 = InitWorkflowCommand.create(workflow)
-        wf_module.last_relevant_delta_id = delta2.id
-        wf_module.save(update_fields=["last_relevant_delta_id"])
+        step.last_relevant_delta_id = delta2.id
+        step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
 
@@ -374,7 +374,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
         )
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id,
@@ -382,13 +382,13 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             notifications=True,
         )
         cache_render_result(
-            workflow, wf_module, delta1.id, RenderResult(arrow_table({"A": [1]}))
+            workflow, step, delta1.id, RenderResult(arrow_table({"A": [1]}))
         )
 
         # Make a new delta, so we need to re-render. Give it the same output.
         delta2 = InitWorkflowCommand.create(workflow)
-        wf_module.last_relevant_delta_id = delta2.id
-        wf_module.save(update_fields=["last_relevant_delta_id"])
+        step.last_relevant_delta_id = delta2.id
+        step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
 
@@ -410,7 +410,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
         )
-        wf_module = tab.wf_modules.create(
+        step = tab.steps.create(
             order=0,
             slug="step-1",
             last_relevant_delta_id=delta1.id,
@@ -420,8 +420,8 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         # Make a new delta, so we need to re-render. Give it the same output.
         delta2 = InitWorkflowCommand.create(workflow)
-        wf_module.last_relevant_delta_id = delta2.id
-        wf_module.save(update_fields=["last_relevant_delta_id"])
+        step.last_relevant_delta_id = delta2.id
+        step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
 

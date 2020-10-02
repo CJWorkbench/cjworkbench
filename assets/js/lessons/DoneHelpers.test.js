@@ -3,16 +3,16 @@ import { StateWithHelpers, WorkflowModuleWithHelpers, WorkflowWithHelpers } from
 
 describe('DoneHelpers', () => {
   describe('WorkflowWithHelpers', () => {
-    it('should give wfModules', () => {
+    it('should give steps', () => {
       const workflow = new WorkflowWithHelpers({
         tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [1, 2] },
-          'tab-22': { wf_module_ids: [] }
+          'tab-21': { step_ids: [1, 2] },
+          'tab-22': { step_ids: [] }
         },
-        wfModules: {
+        steps: {
           1: { module: 'foo' },
           2: { module: 'bar' }
         },
@@ -22,20 +22,20 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModules.map(step => step.moduleName)).toEqual(['Foo', 'Bar'])
-      expect(workflow.selectedTab.wfModules.map(step => step.moduleSlug)).toEqual(['foo', 'bar'])
+      expect(workflow.selectedTab.steps.map(step => step.moduleName)).toEqual(['Foo', 'Bar'])
+      expect(workflow.selectedTab.steps.map(step => step.moduleSlug)).toEqual(['foo', 'bar'])
     })
 
-    it('should give wfModuleNames', () => {
+    it('should give stepNames', () => {
       const workflow = new WorkflowWithHelpers({
         tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [1, 2] },
-          'tab-22': { wf_module_ids: [] }
+          'tab-21': { step_ids: [1, 2] },
+          'tab-22': { step_ids: [] }
         },
-        wfModules: {
+        steps: {
           1: { module: 'foo' },
           2: { module: 'bar' }
         },
@@ -45,19 +45,19 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModuleNames).toEqual(['Foo', 'Bar'])
+      expect(workflow.selectedTab.stepNames).toEqual(['Foo', 'Bar'])
     })
 
-    it('should give wfModuleSlugs', () => {
+    it('should give stepModuleIds', () => {
       const workflow = new WorkflowWithHelpers({
         tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [1, 2] },
-          'tab-22': { wf_module_ids: [] }
+          'tab-21': { step_ids: [1, 2] },
+          'tab-22': { step_ids: [] }
         },
-        wfModules: {
+        steps: {
           1: { module: 'foo' },
           2: { module: 'bar' }
         },
@@ -67,96 +67,96 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.wfModuleSlugs).toEqual(['foo', 'bar'])
+      expect(workflow.selectedTab.stepModuleIds).toEqual(['foo', 'bar'])
     })
 
-    it('should give wfModuleName=null when there is no module', () => {
+    it('should give stepName=null when there is no module', () => {
       const workflow = new WorkflowWithHelpers({
         tab_slugs: ['tab-21', 'tab-22'],
         selected_tab_position: 0
       }, {
         tabs: {
-          'tab-21': { wf_module_ids: [1, 2, '3_nonce'] },
-          'tab-22': { wf_module_ids: [] }
+          'tab-21': { step_ids: [1, 2, '3_nonce'] },
+          'tab-22': { step_ids: [] }
         },
-        wfModules: {
+        steps: {
           1: { module: 'blah' }, // not a real module
           2: {} // no module
         },
         modules: {}
       })
 
-      expect(workflow.selectedTab.wfModuleNames).toEqual([null, null, null])
-      expect(workflow.selectedTab.wfModuleSlugs).toEqual(['blah', null, null])
+      expect(workflow.selectedTab.stepNames).toEqual([null, null, null])
+      expect(workflow.selectedTab.stepModuleIds).toEqual(['blah', null, null])
     })
   })
 
   describe('WorkflowModuleWithHelpers', () => {
     it('should have .isCollapsed', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         is_collapsed: false
       })
-      expect(wfModule.isCollapsed).toBe(false)
+      expect(step.isCollapsed).toBe(false)
     })
 
     it('should have .note', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         notes: 'foo'
       })
-      expect(wfModule.note).toEqual('foo')
+      expect(step.note).toEqual('foo')
     })
 
     it('should have params', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         params: { url: 'foo', bar: 'baz' }
       })
-      expect(wfModule.params).toEqual({
+      expect(step.params).toEqual({
         url: 'foo',
         bar: 'baz'
       })
     })
 
     it('should have empty params on placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers(null, {})
-      expect(wfModule.params).toEqual({})
+      const step = new WorkflowModuleWithHelpers(null, {})
+      expect(step.params).toEqual({})
     })
 
     it('should have secrets', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         secrets: { twitter_credentials: { name: '@hello' } }
       })
-      expect(wfModule.secrets).toEqual({
+      expect(step.secrets).toEqual({
         twitter_credentials: { name: '@hello' }
       })
     })
 
     it('should have empty secrets on placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers(null, {})
-      expect(wfModule.secrets).toEqual({})
+      const step = new WorkflowModuleWithHelpers(null, {})
+      expect(step.secrets).toEqual({})
     })
 
     it('should have moduleName=null and moduleSlug=null when placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers(null, { modules: {} })
-      expect(wfModule.moduleName).toBe(null)
-      expect(wfModule.moduleSlug).toBe(null)
+      const step = new WorkflowModuleWithHelpers(null, { modules: {} })
+      expect(step.moduleName).toBe(null)
+      expect(step.moduleSlug).toBe(null)
     })
 
     it('should have selectedVersion', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         versions: {
           versions: [['some-sort-of-id', 'why is this an Array?']],
           selected: 'some-sort-of-id'
         }
       })
-      expect(wfModule.selectedVersion).toBe('some-sort-of-id')
+      expect(step.selectedVersion).toBe('some-sort-of-id')
     })
 
     it('should have .selectedVersion even when placeholder', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         placeholder: true,
         name: 'Load from URL'
       })
-      expect(wfModule.selectedVersion).toBe(null)
+      expect(step.selectedVersion).toBe(null)
     })
 
     it('should have .updateInterval return `null` if auto_update_data is false', () => {
@@ -189,15 +189,15 @@ describe('DoneHelpers', () => {
     })
 
     it('should have .lastFetchCheckAt', () => {
-      const wfModule = new WorkflowModuleWithHelpers({
+      const step = new WorkflowModuleWithHelpers({
         last_update_check: '2018-07-27T13:27:02.986129Z'
       })
-      expect(wfModule.lastFetchCheckAt).toEqual(new Date(Date.UTC(
+      expect(step.lastFetchCheckAt).toEqual(new Date(Date.UTC(
         2018, 6, 27, 13, 27, 2, 986
       )))
 
-      const wfModuleWithoutDate = new WorkflowModuleWithHelpers({})
-      expect(wfModuleWithoutDate.lastFetchCheckAt).toBe(null)
+      const stepWithoutDate = new WorkflowModuleWithHelpers({})
+      expect(stepWithoutDate.lastFetchCheckAt).toBe(null)
     })
   })
 
@@ -211,10 +211,10 @@ describe('DoneHelpers', () => {
           selected_tab_position: 1
         },
         tabs: {
-          'tab-21': { wf_module_ids: [] },
-          'tab-22': { wf_module_ids: [1, 2] }
+          'tab-21': { step_ids: [] },
+          'tab-22': { step_ids: [1, 2] }
         },
-        wfModules: {
+        steps: {
           1: { module: 'foo' },
           2: { module: 'bar' }
         },
@@ -224,21 +224,21 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(state.selectedTab.wfModuleNames).toEqual(['Foo', 'Bar'])
-      expect(state.selectedTab.wfModuleSlugs).toEqual(['foo', 'bar'])
+      expect(state.selectedTab.stepNames).toEqual(['Foo', 'Bar'])
+      expect(state.selectedTab.stepModuleIds).toEqual(['foo', 'bar'])
     })
 
-    it('should have a .selectedWfModule', () => {
+    it('should have a .selectedStep', () => {
       const state = new StateWithHelpers({
         workflow: {
           tab_slugs: ['tab-11', 'tab-12'],
           selected_tab_position: 1
         },
         tabs: {
-          'tab-11': { wf_module_ids: [] },
-          'tab-12': { wf_module_ids: [2, 3], selected_wf_module_position: 1 }
+          'tab-11': { step_ids: [] },
+          'tab-12': { step_ids: [2, 3], selected_step_position: 1 }
         },
-        wfModules: {
+        steps: {
           2: { module: 'foo' },
           3: { module: 'bar' }
         },
@@ -248,8 +248,8 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(state.selectedWfModule.moduleName).toEqual('Bar')
-      expect(state.selectedWfModule.moduleSlug).toEqual('bar')
+      expect(state.selectedStep.moduleName).toEqual('Bar')
+      expect(state.selectedStep.moduleSlug).toEqual('bar')
     })
   })
 })

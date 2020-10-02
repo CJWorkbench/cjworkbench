@@ -16,20 +16,20 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"id_name":"loadurl"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[0] === 'loadurl'"
+      data-test="return workflow.tabs[0].stepModuleIds[0] === 'loadurl'"
       >Add the data source 'Load from URL'.
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
-      data-test="const wfModule = workflow.tabs[0].wfModules[0]; return wfModule.params.url === 'https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC' && wfModule.selectedVersion"
+      data-highlight='[{"type":"Step","moduleIdName":"loadurl"}]'
+      data-test="const step = workflow.tabs[0].steps[0]; return step.params.url === 'https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC' && step.selectedVersion"
     >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt">https://data.cityofnewyork.us/resource/7x9x-zpz6.json?$order=cmplnt_fr_dt%20DESC</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModule","moduleIdName":"loadurl"}]'
+      data-highlight='[{"type":"Step","moduleIdName":"loadurl"}]'
       data-test="
-        const wfModule = workflow.tabs[0].wfModules[0]
-        return wfModule.updateInterval === 18000
+        const step = workflow.tabs[0].steps[0]
+        return step.updateInterval === 18000
       "
       >Click <kbd>manual</kbd> to open the Workflow Update dialog. Set the feature to <kbd>Auto</kbd>, set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply.</kbd>
     </li>
@@ -43,22 +43,22 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":1,"id_name":"valuefilter"}]'
-      data-test="return workflow.tabs[0].wfModuleSlugs[1] === 'valuefilter'"
+      data-test="return workflow.tabs[0].stepModuleIds[1] === 'valuefilter'"
       >Add the step 'Filter by value'.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[1].params.column === 'boro_nm'"
+      data-test="return workflow.tabs[0].steps[1].params.column === 'boro_nm'"
       >Select the column <kbd>boro_nm</kbd> to filter by.
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[1].params.valueselect.includes('MANHATTAN')"
+      data-test="return workflow.tabs[0].steps[1].params.valueselect.includes('MANHATTAN')"
       >In ‘Filter by value’, select <kbd>Manhattan</kbd> to get a list of police incidents that have been reported there.
       <p class="instruction-detail">
         We want to be notified if any new incidents is added to this list.
       </p>
     </li>
     <li
-      data-test="return workflow.tabs[0].wfModules[1].isEmailUpdates"
+      data-test="return workflow.tabs[0].steps[1].isEmailUpdates"
       >In the filter step, click on the
       <img class="icon-insert" src="./alert_button.svg"> icon. Turn the alert <kbd>ON</kbd>and close the window.
     </li>

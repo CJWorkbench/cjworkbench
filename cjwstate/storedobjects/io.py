@@ -5,15 +5,14 @@ from django.conf import settings
 from django.utils import timezone
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
-from cjwstate.models import StoredObject, WfModule
+from cjwstate.models import StoredObject, Step
 
 
 BUCKET = minio.StoredObjectsBucket
 
 
 def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Path]:
-    """
-    Context manager to download and yield `path`, the StoredObject's file.
+    """Context manager to download and yield `path`, the StoredObject's file.
 
     Raise FileNotFoundError if the object is missing.
 
@@ -36,19 +35,18 @@ def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Pat
         )
 
 
-def _build_key(workflow_id: int, wf_module_id: int) -> str:
+def _build_key(workflow_id: int, step_id: int) -> str:
     """Build a helpful S3 key."""
-    return f"{workflow_id}/{wf_module_id}/{uuid.uuid1()}.dat"
+    return f"{workflow_id}/{step_id}/{uuid.uuid1()}.dat"
 
 
 def create_stored_object(
     workflow_id: int,
-    wf_module_id: int,
+    step_id: int,
     path: Path,
     stored_at: Optional[timezone.datetime] = None,
 ) -> StoredObject:
-    """
-    Write and return a new StoredObject.
+    """Write and return a new StoredObject.
 
     The caller should call enforce_storage_limits() after calling this.
 
@@ -58,11 +56,11 @@ def create_stored_object(
     """
     if stored_at is None:
         stored_at = timezone.now()
-    key = _build_key(workflow_id, wf_module_id)
+    key = _build_key(workflow_id, step_id)
     size = path.stat().st_size
     stored_object = StoredObject.objects.create(
         stored_at=stored_at,
-        wf_module_id=wf_module_id,
+        step_id=step_id,
         key=key,
         size=size,
         hash="unhashed",
@@ -71,9 +69,8 @@ def create_stored_object(
     return stored_object
 
 
-def enforce_storage_limits(wf_module: WfModule) -> None:
-    """
-    Delete old versions that bring us past MAX_STORAGE_PER_MODULE.
+def enforce_storage_limits(step: Step) -> None:
+    """Delete old versions that bring us past MAX_STORAGE_PER_MODULE.
 
     This is important on frequently-updating modules that add to the previous
     table, such as Twitter search, because every version we store is an entire
@@ -83,7 +80,7 @@ def enforce_storage_limits(wf_module: WfModule) -> None:
 
     # walk over this WfM's StoredObjects from newest to oldest, deleting all
     # that are over the limit
-    sos = wf_module.stored_objects.order_by("-stored_at")
+    sos = step.stored_objects.order_by("-stored_at")
     used = 0
     first = True
 

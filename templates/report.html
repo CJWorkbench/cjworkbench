@@ -23,10 +23,10 @@
     </header>
     {% for tab in workflow.tabs %}
       <section>
-        {% for wf_module in tab.wf_modules %}
+        {% for step in tab.steps %}
           <figure>
             <iframe
-              src="/api/wfmodules/{{wf_module.id}}/output#revision={{wf_module.delta_id}}"
+              src="/api/wfmodules/{{step.id}}/output#revision={{step.delta_id}}"
             ></iframe>
           </figure>
         {% endfor %}

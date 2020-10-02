@@ -14,7 +14,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         module_zipfile = create_module_zipfile(
             "yay", spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]}
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             module_id_name="yay",
             params={},
@@ -22,7 +22,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             cached_migrated_params_module_version=module_zipfile.version,
         )
 
-        self.assertEqual(get_migrated_params(wf_module), {"foo": "bar"})
+        self.assertEqual(get_migrated_params(step), {"foo": "bar"})
         self.kernel.migrate_params.assert_not_called()
 
     def test_internal_module_get_cached(self):
@@ -35,7 +35,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 "parameters_version": 2,
             },
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             module_id_name="testinternalmodulegetcached",
             params={},
@@ -43,7 +43,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             cached_migrated_params_module_version="v2",
         )
 
-        self.assertEqual(get_migrated_params(wf_module), {"foo": "bar"})
+        self.assertEqual(get_migrated_params(step), {"foo": "bar"})
         self.kernel.migrate_params.assert_not_called()
 
     def test_wrong_cache_version_calls_migrate_params(self):
@@ -55,7 +55,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 "parameters_version": 2,
             },
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             module_id_name="yay",
             params={"foo": "bar"},
@@ -65,18 +65,18 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.kernel.migrate_params.return_value = {"foo": "baz"}
         with self.assertLogs(level=logging.INFO):
-            self.assertEqual(get_migrated_params(wf_module), {"foo": "baz"})
+            self.assertEqual(get_migrated_params(step), {"foo": "baz"})
         self.kernel.migrate_params.assert_called()
 
         # and assert we've cached things
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
+        self.assertEqual(step.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(
-            wf_module.cached_migrated_params_module_version, module_zipfile.version
+            step.cached_migrated_params_module_version, module_zipfile.version
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
+        step.refresh_from_db()
+        self.assertEqual(step.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(
-            wf_module.cached_migrated_params_module_version, module_zipfile.version
+            step.cached_migrated_params_module_version, module_zipfile.version
         )
 
     def test_internal_wrong_cache_version_calls_migrate_params(self):
@@ -89,7 +89,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 "parameters_version": 3,
             },
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             module_id_name="wrongcacheversioncallsmigrateparams",  # unique
             params={"foo": "bar"},
@@ -99,15 +99,15 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.kernel.migrate_params.return_value = {"foo": "baz"}
         with self.assertLogs(level=logging.INFO):
-            self.assertEqual(get_migrated_params(wf_module), {"foo": "baz"})
+            self.assertEqual(get_migrated_params(step), {"foo": "baz"})
         self.kernel.migrate_params.assert_called()
 
         # and assert we've cached things
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
-        self.assertEqual(wf_module.cached_migrated_params_module_version, "v3")
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
-        self.assertEqual(wf_module.cached_migrated_params_module_version, "v3")
+        self.assertEqual(step.cached_migrated_params, {"foo": "baz"})
+        self.assertEqual(step.cached_migrated_params_module_version, "v3")
+        step.refresh_from_db()
+        self.assertEqual(step.cached_migrated_params, {"foo": "baz"})
+        self.assertEqual(step.cached_migrated_params_module_version, "v3")
 
     def test_no_cache_version_calls_migrate_params(self):
         workflow = Workflow.create_and_init()
@@ -115,7 +115,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             module_id="yay",
             spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             module_id_name="yay",
             params={"foo": "bar"},
@@ -125,18 +125,18 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.kernel.migrate_params.return_value = {"foo": "baz"}
         with self.assertLogs(level=logging.INFO):
-            self.assertEqual(get_migrated_params(wf_module), {"foo": "baz"})
+            self.assertEqual(get_migrated_params(step), {"foo": "baz"})
         self.kernel.migrate_params.assert_called()
 
         # and assert we've cached things
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
+        self.assertEqual(step.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(
-            wf_module.cached_migrated_params_module_version, module_zipfile.version
+            step.cached_migrated_params_module_version, module_zipfile.version
         )
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "baz"})
+        step.refresh_from_db()
+        self.assertEqual(step.cached_migrated_params, {"foo": "baz"})
         self.assertEqual(
-            wf_module.cached_migrated_params_module_version, module_zipfile.version
+            step.cached_migrated_params_module_version, module_zipfile.version
         )
 
     def test_module_error_raises(self):
@@ -145,20 +145,20 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             module_id="yay",
             spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, module_id_name="yay", params={}
         )
 
         self.kernel.migrate_params.side_effect = ModuleError
         with self.assertRaises(ModuleError), self.assertLogs(level=logging.INFO):
-            get_migrated_params(wf_module)
+            get_migrated_params(step)
 
         # Assert we wrote nothing to cache
-        self.assertIsNone(wf_module.cached_migrated_params)
-        self.assertIsNone(wf_module.cached_migrated_params_module_version)
-        wf_module.refresh_from_db()
-        self.assertIsNone(wf_module.cached_migrated_params)
-        self.assertIsNone(wf_module.cached_migrated_params_module_version)
+        self.assertIsNone(step.cached_migrated_params)
+        self.assertIsNone(step.cached_migrated_params_module_version)
+        step.refresh_from_db()
+        self.assertIsNone(step.cached_migrated_params)
+        self.assertIsNone(step.cached_migrated_params_module_version)
 
     def test_no_validate_after_migrate_params(self):
         workflow = Workflow.create_and_init()
@@ -166,7 +166,7 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             module_id="yay",
             spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, module_id_name="yay", params={}
         )
 
@@ -174,11 +174,11 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         # things when params are invalid.
         self.kernel.migrate_params.return_value = {"x": []}
         with self.assertLogs(level=logging.INFO):
-            self.assertEqual(get_migrated_params(wf_module), {"x": []})
+            self.assertEqual(get_migrated_params(step), {"x": []})
 
     def test_deleted_module(self):
         workflow = Workflow.create_and_init()
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0,
             module_id_name="yay",
             params={"foo": "bar"},
@@ -189,31 +189,31 @@ class GetMigratedParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         # We don't validate, because renderer/fetcher/frontend all do different
         # things when params are invalid.
         with self.assertRaises(KeyError):
-            get_migrated_params(wf_module)
+            get_migrated_params(step)
 
         # Assert we did not modify the cache
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "bar"})
-        self.assertEqual(wf_module.cached_migrated_params_module_version, "abc123")
-        wf_module.refresh_from_db()
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "bar"})
-        self.assertEqual(wf_module.cached_migrated_params_module_version, "abc123")
+        self.assertEqual(step.cached_migrated_params, {"foo": "bar"})
+        self.assertEqual(step.cached_migrated_params_module_version, "abc123")
+        step.refresh_from_db()
+        self.assertEqual(step.cached_migrated_params, {"foo": "bar"})
+        self.assertEqual(step.cached_migrated_params_module_version, "abc123")
 
-    def test_deleted_wf_module_race(self):
+    def test_deleted_step_race(self):
         workflow = Workflow.create_and_init()
         module_zipfile = create_module_zipfile(
             module_id="yay",
             spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
         )
-        wf_module = workflow.tabs.first().wf_modules.create(
+        step = workflow.tabs.first().steps.create(
             order=0, module_id_name="yay", params={}
         )
-        wf_module.delete()
+        step.delete()
 
         self.kernel.migrate_params.return_value = {"foo": "bar"}
         with self.assertLogs(level=logging.INFO):
-            self.assertEqual(get_migrated_params(wf_module), {"foo": "bar"})
-        self.assertEqual(wf_module.cached_migrated_params, {"foo": "bar"})
+            self.assertEqual(get_migrated_params(step), {"foo": "bar"})
+        self.assertEqual(step.cached_migrated_params, {"foo": "bar"})
         self.assertEqual(
-            wf_module.cached_migrated_params_module_version, module_zipfile.version
+            step.cached_migrated_params_module_version, module_zipfile.version
         )
-        # ... even though the WfModule does not exist in the database
+        # ... even though the Step does not exist in the database

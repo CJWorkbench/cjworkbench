@@ -99,19 +99,19 @@ class DuplicateTabCommandTest(DbTestCase):
         workflow = Workflow.create_and_init()
         init_delta_id = workflow.last_delta_id
         tab = workflow.tabs.first()
-        tab.selected_wf_module_position = 1
-        tab.save(update_fields=["selected_wf_module_position"])
+        tab.selected_step_position = 1
+        tab.save(update_fields=["selected_step_position"])
         # step1 and step2 have not yet been rendered. (But while we're
         # duplicating, conceivably a render could be running; so when we
         # duplicate them, we need to queue a render.)
-        step1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,
         )
-        tab.wf_modules.create(
+        tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="y",
@@ -131,11 +131,11 @@ class DuplicateTabCommandTest(DbTestCase):
 
         # Adds new tab
         cmd.tab.refresh_from_db()
-        [step1dup, step2dup] = list(cmd.tab.live_wf_modules.all())
+        [step1dup, step2dup] = list(cmd.tab.live_steps.all())
         self.assertFalse(cmd.tab.is_deleted)
         self.assertEqual(cmd.tab.slug, "tab-2")
         self.assertEqual(cmd.tab.name, "Tab 2")
-        self.assertEqual(cmd.tab.selected_wf_module_position, 1)
+        self.assertEqual(cmd.tab.selected_step_position, 1)
         self.assertEqual(step1dup.order, 0)
         self.assertEqual(step1dup.module_id_name, "x")
         self.assertEqual(step1dup.params, {"p": "s1"})
@@ -190,7 +190,7 @@ class DuplicateTabCommandTest(DbTestCase):
         # step1 and step2 have not yet been rendered. (But while we're
         # duplicating, conceivably a render could be running; so when we
         # duplicate them, we need to queue a render.)
-        step1 = tab.wf_modules.create(
+        step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
@@ -211,7 +211,7 @@ class DuplicateTabCommandTest(DbTestCase):
         )
         tab2 = workflow.tabs.last()
         self.assertNotEqual(tab2.id, tab.id)
-        step2 = tab2.wf_modules.last()
+        step2 = tab2.steps.last()
         # We need to render: render() in Steps in the second Tab will be called
         # with different `tab_name` than in the first Tab, meaning their output
         # may be different.

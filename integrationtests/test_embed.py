@@ -2,7 +2,7 @@ from integrationtests.utils import LoggedInIntegrationTest
 import re
 
 
-# WfModule expand/collapse, notes, context menu, export, delete
+# Step expand/collapse, notes, context menu, export, delete
 class TestEmbed(LoggedInIntegrationTest):
     def setUp(self):
         super().setUp()
@@ -19,7 +19,7 @@ class TestEmbed(LoggedInIntegrationTest):
         # Create workflow with chart
         self.add_csv_data_module("a,b,c\n1,2,3")
         self.import_module("linechart")
-        self.add_wf_module("Line Chart")
+        self.add_step("Line Chart")
 
         b.assert_element("iframe", wait=True)  # chart should load
         b.assert_no_element(
