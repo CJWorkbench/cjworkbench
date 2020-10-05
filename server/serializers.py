@@ -29,8 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 def _camelize_str(s: str) -> str:
-    """
-    Convert snake-case to camel-case.
+    """Convert snake-case to camel-case.
 
     >>> _camelize_str('id_name')
     'idName'
@@ -39,8 +38,7 @@ def _camelize_str(s: str) -> str:
 
 
 def _camelize_list(l: List[Any]) -> List[Any]:
-    """
-    Convert snake-case dicts within `l` to camel-case.
+    """Convert snake-case dicts within `l` to camel-case.
 
     >>> _camelize_list(['x_y', {'y_z': 'z_a'}])
     ['x_y', {'yZ': 'z_a'}]
@@ -49,8 +47,7 @@ def _camelize_list(l: List[Any]) -> List[Any]:
 
 
 def _camelize_dict(d: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Convert snake-case keys within `d` to camel-case, recursively.
+    """Convert snake-case keys within `d` to camel-case, recursively.
 
     >>> _camelize_dict({'a_b': 'b_c', 'c_d': {'e_f': 'f_g'}})
     {'aB': 'b_c', 'cD': {'eF': 'f_g'}}
@@ -59,8 +56,7 @@ def _camelize_dict(d: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def _camelize_value(v: Any) -> Any:
-    """
-    Camelize keys of dicts within `v`, recursively.
+    """Camelize keys of dicts within `v`, recursively.
 
     `v` must be a JSON-serializable dict.
     """
@@ -110,8 +106,7 @@ def jsonize_user(user: User) -> Dict[str, Any]:
 
 
 def _maybe_yield(value: Optional[Union[clientside._Null, Any]]) -> Iterable[Any]:
-    """
-    Yield `value` if it is not None.
+    """Yield `value` if it is not None.
 
     Special case: yield `None` if `value == clientside.Null`.
     """
@@ -126,8 +121,7 @@ def _maybe_yield(value: Optional[Union[clientside._Null, Any]]) -> Iterable[Any]
 def _maybe_set(
     d: Dict[str, Any], key: str, value: Optional[Union[clientside._Null, Any]]
 ) -> None:
-    """
-    Set `d[key] = value` if `value` is not `None`.
+    """Set `d[key] = value` if `value` is not `None`.
 
     Special case: if `value` is `Null`, set `d[key] = None`.
     """
@@ -387,8 +381,7 @@ def _ctx_authorized_owner(
 def jsonize_clientside_workflow(
     workflow: clientside.WorkflowUpdate, ctx: JsonizeContext, *, is_init: bool
 ) -> Dict[str, Any]:
-    """
-    Build a JSON-ready dict representation of `workflow`.
+    """Build a JSON-ready dict representation of `workflow`.
 
     If `is_init`, we add some extra properties:
 
@@ -737,8 +730,7 @@ def jsonize_clientside_step(
 def jsonize_clientside_init(
     state: clientside.Init, ctx: JsonizeContext
 ) -> Dict[str, Any]:
-    """
-    Serialize an InitialWorkflow for the user, for use in json.dumps().
+    """Serialize an InitialWorkflow for the user, for use in json.dumps().
 
     The input is user-agnostic. The output is unique to each user. (There is
     some i18n code invoked here.)
@@ -760,8 +752,7 @@ def jsonize_clientside_init(
 def jsonize_clientside_update(
     update: clientside.Update, ctx: JsonizeContext
 ) -> Dict[str, Any]:
-    """
-    Serialize an InitialWorkflow for the user, for use in json.dumps().
+    """Serialize an InitialWorkflow for the user, for use in json.dumps().
 
     The input is user-agnostic. The output is unique to each user. (There is
     some i18n code invoked here.)
