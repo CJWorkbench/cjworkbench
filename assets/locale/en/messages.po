@@ -474,7 +474,7 @@ msgstr "Tab"
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Learn how to replace this step"
 
-#: assets/js/WorkflowEditor/step/Step.js:355
+#: assets/js/WorkflowEditor/step/Step.js:359
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Type a note..."
 
@@ -483,27 +483,27 @@ msgstr "Type a note..."
 msgid "js.WorkflowEditor.step.StepContextMenu.more.hoverText"
 msgstr "more"
 
-#: assets/js/WorkflowEditor/step/Step.js:240
+#: assets/js/WorkflowEditor/step/Step.js:243
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "enter Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:240
+#: assets/js/WorkflowEditor/step/Step.js:243
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "exit Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:372
+#: assets/js/WorkflowEditor/step/Step.js:376
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Email alerts disabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:372
+#: assets/js/WorkflowEditor/step/Step.js:376
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Email alerts enabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:384
+#: assets/js/WorkflowEditor/step/Step.js:388
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Help for this module"
 
-#: assets/js/WorkflowEditor/step/Step.js:394
+#: assets/js/WorkflowEditor/step/Step.js:398
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Edit Note"
 

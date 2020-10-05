@@ -554,7 +554,7 @@ msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/step/Step.js:355
+#: assets/js/WorkflowEditor/step/Step.js:359
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
@@ -565,32 +565,32 @@ msgid "js.WorkflowEditor.step.StepContextMenu.more.hoverText"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:240
+#: assets/js/WorkflowEditor/step/Step.js:243
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:240
+#: assets/js/WorkflowEditor/step/Step.js:243
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/step/Step.js:372
+#: assets/js/WorkflowEditor/step/Step.js:376
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/step/Step.js:372
+#: assets/js/WorkflowEditor/step/Step.js:376
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/step/Step.js:384
+#: assets/js/WorkflowEditor/step/Step.js:388
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/step/Step.js:394
+#: assets/js/WorkflowEditor/step/Step.js:398
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr ""
 
