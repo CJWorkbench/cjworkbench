@@ -96,3 +96,15 @@ services:
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testrabbitmq', 'testminio' ]
     entrypoint: 'bin/unittest-entrypoint.sh'
+
+  stripe:
+    image: stripe/stripe-cli:v1.5.2
+    networks: [ 'dev' ]
+    depends_on: [ 'frontend' ]
+    environment:
+      STRIPE_DEVICE_NAME: workbench-dev
+    env_file:
+      - stripe.env  # STRIPE_API_KEY
+    # Connection: close because in dev mode, Stripe won't notice when a
+    # connection closes because frontend restarts.
+    command: [ 'listen', '--forward-to', 'http://frontend:8000/stripe/webhook', '--events', 'checkout.session.completed,customer.subscription.deleted,customer.subscription.updated' ]

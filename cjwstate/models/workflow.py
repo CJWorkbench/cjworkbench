@@ -8,54 +8,12 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
+from cjworkbench.models.db_object_cooperative_lock import (
+    DbObjectCooperativeLock,
+    lookup_and_cooperative_lock,
+)
 from cjwstate import clientside, minio
 from cjwstate.modules.param_spec import ParamDType
-
-
-class WorkflowCooperativeLock:
-    def __init__(self, workflow):
-        self.workflow = workflow
-        self._after_commit_callbacks = []
-
-    def after_commit(self, fn: Callable[[], None]):
-        """Register `fn` to be called after database commit.
-
-        Specifically, in the following example:
-
-            def x():
-                # Timing 1
-                with Workflow.lookup_and_cooperative_lock(id=123) as workflow_lock:
-                    # Timing 2
-                    workflow = workflow_lock.workflow
-                    workflow.name = "Changed"
-                    workflow.save(update_fields=["name"])
-                    update = workflow.to_clientside()  # uses DB
-                    def notify_websockets():
-                        new_json = jsonize_clientside_workflow(update, ctx)
-                        async_to_sync(async_notify_websockets)(workflow.id, new_json)
-                    workflow_lock.after_commit(notify_websockets)
-                    return True  # Timing 3
-            success = x()  # Timing 4
-
-        * Timing 1: there is no database transaction.
-        * Timing 2: a transaction is open, and `workflow` is selected for update.
-                    If an exception was raised during lookup, the call to `x()`
-                    will raise it and no database modifications will occur.
-        * Timing 3: a value is returned. If an exception was raised in the code
-                    block, the call to `x()` will raise it and the database
-                    transaction will be rolled back. `workflow_lock.workflow`
-                    may be in an inconsistent state.
-        * Timing 4: `notify_websockets()` has been called. If an exception was
-                    raised within it, the call to `x()` will raise it. The
-                    database transaction will NOT be rolled back (since the
-                    exception happened after commit). `workflow_lock.workflow`
-                    may be in an inconsistent state.
-        """
-        self._after_commit_callbacks.append(fn)
-
-    def _invoke_after_commit_callbacks(self):
-        for fn in self._after_commit_callbacks:
-            fn()
 
 
 def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
@@ -262,7 +220,7 @@ class Workflow(models.Model):
             # versions.
             # https://code.djangoproject.com/ticket/28344#comment:10
             self.refresh_from_db()
-            workflow_lock = WorkflowCooperativeLock(self)
+            workflow_lock = DbObjectCooperativeLock("workflow", self)
             yield workflow_lock
 
         # If we reach here, COMMIT was called and we're returning whatever
@@ -367,8 +325,9 @@ class Workflow(models.Model):
         return cls.objects.filter(mask)
 
     @classmethod
-    @contextmanager
-    def lookup_and_cooperative_lock(cls, **kwargs):
+    def lookup_and_cooperative_lock(
+        cls, **kwargs
+    ) -> ContextManager[DbObjectCooperativeLock]:
         """Efficiently lookup and lock a Workflow in one operation.
 
         Usage:
@@ -389,14 +348,7 @@ class Workflow(models.Model):
 
         Raises Workflow.DoesNotExist.
         """
-        with transaction.atomic():
-            workflow = cls.objects.select_for_update().get(**kwargs)
-            workflow_lock = WorkflowCooperativeLock(workflow)
-            yield workflow_lock
-
-        # If we reach here, COMMIT was called and we're returning whatever
-        # the `yield` block returned.
-        workflow_lock._invoke_after_commit_callbacks()
+        return lookup_and_cooperative_lock(cls.objects, "workflow", **kwargs)
 
     @classmethod
     @contextmanager

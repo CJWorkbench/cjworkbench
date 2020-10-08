@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.conf.urls import url
+from django.contrib.staticfiles import views as staticfiles_views
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from django.urls import path
+
 from . import views
-from django.contrib.staticfiles import views as staticfiles_views
-from .views import acl, health, lessons, oauth, workflows, uploads
+from .views import acl, health, lessons, oauth, workflows, uploads, settings
 
 
 def redirect(url: str):

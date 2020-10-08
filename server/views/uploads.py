@@ -14,7 +14,7 @@ from cjwstate import commands
 from cjwstate.models import InProgressUpload, Workflow, Step
 from cjwstate.models.commands import ChangeParametersCommand
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjwstate.models.workflow import WorkflowCooperativeLock
+from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)
@@ -113,7 +113,7 @@ class UploadList(View):
     def post(
         self,
         request: HttpRequest,
-        workflow_lock: WorkflowCooperativeLock,
+        workflow_lock: DbObjectCooperativeLock,
         step: Step,
         file_param_id_name: str,
     ):
@@ -144,7 +144,7 @@ class Upload(View):
     def delete(
         self,
         request: HttpRequest,
-        workflow_lock: WorkflowCooperativeLock,
+        workflow_lock: DbObjectCooperativeLock,
         step: Step,
         file_param_id_name: str,
         uuid: UUID,
@@ -169,7 +169,7 @@ class Upload(View):
     def post(
         self,
         request: HttpRequest,
-        workflow_lock: WorkflowCooperativeLock,
+        workflow_lock: DbObjectCooperativeLock,
         step: Step,
         file_param_id_name: str,
         uuid: UUID,

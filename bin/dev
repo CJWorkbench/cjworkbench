@@ -32,6 +32,31 @@ refresh_suggested_modules() {
   docker_compose_with_commands run --rm pydev pipenv run python ./manage.py import-modules $(cat cjwstate/modules/suggested-modules.txt)
 }
 
+stripe_setup() {
+  if grep -q STRIPE_WEBHOOK_SIGNING_SECRET stripe.env; then
+    echo "Stripe is already authenticated. To re-authenticate, delete 'stripe.env' and begin anew" >&2
+  else
+    # overwrite stripe.env if it exists (it isn't completely set up)
+    echo -e "STRIPE_PUBLIC_API_KEY=$1\nSTRIPE_API_KEY=$2" > stripe.env
+    webhook_signing_secret="$(stripe_run listen --print-secret)"
+    if test "$?" != "0"; then
+      echo "Here is a problem" >&2
+      echo "$webhook_signing_secret" >&2
+      exit 1
+    fi
+    echo -e "STRIPE_WEBHOOK_SIGNING_SECRET=$webhook_signing_secret" >> stripe.env
+  fi
+
+  docker_compose_with_commands run --rm pydev pipenv run python ./manage.py import-plans-from-stripe
+}
+
+stripe_run() {
+  if ! docker_compose_with_commands --env-file stripe.env run -T --rm stripe "$@"; then
+    echo "Failure connecting to Stripe. Run 'bin/dev stripe-setup pk_... sk_...' to pass valid credentials." >&2
+    exit 1
+  fi
+}
+
 print_usage() {
   echo "Usage: $0 COMMAND ARGS..." >&2
   echo >&2
@@ -45,6 +70,8 @@ print_usage() {
   echo '  extract-messages -- extract translation messages from js, python, and templates and merge them into one file per locale' >&2
   echo '  reformat-code -- make code conform to (Black) styleguide' >&2
   echo '  refresh-suggested-modules -- refresh without a whole "start"' >&2
+  echo '  stripe-setup pk_test_ABC... sk_test_ABC... -- prompt and fill in "stripe.json" file' >&2
+  echo '  stripe-listen -- run Stripe (requires "stripe.json" file)' >&2
   echo '  run SERVICE ARGS -- run "docker-compose run -rm SERVICE ARGS..."' >&2
   echo '  quickstart -- start database, RabbitMQ, Webpack and Django without updates' >&2
   echo '  sql -- open a psql prompt in the dev database (it must be up)' >&2
@@ -184,6 +211,14 @@ case "$COMMAND" in
 
   "refresh-suggested-modules")
     refresh_suggested_modules
+    ;;
+
+  "stripe-setup")
+    stripe_setup "$1" "$2"
+    ;;
+
+  "stripe-listen")
+    stripe_run
     ;;
 
   "quickstart")

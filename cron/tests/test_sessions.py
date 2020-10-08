@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 from cjwstate.models import Workflow
-from cjwstate.tests.utils import clear_db
+from cjworkbench.tests.utils import clear_db
 from cron import sessions
 
 

@@ -147,6 +147,8 @@ class AccountAdmin:
             "auth_group_permissions",
             "auth_permission",
             "cjworkbench_userprofile",
+            "subscription",
+            "plan",
             "django_admin_log",
             "auth_user",
             "auth_user_groups",

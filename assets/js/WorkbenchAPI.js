@@ -415,4 +415,18 @@ export default class WorkbenchAPI {
   async clearStepFileUploadApiToken (stepId) {
     return this._callExpectingNull('step.clear_file_upload_api_token', { stepId })
   }
+
+  /**
+   * Construct { checkoutSession, apiKey } pair, for @stripe/stripe-js calls.
+   */
+  async createStripeCheckoutSession () {
+    return this._post('/stripe/create-checkout-session')
+  }
+
+  /**
+   * Construct { billingPortalSession }, for client-side redirects.
+   */
+  async createStripeBillingPortalSession () {
+    return this._post('/stripe/create-billing-portal-session')
+  }
 }

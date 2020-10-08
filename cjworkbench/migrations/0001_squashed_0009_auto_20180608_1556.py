@@ -8,19 +8,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
-    replaces = [
-        ("cjworkbench", "0001_initial"),
-        ("cjworkbench", "0002_auto_20170803_0036"),
-        ("cjworkbench", "0003_googlecredentials"),
-        ("cjworkbench", "0004_auto_20171030_2113"),
-        ("cjworkbench", "0005_googlecredentials_flow"),
-        ("cjworkbench", "0006_auto_20180109_0007"),
-        ("cjworkbench", "0007_auto_20180109_0014"),
-        ("cjworkbench", "0008_auto_20180607_1602"),
-        ("cjworkbench", "0009_auto_20180608_1556"),
-    ]
-
     initial = True
 
     dependencies = [

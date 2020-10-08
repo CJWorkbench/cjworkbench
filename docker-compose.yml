@@ -89,7 +89,7 @@ services:
     command: [
       'sh',
       '-c',
-      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "templates/**/*.html" "templates/**/*.txt" "staticmodules/**/*.*" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" "assets/locale/*/messages.po" --exec python -m uvicorn --host 127.0.0.1 --port 8080 --use-colors cjworkbench.asgi:application'
+      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "{intercom_secret,twitter_secret,client_secret}.json" "stripe.env" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "templates/**/*.html" "templates/**/*.txt" "staticmodules/**/*.*" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" "assets/locale/*/messages.po" --exec python -m uvicorn --host 127.0.0.1 --port 8080 --use-colors --timeout-keep-alive 999999 cjworkbench.asgi:application'
     ]
 
   renderer:
@@ -119,7 +119,7 @@ services:
       '-c',
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" "--pattern cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py renderer'
+      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py renderer'
     ]
 
   fetcher:
@@ -148,7 +148,7 @@ services:
       'sh', '-c',
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
+      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
     ]
 
   cron:

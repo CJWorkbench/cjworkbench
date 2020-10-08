@@ -17,6 +17,8 @@ import sys
 from os.path import abspath, dirname, join, normpath
 from typing import Dict, Optional
 
+from dotenv import load_dotenv
+
 from cjworkbench.i18n import default_locale, supported_locales
 from server.settingsutils import workbench_user_display
 
@@ -343,6 +345,7 @@ LOGGING = {
             "level": ("WARNING" if I_AM_TESTING else "INFO")
         },
         "cjworkbench.pg_render_locker": {"level": "INFO"},
+        "stripe": {"level": "INFO"},
     },
 }
 
@@ -363,6 +366,21 @@ OAUTH_SERVICES: Dict[str, Dict[str, Optional[str]]] = {}
 """
 service => parameters. See requests-oauthlib docs
 """
+
+
+# Stripe is configured via environment variables; but in dev mode, a file
+# "stripe.json" can serve as fallback.
+try:
+    load_dotenv(os.path.join(BASE_DIR, "stripe.env"))
+except FileNotFoundError:
+    # This is normal
+    pass
+
+
+if "STRIPE_API_KEY" in os.environ:
+    STRIPE_API_KEY = os.environ["STRIPE_API_KEY"]
+    STRIPE_PUBLIC_API_KEY = os.environ["STRIPE_PUBLIC_API_KEY"]
+    STRIPE_WEBHOOK_SIGNING_SECRET = os.environ["STRIPE_WEBHOOK_SIGNING_SECRET"]
 
 
 def _maybe_load_oauth_service(

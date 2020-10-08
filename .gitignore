@@ -12,6 +12,7 @@ db.sqlite3-journal
 dbdata/
 local_mail/
 client_secret.json
+stripe.env
 
 # Asset bundles, downloaded modules, saved data
 /node_modules/

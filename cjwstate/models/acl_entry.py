@@ -3,9 +3,7 @@ from django.utils import timezone
 
 # A Workflow is the user's "document," a series of Modules
 class AclEntry(models.Model):
-    """
-    Access-control-list entry granting a user access to a workflow.
-    """
+    """Access-control-list entry granting a user access to a workflow."""
 
     class Meta:
         app_label = "server"
