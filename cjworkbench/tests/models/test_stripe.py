@@ -3,7 +3,7 @@ from typing import NamedTuple
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
 import stripe
 
 from cjworkbench.models.plan import Plan
@@ -47,6 +47,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             "api-key",
         ),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_create_subscription(self, retrieve_subscription):
         plan = create_plan(stripe_product_id="prod_123")
         user = create_user(stripe_customer_id="cus_123")
@@ -60,6 +61,14 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
                 "api-key",
             )
         )
+
+        # Test we sent Stripe the right stuff
+        self.assertTrue(retrieve_subscription.called)
+        args, kwargs = retrieve_subscription.call_args
+        self.assertEqual(args, ("sub_123",))
+        self.assertEqual(kwargs["api_key"], "key_123")
+
+        # Test we created the subscription in the DB
         user.user_profile.refresh_from_db()
         subscriptions = list(user.subscriptions.all())
         self.assertEqual(len(subscriptions), 1)
@@ -243,12 +252,14 @@ class TestCreateCheckoutSession(DbTestCase):
             {"id": "cs_123"}, "api-key"
         ),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_reuse_existing_stripe_customer_id(self, create_session):
         user = create_user(stripe_customer_id="cus_123", locale_id="fr")
         plan = Plan.objects.create(stripe_price_id="price_123")
         checkout_session = create_checkout_session(user.id, plan, "https://example.com")
         self.assertTrue(create_session.called)
         _, kwargs = create_session.call_args
+
         # Sends correct params to Stripe
         self.assertEqual(kwargs["customer"], "cus_123")
         self.assertEqual(kwargs["line_items"], [{"price": "price_123", "quantity": 1}])
@@ -256,6 +267,8 @@ class TestCreateCheckoutSession(DbTestCase):
         self.assertEqual(kwargs["success_url"], "https://example.com")
         self.assertEqual(kwargs["cancel_url"], "https://example.com")
         self.assertEqual(kwargs["mode"], "subscription")
+        self.assertEqual(kwargs["api_key"], "key_123")
+
         # Returns correct response
         self.assertEqual(checkout_session.id, "cs_123")
 
@@ -271,6 +284,7 @@ class TestCreateCheckoutSession(DbTestCase):
         "create",
         return_value=stripe.Customer.construct_from({"id": "cus_123"}, "api-key"),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_assign_new_stripe_customer_id(self, create_customer, create_session):
         user = create_user(
             email="alice@example.org",
@@ -288,6 +302,7 @@ class TestCreateCheckoutSession(DbTestCase):
         self.assertEqual(kwargs["email"], "alice@example.org")
         self.assertEqual(kwargs["name"], "Alice Smith")
         self.assertEqual(kwargs["preferred_locales"], ["fr"])
+        self.assertEqual(kwargs["api_key"], "key_123")
 
         # UserProfile was updated
         user.user_profile.refresh_from_db()
@@ -327,15 +342,18 @@ class TestCreateBillingPortalSession(DbTestCase):
             {"id": "bps_123"}, "api-key"
         ),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_use_existing_stripe_customer_id(self, create_session):
         user = create_user(stripe_customer_id="cus_123")
         session = create_billing_portal_session(user.id, "https://example.com")
 
+        # Sends correct params to Stripe
         self.assertTrue(create_session.called)
         _, kwargs = create_session.call_args
-        # Sends correct params to Stripe
         self.assertEqual(kwargs["customer"], "cus_123")
         self.assertEqual(kwargs["return_url"], "https://example.com")
+        self.assertEqual(kwargs["api_key"], "key_123")
+
         # Returns correct response
         self.assertEqual(session.id, "bps_123")
 
