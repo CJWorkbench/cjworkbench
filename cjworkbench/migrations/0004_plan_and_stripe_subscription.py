@@ -9,43 +9,92 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('cjworkbench', '0003_userprofile_locale_id'),
+        ("cjworkbench", "0003_userprofile_locale_id"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Plan',
+            name="Plan",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('stripe_product_id', models.SlugField(unique=True)),
-                ('stripe_product_name', models.TextField()),
-                ('stripe_price_id', models.SlugField(unique=True)),
-                ('max_fetches_per_day', models.IntegerField(default=1000, help_text="Applies to the sum of all the user's Workflows. One fetch every 5min = 288 fetches per day.")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("stripe_product_id", models.SlugField(unique=True)),
+                ("stripe_product_name", models.TextField()),
+                ("stripe_price_id", models.SlugField(unique=True)),
+                (
+                    "max_fetches_per_day",
+                    models.IntegerField(
+                        default=1000,
+                        help_text="Applies to the sum of all the user's Workflows. One fetch every 5min = 288 fetches per day.",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Plan (edit/delete in Stripe dashboard)',
-                'verbose_name_plural': 'Plans (create/edit/delete in Stripe dashboard)',
-                'db_table': 'plan',
+                "verbose_name": "Plan (edit/delete in Stripe dashboard)",
+                "verbose_name_plural": "Plans (create/edit/delete in Stripe dashboard)",
+                "db_table": "plan",
             },
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='stripe_customer_id',
+            model_name="userprofile",
+            name="stripe_customer_id",
             field=models.SlugField(default=None, null=True),
         ),
         migrations.CreateModel(
-            name='Subscription',
+            name="Subscription",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('stripe_subscription_id', models.SlugField(unique=True)),
-                ('stripe_status', models.CharField(choices=[('trialing', 'trialing'), ('active', 'active'), ('incomplete', 'incomplete'), ('incomplete_expired', 'incomplete_expired'), ('past_due', 'past_due'), ('canceled', 'canceled'), ('unpaid', 'unpaid')], max_length=18)),
-                ('created_at', models.DateTimeField()),
-                ('renewed_at', models.DateTimeField()),
-                ('plan', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='cjworkbench.Plan')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='subscriptions', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("stripe_subscription_id", models.SlugField(unique=True)),
+                (
+                    "stripe_status",
+                    models.CharField(
+                        choices=[
+                            ("trialing", "trialing"),
+                            ("active", "active"),
+                            ("incomplete", "incomplete"),
+                            ("incomplete_expired", "incomplete_expired"),
+                            ("past_due", "past_due"),
+                            ("canceled", "canceled"),
+                            ("unpaid", "unpaid"),
+                        ],
+                        max_length=18,
+                    ),
+                ),
+                ("created_at", models.DateTimeField()),
+                ("renewed_at", models.DateTimeField()),
+                (
+                    "plan",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="cjworkbench.Plan",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="subscriptions",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'subscription',
+                "db_table": "subscription",
             },
         ),
     ]
