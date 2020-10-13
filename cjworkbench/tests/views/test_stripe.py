@@ -197,12 +197,9 @@ class CreateBillingPortalSessionTest(DbTestCase):
         response = self.client.post("/stripe/create-billing-portal-session")
         self.assertEqual(response.status_code, 302)  # redirect to login
 
-    @override_settings(STRIPE_API_KEY="key_123")
     def test_404_no_stripe_customer_id(self):
-        response = self.client.post(
-            "/stripe/create-billing-portal-session",
-            create_user(stripe_customer_id=None),
-        )
+        self.client.force_login(create_user(stripe_customer_id=None))
+        response = self.client.post("/stripe/create-billing-portal-session")
         self.assertEqual(response.status_code, 404)
 
     @patch.object(
