@@ -1,6 +1,7 @@
 import json
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest, JsonResponse, Http404
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
@@ -31,29 +32,34 @@ def webhook(request: HttpRequest) -> HttpResponse:
 
     Ref: https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
     """
-    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+    try:
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+    except KeyError:
+        return HttpResponse(
+            "Missing Stripe-Signature HTTP header",
+            content_type="text/plain; charset=utf-8",
+            status=400,
+        )
 
     try:
         event = stripe.Webhook.construct_event(
             request.body, sig_header, settings.STRIPE_WEBHOOK_SIGNING_SECRET
         )
+        obj = event["data"]["object"]
     except (ValueError, stripe.error.SignatureVerificationError) as e:
-        return HttpResponse(status=400)
+        return HttpResponse(
+            str(e), content_type="text/plain; charset=utf-8", status=400
+        )
 
     if event["type"] == "checkout.session.completed":
-        checkout_session = event["data"]["object"]
         # raise on error
-        cjworkbench.models.stripe.handle_checkout_session_completed(checkout_session)
+        cjworkbench.models.stripe.handle_checkout_session_completed(obj)
     elif event["type"] == "customer.subscription.deleted":
-        subscription = event["data"]["object"]
         # raise on error
-        cjworkbench.models.stripe.handle_customer_subscription_deleted(subscription)
+        cjworkbench.models.stripe.handle_customer_subscription_deleted(obj)
     elif event["type"] == "customer.subscription.updated":
-        subscription = event["data"]["object"]
         # raise on error
-        cjworkbench.models.stripe.handle_customer_subscription_updated(subscription)
-    else:
-        event["data"]["object"]
+        cjworkbench.models.stripe.handle_customer_subscription_updated(obj)
 
     response = HttpResponse(status=204)
     if settings.DEBUG:
@@ -65,6 +71,7 @@ def webhook(request: HttpRequest) -> HttpResponse:
 
 
 @never_cache
+@login_required
 @require_POST
 def create_checkout_session(request: HttpRequest) -> HttpResponse:
     """Return a Stripe `checkout.session` object.
@@ -74,9 +81,14 @@ def create_checkout_session(request: HttpRequest) -> HttpResponse:
 
     TODO unit-test
     """
+    if not hasattr(settings, "STRIPE_PUBLIC_API_KEY") or not hasattr(
+        settings, "STRIPE_API_KEY"
+    ):
+        raise Http404("Stripe is disabled: there is no API key")
+
     plans = list(Plan.objects.all())
     if len(plans) == 0:
-        raise Http404("Stripe is disabled")
+        raise Http404("Stripe is disabled: there are no plans")
     elif len(plans) > 1:
         raise RuntimeError(
             "There are too many Stripe plans! We only support one for now"
@@ -96,6 +108,7 @@ def create_checkout_session(request: HttpRequest) -> HttpResponse:
 
 
 @never_cache
+@login_required
 @require_POST
 def create_billing_portal_session(request: HttpRequest) -> HttpResponse:
     """Return a Stripe `checkout.session` object.
