@@ -2107,6 +2107,71 @@ msgstr ""
 msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr ""
 
+#. default-message: Manage Subscriptions
+#: assets/js/settings/Billing/ManageBilling.js:17
+msgid "js.settings.Billing.ManageBilling.buttonText"
+msgstr ""
+
+#. default-message: Active
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:7
+msgid "js.settings.Billing.StripeSubscriptionStatus.active"
+msgstr ""
+
+#. default-message: Canceled
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:11
+msgid "js.settings.Billing.StripeSubscriptionStatus.canceled"
+msgstr ""
+
+#. default-message: Incomplete
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:8
+msgid "js.settings.Billing.StripeSubscriptionStatus.incomplete"
+msgstr ""
+
+#. default-message: Expired
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:9
+msgid "js.settings.Billing.StripeSubscriptionStatus.incomplete_expired"
+msgstr ""
+
+#. default-message: Past due
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:10
+msgid "js.settings.Billing.StripeSubscriptionStatus.past_due"
+msgstr ""
+
+#. default-message: Trialing
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:6
+msgid "js.settings.Billing.StripeSubscriptionStatus.trialing"
+msgstr ""
+
+#. default-message: Unpaid
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:12
+msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
+msgstr ""
+
+#. default-message: Subscribe
+#: assets/js/settings/Billing/Subscribe.js:17
+msgid "js.settings.Billing.Subscribe.buttonText"
+msgstr ""
+
+#. default-message: Subscribed
+#: assets/js/settings/Billing/Subscription.js:20
+msgid "js.settings.Billing.Subscription.createdAt"
+msgstr ""
+
+#. default-message: Last Renewed
+#: assets/js/settings/Billing/Subscription.js:22
+msgid "js.settings.Billing.Subscription.status"
+msgstr ""
+
+#. default-message: Status
+#: assets/js/settings/Billing/Subscription.js:18
+msgid "js.settings.Billing.Subscription.stripeStatus"
+msgstr ""
+
+#. default-message: Billing
+#: assets/js/settings/Billing/index.js:12
+msgid "js.settings.Billing.h1"
+msgstr ""
+
 #. default-message: Clean Text
 #: assets/js/table/ColumnContextMenu.js:52
 msgid "js.table.ColumnContextMenu.cleanText"

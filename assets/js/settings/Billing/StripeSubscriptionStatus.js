@@ -9,7 +9,7 @@ const StripeStatusMessages = {
   incomplete_expired: t('js.settings.Billing.StripeSubscriptionStatus.incomplete_expired')`Expired`,
   past_due: t('js.settings.Billing.StripeSubscriptionStatus.past_due')`Past due`,
   canceled: t('js.settings.Billing.StripeSubscriptionStatus.canceled')`Canceled`,
-  unpaid: t('js.settings.Billing.StripeSubscriptionStatus.canceled')`Unpaid`
+  unpaid: t('js.settings.Billing.StripeSubscriptionStatus.unpaid')`Unpaid`
 }
 
 export default function StripeSubscriptionStatus (props) {

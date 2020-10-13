@@ -1781,6 +1781,58 @@ msgstr "Name"
 msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr "If"
 
+#: assets/js/settings/Billing/ManageBilling.js:17
+msgid "js.settings.Billing.ManageBilling.buttonText"
+msgstr "Manage Subscriptions"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:7
+msgid "js.settings.Billing.StripeSubscriptionStatus.active"
+msgstr "Active"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:11
+msgid "js.settings.Billing.StripeSubscriptionStatus.canceled"
+msgstr "Canceled"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:8
+msgid "js.settings.Billing.StripeSubscriptionStatus.incomplete"
+msgstr "Incomplete"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:9
+msgid "js.settings.Billing.StripeSubscriptionStatus.incomplete_expired"
+msgstr "Expired"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:10
+msgid "js.settings.Billing.StripeSubscriptionStatus.past_due"
+msgstr "Past due"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:6
+msgid "js.settings.Billing.StripeSubscriptionStatus.trialing"
+msgstr "Trialing"
+
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:12
+msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
+msgstr "Unpaid"
+
+#: assets/js/settings/Billing/Subscribe.js:17
+msgid "js.settings.Billing.Subscribe.buttonText"
+msgstr "Subscribe"
+
+#: assets/js/settings/Billing/Subscription.js:20
+msgid "js.settings.Billing.Subscription.createdAt"
+msgstr "Subscribed"
+
+#: assets/js/settings/Billing/Subscription.js:22
+msgid "js.settings.Billing.Subscription.status"
+msgstr "Last Renewed"
+
+#: assets/js/settings/Billing/Subscription.js:18
+msgid "js.settings.Billing.Subscription.stripeStatus"
+msgstr "Status"
+
+#: assets/js/settings/Billing/index.js:12
+msgid "js.settings.Billing.h1"
+msgstr "Billing"
+
 #: assets/js/table/ColumnContextMenu.js:52
 msgid "js.table.ColumnContextMenu.cleanText"
 msgstr "Clean Text"
