@@ -103,6 +103,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             "api-key",
         ),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_value_error_when_two_items(self, retrieve_subscription):
         plan = create_plan(stripe_product_id="prod_123")
         user = create_user(stripe_customer_id="cus_123")
@@ -131,6 +132,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             "api-key",
         ),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_plan_does_not_exist(self, retrieve_subscription):
         plan = create_plan(stripe_product_id="prod_321")  # wrong ID
         user = create_user(stripe_customer_id="cus_123")
@@ -159,6 +161,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             "api-key",
         ),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_user_profile_does_not_exist(self, retrieve_subscription):
         plan = create_plan(stripe_product_id="prod_123")
         user = create_user(stripe_customer_id="cus_321")  # wrong user
@@ -322,6 +325,7 @@ class TestCreateCheckoutSession(DbTestCase):
         "create",
         return_value=stripe.Customer.construct_from({"id": "cus_123"}, "api-key"),
     )
+    @override_settings(STRIPE_API_KEY="key_123")
     def test_assign_new_customer_before_stripe_checkout_session_error(
         self, create_customer, create_session
     ):
