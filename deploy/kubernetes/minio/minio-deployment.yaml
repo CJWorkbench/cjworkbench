@@ -1,6 +1,6 @@
 # https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/kubernetes-yaml/minio-gcs-gateway-deployment.yaml
 # On production, we use Google Cloud Storage to store data.
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   # This name uniquely identifies the Deployment
@@ -38,11 +38,11 @@ spec:
         - --json
         resources:
           requests:
-            cpu: 0.1
-            memory: 150Mi
+            cpu: 0.25
+            memory: 250Mi
           limits:
             cpu: 0.25
-            memory: 150Mi
+            memory: 250Mi
         env:
         - name: MY_NAMESPACE
           valueFrom:
