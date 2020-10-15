@@ -29,12 +29,13 @@ spec:
       containers:
       - name: minio
         # Pulls the default Minio image from Docker Hub
-        image: minio/minio:RELEASE.2020-02-27T00-23-05Z
+        image: minio/minio:RELEASE.2020-10-12T21-53-21Z
         args:
         - --certs-dir
         - /etc/minio/etcd-ssl
         - gateway
         - gcs
+        - --json
         resources:
           requests:
             cpu: 0.1
