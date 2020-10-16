@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Checkbox from '../Checkbox'
 import Multicolumn from '../Multicolumn'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
@@ -34,19 +35,27 @@ export class JoinColumns extends React.PureComponent {
     selectedTab: PropTypes.string // slug, may be null
   }
 
-  handleChangeOn = (colnames) => {
+  handleChangeOn = (on) => {
     const { onChange, value } = this.props
     onChange({
       ...value,
-      on: colnames
+      on
     })
   }
 
-  handleChangeRight = (colnames) => {
+  handleChangeRight = (right) => {
     const { onChange, value } = this.props
     onChange({
       ...value,
-      right: colnames
+      right
+    })
+  }
+
+  handleChangeRightAll = (rightAll) => {
+    const { onChange, value } = this.props
+    onChange({
+      ...value,
+      rightAll
     })
   }
 
@@ -63,26 +72,42 @@ export class JoinColumns extends React.PureComponent {
 
     return (
       <>
-        <Multicolumn
-          isReadOnly={isReadOnly}
-          name={`${name}[on]`}
-          fieldId={`${fieldId}_on`}
-          onChange={this.handleChangeOn}
-          label={i18n._(/* i18n: This refers to a join operation, as the term join is used in SQL database language. It is followed by one or more column names. */t('js.params.Custom.JoinColumns.joinOn')`Join on`)}
-          inputColumns={bothColumns}
-          addMenuListClassName='join-on'
-          noOptionsMessage={rightTab ? i18n._(/* i18n: The parameter will contain a tab name */t('js.params.Custom.JoinColumns.noColumnToJoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`) : undefined}
-          value={value.on}
-        />
-        <Multicolumn
-          isReadOnly={isReadOnly}
-          name={`${name}[right]`}
-          fieldId={`${fieldId}_right`}
-          onChange={this.handleChangeRight}
-          label={i18n._(t('js.params.Custom.JoinColumns.addColumns')`Add columns`)}
-          inputColumns={rightColumnsNotInOn}
-          value={value.right}
-        />
+        <div className='param param-multicolumn'>
+          <Multicolumn
+            isReadOnly={isReadOnly}
+            name={`${name}[on]`}
+            fieldId={`${fieldId}_on`}
+            onChange={this.handleChangeOn}
+            label={i18n._(/* i18n: This refers to a join operation, as the term join is used in SQL database language. It is followed by one or more column names. */t('js.params.Custom.JoinColumns.joinOn')`Join on`)}
+            inputColumns={bothColumns}
+            addMenuListClassName='join-on'
+            noOptionsMessage={rightTab ? i18n._(/* i18n: The parameter will contain a tab name */t('js.params.Custom.JoinColumns.noColumnToJoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`) : undefined}
+            value={value.on}
+          />
+        </div>
+        {value.rightAll ? null : (
+          <div className='param param-multicolumn'>
+            <Multicolumn
+              isReadOnly={isReadOnly}
+              name={`${name}[right]`}
+              fieldId={`${fieldId}_right`}
+              onChange={this.handleChangeRight}
+              label={i18n._(t('js.params.Custom.JoinColumns.addColumns')`Add columns`)}
+              inputColumns={rightColumnsNotInOn}
+              value={value.right}
+            />
+          </div>
+        )}
+        <div className='param param-checkbox'>
+          <Checkbox
+            isReadOnly={isReadOnly}
+            name={`${name}[rightAll]`}
+            fieldId={`${fieldId}_rightAll`}
+            onChange={this.handleChangeRightAll}
+            label={i18n._(t('js.params.Custom.JoinColumns.addAllColumns')`Add all columns`)}
+            value={value.rightAll}
+          />
+        </div>
       </>
     )
   }
