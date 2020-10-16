@@ -1208,21 +1208,26 @@ msgstr ""
 msgid "js.params.Custom.Groups.groupDates"
 msgstr ""
 
+#. default-message: Add all columns
+#: assets/js/params/Custom/JoinColumns.js:107
+msgid "js.params.Custom.JoinColumns.addAllColumns"
+msgstr ""
+
 #. default-message: Add columns
-#: assets/js/params/Custom/JoinColumns.js:82
+#: assets/js/params/Custom/JoinColumns.js:95
 msgid "js.params.Custom.JoinColumns.addColumns"
 msgstr ""
 
 #. This refers to a join operation, as the term join is used in SQL database
 #. language. It is followed by one or more column names.
 #. default-message: Join on
-#: assets/js/params/Custom/JoinColumns.js:71
+#: assets/js/params/Custom/JoinColumns.js:81
 msgid "js.params.Custom.JoinColumns.joinOn"
 msgstr ""
 
 #. The parameter will contain a tab name
 #. default-message: There is no column to join on in {0}. Columns in both tabs must have identical names and capitalization. Please edit column names.
-#: assets/js/params/Custom/JoinColumns.js:74
+#: assets/js/params/Custom/JoinColumns.js:84
 msgid "js.params.Custom.JoinColumns.noColumnToJoin"
 msgstr ""
 

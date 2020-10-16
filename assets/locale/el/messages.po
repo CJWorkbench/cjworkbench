@@ -1029,18 +1029,22 @@ msgstr "Λεπτομέρεια της στήλης “{colname}”"
 msgid "js.params.Custom.Groups.groupDates"
 msgstr "Ομαδοποίηση ημερομηνιών"
 
-#: assets/js/params/Custom/JoinColumns.js:82
+#: assets/js/params/Custom/JoinColumns.js:107
+msgid "js.params.Custom.JoinColumns.addAllColumns"
+msgstr ""
+
+#: assets/js/params/Custom/JoinColumns.js:95
 msgid "js.params.Custom.JoinColumns.addColumns"
 msgstr "Προσθήκη στηλών"
 
 #. This refers to a join operation, as the term join is used in SQL database
 #. language. It is followed by one or more column names.
-#: assets/js/params/Custom/JoinColumns.js:71
+#: assets/js/params/Custom/JoinColumns.js:81
 msgid "js.params.Custom.JoinColumns.joinOn"
 msgstr "Συνένωση βάσει"
 
 #. The parameter will contain a tab name
-#: assets/js/params/Custom/JoinColumns.js:74
+#: assets/js/params/Custom/JoinColumns.js:84
 msgid "js.params.Custom.JoinColumns.noColumnToJoin"
 msgstr ""
 "Δεν υπάρχει στήλη για να ενωθεί στην {0}. Οι στήλες και στις δύο καρτέλες"
