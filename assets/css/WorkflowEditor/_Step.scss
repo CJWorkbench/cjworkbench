@@ -66,7 +66,7 @@
       }
 
       &:hover .context-buttons {
-        a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
+        a.help-button, button.edit-note, button.delete-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
           opacity: 1;
         }
       }
@@ -238,6 +238,7 @@
       }
 
       .module-name {
+        flex: 1 1 auto; // take all the width possible
         @include title-3;
         color: $brand-text--dark;
       }
@@ -253,10 +254,10 @@
         cursor: pointer;
         opacity: 1;
         &:hover {
-            .context-collapse-button {
-              opacity: 1;
-            }
+          .context-collapse-button {
+            opacity: 1;
           }
+        }
 
         i.icon-caret-right {font-size:1rem;}
 
@@ -287,14 +288,11 @@
 
       .context-buttons {
         align-items: center;
-        flex: 1 0 auto; // grow to the right
-        text-align: right;
+        flex: 0 0 auto; // fixed space
         white-space: nowrap;
         margin-right: .5rem;
 
-        &>a, &>button, &>label, &>.dropdown>button {
-          // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
-          // sure these rules don't conflict when nested. (e.g., no `opacity`)
+        &>a, &>button, &>label {
           display: inline-block;
           font-size: 1.2rem;
           width: 2.2rem;
@@ -312,11 +310,6 @@
             color: $brand-text--dark;
             background-color: $dark-accent--soft;
           }
-        }
-        //menu button when focused and menu visisble
-        .btn-secondary:focus {
-          background-color:$Vlight-gray;
-          color:$dark-gray;
         }
 
         button.notifications {
@@ -346,8 +339,8 @@
           }
         }
 
-        a.help-button, button.edit-note, button.context-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
-          opacity: 0; // only show context buttons when hovering over wf-card
+        a.help-button, button.edit-note, button.delete-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
+          opacity: .2; // only show context buttons when hovering over step card
         }
 
         i.icon-help {
@@ -357,19 +350,9 @@
 
         .edit-note {
           margin-left: .1rem;
-          margin-right:.2rem;
+          margin-right: .2rem;
           i.icon-note {
             margin-left: .2rem;
-          }
-        }
-
-        .dropdown {
-          margin-top: .2rem;
-          display: inline-block;
-          margin-left: -.3rem;
-
-          i.icon-more {
-            position: relative;
           }
         }
 

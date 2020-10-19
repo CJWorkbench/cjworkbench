@@ -3,7 +3,6 @@
 import React from 'react'
 import DataVersionModal from '../DataVersionModal'
 import ErrorBoundary from '../../ErrorBoundary'
-import StepContextMenu from './StepContextMenu'
 import ParamsForm from '../../params/ParamsForm'
 import EditableNotes from '../../EditableNotes'
 import DeprecationNotice from './DeprecationNotice'
@@ -166,7 +165,7 @@ export class Step extends React.PureComponent {
     })
   }
 
-  deleteStep = () => {
+  handleClickDelete = () => {
     this.props.deleteStep(this.props.step.id)
   }
 
@@ -404,28 +403,18 @@ export class Step extends React.PureComponent {
       )
     }
 
-    let contextMenu = null
+    let deleteIcon = null
     if (!this.props.isReadOnly) {
-      contextMenu = (
-        <StepContextMenu
-          deleteStep={this.deleteStep}
-          id={step.id}
-        />
+      deleteIcon = (
+        <button
+          title={i18n._(t('js.WorkflowEditor.step.delete.hoverText')`Delete`)}
+          className='btn delete-button'
+          onClick={this.handleClickDelete}
+        >
+          <i className='icon-bin' />
+        </button>
       )
     }
-
-    // Set opacity to 0/1 instead of just not rendering these elements, so that any children that these
-    // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
-    // Fixes https://www.pivotaltracker.com/story/show/154033690
-    const contextBtns = (
-      <div className='context-buttons'>
-        {this.renderZenModeButton()}
-        {alertButton}
-        {helpIcon}
-        {notesIcon}
-        {contextMenu}
-      </div>
-    )
 
     const moduleIconClassName = 'icon-' + moduleIcon + ' module-icon'
 
@@ -469,7 +458,13 @@ export class Step extends React.PureComponent {
                 />
                 <i className={moduleIconClassName} />
                 <div className='module-name'>{moduleName}</div>
-                {contextBtns}
+                <div className='context-buttons'>
+                  {this.renderZenModeButton()}
+                  {alertButton}
+                  {helpIcon}
+                  {notesIcon}
+                  {deleteIcon}
+                </div>
               </div>
               {(!isReadOnly) ? (
                 <DeprecationNotice

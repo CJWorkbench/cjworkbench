@@ -554,54 +554,43 @@ msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/step/Step.js:359
+#: assets/js/WorkflowEditor/step/Step.js:358
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
-#. When clicked, this opens a menu with more actions.
-#. default-message: more
-#: assets/js/WorkflowEditor/step/StepContextMenu.js:17
-msgid "js.WorkflowEditor.step.StepContextMenu.more.hoverText"
-msgstr ""
-
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:242
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:242
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/step/Step.js:376
+#: assets/js/WorkflowEditor/step/Step.js:375
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/step/Step.js:376
+#: assets/js/WorkflowEditor/step/Step.js:375
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
+#. default-message: Delete
+#: assets/js/WorkflowEditor/step/Step.js:410
+msgid "js.WorkflowEditor.step.delete.hoverText"
+msgstr ""
+
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/step/Step.js:388
+#: assets/js/WorkflowEditor/step/Step.js:387
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/step/Step.js:398
+#: assets/js/WorkflowEditor/step/Step.js:397
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
-msgstr ""
-
-#. default-message: Delete
-#: assets/js/WorkflowEditor/step/StepContextMenu.js:22
-msgid "js.WorkflowEditor.step.stepContextMenu.delete"
-msgstr ""
-
-#. default-message: Export data
-#: assets/js/WorkflowEditor/step/StepContextMenu.js:21
-msgid "js.WorkflowEditor.step.stepContextMenu.exportData"
 msgstr ""
 
 #. default-message: Training

@@ -80,10 +80,15 @@ exports[`Step, not read-only mode matches snapshot 1`] = `
                 className="icon-note"
               />
             </button>
-            <WithI18n
-              deleteStep={[Function]}
-              id={999}
-            />
+            <button
+              className="btn delete-button"
+              onClick={[Function]}
+              title="Delete"
+            >
+              <i
+                className="icon-bin"
+              />
+            </button>
           </div>
         </div>
         <DeprecationMessage

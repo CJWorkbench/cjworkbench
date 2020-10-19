@@ -494,46 +494,37 @@ msgstr "Καρτέλα"
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
-#: assets/js/WorkflowEditor/step/Step.js:359
+#: assets/js/WorkflowEditor/step/Step.js:358
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
-#. When clicked, this opens a menu with more actions.
-#: assets/js/WorkflowEditor/step/StepContextMenu.js:17
-msgid "js.WorkflowEditor.step.StepContextMenu.more.hoverText"
-msgstr "περισσότερα"
-
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:242
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "είσοδος σε λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:242
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "έξοδος από λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:376
+#: assets/js/WorkflowEditor/step/Step.js:375
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
-#: assets/js/WorkflowEditor/step/Step.js:376
+#: assets/js/WorkflowEditor/step/Step.js:375
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
-#: assets/js/WorkflowEditor/step/Step.js:388
+#: assets/js/WorkflowEditor/step/Step.js:410
+msgid "js.WorkflowEditor.step.delete.hoverText"
+msgstr "Διαγραφή"
+
+#: assets/js/WorkflowEditor/step/Step.js:387
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
-#: assets/js/WorkflowEditor/step/Step.js:398
+#: assets/js/WorkflowEditor/step/Step.js:397
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
-
-#: assets/js/WorkflowEditor/step/StepContextMenu.js:22
-msgid "js.WorkflowEditor.step.stepContextMenu.delete"
-msgstr "Διαγραφή"
-
-#: assets/js/WorkflowEditor/step/StepContextMenu.js:21
-msgid "js.WorkflowEditor.step.stepContextMenu.exportData"
-msgstr "Εξαγωγή δεδομένων"
 
 #: assets/js/WorkflowNavBar.js:22
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
