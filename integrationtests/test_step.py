@@ -22,7 +22,7 @@ class TestStep(LoggedInIntegrationTest):
         b.hover_over_element(".module-name")
         b.assert_element('a[title="Help for this module"]')
         b.assert_element('button[title="Edit Note"]')
-        b.assert_element("button[title=more]")
+        b.assert_element('button[title="Delete"]')
 
     def test_export(self):
         b = self.browser
@@ -30,8 +30,7 @@ class TestStep(LoggedInIntegrationTest):
         self.add_csv_data_module()
 
         b.hover_over_element(".module-card-header", wait=True)
-        b.click_button("more")
-        b.click_button("Export")
+        b.click_button("EXPORT", wait=True)  # Wait for data to load
 
         # Wait for modal to appear
         b.assert_element("a[download][href$=csv]", wait=True)

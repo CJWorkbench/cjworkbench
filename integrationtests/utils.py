@@ -107,9 +107,10 @@ class WorkbenchBase(unittest.TestCase):
 
         The first module has `position == 0`.
         """
-        self.browser.click_button(
-            f".step:nth-child({position * 2 + 1}) .delete-button"
-        )
+        b = self.browser
+
+        with b.scope(f".step:nth-child({position * 2 + 1})"):
+            b.click_button("Delete")
 
     # TODO move to a helper .py file
     def add_csv_data_module(self, csv=None):

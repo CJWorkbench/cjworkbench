@@ -95,33 +95,19 @@
   }
 
   // button to export data in table header
-
   .export-table {
+    @include action-button();
+    @include button-blue();
 
-    @extend .action-button;
-    @extend .button-blue;
-    color: $workspace-action; 
-    display: flex;
-    align-items: center;
-    margin-right: 2.25rem;
-    margin-left: 2.5rem;
-    border-color: transparent;
-    background-color: white;
-    cursor: pointer;
-
-    &:hover{
-      border: 1px solid;
+    &:not(:hover):not(:focus):not(:active) {
+      // De-buttonize it when nobody's around, so it doesn't distract
+      border-color: transparent;
+      background-color: white;
     }
-    font-size: 1.4rem;
 
     .icon-download {
       font-size: 1.5rem;
-      margin-right:1rem;
-    }
-    .feed {
-      margin-left: 1rem;
-      padding-left: 1rem;
-      border-left: 1px solid $document-blue--light;
+      margin-right: 1rem;
     }
   }
 }

@@ -55,10 +55,10 @@ export default class TableInfo extends React.PureComponent {
 
         {!stepId ? null : (
           <>
-            <div className='export-table' onClick={this.handleClickExport}>
+            <button className='export-table' onClick={this.handleClickExport}>
               <i className='icon-download' />
-              <span><Trans id='js.table.TableInfo.export' description='This should be all-caps for styling reasons'>EXPORT</Trans></span>
-            </div>
+              <Trans id='js.table.TableInfo.export' description='This should be all-caps for styling reasons'>EXPORT</Trans>
+            </button>
             <ExportModal
               open={isExportModalOpen}
               stepId={stepId}
