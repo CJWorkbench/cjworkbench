@@ -107,14 +107,9 @@ class WorkbenchBase(unittest.TestCase):
 
         The first module has `position == 0`.
         """
-        b = self.browser
-
-        with b.scope(f".step:nth-child({position * 2 + 1})"):
-            b.click_button("more", visible="all")
-
-        # Dropdown menu is at root of document (in a <Portal>)
-        with b.scope(".dropdown-menu"):
-            b.click_button("Delete")
+        self.browser.click_button(
+            f".step:nth-child({position * 2 + 1}) .delete-button"
+        )
 
     # TODO move to a helper .py file
     def add_csv_data_module(self, csv=None):
