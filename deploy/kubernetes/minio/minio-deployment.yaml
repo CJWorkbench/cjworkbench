@@ -38,11 +38,11 @@ spec:
         - --json
         resources:
           requests:
-            cpu: 0.25
-            memory: 250Mi
+            cpu: 0.3
+            memory: 512Mi
           limits:
-            cpu: 0.25
-            memory: 250Mi
+            cpu: 0.3
+            memory: 512Mi
         env:
         - name: MY_NAMESPACE
           valueFrom:
