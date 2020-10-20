@@ -15,7 +15,7 @@ class InitWorkflowCommand(Delta):
 
     class Meta:
         app_label = "server"
-        db_table = "server_initworkflowcommand"
+        proxy = True
 
     @classmethod
     def create(cls, workflow):
@@ -31,7 +31,3 @@ class InitWorkflowCommand(Delta):
         workflow.save(update_fields=["last_delta_id"])
 
         return delta
-
-    @property
-    def command_description(self):
-        return f"Create Workflow"

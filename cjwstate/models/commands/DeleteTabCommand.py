@@ -13,9 +13,7 @@ class DeleteTabCommand(Delta):
 
     class Meta:
         app_label = "server"
-        db_table = "server_deletetabcommand"
-
-    tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
+        proxy = True
 
     # override
     def load_clientside_update(self):

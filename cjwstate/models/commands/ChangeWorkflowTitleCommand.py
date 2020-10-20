@@ -5,17 +5,14 @@ from cjwstate.models import Delta
 class ChangeWorkflowTitleCommand(Delta):
     class Meta:
         app_label = "server"
-        db_table = "server_changeworkflowtitlecommand"
-
-    new_value = models.TextField("new_value")
-    old_value = models.TextField("old_value")
+        proxy = True
 
     def forward(self):
-        self.workflow.name = self.new_value
+        self.workflow.name = self.values_for_forward["title"]
         self.workflow.save(update_fields=["name"])
 
     def backward(self):
-        self.workflow.name = self.old_value
+        self.workflow.name = self.values_for_backward["title"]
         self.workflow.save(update_fields=["name"])
 
     # override
@@ -27,10 +24,6 @@ class ChangeWorkflowTitleCommand(Delta):
         return {
             **kwargs,
             "workflow": workflow,
-            "old_value": workflow.name,
-            "new_value": new_value,
+            "values_for_backward": {"title": workflow.name},
+            "values_for_forward": {"title": new_value},
         }
-
-    @property
-    def command_description(self):
-        return f"Change workflow name to {self.new_value}"

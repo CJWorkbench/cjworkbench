@@ -13,12 +13,7 @@ class SetTabNameCommand(ChangesStepOutputs, Delta):
 
     class Meta:
         app_label = "server"
-        db_table = "server_settabnamecommand"
-
-    tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
-    old_name = models.TextField()
-    new_name = models.TextField()
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+        proxy = True
 
     # override
     def load_clientside_update(self):
@@ -29,13 +24,13 @@ class SetTabNameCommand(ChangesStepOutputs, Delta):
         )
 
     def forward(self):
-        self.tab.name = self.new_name
+        self.tab.name = self.values_for_forward["name"]
         self.tab.save(update_fields=["name"])
         self.forward_affected_delta_ids()
 
     def backward(self):
         self.backward_affected_delta_ids()
-        self.tab.name = self.old_name
+        self.tab.name = self.values_for_backward["name"]
         self.tab.save(update_fields=["name"])
 
     @classmethod
@@ -55,7 +50,7 @@ class SetTabNameCommand(ChangesStepOutputs, Delta):
         return {
             "workflow": workflow,
             "tab": tab,
-            "new_name": new_name,
-            "old_name": tab.name,
+            "values_for_backward": {"name": tab.name},
+            "values_for_forward": {"name": new_name},
             "step_delta_ids": step_delta_ids,
         }

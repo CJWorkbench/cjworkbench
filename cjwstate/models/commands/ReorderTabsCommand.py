@@ -11,11 +11,15 @@ class ReorderTabsCommand(ChangesStepOutputs, Delta):
 
     class Meta:
         app_label = "server"
-        db_table = "server_reordertabscommand"
+        proxy = True
 
-    old_order = ArrayField(models.IntegerField())
-    new_order = ArrayField(models.IntegerField())
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+    @property
+    def _old_order(self):
+        return self.values_for_backward["tab_ids"]
+
+    @property
+    def _new_order(self):
+        return self.values_for_forward["tab_ids"]
 
     # override
     def load_clientside_update(self):
@@ -50,14 +54,14 @@ class ReorderTabsCommand(ChangesStepOutputs, Delta):
             self.workflow.save(update_fields=["selected_tab_position"])
 
     def forward(self):
-        self._write_order(self.new_order)
-        self._update_selected_position(self.old_order, self.new_order)
+        self._write_order(self._new_order)
+        self._update_selected_position(self._old_order, self._new_order)
         self.forward_affected_delta_ids()
 
     def backward(self):
         self.backward_affected_delta_ids()
-        self._write_order(self.old_order)
-        self._update_selected_position(self.new_order, self.old_order)
+        self._write_order(self.values_for_backward["tab_ids"])
+        self._update_selected_position(self._new_order, self._old_order)
 
     @classmethod
     def affected_step_delta_ids(
@@ -122,7 +126,7 @@ class ReorderTabsCommand(ChangesStepOutputs, Delta):
 
         return {
             "workflow": workflow,
-            "new_order": new_order,
-            "old_order": old_order,
+            "values_for_backward": {"tab_ids": old_order},
+            "values_for_forward": {"tab_ids": new_order},
             "step_delta_ids": step_delta_ids,
         }

@@ -6,18 +6,14 @@ from ..step import Step
 class ChangeStepNotesCommand(Delta):
     class Meta:
         app_label = "server"
-        db_table = "server_changestepnotescommand"
-
-    step = models.ForeignKey(Step, on_delete=models.PROTECT)
-    new_value = models.TextField("new_value")
-    old_value = models.TextField("old_value")
+        proxy = True
 
     def forward(self):
-        self.step.notes = self.new_value
+        self.step.notes = self.values_for_forward["note"]
         self.step.save(update_fields=["notes"])
 
     def backward(self):
-        self.step.notes = self.old_value
+        self.step.notes = self.values_for_backward["note"]
         self.step.save(update_fields=["notes"])
 
     # override
@@ -39,10 +35,6 @@ class ChangeStepNotesCommand(Delta):
         return {
             **kwargs,
             "step": step,
-            "old_value": old_value,
-            "new_value": new_value,
+            "values_for_backward": {"note": old_value},
+            "values_for_forward": {"note": new_value},
         }
-
-    @property
-    def command_description(self):
-        return f"Change Step note to {self.new_value}"

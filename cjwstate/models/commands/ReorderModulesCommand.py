@@ -9,13 +9,7 @@ class ReorderModulesCommand(ChangesStepOutputs, Delta):
 
     class Meta:
         app_label = "server"
-        db_table = "server_reordermodulescommand"
-
-    tab = models.ForeignKey("Tab", on_delete=models.PROTECT)
-    # We use a bizarre legacy data format: JSON [ { id: x, order: y}, ... ]
-    old_order = models.TextField()
-    new_order = models.TextField()
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+        proxy = True
 
     # override
     def load_clientside_update(self):
@@ -29,20 +23,16 @@ class ReorderModulesCommand(ChangesStepOutputs, Delta):
         )
 
     def apply_order(self, order):
-        # We validated Workflow IDs back in `.amend_create_args()`
+        # We validated Step IDs back in `.amend_create_args()`
         for record in order:
             self.tab.steps.filter(pk=record["id"]).update(order=record["order"])
 
     def forward(self):
-        new_order = json.loads(self.new_order)
-        self.apply_order(new_order)
-
+        self.apply_order(self.values_for_forward["legacy_format"])
         self.forward_affected_delta_ids()
 
     def backward(self):
-        old_order = json.loads(self.old_order)
-        self.apply_order(old_order)
-
+        self.apply_order(self.values_for_backward["legacy_format"])
         self.backward_affected_delta_ids()
 
     @classmethod
@@ -66,7 +56,7 @@ class ReorderModulesCommand(ChangesStepOutputs, Delta):
             return None
 
         # Now write an icky JSON format instead of our nice lists
-        # TODO simply write arrays to the database.
+        # TODO store arrays of slugs
         old_order_dicts = [
             {"id": id, "order": order} for order, id in enumerate(old_order)
         ]
@@ -86,11 +76,7 @@ class ReorderModulesCommand(ChangesStepOutputs, Delta):
             **kwargs,
             "workflow": workflow,
             "tab": tab,
-            "old_order": json.dumps(old_order_dicts),
-            "new_order": json.dumps(new_order_dicts),
+            "values_for_backward": {"legacy_format": old_order_dicts},
+            "values_for_forward": {"legacy_format": new_order_dicts},
             "step_delta_ids": step_delta_ids,
         }
-
-    @property
-    def command_description(self):
-        return f"Reorder modules to {self.new_order}"

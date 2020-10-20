@@ -14,27 +14,9 @@ class AddModuleCommand(ChangesStepOutputs, Delta):
     soft-deleted Steps does not exist.
     """
 
-    # Foreign keys can get a bit confusing. Here we go:
-    #
-    # * AddModuleCommand can only exist if its Step exists.
-    # * Step depends on Workflow.
-    # * AddModuleCommand depends on Workflow.
-    #
-    # So it's safe to delete Commands from a Workflow (as long as the workflow
-    # has at least one delta). But it's not safe to delete Steps from a
-    # workflow -- unless one clears the Deltas first.
-    #
-    # We set on_delete=PROTECT because if we set on_delete=CASCADE we'd be
-    # ambiguous: should one delete the Step first, or the Delta? The answer
-    # is: you _must_ delete the Delta first; after deleting the Delta, you
-    # _may_ delete the Step.
-
     class Meta:
         app_label = "server"
-        db_table = "server_addmodulecommand"
-
-    step = models.ForeignKey(Step, on_delete=models.PROTECT)
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+        proxy = True
 
     # override
     def load_clientside_update(self):
@@ -166,7 +148,3 @@ class AddModuleCommand(ChangesStepOutputs, Delta):
             "step": step,
             "step_delta_ids": cls.affected_step_delta_ids(step),
         }
-
-    @property
-    def command_description(self):
-        return f"Add Step {self.step}"

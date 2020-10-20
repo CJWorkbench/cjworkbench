@@ -14,15 +14,10 @@ logger = logging.getLogger(__name__)
 class ChangeParametersCommand(ChangesStepOutputs, Delta):
     class Meta:
         app_label = "server"
-        db_table = "server_changeparameterscommand"
-
-    step = models.ForeignKey(Step, on_delete=models.PROTECT)
-    old_values = JSONField("old_values")  # _all_ params
-    new_values = JSONField("new_values")  # only _changed_ params
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+        proxy = True
 
     def forward(self):
-        self.step.params = self.new_values
+        self.step.params = self.values_for_forward["params"]
         self.step.cached_migrated_params = None
         self.step.cached_migrated_params_module_version = None
         self.step.save(
@@ -35,7 +30,7 @@ class ChangeParametersCommand(ChangesStepOutputs, Delta):
         self.forward_affected_delta_ids()
 
     def backward(self):
-        self.step.params = self.old_values
+        self.step.params = self.values_for_backward["params"]
         self.step.cached_migrated_params = None
         self.step.cached_migrated_params_module_version = None
         self.step.save(
@@ -66,11 +61,10 @@ class ChangeParametersCommand(ChangesStepOutputs, Delta):
 
     @classmethod
     def amend_create_kwargs(cls, *, step, new_values, **kwargs):
-        """
-        Prepare `old_values` and `new_values`.
+        """Prepare values_for_backward|forward["params"].
 
-        Raise ValueError if `new_values` won't be valid according to the module
-        spec.
+        Raise ValueError if `values_for_forward["params"]` won't be valid
+        according to the module spec.
         """
         if cls.step_is_deleted(step):  # refreshes from DB
             return None
@@ -106,11 +100,7 @@ class ChangeParametersCommand(ChangesStepOutputs, Delta):
         return {
             **kwargs,
             "step": step,
-            "new_values": new_values,
-            "old_values": old_values,
+            "values_for_backward": {"params": old_values},
+            "values_for_forward": {"params": new_values},
             "step_delta_ids": cls.affected_step_delta_ids(step),
         }
-
-    @property
-    def command_description(self):
-        return "Change params"

@@ -4,38 +4,22 @@ from cjwstate.models import Delta, Tab, Workflow
 
 
 class AddTabCommand(Delta):
-    """
-    Create a `Tab` and insert it into the Workflow.
+    """Create a `Tab` and insert it into the Workflow.
 
     Our "backwards()" logic is to "soft-delete": set `tab.is_deleted=True`.
     Most facets of Workbench's API should pretend a soft-deleted Tab does not
     exist.
     """
 
-    # Foreign keys can get a bit confusing. Here we go:
-    #
-    # * AddTabCommand can only exist if its Tab exists.
-    # * Tab depends on Workflow.
-    # * AddTabCommand depends on Workflow.
-    #
-    # So it's safe to delete Commands from a Workflow (as long as the workflow
-    # has at least one delta). But it's not safe to delete Tabs -- unless one
-    # clears the Deltas first.
-    #
-    # We set on_delete=PROTECT because if we set on_delete=CASCADE we'd be
-    # ambiguous: should one delete the Tab first, or the Delta? The answer is:
-    # you _must_ delete the Delta first; after deleting the Delta, you _may_
-    # delete the Tab.
-    #
-    # TODO nix soft-deleting Tabs and Steps; instead, give DeleteTabCommand
-    # all the info it needs to undo itself. Change this field to `tab_slug`.
-
     class Meta:
         app_label = "server"
-        db_table = "server_addtabcommand"
+        proxy = True
 
-    tab = models.ForeignKey(Tab, on_delete=models.PROTECT)
-    old_selected_tab_position = models.IntegerField()
+    @property
+    def old_selected_tab_position(self):
+        ret = self.values_for_backward["old_selected_tab_position"]
+        assert type(ret) == int
+        return ret
 
     # override
     def load_clientside_update(self):
@@ -86,5 +70,7 @@ class AddTabCommand(Delta):
         return {
             "workflow": workflow,
             "tab": tab,
-            "old_selected_tab_position": workflow.selected_tab_position,
+            "values_for_backward": {
+                "old_selected_tab_position": workflow.selected_tab_position,
+            },
         }

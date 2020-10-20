@@ -119,19 +119,6 @@ class AccountAdmin:
     def clear_data_from_previous_tests(self):
         """Delete all accounts and related data."""
         _Tables = [
-            "server_addmodulecommand",
-            "server_addtabcommand",
-            "server_changedataversioncommand",
-            "server_changeparameterscommand",
-            "server_changestepnotescommand",
-            "server_changeworkflowtitlecommand",
-            "server_deletemodulecommand",
-            "server_deletetabcommand",
-            "server_duplicatetabcommand",
-            "server_reordermodulescommand",
-            "server_reordertabscommand",
-            "server_settabnamecommand",
-            "server_initworkflowcommand",
             "acl_entry",
             "delta",
             "stored_object",

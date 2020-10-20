@@ -1,4 +1,8 @@
+import datetime
+
+import dateutil.parser
 from django.db import models
+
 from ..delta import Delta
 from ..step import Step
 from .util import ChangesStepOutputs
@@ -7,21 +11,22 @@ from .util import ChangesStepOutputs
 class ChangeDataVersionCommand(ChangesStepOutputs, Delta):
     class Meta:
         app_label = "server"
-        db_table = "server_changedataversioncommand"
-
-    step = models.ForeignKey(Step, on_delete=models.PROTECT)
-    # may not have had a previous version
-    old_version = models.DateTimeField("old_version", null=True)
-    new_version = models.DateTimeField("new_version")
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+        proxy = True
 
     def forward(self):
-        self.step.stored_data_version = self.new_version
+        self.step.stored_data_version = dateutil.parser.isoparse(
+            self.values_for_forward["version"]
+        )
         self.step.save(update_fields=["stored_data_version"])
         self.forward_affected_delta_ids()
 
     def backward(self):
-        self.step.stored_data_version = self.old_version
+        old_version_str = self.values_for_backward["version"]
+        if old_version_str is None:
+            old_version = None
+        else:
+            old_version = dateutil.parser.isoparse(old_version_str)
+        self.step.stored_data_version = old_version
         self.step.save(update_fields=["stored_data_version"])
         self.backward_affected_delta_ids()
 
@@ -31,14 +36,27 @@ class ChangeDataVersionCommand(ChangesStepOutputs, Delta):
         return True
 
     @classmethod
-    def amend_create_kwargs(cls, *, step, **kwargs):
+    def amend_create_kwargs(cls, *, step, new_version, **kwargs):
+        old_version = step.stored_data_version
+        if old_version is None:
+            old_version_str = None
+        else:
+            old_version_str = (
+                old_version.astimezone(datetime.timezone.utc)
+                .isoformat()
+                .replace("+00:00", "Z")
+            )
+
+        new_version_str = (
+            new_version.astimezone(datetime.timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
+
         return {
             **kwargs,
             "step": step,
-            "old_version": step.stored_data_version,
+            "values_for_backward": {"version": old_version_str},
+            "values_for_forward": {"version": new_version_str},
             "step_delta_ids": cls.affected_step_delta_ids(step),
         }
-
-    @property
-    def command_description(self):
-        return f"Change Step[{self.step_id}] data version to {self.new_version}"

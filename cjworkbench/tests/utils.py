@@ -77,19 +77,6 @@ class DbTestCase(SimpleTestCase):
 
 
 _Tables = [
-    "server_addmodulecommand",
-    "server_addtabcommand",
-    "server_changedataversioncommand",
-    "server_changeparameterscommand",
-    "server_changestepnotescommand",
-    "server_changeworkflowtitlecommand",
-    "server_deletemodulecommand",
-    "server_deletetabcommand",
-    "server_duplicatetabcommand",
-    "server_reordermodulescommand",
-    "server_reordertabscommand",
-    "server_settabnamecommand",
-    "server_initworkflowcommand",
     "acl_entry",
     "delta",
     "module_version",

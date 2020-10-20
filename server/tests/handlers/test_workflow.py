@@ -26,8 +26,8 @@ class WorkflowTest(HandlerTestCase):
         self.assertResponse(response, data=None)
 
         command = ChangeWorkflowTitleCommand.objects.first()
-        self.assertEqual(command.new_value, "B")
-        self.assertEqual(command.old_value, "A")
+        self.assertEqual(command.values_for_forward, {"title": "B"})
+        self.assertEqual(command.values_for_backward, {"title": "A"})
 
         workflow.refresh_from_db()
         self.assertEqual(workflow.name, "B")

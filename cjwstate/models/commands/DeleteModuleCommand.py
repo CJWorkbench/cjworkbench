@@ -15,10 +15,7 @@ class DeleteModuleCommand(ChangesStepOutputs, Delta):
 
     class Meta:
         app_label = "server"
-        db_table = "server_deletemodulecommand"
-
-    step = models.ForeignKey(Step, on_delete=models.PROTECT)
-    step_delta_ids = ChangesStepOutputs.step_delta_ids
+        proxy = True
 
     # override
     def load_clientside_update(self):
@@ -87,10 +84,6 @@ class DeleteModuleCommand(ChangesStepOutputs, Delta):
             "step": step,
             "step_delta_ids": cls.affected_step_delta_ids(step),
         }
-
-    @property
-    def command_description(self):
-        return f"Delete Step {self.step}"
 
 
 # You may be wondering why there's no @receiver(pre_delete, ...) here. That's

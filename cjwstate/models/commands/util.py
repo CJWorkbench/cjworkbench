@@ -142,7 +142,7 @@ class ChangesStepOutputs:
         for step_id, delta_id in self._changed_step_versions:
             data = data.update_step(step_id, last_relevant_delta_id=delta_id)
 
-        if hasattr(self, "step"):
+        if self.step is not None:  # some Commands use it, some don't
             if self.step.is_deleted or self.step.tab.is_deleted:
                 # When we did or undid this command, we removed the
                 # Step from the Workflow.

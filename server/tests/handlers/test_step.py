@@ -88,8 +88,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertResponse(response, data=None)
 
         command = ChangeParametersCommand.objects.first()
-        self.assertEquals(command.new_values, {"foo": "bar"})
-        self.assertEquals(command.old_values, {"foo": ""})
+        self.assertEquals(command.values_for_forward, {"params": {"foo": "bar"}})
+        self.assertEquals(command.values_for_backward, {"params": {"foo": ""}})
         self.assertEquals(command.step_id, step.id)
         self.assertEquals(command.workflow_id, workflow.id)
         step.refresh_from_db()
@@ -146,7 +146,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             )
         self.assertResponse(response, data=None)
         command = ChangeParametersCommand.objects.first()
-        self.assertEquals(command.new_values, {"foo": "br"})
+        self.assertEquals(command.values_for_forward, {"params": {"foo": "br"}})
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
@@ -348,8 +348,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertResponse(response, data=None)
 
         command = ChangeStepNotesCommand.objects.first()
-        self.assertEquals(command.new_value, "B")
-        self.assertEquals(command.old_value, "A")
+        self.assertEquals(command.values_for_forward, {"note": "B"})
+        self.assertEquals(command.values_for_backward, {"note": "A"})
         self.assertEquals(command.step_id, step.id)
         self.assertEquals(command.workflow_id, workflow.id)
 
