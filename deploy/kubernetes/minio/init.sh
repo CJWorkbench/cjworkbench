@@ -106,6 +106,9 @@ rm "$DIR"/*.{crt,csr,key,srl}
 
 kubectl apply -f "$DIR"/minio-etcd-statefulset.yaml
 
+sleep 60
+kubectl set env statefulset/minio-etcd ETCD_INITIAL_CLUSTER_STATE=existing
+
 # We'll use openssl rand to generate a password that only uses base64
 # characters. Then we'll base64-encode it for use in kubectl commands.
 kubectl create secret generic minio-access-key \
