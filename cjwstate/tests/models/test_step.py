@@ -4,7 +4,7 @@ from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -74,7 +74,7 @@ class StepTests(DbTestCase):
         )
 
         workflow2 = Workflow.create_and_init()
-        InitWorkflowCommand.create(workflow2)
+        InitWorkflow.create(workflow2)
         tab2 = workflow2.tabs.create(position=0)
         step2 = step.duplicate_into_new_workflow(tab2)
 

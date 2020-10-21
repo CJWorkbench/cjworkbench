@@ -5,11 +5,7 @@ import uuid
 from django.contrib.auth.models import User
 from cjwstate import commands, minio
 from cjwstate.models.workflow import Workflow, DependencyGraph
-from cjwstate.models.commands import (
-    InitWorkflowCommand,
-    AddModuleCommand,
-    ChangeWorkflowTitleCommand,
-)
+from cjwstate.models.commands import InitWorkflow, AddStep, SetWorkflowTitle
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -62,7 +58,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(wf2.owner, self.bob)
         self.assertEqual(wf2.name, "Copy of Foo")
         self.assertEqual(wf2.deltas.all().count(), 1)
-        self.assertIsInstance(wf2.last_delta, InitWorkflowCommand)
+        self.assertEqual(wf2.last_delta.command_name, InitWorkflow.__name__)
         self.assertFalse(wf2.public)
         self.assertEqual(wf1.tabs.first().steps.count(), wf2.tabs.first().steps.count())
 
@@ -122,28 +118,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name="A")
         tab = workflow.tabs.create(position=0)
-        self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="B"
-            )
-        )
-        create_module_zipfile("x")
-        self.run_with_async_db(
-            commands.do(
-                AddModuleCommand,
-                workflow_id=workflow.id,
-                tab=tab,
-                slug="step-1",
-                module_id_name="x",
-                position=0,
-                param_values={},
-            )
-        )
-        self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="C"
-            )
-        )
         workflow.delete()
         self.assertTrue(True)  # no crash
 

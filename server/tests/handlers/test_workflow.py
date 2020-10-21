@@ -8,7 +8,7 @@ from server.handlers.workflow import (
 )
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import ChangeWorkflowTitleCommand
+from cjwstate.models.commands import SetWorkflowTitle
 from .util import HandlerTestCase
 
 
@@ -25,9 +25,9 @@ class WorkflowTest(HandlerTestCase):
         response = self.run_handler(set_name, user=user, workflow=workflow, name="B")
         self.assertResponse(response, data=None)
 
-        command = ChangeWorkflowTitleCommand.objects.first()
-        self.assertEqual(command.values_for_forward, {"title": "B"})
-        self.assertEqual(command.values_for_backward, {"title": "A"})
+        delta = workflow.deltas.last()
+        self.assertEqual(delta.values_for_forward, {"title": "B"})
+        self.assertEqual(delta.values_for_backward, {"title": "A"})
 
         workflow.refresh_from_db()
         self.assertEqual(workflow.name, "B")

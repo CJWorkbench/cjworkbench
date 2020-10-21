@@ -178,7 +178,6 @@ INSTALLED_APPS = [
     "channels",
     "webpack_loader",
     "rest_framework",
-    "polymorphic",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",

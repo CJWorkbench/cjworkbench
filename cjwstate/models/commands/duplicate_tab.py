@@ -1,9 +1,10 @@
-from django.db import models, IntegrityError
+from django.db import IntegrityError
 from django.db.models import F
-from cjwstate.models import Delta, Tab, Workflow
+
+from .base import BaseCommand
 
 
-class DuplicateTabCommand(Delta):
+class DuplicateTab(BaseCommand):
     """Create a `Tab` copying the contents of another Tab.
 
     Our "backwards()" logic is to "soft-delete": set `tab.is_deleted=True`.
@@ -11,63 +12,53 @@ class DuplicateTabCommand(Delta):
     exist.
     """
 
-    class Meta:
-        app_label = "server"
-        proxy = True
-
-    @property
-    def old_selected_tab_position(self):
-        ret = self.values_for_backward["old_selected_tab_position"]
-        assert type(ret) == int
-        return ret
-
-    # override
-    def load_clientside_update(self):
+    def load_clientside_update(self, delta):
         data = (
             super()
-            .load_clientside_update()
+            .load_clientside_update(delta)
             .update_workflow(
-                tab_slugs=list(self.workflow.live_tabs.values_list("slug", flat=True))
+                tab_slugs=list(delta.workflow.live_tabs.values_list("slug", flat=True))
             )
         )
-        if self.tab.is_deleted:
+        if delta.tab.is_deleted:
             step_ids = list(
                 # tab.live_steps can be nonempty even when tab.is_deleted
-                self.tab.live_steps.values_list("id", flat=True)
+                delta.tab.live_steps.values_list("id", flat=True)
             )
-            return data.clear_tab(self.tab.slug).clear_steps(step_ids)
+            return data.clear_tab(delta.tab.slug).clear_steps(step_ids)
         else:
             return data.replace_tab(
-                self.tab.slug, self.tab.to_clientside()
+                delta.tab.slug, delta.tab.to_clientside()
             ).replace_steps(
-                {step.id: step.to_clientside() for step in self.tab.live_steps}
+                {step.id: step.to_clientside() for step in delta.tab.live_steps}
             )
 
-    def forward(self):
-        self.workflow.live_tabs.filter(position__gte=self.tab.position).update(
+    def forward(self, delta):
+        delta.workflow.live_tabs.filter(position__gte=delta.tab.position).update(
             position=F("position") + 1
         )
 
-        self.tab.is_deleted = False
-        self.tab.save(update_fields=["is_deleted"])
+        delta.tab.is_deleted = False
+        delta.tab.save(update_fields=["is_deleted"])
 
-        self.workflow.selected_tab_position = self.tab.position
-        self.workflow.save(update_fields=["selected_tab_position"])
+        delta.workflow.selected_tab_position = delta.tab.position
+        delta.workflow.save(update_fields=["selected_tab_position"])
 
-    def backward(self):
-        self.tab.is_deleted = True
-        self.tab.save(update_fields=["is_deleted"])
+    def backward(self, delta):
+        delta.tab.is_deleted = True
+        delta.tab.save(update_fields=["is_deleted"])
 
-        self.workflow.live_tabs.filter(position__gt=self.tab.position).update(
+        delta.workflow.live_tabs.filter(position__gt=delta.tab.position).update(
             position=F("position") - 1
         )
 
         # We know old_selected_tab_position is valid, always
-        self.workflow.selected_tab_position = self.old_selected_tab_position
-        self.workflow.save(update_fields=["selected_tab_position"])
+        delta.workflow.selected_tab_position = delta.values_for_backward[
+            "old_selected_tab_position"
+        ]
+        delta.workflow.save(update_fields=["selected_tab_position"])
 
-    # override
-    def get_modifies_render_output(self) -> bool:
+    def get_modifies_render_output(self, delta) -> bool:
         """Execute if we added a module that isn't rendered.
 
         The common case -- duplicating an already-rendered tab, or possibly an
@@ -79,14 +70,13 @@ class DuplicateTabCommand(Delta):
 
         This must be called in a `workflow.cooperative_lock()`.
         """
-        return not self.tab.is_deleted and any(
+        return not delta.tab.is_deleted and any(
             step.last_relevant_delta_id != step.cached_render_result_delta_id
-            for step in self.tab.live_steps.all()
+            for step in delta.tab.live_steps.all()
         )
 
-    @classmethod
     def amend_create_kwargs(
-        cls, *, workflow: Workflow, from_tab: Tab, slug: str, name: str
+        self, *, workflow: "Workflow", from_tab: "Tab", slug: str, name: str
     ):
         """Create a duplicate of `from_tab`."""
         # tab starts off "deleted" and appears at end of tabs list; we

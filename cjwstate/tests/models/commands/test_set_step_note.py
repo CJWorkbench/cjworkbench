@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import ChangeStepNotesCommand
+from cjwstate.models.commands import SetStepNote
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -11,7 +11,7 @@ async def async_noop(*args, **kwargs):
 
 @patch.object(commands, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
-class ChangeStepNotesCommandTests(DbTestCase):
+class SetStepNoteTests(DbTestCase):
     def test_change_notes(self):
         workflow = Workflow.create_and_init()
         step = workflow.tabs.first().steps.create(
@@ -24,7 +24,7 @@ class ChangeStepNotesCommandTests(DbTestCase):
         # do
         cmd = self.run_with_async_db(
             commands.do(
-                ChangeStepNotesCommand,
+                SetStepNote,
                 workflow_id=workflow.id,
                 step=step,
                 new_value="text2",

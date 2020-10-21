@@ -514,7 +514,7 @@ registerReducerFunc(REQUEST_STEP_FETCH + '_FULFILLED', (state, action) => {
   // Set the Step to 'busy' on the client side.
   //
   // A fetch might cause _all_ Steps to become busy on the server, if it
-  // kicks off a ChangeDataVersionCommand. If it doesn't, the other Steps
+  // kicks off a SetStepDataVersion command. If it doesn't, the other Steps
   // will stay as they are. Let's not pre-emptively update those _other_
   // Step statuses, lest the server never tell us they won't change.
   return {

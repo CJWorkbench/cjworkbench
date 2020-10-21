@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Delta, Step, Workflow
-from cjwstate.models.commands import ChangeDataVersionCommand
+from cjwstate.models.commands import SetStepDataVersion, NAME_TO_COMMAND
 
 
 async def websockets_notify(workflow_id: int, update: clientside.Update) -> None:
@@ -35,13 +35,13 @@ async def _maybe_queue_render(
     """
     Tell renderer to render workflow; return immediately.
 
-    `delta` is used to check for ChangeDataVersionCommand, which gets special
+    `delta` is used to check for SetStepDataVersion, which gets special
     logic. But to be clear: the `delta` in question might have been undo()-ne.
     We are queueing a render of version `workflow.last_delta_id`, which may or
     may not be `delta.id`.
     """
-    if isinstance(delta, ChangeDataVersionCommand):
-        # ChangeDataVersionCommand is often created from a fetch, and fetches
+    if delta.command_name == SetStepDataVersion.__name__:
+        # SetStepDataVersion is often created from a fetch, and fetches
         # are often invoked by cron. These can be our most resource-intensive
         # operations: e.g., Twitter-accumulate with 1M records. So let's use
         # lazy rendering.
@@ -96,10 +96,11 @@ def _first_forward_and_save_returning_clientside_update(
     This is how `cls.amend_create_kwargs()` suggests the Delta should not be
     created at all.
     """
+    command = NAME_TO_COMMAND[cls.__name__]
     # raises Workflow.DoesNotExist
     with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
         workflow = workflow_lock.workflow
-        create_kwargs = cls.amend_create_kwargs(workflow=workflow, **kwargs)
+        create_kwargs = command.amend_create_kwargs(workflow=workflow, **kwargs)
         if not create_kwargs:
             return (None, None, False)
 
@@ -111,10 +112,12 @@ def _first_forward_and_save_returning_clientside_update(
         if orphan_delta:
             orphan_delta.delete_with_successors()
 
-        delta = cls.objects.create(
-            prev_delta_id=workflow.last_delta_id, **create_kwargs
+        delta = Delta.objects.create(
+            command_name=cls.__name__,
+            prev_delta_id=workflow.last_delta_id,
+            **create_kwargs,
         )
-        delta.forward()
+        command.forward(delta)
 
         if orphan_delta:
             # We just deleted deltas; now we can garbage-collect Tabs and
@@ -128,8 +131,8 @@ def _first_forward_and_save_returning_clientside_update(
 
         return (
             delta,
-            delta.load_clientside_update(),
-            delta.get_modifies_render_output(),
+            command.load_clientside_update(delta),
+            command.get_modifies_render_output(delta),
         )
 
 
@@ -138,11 +141,15 @@ def _call_forward_and_load_clientside_update(
     delta: Delta,
 ) -> Tuple[clientside.Update, bool]:
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
-        delta.forward()
+        command = NAME_TO_COMMAND[delta.command_name]
+        command.forward(delta)
         delta.workflow.last_delta = delta
         delta.workflow.save(update_fields=["last_delta_id"])
 
-        return (delta.load_clientside_update(), delta.get_modifies_render_output())
+        return (
+            command.load_clientside_update(delta),
+            command.get_modifies_render_output(delta),
+        )
 
 
 @database_sync_to_async
@@ -150,7 +157,8 @@ def _call_backward_and_load_clientside_update(
     delta: Delta,
 ) -> Tuple[clientside.Update, bool]:
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
-        delta.backward()
+        command = NAME_TO_COMMAND[delta.command_name]
+        command.backward(delta)
 
         # Point workflow to previous delta
         # Only update prev_delta_id: other columns may have been edited in
@@ -158,12 +166,14 @@ def _call_backward_and_load_clientside_update(
         delta.workflow.last_delta = delta.prev_delta
         delta.workflow.save(update_fields=["last_delta_id"])
 
-        return (delta.load_clientside_update(), delta.get_modifies_render_output())
+        return (
+            command.load_clientside_update(delta),
+            command.get_modifies_render_output(delta),
+        )
 
 
 async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
-    """
-    Create a Command and run its .forward().
+    """Create a Delta and run its Command's .forward().
 
     If `amend_create_kwargs()` returns `None`, no-op.
 
@@ -175,7 +185,7 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
     Example:
 
         delta = await commands.do(
-            ChangeStepNotesCommand,
+            SetStepNote,
             workflow_id=step.workflow_id,
             # ... other kwargs
         )
@@ -202,9 +212,7 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
 
 
 async def redo(delta: Delta) -> None:
-    """
-    Call delta.forward(); notify websockets and renderer.
-    """
+    """Call delta.forward(); notify websockets and renderer."""
     # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
     update, want_render = await _call_forward_and_load_clientside_update(delta)
     await websockets_notify(delta.workflow_id, update)
@@ -214,9 +222,7 @@ async def redo(delta: Delta) -> None:
 
 
 async def undo(delta: Delta) -> None:
-    """
-    Call delta.backward(); notify websockets and renderer.
-    """
+    """Call delta.backward(); notify websockets and renderer."""
     # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
     update, want_render = await _call_backward_and_load_clientside_update(delta)
     await websockets_notify(delta.workflow_id, update)

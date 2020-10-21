@@ -10,7 +10,7 @@ from django.template.response import TemplateResponse
 import server.utils
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from server.models.course import Course, CourseLookup, AllCoursesByLocale
 from server.models.lesson import (
@@ -113,7 +113,7 @@ def _ensure_workflow(request, lesson: Lesson):
 
 
 def _init_workflow_for_lesson(workflow, lesson):
-    InitWorkflowCommand.create(workflow)
+    InitWorkflow.create(workflow)
 
     # Create each step of each tab
     tab_dicts = lesson.initial_workflow.tabs

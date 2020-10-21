@@ -1,42 +1,35 @@
-import json
-from django.db import models
-from cjwstate.models import Delta
+from .base import BaseCommand
 from .util import ChangesStepOutputs
 
 
-class ReorderModulesCommand(ChangesStepOutputs, Delta):
+def _apply_order(tab, order):
+    # We validated Step IDs back in `.amend_create_args()`
+    for record in order:
+        tab.steps.filter(pk=record["id"]).update(order=record["order"])
+
+
+class ReorderSteps(ChangesStepOutputs, BaseCommand):
     """Overwrite step.order for all steps in a tab."""
 
-    class Meta:
-        app_label = "server"
-        proxy = True
-
-    # override
-    def load_clientside_update(self):
+    def load_clientside_update(self, delta):
         return (
             super()
-            .load_clientside_update()
+            .load_clientside_update(delta)
             .update_tab(
-                self.tab.slug,
-                step_ids=list(self.tab.live_steps.values_list("id", flat=True)),
+                delta.tab.slug,
+                step_ids=list(delta.tab.live_steps.values_list("id", flat=True)),
             )
         )
 
-    def apply_order(self, order):
-        # We validated Step IDs back in `.amend_create_args()`
-        for record in order:
-            self.tab.steps.filter(pk=record["id"]).update(order=record["order"])
+    def forward(self, delta):
+        _apply_order(delta.tab, delta.values_for_forward["legacy_format"])
+        self.forward_affected_delta_ids(delta)
 
-    def forward(self):
-        self.apply_order(self.values_for_forward["legacy_format"])
-        self.forward_affected_delta_ids()
+    def backward(self, delta):
+        _apply_order(delta.tab, delta.values_for_backward["legacy_format"])
+        self.backward_affected_delta_ids(delta)
 
-    def backward(self):
-        self.apply_order(self.values_for_backward["legacy_format"])
-        self.backward_affected_delta_ids()
-
-    @classmethod
-    def amend_create_kwargs(cls, *, workflow, tab, new_order, **kwargs):
+    def amend_create_kwargs(self, *, workflow, tab, new_order, **kwargs):
         old_order = tab.live_steps.values_list("id", flat=True)
 
         try:
@@ -70,7 +63,7 @@ class ReorderModulesCommand(ChangesStepOutputs, Delta):
         # This list of Step IDs will be the same (in a different order --
         # order doesn't matter) _after_ update.
         step = tab.live_steps.get(order=min_diff_order)
-        step_delta_ids = cls.affected_step_delta_ids(step)
+        step_delta_ids = self.affected_step_delta_ids(step)
 
         return {
             **kwargs,

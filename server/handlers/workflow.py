@@ -4,7 +4,7 @@ from .types import HandlerError
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import commands
 from cjwstate.models import Tab, Workflow, Step
-from cjwstate.models.commands import ChangeWorkflowTitleCommand, ReorderTabsCommand
+from cjwstate.models.commands import SetWorkflowTitle, ReorderTabs
 from server.versions import WorkflowRedo, WorkflowUndo
 
 
@@ -24,9 +24,7 @@ async def redo(workflow: Workflow, **kwargs):
 @websockets_handler("write")
 async def set_name(workflow: Workflow, name: str, **kwargs):
     name = str(name)  # JSON input cannot cause error here
-    await commands.do(
-        ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value=name
-    )
+    await commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value=name)
 
 
 @database_sync_to_async
@@ -93,9 +91,7 @@ async def set_tab_order(workflow: Workflow, tabSlugs: List[str], **kwargs):
             raise HandlerError("tabSlugs must be an Array of slugs")
 
     try:
-        await commands.do(
-            ReorderTabsCommand, workflow_id=workflow.id, new_order=tabSlugs
-        )
+        await commands.do(ReorderTabs, workflow_id=workflow.id, new_order=tabSlugs)
     except ValueError as err:
         if str(err) == "wrong tab slugs":
             raise HandlerError("wrong tab slugs")

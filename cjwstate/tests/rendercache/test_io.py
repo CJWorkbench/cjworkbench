@@ -15,7 +15,7 @@ from cjwkernel.types import (
 from cjwkernel.tests.util import tempfile_context
 from cjwstate import minio
 from cjwstate.models import Workflow, Step
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import DbTestCase
 from cjwstate.rendercache.io import (
     BUCKET,
@@ -33,7 +33,7 @@ class RendercacheIoTests(DbTestCase):
     def setUp(self):
         super().setUp()
         self.workflow = Workflow.objects.create()
-        self.delta = InitWorkflowCommand.create(self.workflow)
+        self.delta = InitWorkflow.create(self.workflow)
         self.tab = self.workflow.tabs.create(position=0)
         self.step = self.tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=self.delta.id

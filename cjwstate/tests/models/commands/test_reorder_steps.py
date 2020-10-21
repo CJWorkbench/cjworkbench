@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand, ReorderModulesCommand
+from cjwstate.models.commands import InitWorkflow, ReorderSteps
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -11,12 +11,12 @@ async def async_noop(*args, **kwargs):
 
 @patch.object(commands, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
-class ReorderModulesCommandTest(DbTestCase):
+class ReorderStepsTest(DbTestCase):
     def setUp(self):
         super().setUp()
 
         self.workflow = Workflow.objects.create()
-        self.delta = InitWorkflowCommand.create(self.workflow)
+        self.delta = InitWorkflow.create(self.workflow)
         self.tab = self.workflow.tabs.create(position=0, slug="tab-1")
 
     def assertStepVersions(self, expected_versions):
@@ -38,7 +38,7 @@ class ReorderModulesCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderModulesCommand,
+                ReorderSteps,
                 workflow_id=self.workflow.id,
                 tab=self.tab,
                 new_order=[step1.id, step3.id, step2.id],
@@ -91,7 +91,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
-                    ReorderModulesCommand,
+                    ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[step1.id, step3.id, step2.id],
@@ -105,7 +105,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
-                    ReorderModulesCommand,
+                    ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[step1.id + 1],
@@ -116,7 +116,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
-                    ReorderModulesCommand,
+                    ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order={"not": "an array"},
@@ -134,7 +134,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
-                    ReorderModulesCommand,
+                    ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[step1.id],
@@ -152,7 +152,7 @@ class ReorderModulesCommandTest(DbTestCase):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
-                    ReorderModulesCommand,
+                    ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
                     new_order=[step1.id, step1.id],
@@ -169,7 +169,7 @@ class ReorderModulesCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderModulesCommand,
+                ReorderSteps,
                 workflow_id=self.workflow.id,
                 tab=self.tab,
                 new_order=[step1.id, step2.id],

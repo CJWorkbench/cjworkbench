@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import ChangeParametersCommand, InitWorkflowCommand
+from cjwstate.models.commands import SetStepParams, InitWorkflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -16,7 +16,7 @@ async def async_noop(*args, **kwargs):
 
 @patch.object(commands, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
-class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
+class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_change_parameters(self):
         # Setup: workflow with loadurl module
         #
@@ -56,7 +56,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             cmd = self.run_with_async_db(
                 commands.do(
-                    ChangeParametersCommand,
+                    SetStepParams,
                     workflow_id=workflow.id,
                     step=step,
                     new_values={"url": "http://example.com/foo", "has_header": False},
@@ -100,7 +100,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ChangeParametersCommand,
+                SetStepParams,
                 workflow_id=workflow.id,
                 step=step,
                 new_values={"url": "https://example.com"},
@@ -110,7 +110,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
     def test_change_parameters_on_soft_deleted_tab(self):
         workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
+        delta = InitWorkflow.create(workflow)
         tab = workflow.tabs.create(position=0, is_deleted=True)
 
         step = tab.steps.create(
@@ -123,7 +123,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ChangeParametersCommand,
+                SetStepParams,
                 workflow_id=workflow.id,
                 step=step,
                 new_values={"url": "https://example.com"},
@@ -146,7 +146,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ChangeParametersCommand,
+                SetStepParams,
                 workflow_id=workflow.id,
                 step=step,
                 new_values={"url": "https://example.com"},
@@ -159,7 +159,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         # Initialize a Step that used module 'x' version '1' (which we
         # don't need to write in code -- after all, that version might be long
-        # gone when ChangeParametersCommand is called.
+        # gone when SetStepParams is called.
         step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
@@ -195,7 +195,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             cmd = self.run_with_async_db(
                 commands.do(
-                    ChangeParametersCommand,
+                    SetStepParams,
                     workflow_id=workflow.id,
                     step=step,
                     new_values={"x": 2},
@@ -236,7 +236,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
             # Now the user requests to change params, giving an invalid param.
             self.run_with_async_db(
                 commands.do(
-                    ChangeParametersCommand,
+                    SetStepParams,
                     workflow_id=workflow.id,
                     step=step,
                     new_values={"x": "Threeve"},
@@ -275,7 +275,7 @@ class ChangeParametersCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             cmd = self.run_with_async_db(
                 commands.do(
-                    ChangeParametersCommand,
+                    SetStepParams,
                     workflow_id=workflow.id,
                     step=step2,
                     new_values={"x": 2},

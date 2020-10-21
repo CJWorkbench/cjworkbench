@@ -378,7 +378,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         key = upload.get_upload_key()
         minio.put_bytes(upload.Bucket, key, b"1234567")
         with self.assertLogs(level=logging.INFO):
-            # Logs ChangeParametersCommand's migrate_params()
+            # Logs SetStepParams's migrate_params()
             response = self.client.post(
                 f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
                 {"filename": "test.csv"},
@@ -407,7 +407,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(data["uuid"], uuid)
         self.assertEqual(data["name"], "test.csv")
         self.assertEqual(data["size"], 7)
-        # ChangeParametersCommand ran
+        # SetStepParams ran
         step.refresh_from_db()
         self.assertEqual(step.params, {"file": uuid})
         # Send deltas

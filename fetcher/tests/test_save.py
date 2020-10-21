@@ -4,7 +4,7 @@ from cjwkernel.types import FetchResult, I18nMessage, RenderError
 from cjwkernel.tests.util import parquet_file
 from cjwstate import clientside, rabbitmq, storedobjects
 from cjwstate.models import Step, Workflow
-from cjwstate.models.commands import ChangeDataVersionCommand
+from cjwstate.models.commands import SetStepDataVersion
 from cjwstate.tests.utils import DbTestCase
 from fetcher import save
 
@@ -52,7 +52,7 @@ class SaveTests(DbTestCase):
         )
 
         workflow.refresh_from_db()
-        self.assertIsInstance(workflow.last_delta, ChangeDataVersionCommand)
+        self.assertEqual(workflow.last_delta.command_name, SetStepDataVersion.__name__)
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_mark_result_unchanged(self, send_update):

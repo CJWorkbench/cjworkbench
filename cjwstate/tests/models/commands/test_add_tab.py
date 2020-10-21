@@ -2,7 +2,7 @@ import asyncio
 from unittest.mock import patch
 from cjwstate import clientside, commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import AddTabCommand
+from cjwstate.models.commands import AddTab
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -10,12 +10,12 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-class AddTabCommandTest(DbTestCase):
+class AddTabTest(DbTestCase):
     @patch.object(commands, "websockets_notify", async_noop)
     def test_append_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
         cmd = self.run_with_async_db(
-            commands.do(AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="A")
+            commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         new_tab = workflow.live_tabs.get(position=1)
         self.assertEqual(new_tab.name, "A")
@@ -34,7 +34,7 @@ class AddTabCommandTest(DbTestCase):
     def test_no_hard_or_soft_delete_when_deleting_applied_delta(self):
         workflow = Workflow.create_and_init()
         cmd = self.run_with_async_db(
-            commands.do(AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="A")
+            commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         cmd.delete()
         self.assertEquals(workflow.live_tabs.count(), 2)
@@ -47,7 +47,7 @@ class AddTabCommandTest(DbTestCase):
 
         workflow = Workflow.create_and_init(selected_tab_position=0)
         cmd = self.run_with_async_db(
-            commands.do(AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="A")
+            commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         delta1 = send_update.call_args[0][1]
         self.assertEqual(delta1.workflow.tab_slugs, ["tab-1", "tab-2"])

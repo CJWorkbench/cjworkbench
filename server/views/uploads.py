@@ -12,7 +12,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from cjwstate import commands
 from cjwstate.models import InProgressUpload, Workflow, Step
-from cjwstate.models.commands import ChangeParametersCommand
+from cjwstate.models.commands import SetStepParams
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 
@@ -214,7 +214,7 @@ class Upload(View):
             workflow = workflow_lock.workflow
             # sends delta to Websockets clients and queues render.
             async_to_sync(commands.do)(
-                ChangeParametersCommand,
+                SetStepParams,
                 workflow_id=workflow.id,
                 step=step,
                 new_values=want_params,

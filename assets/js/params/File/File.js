@@ -78,7 +78,7 @@ export class File extends React.PureComponent {
         // The upload completed; now change the param server-side. That way
         // the user won't need to click the Go button after upload.
         //
-        // Assumes ChangeParametersCommand allows partial params.
+        // Assumes SetStepParams allows partial params.
         if (result.value && result.value.uuid) { // ignore abort, which wouldn't set value/uuid
           setStepParams(stepId, { [name]: result.value.uuid })
         }

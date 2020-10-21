@@ -10,7 +10,7 @@ from server.handlers.tab import (
 )
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import AddModuleCommand, ReorderModulesCommand
+from cjwstate.models.commands import AddStep, ReorderSteps
 from .util import HandlerTestCase
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
@@ -50,12 +50,12 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertResponse(response, data=None)
 
-        command = AddModuleCommand.objects.first()
-        self.assertEquals(command.step.order, 3)
-        self.assertEquals(command.step.module_id_name, "amodule")
-        self.assertEquals(command.step.params["foo"], "bar")
-        self.assertEquals(command.step.tab.slug, "tab-1")
-        self.assertEquals(command.workflow_id, workflow.id)
+        delta = workflow.deltas.last()
+        self.assertEquals(delta.step.order, 3)
+        self.assertEquals(delta.step.module_id_name, "amodule")
+        self.assertEquals(delta.step.params["foo"], "bar")
+        self.assertEquals(delta.step.tab.slug, "tab-1")
+        self.assertEquals(delta.workflow_id, workflow.id)
 
     def test_add_module_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)  # tab-1
@@ -196,9 +196,8 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertResponse(response, data=None)
 
-        command = ReorderModulesCommand.objects.first()
-        self.assertEquals(command.tab_id, tab.id)
-        self.assertEquals(command.workflow_id, workflow.id)
+        delta = workflow.deltas.last()
+        self.assertEquals(delta.tab_id, tab.id)
 
     def test_reorder_modules_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)

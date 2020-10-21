@@ -8,11 +8,7 @@ from django.test import override_settings
 from django.utils import timezone
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import (
-    ChangeParametersCommand,
-    ChangeStepNotesCommand,
-    DeleteModuleCommand,
-)
+from cjwstate.models.commands import SetStepParams, SetStepNote, DeleteStep
 from server.handlers.step import (
     set_params,
     delete,
@@ -87,11 +83,10 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             )
         self.assertResponse(response, data=None)
 
-        command = ChangeParametersCommand.objects.first()
-        self.assertEquals(command.values_for_forward, {"params": {"foo": "bar"}})
-        self.assertEquals(command.values_for_backward, {"params": {"foo": ""}})
-        self.assertEquals(command.step_id, step.id)
-        self.assertEquals(command.workflow_id, workflow.id)
+        delta = workflow.deltas.filter(command_name=SetStepParams.__name__).first()
+        self.assertEquals(delta.values_for_forward, {"params": {"foo": "bar"}})
+        self.assertEquals(delta.values_for_backward, {"params": {"foo": ""}})
+        self.assertEquals(delta.step_id, step.id)
         step.refresh_from_db()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
@@ -145,8 +140,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
                 values={"foo": "b\x00\x00r"},
             )
         self.assertResponse(response, data=None)
-        command = ChangeParametersCommand.objects.first()
-        self.assertEquals(command.values_for_forward, {"params": {"foo": "br"}})
+        delta = workflow.deltas.last()
+        self.assertEquals(delta.values_for_forward, {"params": {"foo": "br"}})
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
@@ -219,8 +214,9 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertResponse(response, data=None)
 
-        command = DeleteModuleCommand.objects.first()
-        self.assertEquals(command.step_id, step.id)
+        delta = workflow.deltas.last()
+        self.assertEquals(delta.command_name, DeleteStep.__name__)
+        self.assertEquals(delta.step_id, step.id)
         step.refresh_from_db()
         self.assertEqual(step.is_deleted, True)
 
@@ -347,11 +343,11 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertResponse(response, data=None)
 
-        command = ChangeStepNotesCommand.objects.first()
-        self.assertEquals(command.values_for_forward, {"note": "B"})
-        self.assertEquals(command.values_for_backward, {"note": "A"})
-        self.assertEquals(command.step_id, step.id)
-        self.assertEquals(command.workflow_id, workflow.id)
+        delta = workflow.deltas.last()
+        self.assertEquals(delta.values_for_forward, {"note": "B"})
+        self.assertEquals(delta.values_for_backward, {"note": "A"})
+        self.assertEquals(delta.step_id, step.id)
+        self.assertEquals(delta.workflow_id, workflow.id)
 
         step.refresh_from_db()
         self.assertEqual(step.notes, "B")

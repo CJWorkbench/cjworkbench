@@ -2,7 +2,7 @@ from django.db.models import F
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import commands
 from cjwstate.models import Delta, Workflow
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 
 
 @database_sync_to_async
@@ -39,7 +39,7 @@ async def WorkflowUndo(workflow_id: int):
     except Delta.DoesNotExist:
         return
 
-    if not isinstance(delta, InitWorkflowCommand):
+    if delta.command_name != InitWorkflow.__name__:
         await commands.undo(delta)  # uses cooperative_lock()
 
 

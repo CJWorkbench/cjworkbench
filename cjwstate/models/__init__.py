@@ -8,4 +8,3 @@ from .delta import Delta
 from .uploaded_file import UploadedFile
 from .stored_object import StoredObject
 from .in_progress_upload import InProgressUpload
-from . import commands

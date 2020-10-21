@@ -11,10 +11,10 @@ from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
 from cjwstate.models import Workflow, Step
 from cjwstate.models.commands import (
-    ChangeParametersCommand,
-    DeleteModuleCommand,
-    ChangeDataVersionCommand,
-    ChangeStepNotesCommand,
+    SetStepParams,
+    DeleteStep,
+    SetStepDataVersion,
+    SetStepNote,
 )
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.param_spec import ParamSpec
@@ -107,10 +107,7 @@ async def set_params(workflow: Workflow, step: Step, values: Dict[str, Any], **k
 
     try:
         await commands.do(
-            ChangeParametersCommand,
-            workflow_id=workflow.id,
-            step=step,
-            new_values=values,
+            SetStepParams, workflow_id=workflow.id, step=step, new_values=values
         )
     except ValueError as err:
         raise HandlerError("ValueError: " + str(err))
@@ -120,7 +117,7 @@ async def set_params(workflow: Workflow, step: Step, values: Dict[str, Any], **k
 @websockets_handler("write")
 @_loading_step
 async def delete(workflow: Workflow, step: Step, **kwargs):
-    await commands.do(DeleteModuleCommand, workflow_id=workflow.id, step=step)
+    await commands.do(DeleteStep, workflow_id=workflow.id, step=step)
 
 
 @database_sync_to_async
@@ -165,7 +162,7 @@ async def set_stored_data_version(
     version = await _find_precise_version(step, version)
 
     await commands.do(
-        ChangeDataVersionCommand,
+        SetStepDataVersion,
         workflow_id=workflow.id,
         step=step,
         new_version=version,
@@ -180,7 +177,7 @@ async def set_stored_data_version(
 async def set_notes(workflow: Workflow, step: Step, notes: str, **kwargs):
     notes = str(notes)  # cannot error from JSON input
     await commands.do(
-        ChangeStepNotesCommand,
+        SetStepNote,
         workflow_id=workflow.id,
         step=step,
         new_value=notes,

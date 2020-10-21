@@ -210,7 +210,7 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
             # Let's double-check. This will handle edge cases such as "we wiped
             # our caches" or maybe some bugs we haven't thought of.
             #
-            # This isn't just for bug recovery. ChangeDataVersionCommand won't
+            # This isn't just for bug recovery. SetStepDataVersion won't
             # queue_render until a client requests it.
             async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
 

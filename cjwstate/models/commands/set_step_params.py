@@ -1,72 +1,62 @@
-import logging
-from django.contrib.postgres.fields import JSONField
-from django.db import models
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.params import invoke_migrate_params
-from ..delta import Delta
-from ..step import Step
+from .base import BaseCommand
 from .util import ChangesStepOutputs
 
 
-logger = logging.getLogger(__name__)
+def _step_is_deleted(step):
+    """Return True iff we cannot add commands to `step`."""
+    from ..step import Step
+
+    try:
+        step.refresh_from_db()
+    except Step.DoesNotExist:
+        return True
+
+    if step.is_deleted:
+        return True
+
+    step.tab.refresh_from_db()
+    if step.tab.is_deleted:
+        return True
+
+    return False
 
 
-class ChangeParametersCommand(ChangesStepOutputs, Delta):
-    class Meta:
-        app_label = "server"
-        proxy = True
-
-    def forward(self):
-        self.step.params = self.values_for_forward["params"]
-        self.step.cached_migrated_params = None
-        self.step.cached_migrated_params_module_version = None
-        self.step.save(
+class SetStepParams(ChangesStepOutputs, BaseCommand):
+    def forward(self, delta):
+        delta.step.params = delta.values_for_forward["params"]
+        delta.step.cached_migrated_params = None
+        delta.step.cached_migrated_params_module_version = None
+        delta.step.save(
             update_fields=[
                 "params",
                 "cached_migrated_params",
                 "cached_migrated_params_module_version",
             ]
         )
-        self.forward_affected_delta_ids()
+        self.forward_affected_delta_ids(delta)
 
-    def backward(self):
-        self.step.params = self.values_for_backward["params"]
-        self.step.cached_migrated_params = None
-        self.step.cached_migrated_params_module_version = None
-        self.step.save(
+    def backward(self, delta):
+        delta.step.params = delta.values_for_backward["params"]
+        delta.step.cached_migrated_params = None
+        delta.step.cached_migrated_params_module_version = None
+        delta.step.save(
             update_fields=[
                 "params",
                 "cached_migrated_params",
                 "cached_migrated_params_module_version",
             ]
         )
-        self.backward_affected_delta_ids()
+        self.backward_affected_delta_ids(delta)
 
-    @classmethod
-    def step_is_deleted(self, step):
-        """Return True iff we cannot add commands to `step`."""
-        try:
-            step.refresh_from_db()
-        except Step.DoesNotExist:
-            return True
-
-        if step.is_deleted:
-            return True
-
-        step.tab.refresh_from_db()
-        if step.tab.is_deleted:
-            return True
-
-        return False
-
-    @classmethod
-    def amend_create_kwargs(cls, *, step, new_values, **kwargs):
+    def amend_create_kwargs(self, *, step, new_values, **kwargs):
         """Prepare values_for_backward|forward["params"].
 
         Raise ValueError if `values_for_forward["params"]` won't be valid
         according to the module spec.
         """
-        if cls.step_is_deleted(step):  # refreshes from DB
+        if _step_is_deleted(step):  # refreshes from DB
             return None
 
         try:
@@ -102,5 +92,5 @@ class ChangeParametersCommand(ChangesStepOutputs, Delta):
             "step": step,
             "values_for_backward": {"params": old_values},
             "values_for_forward": {"params": new_values},
-            "step_delta_ids": cls.affected_step_delta_ids(step),
+            "step_delta_ids": self.affected_step_delta_ids(step),
         }

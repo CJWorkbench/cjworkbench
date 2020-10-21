@@ -3,7 +3,7 @@ from unittest.mock import patch
 from django.utils import timezone
 from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import ChangeDataVersionCommand
+from cjwstate.models.commands import SetStepDataVersion
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -16,7 +16,7 @@ future_none.set_result(None)
 
 
 @patch.object(commands, "websockets_notify", async_noop)
-class ChangeDataVersionCommandTests(DbTestCase):
+class SetStepParamsTests(DbTestCase):
     def setUp(self):
         super().setUp()
 
@@ -43,7 +43,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
         # Change back to first version
         cmd = self.run_with_async_db(
             commands.do(
-                ChangeDataVersionCommand,
+                SetStepDataVersion,
                 workflow_id=self.workflow.id,
                 step=self.step,
                 new_version=date1,
@@ -79,7 +79,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
 
         delta = self.run_with_async_db(
             commands.do(
-                ChangeDataVersionCommand,
+                SetStepDataVersion,
                 workflow_id=self.workflow.id,
                 step=self.step,
                 new_version=date2,
@@ -106,7 +106,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
 
         delta = self.run_with_async_db(
             commands.do(
-                ChangeDataVersionCommand,
+                SetStepDataVersion,
                 workflow_id=self.workflow.id,
                 step=self.step,
                 new_version=date2,
@@ -139,7 +139,7 @@ class ChangeDataVersionCommandTests(DbTestCase):
 
         delta = self.run_with_async_db(
             commands.do(
-                ChangeDataVersionCommand,
+                SetStepDataVersion,
                 workflow_id=self.workflow.id,
                 step=self.step,
                 new_version=date2,

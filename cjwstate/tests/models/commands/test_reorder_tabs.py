@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import ReorderTabsCommand
+from cjwstate.models.commands import ReorderTabs
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -20,7 +20,7 @@ class MockLoadedModule:
         return params  # no-op
 
 
-class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
+class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(commands, "websockets_notify", async_noop)
     @patch.object(commands, "queue_render", async_noop)
     def test_reorder_slugs(self):
@@ -30,7 +30,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderTabsCommand,
+                ReorderTabs,
                 workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
@@ -62,7 +62,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderTabsCommand,
+                ReorderTabs,
                 workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
@@ -102,7 +102,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderTabsCommand,
+                ReorderTabs,
                 workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
@@ -122,7 +122,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.run_with_async_db(
             commands.do(
-                ReorderTabsCommand,
+                ReorderTabs,
                 workflow_id=workflow.id,
                 new_order=["tab-3", "tab-1", "tab-2"],
             )
@@ -138,7 +138,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
-                    ReorderTabsCommand,
+                    ReorderTabs,
                     workflow_id=workflow.id,
                     new_order=["tab-1", "tab-1", "tab-2"],
                 )
@@ -150,9 +150,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
-                commands.do(
-                    ReorderTabsCommand, workflow_id=workflow.id, new_order=["tab-1"]
-                )
+                commands.do(ReorderTabs, workflow_id=workflow.id, new_order=["tab-1"])
             )
 
     def test_no_op(self):
@@ -161,7 +159,7 @@ class ReorderTabsCommandTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderTabsCommand,
+                ReorderTabs,
                 workflow_id=workflow.id,
                 new_order=["tab-1", "tab-2"],
             )

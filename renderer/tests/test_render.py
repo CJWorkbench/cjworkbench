@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from unittest.mock import Mock, patch
 from cjworkbench.pg_render_locker import WorkflowAlreadyLocked
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import DbTestCase
 from renderer import execute
 from renderer.render import handle_render, render_workflow_and_maybe_requeue
@@ -70,7 +70,7 @@ class RenderTest(DbTestCase):
     def test_render_happy_path(self, execute):
         execute.side_effect = async_noop
         workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
+        delta = InitWorkflow.create(workflow)
         ack = Mock(name="ack", side_effect=async_noop)
         requeue = Mock(name="requeue", side_effect=async_noop)
 
@@ -89,7 +89,7 @@ class RenderTest(DbTestCase):
     def test_render_other_renderer_rendering_so_skip(self, execute):
         execute.side_effect = async_noop
         workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
+        delta = InitWorkflow.create(workflow)
         ack = Mock(name="ack", side_effect=async_noop)
         requeue = Mock(name="requeue", side_effect=async_noop)
 
@@ -120,7 +120,7 @@ class RenderTest(DbTestCase):
         # raises something it shouldn't raise.
         execute.side_effect = FileNotFoundError
         workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
+        delta = InitWorkflow.create(workflow)
         ack = Mock(name="ack", side_effect=async_noop)
         requeue = Mock(name="requeue", side_effect=async_noop)
 
@@ -174,7 +174,7 @@ class RenderTest(DbTestCase):
     def test_render_unneeded_execution_so_requeue(self, mock_execute):
         mock_execute.side_effect = async_err(execute.UnneededExecution)
         workflow = Workflow.objects.create()
-        delta = InitWorkflowCommand.create(workflow)
+        delta = InitWorkflow.create(workflow)
         ack = Mock(name="ack", side_effect=async_noop)
         requeue = Mock(name="requeue", side_effect=async_noop)
 

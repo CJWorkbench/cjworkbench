@@ -2,14 +2,10 @@ import asyncio
 from unittest.mock import patch
 from cjwstate.models import Delta, Tab, Workflow, Step
 
-# We'll use ChangeWorkflowTitleCommand and ChangeStepNotes as "canonical"
+# We'll use SetWorkflowTitle and ChangeStepNotes as "canonical"
 # deltas -- one requiring Step, one not.
 from cjwstate import commands
-from cjwstate.models.commands import (
-    ChangeWorkflowTitleCommand,
-    ChangeStepNotesCommand,
-    AddTabCommand,
-)
+from cjwstate.models.commands import SetWorkflowTitle, SetStepNote, AddTab
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -24,27 +20,19 @@ class DeltaTest(DbTestCase):
         workflow = Workflow.create_and_init()
 
         self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         delta2 = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="2"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
         )
         delta3 = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="3"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="3")
         )
         self.run_with_async_db(commands.undo(delta3))
         self.run_with_async_db(commands.undo(delta2))
         # Create a new delta ... making delta2 and delta3 obsolete
         self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="4"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="4")
         )
 
         with self.assertRaises(Delta.DoesNotExist):
@@ -54,7 +42,7 @@ class DeltaTest(DbTestCase):
 
     def test_delete_orphans_does_not_delete_new_tab(self):
         """
-        Don't delete a new AddTabCommand's new orphan Tab during creation.
+        Don't delete a new AddTab's new orphan Tab during creation.
 
         We delete orphans Deltas during creation, and we should delete their
         Tabs/Steps. But we shouldn't delete _new_ Tabs/Steps. (We need
@@ -62,20 +50,16 @@ class DeltaTest(DbTestCase):
         """
         workflow = Workflow.create_and_init()
 
-        # Create a soft-deleted Tab in an orphan Delta (via AddTabCommand)
+        # Create a soft-deleted Tab in an orphan Delta (via AddTab)
         delta1 = self.run_with_async_db(
-            commands.do(
-                AddTabCommand, workflow_id=workflow.id, slug="tab-2", name="name-2"
-            )
+            commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="name-2")
         )
         self.run_with_async_db(commands.undo(delta1))
 
         # Now create a new Tab in a new Delta. This will delete delta1, and it
         # _should_ delete `tab-2`.
         self.run_with_async_db(
-            commands.do(
-                AddTabCommand, workflow_id=workflow.id, slug="tab-3", name="name-3"
-            )
+            commands.do(AddTab, workflow_id=workflow.id, slug="tab-3", name="name-3")
         )
 
         with self.assertRaises(Tab.DoesNotExist):
@@ -89,16 +73,12 @@ class DeltaTest(DbTestCase):
 
         # Create a delta we want to delete
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
 
         # Create deltas on workflow2 that we _don't_ want to delete
         delta2 = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow2.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow2.id, new_value="1")
         )
 
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
@@ -115,9 +95,7 @@ class DeltaTest(DbTestCase):
         )
 
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
         delta.delete_with_successors()
@@ -135,9 +113,7 @@ class DeltaTest(DbTestCase):
         )
 
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
         delta.delete_with_successors()
@@ -157,9 +133,7 @@ class DeltaTest(DbTestCase):
 
         # delete a delta
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
         delta.delete_with_successors()
@@ -177,7 +151,7 @@ class DeltaTest(DbTestCase):
         # "protect" it: here's a delta we _aren't_ deleting
         self.run_with_async_db(
             commands.do(
-                ChangeStepNotesCommand,
+                SetStepNote,
                 workflow_id=workflow.id,
                 step=step,
                 new_value="1",
@@ -186,9 +160,7 @@ class DeltaTest(DbTestCase):
 
         # now delete a delta
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
         delta.delete_with_successors()
@@ -207,9 +179,7 @@ class DeltaTest(DbTestCase):
 
         # now delete a delta on workflow1
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
         delta.delete_with_successors()
@@ -226,9 +196,7 @@ class DeltaTest(DbTestCase):
 
         # now delete a delta on workflow1
         delta = self.run_with_async_db(
-            commands.do(
-                ChangeWorkflowTitleCommand, workflow_id=workflow.id, new_value="1"
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
         delta.delete_with_successors()

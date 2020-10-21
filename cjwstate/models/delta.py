@@ -2,27 +2,36 @@ from typing import List, Tuple
 
 import django.utils
 from django.contrib.postgres.fields import ArrayField, JSONField
-from django.db import connection, models
-from polymorphic.models import PolymorphicModel
+from django.db import models
 
 from cjwstate import clientside
+from .commands import NAME_TO_COMMAND
 
 
-# Base class of a single undoable/redoable action
-# Derived classes implement the actual mutations on the database
-# (via polymorphic forward()/backward())
-# To derive a command from Delta:
-#
-#   - implement @classmethod amend_create_kwargs() -- a database-sync method.
-#   - implement load_clientside_update() -- a database-sync method.
-#   - implement forward() and backward() -- database-sync methods.
-#
-# Create Deltas using `cjwstate.commands.do()`. This will call these
-# synchronous methods correctly.
-class Delta(PolymorphicModel):
+class Delta(models.Model):
     class Meta:
         app_label = "server"
         db_table = "delta"
+        ordering = ["id"]  # we read workflow.deltas.last() in tests
+        constraints = [
+            # Django's CharField.choices doesn't add a DB constraint. So let's
+            # add one ourselves.
+            models.CheckConstraint(
+                check=models.Q(command_name__in=list(NAME_TO_COMMAND.keys())),
+                name="delta_command_name_valid",
+            ),
+            # The first Delta in any Workflow must be InitWorkflow
+            models.CheckConstraint(
+                check=(
+                    models.Q(command_name="InitWorkflow", prev_delta_id__isnull=True)
+                    | (
+                        ~models.Q(command_name="InitWorkflow")
+                        & models.Q(prev_delta_id__isnull=False)
+                    )
+                ),
+                name="delta_first_command_per_workflow_is_init",
+            ),
+        ]
 
     # These fields must be set by any child classes, when instantiating
     workflow = models.ForeignKey(
@@ -40,11 +49,16 @@ class Delta(PolymorphicModel):
 
     datetime = models.DateTimeField("datetime", default=django.utils.timezone.now)
 
+    command_name = models.CharField(
+        choices=[(key, key) for key in NAME_TO_COMMAND.keys()],
+        max_length=max(len(name) for name in NAME_TO_COMMAND.keys()),
+    )
+
     # Foreign keys can get a bit confusing. Here we go:
     #
-    # * AddModuleCommand can only exist if its Step exists (Delta.step)
+    # * Delta can only exist if its Step exists (Delta.step)
     # * Step depends on Workflow (Step.workflow)
-    # * AddModuleCommand depends on Workflow (Delta.workflow)
+    # * Delta depends on Workflow (Delta.workflow)
     #
     # So it's safe to delete Deltas from a Workflow (as long as the workflow
     # has at least one delta). But it's not safe to delete Steps from a
@@ -56,88 +70,39 @@ class Delta(PolymorphicModel):
     # _may_ delete the Step.
     #
     # TODO nix soft-deleting Tabs and Steps. Keep IDs out of the model and use
-    # slugs throughout. DeleteTabCommand.values_for_backward() would include
+    # slugs throughout. DeleteTab.values_for_backward() would include
     # all the step data needed to recreate all deleted steps, for instance.
 
     tab = models.ForeignKey("Tab", null=True, on_delete=models.PROTECT)
     """Tab affected by this Delta.
 
-    This is only set and used by some subclasses.
+    This is only set and used by some Commands.
     """
 
     step = models.ForeignKey("Step", null=True, on_delete=models.PROTECT)
     """Step affected by this Delta.
 
-    This is only set and used by some subclasses.
+    This is only set and used by some Commands.
     """
 
     step_delta_ids = ArrayField(ArrayField(models.IntegerField(), size=2), default=list)
     """(step_id, last_relevant_delta_id) before forward() is called.
 
-    Every Step referenced must be re-rendered when this step's forward() is
+    Every Step referenced must be re-rendered when the Command's forward() is
     called. Afterwards, its last_relevant_delta_id will be self.id.
     """
 
     values_for_backward = JSONField(default=dict)
     """Data required to call .backward().
 
-    Data format is subclass-dependent.
+    Data format is Command-dependent.
     """
 
     values_for_forward = JSONField(default=dict)
     """Data required to call .forward().
 
-    Data format is subclass-dependent.
+    Data format is Command-dependent.
     """
-
-    def load_clientside_update(self) -> clientside.Update:
-        """Build state updates for the client to receive over Websockets.
-
-        This is called synchronously. It may access the database. When
-        overriding, be sure to call super() to update the most basic data.
-
-        This must be called in a `workflow.cooperative_lock()`.
-        """
-        return clientside.Update(
-            workflow=clientside.WorkflowUpdate(
-                # self.workflow.last_delta may not be `self`
-                updated_at=self.workflow.last_delta.datetime
-            )
-        )
-
-    def get_modifies_render_output(self) -> bool:
-        """Return whether this Delta might change a Step's render() output.
-
-        This must be called in a `workflow.cooperative_lock()`.
-        """
-        return False
-
-    @classmethod
-    def affected_step_delta_ids(cls, step: "Step") -> List[Tuple[int, int]]:
-        """Calculate [(step_id, previous_delta_id)] for `step` and deps.
-
-        This is a stub. Subclass ChangesStepOutputs (and read this method's
-        documentation there) if you are creating a Delta that may require a
-        render.
-        """
-        return []
-
-    @classmethod
-    def amend_create_kwargs(cls, **kwargs):
-        """Look up additional objects.create() kwargs from the database.
-
-        Delta creation can depend upon values already in the database. The
-        delta may calculate those values itself.
-
-        Return `None` to abort creating the Delta altogether.
-
-        Example:
-
-            @classmethod
-            def amend_create_kwargs(cls, *, workflow, **kwargs):
-                return {**kwargs, 'workflow': workflow, 'old_value': ... }
-        """
-        return kwargs
 
     def delete_with_successors(self):
         """Delete all Deltas in self.workflow, starting with this one.

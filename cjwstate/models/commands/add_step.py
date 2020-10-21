@@ -1,12 +1,11 @@
-from django.db import models
-from django.db.models import F
+from django.db.models import F, Q
+
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from ..delta import Delta
-from ..step import Step
+from .base import BaseCommand
 from .util import ChangesStepOutputs
 
 
-class AddModuleCommand(ChangesStepOutputs, Delta):
+class AddStep(ChangesStepOutputs, BaseCommand):
     """Create a `Step` and insert it into the Workflow.
 
     Our "backwards()" logic is to "soft-delete": set
@@ -14,62 +13,58 @@ class AddModuleCommand(ChangesStepOutputs, Delta):
     soft-deleted Steps does not exist.
     """
 
-    class Meta:
-        app_label = "server"
-        proxy = True
-
     # override
-    def load_clientside_update(self):
+    def load_clientside_update(self, delta):
         data = (
             super()
-            .load_clientside_update()
+            .load_clientside_update(delta)
             .update_tab(
-                self.step.tab_slug,
-                step_ids=list(self.step.tab.live_steps.values_list("id", flat=True)),
+                delta.step.tab_slug,
+                step_ids=list(delta.step.tab.live_steps.values_list("id", flat=True)),
             )
         )
-        if self.step.is_deleted:
-            data = data.clear_step(self.step.id)
+        if delta.step.is_deleted:
+            data = data.clear_step(delta.step.id)
         else:
-            data = data.replace_step(self.step.id, self.step.to_clientside())
+            data = data.replace_step(delta.step.id, delta.step.to_clientside())
         return data
 
-    @classmethod
-    def affected_steps_in_tab(cls, step) -> models.Q:
+    # override
+    def affected_steps_in_tab(self, step) -> Q:
         # We don't need to change self.step's delta_id: just the others.
         #
         # At the time this method is called, `step` is "deleted" (well,
         # not yet created).
-        return models.Q(tab_id=step.tab_id, order__gte=step.order, is_deleted=False)
+        return Q(tab_id=step.tab_id, order__gte=step.order, is_deleted=False)
 
-    def forward(self):
-        if not self.step.last_relevant_delta_id:
-            # We couldn't set self.step.last_relevant_delta_id during
-            # creation because `self` (the delta in question) wasn't created.
+    def forward(self, delta):
+        if not delta.step.last_relevant_delta_id:
+            # We couldn't set step.last_relevant_delta_id during Delta creation
+            # because `delta` didn't exist at that point.
             # Set it now, before .forward_affected_delta_ids(). After this
             # first write, this Delta should never modify it.
-            self.step.last_relevant_delta_id = self.id
-            self.step.save(update_fields=["last_relevant_delta_id"])
+            delta.step.last_relevant_delta_id = delta.id
+            delta.step.save(update_fields=["last_relevant_delta_id"])
 
         # Move subsequent modules over to make way for this one.
-        tab = self.step.tab
-        tab.live_steps.filter(order__gte=self.step.order).update(order=F("order") + 1)
+        tab = delta.step.tab
+        tab.live_steps.filter(order__gte=delta.step.order).update(order=F("order") + 1)
 
-        self.step.is_deleted = False
-        self.step.save(update_fields=["is_deleted"])
+        delta.step.is_deleted = False
+        delta.step.save(update_fields=["is_deleted"])
 
-        tab.selected_step_position = self.step.order
+        tab.selected_step_position = delta.step.order
         tab.save(update_fields=["selected_step_position"])
 
-        self.forward_affected_delta_ids()
+        self.forward_affected_delta_ids(delta)
 
-    def backward(self):
-        self.step.is_deleted = True
-        self.step.save(update_fields=["is_deleted"])
+    def backward(self, delta):
+        delta.step.is_deleted = True
+        delta.step.save(update_fields=["is_deleted"])
 
         # Move subsequent modules back to fill the gap created by deleting
-        tab = self.step.tab
-        tab.live_steps.filter(order__gt=self.step.order).update(order=F("order") - 1)
+        tab = delta.step.tab
+        tab.live_steps.filter(order__gt=delta.step.order).update(order=F("order") - 1)
 
         # Prevent tab.selected_step_position from becoming invalid
         #
@@ -86,28 +81,25 @@ class AddModuleCommand(ChangesStepOutputs, Delta):
                 tab.selected_step_position = n_modules - 1
             tab.save(update_fields=["selected_step_position"])
 
-        self.backward_affected_delta_ids()
+        self.backward_affected_delta_ids(delta)
 
     # override
-    def get_modifies_render_output(self) -> bool:
-        """
-        Force a render.
+    def get_modifies_render_output(self, delta) -> bool:
+        """Force a render.
 
-        Adding a module to an empty workflow, self._changed_step_versions
+        Adding a module to an empty workflow, delta._changed_step_versions
         will be None -- and yet we need a render!
 
         TODO brainstorm other solutions to the original race -- that we can't
         know this delta's ID until after we save it to the database, yet we
-        need to save its own ID in self._changed_step_versions.
+        need to save its own ID in delta._changed_step_versions.
         """
         return True
 
-    @classmethod
     def amend_create_kwargs(
-        cls, *, workflow, tab, slug, module_id_name, position, param_values, **kwargs
+        self, *, workflow, tab, slug, module_id_name, position, param_values, **kwargs
     ):
-        """
-        Add a step to the tab.
+        """Add a step to the tab.
 
         Raise KeyError if `module_id_name` is invalid.
 
@@ -115,6 +107,8 @@ class AddModuleCommand(ChangesStepOutputs, Delta):
 
         Raise ValueError if `param_values` do not match the module's spec.
         """
+        from ..step import Step
+
         # ensure slug is unique, or raise ValueError
         if Step.objects.filter(tab__workflow_id=workflow.id, slug=slug).count() > 0:
             raise ValueError("slug is not unique. Please pass a unique slug.")
@@ -146,5 +140,5 @@ class AddModuleCommand(ChangesStepOutputs, Delta):
             **kwargs,
             "workflow": workflow,
             "step": step,
-            "step_delta_ids": cls.affected_step_delta_ids(step),
+            "step_delta_ids": self.affected_step_delta_ids(step),
         }

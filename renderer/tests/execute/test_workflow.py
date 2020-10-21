@@ -16,7 +16,7 @@ from cjwkernel.tests.util import (
 )
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 from cjwstate.rendercache import cache_render_result, open_cached_render_result
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.types import UnneededExecution
@@ -79,7 +79,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         result1 = RenderResult(arrow_table({"A": [1]}))
         cache_render_result(workflow, step, delta1.id, result1)
 
-        delta2 = InitWorkflowCommand.create(workflow)
+        delta2 = InitWorkflow.create(workflow)
         step.last_relevant_delta_id = delta2.id
         step.save(update_fields=["last_relevant_delta_id"])
 
@@ -271,7 +271,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         workflow = Workflow.objects.create()
         create_module_zipfile("mod")
         tab = workflow.tabs.create(position=0)
-        delta = InitWorkflowCommand.create(workflow)
+        delta = InitWorkflow.create(workflow)
         step1 = tab.steps.create(
             order=0,
             slug="step-1",
@@ -339,7 +339,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_email_delta(self, email):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflowCommand.create(workflow)
+        delta1 = InitWorkflow.create(workflow)
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
@@ -356,7 +356,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         )
 
         # Make a new delta, so we need to re-render.
-        delta2 = InitWorkflowCommand.create(workflow)
+        delta2 = InitWorkflow.create(workflow)
         step.last_relevant_delta_id = delta2.id
         step.save(update_fields=["last_relevant_delta_id"])
 
@@ -369,7 +369,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_email_no_delta_when_not_changed(self, email):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflowCommand.create(workflow)
+        delta1 = InitWorkflow.create(workflow)
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
@@ -386,7 +386,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         )
 
         # Make a new delta, so we need to re-render. Give it the same output.
-        delta2 = InitWorkflowCommand.create(workflow)
+        delta2 = InitWorkflow.create(workflow)
         step.last_relevant_delta_id = delta2.id
         step.save(update_fields=["last_relevant_delta_id"])
 
@@ -405,7 +405,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflowCommand.create(workflow)
+        delta1 = InitWorkflow.create(workflow)
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
@@ -419,7 +419,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         )
 
         # Make a new delta, so we need to re-render. Give it the same output.
-        delta2 = InitWorkflowCommand.create(workflow)
+        delta2 = InitWorkflow.create(workflow)
         step.last_relevant_delta_id = delta2.id
         step.save(update_fields=["last_relevant_delta_id"])
 

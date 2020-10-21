@@ -3,10 +3,10 @@ from unittest.mock import patch
 from cjwstate import commands
 from cjwstate.models import Delta, ModuleVersion, Workflow
 from cjwstate.models.commands import (
-    AddModuleCommand,
-    ChangeParametersCommand,
-    ChangeWorkflowTitleCommand,
-    ChangeStepNotesCommand,
+    AddStep,
+    SetStepParams,
+    SetWorkflowTitle,
+    SetStepNote,
 )
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
@@ -58,7 +58,7 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # Add a module
         cmd1 = self.run_with_async_db(
             commands.do(
-                AddModuleCommand,
+                AddStep,
                 workflow_id=workflow.id,
                 tab=tab,
                 slug="step-1",
@@ -92,7 +92,7 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             cmd2 = self.run_with_async_db(
                 commands.do(
-                    ChangeParametersCommand,
+                    SetStepParams,
                     workflow_id=workflow.id,
                     step=tab.live_steps.first(),
                     new_values={"csv": "some value"},
@@ -131,9 +131,7 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # Add one more command so the stack is 3 deep
         cmd3 = self.run_with_async_db(
             commands.do(
-                ChangeWorkflowTitleCommand,
-                workflow_id=workflow.id,
-                new_value="New Title",
+                SetWorkflowTitle, workflow_id=workflow.id, new_value="New Title"
             )
         )
         v3 = cmd3.id
@@ -174,7 +172,7 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         step = all_modules.first()
         cmd4 = self.run_with_async_db(
             commands.do(
-                ChangeStepNotesCommand,
+                SetStepNote,
                 workflow_id=workflow.id,
                 step=step,
                 new_value="Note of no note",
@@ -194,7 +192,7 @@ class VersionsTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(workflow.last_delta_id, v1)
         cmd5 = self.run_with_async_db(
             commands.do(
-                ChangeStepNotesCommand,
+                SetStepNote,
                 workflow_id=workflow.id,
                 step=cmd1.step,
                 new_value="Note of some note",

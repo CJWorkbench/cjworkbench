@@ -4,7 +4,7 @@ from cjworkbench.sync import database_sync_to_async
 from cjwkernel.types import FetchResult
 from cjwstate import clientside, commands, rabbitmq, storedobjects
 from cjwstate.models import Step, Workflow
-from cjwstate.models.commands import ChangeDataVersionCommand
+from cjwstate.models.commands import SetStepDataVersion
 
 
 @contextlib.contextmanager
@@ -45,7 +45,7 @@ def _do_create_result(
 
     Modify `step` in-place.
 
-    Do *not* do the logic in ChangeDataVersionCommand. We're creating a new
+    Do *not* do the logic in SetStepDataVersion. We're creating a new
     version, not doing something undoable.
 
     Raise Step.DoesNotExist or Workflow.DoesNotExist in case of a race.
@@ -65,12 +65,12 @@ def _do_create_result(
 async def create_result(
     workflow_id: int, step: Step, result: FetchResult, now: timezone.datetime
 ) -> None:
-    """Store fetched table as storedobject..
+    """Store fetched table as storedobject.
 
     Set `fetch_errors` to `result.errors`. Set `is_busy` to `False`. Set
     `last_update_check`.
 
-    Create (and run) a ChangeDataVersionCommand. This will kick off an execute
+    Create (and run) a SetStepDataVersion. This will kick off an execute
     cycle, which will render each module and email the owner if data has
     changed and notifications are enabled.
 
@@ -83,7 +83,7 @@ async def create_result(
     except (Step.DoesNotExist, Workflow.DoesNotExist):
         return  # there's nothing more to do
 
-    # ChangeDataVersionCommand will change `step.last_relevant_delta_id`.
+    # SetStepDataVersion will change `step.last_relevant_delta_id`.
     # This must happen before we notify with our own `is_busy=False`, to avoid
     # this erroneous ordering of Websockets messages:
     #
@@ -93,13 +93,13 @@ async def create_result(
     #
     # If C comes before B, the client will flicker to a "not-busy" state.
     await commands.do(
-        ChangeDataVersionCommand,
+        SetStepDataVersion,
         workflow_id=workflow_id,
         step=step,
         new_version=now,
     )
 
-    # XXX odd design: ChangeDataVersionCommand happens to update "versions"
+    # XXX odd design: SetStepDataVersion happens to update "versions"
     # on the client. So _notify_websockets() doesn't need to send the new
     # "versions".
 

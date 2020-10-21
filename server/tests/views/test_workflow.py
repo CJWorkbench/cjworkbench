@@ -7,7 +7,7 @@ from cjwkernel.types import RenderResult
 from cjwstate import rabbitmq
 from cjwstate.rendercache import cache_render_result
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflowCommand
+from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -180,7 +180,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         # Make the cached result stale. (The view will actually send the
         # stale-result metadata to the client. That's why we cached it.)
-        delta2 = InitWorkflowCommand.create(self.workflow1)
+        delta2 = InitWorkflow.create(self.workflow1)
         step.last_relevant_delta_id = delta2.id
         step.save(update_fields=["last_relevant_delta_id"])
         self.client.force_login(self.user)

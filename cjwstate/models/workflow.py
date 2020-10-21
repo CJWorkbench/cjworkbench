@@ -376,11 +376,11 @@ class Workflow(models.Model):
     @staticmethod
     def create_and_init(**kwargs):
         """Create and return a _valid_ Workflow: one with a Tab and a Delta."""
-        from cjwstate.models.commands import InitWorkflowCommand
+        from cjwstate.models.commands import InitWorkflow
 
         with transaction.atomic():
             workflow = Workflow.objects.create(**kwargs)
-            InitWorkflowCommand.create(workflow)
+            InitWorkflow.create(workflow)
             workflow.tabs.create(position=0, slug="tab-1", name="Tab 1")
             return workflow
 
@@ -400,9 +400,9 @@ class Workflow(models.Model):
 
             # Set wf.last_delta and wf.last_delta_id, so we can render.
             # Import here to avoid circular deps
-            from cjwstate.models.commands import InitWorkflowCommand
+            from cjwstate.models.commands import InitWorkflow
 
-            InitWorkflowCommand.create(wf)
+            InitWorkflow.create(wf)
 
             tabs = list(self.live_tabs)
             for tab in tabs:
@@ -443,25 +443,16 @@ class Workflow(models.Model):
 
     def clear_deltas(self):
         """Become a single-Delta Workflow."""
-        from cjwstate.models.commands import InitWorkflowCommand
+        from cjwstate.models.commands import InitWorkflow
+        from cjwstate.models import Delta
 
         try:
-            from cjwstate.models import Delta
-
             first_delta = self.deltas.get(prev_delta_id=None)
-        except Delta.DoesNotExist:
-            # Invariant failed. Defensive programming: recover.
-            first_delta = InitWorkflowCommand.create(self)
-
-        if not isinstance(first_delta, InitWorkflowCommand):
-            # Invariant failed: first delta should be InitWorkflowCommand.
-            # Defensive programming: recover. Delete _every_ Delta, and then
-            # add the one that belongs.
-            first_delta.delete()
-            first_delta = InitWorkflowCommand.create(self)
-        else:
             self.last_delta_id = first_delta.id
             self.save(update_fields=["last_delta_id"])
+        except Delta.DoesNotExist:
+            # Integrity error: missing Delta. Repair.
+            first_delta = InitWorkflow.create(self)
 
         try:
             # Select the _second_ delta.

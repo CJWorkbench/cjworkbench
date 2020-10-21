@@ -4,7 +4,7 @@ from cjwkernel.tests.util import arrow_table
 from cjwstate import clientside, commands
 from cjwstate.rendercache.io import cache_render_result
 from cjwstate.models import Workflow
-from cjwstate.models.commands import DuplicateTabCommand
+from cjwstate.models.commands import DuplicateTab
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -12,7 +12,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-class DuplicateTabCommandTest(DbTestCase):
+class DuplicateTabTest(DbTestCase):
     @patch.object(commands, "queue_render")
     @patch.object(commands, "websockets_notify")
     def test_duplicate_empty_tab(self, send_update, queue_render):
@@ -22,7 +22,7 @@ class DuplicateTabCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                DuplicateTabCommand,
+                DuplicateTab,
                 workflow_id=workflow.id,
                 from_tab=tab,
                 slug="tab-2",
@@ -121,7 +121,7 @@ class DuplicateTabCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                DuplicateTabCommand,
+                DuplicateTab,
                 workflow_id=workflow.id,
                 from_tab=tab,
                 slug="tab-2",
@@ -202,7 +202,7 @@ class DuplicateTabCommandTest(DbTestCase):
 
         cmd = self.run_with_async_db(
             commands.do(
-                DuplicateTabCommand,
+                DuplicateTab,
                 workflow_id=workflow.id,
                 from_tab=tab,
                 slug="tab-2",
@@ -224,7 +224,7 @@ class DuplicateTabCommandTest(DbTestCase):
         with self.assertRaisesRegex(ValueError, "used"):
             self.run_with_async_db(
                 commands.do(
-                    DuplicateTabCommand,
+                    DuplicateTab,
                     workflow_id=workflow.id,
                     from_tab=tab,
                     slug=tab.slug,
@@ -240,7 +240,7 @@ class DuplicateTabCommandTest(DbTestCase):
         workflow.tabs.create(position=1, slug="tab-2", name="Tab 2")
         self.run_with_async_db(
             commands.do(
-                DuplicateTabCommand,
+                DuplicateTab,
                 workflow_id=workflow.id,
                 from_tab=tab1,
                 slug="tab-3",
