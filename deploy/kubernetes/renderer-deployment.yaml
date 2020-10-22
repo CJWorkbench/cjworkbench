@@ -13,6 +13,7 @@ spec:
       labels:
         app: renderer-app
     spec:
+      serviceAccountName: renderer-sa
       nodeSelector: # Only schedule on nodes that disallow SMT. (Pod runs untrusted user code.)
         cloud.google.com/gke-smt-disabled: "true"
       tolerations: # Allow scheduling on preemptible nodes. (Work is expensive to run, cheap to retry.)
@@ -67,9 +68,12 @@ spec:
             - name: ASGI_THREADS
               value: '2'
             - name: CJW_DB_HOST
-              value: database-service
+              value: localhost  # cloud-sql-proxy
             - name: CJW_DB_PASSWORD
-              value: cjworkbench
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cjworkbench-credentials
+                  key: password
             - name: CJW_SECRET_KEY
               value: renderer-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
@@ -117,6 +121,21 @@ spec:
               add:
                 # TODO ban render() from networking. Period. Then nix NET_ADMIN priv.
                 - NET_ADMIN # To create network interface for sandbox in cjwkernel
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.18.0
+          env:
+            - name: PROJECT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: gcloud-config
+                  key: PROJECT_NAME
+          command:
+            - "/cloud_sql_proxy"
+            - "-ip_address_types=PRIVATE"
+            - "-log_debug_stdout=true"
+            - "-instances=$(PROJECT_NAME):us-central1:postgres=tcp:5432"
+          securityContext:
+            runAsNonRoot: true
         - name: teardown-sandboxes
           # "any volume mounts created by Containers in Pods must be destroyed
           # (unmounted) by the Containers on termination"

@@ -52,8 +52,26 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
   --role roles/monitoring.viewer
 
+for service in frontend fetcher renderer cron migrate; do
+  gcloud iam service-accounts create $CLUSTER_NAME-$service-sa \
+    --display-name=$CLUSTER_NAME-$service-sa
+
+  gcloud iam service-accounts add-iam-policy-binding \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:$PROJECT_NAME.svc.id.goog[default/$service-sa]" \
+    "$CLUSTER_NAME-$service-sa@$PROJECT_NAME.iam.gserviceaccount.com"
+
+  gcloud projects add-iam-policy-binding $PROJECT_NAME \
+    --member "serviceAccount:$CLUSTER_NAME-$service-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
+    --role roles/cloudsql.client
+done
+
 echo "Browse to https://console.cloud.google.com/apis/library/container.googleapis.com?project=$PROJECT_NAME"
-echo "to enable the Kubernetes Engine API"
+echo "to enable the se APIs:"
+echo
+echo " * Cloud SQL Admin API"
+echo " * Kubernetes Engine API"
+echo " * Service Networking API"
 echo
 echo "When done, press Enter:"
 read
@@ -78,6 +96,12 @@ kubectl create clusterrolebinding cluster-admin-binding \
   --clusterrole cluster-admin \
   --user $(gcloud config get-value account)
 
+for service in frontend fetcher renderer cron migrate; do
+  kubectl create serviceaccount "$service-sa"
+
+  kubectl annotate serviceaccount "$service-sa" \
+    iam.gke.io/gcp-service-account="$CLUSTER_NAME-$service-sa@$PROJECT_NAME.iam.gserviceaccount.com"
+done
 
 # Make the "gke-smt-disabled" flag do something useful.
 #
@@ -228,14 +252,14 @@ kubectl create secret generic minio-gcs-credentials \
   --from-file=./application_default_credentials.json
 rm application_default_credentials.json
 
-# 2. Start database+rabbitmq+minio
-kubectl apply -f dbdata-pvc.yaml
-kubectl apply -f database-service.yaml
-kubectl apply -f database-deployment.yaml
+# 2. Prepare Cloud SQL
+source ./02-sql.sh
+
+# 3. Start rabbitmq+minio
 rabbitmq/init.sh
 minio/init.sh $ENV
 
-# 3. Create secrets! You'll need to be very careful here....
+# 4. Create secrets! You'll need to be very careful here....
 : ${CJW_SECRET_KEY:?"Must set CJW_SECRET_KEY"}
 kubectl create secret generic cjw-secret-key \
   --from-literal=value=$CJW_SECRET_KEY
@@ -260,20 +284,22 @@ kubectl create secret generic intercom-oauth-secret --from-file=json=intercom-oa
 [ -f twitter-oauth-secret.json ] # we're set -e, so this will exit if missing
 kubectl create secret generic twitter-oauth-secret --from-file=json=twitter-oauth-secret.json
 
-# 4. Migrate database
+# 5. Migrate database
 kubectl create configmap workbench-config \
   --from-literal=environment=$ENV \
   --from-literal=domainName=$DOMAIN_NAME \
   --from-literal=domainNameWithLeadingDot=.$DOMAIN_NAME \
   --from-literal=appDomainName=$APP_FQDN \
   --from-literal=canonicalUrl="https://$APP_FQDN"
+kubectl create configmap gcloud-config \
+  --from-literal=PROJECT_NAME=$PROJECT_NAME
 kubectl run migrate-cluster-setup \
   --image="gcr.io/workbenchdata-ci/migrate:latest" \
   -i --rm --quiet \
   --restart=Never \
   --overrides="$(cat migrate.json | sed -e 's/$SHA/latest/')"
 
-# 5. Spin up server
+# 6. Spin up server
 kubectl apply -f fetcher-deployment.yaml
 kubectl apply -f renderer-deployment.yaml
 kubectl apply -f cron-deployment.yaml
@@ -281,13 +307,10 @@ kubectl apply -f frontend-ingress-common.yaml
 kubectl apply -f frontend-service.yaml
 kubectl apply -f frontend-deployment.yaml
 
-# 6. Set up ingress to terminate SSL and direct traffic to frontend
+# 7. Set up ingress to terminate SSL and direct traffic to frontend
 gcloud compute addresses create $APP_STATIC_IP_NAME --global
 kubectl apply -f frontend-$ENV-ingress.yaml
 STATIC_IP=$(gcloud compute addresses describe $APP_STATIC_IP_NAME --global | grep address: | cut -b10-)
 gcloud dns record-sets transaction start --zone=$ZONE_NAME
 gcloud dns record-sets transaction add --zone=$ZONE_NAME --name $APP_FQDN. --ttl 300 --type A $STATIC_IP
 gcloud dns record-sets transaction execute --zone=$ZONE_NAME
-
-# 7. Backups
-backups/init.sh "$ENV"

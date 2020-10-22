@@ -15,6 +15,7 @@ spec:
       labels:
         app: cron-app
     spec:
+      serviceAccountName: cron-sa
       containers:
         - name: cron
           image: "gcr.io/workbenchdata-ci/cron:latest"
@@ -33,9 +34,12 @@ spec:
             - name: ASGI_THREADS
               value: '2'
             - name: CJW_DB_HOST
-              value: database-service
+              value: localhost  # cloud-sql-proxy
             - name: CJW_DB_PASSWORD
-              value: cjworkbench
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cjworkbench-credentials
+                  key: password
             - name: CJW_SECRET_KEY
               value: cron-needs-no-secret-key
             - name: CJW_SENDGRID_API_KEY
@@ -72,3 +76,18 @@ spec:
                   key: rabbitmq-pass
             - name: CJW_RABBITMQ_HOST
               value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.18.0
+          env:
+            - name: PROJECT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: gcloud-config
+                  key: PROJECT_NAME
+          command:
+            - "/cloud_sql_proxy"
+            - "-ip_address_types=PRIVATE"
+            - "-log_debug_stdout=true"
+            - "-instances=$(PROJECT_NAME):us-central1:postgres=tcp:5432"
+          securityContext:
+            runAsNonRoot: true

@@ -6,10 +6,29 @@
   },
   "spec": {
     "restartPolicy": "Never",
+    "terminationGracePeriodSeconds": 0,
+    "serviceAccountName": "migrate-sa",
+    "volumes": [
+      {
+        "name": "gh-262-cloudsq1-proxy-terminate-sidecar",
+        "emptyDir": {}
+      }
+    ],
     "containers": [
       {
         "name": "migrate",
         "image": "gcr.io/workbenchdata-ci/migrate:$SHA",
+        "volumeMounts": [
+          {
+            "mountPath": "/gh-262-cloudsq1-proxy-terminate-sidecar",
+            "name": "gh-262-cloudsq1-proxy-terminate-sidecar"
+          }
+        ],
+        "command": [
+          "/bin/sh",
+          "-c",
+          "trap 'touch /gh-262-cloudsq1-proxy-terminate-sidecar/done' EXIT\nbin/migrate-prod"
+        ],
         "env": [
           {
             "name": "CJW_PRODUCTION",
@@ -25,15 +44,20 @@
           },
           {
             "name": "CJW_DB_HOST",
-            "value": "database-service"
+            "value": "localhost"
+          },
+          {
+            "name": "CJW_DB_PASSWORD",
+            "valueFrom": {
+              "secretKeyRef": {
+                "name": "postgres-cjworkbench-credentials",
+                "key": "password"
+              }
+            }
           },
           {
             "name": "CJW_RABBITMQ_HOST",
             "value": "amqp://guest:guest@rabbitmq-service/"
-          },
-          {
-            "name": "CJW_DB_PASSWORD",
-            "value": "cjworkbench"
           },
           {
             "name": "CJW_SECRET_KEY",
@@ -83,6 +107,35 @@
             "value": "https://user-files$(MINIO_BUCKET_SUFFIX)"
           }
         ]
+      },
+      {
+        "name": "cloudsql-proxy",
+        "image": "gcr.io/cloudsql-docker/gce-proxy:1.18.0-buster",
+        "volumeMounts": [
+          {
+            "mountPath": "/gh-262-cloudsq1-proxy-terminate-sidecar",
+            "name": "gh-262-cloudsq1-proxy-terminate-sidecar"
+          }
+        ],
+        "env": [
+          {
+            "name": "PROJECT_NAME",
+            "valueFrom": {
+              "configMapKeyRef": {
+                "name": "gcloud-config",
+                "key": "PROJECT_NAME"
+              }
+            }
+          }
+        ],
+        "command": [
+          "/bin/sh",
+          "-c",
+          "/cloud_sql_proxy -ip_address_types=PRIVATE -log_debug_stdout=true -instances=$(PROJECT_NAME):us-central1:postgres=tcp:5432 & PROXY_PID=$!\n(until [ -f /gh-262-cloudsq1-proxy-terminate-sidecar/done ]; do sleep 1; done; kill $PROXY_PID) &\nwait $PROXY_PID\nPROXY_RETVAL=$?\nif [ -f /gh-262-cloudsq1-proxy-terminate-sidecar/done ]; then exit 0; fi; exit $PROXY_RETVAL"
+        ],
+        "securityContext": {
+          "runAsNonRoot": true
+        }
       }
     ]
   }
