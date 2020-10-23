@@ -70,6 +70,27 @@ class DTypeColumnTest(unittest.TestCase):
         )
 
 
+class DTypeTimezoneTest(unittest.TestCase):
+    def test_coerce_str_to_timezone(self):
+        self.assertEqual(DT.Timezone().coerce("America/Montreal"), "America/Montreal")
+
+    def test_coerce_nonsense_str_to_utc(self):
+        self.assertEqual(DT.Timezone().coerce("America/NotMontreal"), "UTC")
+
+    def test_validate_ok(self):
+        DT.Timezone().validate("America/Montreal")  # no error
+
+    def test_validate_value_error(self):
+        with self.assertRaises(ValueError):
+            DT.Timezone().validate("America/NotMontreal")
+
+    def test_parse(self):
+        self.assertEqual(
+            DT.Timezone._from_plain_data(default="America/Montreal"),
+            DT.Timezone(default="America/Montreal"),
+        )
+
+
 class DTypeMulticolumnTest(unittest.TestCase):
     def test_multicolumn_default(self):
         self.assertEqual(DT.Multicolumn().coerce(None), [])

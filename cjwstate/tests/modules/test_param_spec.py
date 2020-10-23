@@ -248,3 +248,10 @@ class ParamSpecTest(unittest.TestCase):
         )
         self.assertEqual(param_spec.column_types, ["text", "number"])
         self.assertEqual(param_spec.dtype.column_types, frozenset(["text", "number"]))
+
+    def test_timestamp_type(self):
+        param_spec = ParamSpec.from_dict(
+            dict(id_name="tz", name="Timezone", type="timezone")
+        )
+        self.assertEqual(param_spec, ParamSpec.Timezone(id_name="tz", name="Timezone"))
+        self.assertEqual(param_spec.dtype, DT.Timezone())

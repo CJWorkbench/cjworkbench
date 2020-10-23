@@ -18,6 +18,7 @@ import Secret from './Secret'
 import StaticText from './StaticText'
 import String_ from './String'
 import Tab from './Tab'
+import Timezone from './Timezone'
 import List from './List'
 import { QuickFixPropTypes } from '../WorkflowEditor/step/QuickFix'
 
@@ -96,6 +97,7 @@ export default class Param extends React.PureComponent {
       case 'statictext': return StaticText
       case 'string': return String_
       case 'tab': return Tab
+      case 'timezone': return Timezone
       case 'list': return List
     }
   }

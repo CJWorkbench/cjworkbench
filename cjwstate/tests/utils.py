@@ -8,7 +8,6 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from django.db import connection, connections
 from django.contrib.auth.models import User
-from django.test import SimpleTestCase
 from cjworkbench.tests.utils import DbTestCase as BaseDbTestCase
 from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from cjwstate import minio

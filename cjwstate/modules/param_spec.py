@@ -18,8 +18,7 @@ _lookup = {}  # dict of e.g., {'column': ParamSpecColumn}
 
 @dataclass(frozen=True)
 class ParamSpec(ABC):
-    """
-    The specification of a module form field that will appear to the user.
+    """A module form field that will appear to the user.
 
     The module author specifies this in `parameters` in the module-spec file.
 
@@ -392,6 +391,20 @@ class ParamSpecFloat(_RegisterType("float"), _HasPlaceholder, _HasName, ParamSpe
     @property
     def dtype(self) -> Optional[ParamDType]:
         return ParamDType.Float(self.default)
+
+
+@dataclass(frozen=True)
+class ParamSpecTimezone(_RegisterType("timezone"), _HasName, ParamSpec):
+    """
+    Timezone such as 'America/Montreal' or 'UTC'.
+    """
+
+    default: str = "UTC"
+
+    # override
+    @property
+    def dtype(self) -> Optional[ParamDType]:
+        return ParamDType.Timezone(self.default)
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,9 @@
-from dataclasses import dataclass, field
 import re
-from typing import Any, ClassVar, Dict, FrozenSet, List, Optional
 import typing.re
+from dataclasses import dataclass, field
+from typing import Any, ClassVar, Dict, FrozenSet, List, Optional
+
+import pytz
 
 
 @dataclass(frozen=True)
@@ -312,6 +314,27 @@ class ParamDTypeEnum(ParamDType):
         return cls(choices=frozenset(choices), **kwargs)
 
 
+@dataclass(frozen=True)
+class ParamDTypeTimezone(ParamDType):
+    """
+    Accepts 'America/Montreal'-style strings or 'UTC'.
+
+    The database is from https://www.iana.org/time-zones
+    """
+
+    default: str = "UTC"
+
+    def coerce(self, value):
+        if value in pytz.all_timezones_set:
+            return value
+        else:
+            return self.default
+
+    def validate(self, value):
+        if value not in pytz.all_timezones_set:
+            raise ValueError("Value %r is not an IANA timezone identifier" % value)
+
+
 class _ListMethods:
     """
     Methods that use `self.inner_dtype` and expect values to be list.
@@ -539,6 +562,7 @@ ParamDType.Integer = ParamDTypeInteger
 ParamDType.Float = ParamDTypeFloat
 ParamDType.Boolean = ParamDTypeBoolean
 ParamDType.Enum = ParamDTypeEnum
+ParamDType.Timezone = ParamDTypeTimezone
 ParamDType.Option = ParamDTypeOption
 ParamDType.List = ParamDTypeList
 ParamDType.Dict = ParamDTypeDict

@@ -221,6 +221,7 @@ class Kernel:
                 "pyarrow",
                 "pyarrow.pandas_compat",
                 "pyarrow.parquet",
+                "pytz",
                 "re2",
                 "requests",
                 "schedula.dispatcher",

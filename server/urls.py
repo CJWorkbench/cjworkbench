@@ -5,8 +5,9 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from django.urls import path
 
+import server.views.jsdata.timezones
 from . import views
-from .views import acl, health, lessons, oauth, workflows, uploads, settings
+from .views import acl, health, jsdata, lessons, oauth, workflows, uploads, settings
 
 
 def redirect(url: str):
@@ -110,6 +111,8 @@ urlpatterns = [
     url(r"^404/$", TemplateView.as_view(template_name="404.html")),
     # 403
     url(r"^403/$", TemplateView.as_view(template_name="403.html")),
+    # JavaScript support data
+    path("jsdata/timezones.json", jsdata.timezones.index),
 ]
 
 if settings.DEBUG:

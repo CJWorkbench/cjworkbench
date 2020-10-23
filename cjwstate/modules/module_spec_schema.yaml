@@ -157,6 +157,13 @@ definitions:
                 default:
                     type: number
                     description: "Value to set on the user's behalf (default null)"
+        timezone:
+            <<: *common_param_spec
+            required: [ id_name, type, name ]
+            properties:
+                <<: *common_param_spec_properties
+                type: { const: timezone }
+                name: { $ref: '#/definitions/param_specs/_lib/name' }
         checkbox:
             <<: *common_param_spec
             required: [ id_name, type, name ]
@@ -379,6 +386,7 @@ definitions:
                 { $ref: '#/definitions/param_specs/float' },
                 { $ref: '#/definitions/param_specs/checkbox' },
                 { $ref: '#/definitions/param_specs/menu' },
+                { $ref: '#/definitions/param_specs/timezone' },
                 { $ref: '#/definitions/param_specs/radio' },
                 { $ref: '#/definitions/param_specs/button' },
                 { $ref: '#/definitions/param_specs/column' },
@@ -441,6 +449,12 @@ definitions:
                 type: { const: enum }
                 choices: { type: array }
                 default: {}
+        timezone:
+            type: object
+            required: [ type ]
+            properties:
+                type: { const: timezone }
+                default: { type: string }
         column:
             type: object
             required: [ type ]
@@ -506,6 +520,7 @@ definitions:
                 { $ref: '#/definitions/dtypes/float' },
                 { $ref: '#/definitions/dtypes/boolean' },
                 { $ref: '#/definitions/dtypes/column' },
+                { $ref: '#/definitions/dtypes/timezone' },
                 { $ref: '#/definitions/dtypes/multicolumn' },
                 { $ref: '#/definitions/dtypes/tab' },
                 { $ref: '#/definitions/dtypes/multitab' },
