@@ -37,6 +37,7 @@ selectsql
 sentimentanalysis
 sort
 splitcolumn
+splittimestamp
 startfromtab
 timestampmath
 transpose
