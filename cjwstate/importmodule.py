@@ -24,8 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class WorkbenchModuleImportError(Exception):
-    """
-    An Exception importing the module.
+    """An Exception importing the module.
 
     All messages are in English. (TODO consider i18n for them.)
     """
@@ -41,8 +40,7 @@ SHA1_PATTERN = re.compile(r"^[a-f0-9]{40}$")
 
 
 def _resolve_github_ref(owner: str, repo: str, ref: str) -> str:
-    """
-    Given a GitHub owner/repo/ref, return the sha1 at that ref.
+    """Given a GitHub owner/repo/ref, return the sha1 at that ref.
 
     Raise WorkbenchModuleImportError if the HTTP request fails or GitHub says
     there is no such ref. These errors are all in English, since we assume most
@@ -68,8 +66,7 @@ def _resolve_github_ref(owner: str, repo: str, ref: str) -> str:
 
 
 def _download_url(url: str, dest: Path) -> None:
-    """
-    Download archive from URL to file `dest`.
+    """Download archive from URL to file `dest`.
 
     Raise `WorkbenchModuleImportError` on HTTP error.
     """
@@ -87,8 +84,7 @@ def _download_url(url: str, dest: Path) -> None:
 
 
 def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
-    """
-    Ensure `path` points to a valid ModuleZipfile.
+    """Ensure `path` points to a valid ModuleZipfile.
 
     Raise `WorkbenchModuleImportError` with an English-language description
     of the flaw otherwise. (This can help module authors fix their mistakes.)
@@ -125,8 +121,7 @@ def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
 
 
 def import_zipfile(path: Path) -> clientside.Module:
-    """
-    Save a zipfile to database and minio and build a `clientside.Module`.
+    """Save a zipfile to database and minio and build a `clientside.Module`.
 
     Raise `WorkbenchModuleImportError` if `path` points to an invalid module.
 
@@ -151,10 +146,9 @@ def import_zipfile(path: Path) -> clientside.Module:
 
 
 def import_module_from_github(
-    owner: str, repo: str, ref: str = "master"
+    owner: str, repo: str, ref: str = "main"
 ) -> clientside.Module:
-    """
-    Download module data from GitHub and store it in database+minio.
+    """Download module data from GitHub and store it in database+minio.
 
     Return a `clientside.Module` on success.
 
@@ -188,8 +182,7 @@ def import_module_from_github(
 
 
 def import_module_from_test_zip_url(url: str) -> clientside.Module:
-    """
-    Download module data from a zipfile at a trusted URL.
+    """Download module data from a zipfile at a trusted URL.
 
     Return a `clientside.Module` on success.
 
@@ -203,8 +196,7 @@ def import_module_from_test_zip_url(url: str) -> clientside.Module:
 
 
 def import_module_from_url(url: str) -> clientside.Module:
-    """
-    Import zipfile from a URL.
+    """Import zipfile from a URL.
 
     Return a `ModuleZipFile` on success.
 
@@ -243,8 +235,7 @@ def _hexsha1(path: Path) -> str:
 
 
 def import_module_from_directory(dirpath: Path):
-    """
-    Create a zipfile using the files in a directory.
+    """Create a zipfile using the files in a directory.
 
     Use `dirpath.name` as `module_id`. Use "dir-{hex-sha1sum of zipfile}" as
     `version`.
@@ -261,8 +252,7 @@ def import_module_from_directory(dirpath: Path):
 
 @contextlib.contextmanager
 def directory_loaded_as_zipfile_path(dirpath: Path) -> ContextManager[Path]:
-    """
-    Yield -- but do not save -- a zipfile using the files in a directory.
+    """Yield -- but do not save -- a zipfile using the files in a directory.
 
     Use `dirpath.name` as `module_id`. Use "dir-{hex-sha1sum of zipfile}" as
     `version`.
