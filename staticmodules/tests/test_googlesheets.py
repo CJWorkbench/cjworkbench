@@ -1,5 +1,6 @@
 import contextlib
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import logging
 import io
 from pathlib import Path
 import unittest
@@ -110,7 +111,9 @@ class FetchTests(unittest.TestCase):
         self, params: Dict[str, Any], secrets: Dict[str, Any]
     ) -> ContextManager[FetchResult]:
         with tempfile_context(prefix="output-") as output_path:
-            errors = fetch(params, secrets=secrets, output_path=output_path)
+            with self.assertLogs(level=logging.DEBUG):  # hide httpx._client messages
+                logging.debug("dummy message to make self.assertLogs() succeed")
+                errors = fetch(params, secrets=secrets, output_path=output_path)
             yield FetchResult(
                 output_path, [RenderError(I18nMessage(*e)) for e in errors]
             )
@@ -132,7 +135,7 @@ class FetchTests(unittest.TestCase):
             with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
-                    headers, [("content-type", "text/csv"), ("content-length", "11")]
+                    headers, [("Content-Type", "text/csv"), ("Content-Length", "11")]
                 )
         self.assertRegex(
             self.last_http_requestline, "/files/.*/export\?mimeType=text%2Fcsv"
@@ -150,7 +153,7 @@ class FetchTests(unittest.TestCase):
             with httpfile.read(result.path) as (_, __, headers, body_path):
                 self.assertEqual(body_path.read_bytes(), body)
                 self.assertEqual(
-                    headers, [("content-type", "text/csv"), ("content-length", "11")]
+                    headers, [("Content-Type", "text/csv"), ("Content-Length", "11")]
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
 
@@ -169,8 +172,8 @@ class FetchTests(unittest.TestCase):
                 self.assertEqual(
                     headers,
                     [
-                        ("content-type", "text/tab-separated-values"),
-                        ("content-length", "11"),
+                        ("Content-Type", "text/tab-separated-values"),
+                        ("Content-Length", "11"),
                     ],
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
@@ -190,8 +193,8 @@ class FetchTests(unittest.TestCase):
                 self.assertEqual(
                     headers,
                     [
-                        ("content-type", "application/vnd.ms-excel"),
-                        ("content-length", "4"),
+                        ("Content-Type", "application/vnd.ms-excel"),
+                        ("Content-Length", "4"),
                     ],
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
@@ -223,10 +226,10 @@ class FetchTests(unittest.TestCase):
                     headers,
                     [
                         (
-                            "content-type",
+                            "Content-Type",
                             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         ),
-                        ("content-length", "4"),
+                        ("Content-Length", "4"),
                     ],
                 )
         self.assertRegex(self.last_http_requestline, "/files/.*?alt=media")
