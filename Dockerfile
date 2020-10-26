@@ -41,7 +41,7 @@ RUN mkdir -p /usr/share/nltk_data \
     && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > corpora/stopwords.zip \
     && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > sentiment/vader_lexicon.zip
 
-RUN pip install pipenv==2020.5.28
+RUN pip install pipenv==2020.8.13
 
 COPY --from=arrow-tools /usr/bin/arrow-validate /usr/bin/arrow-validate
 COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
