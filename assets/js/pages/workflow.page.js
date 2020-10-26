@@ -1,4 +1,3 @@
-// workflow.page.js - the master JavaScript for /workflows/:id
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise-middleware'
