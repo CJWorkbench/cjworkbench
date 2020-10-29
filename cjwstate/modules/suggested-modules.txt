@@ -12,6 +12,7 @@ countbydate
 dropna
 droprowsbyposition
 editcells
+fillna
 filter
 formatnumbers
 formula
