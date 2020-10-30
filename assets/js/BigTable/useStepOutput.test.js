@@ -112,7 +112,7 @@ test('abort and start a new load when props change, with a non-memoized loading 
       nTileRows: 1,
       nTileColumns: 1,
     })
-    return <div>{isLoading ? 'loading' : sparseTileGrid.tileRows[0][0].rows[0][1]}</div>
+    return <div>{isLoading ? 'loading' : sparseTileGrid[0][0][0][1]}</div>
   }
   const { rerender, getByText } = render(<Table fetchTile={fetchTileX} />)
   act(() => rerender(<Table fetchTile={fetchTileY} />))
@@ -123,8 +123,7 @@ test('abort and start a new load when props change, with a non-memoized loading 
 })
 
 test('handle error during HTTP request, making it a tile', async () => {
-  let reject = null // call reject(new Error()) when wanted
-  const fetchTile = () => new Promise((res, rej) => { reject = rej /* and never end */ })
+  const fetchTile = () => Promise.reject(new Error("oops"))
 
   function Table (props) {
     const { sparseTileGrid, isLoading } = useStepOutput({
@@ -134,14 +133,13 @@ test('handle error during HTTP request, making it a tile', async () => {
     })
     return isLoading ? <div className="loading" /> : (
       <div>
-        <div className="errorType">{sparseTileGrid.tileRows[0][0].error.type}</div>
-        <div className="errorName">{sparseTileGrid.tileRows[0][0].error.error.name}</div>
-        <div className="errormessage">{sparseTileGrid.tileRows[0][0].error.error.message}</div>
+        <div className="errorType">{sparseTileGrid[0][0].error.type}</div>
+        <div className="errorName">{sparseTileGrid[0][0].error.error.name}</div>
+        <div className="errormessage">{sparseTileGrid[0][0].error.error.message}</div>
       </div>
     )
   }
   const { getByText } = render(<Table />)
-  reject(new Error("oops"))
   await waitFor(() => expect(getByText('fetchError')).toBeInTheDocument())
   expect(getByText('Error')).toBeInTheDocument()
   expect(getByText('oops')).toBeInTheDocument()
@@ -160,9 +158,9 @@ test('handle error during fetch .json() call, making it a tile', async () => {
     })
     return isLoading ? <div className="loading" /> : (
       <div>
-        <div className="errorType">{sparseTileGrid.tileRows[0][0].error.type}</div>
-        <div className="errorName">{sparseTileGrid.tileRows[0][0].error.error.name}</div>
-        <div className="errormessage">{sparseTileGrid.tileRows[0][0].error.error.message}</div>
+        <div className="errorType">{sparseTileGrid[0][0].error.type}</div>
+        <div className="errorName">{sparseTileGrid[0][0].error.error.name}</div>
+        <div className="errormessage">{sparseTileGrid[0][0].error.error.message}</div>
       </div>
     )
   }
@@ -196,12 +194,10 @@ test('request a new tile when wanted tiles change', async () => {
     }, [setWantedTileRange])
     return isLoading ? <div className="loading" /> : (
       <div>
-        {sparseTileGrid.tileRows.map((tileColumns, tileRow) => (
+        {sparseTileGrid.map((tileColumns, tileRow) => (
           <div key={tileRow}>
-            {tileColumns.map(({ type, ...rest }, tileColumn)  => (
-              <div key={tileColumn}>
-                {type} - {tileRow} - {tileColumn} - {type === 'loaded' ? JSON.stringify(rest.rows) : '...'}
-              </div>
+            {tileColumns.map((tile, tileColumn)  => (
+              <div key={tileColumn}>r{tileRow}c{tileColumn} - {JSON.stringify(tile)}</div>
             ))}
           </div>
         ))}
@@ -209,9 +205,9 @@ test('request a new tile when wanted tiles change', async () => {
     )
   }
   const { getByText } = render(<Table fetchTile={fetchTile} />)
-  await waitFor(() => expect(getByText('loaded - 0 - 0 - [["foo"]]')).toBeInTheDocument())
+  await waitFor(() => expect(getByText('r0c0 - [["foo"]]')).toBeInTheDocument())
   act(() => ensureTilesLoadedRef.current(0, 1, 1, 2))
-  await waitFor(() => expect(getByText('loaded - 0 - 1 - [["bar"]]')).toBeInTheDocument())
+  await waitFor(() => expect(getByText('r0c1 - [["bar"]]')).toBeInTheDocument())
 })
 
 test('expand a gap and load it when wanted tiles change', async () => {
@@ -237,26 +233,20 @@ test('expand a gap and load it when wanted tiles change', async () => {
     }, [setWantedTileRange])
     return (
       <div>
-        {sparseTileGrid.tileRows.map((tileColumns, tileRow) => {
-          if (Number.isInteger(tileColumns)) {
-            return <div key={tileRow}>{tileColumns}</div>
-          }
-          if (tileColumns[0].type === 'loading') {
-            return <div key={tileRow}>loading</div>
-          }
-          return <div key={tileRow}>loaded - {tileColumns[0].rows[0][0]}</div>
-        })}
+        {sparseTileGrid.map((tileColumns, tileRow) => (
+          <div key={tileRow}>{JSON.stringify(tileColumns)}</div>
+        ))}
       </div>
     )
   }
   const { getByText } = render(<Table fetchTile={fetchTile} />)
-  await waitFor(() => expect(getByText('loaded - foo')).toBeInTheDocument()) // row 0
+  await waitFor(() => expect(getByText('[[["foo"]]]')).toBeInTheDocument()) // row 0
   act(() => ensureTilesLoadedRef.current(3, 4, 0, 1))
   expect(getByText('2')).toBeInTheDocument() // rows 1-2
   expect(getByText('1')).toBeInTheDocument() // row 4
   expect(fetchTile).toHaveBeenCalledTimes(2)
   expect(fetchTile.mock.calls[1][0]).toEqual(3) // expanded row 3
-  await waitFor(() => expect(getByText('loaded - bar')).toBeInTheDocument())
+  await waitFor(() => expect(getByText('[[["bar"]]]')).toBeInTheDocument())
 })
 
 test('continue requesting tiles (without abort) when requested rows are not all loaded', async () => {
@@ -273,26 +263,15 @@ test('continue requesting tiles (without abort) when requested rows are not all 
     React.useEffect(() => { setWantedTileRange(0, 2, 0, 3) }, [setWantedTileRange])
     return (
       <div>
-        {sparseTileGrid.tileRows.map((tileColumns, tileRow) => (
-          <div key={tileRow}>
-            {Number.isInteger(tileColumns) ? String(tileColumns) : (
-              tileColumns.map((tile, tileColumn) => (
-                <div key={tileColumn}>{tile.type === 'loading' ? 'loading' : tile.rows[0][0]}</div>
-              ))
-            )}
-          </div>
+        {sparseTileGrid.map((tileColumns, tileRow) => (
+          <div key={tileRow}>{JSON.stringify(tileColumns)}</div>
         ))}
       </div>
     )
   }
   const { getByText } = render(<Table fetchTile={fetchTile} />)
-  await waitFor(() => expect(getByText('r1c2')).toBeInTheDocument()) // all done!
-  // test that the rest are loaded, too
-  expect(getByText('r0c0')).toBeInTheDocument()
-  expect(getByText('r0c1')).toBeInTheDocument()
-  expect(getByText('r0c2')).toBeInTheDocument()
-  expect(getByText('r1c0')).toBeInTheDocument()
-  expect(getByText('r1c1')).toBeInTheDocument()
+  await waitFor(() => expect(getByText('[[["r1c0"]],[["r1c1"]],[["r1c2"]]]')).toBeInTheDocument()) // all done!
+  expect(getByText('[[["r0c0"]],[["r0c1"]],[["r0c2"]]]')).toBeInTheDocument() // test that the rest are loaded, too
 })
 
 test('continue fetching other tiles on error', async () => {
@@ -310,11 +289,11 @@ test('continue fetching other tiles on error', async () => {
     React.useEffect(() => { setWantedTileRange(0, 2, 0, 2) }, [setWantedTileRange])
     return (
       <div>
-        {sparseTileGrid.tileRows.map((tileColumns, tileRow) => (
+        {sparseTileGrid.map((tileColumns, tileRow) => (
           <div key={tileRow}>
             {Number.isInteger(tileColumns) ? String(tileColumns) : (
               tileColumns.map((tile, tileColumn) => (
-                <div key={tileColumn}>r{tileRow}c{tileColumn}: {tile.type}</div>
+                <div key={tileColumn}>r{tileRow}c{tileColumn}: {JSON.stringify(tile)}</div>
               ))
             )}
           </div>
@@ -323,9 +302,9 @@ test('continue fetching other tiles on error', async () => {
     )
   }
   const { getByText } = render(<Table fetchTile={fetchTile} />)
-  await waitFor(() => expect(getByText('r1c1: loaded')).toBeInTheDocument()) // all done!
+  await waitFor(() => expect(getByText('r1c1: [["r1c1"]]')).toBeInTheDocument()) // all done!
   // test that the rest are loaded, too
-  expect(getByText('r0c0: error')).toBeInTheDocument()
-  expect(getByText('r0c1: error')).toBeInTheDocument()
-  expect(getByText('r1c0: loaded')).toBeInTheDocument()
+  expect(getByText('r0c0: {"error":{"type":"fetchError","error":{"name":"Error","message":"oops"}}}')).toBeInTheDocument()
+  expect(getByText('r0c1: {"error":{"type":"fetchError","error":{"name":"Error","message":"oops"}}}')).toBeInTheDocument()
+  expect(getByText('r1c0: [["r1c0"]]')).toBeInTheDocument()
 })

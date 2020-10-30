@@ -1,104 +1,139 @@
 /* globals expect, test */
-import { LoadedTile, LoadingTile, SparseTileGrid } from './tiles'
 import splitGapsIntoLoadingTiles from './splitGapsIntoLoadingTiles'
 
-test('returns input when no gaps impact us', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+test('return input when no gaps impact us', () => {
+  const sparseTileGrid = [
+    [[['0']]],
     3,
-    [new LoadedTile(4, 0, [['4']])],
-    [new LoadingTile(5, 0)],
-    [new LoadedTile(5, 0, [['6']])],
-    2,
-    [new LoadedTile(9, 0, [['9']])]
-  ])
+    [[['4']]],
+    [null],
+    [[['6']]],
+    [[['9']]],
+  ]
   const result = splitGapsIntoLoadingTiles(sparseTileGrid, 4, 6)
   expect(result).toBe(sparseTileGrid)
 })
 
-test('splits a gap at its start', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+test('split a gap at its start', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
     4
-  ])
-  const result = splitGapsIntoLoadingTiles(sparseTileGrid, 1, 3)
-  expect(result).toEqual(new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
-    [new LoadingTile(1, 0)],
-    [new LoadingTile(2, 0)],
+  ], 1, 3)
+  expect(result).toEqual([
+    [[['0']]],
+    [null],
+    [null],
     2
-  ]))
+  ])
 })
 
-test('splits a gap at its end', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+test('split a gap at its end', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
     4,
-    [new LoadedTile(5, 0, [['5']])]
-  ])
-  const result = splitGapsIntoLoadingTiles(sparseTileGrid, 3, 5)
-  expect(result).toEqual(new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+    [[['5']]],
+  ], 3, 5)
+  expect(result).toEqual([
+    [[['0']]],
     2,
-    [new LoadingTile(3, 0)],
-    [new LoadingTile(4, 0)],
-    [new LoadedTile(5, 0, [['5']])]
-  ]))
+    [null],
+    [null],
+    [[['5']]]
+  ])
 })
 
-test('splits a gap in its middle', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+test('split a gap in its middle', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
     4,
-    [new LoadedTile(5, 0, [['5']])]
-  ])
-  const result = splitGapsIntoLoadingTiles(sparseTileGrid, 2, 4)
-  expect(result).toEqual(new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+    [[['5']]],
+  ], 2, 4)
+  expect(result).toEqual([
+    [[['0']]],
     1,
-    [new LoadingTile(2, 0)],
-    [new LoadingTile(3, 0)],
+    [null],
+    [null],
     1,
-    [new LoadedTile(5, 0, [['5']])]
-  ]))
+    [[['5']]]
+  ])
 })
 
-test('splits an end-gap at its end, leaving a number before', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
-    4,
-  ])
-  const result = splitGapsIntoLoadingTiles(sparseTileGrid, 3, 5)
-  expect(result).toEqual(new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
+test('split an end-gap at its end, leaving a number before', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
+    4
+  ], 3, 5)
+  expect(result).toEqual([
+    [[['0']]],
     2,
-    [new LoadingTile(3, 0)],
-    [new LoadingTile(4, 0)],
-  ]))
+    [null],
+    [null]
+  ])
 })
 
-test('splits an end-gap completely', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
-    2,
+test('split an end-gap completely', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
+    2
+  ], 1, 3)
+  expect(result).toEqual([
+    [[['0']]],
+    [null],
+    [null]
   ])
-  const result = splitGapsIntoLoadingTiles(sparseTileGrid, 1, 3)
-  expect(result).toEqual(new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
-    [new LoadingTile(1, 0)],
-    [new LoadingTile(2, 0)],
-  ]))
 })
 
-test('splits an end-gap completely, even when wanted start overlaps', () => {
-  const sparseTileGrid = new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
-    2,
+test('create the same number of loading tiles as there are tiles in the first tile-row', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['A1']], [['A2']], [['A3']]],
+    1
+  ], 1, 2)
+  expect(result).toEqual([
+    [[['A1']], [['A2']], [['A3']]],
+    [null, null, null]
   ])
-  const result = splitGapsIntoLoadingTiles(sparseTileGrid, 0, 3)
-  expect(result).toEqual(new SparseTileGrid([
-    [new LoadedTile(0, 0, [['0']])],
-    [new LoadingTile(1, 0)],
-    [new LoadingTile(2, 0)],
-  ]))
+})
+
+test('split an end-gap completely, even when wanted start overlaps', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
+    2
+  ], 0, 3)
+  expect(result).toEqual([
+    [[['0']]],
+    [null],
+    [null]
+  ])
+})
+
+test('split a gap when end overlaps', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
+    2,
+    [[['3']]],
+  ], 2, 4)
+  expect(result).toEqual([
+    [[['0']]],
+    1,
+    [null],
+    [[['3']]],
+  ])
+})
+
+test('split multiple gaps', () => {
+  const result = splitGapsIntoLoadingTiles([
+    [[['0']]],
+    1,
+    [[['2']]],
+    2,
+    [[['5']]],
+  ], 0, 6)
+  expect(result).toEqual([
+    [[['0']]],
+    [null],
+    [[['2']]],
+    [null],
+    [null],
+    [[['5']]]
+  ])
 })

@@ -1,9 +1,4 @@
-export default function findWantedLoadingTile (sparseTileGrid, r1, r2, c1, c2) {
-  if (sparseTileGrid.tileRows.length === 0) {
-    return null
-  }
-
-  const { tileRows } = sparseTileGrid
+export default function findWantedLoadingTile (tileRows, r1, r2, c1, c2) {
   let r = 0
   let tileColumns
   for (let i = 0; i < tileRows.length && r < r2; i++) {
@@ -15,8 +10,8 @@ export default function findWantedLoadingTile (sparseTileGrid, r1, r2, c1, c2) {
       if (r >= r1) {
         tileColumns = item
         for (let j = c1; j < c2; j++) {
-          if (tileColumns[j].type === 'loading') {
-            return tileColumns[j]
+          if (tileColumns[j] === null) {
+            return { tileRow: r, tileColumn: j }
           }
         }
       }

@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { ErrorTile, LoadedTile, LoadingTile, SparseTileGrid } from './tiles'
 import placeTile from './placeTile'
 import findWantedLoadingTile from './findWantedLoadingTile'
 import splitGapsIntoLoadingTiles from './splitGapsIntoLoadingTiles'
@@ -8,19 +7,15 @@ import splitGapsIntoLoadingTiles from './splitGapsIntoLoadingTiles'
 function createSparseTileGrid(nTileRows, nTileColumns) {
   const tileRows = []
   if (nTileRows > 0) {
-    // first row: all LoadingTile
-    const tileRow = []
-    for (let tileColumn = 0; tileColumn < nTileColumns; tileColumn++) {
-      tileRow.push(new LoadingTile(0, tileColumn))
-    }
-    tileRows.push(tileRow)
+    // first row: all loading
+    tileRows.push(Array(nTileColumns).fill(null))
 
     if (nTileRows > 1) {
       // rest of rows: gap
       tileRows.push(nTileRows - 1)
     }
   }
-  return new SparseTileGrid(tileRows)
+  return tileRows
 }
 
 function init ({ nTileRows, nTileColumns }) {
@@ -32,10 +27,7 @@ function init ({ nTileRows, nTileColumns }) {
 }
 
 function handleFetchSuccess (state, { tileRow, tileColumn, rows }) {
-  const sparseTileGrid = placeTile(
-    state.sparseTileGrid,
-    new LoadedTile(tileRow, tileColumn, rows)
-  )
+  const sparseTileGrid = placeTile(state.sparseTileGrid, tileRow, tileColumn, rows)
   return {
     ...state,
     sparseTileGrid,
@@ -44,10 +36,7 @@ function handleFetchSuccess (state, { tileRow, tileColumn, rows }) {
 }
 
 function handleFetchError (state, { tileRow, tileColumn, error }) {
-  const sparseTileGrid = placeTile(
-    state.sparseTileGrid,
-    new ErrorTile(tileRow, tileColumn, error)
-  )
+  const sparseTileGrid = placeTile(state.sparseTileGrid, tileRow, tileColumn, { error })
   return {
     ...state,
     sparseTileGrid,
@@ -91,7 +80,7 @@ function reducer (state, action) {
  *       return (
  *         <table>
  *           <tbody>
- *             {sparseTileGrid.tileRows.map((tileColumns, tileRow) => (
+ *             {sparseTileGrid.map((tileColumns, tileRow) => (
  *               <tr key={tileRow}>
  *                 {tileRow.map((tile, tileColumn) => (
  *                   <td className={`tile-${tile.state}`} key={tileColumn} />
@@ -105,8 +94,10 @@ function reducer (state, action) {
  *
  * The return values are:
  *
- * * `sparseTileGrid.tileRows` - Array of Array[Tile]|Number. Empty only if the table has no rows.
- *                               Each child Array is guaranteed to have length=`tileColumns`.
+ * * `sparseTileGrid` - Array of Array[Tile]|Number. Empty only if the table has no rows.
+ *                      Each child Array is guaranteed to have length=`tileColumns`. A
+ *                      Tile can be an Array[Array[Any]] (data), null (meaning "loading"),
+ *                      or an object representing an error.
  * * `setWantedTileRange(r1, r2, c1, c2)` - Callback that suggests the next tiles to
  *                                          load. The caller is expected to call this
  *                                          when the user stops scrolling. The caller

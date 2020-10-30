@@ -1,15 +1,8 @@
-import { LoadingTile, SparseTileGrid } from './tiles'
-
-function createLoadingRow (tileRow, nTileColumns) {
-  const ret = []
-  for (let tileColumn = 0; tileColumn < nTileColumns; tileColumn++) {
-    ret.push(new LoadingTile(tileRow, tileColumn))
-  }
-  return ret
+function createLoadingRow (nTileColumns) {
+  return Array(nTileColumns).fill(null)
 }
 
-function needsChange (sparseTileGrid, tileRowBegin, tileRowEnd) {
-  const { tileRows } = sparseTileGrid
+function needsChange (tileRows, tileRowBegin, tileRowEnd) {
   let tileRow = 0 // number
   for (let i = 0; i < tileRows.length; i++) {
     const item = tileRows[i]
@@ -35,15 +28,20 @@ function needsChange (sparseTileGrid, tileRowBegin, tileRowEnd) {
  * are rows of tiles.
  *
  * This returns its input when no gaps apply.
+ *
+ * Assumes the first row is already split.
  */
-export default function splitGapsIntoLoadingTiles (sparseTileGrid, tileRowBegin, tileRowEnd) {
-  if (!needsChange(sparseTileGrid, tileRowBegin, tileRowEnd)) {
+export default function splitGapsIntoLoadingTiles (tileRows, tileRowBegin, tileRowEnd) {
+  if (!needsChange(tileRows, tileRowBegin, tileRowEnd)) {
     // Return input -- so React.useMemo() can help avoid renders
-    return sparseTileGrid
+    return tileRows
+  }
+
+  if (Number.isInteger(tileRows[0])) {
+    throw new Error("First tile-row must not be a gap")
   }
 
   let tileRow = 0
-  const { tileRows } = sparseTileGrid
   const newTileRows = []
   tileRows.forEach(item => {
     if (tileRow >= tileRowEnd) {
@@ -65,7 +63,7 @@ export default function splitGapsIntoLoadingTiles (sparseTileGrid, tileRowBegin,
           }
           // For each critical row, split the number into rows
           while (item > 0 && tileRow < tileRowEnd) {
-            newTileRows.push(createLoadingRow(tileRow, tileRows[0].length))
+            newTileRows.push(createLoadingRow(tileRows[0].length))
             tileRow++
             item--
           }
@@ -83,5 +81,5 @@ export default function splitGapsIntoLoadingTiles (sparseTileGrid, tileRowBegin,
     }
   })
 
-  return new SparseTileGrid(newTileRows)
+  return newTileRows
 }

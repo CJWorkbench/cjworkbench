@@ -1,36 +1,35 @@
 /* globals expect, test */
 import findWantedLoadingTile from './findWantedLoadingTile'
-import { LoadingTile, LoadedTile, SparseTileGrid } from './tiles'
 
 test('find null on empty grid', () => {
-  expect(findWantedLoadingTile(new SparseTileGrid([]), 0, 1, 0, 1)).toBe(null)
+  expect(findWantedLoadingTile([], 0, 1, 0, 1)).toBe(null)
 })
 
 test('find the first tile on a one-tile grid', () => {
-  expect(findWantedLoadingTile(new SparseTileGrid([[new LoadingTile(0, 0)]]), 0, 1, 0, 1)).toEqual(new LoadingTile(0, 0))
+  expect(findWantedLoadingTile([[null]], 0, 1, 0, 1)).toEqual({ tileRow: 0, tileColumn: 0 })
 })
 
 test('find nothing when the grid is all loaded', () => {
-  expect(findWantedLoadingTile(new SparseTileGrid([[new LoadedTile(0, 0, [['X']])]], 0, 1, 0, 1))).toBe(null)
+  expect(findWantedLoadingTile([[[['X']]]], 0, 1, 0, 1)).toBe(null)
 })
 
 test('skip gaps', () => {
-  expect(findWantedLoadingTile(new SparseTileGrid([
-    [new LoadingTile(0, 0), new LoadingTile(0, 1), new LoadingTile(0, 2)],
-    1,
-    [new LoadingTile(2, 0), new LoadingTile(2, 1), new LoadingTile(2, 2)],
-  ]), 2, 3, 1, 2)).toEqual(new LoadingTile(2, 1))
+  expect(findWantedLoadingTile([
+    [null, null, null],
+    2,
+    [null, null, null]
+  ], 3, 4, 1, 2)).toEqual({ tileRow: 3, tileColumn: 1 })
 })
 
 test('find the first loading tile in a row', () => {
-  expect(findWantedLoadingTile(new SparseTileGrid([
-    [new LoadingTile(0, 0), new LoadedTile(0, 1, [['C1']]), new LoadedTile(0, 2, [['D1']]), new LoadingTile(0, 3)],
-  ]), 0, 1, 1, 4)).toEqual(new LoadingTile(0, 3))
+  expect(findWantedLoadingTile([
+    [null, [['B1']], [['C1']], null]
+  ], 0, 1, 1, 4)).toEqual({ tileRow: 0, tileColumn: 3 })
 })
 
 test('skip an all-loaded row and search the next row', () => {
-  expect(findWantedLoadingTile(new SparseTileGrid([
-    [new LoadingTile(0, 0), new LoadedTile(0, 1, [['C1']]), new LoadedTile(0, 2, [['D1']]), new LoadedTile(0, 3, [['E1']])],
-    [new LoadingTile(1, 0), new LoadedTile(1, 1, [['C1']]), new LoadingTile(1, 2), new LoadedTile(1, 3, [['E2']])],
-  ]), 0, 2, 1, 4)).toEqual(new LoadingTile(1, 2))
+  expect(findWantedLoadingTile([
+    [null, [['B1']], [['C1']], [['D1']]],
+    [null, [['B2']], null, [['D2']]]
+  ], 0, 2, 1, 4)).toEqual({ tileRow: 1, tileColumn: 2 })
 })
