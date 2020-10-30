@@ -39,6 +39,9 @@
     "@lingui/loader": "^2.9.2",
     "@lingui/macro": "^2.9.2",
     "@lingui/react": "^2.9.2",
+    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/react": "^11.1.0",
+    "abort-controller": "^3.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
@@ -55,6 +58,7 @@
     "jest": "^26.5.0",
     "memoize-one": "^5.1.1",
     "mini-css-extract-plugin": "^0.11.3",
+    "node-fetch": "^2.6.1",
     "node-sass": "^4.14.1",
     "prop-types": "^15.6.2",
     "react": "^16.13.1",
@@ -86,7 +90,7 @@
     "parser": "babel-eslint"
   },
   "jest": {
-    "setupFiles": [
+    "setupFilesAfterEnv": [
       "./setupJest.js"
     ],
     "restoreMocks": true,

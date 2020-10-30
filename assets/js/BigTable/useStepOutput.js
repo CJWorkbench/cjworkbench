@@ -1,0 +1,190 @@
+import React from 'react'
+
+import { ErrorTile, LoadedTile, LoadingTile, SparseTileGrid } from './tiles'
+import placeTile from './placeTile'
+import findWantedLoadingTile from './findWantedLoadingTile'
+import splitGapsIntoLoadingTiles from './splitGapsIntoLoadingTiles'
+
+function createSparseTileGrid(nTileRows, nTileColumns) {
+  const tileRows = []
+  if (nTileRows > 0) {
+    // first row: all LoadingTile
+    const tileRow = []
+    for (let tileColumn = 0; tileColumn < nTileColumns; tileColumn++) {
+      tileRow.push(new LoadingTile(0, tileColumn))
+    }
+    tileRows.push(tileRow)
+
+    if (nTileRows > 1) {
+      // rest of rows: gap
+      tileRows.push(nTileRows - 1)
+    }
+  }
+  return new SparseTileGrid(tileRows)
+}
+
+function init ({ nTileRows, nTileColumns }) {
+  return {
+    wantedTileRange: [0, 1, 0, 1],
+    sparseTileGrid: createSparseTileGrid(nTileRows, nTileColumns),
+    loadingTile: nTileRows === 0 ? null : { tileRow: 0, tileColumn: 0 }
+  }
+}
+
+function handleFetchSuccess (state, { tileRow, tileColumn, rows }) {
+  const sparseTileGrid = placeTile(
+    state.sparseTileGrid,
+    new LoadedTile(tileRow, tileColumn, rows)
+  )
+  return {
+    ...state,
+    sparseTileGrid,
+    loadingTile: findWantedLoadingTile(sparseTileGrid, ...state.wantedTileRange)
+  }
+}
+
+function handleFetchError (state, { tileRow, tileColumn, error }) {
+  const sparseTileGrid = placeTile(
+    state.sparseTileGrid,
+    new ErrorTile(tileRow, tileColumn, error)
+  )
+  return {
+    ...state,
+    sparseTileGrid,
+    loadingTile: findWantedLoadingTile(sparseTileGrid, ...state.wantedTileRange)
+  }
+}
+
+function handleSetWantedTileRange (state, r1, r2, c1, c2) {
+  const sparseTileGrid = splitGapsIntoLoadingTiles(state.sparseTileGrid, r1, r2)
+  const wantedTileRange = [r1, r2, c1, c2]
+  return {
+    ...state,
+    sparseTileGrid,
+    wantedTileRange,
+    loadingTile: state.loadingTile || findWantedLoadingTile(sparseTileGrid, ...wantedTileRange)
+  }
+}
+
+function reducer (state, action) {
+  switch (action.type) {
+    case 'handleFetchSuccess':
+      return handleFetchSuccess(state, action.payload)
+    case 'handleFetchError':
+      return handleFetchError(state, action.payload)
+    case 'setWantedTileRange':
+      return handleSetWantedTileRange(state, ...action.payload)
+    default:
+      throw new Error('unknown action')
+  }
+}
+
+/**
+ * Load data for use in a table.
+ *
+ * Usage:
+ *
+ *     function MyTable(props) {
+ *       const { sparseTileGrid, setWantedTileRange, isLoading } = useStepOutput({
+ *         fetchTile, nTileRows, nTileColumns
+ *       })
+ *       return (
+ *         <table>
+ *           <tbody>
+ *             {sparseTileGrid.tileRows.map((tileColumns, tileRow) => (
+ *               <tr key={tileRow}>
+ *                 {tileRow.map((tile, tileColumn) => (
+ *                   <td className={`tile-${tile.state}`} key={tileColumn} />
+ *                 ))}
+ *               </tr>
+ *             ))}
+ *           </tbody>
+ *         </table>
+ *       )
+ *     }
+ *
+ * The return values are:
+ *
+ * * `sparseTileGrid.tileRows` - Array of Array[Tile]|Number. Empty only if the table has no rows.
+ *                               Each child Array is guaranteed to have length=`tileColumns`.
+ * * `setWantedTileRange(r1, r2, c1, c2)` - Callback that suggests the next tiles to
+ *                                          load. The caller is expected to call this
+ *                                          when the user stops scrolling. The caller
+ *                                          cannot "force" any requests: it can only
+ *                                          say it's looking at these tiles and trust
+ *                                          that tiles will be forthcoming. r2 and c2
+ *                                          are "end" indexes in the C sense: they
+ *                                          come _after_ the tile in question. So
+ *                                          `0, 1, 2, 3` will only fetch tile (0,2).
+ * * `isLoading` - True when any tile is a "loading" tile.
+ */
+export default function useStepOutput (props) {
+  const { fetchTile, nTileRows, nTileColumns } = props
+  const [{ sparseTileGrid, wantedTileRange, loadingTile }, dispatch] = React.useReducer(reducer, { nTileRows, nTileColumns }, init)
+  const isLoading = loadingTile !== null
+  const setWantedTileRange = React.useCallback((...payload) => dispatch({ type: 'setWantedTileRange', payload }), [dispatch])
+
+  React.useEffect(() => {
+    if (loadingTile === null) return
+
+    // call fetchTile() from useEffect(), not from reducer. Reducers should not
+    // have side effects.
+    const { tileRow, tileColumn } = loadingTile
+
+    const abortController = new global.AbortController()
+    const { signal } = abortController
+    const currentFetch = fetchTile(tileRow, tileColumn, { signal })
+
+    currentFetch.then(
+      async response => {
+        if (abortController.signal.aborted) return
+
+        if (response.status !== 200) {
+          return dispatch({
+            type: 'handleFetchError',
+            payload: {
+              tileRow,
+              tileColumn,
+              error: { type: 'httpStatusNotOk', httpStatus: `${response.status} ${response.statusText}` }
+            }
+          })
+        }
+
+        let data
+        try {
+          data = await response.json()
+        } catch ({ name, message }) {
+          // XXX ...should we do anything if abortController.signal.aborted?
+          return dispatch({
+            type: 'handleFetchError',
+            payload: {
+              tileRow,
+              tileColumn,
+              error: { type: 'jsonError', error: { name, message } }
+            }
+          })
+        }
+
+        return dispatch({
+          type: 'handleFetchSuccess',
+          payload: { tileRow, tileColumn, rows: data.rows }
+        })
+      },
+      ({ name, message }) => {
+        if (abortController.signal.aborted) return
+
+        dispatch({
+          type: 'handleFetchError',
+          payload: {
+            tileRow,
+            tileColumn,
+            error: { type: 'fetchError', error: { name, message } }
+          }
+        })
+      }
+    )
+    return () => abortController.abort()
+  }, [loadingTile, fetchTile, dispatch])
+
+  return { sparseTileGrid, setWantedTileRange, isLoading }
+}
