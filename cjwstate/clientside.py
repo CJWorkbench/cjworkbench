@@ -1,5 +1,4 @@
-"""
-State that will be seen in Redux clients.
+"""State that will be seen in Redux clients.
 
 This state is created within the `cjwstate` package and passed to
 `server.websockets`. It is language-agnostic: the Websockets module
@@ -16,7 +15,7 @@ instead.
 from __future__ import annotations
 from dataclasses import dataclass, field, replace
 import datetime
-from typing import Any, Dict, FrozenSet, Iterable, List, Optional, Union
+from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Optional, Union
 from cjwstate.modules.types import ModuleSpec
 
 
@@ -26,8 +25,7 @@ class _Null:
 
 
 Null = _Null()
-"""
-Sentinel indicating that the web browser should change the value to
+"""Sentinel indicating that the web browser should change the value to
 JavaScript `null`.
 
 We don't use `None` for this purpose: `None` means there is no update.
@@ -68,8 +66,7 @@ class Module:
 
 @dataclass(frozen=True)
 class WorkflowUpdate:
-    """
-    Updates to clients' `workflow` state.
+    """Updates to clients' `workflow` state.
 
     The following fields cannot be represented here:
 
@@ -84,22 +81,19 @@ class WorkflowUpdate:
     """
 
     id: Optional[int] = None
-    """
-    ID of the workflow in the database.
+    """ID of the workflow in the database.
 
     Required for init, and must be None afterwards.
     """
 
     url_id: Optional[int] = None
-    """
-    ID of the workflow in URLs.
+    """ID of the workflow in URLs.
 
     Required for init, and must be None afterwards.
     """
 
     owner: Optional["User"] = None
-    """
-    Workflow owner, maybe anonymous. (Django model -- TODO use something else.)
+    """Workflow owner, maybe anonymous. (Django model -- TODO use something else.)
 
     Required for init, and must be None afterwards.
 
@@ -112,8 +106,7 @@ class WorkflowUpdate:
     """True if this is an 'example' workflow."""
 
     selected_tab_position: Optional[int] = None
-    """
-    Position of initial tab for the user to display.
+    """Position of initial tab for the user to display.
 
     Required for init, and must be None afterwards.
     """
@@ -123,6 +116,9 @@ class WorkflowUpdate:
 
     tab_slugs: Optional[List[str]] = None
     """Ordered list of tab slugs."""
+
+    block_slugs: Optional[List[str]] = None
+    """Ordered list of report block slugs."""
 
     public: Optional[bool] = None
     """True means anybody can see it."""
@@ -136,8 +132,7 @@ class WorkflowUpdate:
 
 @dataclass(frozen=True)
 class StepUpdate:
-    """
-    Data for a new or existing Step with the given id (TODO use slug, nix id).
+    """Data for a new or existing Step with the given id (TODO use slug, nix id).
 
     Every field of an Update is Optional, default `None`. `None` means there
     is no update, and the client should keep whichever value it already had.
@@ -146,50 +141,43 @@ class StepUpdate:
     """
 
     id: Optional[int] = None
-    """
-    Step identifier. TODO nix this and use slug as identifier.
+    """Step identifier. TODO nix this and use slug as identifier.
 
     Required for creation, and must be None afterwards.
     """
 
     slug: Optional[str] = None
-    """
-    Step identifier.
+    """Step identifier.
 
     Required for creation, and must be None afterwards.
     """
 
     module_slug: Optional[str] = None
-    """
-    Module identifier.
+    """Module identifier.
 
     Required for creation and whenever `render_result` is not empty.
     """
 
     tab_slug: Optional[str] = None
-    """
-    Tab identifier.
+    """Tab identifier.
 
     TODO nix this -- it's redundant.
     """
 
     is_busy: Optional[bool] = None
-    """
-    True during fetch.
+    """True during fetch.
 
     TODO nix this and track fetches as separate objects.
     """
 
     last_relevant_delta_id: Optional[int] = None
-    """
-    Delta ID that ought to be rendered.
+    """Delta ID that ought to be rendered.
 
     This may get out of sync with cached_render_result_delta_id.
     """
 
     render_result: Optional[Union[_Null, "CachedRenderResult"]] = None
-    """
-    Cached, maybe-stale render result.
+    """Cached, maybe-stale render result.
 
     Null if there is no cached render result.
 
@@ -203,68 +191,52 @@ class StepUpdate:
     """
 
     files: Optional[List[UploadedFile]] = None
-    """
-    List of all files uploaded by the user to this Step.
+    """List of all files uploaded by the user to this Step.
     """
 
     params: Optional[Dict[str, Any]] = None
-    """
-    User-supplied params.
-    """
+    """User-supplied params."""
 
     secrets: Optional[Dict[str, Dict[str, str]]] = None
-    """
-    User-supplied secrets.
+    """User-supplied secrets.
 
     Each secret is a Dict with just a "name" (str) value.
     """
 
     is_collapsed: Optional[bool] = None
-    """
-    True if the module should occupy fewer pixels on the screen.
-    """
+    """True if the module should occupy fewer pixels on the screen."""
 
     notes: Optional[str] = None
-    """
-    User-entered notes. May be `""`.
-    """
+    """User-entered notes. May be `""`."""
 
     is_auto_fetch: Optional[bool] = None
-    """
-    True if the user wants this module to fetch as a cronjob.
-    """
+    """True if the user wants this module to fetch as a cronjob."""
 
     fetch_interval: Optional[int] = None
-    """
-    Number of seconds between fetches, if is_auto_update is set.
+    """Number of seconds between fetches, if is_auto_update is set.
 
     (If is_auto_update _isn't_ set, number of seconds to default it to when it
     does become set.)
     """
 
     last_fetched_at: Optional[Union[_Null, datetime.datetime]] = None
-    """
-    Time of last fetch, or Null.
+    """Time of last fetch, or Null.
 
     This time may be more recent than the latest FetchedVersion, if we polled a
     website and then decided not to create a new FetchedVersion.
     """
 
     is_notify_on_change: Optional[bool] = None
-    """
-    True if we are to email the user when the result changes.
-    """
+    """True if we are to email the user when the result changes."""
 
     has_unseen_notification: Optional[bool] = None
-    """
-    True if no user has viewed a notification.
+    """True if no user has viewed a notification.
 
     TODO revisit this feature. It's not multi-user friendly.
     """
 
     versions: Optional[FetchedVersionList] = None
-    """
-    Information about fetched versions.
+    """Information about fetched versions.
 
     TODO redesign "versions" from scratch. They currently conflate all these
     cases:
@@ -281,8 +253,7 @@ class StepUpdate:
 
 @dataclass(frozen=True)
 class TabUpdate:
-    """
-    Data for a new or existing Tab with the given slug.
+    """Data for a new or existing Tab with the given slug.
 
     Every field of an Update is Optional, default `None`. `None` means there
     is no update, and the client should keep whichever value it already had.
@@ -291,27 +262,22 @@ class TabUpdate:
     """
 
     slug: Optional[str] = None
-    """
-    Tab identifier.
+    """Tab identifier.
 
     Required for creation, and must be None afterwards.
     """
 
     name: Optional[str] = None
-    """
-    User-supplied name.
-    """
+    """User-supplied name."""
 
     step_ids: Optional[List[int]] = None
-    """
-    Step IDs, in order.
+    """Step IDs, in order.
 
     TODO change this to Step slugs.
     """
 
     selected_step_index: Optional[int] = None
-    """
-    Position (0 = "first") of the last step selected by any editor.
+    """Position (0 = "first") of the last step selected by any editor.
 
     This is only used during page load. We probably ought to make it per-user,
     but it's too subtle to be a priority.
@@ -319,9 +285,29 @@ class TabUpdate:
 
 
 @dataclass(frozen=True)
+class TextBlock:
+    markdown: str
+    type: Literal["text"] = "text"
+
+
+@dataclass(frozen=True)
+class ChartBlock:
+    step_slug: str
+    type: Literal["chart"] = "chart"
+
+
+@dataclass(frozen=True)
+class TableBlock:
+    tab_slug: str
+    type: Literal["table"] = "table"
+
+
+Block = Union[TextBlock, ChartBlock, TableBlock]
+
+
+@dataclass(frozen=True)
 class Update:
-    """
-    New data to pass to the client.
+    """New data to pass to the client.
 
     Every field of an Update is Optional, default `None`. `None` means there
     is no update, and the client should keep whichever value it already had.
@@ -344,11 +330,17 @@ class Update:
     tabs: Dict[str, TabUpdate] = field(default_factory=dict)
     """Tabs to add or update, keyed by slug."""
 
+    blocks: Dict[str, Block] = field(default_factory=dict)
+    """Report blocks to add or update, keyed by slug."""
+
     clear_tab_slugs: FrozenSet[str] = field(default_factory=frozenset)
     """Tab slugs the client should forget about."""
 
     clear_step_ids: FrozenSet[int] = field(default_factory=frozenset)
     """Step IDs the client should forget about. TODO use slugs, not IDs."""
+
+    clear_block_slugs: FrozenSet[str] = field(default_factory=frozenset)
+    """Block slugs the client should forget about."""
 
     def update_tab(self, slug: str, **kwargs) -> Update:
         """Return an Update with added/modified tab values."""
@@ -382,6 +374,10 @@ class Update:
         assert id == update.id
         return replace(self, steps={**self.steps, id: update})
 
+    def replace_blocks(self, updates: Dict[str, Block]) -> Update:
+        """Return an Update with added/modified block."""
+        return replace(self, blocks={**self.blocks, **updates})
+
     def replace_steps(self, updates: Dict[int, StepUpdate]) -> Update:
         """Return an Update with new or replaced Steps. TODO key by slug, not id."""
         return replace(self, steps={**self.steps, **updates})
@@ -398,11 +394,14 @@ class Update:
         """Return an Update that clears Steps. TODO key by slug, not id."""
         return replace(self, clear_step_ids=self.clear_step_ids.union(ids))
 
+    def clear_blocks(self, slugs: Iterable[str]) -> Update:
+        """Return an Update that clears report Blocks."""
+        return replace(self, clear_block_slugs=self.clear_block_slugs.union(slugs))
+
 
 @dataclass(frozen=True)
 class Init:
-    """
-    Initial state to pass to the client.
+    """Initial state to pass to the client.
 
     This is modeled after `Update`, with these differences:
 
@@ -415,3 +414,4 @@ class Init:
     modules: Dict[str, Module]
     steps: Dict[int, StepUpdate]  # TODO key by slug, not ID
     tabs: Dict[str, TabUpdate]
+    blocks: Dict[str, Block]

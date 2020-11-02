@@ -2,7 +2,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional, Set, Tuple, FrozenSet
-from django.db import models, transaction
+from django.db import connection, models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.http import HttpRequest
@@ -185,6 +185,8 @@ class Workflow(models.Model):
         default=None,
         on_delete=models.SET_DEFAULT,
     )
+
+    has_custom_report = models.BooleanField(default=False)
 
     @contextmanager
     def cooperative_lock(self):
@@ -407,6 +409,57 @@ class Workflow(models.Model):
             tabs = list(self.live_tabs)
             for tab in tabs:
                 tab.duplicate_into_new_workflow(wf)
+
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    WITH tab_id_map AS (
+                        SELECT
+                            tab1.id AS old_id,
+                            tab2.id AS new_id
+                        FROM tab tab1
+                        INNER JOIN tab tab2 ON tab1.slug = tab2.slug
+                        WHERE tab1.workflow_id = %(old_workflow_id)s
+                          AND tab2.workflow_id = %(new_workflow_id)s
+                    ),
+                    step_id_map AS (
+                        SELECT
+                            step1.id AS old_id,
+                            step2.id AS new_id
+                        FROM step step1
+                        INNER JOIN tab tab1 ON step1.tab_id = tab1.id
+                        INNER JOIN tab tab2 ON tab1.slug = tab2.slug
+                        INNER JOIN step step2 ON step2.tab_id = tab2.id AND step2.slug = step1.slug
+                        WHERE tab1.workflow_id = %(old_workflow_id)s
+                          AND tab2.workflow_id = %(new_workflow_id)s
+                    )
+                    INSERT INTO block (
+                        workflow_id,
+                        slug,
+                        position,
+                        created_at,
+                        block_type,
+                        text_markdown,
+                        tab_id,
+                        step_id
+                    )
+                    SELECT
+                        %(new_workflow_id)s,
+                        slug,
+                        position,
+                        created_at,
+                        block_type,
+                        text_markdown,
+                        (SELECT tab_id_map.new_id FROM tab_id_map WHERE tab_id_map.old_id = block.tab_id),
+                        (SELECT step_id_map.new_id FROM step_id_map WHERE step_id_map.old_id = block.step_id)
+                    FROM block
+                    WHERE workflow_id = %(old_workflow_id)s
+                    """,
+                    {
+                        "old_workflow_id": self.id,
+                        "new_workflow_id": wf.id,
+                    },
+                )
 
         return wf
 

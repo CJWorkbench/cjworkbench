@@ -1,4 +1,5 @@
 from .acl_entry import AclEntry
+from .block import Block
 from .cached_render_result import CachedRenderResult
 from .workflow import Workflow
 from .step import Step

@@ -2,6 +2,8 @@ from django.db.models import F, Q
 from .base import BaseCommand
 from .util import ChangesStepOutputs
 
+from cjwstate import clientside
+
 
 class DeleteStep(ChangesStepOutputs, BaseCommand):
     """Remove `step` from its Workflow.
@@ -11,7 +13,7 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
     """
 
     def load_clientside_update(self, delta):
-        return (
+        ret = (
             super()
             .load_clientside_update(delta)
             .update_tab(
@@ -19,6 +21,23 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
                 step_ids=list(delta.step.tab.live_steps.values_list("id", flat=True)),
             )
         )
+        blocks = delta.values_for_backward.get("blocks", [])
+        if blocks:
+            ret = ret.update_workflow(
+                block_slugs=list(delta.workflow.blocks.values_list("slug", flat=True))
+            )
+            if delta.step.is_deleted:
+                # Clear the blocks we deleted
+                ret = ret.clear_blocks(block["slug"] for block in blocks)
+            else:
+                # Undoing, we need to re-add slugs
+                ret = ret.replace_blocks(
+                    {
+                        block["slug"]: clientside.ChartBlock(delta.step.slug)
+                        for block in blocks
+                    }
+                )
+        return ret
 
     def affected_steps_in_tab(self, step) -> Q:
         # We don't need to change step's delta_id: just the others.
@@ -37,9 +56,17 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
                 tab.selected_step_position = None
             tab.save(update_fields=["selected_step_position"])
 
+        # Delete charts from the report
+        blocks = list(delta.step.blocks.all())
+        delta.step.blocks.all().delete()
+        for block in reversed(blocks):
+            delta.workflow.blocks.filter(position__gt=block.position).update(
+                position=F("position") - 1
+            )
+
+        # Soft-delete the step
         delta.step.is_deleted = True
         delta.step.save(update_fields=["is_deleted"])
-
         tab.live_steps.filter(order__gt=delta.step.order).update(order=F("order") - 1)
 
         self.forward_affected_delta_ids(delta)
@@ -53,12 +80,19 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
         delta.step.is_deleted = False
         delta.step.save(update_fields=["is_deleted"])
 
+        blocks = delta.values_for_backward.get("blocks", [])
+        for block_kwargs in blocks:
+            delta.workflow.blocks.filter(position__gte=block_kwargs["position"]).update(
+                position=F("position") + 1
+            )
+            delta.workflow.blocks.create(**block_kwargs, step_id=delta.step_id)
+
         # Don't set tab.selected_step_position. We can't restore it, and
         # this operation can't invalidate any value that was there previously.
 
         self.backward_affected_delta_ids(delta)
 
-    def amend_create_kwargs(self, *, step, **kwargs):
+    def amend_create_kwargs(self, *, workflow, step, **kwargs):
         # If step is already deleted, ignore this Delta.
         #
         # This works around a race: what if two users delete the same Step
@@ -69,10 +103,23 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
         if step.is_deleted or step.tab.is_deleted:
             return None
 
+        values_for_backward = {}
+        if workflow.has_custom_report:
+            values_for_backward["blocks"] = list(
+                {
+                    k: v
+                    for k, v in block.to_json_safe_kwargs().items()
+                    if k != "step_slug"
+                }
+                for block in step.blocks.all()
+            )
+
         return {
             **kwargs,
+            "workflow": workflow,
             "step": step,
             "step_delta_ids": self.affected_step_delta_ids(step),
+            "values_for_backward": values_for_backward,
         }
 
 

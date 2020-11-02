@@ -78,6 +78,7 @@ class DbTestCase(SimpleTestCase):
 
 _Tables = [
     "acl_entry",
+    "block",
     "delta",
     "module_version",
     "stored_object",

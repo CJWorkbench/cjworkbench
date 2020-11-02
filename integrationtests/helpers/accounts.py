@@ -120,6 +120,7 @@ class AccountAdmin:
         """Delete all accounts and related data."""
         _Tables = [
             "acl_entry",
+            "block",
             "delta",
             "stored_object",
             "uploaded_file",

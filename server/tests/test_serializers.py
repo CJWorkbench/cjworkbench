@@ -6,13 +6,20 @@ from server.serializers import (
     JsonizeContext,
     JsonizeModuleContext,
     jsonize_clientside_module,
+    jsonize_clientside_update,
     _jsonize_param_spec,
 )
 from cjworkbench.tests.i18n.util import mock_app_catalogs, mock_cjwmodule_catalogs
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from babel.messages.catalog import Catalog
 from cjwstate.modules.types import ModuleSpec
-from cjwstate.clientside import Module
+from cjwstate.clientside import (
+    Module,
+    Update,
+    ChartBlock,
+    TableBlock,
+    TextBlock,
+)
 from typing import Dict, Any, List, Tuple
 from io import BytesIO
 from babel.messages.pofile import write_po
@@ -1631,3 +1638,36 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
                     mock_jsonize_context(locale_id="el"),
                 )
                 self.assertRegex(result, "messageid")
+
+
+class JsonizeBlocksTest(unittest.TestCase):
+    def test_text_block(self):
+        self.assertEqual(
+            jsonize_clientside_update(
+                Update(
+                    blocks={"block-1": TextBlock(markdown="# header")},
+                ),
+                mock_jsonize_context(),
+            ),
+            {
+                "updateBlocks": {"block-1": {"type": "text", "markdown": "# header"}},
+            },
+        )
+
+    def test_chart_block(self):
+        self.assertEqual(
+            jsonize_clientside_update(
+                Update(blocks={"block-1": ChartBlock(step_slug="step-1")}),
+                mock_jsonize_context(),
+            ),
+            {"updateBlocks": {"block-1": {"type": "chart", "stepSlug": "step-1"}}},
+        )
+
+    def test_table_block(self):
+        self.assertEqual(
+            jsonize_clientside_update(
+                Update(blocks={"block-1": TableBlock(tab_slug="tab-1")}),
+                mock_jsonize_context(),
+            ),
+            {"updateBlocks": {"block-1": {"type": "table", "tabSlug": "tab-1"}}},
+        )

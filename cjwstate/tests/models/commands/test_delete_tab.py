@@ -1,7 +1,8 @@
 import asyncio
 from unittest.mock import patch
-from cjwstate import commands
-from cjwstate.models import Workflow
+
+from cjwstate import clientside, commands
+from cjwstate.models import Block, Workflow
 from cjwstate.models.commands import DeleteTab
 from cjwstate.tests.utils import DbTestCase
 
@@ -142,3 +143,87 @@ class DeleteTabTest(DbTestCase):
         self.assertEqual(delta2.workflow.tab_slugs, ["tab-1", "tab-2"])
         self.assertEqual(list(delta2.tabs.keys()), ["tab-2"])
         self.assertFalse(delta2.clear_tab_slugs)
+
+    @patch.object(commands, "websockets_notify")
+    def test_delete_custom_report_table(self, send_update):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        send_update.return_value = future_none
+
+        workflow = Workflow.create_and_init(
+            selected_tab_position=0, has_custom_report=True
+        )  # tab-1
+        tab2 = workflow.tabs.create(position=1, slug="tab-2")
+
+        block1 = workflow.blocks.create(
+            position=0, slug="block-1", block_type="Text", text_markdown="1"
+        )
+        block2 = workflow.blocks.create(
+            position=1, slug="block-2", block_type="Table", tab_id=tab2.id
+        )
+        block3 = workflow.blocks.create(
+            position=2, slug="block-3", block_type="Text", text_markdown="3"
+        )
+
+        cmd = self.run_with_async_db(
+            commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
+        )
+        delta1 = send_update.call_args[0][1]
+        self.assertEqual(delta1.workflow.block_slugs, ["block-1", "block-3"])
+        self.assertEqual(delta1.blocks, {})
+        self.assertEqual(delta1.clear_block_slugs, frozenset(["block-2"]))
+        with self.assertRaises(Block.DoesNotExist):
+            block2.refresh_from_db()
+        block3.refresh_from_db()
+        self.assertEqual(block3.position, 1)
+
+        self.run_with_async_db(commands.undo(cmd))
+        delta2 = send_update.call_args[0][1]
+        self.assertEqual(delta2.workflow.block_slugs, ["block-1", "block-2", "block-3"])
+        self.assertEqual(delta2.blocks, {"block-2": clientside.TableBlock("tab-2")})
+        self.assertEqual(delta2.clear_block_slugs, frozenset())
+
+    @patch.object(commands, "websockets_notify")
+    def test_delete_custom_report_chart(self, send_update):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        send_update.return_value = future_none
+
+        workflow = Workflow.create_and_init(
+            selected_tab_position=0, has_custom_report=True
+        )  # tab-1
+        tab2 = workflow.tabs.create(position=1, slug="tab-2")
+        step = tab2.steps.create(
+            order=0,
+            slug="step-x",
+            last_relevant_delta_id=workflow.last_delta_id,
+            params={},
+        )
+
+        block1 = workflow.blocks.create(
+            position=0, slug="block-1", block_type="Text", text_markdown="1"
+        )
+        block2 = workflow.blocks.create(
+            position=1, slug="block-2", block_type="Chart", step_id=step.id
+        )
+        block3 = workflow.blocks.create(
+            position=2, slug="block-3", block_type="Text", text_markdown="3"
+        )
+
+        cmd = self.run_with_async_db(
+            commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
+        )
+        delta1 = send_update.call_args[0][1]
+        self.assertEqual(delta1.workflow.block_slugs, ["block-1", "block-3"])
+        self.assertEqual(delta1.blocks, {})
+        self.assertEqual(delta1.clear_block_slugs, frozenset(["block-2"]))
+        with self.assertRaises(Block.DoesNotExist):
+            block2.refresh_from_db()
+        block3.refresh_from_db()
+        self.assertEqual(block3.position, 1)
+
+        self.run_with_async_db(commands.undo(cmd))
+        delta2 = send_update.call_args[0][1]
+        self.assertEqual(delta2.workflow.block_slugs, ["block-1", "block-2", "block-3"])
+        self.assertEqual(delta2.blocks, {"block-2": clientside.ChartBlock("step-x")})
+        self.assertEqual(delta2.clear_block_slugs, frozenset())

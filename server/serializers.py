@@ -2,6 +2,7 @@ import datetime
 import logging
 import re
 from collections import namedtuple
+from dataclasses import asdict
 from functools import singledispatch
 from typing import Any, Dict, Iterable, List, Optional, Union
 
@@ -431,6 +432,17 @@ def jsonize_clientside_workflow(
     return d
 
 
+def jsonize_clientside_block(block: clientside.Block) -> Dict[str, str]:
+    if block.type == "text":
+        return {"type": "text", "markdown": block.markdown}
+    elif block.type == "chart":
+        return {"type": "chart", "stepSlug": block.step_slug}
+    elif block.type == "table":
+        return {"type": "table", "tabSlug": block.tab_slug}
+    else:
+        raise NotImplementedError
+
+
 def jsonize_clientside_module(
     module: clientside.Module, ctx: JsonizeContext
 ) -> Dict[str, Any]:
@@ -762,6 +774,10 @@ def jsonize_clientside_update(
         r["updateWorkflow"] = jsonize_clientside_workflow(
             update.workflow, ctx, is_init=False
         )
+    if update.blocks:
+        r["updateBlocks"] = {
+            k: jsonize_clientside_block(v) for k, v in update.blocks.items()
+        }
     if update.modules:
         r["updateModules"] = {
             k: jsonize_clientside_module(v, ctx) for k, v in update.modules.items()
@@ -772,6 +788,8 @@ def jsonize_clientside_update(
         }
     if update.tabs:
         r["updateTabs"] = {k: jsonize_clientside_tab(v) for k, v in update.tabs.items()}
+    if update.clear_block_slugs:
+        r["clearBlockSlugs"] = list(update.clear_block_slugs)
     if update.clear_tab_slugs:
         r["clearTabSlugs"] = list(update.clear_tab_slugs)
     if update.clear_step_ids:
