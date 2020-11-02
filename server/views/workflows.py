@@ -60,6 +60,9 @@ def make_init_state(
                     )
                     for module_id, module in modules.items()
                 },
+                blocks={
+                    block_slug: block.to_clientside() for block in workflow.blocks.all()
+                },
             )
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
@@ -92,7 +95,9 @@ class Index(View):
             )
             return [
                 jsonize_clientside_workflow(
-                    w.to_clientside(include_tab_slugs=False), ctx, is_init=True
+                    w.to_clientside(include_tab_slugs=False, include_block_slugs=False),
+                    ctx,
+                    is_init=True,
                 )
                 for w in workflows
             ]

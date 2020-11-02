@@ -553,12 +553,17 @@ class Workflow(models.Model):
         super().delete(*args, **kwargs)
 
     def to_clientside(
-        self, *, include_tab_slugs: bool = True
+        self, *, include_tab_slugs: bool = True, include_block_slugs: Bool = True
     ) -> clientside.WorkflowUpdate:
         if include_tab_slugs:
             tab_slugs = list(self.live_tabs.values_list("slug", flat=True))
         else:
             tab_slugs = None  # faster (for index page)
+
+        if include_block_slugs:
+            block_slugs = list(self.blocks.values_list("slug", flat=True))
+        else:
+            block_slugs = None  # faster (for index page)
 
         return clientside.WorkflowUpdate(
             id=self.id,
@@ -568,6 +573,7 @@ class Workflow(models.Model):
             selected_tab_position=self.selected_tab_position,
             name=self.name,
             tab_slugs=tab_slugs,
+            block_slugs=block_slugs,
             public=self.public,
             updated_at=self.last_delta.datetime,
             acl=[
