@@ -1,14 +1,8 @@
-import datetime
 from typing import Any, Dict
 
 from django.db import models
-from django.utils import timezone
 
 from .. import clientside
-
-
-def jsonize_datetime(dt: datetime.datetime) -> str:
-    return dt.isoformat().replace("+00:00", "Z")
 
 
 class Block(models.Model):
@@ -70,9 +64,6 @@ class Block(models.Model):
 
     position = models.IntegerField()
 
-    # use default, not auto_now_add, so we can set custom values in tests
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-
     block_type = models.CharField(
         choices=[("Chart", "Chart"), ("Table", "Table"), ("Text", "Text")],
         max_length=5,
@@ -127,7 +118,6 @@ class Block(models.Model):
         ret = {
             "slug": self.slug,
             "position": self.position,
-            "created_at": jsonize_datetime(self.created_at),
             "block_type": self.block_type,
         }
         if self.block_type == "Chart":
