@@ -8,7 +8,7 @@ test('return input when no gaps impact us', () => {
     [[['4']]],
     [null],
     [[['6']]],
-    [[['9']]],
+    [[['9']]]
   ]
   const result = splitGapsIntoLoadingTiles(sparseTileGrid, 4, 6)
   expect(result).toBe(sparseTileGrid)
@@ -31,7 +31,7 @@ test('split a gap at its end', () => {
   const result = splitGapsIntoLoadingTiles([
     [[['0']]],
     4,
-    [[['5']]],
+    [[['5']]]
   ], 3, 5)
   expect(result).toEqual([
     [[['0']]],
@@ -46,7 +46,7 @@ test('split a gap in its middle', () => {
   const result = splitGapsIntoLoadingTiles([
     [[['0']]],
     4,
-    [[['5']]],
+    [[['5']]]
   ], 2, 4)
   expect(result).toEqual([
     [[['0']]],
@@ -110,13 +110,13 @@ test('split a gap when end overlaps', () => {
   const result = splitGapsIntoLoadingTiles([
     [[['0']]],
     2,
-    [[['3']]],
+    [[['3']]]
   ], 2, 4)
   expect(result).toEqual([
     [[['0']]],
     1,
     [null],
-    [[['3']]],
+    [[['3']]]
   ])
 })
 
@@ -126,7 +126,7 @@ test('split multiple gaps', () => {
     1,
     [[['2']]],
     2,
-    [[['5']]],
+    [[['5']]]
   ], 0, 6)
   expect(result).toEqual([
     [[['0']]],

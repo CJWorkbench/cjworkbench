@@ -38,7 +38,7 @@ export default function splitGapsIntoLoadingTiles (tileRows, tileRowBegin, tileR
   }
 
   if (Number.isInteger(tileRows[0])) {
-    throw new Error("First tile-row must not be a gap")
+    throw new Error('First tile-row must not be a gap')
   }
 
   let tileRow = 0

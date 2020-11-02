@@ -43,10 +43,10 @@ function tileRowsAndGaps (sparseTileGrid, nRowsPerTile, nRows) {
   return ret
 }
 
-function RowNumber({ index }) { return <>ROW: {index}</> }
+function RowNumber ({ index }) { return <>ROW: {index}</> }
 
 export default function BigTable ({
-  sparseTileGrid, nRows, columns, nRowsPerTile, nColumnsPerTile, setWantedTileRange,
+  sparseTileGrid, nRows, columns, nRowsPerTile, nColumnsPerTile, setWantedTileRange
 }) {
   const tiledColumnDefinitions = React.useMemo(() => tileColumnDefinitions(columns, nColumnsPerTile), [columns, nColumnsPerTile])
   const tiledColumnComponents = React.useMemo(() => tiledColumnDefinitions.map(x => x.map(y => y.valueComponent)), [tiledColumnDefinitions])
@@ -103,5 +103,5 @@ BigTable.propTypes = {
   columns: PropTypes.arrayOf(columnDefinitionType.isRequired).isRequired,
   nRowsPerTile: PropTypes.number.isRequired,
   nColumnsPerTile: PropTypes.number.isRequired,
-  setWantedTileRange: PropTypes.func.isRequired, // func(r1, r2, c1, c2) => undefined
+  setWantedTileRange: PropTypes.func.isRequired // func(r1, r2, c1, c2) => undefined
 }

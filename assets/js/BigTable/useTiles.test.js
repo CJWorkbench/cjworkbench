@@ -34,7 +34,7 @@ test('memoize the empty result', () => {
     const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
       fetchTile, // unused
       nTileRows: 0,
-      nTileColumns: 2,
+      nTileColumns: 2
     })
     React.useEffect(() => { nChanges++ }, [sparseTileGrid, setWantedTileRange, isLoading])
     React.useEffect(() => { lastRenderNumber = renderNumber }, [renderNumber])
@@ -58,7 +58,7 @@ test('memoize a loading tile', async () => {
     const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
-      nTileColumns: 1,
+      nTileColumns: 1
     })
     React.useEffect(() => { nChanges++ }, [sparseTileGrid, setWantedTileRange, isLoading])
     React.useEffect(() => { lastRenderNumber = renderNumber }, [renderNumber])
@@ -87,7 +87,7 @@ test('load when started', async () => {
     const { isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
-      nTileColumns: 1,
+      nTileColumns: 1
     })
     return <div>{isLoading ? 'loading' : 'loaded'}</div>
   }
@@ -110,7 +110,7 @@ test('abort and start a new load when props change, with a non-memoized loading 
     const { sparseTileGrid, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
-      nTileColumns: 1,
+      nTileColumns: 1
     })
     return <div>{isLoading ? 'loading' : sparseTileGrid[0][0][0][1]}</div>
   }
@@ -123,19 +123,19 @@ test('abort and start a new load when props change, with a non-memoized loading 
 })
 
 test('handle error during HTTP request, making it a tile', async () => {
-  const fetchTile = () => Promise.reject(new Error("oops"))
+  const fetchTile = () => Promise.reject(new Error('oops'))
 
   function Table (props) {
     const { sparseTileGrid, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
-      nTileColumns: 1,
+      nTileColumns: 1
     })
-    return isLoading ? <div className="loading" /> : (
+    return isLoading ? <div className='loading' /> : (
       <div>
-        <div className="errorType">{sparseTileGrid[0][0].error.type}</div>
-        <div className="errorName">{sparseTileGrid[0][0].error.error.name}</div>
-        <div className="errormessage">{sparseTileGrid[0][0].error.error.message}</div>
+        <div className='errorType'>{sparseTileGrid[0][0].error.type}</div>
+        <div className='errorName'>{sparseTileGrid[0][0].error.error.name}</div>
+        <div className='errormessage'>{sparseTileGrid[0][0].error.error.message}</div>
       </div>
     )
   }
@@ -146,26 +146,26 @@ test('handle error during HTTP request, making it a tile', async () => {
 })
 
 test('handle error during fetch .json() call, making it a tile', async () => {
-  let reject = null // call reject(new Error()) when wanted
-  const httpJsonResult = new Promise((res, rej) => { reject = rej /* and never end */ })
+  let rej = null // call rej(new Error()) when wanted
+  const httpJsonResult = new Promise((resolve, reject) => { rej = reject /* and never end */ })
   const fetchTile = () => Promise.resolve(new MockFetchResult({ json: httpJsonResult }))
 
   function Table (props) {
     const { sparseTileGrid, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
-      nTileColumns: 1,
+      nTileColumns: 1
     })
-    return isLoading ? <div className="loading" /> : (
+    return isLoading ? <div className='loading' /> : (
       <div>
-        <div className="errorType">{sparseTileGrid[0][0].error.type}</div>
-        <div className="errorName">{sparseTileGrid[0][0].error.error.name}</div>
-        <div className="errormessage">{sparseTileGrid[0][0].error.error.message}</div>
+        <div className='errorType'>{sparseTileGrid[0][0].error.type}</div>
+        <div className='errorName'>{sparseTileGrid[0][0].error.error.name}</div>
+        <div className='errormessage'>{sparseTileGrid[0][0].error.error.message}</div>
       </div>
     )
   }
   const { getByText } = render(<Table />)
-  reject(new Error("oops"))
+  rej(new Error('oops'))
   await waitFor(() => expect(getByText('jsonError')).toBeInTheDocument())
   expect(getByText('Error')).toBeInTheDocument()
   expect(getByText('oops')).toBeInTheDocument()
@@ -179,7 +179,7 @@ test('request a new tile when wanted tiles change', async () => {
     new MockFetchResult({ json: { tileRow: 0, tileColumn: 1, rows: [['bar']] } })
   )
 
-  const fetchTile = (_, tileColumn) => tileColumn == 1 ? fetchTileYResult : fetchTileXResult
+  const fetchTile = (_, tileColumn) => tileColumn === 1 ? fetchTileYResult : fetchTileXResult
 
   const ensureTilesLoadedRef = { current: null }
 
@@ -187,16 +187,16 @@ test('request a new tile when wanted tiles change', async () => {
     const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
-      nTileColumns: 2,
+      nTileColumns: 2
     })
     React.useEffect(() => {
       ensureTilesLoadedRef.current = setWantedTileRange
     }, [setWantedTileRange])
-    return isLoading ? <div className="loading" /> : (
+    return isLoading ? <div className='loading' /> : (
       <div>
         {sparseTileGrid.map((tileColumns, tileRow) => (
           <div key={tileRow}>
-            {tileColumns.map((tile, tileColumn)  => (
+            {tileColumns.map((tile, tileColumn) => (
               <div key={tileColumn}>r{tileRow}c{tileColumn} - {JSON.stringify(tile)}</div>
             ))}
           </div>
@@ -218,7 +218,7 @@ test('expand a gap and load it when wanted tiles change', async () => {
     new MockFetchResult({ json: { tileRow: 0, tileColumn: 1, rows: [['bar']] } })
   )
 
-  const fetchTile = jest.fn(tileRow => tileRow == 0 ? fetchTileXResult : fetchTileYResult)
+  const fetchTile = jest.fn(tileRow => tileRow === 0 ? fetchTileXResult : fetchTileYResult)
 
   const ensureTilesLoadedRef = { current: null }
 
@@ -226,7 +226,7 @@ test('expand a gap and load it when wanted tiles change', async () => {
     const { sparseTileGrid, setWantedTileRange } = useTiles({
       fetchTile,
       nTileRows: 5,
-      nTileColumns: 1,
+      nTileColumns: 1
     })
     React.useEffect(() => {
       ensureTilesLoadedRef.current = setWantedTileRange
@@ -258,7 +258,7 @@ test('continue requesting tiles (without abort) when requested rows are not all 
     const { sparseTileGrid, setWantedTileRange } = useTiles({
       fetchTile,
       nTileRows: 2,
-      nTileColumns: 3,
+      nTileColumns: 3
     })
     React.useEffect(() => { setWantedTileRange(0, 2, 0, 3) }, [setWantedTileRange])
     return (
@@ -276,7 +276,7 @@ test('continue requesting tiles (without abort) when requested rows are not all 
 
 test('continue fetching other tiles on error', async () => {
   async function fetchTile (tileRow, tileColumn) {
-    if (tileRow === 0) throw new Error("oops")
+    if (tileRow === 0) throw new Error('oops')
     return new MockFetchResult({ json: { tileRow, tileColumn, rows: [[`r${tileRow}c${tileColumn}`]] } })
   }
 
@@ -284,7 +284,7 @@ test('continue fetching other tiles on error', async () => {
     const { sparseTileGrid, setWantedTileRange } = useTiles({
       fetchTile,
       nTileRows: 2,
-      nTileColumns: 2,
+      nTileColumns: 2
     })
     React.useEffect(() => { setWantedTileRange(0, 2, 0, 2) }, [setWantedTileRange])
     return (

@@ -13,6 +13,6 @@ test('renders a gap', () => {
       />
     </table>
   )
-  expect(container.querySelector('td')).toHaveAttribute('rowSpan', "120")
-  expect(container.querySelector('td')).toHaveAttribute('colSpan', "6") // includes one for row-number
+  expect(container.querySelector('td')).toHaveAttribute('rowSpan', '120')
+  expect(container.querySelector('td')).toHaveAttribute('colSpan', '6') // includes one for row-number
 })

@@ -4,7 +4,7 @@ import placeTile from './placeTile'
 import findWantedLoadingTile from './findWantedLoadingTile'
 import splitGapsIntoLoadingTiles from './splitGapsIntoLoadingTiles'
 
-function createSparseTileGrid(nTileRows, nTileColumns) {
+function createSparseTileGrid (nTileRows, nTileColumns) {
   const tileRows = []
   if (nTileRows > 0) {
     // first row: all loading
@@ -111,7 +111,7 @@ function reducer (state, action) {
  */
 export default function useStepOutput (props) {
   const { fetchTile, nTileRows, nTileColumns } = props
-  const [{ sparseTileGrid, wantedTileRange, loadingTile }, dispatch] = React.useReducer(reducer, { nTileRows, nTileColumns }, init)
+  const [{ sparseTileGrid, loadingTile }, dispatch] = React.useReducer(reducer, { nTileRows, nTileColumns }, init)
   const isLoading = loadingTile !== null
   const setWantedTileRange = React.useCallback((...payload) => dispatch({ type: 'setWantedTileRange', payload }), [dispatch])
 

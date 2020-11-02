@@ -7,5 +7,5 @@ export default function TileGap ({ nRows, nColumns }) {
 }
 TileGap.propTypes = {
   nRows: PropTypes.number.isRequired,
-  nColumns: PropTypes.number.isRequired,
+  nColumns: PropTypes.number.isRequired
 }

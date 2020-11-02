@@ -1,11 +1,10 @@
 /* globals expect, test */
 import React from 'react'
-import { prettyDOM } from '@testing-library/react'
 import { render } from '@testing-library/react'
 
 import BigTable from './BigTable'
 
-test("Empty table", () => {
+test('Empty table', () => {
   const column = {
     width: 60,
     headerComponent: () => <>HEADER</>,
@@ -26,7 +25,7 @@ test("Empty table", () => {
   expect(container.querySelector('tbody')).toBe(null)
 })
 
-test("Table with a gap", () => {
+test('Table with a gap', () => {
   const A = {
     width: 60,
     headerComponent: () => <>HEADER A</>,

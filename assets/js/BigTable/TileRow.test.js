@@ -5,12 +5,12 @@ import { render } from '@testing-library/react'
 import TileRow from './TileRow'
 
 test('render loaded tiles', () => {
-  function A({ value }) { return <>A: {JSON.stringify(value)}</> }
-  function B({ value }) { return <>B: {JSON.stringify(value)}</> }
-  function C({ value }) { return <>C: {JSON.stringify(value)}</> }
-  function D({ value }) { return <>D: {JSON.stringify(value)}</> }
-  function E({ value }) { return <>E: {JSON.stringify(value)}</> }
-  function RowNumber({ index }) { return <>ROW: {index}</> }
+  function A ({ value }) { return <>A: {JSON.stringify(value)}</> }
+  function B ({ value }) { return <>B: {JSON.stringify(value)}</> }
+  function C ({ value }) { return <>C: {JSON.stringify(value)}</> }
+  function D ({ value }) { return <>D: {JSON.stringify(value)}</> }
+  function E ({ value }) { return <>E: {JSON.stringify(value)}</> }
+  function RowNumber ({ index }) { return <>ROW: {index}</> }
 
   const { getByText } = render(
     <table>
@@ -40,8 +40,8 @@ test('render loaded tiles', () => {
 })
 
 test('render loading tiles', () => {
-  function Tile(props) { return <>TILE</> }
-  function RowNumber({ index }) { return <>ROW: {index}</> }
+  function Tile (props) { return <>TILE</> }
+  function RowNumber ({ index }) { return <>ROW: {index}</> }
 
   const { getByText } = render(
     <table>
@@ -59,13 +59,13 @@ test('render loading tiles', () => {
 })
 
 test('render error tiles', () => {
-  function Tile(props) { return <>TILE</> }
-  function RowNumber({ index }) { return <>ROW: {index}</> }
+  function Tile (props) { return <>TILE</> }
+  function RowNumber ({ index }) { return <>ROW: {index}</> }
 
   const { getByText } = render(
     <table>
       <TileRow
-        tiles={[{error: { name: 'ENAME', message: 'EMESSAGE' } }, null]}
+        tiles={[{ error: { name: 'ENAME', message: 'EMESSAGE' } }, null]}
         nRows={4}
         rowIndex={100}
         tiledColumnComponents={[[Tile, Tile, Tile], [Tile, Tile]]}

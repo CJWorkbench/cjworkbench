@@ -2,7 +2,7 @@ function splice (array, index, value) {
   return [...array.slice(0, index), value, ...array.slice(index + 1)]
 }
 
-function findTileRowIndex(tileRows, tileRow) {
+function findTileRowIndex (tileRows, tileRow) {
   let tr = 0
   for (let i = 0; i < tileRows.length; i++) {
     const item = tileRows[i]
@@ -15,7 +15,7 @@ function findTileRowIndex(tileRows, tileRow) {
       tr += 1
     }
   }
-  throw new Error("Could not find tileRow in tileRows. Is there a gap that should not be there?")
+  throw new Error('Could not find tileRow in tileRows. Is there a gap that should not be there?')
 }
 
 /**

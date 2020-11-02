@@ -12,21 +12,21 @@ function RowInTile ({ tile, rowIndexInTile, nRows, columnComponents }) {
         <ColumnComponent value={tile[rowIndexInTile][columnIndex]} />
       </td>
     ))
-  } else if ("error" in tile) {
+  } else if ('error' in tile) {
     return rowIndexInTile === 0 ? (
       <td className='error' colSpan={columnComponents.length} rowSpan={nRows}>
         {tile.error.name}: {tile.error.message}
       </td>
     ) : null
   } else {
-    throw new Error("Unexpected tile")
+    throw new Error('Unexpected tile')
   }
 }
 RowInTile.propTypes = {
   tile: tileType, // null means loading
   rowIndexInTile: PropTypes.number.isRequired,
   nRows: PropTypes.number.isRequired,
-  columnComponents: PropTypes.arrayOf(PropTypes.elementType.isRequired).isRequired,
+  columnComponents: PropTypes.arrayOf(PropTypes.elementType.isRequired).isRequired
 }
 
 /**
@@ -59,5 +59,5 @@ TileRow.propTypes = {
   nRows: PropTypes.number.isRequired,
   tiledColumnComponents: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.elementType.isRequired).isRequired).isRequired,
   rowIndex: PropTypes.number.isRequired,
-  rowNumberComponent: PropTypes.elementType.isRequired,
+  rowNumberComponent: PropTypes.elementType.isRequired
 }

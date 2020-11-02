@@ -9,7 +9,7 @@ test('replace first loading tile with loaded tile', () => {
 })
 
 test('replace a loading tile with an error', () => {
-  const errorTile = {error: { name: 'x', message: 'y'}}
+  const errorTile = { error: { name: 'x', message: 'y' } }
   expect(
     placeTile([[null, null]], 0, 1, errorTile)
   ).toEqual([[null, errorTile]])
@@ -33,12 +33,12 @@ test('skip a RowGapTile', () => {
     [[['A1']]],
     2,
     [null],
-    [[['A5']]],
+    [[['A5']]]
   ], 3, 0, [['A4']])
   expect(result).toEqual([
     [[['A1']]],
     2,
     [[['A4']]],
-    [[['A5']]],
+    [[['A5']]]
   ])
 })
