@@ -3,7 +3,7 @@ import React from 'react'
 import { act, render, waitFor } from '@testing-library/react'
 import { AbortError } from 'node-fetch'
 
-import useStepOutput from './useStepOutput'
+import useTiles from './useTiles'
 
 class MockFetchResult {
   constructor ({ status = 200, statusText = 'OK', json = null, body = null, requestOptions = {} }) {
@@ -31,7 +31,7 @@ test('memoize the empty result', () => {
   let lastRenderNumber = 0
   const fetchTile = jest.fn()
   function NoisyComponent ({ renderNumber }) {
-    const { sparseTileGrid, setWantedTileRange, isLoading } = useStepOutput({
+    const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
       fetchTile, // unused
       nTileRows: 0,
       nTileColumns: 2,
@@ -55,7 +55,7 @@ test('memoize a loading tile', async () => {
   const fetchTileResult = Promise.resolve(new MockFetchResult({ json: { tileRow: 0, tileColumn: 0, rows: [['X']] } }))
   const fetchTile = () => fetchTileResult
   function NoisyComponent ({ renderNumber }) {
-    const { sparseTileGrid, setWantedTileRange, isLoading } = useStepOutput({
+    const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
       nTileColumns: 1,
@@ -84,7 +84,7 @@ test('load when started', async () => {
   }
 
   function Table (props) {
-    const { isLoading } = useStepOutput({
+    const { isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
       nTileColumns: 1,
@@ -107,7 +107,7 @@ test('abort and start a new load when props change, with a non-memoized loading 
   const fetchTileY = jest.fn((tr, tc, requestOptions) => fetchTileYResult)
 
   function Table ({ fetchTile }) {
-    const { sparseTileGrid, isLoading } = useStepOutput({
+    const { sparseTileGrid, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
       nTileColumns: 1,
@@ -126,7 +126,7 @@ test('handle error during HTTP request, making it a tile', async () => {
   const fetchTile = () => Promise.reject(new Error("oops"))
 
   function Table (props) {
-    const { sparseTileGrid, isLoading } = useStepOutput({
+    const { sparseTileGrid, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
       nTileColumns: 1,
@@ -151,7 +151,7 @@ test('handle error during fetch .json() call, making it a tile', async () => {
   const fetchTile = () => Promise.resolve(new MockFetchResult({ json: httpJsonResult }))
 
   function Table (props) {
-    const { sparseTileGrid, isLoading } = useStepOutput({
+    const { sparseTileGrid, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
       nTileColumns: 1,
@@ -184,7 +184,7 @@ test('request a new tile when wanted tiles change', async () => {
   const ensureTilesLoadedRef = { current: null }
 
   function Table (props) {
-    const { sparseTileGrid, setWantedTileRange, isLoading } = useStepOutput({
+    const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
       fetchTile,
       nTileRows: 1,
       nTileColumns: 2,
@@ -223,7 +223,7 @@ test('expand a gap and load it when wanted tiles change', async () => {
   const ensureTilesLoadedRef = { current: null }
 
   function Table (props) {
-    const { sparseTileGrid, setWantedTileRange } = useStepOutput({
+    const { sparseTileGrid, setWantedTileRange } = useTiles({
       fetchTile,
       nTileRows: 5,
       nTileColumns: 1,
@@ -255,7 +255,7 @@ test('continue requesting tiles (without abort) when requested rows are not all 
   )
 
   function Table (props) {
-    const { sparseTileGrid, setWantedTileRange } = useStepOutput({
+    const { sparseTileGrid, setWantedTileRange } = useTiles({
       fetchTile,
       nTileRows: 2,
       nTileColumns: 3,
@@ -281,7 +281,7 @@ test('continue fetching other tiles on error', async () => {
   }
 
   function Table (props) {
-    const { sparseTileGrid, setWantedTileRange } = useStepOutput({
+    const { sparseTileGrid, setWantedTileRange } = useTiles({
       fetchTile,
       nTileRows: 2,
       nTileColumns: 2,
