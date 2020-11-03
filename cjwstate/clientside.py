@@ -117,6 +117,9 @@ class WorkflowUpdate:
     tab_slugs: Optional[List[str]] = None
     """Ordered list of tab slugs."""
 
+    has_custom_report: Optional[bool] = None
+    """If True, report comes from `block_slugs`; if False, from HTML-producing Steps."""
+
     block_slugs: Optional[List[str]] = None
     """Ordered list of report block slugs."""
 

@@ -1,6 +1,7 @@
 from django.db.models import F, Q, QuerySet
 
 from cjwstate import clientside
+from ..dbutil import make_gap_in_list, remove_gap_from_list
 from .base import BaseCommand
 
 
@@ -58,9 +59,7 @@ class DeleteTab(BaseCommand):
         blocks = list(blocks_q)
         blocks_q.delete()
         for block in reversed(blocks):
-            delta.workflow.blocks.filter(position__gt=block.position).update(
-                position=F("position") - 1
-            )
+            remove_gap_from_list(delta.workflow.blocks, "position", block.position)
 
         delta.workflow.live_tabs.filter(position__gt=delta.tab.position).update(
             position=F("position") - 1
@@ -83,8 +82,8 @@ class DeleteTab(BaseCommand):
         # Re-create deleted Blocks
         blocks = delta.values_for_backward.get("blocks", [])
         for block_kwargs in blocks:
-            delta.workflow.blocks.filter(position__gte=block_kwargs["position"]).update(
-                position=F("position") + 1
+            make_gap_in_list(
+                delta.workflow.blocks, "position", block_kwargs["position"]
             )
             if block_kwargs["block_type"] == "Chart":
                 step = delta.tab.live_steps.get(slug=block_kwargs["step_slug"])

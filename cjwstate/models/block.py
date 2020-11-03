@@ -1,8 +1,27 @@
+from __future__ import annotations
+
 from typing import Any, Dict
 
 from django.db import models
 
 from .. import clientside
+
+
+class BlockManager(models.Manager):
+    def create(self, *, workflow, **kwargs) -> Block:
+        from .step import Step
+
+        if "step_slug" in kwargs:
+            assert "step_id" not in kwargs and "step" not in kwargs
+            step_slug = kwargs.pop("step_slug")
+            kwargs["step_id"] = Step.live_in_workflow(workflow).get(slug=step_slug).id
+
+        if "tab_slug" in kwargs:
+            assert "tab_id" not in kwargs and "tab" not in kwargs
+            tab_slug = kwargs.pop("tab_slug")
+            kwargs["tab_id"] = workflow.live_tabs.get(slug=tab_slug).id
+
+        return super().create(workflow=workflow, **kwargs)
 
 
 class Block(models.Model):
@@ -47,6 +66,8 @@ class Block(models.Model):
                 fields=["workflow", "position"], name="unique_workflow_block_positions"
             ),
         ]
+
+    objects = BlockManager()
 
     workflow = models.ForeignKey(
         "server.Workflow", related_name="blocks", on_delete=models.CASCADE
@@ -114,6 +135,8 @@ class Block(models.Model):
 
         We store serialized Blocks in our undo history. The client never sees
         these values.
+
+        BlockManager.create() accepts these kwargs directly.
         """
         ret = {
             "slug": self.slug,

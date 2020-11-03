@@ -1,8 +1,9 @@
 from django.db.models import F, Q
-from .base import BaseCommand
-from .util import ChangesStepOutputs
 
 from cjwstate import clientside
+from ..dbutil import make_gap_in_list, remove_gap_from_list
+from .base import BaseCommand
+from .util import ChangesStepOutputs
 
 
 class DeleteStep(ChangesStepOutputs, BaseCommand):
@@ -60,9 +61,7 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
         blocks = list(delta.step.blocks.all())
         delta.step.blocks.all().delete()
         for block in reversed(blocks):
-            delta.workflow.blocks.filter(position__gt=block.position).update(
-                position=F("position") - 1
-            )
+            remove_gap_from_list(delta.workflow.blocks, "position", block.position)
 
         # Soft-delete the step
         delta.step.is_deleted = True
@@ -82,8 +81,8 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
 
         blocks = delta.values_for_backward.get("blocks", [])
         for block_kwargs in blocks:
-            delta.workflow.blocks.filter(position__gte=block_kwargs["position"]).update(
-                position=F("position") + 1
+            make_gap_in_list(
+                delta.workflow.blocks, "position", block_kwargs["position"]
             )
             delta.workflow.blocks.create(**block_kwargs, step_id=delta.step_id)
 

@@ -230,7 +230,7 @@ class Step(models.Model):
     @classmethod
     def live_in_workflow(cls, workflow: Union[int, Workflow]) -> models.QuerySet:
         """
-        QuerySet of not-deleted Steps in `workflow`.
+        QuerySet of not-deleted Steps in `workflow`, ordered by tab+position.
 
         You may specify `workflow` by its `pk` or as an object.
 
@@ -243,7 +243,7 @@ class Step(models.Model):
 
         return cls.objects.filter(
             tab__workflow_id=workflow_id, tab__is_deleted=False, is_deleted=False
-        )
+        ).order_by("tab__position", "order")
 
     # ---- Authorization ----
     # User can access step if they can access workflow

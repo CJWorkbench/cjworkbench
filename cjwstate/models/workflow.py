@@ -573,6 +573,7 @@ class Workflow(models.Model):
             selected_tab_position=self.selected_tab_position,
             name=self.name,
             tab_slugs=tab_slugs,
+            has_custom_report=self.has_custom_report,
             block_slugs=block_slugs,
             public=self.public,
             updated_at=self.last_delta.datetime,
