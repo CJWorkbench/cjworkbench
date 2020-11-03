@@ -98,6 +98,9 @@ class AddBlock(BaseCommand):
         from ..step import Step
         from ..reports import build_auto_report_for_workflow
 
+        if workflow.blocks.filter(slug=slug).exists():
+            raise ValueError("This Block slug already exists")
+
         block = {
             "slug": slug,
             "position": position,

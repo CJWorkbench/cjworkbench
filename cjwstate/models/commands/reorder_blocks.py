@@ -73,7 +73,7 @@ class ReorderBlocks(BaseCommand):
         else:
             reorder_list_by_slugs(workflow.blocks, "position", slugs)
 
-    def amend_create_kwargs(self, *, workflow: "Workflow", new_order: List[str]):
+    def amend_create_kwargs(self, *, workflow: "Workflow", slugs: List[str]):
         from ..reports import build_auto_report_for_workflow
 
         if workflow.has_custom_report:
@@ -85,17 +85,17 @@ class ReorderBlocks(BaseCommand):
                 b.slug for b in build_auto_report_for_workflow(workflow)
             ]
 
-        if old_order_for_compare == new_order:
+        if slugs == old_order_for_compare:
             return None  # no-op
         # Assume old_order_for_compare never has duplicates, because the
         # database is consistent.
-        if len(old_order_for_compare) != len(new_order) or frozenset(
+        if len(old_order_for_compare) != len(slugs) or frozenset(
             old_order_for_compare
-        ) != frozenset(new_order):
-            raise ValueError("Wrong block slugs")
+        ) != frozenset(slugs):
+            raise ValueError("slugs does not have the expected elements")
 
         return {
             "workflow": workflow,
-            "values_for_forward": {"slugs": new_order},
+            "values_for_forward": {"slugs": slugs},
             "values_for_backward": {"slugs": old_order},
         }

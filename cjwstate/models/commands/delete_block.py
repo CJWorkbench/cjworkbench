@@ -103,9 +103,7 @@ class DeleteBlock(BaseCommand):
 
         if workflow.has_custom_report:
             auto_report_block_slugs = None
-            block = workflow.blocks.filter(slug=slug).first()
-            if block is None:
-                raise ValueError("There is no block with this slug")
+            block = workflow.blocks.get(slug=slug)  # raises Block.DoesNotExist
         else:
             auto_report_block_slugs = list(
                 block.slug for block in build_auto_report_for_workflow(workflow)

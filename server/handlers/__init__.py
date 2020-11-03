@@ -81,6 +81,7 @@ async def handle(request: HandlerRequest) -> HandlerResponse:
     import server.handlers.upload  # noqa: F401
     import server.handlers.step  # noqa: F401
     import server.handlers.workflow  # noqa: F401
+    import server.handlers.report  # noqa: F401
 
     try:
         handler = Handlers[request.path]
