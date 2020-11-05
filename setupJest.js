@@ -26,8 +26,5 @@ global.console.warn = function thisTestFailsBecauseItCallsConsoleWarn (...args) 
     // TODO nix react-data-grid and its obsolete lifecycle method calls
     return // allow warnings -- for now!
   }
-  console.log('args 0: ', args[0])
-  console.log('args 1: ', args[1])
-  console.log('args 2: ', args[2])
   throw new LoggedToConsoleError(format(...args))
 }
