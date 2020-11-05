@@ -30,7 +30,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ReorderBlocks,
                     workflow_id=workflow.id,
-                    new_order=["block-2", "block-3", "block-1"],
+                    slugs=["block-2", "block-3", "block-1"],
                 )
             )
 
@@ -46,7 +46,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         cmd = self.run_with_async_db(
             commands.do(
-                ReorderBlocks, workflow_id=workflow.id, new_order=["block-1", "block-2"]
+                ReorderBlocks, workflow_id=workflow.id, slugs=["block-1", "block-2"]
             )
         )
         self.assertIsNone(cmd)
@@ -72,7 +72,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             commands.do(
                 ReorderBlocks,
                 workflow_id=workflow.id,
-                new_order=["block-2", "block-3", "block-1"],
+                slugs=["block-2", "block-3", "block-1"],
             )
         )
         self.assertEqual(
@@ -107,7 +107,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 commands.do(
                     ReorderBlocks,
                     workflow_id=workflow.id,
-                    new_order=["block-nope", "block-auto-step-2"],
+                    slugs=["block-nope", "block-auto-step-2"],
                 )
             )
 
@@ -125,7 +125,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             commands.do(
                 ReorderBlocks,
                 workflow_id=workflow.id,
-                new_order=["block-auto-step-2", "block-auto-step-3"],
+                slugs=["block-auto-step-2", "block-auto-step-3"],
             )
         )
         self.assertIsNone(cmd)
@@ -148,7 +148,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             commands.do(
                 ReorderBlocks,
                 workflow_id=workflow.id,
-                new_order=["block-auto-step-3", "block-auto-step-2"],
+                slugs=["block-auto-step-3", "block-auto-step-2"],
             )
         )
         self.assertEqual(
