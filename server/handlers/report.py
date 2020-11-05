@@ -32,6 +32,7 @@ async def add_block(
     workflow: Workflow,
     slug: str,
     position: int,
+    optimisticId: str,
     blockType: Literal["Chart", "Table", "Text"],
     tabSlug: Optional[str] = None,
     stepSlug: Optional[str] = None,
@@ -39,6 +40,8 @@ async def add_block(
     **kwargs,
 ):
     slug = _parse_slug(slug)
+    if not isinstance(optimisticId, str):
+        raise HandlerError("BadRequest: optimisticId must be str")
     if not isinstance(position, int):
         raise HandlerError("BadRequest: position must be int")
     if blockType not in {"Chart", "Table", "Text"}:
@@ -53,6 +56,7 @@ async def add_block(
     try:
         await commands.do(
             AddBlock,
+            optimistic_update_id=optimisticId,
             workflow_id=workflow.id,
             slug=slug,
             position=position,
@@ -67,38 +71,62 @@ async def add_block(
 
 @register_websockets_handler
 @websockets_handler("write")
-async def delete_block(workflow: Workflow, slug: str, **kwargs):
+async def delete_block(optimisticId: str, workflow: Workflow, slug: str, **kwargs):
     slug = _parse_slug(slug)
+    if not isinstance(optimisticId, str):
+        raise HandlerError("BadRequest: optimisticId must be str")
 
     try:
-        await commands.do(DeleteBlock, workflow_id=workflow.id, slug=slug)
+        await commands.do(
+            DeleteBlock,
+            optimistic_update_id=optimisticId,
+            workflow_id=workflow.id,
+            slug=slug,
+        )
     except (Block.DoesNotExist, ValueError) as err:
         raise HandlerError("%s: %s" % (type(err).__name__, str(err)))
 
 
 @register_websockets_handler
 @websockets_handler("write")
-async def reorder_blocks(workflow: Workflow, slugs: List[str], **kwargs):
+async def reorder_blocks(
+    optimisticId: str, workflow: Workflow, slugs: List[str], **kwargs
+):
     if not isinstance(slugs, list):
         raise HandlerError("BadRequest: slugs must be an Array")
+    if not isinstance(optimisticId, str):
+        raise HandlerError("BadRequest: optimisticId must be str")
     slugs = [_parse_slug(slug) for slug in slugs]
 
     try:
-        await commands.do(ReorderBlocks, workflow_id=workflow.id, slugs=slugs)
+        await commands.do(
+            ReorderBlocks,
+            optimistic_update_id=optimisticId,
+            workflow_id=workflow.id,
+            slugs=slugs,
+        )
     except ValueError as err:
         raise HandlerError("%s: %s" % (type(err).__name__, str(err)))
 
 
 @register_websockets_handler
 @websockets_handler("write")
-async def set_block_markdown(workflow: Workflow, slug: str, markdown: str, **kwargs):
+async def set_block_markdown(
+    optimisticId: str, workflow: Workflow, slug: str, markdown: str, **kwargs
+):
     slug = _parse_slug(slug)
+    if not isinstance(optimisticId, str):
+        raise HandlerError("BadRequest: optimisticId must be str")
     if not isinstance(markdown, str):
         raise HandlerError("BadRequest: markdown must be a String")
 
     try:
         await commands.do(
-            SetBlockMarkdown, workflow_id=workflow.id, slug=slug, markdown=markdown
+            SetBlockMarkdown,
+            optimistic_update_id=optimisticId,
+            workflow_id=workflow.id,
+            slug=slug,
+            markdown=markdown,
         )
     except (Block.DoesNotExist, ValueError) as err:
         raise HandlerError("%s: %s" % (type(err).__name__, str(err)))

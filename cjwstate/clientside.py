@@ -321,6 +321,22 @@ class Update:
     methods return new objects. They do not modify the existing object.
     """
 
+    optimistic_id: Optional[str] = None
+    """Optional client-side ID for this update.
+
+    The client who triggers this Update may store a local "optimisticUpdate"
+    with a random ID. It will render that "optimisticUpdate" locally, so the
+    user can interact as though the change already happened.
+
+    Meanwhile, that client waits for the server to send this Update -- which it
+    identifies using `optimisticId`. When it receives this Update, it clears its
+    local "optimisticUpdate" and applies this _real_ Update instead.
+
+    Other clients (all the clients listening on this workflow who did not
+    request this update) can ignore this `optimisticId`, because they didn't
+    generate it. They can apply this Update normally.
+    """
+
     workflow: Optional[WorkflowUpdate] = None
     """Workflow-wide data to replace."""
 
@@ -344,6 +360,10 @@ class Update:
 
     clear_block_slugs: FrozenSet[str] = field(default_factory=frozenset)
     """Block slugs the client should forget about."""
+
+    def replace_optimistic_id(self, optimistic_id: str) -> Update:
+        """Return an Update with added/modified optimistic_id."""
+        return replace(self, optimistic_id=optimistic_id)
 
     def update_tab(self, slug: str, **kwargs) -> Update:
         """Return an Update with added/modified tab values."""

@@ -4,7 +4,7 @@ from cjwstate.models import Delta, Tab, Workflow, Step
 
 # We'll use SetWorkflowTitle and ChangeStepNotes as "canonical"
 # deltas -- one requiring Step, one not.
-from cjwstate import commands
+from cjwstate import clientside, commands
 from cjwstate.models.commands import SetWorkflowTitle, SetStepNote, AddTab
 from cjwstate.tests.utils import DbTestCase
 
@@ -14,8 +14,8 @@ future_none.set_result(None)
 
 
 @patch.object(commands, "queue_render", lambda *x: future_none)
-@patch.object(commands, "websockets_notify", lambda *x: future_none)
-class DeltaTest(DbTestCase):
+class CommandsTest(DbTestCase):
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_orphans(self):
         workflow = Workflow.create_and_init()
 
@@ -40,14 +40,13 @@ class DeltaTest(DbTestCase):
         with self.assertRaises(Delta.DoesNotExist):
             delta3.refresh_from_db()
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_orphans_does_not_delete_new_tab(self):
-        """
-        Don't delete a new AddTab's new orphan Tab during creation.
-
-        We delete orphans Deltas during creation, and we should delete their
-        Tabs/Steps. But we shouldn't delete _new_ Tabs/Steps. (We need
-        to order creation and deletion carefully to avoid doing so.)
-        """
+        # Don't delete a new AddTab's new orphan Tab during creation.
+        #
+        # We delete orphans Deltas during creation, and we should delete their
+        # Tabs/Steps. But we shouldn't delete _new_ Tabs/Steps. (We need
+        # to order creation and deletion carefully to avoid doing so.)
         workflow = Workflow.create_and_init()
 
         # Create a soft-deleted Tab in an orphan Delta (via AddTab)
@@ -67,6 +66,7 @@ class DeltaTest(DbTestCase):
         with self.assertRaises(Delta.DoesNotExist):
             delta1.refresh_from_db()
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_ignores_other_workflows(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()  # ignore me!
@@ -87,6 +87,7 @@ class DeltaTest(DbTestCase):
 
         delta2.refresh_from_db()  # do not crash
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_deletes_soft_deleted_step(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
@@ -104,6 +105,7 @@ class DeltaTest(DbTestCase):
         with self.assertRaises(Step.DoesNotExist):
             step.refresh_from_db()
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_deletes_soft_deleted_tab(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.create(position=1, is_deleted=True)
@@ -124,6 +126,7 @@ class DeltaTest(DbTestCase):
         with self.assertRaises(Tab.DoesNotExist):
             tab.refresh_from_db()
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_protects_non_deleted_step(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
@@ -141,6 +144,7 @@ class DeltaTest(DbTestCase):
 
         step.refresh_from_db()  # no DoesNotExist: it's not deleted
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_protects_soft_deleted_step_with_reference(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
@@ -168,6 +172,7 @@ class DeltaTest(DbTestCase):
 
         step.refresh_from_db()  # no DoesNotExist -- a delta depends on it
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_scopes_step_delete_by_workflow(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()
@@ -187,6 +192,7 @@ class DeltaTest(DbTestCase):
 
         step.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
 
+    @patch.object(commands, "websockets_notify", lambda *x: future_none)
     def test_delete_scopes_tab_delete_by_workflow(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()
@@ -203,3 +209,22 @@ class DeltaTest(DbTestCase):
         workflow.delete_orphan_soft_deleted_models()
 
         tab.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
+
+    @patch.object(commands, "websockets_notify")
+    def test_pass_through_optimistic_update_id(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        workflow = Workflow.create_and_init()
+        self.run_with_async_db(
+            commands.do(
+                SetWorkflowTitle,
+                optimistic_update_id="update-1",
+                workflow_id=workflow.id,
+                new_value="1",
+            )
+        )
+        websockets_notify.assert_called()
+        update = websockets_notify.call_args[0][1]
+        self.assertEqual(update.optimistic_id, "update-1")

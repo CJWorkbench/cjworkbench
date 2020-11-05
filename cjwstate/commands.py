@@ -172,7 +172,9 @@ def _call_backward_and_load_clientside_update(
         )
 
 
-async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
+async def do(
+    cls, *, workflow_id: int, optimistic_update_id: Optional[str] = None, **kwargs
+) -> Delta:
     """Create a Delta and run its Command's .forward().
 
     If `amend_create_kwargs()` returns `None`, no-op.
@@ -181,6 +183,10 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
     and possibly schedule a render.
 
     Keyword arguments vary by cls, but `workflow_id` is always required.
+
+    If the client provides an optimistic update ID to an API function, that
+    function _must_ supply that `optimistic_update_id` here. The client and
+    server can't remain in sync without it.
 
     Example:
 
@@ -203,6 +209,8 @@ async def do(cls, *, workflow_id: int, **kwargs) -> Delta:
     # In order: notify websockets that things are busy, _then_ give
     # renderer the chance to notify websockets rendering is finished.
     if update:
+        if optimistic_update_id:
+            update = update.replace_optimistic_id(optimistic_update_id)
         await websockets_notify(workflow_id, update)
 
     if want_render:

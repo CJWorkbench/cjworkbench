@@ -21,8 +21,10 @@ def noop(*args, **kwargs):
 
 
 class ReportTest(HandlerTestCase, DbTestCase):
-    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
-    def test_add_block(self):
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_add_block(self, send_update):
+        send_update.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(
             owner=user, has_custom_report=True
@@ -31,6 +33,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             add_block,
             user=user,
+            optimisticId="update-1",
             workflow=workflow,
             position=0,
             slug="block-1",
@@ -46,12 +49,17 @@ class ReportTest(HandlerTestCase, DbTestCase):
             [(0, "block-1", "Table", workflow.tabs.first().id)],
         )
 
+        send_update.assert_called()
+        update = send_update.call_args[0][1]
+        self.assertEqual(update.optimistic_id, "update-1")
+
     def test_add_block_viewer_access_denied(self):
         workflow = Workflow.create_and_init(
             public=True, has_custom_report=True
         )  # tab-1
         response = self.run_handler(
             add_block,
+            optimisticId="update-1",
             workflow=workflow,
             position=0,
             slug="block-1",
@@ -70,6 +78,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             add_block,
             user=user,
+            optimisticId="update-1",
             workflow=workflow,
             position=0,
             slug="block-1",
@@ -78,8 +87,10 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )
         self.assertResponse(response, error="ValueError: Invalid Table params")
 
-    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
-    def test_delete_block(self):
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_delete_block(self, send_update):
+        send_update.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(
             owner=user, has_custom_report=True
@@ -89,10 +100,18 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )
 
         response = self.run_handler(
-            delete_block, user=user, workflow=workflow, slug="block-1"
+            delete_block,
+            user=user,
+            optimisticId="update-1",
+            workflow=workflow,
+            slug="block-1",
         )
         self.assertResponse(response, data=None)
         self.assertEquals(workflow.blocks.exists(), False)
+
+        send_update.assert_called()
+        update = send_update.call_args[0][1]
+        self.assertEqual(update.optimistic_id, "update-1")
 
     def test_delete_block_does_not_exist(self):
         user = User.objects.create(username="a", email="a@example.org")
@@ -103,6 +122,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             delete_block,
             user=user,
+            optimisticId="update-1",
             workflow=workflow,
             slug="block-does-not-exist",
         )
@@ -114,11 +134,15 @@ class ReportTest(HandlerTestCase, DbTestCase):
         workflow = Workflow.create_and_init(
             public=True, has_custom_report=True
         )  # tab-1
-        response = self.run_handler(delete_block, workflow=workflow, slug="block-1")
+        response = self.run_handler(
+            delete_block, optimisticId="update-1", workflow=workflow, slug="block-1"
+        )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
-    def test_reorder_blocks(self):
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_reorder_blocks(self, send_update):
+        send_update.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, has_custom_report=True)  # tab-1
         workflow.blocks.create(
@@ -129,7 +153,11 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )
 
         response = self.run_handler(
-            reorder_blocks, user=user, workflow=workflow, slugs=["block-2", "block-1"]
+            reorder_blocks,
+            user=user,
+            optimisticId="update-1",
+            workflow=workflow,
+            slugs=["block-2", "block-1"],
         )
         self.assertResponse(response, data=None)
 
@@ -137,10 +165,17 @@ class ReportTest(HandlerTestCase, DbTestCase):
             list(workflow.blocks.values_list("slug", flat=True)), ["block-2", "block-1"]
         )
 
+        send_update.assert_called()
+        update = send_update.call_args[0][1]
+        self.assertEqual(update.optimistic_id, "update-1")
+
     def test_reorder_blocks_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True, has_custom_report=True)
         response = self.run_handler(
-            reorder_blocks, workflow=workflow, slugs=["don't", "care"]
+            reorder_blocks,
+            optimisticId="update-1",
+            workflow=workflow,
+            slugs=["don't", "care"],
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
@@ -152,14 +187,20 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )
 
         response = self.run_handler(
-            reorder_blocks, user=user, workflow=workflow, slugs=["block-2", "block-1"]
+            reorder_blocks,
+            user=user,
+            optimisticId="update-1",
+            workflow=workflow,
+            slugs=["block-2", "block-1"],
         )
         self.assertResponse(
             response, error="ValueError: slugs does not have the expected elements"
         )
 
-    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
-    def test_set_block_markdown(self):
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_set_block_markdown(self, send_update):
+        send_update.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user, has_custom_report=True)  # tab-1
         workflow.blocks.create(
@@ -169,6 +210,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             set_block_markdown,
             user=user,
+            optimisticId="update-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",
@@ -177,6 +219,10 @@ class ReportTest(HandlerTestCase, DbTestCase):
         self.assertEqual(
             workflow.blocks.filter(slug="block-1", text_markdown="bar").exists(), True
         )
+
+        send_update.assert_called()
+        update = send_update.call_args[0][1]
+        self.assertEqual(update.optimistic_id, "update-1")
 
     def test_set_block_markdown_viewer_access_denied(self):
         workflow = Workflow.create_and_init(
@@ -187,7 +233,11 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )
 
         response = self.run_handler(
-            set_block_markdown, workflow=workflow, slug="block-1", markdown="bar"
+            set_block_markdown,
+            optimisticId="update-1",
+            workflow=workflow,
+            slug="block-1",
+            markdown="bar",
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
@@ -197,6 +247,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             set_block_markdown,
             user=user,
+            optimisticId="update-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",
