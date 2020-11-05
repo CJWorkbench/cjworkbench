@@ -1,6 +1,8 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
 import { generateSlug } from './utils'
+import applyUpdate from './reducers/applyUpdate'
+import { reducerFunctions as ReportReducerFunctions } from './WorkflowEditor/Report/actions'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
@@ -63,6 +65,7 @@ function handleError (state, action) {
 
 const reducerFunc = {
   ...FileReducerFunctions,
+  ...ReportReducerFunctions,
   ...ShareReducerFunctions,
   ...TabReducerFunctions,
   ...WorkflowEditorReducerFunctions
@@ -83,76 +86,13 @@ function generateNonce (invalidValues, prefix) {
 
 // -- Workflow actions --
 
-// 'data' is { updateWorkflow, updateSteps, updateTabs, clearTabSlugs, clearStepIds }, all
+// 'data' is { optimisticId, updateWorkflow, updateSteps, updateTabs, clearTabSlugs, clearStepIds }, all
 // optional
 export function applyDeltaAction (data) {
   return { type: APPLY_DELTA, payload: data }
 }
 registerReducerFunc(APPLY_DELTA, (state, action) => {
-  const data = action.payload
-
-  let { workflow, steps, tabs, pendingTabs } = state
-
-  if (data.updateWorkflow) {
-    workflow = {
-      ...workflow,
-      ...data.updateWorkflow
-    }
-  }
-
-  if (data.updateSteps || data.clearStepIds) {
-    steps = { ...steps }
-
-    if (data.updateSteps) {
-      for (const stepId in (data.updateSteps || {})) {
-        steps[stepId] = {
-          ...steps[stepId],
-          ...data.updateSteps[stepId]
-        }
-      }
-    }
-
-    if (data.clearStepIds) {
-      steps = { ...steps }
-      for (const stepId of (data.clearStepIds || [])) {
-        delete steps[String(stepId)]
-      }
-    }
-  }
-
-  if (data.updateTabs || data.clearTabSlugs) {
-    tabs = { ...tabs }
-    pendingTabs = { ...(pendingTabs || {}) } // shallow copy
-
-    for (const tabSlug in (data.updateTabs || {})) {
-      const update = data.updateTabs[tabSlug]
-      const oldPosition = tabs[tabSlug] ? tabs[tabSlug].selected_step_position : null
-      tabs[tabSlug] = {
-        ...tabs[tabSlug],
-        ...update
-      }
-      if (oldPosition !== null) {
-        // Server updates shouldn't overwrite selected_step_position ...
-        // _except_ if the client doesn't actually have a position set (such as
-        // when duplicate succeeds and the new tab is one we haven't seen).
-        tabs[tabSlug].selected_step_position = oldPosition
-      }
-      delete pendingTabs[tabSlug] // if it's a pendingTab
-    }
-
-    for (const tabSlug of (data.clearTabSlugs || [])) {
-      delete tabs[tabSlug]
-      delete pendingTabs[tabSlug]
-    }
-  }
-
-  return {
-    ...state,
-    tabs,
-    pendingTabs,
-    workflow,
-    steps
-  }
+  return applyUpdate(state, action.payload)
 })
 
 // SET_WORKFLOW_NAME

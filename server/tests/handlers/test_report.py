@@ -33,11 +33,11 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             add_block,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             position=0,
             slug="block-1",
-            blockType="Table",
+            type="table",
             tabSlug="tab-1",
         )
         self.assertResponse(response, data=None)
@@ -59,11 +59,11 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )  # tab-1
         response = self.run_handler(
             add_block,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             position=0,
             slug="block-1",
-            blockType="Table",
+            type="table",
             tabSlug="tab-1",
         )
 
@@ -78,11 +78,11 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             add_block,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             position=0,
             slug="block-1",
-            blockType="Table",
+            type="table",
             tabSlug="tab-that-does-not-exist",
         )
         self.assertResponse(response, error="ValueError: Invalid Table params")
@@ -102,7 +102,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             delete_block,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slug="block-1",
         )
@@ -122,7 +122,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             delete_block,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slug="block-does-not-exist",
         )
@@ -135,7 +135,10 @@ class ReportTest(HandlerTestCase, DbTestCase):
             public=True, has_custom_report=True
         )  # tab-1
         response = self.run_handler(
-            delete_block, optimisticId="update-1", workflow=workflow, slug="block-1"
+            delete_block,
+            optimisticUpdateId="update-1",
+            workflow=workflow,
+            slug="block-1",
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
@@ -155,7 +158,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             reorder_blocks,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slugs=["block-2", "block-1"],
         )
@@ -173,7 +176,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         workflow = Workflow.create_and_init(public=True, has_custom_report=True)
         response = self.run_handler(
             reorder_blocks,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slugs=["don't", "care"],
         )
@@ -189,7 +192,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             reorder_blocks,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slugs=["block-2", "block-1"],
         )
@@ -210,7 +213,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             set_block_markdown,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",
@@ -234,7 +237,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
 
         response = self.run_handler(
             set_block_markdown,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",
@@ -247,7 +250,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             set_block_markdown,
             user=user,
-            optimisticId="update-1",
+            optimisticUpdateId="update-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",

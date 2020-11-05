@@ -400,7 +400,7 @@ def jsonize_clientside_workflow(
         ("tab_slugs", workflow.tab_slugs),
         ("public", workflow.public),
         ("selected_tab_position", workflow.selected_tab_position),
-        ("has_custom_report", workflow.has_custom_report),
+        ("hasCustomReport", workflow.has_custom_report),
         ("blockSlugs", workflow.block_slugs),
     ):
         _maybe_set(d, k, v)

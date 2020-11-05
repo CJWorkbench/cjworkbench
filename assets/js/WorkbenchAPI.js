@@ -151,6 +151,22 @@ export default class WorkbenchAPI {
     return this._callExpectingNull('tab.delete', { tabSlug })
   }
 
+  addBlock (args) {
+    return this._callExpectingNull('report.add_block', args)
+  }
+
+  deleteBlock (args) {
+    return this._callExpectingNull('report.delete_block', args)
+  }
+
+  reorderBlocks (args) {
+    return this._callExpectingNull('report.reorder_blocks', args)
+  }
+
+  setBlockMarkdown (args) {
+    return this._callExpectingNull('report.set_block_markdown', args)
+  }
+
   setWorkflowPublic (workflowId, isPublic) {
     return this._post(`/api/workflows/${workflowId}`, { public: isPublic })
   }

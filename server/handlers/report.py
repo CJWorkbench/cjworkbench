@@ -14,6 +14,11 @@ from .types import HandlerError
 
 
 SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
+JsonChartTypeToDatabaseChartType = {
+    "chart": "Chart",
+    "table": "Table",
+    "text": "Text",
+}
 
 
 def _parse_slug(slug: str):
@@ -32,54 +37,59 @@ async def add_block(
     workflow: Workflow,
     slug: str,
     position: int,
-    optimisticId: str,
-    blockType: Literal["Chart", "Table", "Text"],
+    optimisticUpdateId: str,
+    type: Literal["chart", "table", "text"],
     tabSlug: Optional[str] = None,
     stepSlug: Optional[str] = None,
     markdown: str = "",
     **kwargs,
 ):
     slug = _parse_slug(slug)
-    if not isinstance(optimisticId, str):
-        raise HandlerError("BadRequest: optimisticId must be str")
+    if not isinstance(optimisticUpdateId, str):
+        raise HandlerError("BadRequest: optimisticUpdateId must be String")
     if not isinstance(position, int):
         raise HandlerError("BadRequest: position must be int")
-    if blockType not in {"Chart", "Table", "Text"}:
-        raise HandlerError("BadRequest: blockType must be Chart, Table or Text")
+    if type not in JsonChartTypeToDatabaseChartType:
+        raise HandlerError(
+            "BadRequest: type must be one of %r"
+            % list(JsonChartTypeToDatabaseChartType.keys())
+        )
     if tabSlug is not None and not isinstance(tabSlug, str):
-        raise HandlerError("BadRequest: tabSlug must be str")
+        raise HandlerError("BadRequest: tabSlug must be String")
     if stepSlug is not None and not isinstance(stepSlug, str):
-        raise HandlerError("BadRequest: stepSlug must be str")
+        raise HandlerError("BadRequest: stepSlug must be String")
     if not isinstance(markdown, str):
-        raise HandlerError("BadRequest: markdown must be str")
+        raise HandlerError("BadRequest: markdown must be String")
 
     try:
         await commands.do(
             AddBlock,
-            optimistic_update_id=optimisticId,
+            optimistic_update_id=optimisticUpdateId,
             workflow_id=workflow.id,
             slug=slug,
             position=position,
-            block_type=blockType,
+            block_type=JsonChartTypeToDatabaseChartType[type],
             tab_slug=tabSlug,
             step_slug=stepSlug,
             text_markdown=markdown,
         )
     except ValueError as err:
-        raise HandlerError("%s: %s" % (type(err).__name__, str(err)))
+        raise HandlerError("%s: %s" % (__builtins__["type"](err).__name__, str(err)))
 
 
 @register_websockets_handler
 @websockets_handler("write")
-async def delete_block(optimisticId: str, workflow: Workflow, slug: str, **kwargs):
+async def delete_block(
+    optimisticUpdateId: str, workflow: Workflow, slug: str, **kwargs
+):
     slug = _parse_slug(slug)
-    if not isinstance(optimisticId, str):
-        raise HandlerError("BadRequest: optimisticId must be str")
+    if not isinstance(optimisticUpdateId, str):
+        raise HandlerError("BadRequest: optimisticUpdateId must be str")
 
     try:
         await commands.do(
             DeleteBlock,
-            optimistic_update_id=optimisticId,
+            optimistic_update_id=optimisticUpdateId,
             workflow_id=workflow.id,
             slug=slug,
         )
@@ -90,18 +100,18 @@ async def delete_block(optimisticId: str, workflow: Workflow, slug: str, **kwarg
 @register_websockets_handler
 @websockets_handler("write")
 async def reorder_blocks(
-    optimisticId: str, workflow: Workflow, slugs: List[str], **kwargs
+    optimisticUpdateId: str, workflow: Workflow, slugs: List[str], **kwargs
 ):
     if not isinstance(slugs, list):
         raise HandlerError("BadRequest: slugs must be an Array")
-    if not isinstance(optimisticId, str):
-        raise HandlerError("BadRequest: optimisticId must be str")
+    if not isinstance(optimisticUpdateId, str):
+        raise HandlerError("BadRequest: optimisticUpdateId must be str")
     slugs = [_parse_slug(slug) for slug in slugs]
 
     try:
         await commands.do(
             ReorderBlocks,
-            optimistic_update_id=optimisticId,
+            optimistic_update_id=optimisticUpdateId,
             workflow_id=workflow.id,
             slugs=slugs,
         )
@@ -112,18 +122,18 @@ async def reorder_blocks(
 @register_websockets_handler
 @websockets_handler("write")
 async def set_block_markdown(
-    optimisticId: str, workflow: Workflow, slug: str, markdown: str, **kwargs
+    optimisticUpdateId: str, workflow: Workflow, slug: str, markdown: str, **kwargs
 ):
     slug = _parse_slug(slug)
-    if not isinstance(optimisticId, str):
-        raise HandlerError("BadRequest: optimisticId must be str")
+    if not isinstance(optimisticUpdateId, str):
+        raise HandlerError("BadRequest: optimisticUpdateId must be str")
     if not isinstance(markdown, str):
         raise HandlerError("BadRequest: markdown must be a String")
 
     try:
         await commands.do(
             SetBlockMarkdown,
-            optimistic_update_id=optimisticId,
+            optimistic_update_id=optimisticUpdateId,
             workflow_id=workflow.id,
             slug=slug,
             markdown=markdown,
