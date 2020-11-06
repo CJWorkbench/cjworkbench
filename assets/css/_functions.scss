@@ -1,0 +1,3 @@
+@function composite-colors($color, $background) {
+  @return mix(opacify($color, 1), $background, alpha($color) * 100%);
+}

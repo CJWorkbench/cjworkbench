@@ -758,6 +758,9 @@ def jsonize_clientside_init(
         "steps": {
             str(k): jsonize_clientside_step(v, ctx) for k, v in state.steps.items()
         },
+        "blocks": {
+            str(k): jsonize_clientside_block(v) for k, v in state.blocks.items()
+        },
         "workflowId": state.workflow.id,
         "workflow": jsonize_clientside_workflow(state.workflow, ctx, is_init=True),
     }
@@ -773,7 +776,7 @@ def jsonize_clientside_update(
     """
     r = {}
     if update.optimistic_id:
-        r["optimisticId"] = update.optimisticId
+        r["optimisticId"] = update.optimistic_id
     if update.workflow:
         r["updateWorkflow"] = jsonize_clientside_workflow(
             update.workflow, ctx, is_init=False

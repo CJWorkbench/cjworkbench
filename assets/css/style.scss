@@ -1,6 +1,7 @@
 @import './variables';
 @import './fonts';
 @import 'components/Fonts.scss';
+@import './functions';
 @import './mixins';
 @import './Icons.scss';
 
@@ -31,7 +32,6 @@
 @import './bootstrap-overrides.scss';
 @import './custom-select.scss';
 
-@import 'components/data_version.scss';
 @import 'components/dropdown-menu.scss';
 @import 'components/Buttons.scss';
 @import 'components/Accounts.scss';
@@ -51,6 +51,7 @@
 @import 'components/ShareModal.scss';
 @import 'components/right-pane-messages.scss';
 @import 'components/UnhandledErrorReport';
+@import 'components/data_version.scss';
 
 @import 'ImportModuleFromGitHub';
 

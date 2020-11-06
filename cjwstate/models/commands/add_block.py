@@ -59,7 +59,7 @@ class AddBlock(BaseCommand):
         if not workflow.has_custom_report:
             from ..reports import build_auto_report_for_workflow
 
-            workflow.has_custom_report = False
+            workflow.has_custom_report = True
             workflow.save(update_fields=["has_custom_report"])
             auto_report = build_auto_report_for_workflow(workflow)
             for auto_block in auto_report:

@@ -4,7 +4,7 @@ import StepList from './StepList'
 import OutputPane from './OutputPane'
 import PaneSelect from './PaneSelect'
 import * as propTypes from './propTypes'
-import Report from '../Report'
+import Report from './Report'
 
 /**
  * The Workflow editing interface.

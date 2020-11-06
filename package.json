@@ -18,6 +18,7 @@
     "react-copy-to-clipboard": "^5.0.2",
     "react-data-grid": "^4.0.8",
     "react-dom-confetti": "^0.2.0",
+    "react-markdown": "^5.0.2",
     "react-popper": "^2.2.3",
     "react-redux": "^7.2.1",
     "react-select": "^3.1.0",

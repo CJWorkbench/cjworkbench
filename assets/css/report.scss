@@ -2,10 +2,6 @@
 @import 'fonts';
 @import './Icons.scss';
 
-// margin-horiz will be added to textual elements only (not the whole page --
-// we don't want it on charts)
-$margin-horiz: 1rem;
-
 // Bootstrap
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
@@ -23,7 +19,7 @@ $margin-horiz: 1rem;
  */
 
 body {
-  padding: 2rem 0;
+  padding: 2rem 1rem;
   background: white;
   @include font-sans-regular;
   color: $brand-text--darker;
@@ -45,38 +41,18 @@ article {
   margin: 0 auto;
 }
 
-h1, h2, p {
-  margin-left: $margin-horiz;
-  margin-right: $margin-horiz;
-  color: $brand-text--darker;
-}
-
-h1, h2 {
-  @include font-sans-bold;
-}
-
-h1 {
-  font-size: 1.2rem;
-  margin-bottom: .2rem;
-
-  .icon {
-    vertical-align: -.15em; // icon doesn't line up with baseline
-    margin-right: .75em;
-  }
-}
-
-h2 {
-  font-size: 1rem;
-  margin-top: 2rem;
-}
-
-p {
-  // overwrite margins from reboot.scss
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
 header {
+  h1 {
+    @include font-sans-bold;
+    font-size: 1.2rem;
+    margin-bottom: .2rem;
+
+    .icon {
+      vertical-align: -.15em; // icon doesn't line up with baseline
+      margin-right: .75em;
+    }
+  }
+
   .metadata {
     font-size: .8rem;
     color: $brand-text--medium;
@@ -100,7 +76,7 @@ section:not(:last-child) {
   padding-bottom: 1rem;
 }
 
-figure {
+.block-chart .block-main {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -114,7 +90,6 @@ figure {
     height: 100%;
     border: 0;
   }
-
 }
 
 @media print {
@@ -122,7 +97,7 @@ figure {
     padding: 0;
   }
 
-  figure {
+  section {
     page-break-inside: avoid; // for printing
   }
 }

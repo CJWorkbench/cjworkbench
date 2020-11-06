@@ -162,33 +162,29 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "This workflow is currently private"
 
-#: assets/js/Report/Dashboard.js:11
-msgid "js.Report.Dashboard.addChartstoTabs"
-msgstr "Add charts to tabs, and they'll appear here."
-
-#: assets/js/Report/ShareCard.js:21
+#: assets/js/WorkflowEditor/Report/ShareCard.js:21
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Only collaborators can view this report"
 
-#: assets/js/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:19
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Anyone can view this report"
 
 #. As in 'Edit privacy settings'
-#: assets/js/Report/ShareCard.js:24
+#: assets/js/WorkflowEditor/Report/ShareCard.js:24
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Edit privacy"
 
 #. As in 'URL of report'
-#: assets/js/Report/ShareCard.js:27
+#: assets/js/WorkflowEditor/Report/ShareCard.js:27
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Report URL"
 
-#: assets/js/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:14
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "This workflow is private"
 
-#: assets/js/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:12
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "This workflow is public"
 
@@ -442,6 +438,58 @@ msgstr "Report"
 #: assets/js/WorkflowEditor/PaneSelect.js:15
 msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
 msgstr "Report"
+
+#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:17
+msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.hoverText"
+msgstr "Add chart"
+
+#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:30
+msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName"
+msgstr "{tabName} – {moduleName}"
+
+#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:16
+msgid "js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText"
+msgstr "Add table from tab"
+
+#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:16
+msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.hoverText"
+msgstr "Add Text Block"
+
+#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:9
+msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
+msgstr "Enter MarkDown text here"
+
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:14
+msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
+msgstr "Delete"
+
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:23
+msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
+msgstr "Edit"
+
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
+msgstr "Move down"
+
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:33
+msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
+msgstr "Move up"
+
+#: assets/js/WorkflowEditor/Report/TableBlock.js:21
+msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
+msgstr "Download spreadsheet"
+
+#: assets/js/WorkflowEditor/Report/TableBlock.js:25
+msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
+msgstr "No table data"
+
+#: assets/js/WorkflowEditor/Report/TextBlock.js:26
+msgid "js.WorkflowEditor.Report.TextBlock.submit"
+msgstr "Save"
+
+#: assets/js/WorkflowEditor/Report/TextBlock.js:23
+msgid "js.WorkflowEditor.Report.TextBock.cancel"
+msgstr "Cancel"
 
 #: assets/js/WorkflowEditor/StepList.js:138
 msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
@@ -1949,27 +1997,27 @@ msgstr "Scrape"
 msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr "Visualize"
 
-#: assets/js/utils.js:47
+#: assets/js/utils.js:48
 msgid "js.util.timeDifference.ago.days"
 msgstr "{days}d ago"
 
-#: assets/js/utils.js:49
+#: assets/js/utils.js:50
 msgid "js.util.timeDifference.ago.hours"
 msgstr "{hours}h ago"
 
-#: assets/js/utils.js:51
+#: assets/js/utils.js:52
 msgid "js.util.timeDifference.ago.minutes"
 msgstr "{minutes}m ago"
 
-#: assets/js/utils.js:53
+#: assets/js/utils.js:54
 msgid "js.util.timeDifference.ago.seconds"
 msgstr "{seconds}s ago"
 
-#: assets/js/utils.js:45
+#: assets/js/utils.js:46
 msgid "js.util.timeDifference.ago.years"
 msgstr "{years}y ago"
 
-#: assets/js/utils.js:55
+#: assets/js/utils.js:56
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
@@ -2168,22 +2216,22 @@ msgstr ""
 msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr "Otherwise, please contact us so we can figure out what's wrong."
 
-#: templates/report.html:18
+#: templates/report.html:19
 msgid "py.templates.report.author"
 msgstr "by {workflowOwner}"
 
-#: templates/report.html:19
+#: templates/report.html:20
 msgid "py.templates.report.updated"
 msgstr "Updated <time0>{timeAgo}</time0> ago"
 
 #. This is a link to a workflow
-#: templates/report.html:21
+#: templates/report.html:22
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Source data"
 
-#: templates/report.html:36
-msgid "py.templates.report.addChartsTitle"
-msgstr "Add charts to tabs, and they'll appear here."
+#: templates/report.html:40
+msgid "py.templates.report.table.download"
+msgstr "Download as spreadsheet"
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"

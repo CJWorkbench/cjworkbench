@@ -26,7 +26,7 @@ export default class DropdownItem extends React.PureComponent {
     onClick: PropTypes.func, // for <button> (otherwise, see href)
     active: PropTypes.bool, // adds CSS class
     disabled: PropTypes.bool // if set, cannot be clicked
-    // Other props -- e.g., 'data-comparator' -- will be assed through as-is to <button>/<a>.
+    // Other props -- e.g., 'data-comparator' -- will be passed through as-is to <button>/<a>.
   }
 
   static contextType = DropdownContext

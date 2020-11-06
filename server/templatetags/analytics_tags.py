@@ -9,8 +9,7 @@ register = template.Library()
 
 @register.simple_tag
 def load_analytics_ids():
-    """
-    Return analytics IDs as a dict.
+    """Return analytics IDs as a dict.
 
     Keys:
 

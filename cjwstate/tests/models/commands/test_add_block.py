@@ -126,6 +126,8 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 text_markdown="hi!",
             )
         )
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.has_custom_report, True)
         self.assertEqual(
             list(
                 workflow.blocks.values_list(
@@ -154,11 +156,12 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
 
         self.run_with_async_db(commands.undo(cmd))
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.has_custom_report, False)
         self.assertEqual(list(workflow.blocks.values_list("slug", "position")), [])
         delta2 = send_update.call_args[0][1]
         self.assertEqual(delta2.workflow.has_custom_report, False)
         self.assertEqual(delta2.workflow.block_slugs, [])
-        self.assertEqual(delta2.workflow.has_custom_report, False)
         self.assertEqual(
             delta2.clear_block_slugs,
             frozenset(["block-auto-step-2", "block-1", "block-auto-step-3"]),

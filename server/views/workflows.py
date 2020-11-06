@@ -18,6 +18,7 @@ from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow, Step, Tab
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
+from cjwstate.models.reports import build_report_for_workflow
 from server.models.course import CourseLookup
 from server.models.lesson import LessonLookup
 from server.serializers import (
@@ -61,7 +62,7 @@ def make_init_state(
                     for module_id, module in modules.items()
                 },
                 blocks={
-                    block_slug: block.to_clientside() for block in workflow.blocks.all()
+                    block.slug: block.to_clientside() for block in workflow.blocks.all()
                 },
             )
     except Workflow.DoesNotExist:
@@ -306,68 +307,9 @@ class Duplicate(View):
 class Report(View):
     """Render all the charts in a workflow."""
 
-    @dataclass
-    class StepWithIframe:
-        id: int
-        delta_id: int
-
-        @classmethod
-        def from_step(cls, step: Step) -> Report.StepWithIframe:
-            return cls(id=step.id, delta_id=step.last_relevant_delta_id)
-
-    @dataclass
-    class TabWithIframes:
-        slug: str
-        name: str
-        steps: List[Report.StepWithIframe]
-
-        @classmethod
-        def from_tab(
-            cls, tab: Tab, module_zipfiles: Dict[str, ModuleZipfile]
-        ) -> Report.TabWithIframes:
-            all_steps = tab.live_steps.only(
-                "id", "last_relevant_delta_id", "module_id_name"
-            )
-
-            steps = [
-                Report.StepWithIframe.from_step(step)
-                for step in all_steps
-                if step.module_id_name in module_zipfiles
-                and (
-                    module_zipfiles[step.module_id_name].get_optional_html() is not None
-                )
-            ]
-            return cls(slug=tab.slug, name=tab.name, steps=steps)
-
-    @dataclass
-    class ReportWorkflow:
-        id: int
-        name: str
-        owner_name: str
-        updated_at: datetime.datetime
-        tabs: List[Report.TabWithIframes]
-
-        @classmethod
-        def from_workflow(cls, workflow: Workflow) -> Report.ReportWorkflow:
-            module_zipfiles = MODULE_REGISTRY.all_latest()
-
-            # prefetch would be nice, but it's tricky because A) we need to
-            # filter out is_deleted; and B) we need to filter for modules that
-            # have .html files.
-            all_tabs = [
-                Report.TabWithIframes.from_tab(tab, module_zipfiles)
-                for tab in workflow.live_tabs
-            ]
-            tabs = [tab for tab in all_tabs if tab.steps]
-            return cls(
-                id=workflow.id,
-                name=workflow.name,
-                owner_name=workbench_user_display(workflow.owner),
-                updated_at=workflow.last_delta.datetime,
-                tabs=tabs,
-            )
-
     @method_decorator(loads_workflow_for_read)
     def get(self, request: HttpRequest, workflow: Workflow):
-        report_workflow = Report.ReportWorkflow.from_workflow(workflow)
-        return TemplateResponse(request, "report.html", {"workflow": report_workflow})
+        blocks = build_report_for_workflow(workflow)
+        return TemplateResponse(
+            request, "report.html", {"workflow": workflow, "blocks": blocks}
+        )

@@ -1,6 +1,7 @@
 {% extends 'minimum.html' %}
 {% load render_bundle from webpack_loader %}
 {% load i18n_icu %}
+{% load markdown %}
 
 {% block title %}
   {{ workflow.name }} | Workbench
@@ -21,19 +22,27 @@
         <a target="_parent" href="/workflows/{{workflow.id}}/">{% trans_html "py.templates.report.sourceDataLink.link" default="Source data" comment="This is a link to a workflow" %}</a>
       </div>
     </header>
-    {% for tab in workflow.tabs %}
-      <section>
-        {% for step in tab.steps %}
-          <figure>
+    {% for block in blocks %}
+      <section data-block-slug={{block.slug}} class="block block-{{block.block_type.lower}}">
+        <div class="block-main">
+          {% if block.block_type == "Chart" %}
             <iframe
-              src="/api/wfmodules/{{step.id}}/output#revision={{step.delta_id}}"
+              src="/api/wfmodules/{{block.step.id}}/output#revision={{block.step.last_relevant_delta_id}}"
             ></iframe>
-          </figure>
-        {% endfor %}
+          {% elif block.block_type == "Text" %}
+            <div class="markdown">
+              {{ block.text_markdown | markdown }}
+            </div>
+          {% elif block.block_type == "Table" %}
+            <h2>{{block.tab.name}}</h2>
+            {% if block.tab.live_steps.exists and block.tab.live_steps.last.cached_render_result_status == 'ok' %}
+              <a download href="/public/moduledata/live/{{block.tab.live_steps.last.id}}.csv">
+                {% trans_html "py.templates.report.table.download" default="Download as spreadsheet" %}
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
       </section>
     {% endfor %}
-    {% if not workflow.tabs %}
-      <p class="empty">{% trans_html "py.templates.report.addChartsTitle" default="Add charts to tabs, and they'll appear here." %}</p>
-    {% endif %}
   </article>
 {% endblock %}

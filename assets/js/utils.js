@@ -1,4 +1,5 @@
 // ---- Utilities ---
+import React from 'react'
 import * as Cookies from 'js-cookie'
 import { fromByteArray as base64Encode } from 'base64-js'
 import { t } from '@lingui/macro'
@@ -129,4 +130,31 @@ export function generateSlug (prefix) {
       .replace(/\+/g, '-')
       .replace(new RegExp('/', 'g'), '_')
   )
+}
+
+/**
+ * Return `null` if `callbackOrNull === null`; otherwise return a curried function.
+ *
+ * Usage:
+ *
+ *     const handleClick = useCurriedCallbackOrNull(onClick, id)
+ *     return <button disabled={handleClick === null} onClick={handleClick}>...</button>
+ */
+export function useCurriedCallbackOrNull (callbackOrNull, ...args) {
+  return React.useMemo(() => {
+    if (callbackOrNull === null) return null
+    return () => callbackOrNull(...args)
+  }, [callbackOrNull, ...args])
+}
+
+/**
+ * `React.useCallback()` ... prepending `args` for syntactic sugar.
+ *
+ * Usage:
+ *
+ *     const handleClick = useCallback(onClick, id)
+ *     return <button onClick={handleClick}>...</button>
+ */
+export function useCurriedCallback (func, ...args) {
+  return React.useCallback(() => func(...args), [func, ...args])
 }

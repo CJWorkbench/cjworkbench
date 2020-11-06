@@ -84,7 +84,7 @@ test('select empty custom report, even if auto-report would have a chart', () =>
       'tab-1': { step_ids: [1] }
     },
     steps: {
-      1: { slug: 'step-1', module: 'chart' }
+      1: { slug: 'step-1', module: 'chart', output_status: null, cached_render_result_delta_id: null }
     },
     modules: {
       chart: { has_html_output: true }
@@ -93,18 +93,62 @@ test('select empty custom report, even if auto-report would have a chart', () =>
 })
 
 test('select custom report with table', () => {
-  const tab1 = 'find me!'
   expect(selectReport({
     workflow: { hasCustomReport: true, blockSlugs: ['block-1'] },
     tabs: {
-      'tab-1': tab1
+      'tab-1': {
+        name: 'Find me!',
+        step_ids: [1, 2]
+      }
+    },
+    steps: {
+      1: { slug: 'step-1' },
+      2: { slug: 'step-2', output_status: 'ok', cached_render_result_delta_id: 123 }
+    },
+    blocks: {
+      'block-1': { type: 'table', tabSlug: 'tab-1' }
+    }
+  })).toEqual([
+    {
+      slug: 'block-1',
+      type: 'table',
+      tab: {
+        slug: 'tab-1',
+        name: 'Find me!',
+        outputStep: {
+          id: 2, // TODO nix IDs https://www.pivotaltracker.com/story/show/167600824
+          slug: 'step-2',
+          outputStatus: 'ok',
+          deltaId: 123
+        }
+      }
+    }
+  ])
+})
+
+test('select custom report with table that has no steps', () => {
+  expect(selectReport({
+    workflow: { hasCustomReport: true, blockSlugs: ['block-1'] },
+    tabs: {
+      'tab-1': {
+        name: 'Find me!',
+        step_ids: []
+      }
     },
     steps: {},
     blocks: {
       'block-1': { type: 'table', tabSlug: 'tab-1' }
     }
   })).toEqual([
-    { slug: 'block-1', type: 'table', tab: tab1 }
+    {
+      slug: 'block-1',
+      type: 'table',
+      tab: {
+        slug: 'tab-1',
+        name: 'Find me!',
+        outputStep: null
+      }
+    }
   ])
 })
 

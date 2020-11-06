@@ -136,7 +136,7 @@ button:focus { outline:0 !important; }
 //* - Action button - */
 
 @mixin action-button {
-  font-weight: bold!important;
+  font-weight: bold;
   cursor: pointer;
   border: 1px solid $brand-workspace;
   min-width: 7rem;
@@ -314,12 +314,14 @@ button:focus { outline:0 !important; }
 @mixin button-gray {
   color: $medium-gray;
   border-color: $medium-gray;
-  background-color: transparent;
+  background-color: white;
   &:hover {
-    background-color: $dark-accent--soft;
+    color: $dark-gray;
+    background-color: composite-colors($dark-accent--soft, white);
   }
   &:active {
-    background-color: $dark-accent--soft-M;
+    color: $dark-gray;
+    background-color: composite-colors($dark-accent--soft-M, white);
   }
 }
 .button-gray {
@@ -391,11 +393,6 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-pink-fill {
-  @include button-pink-fill;
-}
-
-
 
 @mixin button-orange {
   color: $brand-orange;
@@ -460,7 +457,7 @@ button:focus { outline:0 !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color:$medium-gray;
+  color: $medium-gray;
   border-radius: 0 3px 3px 0;
   font-size: 1.5rem;
   text-decoration: none;

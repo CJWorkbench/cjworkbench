@@ -1,5 +1,5 @@
 export default function applyUpdate (state, update) {
-  let { workflow, steps, tabs, blocks, pendingTabs, optimisticUpdates = {} } = state
+  let { workflow, steps, tabs, blocks, pendingTabs, optimisticUpdates = [] } = state
 
   if (update.updateWorkflow) {
     workflow = {
@@ -61,7 +61,7 @@ export default function applyUpdate (state, update) {
     }
   }
 
-  if (update.optimisticId && optimisticUpdates) {
+  if (update.optimisticId) {
     optimisticUpdates = optimisticUpdates.filter(u => u.optimisticId !== update.optimisticId)
   }
 

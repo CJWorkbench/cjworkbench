@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ShareButton from '../ShareModal/ShareButton'
+import ShareButton from '../../ShareModal/ShareButton'
 import { Trans } from '@lingui/macro'
 
 export default function ShareCard ({ workflowId, isPublic }) {
