@@ -30,7 +30,7 @@ function EditMarkdown ({ value, onChange, onSubmit, onCancel }) {
   )
 }
 
-export default function TextBlock ({ block, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
+export default function TextBlock ({ block, isReadOnly, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
   const { slug, markdown } = block
   const [editedMarkdown, setEditedMarkdown] = React.useState(null) // non-null means, "editing"
   const handleClickEdit = React.useMemo(() => {
@@ -49,6 +49,7 @@ export default function TextBlock ({ block, onClickDelete, onClickMoveUp, onClic
     <BlockFrame
       className='block-text'
       slug={block.slug}
+      isReadOnly={isReadOnly}
       onClickDelete={onClickDelete}
       onClickMoveUp={onClickMoveUp}
       onClickMoveDown={onClickMoveDown}
@@ -73,6 +74,7 @@ TextBlock.propTypes = {
   block: PropTypes.shape({
     markdown: PropTypes.string.isRequired
   }).isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
   onClickDelete: PropTypes.func.isRequired, // func(slug) => undefined
   onClickMoveDown: PropTypes.func, // or null, if this is the bottom block
   onClickMoveUp: PropTypes.func, // or null, if this is the top block

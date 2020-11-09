@@ -7,6 +7,7 @@ import AddBlockPrompt from './AddBlockPrompt'
 export default function Report ({
   workflow, blocks, reportableTabs, addBlock, deleteBlock, reorderBlocks, setBlockMarkdown
 }) {
+  const isReadOnly = workflow.read_only
   const handleClickDelete = deleteBlock
   const handleClickMoveUp = React.useCallback(slug => {
     const slugs = blocks.map(b => b.slug) // we're going to mutate it
@@ -26,13 +27,16 @@ export default function Report ({
   }, [blocks, reorderBlocks])
 
   return (
-    <div className='report-container'>
+    <div className={`report-container ${isReadOnly ? 'report-read-only' : 'report-read-write'}`}>
       <ReportHeader title={workflow.name} />
       {blocks.map((block, position) => (
         <React.Fragment key={block.slug}>
-          <AddBlockPrompt position={position} tabs={reportableTabs} onSubmit={addBlock} />
+          {isReadOnly ? null : (
+            <AddBlockPrompt position={position} tabs={reportableTabs} onSubmit={addBlock} />
+          )}
           <Block
             block={block}
+            isReadOnly={isReadOnly}
             onClickDelete={handleClickDelete}
             onClickMoveUp={position === 0 ? null : handleClickMoveUp}
             onClickMoveDown={position === blocks.length - 1 ? null : handleClickMoveDown}
@@ -40,14 +44,17 @@ export default function Report ({
           />
         </React.Fragment>
       ))}
-      <AddBlockPrompt position={blocks.length} tabs={reportableTabs} onSubmit={addBlock} />
+      {isReadOnly ? null : (
+        <AddBlockPrompt position={blocks.length} tabs={reportableTabs} onSubmit={addBlock} />
+      )}
     </div>
   )
 }
 Report.propTypes = {
   workflow: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    read_only: PropTypes.bool.isRequired
   }).isRequired,
   blocks: PropTypes.array.isRequired,
   reportableTabs: PropTypes.array.isRequired,

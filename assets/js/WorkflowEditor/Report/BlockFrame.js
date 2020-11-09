@@ -47,7 +47,7 @@ function BlockActions ({ onClickDelete, onClickMoveUp, onClickMoveDown, onClickE
   )
 }
 
-function BlockFrame ({ children, className, slug, onClickDelete, onClickMoveUp, onClickMoveDown, onClickEdit, i18n }) {
+function BlockFrame ({ children, isReadOnly, className, slug, onClickDelete, onClickMoveUp, onClickMoveDown, onClickEdit, i18n }) {
   const handleClickDelete = useCurriedCallback(onClickDelete, slug)
   const handleClickMoveUp = useCurriedCallbackOrNull(onClickMoveUp, slug)
   const handleClickMoveDown = useCurriedCallbackOrNull(onClickMoveDown, slug)
@@ -55,13 +55,15 @@ function BlockFrame ({ children, className, slug, onClickDelete, onClickMoveUp, 
   return (
     <section className={`block ${className}`}>
       <div className='block-main'>{children}</div>
-      <BlockActions
-        i18n={i18n}
-        onClickDelete={handleClickDelete}
-        onClickMoveUp={handleClickMoveUp}
-        onClickMoveDown={handleClickMoveDown}
-        onClickEdit={onClickEdit}
-      />
+      {isReadOnly ? null : (
+        <BlockActions
+          i18n={i18n}
+          onClickDelete={handleClickDelete}
+          onClickMoveUp={handleClickMoveUp}
+          onClickMoveDown={handleClickMoveDown}
+          onClickEdit={onClickEdit}
+        />
+      )}
     </section>
   )
 }
@@ -70,6 +72,7 @@ BlockFrame.defaultProps = {
 }
 BlockFrame.propTypes = {
   className: PropTypes.string.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
   slug: PropTypes.string.isRequired,
   onClickDelete: PropTypes.func.isRequired, // func(slug) => undefined

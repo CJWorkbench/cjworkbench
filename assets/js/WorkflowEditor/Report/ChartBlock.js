@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import BlockFrame from './BlockFrame'
 
-export default function ChartBlock ({ block, onClickDelete, onClickMoveDown, onClickMoveUp }) {
+export default function ChartBlock ({ block, isReadOnly, onClickDelete, onClickMoveDown, onClickMoveUp }) {
   const { slug, step } = block
   const deltaId = step.cached_render_result_delta_id || 'rendering'
 
@@ -10,6 +10,7 @@ export default function ChartBlock ({ block, onClickDelete, onClickMoveDown, onC
     <BlockFrame
       className='block-chart'
       slug={slug}
+      isReadOnly={isReadOnly}
       onClickDelete={onClickDelete}
       onClickMoveDown={onClickMoveDown}
       onClickMoveUp={onClickMoveUp}
@@ -26,6 +27,7 @@ ChartBlock.propTypes = {
       cached_render_result_delta_id: PropTypes.number // null if never rendered
     }).isRequired
   }).isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
   onClickDelete: PropTypes.func.isRequired, // func(slug) => undefined
   onClickMoveDown: PropTypes.func, // or null, if this is the bottom block
   onClickMoveUp: PropTypes.func // or null, if this is the top block

@@ -13,11 +13,12 @@ const Components = {
 /**
  * Choose among ChartBlock, TableBlock and TextBlock, depending on `block.type`
  * */
-export default function Block ({ block, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
+export default function Block ({ block, isReadOnly, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
   const Component = Components[block.type]
   return (
     <Component
       block={block}
+      isReadOnly={isReadOnly}
       onClickDelete={onClickDelete}
       onClickMoveUp={onClickMoveUp}
       onClickMoveDown={onClickMoveDown}
@@ -43,6 +44,7 @@ Block.propTypes = {
       tab: PropTypes.object.isRequired
     }).isRequired
   ]).isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
   onClickDelete: PropTypes.func.isRequired, // func(slug) => undefined
   onClickMoveDown: PropTypes.func, // or null, if this is the bottom block
   onClickMoveUp: PropTypes.func, // or null, if this is the top block

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import BlockFrame from './BlockFrame'
 
-export default function TableBlock ({ block, onClickDelete, onClickMoveDown, onClickMoveUp }) {
+export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickMoveDown, onClickMoveUp }) {
   const { slug, tab } = block
   const { name, outputStep } = tab
 
@@ -11,6 +11,7 @@ export default function TableBlock ({ block, onClickDelete, onClickMoveDown, onC
     <BlockFrame
       className='block-table'
       slug={slug}
+      isReadOnly={isReadOnly}
       onClickDelete={onClickDelete}
       onClickMoveDown={onClickMoveDown}
       onClickMoveUp={onClickMoveUp}
@@ -40,5 +41,9 @@ TableBlock.propTypes = {
         deltaId: PropTypes.number.isRequired
       }) // null if the tab has no [cached] output
     }).isRequired
-  }).isRequired
+  }).isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
+  onClickDelete: PropTypes.func.isRequired, // func(slug) => undefined
+  onClickMoveDown: PropTypes.func, // or null, if this is the bottom block
+  onClickMoveUp: PropTypes.func // or null, if this is the top block
 }

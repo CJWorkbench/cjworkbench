@@ -69,6 +69,14 @@ article.report {
     background: white;
   }
 
+  .report-read-only {
+    // Read-only reports don't have .add-block-prompt elements, so we increase
+    // the margin between blocks.
+    section.block { // more specific than the normal section.block
+      margin-top: 3rem;
+    }
+  }
+
   header {
     margin: 2rem;
   }
@@ -114,7 +122,7 @@ article.report {
 
   section.block {
     display: flex;
-    margin: 2rem;
+    margin: 1rem 2rem;
 
     .block-main {
       flex: 1 1 auto;
