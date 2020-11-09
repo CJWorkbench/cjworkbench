@@ -41,6 +41,10 @@ article {
   margin: 0 auto;
 }
 
+header, section {
+  margin: 1rem 0;
+}
+
 header {
   h1 {
     @include font-sans-bold;
@@ -68,12 +72,6 @@ header {
       color: $brand-workspace;
     }
   }
-}
-
-section:not(:last-child) {
-  border-bottom: 1px solid $Vlight-gray;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
 }
 
 .block-chart .block-main {
