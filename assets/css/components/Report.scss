@@ -100,17 +100,21 @@ article.report {
   .add-block-prompt {
     text-align: center;
     position: relative;
+    opacity: .3;
 
-    &:hover::before {
-      // Show a line on hover
-      display: block;
-      content: '';
-      height: .2rem;
-      position: absolute;
-      top: calc(50% - .1rem);
-      background: $brand-orange;
-      left: 2rem;
-      right: 2rem;
+    &:hover, &.active {
+      opacity: 1;
+      &::before {
+        // Show a line on hover
+        display: block;
+        content: '';
+        height: .2rem;
+        position: absolute;
+        top: calc(50% - .1rem);
+        background: $brand-orange;
+        left: 2rem;
+        right: 2rem;
+      }
     }
 
     &>* {

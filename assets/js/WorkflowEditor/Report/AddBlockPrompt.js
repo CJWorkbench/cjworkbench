@@ -5,6 +5,17 @@ import AddTableBlockPrompt from './AddTableBlockPrompt'
 import AddChartBlockPrompt from './AddChartBlockPrompt'
 
 export default function AddBlockPrompt ({ position, tabs, onSubmit }) {
+  const [openMenu, setOpenMenu] = React.useState(null) // null, 'table', 'chart'
+  const handleOpenChartMenu = React.useCallback(() => {
+    setOpenMenu('chart')
+  }, [setOpenMenu])
+  const handleOpenTableMenu = React.useCallback(() => {
+    setOpenMenu('table')
+  }, [setOpenMenu])
+  const handleCloseMenu = React.useCallback(() => {
+    setOpenMenu(null)
+  }, [setOpenMenu])
+
   const handleSubmitText = React.useCallback(block => {
     onSubmit(position, { type: 'text', ...block })
   }, [position, onSubmit])
@@ -15,10 +26,22 @@ export default function AddBlockPrompt ({ position, tabs, onSubmit }) {
     onSubmit(position, { type: 'chart', ...block })
   }, [position, onSubmit])
   return (
-    <div className='add-block-prompt'>
+    <div className={`add-block-prompt${openMenu === null ? '' : ' active'}`}>
       <AddTextBlockPrompt onSubmit={handleSubmitText} />
-      <AddTableBlockPrompt tabs={tabs} onSubmit={handleSubmitTable} />
-      <AddChartBlockPrompt tabs={tabs} onSubmit={handleSubmitChart} />
+      <AddTableBlockPrompt
+        tabs={tabs}
+        isMenuOpen={openMenu === 'table'}
+        onOpenMenu={handleOpenTableMenu}
+        onCloseMenu={handleCloseMenu}
+        onSubmit={handleSubmitTable}
+      />
+      <AddChartBlockPrompt
+        tabs={tabs}
+        isMenuOpen={openMenu === 'chart'}
+        onOpenMenu={handleOpenChartMenu}
+        onCloseMenu={handleCloseMenu}
+        onSubmit={handleSubmitChart}
+      />
     </div>
   )
 }

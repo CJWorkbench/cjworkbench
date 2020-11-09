@@ -33,6 +33,7 @@ class TestReport(LoggedInIntegrationTest):
 
         b = self.browser
         b.click_button("Report")  # switch to report
+        b.assert_element(".add-block-prompt")
         url = b.text(".share-card .url .copy", wait=True)
         b.visit(url)
 
@@ -42,22 +43,6 @@ class TestReport(LoggedInIntegrationTest):
         # columnchart.html. It includes <div id="vega">.
         with b.iframe("iframe", wait=True):
             b.assert_element("#vega", wait=True)
-
-    def test_empty_report_is_sane(self):
-        self._create_workflow(title="Example Workflow")
-
-        b = self.browser
-        b.click_button("Report")  # switch to report
-
-        b.assert_element(".empty-report", text="Add charts to tabs", wait=True)
-        b.assert_no_element(".share-card .url .copy")
-
-        # ... but the link must work, even though we don't expose it: the link
-        # might have been shared before all the charts were removed.
-        b.visit(b.get_url() + "report")  # /workflows/:id/report
-        b.assert_element("h1", text="Example Workflow", wait=True)
-        b.assert_element("p", text="Add charts to tabs")
-        b.assert_no_element("iframe")
 
     def test_report_share_with_collaborators(self):
         user1 = self.account_admin.create_user("a@example.org")
@@ -92,7 +77,7 @@ class TestReport(LoggedInIntegrationTest):
         b.visit(url)
         b.assert_no_element("h1", text="Example Workflow", wait=True)
 
-    def test_report_share_public(self):
+    def test_report_share_public_iframe(self):
         user1 = self.account_admin.create_user("a@example.org")
 
         self._create_workflow(title="Example Workflow")
@@ -109,15 +94,40 @@ class TestReport(LoggedInIntegrationTest):
             time.sleep(2)
             b.click_button("Close")
         b.assert_element(".share-card .accessible-to", text="Anyone can view")
-        url = b.text(".share-card .url .copy", wait=True)
+        iframe_url = b.text(".share-card .url .copy", wait=True)
 
         # user1 can view the report
         accounts.logout(b)
         accounts.login(b, user1.email, user1.password)
-        b.visit(url)
+        b.visit(iframe_url)
         b.assert_element("h1", text="Example Workflow", wait=True)
+
+        # anonymous user can view the report
+        accounts.logout(b)
+        b.visit(iframe_url)
+        b.assert_element("h1", text="Example Workflow", wait=True)
+
+    def test_report_read_only(self):
+        user1 = self.account_admin.create_user("a@example.org")
+
+        self._create_workflow(title="Example Workflow")
+        self._build_chart()
+
+        # Share report with public
+        b = self.browser
+        b.click_button("Report")  # switch to report
+        with b.scope(".share-card"):
+            b.click_button("Edit privacy", wait=True)
+        with b.scope(".share-modal", wait=True):  # wait for dialog
+            b.check("Anyone can view")
+            # This fires and forgets an AJAX request. Wait for it to finish.
+            time.sleep(2)
+            b.click_button("Close")
+        b.assert_element(".share-card .accessible-to", text="Anyone can view")
+        url = b.get_url()
 
         # anonymous user can view the report
         accounts.logout(b)
         b.visit(url)
         b.assert_element("h1", text="Example Workflow", wait=True)
+        b.assert_no_element(".add-block-prompt")

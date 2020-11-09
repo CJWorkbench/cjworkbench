@@ -2,15 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
 
-function AddTableBlockPrompt ({ onSubmit, tabs, i18n }) {
+function AddTableBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
+  const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
   const handleClick = React.useCallback(ev => {
     onSubmit({ tabSlug: ev.target.getAttribute('data-tab-slug') })
   }, [onSubmit])
 
   return (
-    <UncontrolledDropdown>
+    <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
       <DropdownToggle
         className='button-gray'
         title={i18n._(t('js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText')`Add table from tab`)}
@@ -28,7 +29,7 @@ function AddTableBlockPrompt ({ onSubmit, tabs, i18n }) {
           </DropdownItem>
         ))}
       </DropdownMenu>
-    </UncontrolledDropdown>
+    </Dropdown>
   )
 }
 AddTableBlockPrompt.propTypes = {
@@ -36,6 +37,9 @@ AddTableBlockPrompt.propTypes = {
     slug: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired
   }).isRequired).isRequired,
+  isMenuOpen: PropTypes.bool.isRequired,
+  onOpenMenu: PropTypes.func.isRequired,
+  onCloseMenu: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired // func({ tabSlug }) => undefined
 }
 export default withI18n()(AddTableBlockPrompt)
