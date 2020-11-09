@@ -173,7 +173,7 @@ def _call_backward_and_load_clientside_update(
 
 
 async def do(
-    cls, *, workflow_id: int, optimistic_update_id: Optional[str] = None, **kwargs
+    cls, *, workflow_id: int, mutation_id: Optional[str] = None, **kwargs
 ) -> Delta:
     """Create a Delta and run its Command's .forward().
 
@@ -184,15 +184,16 @@ async def do(
 
     Keyword arguments vary by cls, but `workflow_id` is always required.
 
-    If the client provides an optimistic update ID to an API function, that
-    function _must_ supply that `optimistic_update_id` here. The client and
-    server can't remain in sync without it.
+    If the client provides a mutation ID to an API function, that function
+    _must_ supply that `mutation_id` here. The client and server can't remain
+    in sync without it.
 
     Example:
 
         delta = await commands.do(
             SetStepNote,
             workflow_id=step.workflow_id,
+            mutation_id=mutation_id,
             # ... other kwargs
         )
         # now delta has been applied and committed to the database, and
@@ -209,8 +210,8 @@ async def do(
     # In order: notify websockets that things are busy, _then_ give
     # renderer the chance to notify websockets rendering is finished.
     if update:
-        if optimistic_update_id:
-            update = update.replace_optimistic_id(optimistic_update_id)
+        if mutation_id:
+            update = update.replace_mutation_id(mutation_id)
         await websockets_notify(workflow_id, update)
 
     if want_render:

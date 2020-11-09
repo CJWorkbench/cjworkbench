@@ -33,7 +33,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             add_block,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             position=0,
             slug="block-1",
@@ -51,7 +51,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
 
         send_update.assert_called()
         update = send_update.call_args[0][1]
-        self.assertEqual(update.optimistic_id, "update-1")
+        self.assertEqual(update.mutation_id, "mutation-1")
 
     def test_add_block_viewer_access_denied(self):
         workflow = Workflow.create_and_init(
@@ -59,7 +59,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )  # tab-1
         response = self.run_handler(
             add_block,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             position=0,
             slug="block-1",
@@ -78,7 +78,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             add_block,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             position=0,
             slug="block-1",
@@ -102,7 +102,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             delete_block,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slug="block-1",
         )
@@ -111,7 +111,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
 
         send_update.assert_called()
         update = send_update.call_args[0][1]
-        self.assertEqual(update.optimistic_id, "update-1")
+        self.assertEqual(update.mutation_id, "mutation-1")
 
     def test_delete_block_does_not_exist(self):
         user = User.objects.create(username="a", email="a@example.org")
@@ -122,7 +122,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             delete_block,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slug="block-does-not-exist",
         )
@@ -136,7 +136,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         )  # tab-1
         response = self.run_handler(
             delete_block,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slug="block-1",
         )
@@ -158,7 +158,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             reorder_blocks,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slugs=["block-2", "block-1"],
         )
@@ -170,13 +170,13 @@ class ReportTest(HandlerTestCase, DbTestCase):
 
         send_update.assert_called()
         update = send_update.call_args[0][1]
-        self.assertEqual(update.optimistic_id, "update-1")
+        self.assertEqual(update.mutation_id, "mutation-1")
 
     def test_reorder_blocks_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True, has_custom_report=True)
         response = self.run_handler(
             reorder_blocks,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slugs=["don't", "care"],
         )
@@ -192,7 +192,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             reorder_blocks,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slugs=["block-2", "block-1"],
         )
@@ -213,7 +213,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             set_block_markdown,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",
@@ -225,7 +225,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
 
         send_update.assert_called()
         update = send_update.call_args[0][1]
-        self.assertEqual(update.optimistic_id, "update-1")
+        self.assertEqual(update.mutation_id, "mutation-1")
 
     def test_set_block_markdown_viewer_access_denied(self):
         workflow = Workflow.create_and_init(
@@ -237,7 +237,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
 
         response = self.run_handler(
             set_block_markdown,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",
@@ -250,7 +250,7 @@ class ReportTest(HandlerTestCase, DbTestCase):
         response = self.run_handler(
             set_block_markdown,
             user=user,
-            optimisticUpdateId="update-1",
+            mutationId="mutation-1",
             workflow=workflow,
             slug="block-1",
             markdown="bar",

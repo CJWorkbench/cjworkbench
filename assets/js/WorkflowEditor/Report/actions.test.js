@@ -40,22 +40,22 @@ describe('Report.actions', () => {
       expect(api.addBlock).toHaveBeenCalledWith({
         slug: 'block-3',
         position: 1,
-        optimisticUpdateId: 'update-3',
+        mutationId: 'mutation-3',
         type: 'text',
         markdown: 'new'
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-3'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-3'])
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-3'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-3'])
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-3',
+        mutationId: 'mutation-3',
         updateWorkflow: {
           blockSlugs: ['block-1', 'block-3', 'block-2']
         },
@@ -64,7 +64,7 @@ describe('Report.actions', () => {
         }
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectReport(store.getState())).toEqual(expectedReport)
     })
 
@@ -103,24 +103,24 @@ describe('Report.actions', () => {
       expect(api.addBlock).toHaveBeenCalledWith({
         slug: 'block-foo',
         position: 1,
-        optimisticUpdateId: 'update-foo',
+        mutationId: 'mutation-foo',
         type: 'text',
         markdown: 'new'
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-foo'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-foo'])
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-foo'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-foo'])
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-foo',
+        mutationId: 'mutation-foo',
         updateWorkflow: {
           hasCustomReport: true,
           blockSlugs: ['block-auto-step-1', 'block-foo']
@@ -131,7 +131,7 @@ describe('Report.actions', () => {
         }
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectReport(store.getState())).toEqual(expectedReport)
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
     })
@@ -162,26 +162,26 @@ describe('Report.actions', () => {
       generateSlug.mockImplementation(prefix => prefix + '1')
       const done = store.dispatch(actions.deleteBlock('block-2'))
       expect(api.deleteBlock).toHaveBeenCalledWith({
-        optimisticUpdateId: 'update-1',
+        mutationId: 'mutation-1',
         slug: 'block-2'
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-1',
+        mutationId: 'mutation-1',
         updateWorkflow: { blockSlugs: ['block-1'] },
         clearBlockSlugs: ['block-2']
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectReport(store.getState())).toEqual(expectedReport)
     })
 
@@ -216,23 +216,23 @@ describe('Report.actions', () => {
       generateSlug.mockImplementation(prefix => prefix + '1')
       const done = store.dispatch(actions.deleteBlock('block-auto-step-2'))
       expect(api.deleteBlock).toHaveBeenCalledWith({
-        optimisticUpdateId: 'update-1',
+        mutationId: 'mutation-1',
         slug: 'block-auto-step-2'
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-1',
+        mutationId: 'mutation-1',
         updateWorkflow: {
           hasCustomReport: true,
           blockSlugs: ['block-auto-step-1']
@@ -242,7 +242,7 @@ describe('Report.actions', () => {
         }
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectReport(store.getState())).toEqual(expectedReport)
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
     })
@@ -276,25 +276,25 @@ describe('Report.actions', () => {
       generateSlug.mockImplementation(prefix => prefix + '1')
       const done = store.dispatch(actions.reorderBlocks(['block-2', 'block-1']))
       expect(api.reorderBlocks).toHaveBeenCalledWith({
-        optimisticUpdateId: 'update-1',
+        mutationId: 'mutation-1',
         slugs: ['block-2', 'block-1']
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-1',
+        mutationId: 'mutation-1',
         updateWorkflow: { blockSlugs: ['block-2', 'block-1'] }
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectReport(store.getState())).toEqual(expectedReport)
     })
 
@@ -330,23 +330,23 @@ describe('Report.actions', () => {
       generateSlug.mockImplementation(prefix => prefix + '1')
       const done = store.dispatch(actions.reorderBlocks(['block-auto-step-2', 'block-auto-step-1']))
       expect(api.reorderBlocks).toHaveBeenCalledWith({
-        optimisticUpdateId: 'update-1',
+        mutationId: 'mutation-1',
         slugs: ['block-auto-step-2', 'block-auto-step-1']
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
       expect(selectReport(store.getState())).toEqual(expectedReport)
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-1',
+        mutationId: 'mutation-1',
         updateWorkflow: {
           hasCustomReport: true,
           blockSlugs: ['block-auto-step-2', 'block-auto-step-1']
@@ -357,7 +357,7 @@ describe('Report.actions', () => {
         }
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectReport(store.getState())).toEqual(expectedReport)
       expect(selectOptimisticState(store.getState()).workflow.hasCustomReport).toBe(true)
     })
@@ -383,26 +383,26 @@ describe('Report.actions', () => {
       generateSlug.mockImplementation(prefix => prefix + '1')
       const done = store.dispatch(actions.setBlockMarkdown('block-1', 'bar'))
       expect(api.setBlockMarkdown).toHaveBeenCalledWith({
-        optimisticUpdateId: 'update-1',
+        mutationId: 'mutation-1',
         slug: 'block-1',
         markdown: 'bar'
       })
 
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectOptimisticState(store.getState()).blocks['block-1'].markdown).toEqual('bar')
 
       endDelay()
       await done
       // Optimistic update is still there
-      expect(store.getState().optimisticUpdates.map(u => u.optimisticId)).toEqual(['update-1'])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectOptimisticState(store.getState()).blocks['block-1'].markdown).toEqual('bar')
 
       await store.dispatch(applyDeltaAction({
-        optimisticId: 'update-1',
+        mutationId: 'mutation-1',
         updateBlocks: { 'block-1': { type: 'text', markdown: 'bar' } }
       }))
       // Optimistic update is gone: the real update took its place
-      expect(store.getState().optimisticUpdates).toEqual([])
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectOptimisticState(store.getState()).blocks['block-1'].markdown).toEqual('bar')
     })
 
@@ -411,7 +411,7 @@ describe('Report.actions', () => {
     beforeEach(() => { global.console.warn = jest.fn() })
     afterEach(() => { global.console.warn = originalWarn })
 
-    it('should revert optimistic update on error', async () => {
+    it('should revert optimistic mutation on error', async () => {
       const api = {
         setBlockMarkdown: jest.fn(() => Promise.reject(new Error('failed')))
       }
@@ -428,6 +428,7 @@ describe('Report.actions', () => {
       const done = store.dispatch(actions.setBlockMarkdown('block-1', 'bar'))
       expect(selectOptimisticState(store.getState()).blocks['block-1'].markdown).toEqual('bar') // applied
       await done
+      expect(store.getState().pendingMutations).toEqual([])
       expect(selectOptimisticState(store.getState()).blocks['block-1'].markdown).toEqual('foo') // unapplied because error
     })
   })

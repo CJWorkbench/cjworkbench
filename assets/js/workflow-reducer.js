@@ -86,7 +86,7 @@ function generateNonce (invalidValues, prefix) {
 
 // -- Workflow actions --
 
-// 'data' is { optimisticId, updateWorkflow, updateSteps, updateTabs, clearTabSlugs, clearStepIds }, all
+// 'data' is { mutationId, updateWorkflow, updateSteps, updateTabs, clearTabSlugs, clearStepIds }, all
 // optional
 export function applyDeltaAction (data) {
   return { type: APPLY_DELTA, payload: data }

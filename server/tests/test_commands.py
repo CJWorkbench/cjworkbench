@@ -211,7 +211,7 @@ class CommandsTest(DbTestCase):
         tab.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
 
     @patch.object(commands, "websockets_notify")
-    def test_pass_through_optimistic_update_id(self, websockets_notify):
+    def test_pass_through_mutation_id(self, websockets_notify):
         future_none = asyncio.Future()
         future_none.set_result(None)
         websockets_notify.return_value = future_none
@@ -220,11 +220,11 @@ class CommandsTest(DbTestCase):
         self.run_with_async_db(
             commands.do(
                 SetWorkflowTitle,
-                optimistic_update_id="update-1",
+                mutation_id="mutation-1",
                 workflow_id=workflow.id,
                 new_value="1",
             )
         )
         websockets_notify.assert_called()
         update = websockets_notify.call_args[0][1]
-        self.assertEqual(update.optimistic_id, "update-1")
+        self.assertEqual(update.mutation_id, "mutation-1")

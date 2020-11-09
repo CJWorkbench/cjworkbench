@@ -775,8 +775,8 @@ def jsonize_clientside_update(
     some i18n code invoked here.)
     """
     r = {}
-    if update.optimistic_id:
-        r["optimisticId"] = update.optimistic_id
+    if update.mutation_id:
+        r["mutationId"] = update.mutation_id
     if update.workflow:
         r["updateWorkflow"] = jsonize_clientside_workflow(
             update.workflow, ctx, is_init=False

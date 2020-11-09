@@ -1,12 +1,9 @@
 import { createSelector } from 'reselect'
 import selectOptimisticState from './selectOptimisticState'
+import selectAutoReport from './selectAutoReport'
 
 function selectWorkflowBlockSlugs (state) {
   return state.workflow.blockSlugs
-}
-
-function selectWorkflowTabSlugs (state) {
-  return state.workflow.tab_slugs
 }
 
 function selectBlocks (state) {
@@ -28,31 +25,6 @@ const selectStepsBySlug = createSelector(selectSteps, steps => {
 function selectTabs (state) {
   return state.tabs
 }
-
-function selectModules (state) {
-  return state.modules
-}
-
-function createSet (values) {
-  const set = {}
-  values.forEach(v => { set[v] = null })
-  return set
-}
-
-const selectModulesWithCharts = createSelector(
-  selectModules,
-  modules => createSet(Object.keys(modules).filter(m => modules[m].has_html_output))
-)
-
-const selectTabSteps = createSelector(
-  selectWorkflowTabSlugs,
-  selectTabs,
-  selectSteps,
-  (tabSlugs, tabs, steps) => tabSlugs.map(tabSlug => ({
-    slug: tabSlug,
-    steps: tabs[tabSlug].step_ids.map(stepId => steps[String(stepId)])
-  }))
-)
 
 function selectOutputStep (id, steps) {
   const step = steps[String(id)]
@@ -93,18 +65,6 @@ const selectCustomReport = createSelector(
   (blockSlugs, blocks, tabs, steps, stepsBySlug) => blockSlugs.map(slug => selectBlock(slug, blocks[slug], tabs, steps, stepsBySlug))
 )
 
-const selectAutoReport = createSelector(
-  selectTabSteps,
-  selectModulesWithCharts,
-  (tabSteps, wantModules) => tabSteps.flatMap(
-    ({ steps }) => steps.filter(step => step.module in wantModules).map(step => ({
-      slug: `block-auto-${step.slug}`,
-      type: 'chart',
-      step
-    }))
-  )
-)
-
 function selectNonOptimisticReport (state) {
   return state.workflow.hasCustomReport ? selectCustomReport(state) : selectAutoReport(state)
 }
@@ -119,7 +79,7 @@ function selectNonOptimisticReport (state) {
  * "auto-report" that incorporates all chart-producing steps, in order. (This
  * mimics the server-side "auto-report" logic. We copy that code because A. it's
  * user-visible, so it's clearly defined; and B. we can apply optimistic
- * deltas.)
+ * mutations.)
  */
 function selectReport (state) {
   const optimisticState = selectOptimisticState(state)
