@@ -107,6 +107,37 @@ class TestReport(LoggedInIntegrationTest):
         b.visit(iframe_url)
         b.assert_element("h1", text="Example Workflow", wait=True)
 
+    def test_report_empty_read_only(self):
+        user1 = self.account_admin.create_user("a@example.org")
+
+        self._create_workflow(title="Example Workflow")
+
+        # Share report with public
+        b = self.browser
+        b.click_button("Report")  # switch to report
+        b.assert_element("h1", text="Example Workflow", wait=True)
+        b.assert_no_element(".share-card")  # no share card in empty report
+
+        b.click_button("Share")
+        with b.scope(".share-modal", wait=True):  # wait for dialog
+            b.check("Anyone can view")
+            # This fires and forgets an AJAX request. Wait for it to finish.
+            time.sleep(2)
+            b.click_button("Close")
+
+        # anonymous user can view the report UI
+        url = b.get_url()
+        accounts.logout(b)
+        b.visit(url)
+        b.click_button("Report", wait=True)  # switch to report
+        b.assert_element("h1", text="Example Workflow", wait=True)
+        b.assert_no_element(".add-block-prompt")
+
+        # anonymous user can view the report iframe
+        iframe_url = url + "report"
+        b.visit(iframe_url)
+        b.assert_element("h1", text="Example Workflow", wait=True)
+
     def test_report_read_only(self):
         user1 = self.account_admin.create_user("a@example.org")
 
@@ -125,9 +156,15 @@ class TestReport(LoggedInIntegrationTest):
             b.click_button("Close")
         b.assert_element(".share-card .accessible-to", text="Anyone can view")
         url = b.get_url()
+        iframe_url = b.text(".share-card .url .copy", wait=True)
 
-        # anonymous user can view the report
+        # anonymous user can view the report UI
         accounts.logout(b)
         b.visit(url)
+        b.click_button("Report", wait=True)  # switch to report
         b.assert_element("h1", text="Example Workflow", wait=True)
         b.assert_no_element(".add-block-prompt")
+
+        # anonymous user can view the report iframe
+        b.visit(iframe_url)
+        b.assert_element("h1", text="Example Workflow", wait=True)
