@@ -1,11 +1,13 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 import datetime
 import json
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
+
 from asgiref.sync import async_to_sync
 from django.contrib.auth.decorators import login_required
-import django.db
+from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
@@ -14,6 +16,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework import status
+
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow, Step, Tab
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -132,7 +135,7 @@ def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Wor
     except Workflow.DoesNotExist:
         try:
             new_workflow = workflow.duplicate_anonymous(session_key)
-        except django.db.IntegrityError:
+        except IntegrityError:
             # Race: the same user just requested a duplicate at the same time,
             # and both decided to duplicate simultaneously. A database
             # constraint means one will get an IntegrityError ... so at this
@@ -311,5 +314,11 @@ class Report(View):
     def get(self, request: HttpRequest, workflow: Workflow):
         blocks = build_report_for_workflow(workflow)
         return TemplateResponse(
-            request, "report.html", {"workflow": workflow, "blocks": blocks}
+            request,
+            "report.html",
+            {
+                "workflow": workflow,
+                "blocks": blocks,
+                "owner_name": workbench_user_display(workflow.owner),
+            },
         )
