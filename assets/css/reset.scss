@@ -7,8 +7,10 @@ html {
   height: 100vh;
   margin: 0;
   padding: 0;
-  /* sets the basis for `rem` styling units */
-  font-size: 10px; // TODO DELETEME (it'll be hard)
+  @if global-var-exists(we-changed-what-rem-means-and-now-we-regret-it) {
+    /* sets the basis for `rem` styling units */
+    font-size: $we-changed-what-rem-means-and-now-we-regret-it; // TODO DELETEME (it'll be hard)
+  }
 }
 
 body {

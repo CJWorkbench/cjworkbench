@@ -484,11 +484,11 @@
       // Entire Row styling
 
       .react-grid-Row--odd .react-grid-Cell {
-        background-color: #ECF4F8;
+        background-color: $table-row-background-odd;
       }
 
       .react-grid-Row:hover .react-grid-Cell {
-        background-color: #DBEBF3;
+        background-color: $table-row-background-hover;
       }
 
       .react-grid-Row:hover .react-grid-Cell:last-child {

@@ -45,6 +45,16 @@ function handleFetchError (state, { tileRow, tileColumn, error }) {
 }
 
 function handleSetWantedTileRange (state, r1, r2, c1, c2) {
+  if (
+    r1 === state.wantedTileRange[0] &&
+    r2 === state.wantedTileRange[1] &&
+    c1 === state.wantedTileRange[2] &&
+    c2 === state.wantedTileRange[3]
+  ) {
+    // no-op: don't modify state spuriously, because useTiles() caller would re-render
+    return state
+  }
+
   const sparseTileGrid = splitGapsIntoLoadingTiles(state.sparseTileGrid, r1, r2)
   const wantedTileRange = [r1, r2, c1, c2]
   return {
@@ -74,7 +84,7 @@ function reducer (state, action) {
  * Usage:
  *
  *     function MyTable(props) {
- *       const { sparseTileGrid, setWantedTileRange, isLoading } = useStepOutput({
+ *       const { sparseTileGrid, setWantedTileRange, isLoading } = useTiles({
  *         fetchTile, nTileRows, nTileColumns
  *       })
  *       return (
@@ -109,7 +119,7 @@ function reducer (state, action) {
  *                                          `0, 1, 2, 3` will only fetch tile (0,2).
  * * `isLoading` - True when any tile is a "loading" tile.
  */
-export default function useStepOutput (props) {
+export default function useTiles (props) {
   const { fetchTile, nTileRows, nTileColumns } = props
   const [{ sparseTileGrid, loadingTile }, dispatch] = React.useReducer(reducer, { nTileRows, nTileColumns }, init)
   const isLoading = loadingTile !== null

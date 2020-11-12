@@ -13,10 +13,11 @@ const Components = {
 /**
  * Choose among ChartBlock, TableBlock and TextBlock, depending on `block.type`
  * */
-export default function Block ({ block, isReadOnly, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
+export default function Block ({ workflowId, block, isReadOnly, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
   const Component = Components[block.type]
   return (
     <Component
+      workflowId={workflowId}
       block={block}
       isReadOnly={isReadOnly}
       onClickDelete={onClickDelete}
@@ -27,6 +28,7 @@ export default function Block ({ block, isReadOnly, onClickDelete, onClickMoveUp
   )
 }
 Block.propTypes = {
+  workflowId: PropTypes.number.isRequired,
   block: PropTypes.oneOfType([
     PropTypes.exact({
       slug: PropTypes.string.isRequired,

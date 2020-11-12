@@ -763,6 +763,7 @@ def jsonize_clientside_init(
         },
         "workflowId": state.workflow.id,
         "workflow": jsonize_clientside_workflow(state.workflow, ctx, is_init=True),
+        "settings": state.settings,
     }
 
 

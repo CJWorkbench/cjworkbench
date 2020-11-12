@@ -10,6 +10,9 @@ $page-background: #F0F3F8;
 $WF-background: $page-background;
 $module-background:#f8f8f8;
 $table-background: #f3f3f3;
+$table-row-background-odd: #ecf4f8;
+$table-row-background-even: white;
+$table-row-background-hover: #dbebf3;
 $modal-color: $workspace-action;
 $document-blue: #466577;
 $hover-background: #F5F5F5;
@@ -130,3 +133,27 @@ $param-margin: .8rem;
 // Helper ⊂(◉‿◉)つ
 
 $module-popover-border-width: 2px;
+
+// Historical baggage: we avoid rems because of a terrible CSS decision way back
+// when that made 1rem=10px (breaking font sizes everywhere).
+//
+// Transitionally, call rem(1.6) instead of writing 1.6rem.
+//
+// One day, we'll nix all this and make a rem a rem.
+@function rem($n) {
+  @if global-variable-exists(we-changed-what-rem-means-and-now-we-regret-it) {
+    // Assumes the browser's default is 16px per rem
+    @return $n * 1rem * 16px / $we-changed-what-rem-means-and-now-we-regret-it;
+  } @else {
+    @return $n * 1rem;
+  }
+}
+
+@function badrem($n) {
+  @if global-variable-exists(we-changed-what-rem-means-and-now-we-regret-it) {
+    @return $n * 1rem;
+  } @else {
+    // Assumes the browser's default is 16px per rem, and the variable is 10
+    @return $n * 1rem * 10 / 16;
+  }
+}

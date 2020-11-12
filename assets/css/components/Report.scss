@@ -167,8 +167,8 @@ article.report {
   }
 
   .block-table .block-main {
-    // Reset awful "1em is 10px"
-    font-size: 1.6rem;
+    font-size: 1.6rem; // Reset awful "1em is 10px"
+    overflow: hidden; // table cannot exceed width of report
   }
 
   .markdown {

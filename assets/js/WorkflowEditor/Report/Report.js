@@ -35,6 +35,7 @@ export default function Report ({
             <AddBlockPrompt position={position} tabs={reportableTabs} onSubmit={addBlock} />
           )}
           <Block
+            workflowId={workflow.id}
             block={block}
             isReadOnly={isReadOnly}
             onClickDelete={handleClickDelete}

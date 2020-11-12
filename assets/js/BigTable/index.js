@@ -1,1 +1,1 @@
-export { BigTable } from './BigTable'
+export { default } from './BigTable'

@@ -1,6 +1,7 @@
 {% extends 'minimum.html' %}
 {% load render_bundle from webpack_loader %}
 {% load i18n_icu %}
+{% load json_filters %}
 {% load markdown %}
 
 {% block title %}
@@ -12,6 +13,9 @@
 {% endblock %}
 
 {% block body %}
+  <script>
+    window.initState = {{initState|json_in_script_tag}}
+  </script>
   <article class="report">
     <header>
       <h1><i class="icon icon-chart"></i>{{workflow.name}}</h1>
@@ -23,7 +27,7 @@
       </div>
     </header>
     {% for block in blocks %}
-      <section data-block-slug={{block.slug}} class="block block-{{block.block_type.lower}}">
+      <section data-block-slug="{{block.slug}}" class="block block-{{block.block_type.lower}}">
         <div class="block-main">
           {% if block.block_type == "Chart" %}
             <iframe
@@ -36,6 +40,7 @@
           {% elif block.block_type == "Table" %}
             <h2>{{block.tab.name}}</h2>
             {% if block.tab.live_steps.exists and block.tab.live_steps.last.cached_render_result_status == 'ok' %}
+              <div class="data-table" data-step-slug="{{block.tab.live_steps.last.slug}}"></div>
               <a download href="/public/moduledata/live/{{block.tab.live_steps.last.id}}.csv">
                 {% trans_html "py.templates.report.table.download" default="Download as spreadsheet" %}
               </a>
@@ -45,4 +50,5 @@
       </section>
     {% endfor %}
   </article>
+  {% render_bundle 'report' 'js' %}
 {% endblock %}

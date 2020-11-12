@@ -438,3 +438,4 @@ class Init:
     steps: Dict[int, StepUpdate]  # TODO key by slug, not ID
     tabs: Dict[str, TabUpdate]
     blocks: Dict[str, Block]
+    settings: Dict[str, int]

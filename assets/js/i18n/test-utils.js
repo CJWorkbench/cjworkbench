@@ -1,5 +1,6 @@
 import { I18nProvider } from '@lingui/react'
 import React from 'react'
+import { render } from '@testing-library/react'
 import { shape, object } from 'prop-types'
 import { mount, shallow } from 'enzyme'
 
@@ -73,4 +74,12 @@ export function mountWithI18n (node, { context, childContextTypes, ...otherMount
       ...otherMountOptions
     }
   )
+}
+
+function I18nWrapper (props) {
+  return <I18nProvider language='en' catalogs={{ en: {} }} {...props} />
+}
+
+export function renderWithI18n (node, options) {
+  return render(node, { wrapper: I18nWrapper, ...options })
 }

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import get_object_or_404
-from django.utils.cache import add_never_cache_headers
+from django.utils.cache import add_never_cache_headers, patch_response_headers
 from django.views.decorators.clickjacking import xframe_options_exempt
 import numpy as np
 import pyarrow as pa
@@ -30,7 +30,35 @@ from cjwstate.models.module_registry import MODULE_REGISTRY
 _MaxNRowsPerRequest = 300
 
 
-def _with_step_for_read(fn):
+def _with_unlocked_step_for_read(fn):
+    """Decorate: `fn(request, workflow_id, step_slug, ...)` becomes `fn(request, step, ...)`
+
+    The inner function will raise Http404 if the step is not found in the database,
+    or PermissionDenied if the person requesting does not have read access.
+    """
+
+    def inner(request: HttpRequest, workflow_id: int, step_slug: str, *args, **kwargs):
+        try:
+            with Workflow.authorized_lookup_and_cooperative_lock(
+                "read", request.user, request.session, pk=workflow_id
+            ) as workflow_lock:
+                step = Step.live_in_workflow(workflow_lock.workflow.id).get(
+                    slug=step_slug
+                )
+        except Workflow.DoesNotExist as err:
+            if err.args[0].endswith("access denied"):
+                raise PermissionDenied()
+            else:
+                raise Http404("workflow not found or not authorized")
+        except Step.DoesNotExist:
+            raise Http404("step not found")
+
+        return fn(request, step, *args, **kwargs)
+
+    return inner
+
+
+def _with_step_for_read_by_id(fn):
     """Decorate: `fn(request, step_id, ...)` becomes `fn(request, step, ...)`
 
     The inner function will be wrapped in a cooperative lock.
@@ -110,7 +138,7 @@ def int_or_none(x):
 # /render: return output table of this module
 @api_view(["GET"])
 @renderer_classes((JSONRenderer,))
-@_with_step_for_read
+@_with_step_for_read_by_id
 def step_render(request: HttpRequest, step: Step, format=None):
     # Get first and last row from query parameters, or default to all if not
     # specified
@@ -146,9 +174,56 @@ def step_render(request: HttpRequest, step: Step, format=None):
     return response
 
 
+# /tiles/:slug/v:delta_id/:tile_row,:tile_column.json: table data
+@api_view(["GET"])
+@_with_unlocked_step_for_read
+def step_tile(
+    request: HttpRequest, step: Step, delta_id: int, tile_row: int, tile_column: int
+):
+    # No need for cooperative lock: the cache may always be corrupt (lock or no), and
+    # we don't read from the database
+    row_begin = tile_row * settings.BIG_TABLE_ROWS_PER_TILE
+    row_end = row_begin + settings.BIG_TABLE_ROWS_PER_TILE  # one past end
+    column_begin = tile_column * settings.BIG_TABLE_COLUMNS_PER_TILE
+    column_end = column_begin + settings.BIG_TABLE_COLUMNS_PER_TILE  # one past end
+
+    cached_result = step.cached_render_result
+    if cached_result is None or cached_result.delta_id != delta_id:
+        return JsonResponse({"error": "delta_id result not cached"}, status=404)
+
+    if (
+        cached_result.table_metadata.n_rows <= row_begin
+        or len(cached_result.table_metadata.columns) <= column_begin
+    ):
+        return JsonResponse({"error": "tile out of bounds"}, status=404)
+
+    try:
+        record_json = read_cached_render_result_slice_as_text(
+            cached_result,
+            "json",
+            only_rows=range(row_begin, row_end),
+            only_columns=range(column_begin, column_end),
+        )
+    except CorruptCacheError:
+        # A different 404 message to help during debugging
+        return JsonResponse(
+            {"error": "result went away; please try again with another delta_id"},
+            status=404,
+        )
+
+    # Convert from [{"a": "b", "c": "d"}, ...] to [["b", "d"], ...]
+    rows = json.loads(
+        record_json, object_pairs_hook=lambda pairs: [v for k, v in pairs]
+    )
+
+    response = JsonResponse({"rows": rows})
+    patch_response_headers(response, cache_timeout=600)
+    return response
+
+
 @api_view(["GET"])
 @xframe_options_exempt
-@_with_step_for_read
+@_with_step_for_read_by_id
 def step_output(request: HttpRequest, step: Step, format=None):
     try:
         module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
@@ -160,7 +235,7 @@ def step_output(request: HttpRequest, step: Step, format=None):
 
 @api_view(["GET"])
 @renderer_classes((JSONRenderer,))
-@_with_step_for_read
+@_with_step_for_read_by_id
 def step_embeddata(request: HttpRequest, step: Step):
     # Speedy bypassing of locks: we don't care if we get out-of-date data
     # because we assume the client will re-request when it gets a new
@@ -177,7 +252,7 @@ def step_embeddata(request: HttpRequest, step: Step):
 
 @api_view(["GET"])
 @renderer_classes((JSONRenderer,))
-@_with_step_for_read
+@_with_step_for_read_by_id
 def step_value_counts(request: HttpRequest, step: Step):
     try:
         colname = request.GET["column"]
@@ -304,7 +379,7 @@ class SubprocessOutputFileLike(io.RawIOBase):
 
 
 @api_view(["GET"])
-@_with_step_for_read
+@_with_step_for_read_by_id
 def step_public_json(request: HttpRequest, step: Step):
     def schedule_render_and_suggest_retry():
         """Schedule a render and return a response asking the user to retry.
@@ -346,7 +421,7 @@ def step_public_json(request: HttpRequest, step: Step):
     )
 
 
-@_with_step_for_read
+@_with_step_for_read_by_id
 def step_public_csv(request: HttpRequest, step: Step):
     def schedule_render_and_suggest_retry():
         """Schedule a render and return a response asking the user to retry.

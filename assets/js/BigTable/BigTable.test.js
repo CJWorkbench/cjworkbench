@@ -1,43 +1,48 @@
 /* globals expect, test */
 import React from 'react'
-import { render } from '@testing-library/react'
 
+import '../__mocks__/ResizeObserver'
+import { renderWithI18n } from '../i18n/test-utils'
 import BigTable from './BigTable'
 
-test('Empty table', () => {
+test('Empty table', async () => {
   const column = {
     width: 60,
+    type: 'text',
     headerComponent: () => <>HEADER</>,
     valueComponent: ({ value }) => <>value: {value}</>
   }
 
-  const { container } = render(
+  const { container } = renderWithI18n(
     <BigTable
       sparseTileGrid={[]}
       nRows={0}
       columns={[column]}
       nRowsPerTile={100}
       nColumnsPerTile={10}
+      fixedCellRange={[0, 0, 0, 1]}
       setWantedTileRange={() => {}}
     />
   )
   expect(container.querySelectorAll('th')).toHaveLength(2) // 1 column, row-number column
-  expect(container.querySelector('tbody')).toBe(null)
+  expect(container.querySelector('tbody tr')).toBe(null)
 })
 
-test('Table with a gap', () => {
+test('Table with a gap', async () => {
   const A = {
     width: 60,
+    type: 'number',
     headerComponent: () => <>HEADER A</>,
-    valueComponent: ({ value }) => <>A: {value}</>
+    valueComponent: ({ value }) => <>A: {value || 'NULL'}</>
   }
   const B = {
     width: 61,
+    type: 'text',
     headerComponent: () => <>HEADER B</>,
-    valueComponent: ({ value }) => <>B: {value}</>
+    valueComponent: ({ value }) => <>B: {value || 'NULL'}</>
   }
 
-  const { container, queryByText } = render(
+  const { container, queryByText, getAllByText } = renderWithI18n(
     <BigTable
       sparseTileGrid={[
         [
@@ -54,16 +59,16 @@ test('Table with a gap', () => {
       columns={[A, B]}
       nRowsPerTile={3}
       nColumnsPerTile={1}
+      fixedCellRange={[0, 11, 0, 2]}
       setWantedTileRange={() => {}}
     />
   )
   expect(container.querySelectorAll('thead th')).toHaveLength(3) // 2 column, row-number column
-  expect(container.querySelector('tbody.gap td[colspan="3"][rowspan="6"]')).toBeInTheDocument()
-  expect(container.querySelectorAll('tbody')).toHaveLength(3)
   expect(queryByText('A: A1')).toBeInTheDocument()
   expect(queryByText('B: B1')).toBeInTheDocument()
   expect(queryByText('A: A11')).toBeInTheDocument()
   expect(queryByText('B: B11')).toBeInTheDocument()
-  expect(container.querySelector('tbody+tbody').childNodes).toHaveLength(1) // a gap is one big row
+  expect(getAllByText('A: NULL')).toHaveLength(6)
+  expect(getAllByText('B: NULL')).toHaveLength(6)
   expect(container).toMatchSnapshot()
 })

@@ -15,6 +15,7 @@ module.exports = {
     login: './assets/js/pages/login',
     workflows: './assets/js/pages/workflows.page',
     workflow: './assets/js/pages/workflow.page',
+    report: './assets/js/pages/report.page',
     embed: './assets/js/pages/embed.page'
   },
 

@@ -84,12 +84,17 @@ urlpatterns = [
         r"^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$",
         workflows.Duplicate.as_view(),
     ),
-    url(r"^workflows/(?P<workflow_id>[0-9]+)/report$", workflows.Report.as_view()),
     url(
         r"^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$",
         acl.Entry.as_view(),
     ),
     url(r"^api/importfromgithub/?$", views.import_from_github),
+    # Decent URLs
+    url(r"^workflows/(?P<workflow_id>[0-9]+)/report$", workflows.Report.as_view()),
+    path(
+        "workflows/<int:workflow_id>/tiles/<slug:step_slug>/delta-<int:delta_id>/<int:tile_row>,<int:tile_column>.json",
+        views.step_tile,
+    ),
     # Steps
     # TODO: "render" and "output" are bad names. Differentiate them.
     path("api/wfmodules/<int:step_id>/render", views.step_render),
@@ -105,12 +110,11 @@ urlpatterns = [
     ),
     url(r"^oauth/?$", oauth.finish_authorize),
     # Embeds
-    url(r"^embed/(?P<step_id>[0-9]+)/?$", views.embed),
-    url(r"^healthz$", health.healthz),
-    # 404
+    url(r"^embed/(?P<step_id>[0-9]+)/?$", views.embed),  # FIXME needs workflow ID
+    # 404, 403, status
     url(r"^404/$", TemplateView.as_view(template_name="404.html")),
-    # 403
     url(r"^403/$", TemplateView.as_view(template_name="403.html")),
+    url(r"^healthz$", health.healthz),
     # JavaScript support data
     path("jsdata/timezones.json", jsdata.timezones.index),
 ]

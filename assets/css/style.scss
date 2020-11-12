@@ -1,3 +1,5 @@
+$we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll be hard)
+
 @import './variables';
 @import './fonts';
 @import 'components/Fonts.scss';
@@ -57,5 +59,6 @@
 
 @import 'params/index';
 @import 'WorkflowEditor/index';
+@import 'BigTable/index';
 
 @import 'i18n/LocaleSwitcher';

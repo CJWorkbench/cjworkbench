@@ -521,7 +521,7 @@ msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName"
 msgstr ""
 
 #. default-message: Add table from tab
-#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:16
+#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:17
 msgid "js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText"
 msgstr ""
 
@@ -556,12 +556,12 @@ msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
 #. default-message: Download spreadsheet
-#: assets/js/WorkflowEditor/Report/TableBlock.js:21
+#: assets/js/WorkflowEditor/Report/TableBlock.js:24
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
 #. default-message: No table data
-#: assets/js/WorkflowEditor/Report/TableBlock.js:25
+#: assets/js/WorkflowEditor/Report/TableBlock.js:28
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 
@@ -573,6 +573,11 @@ msgstr ""
 #. default-message: Cancel
 #: assets/js/WorkflowEditor/Report/TextBlock.js:23
 msgid "js.WorkflowEditor.Report.TextBock.cancel"
+msgstr ""
+
+#. default-message: null
+#: assets/js/Report/CellFormatters2.js:26
+msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #. default-message: This Tab has no Steps.
@@ -2612,23 +2617,23 @@ msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
 #. default-message: by {workflowOwner}
-#: templates/report.html:19
+#: templates/report.html:23
 msgid "py.templates.report.author"
 msgstr ""
 
 #. default-message: Updated <time0>{timeAgo}</time0> ago
-#: templates/report.html:20
+#: templates/report.html:24
 msgid "py.templates.report.updated"
 msgstr ""
 
 #. This is a link to a workflow
 #. default-message: Source data
-#: templates/report.html:22
+#: templates/report.html:26
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
 #. default-message: Download as spreadsheet
-#: templates/report.html:40
+#: templates/report.html:45
 msgid "py.templates.report.table.download"
 msgstr ""
 

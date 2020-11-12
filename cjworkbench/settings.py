@@ -489,8 +489,7 @@ if STATIC_URL != "http://localhost:8000/static/":
     print(f"Serving static files from {STATIC_URL}")
 
 LESSON_FILES_URL = "https://storage.googleapis.com/production-static.workbenchdata.com"
-"""
-URL where we publish data for users to fetch in lessons.
+"""URL where we publish data for users to fetch in lessons.
 
 [2019-11-12] Currently, this is in the production static-files URL. TODO move
 it to a new bucket, because developers must write to the bucket before
@@ -502,4 +501,18 @@ don't use internal resolvers (e.g., Docker DNS, Docker-managed /etc/hosts) and
 we firewall internal IP addresses (e.g., minio, localhost). Dev,
 integration-test and production all have different network setups, and we'd
 need three different codepaths to make environment-specific URLs work.
+"""
+
+BIG_TABLE_ROWS_PER_TILE = 100
+"""Number of rows fetched in a single request of a table.
+
+A smaller number means more HTTP requests are needed to fill a table. A larger
+number means each request returns more data -- and React renders are slower.
+"""
+
+BIG_TABLE_COLUMNS_PER_TILE = 20
+"""Number of rows fetched in a single request of a table.
+
+A smaller number means more HTTP requests are needed to fill a table. A larger
+number means each request returns more data -- and React renders are slower.
 """

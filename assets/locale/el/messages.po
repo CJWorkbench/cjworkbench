@@ -467,7 +467,7 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:16
+#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:17
 msgid "js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText"
 msgstr ""
 
@@ -495,11 +495,11 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:21
+#: assets/js/WorkflowEditor/Report/TableBlock.js:24
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:25
+#: assets/js/WorkflowEditor/Report/TableBlock.js:28
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 
@@ -509,6 +509,10 @@ msgstr ""
 
 #: assets/js/WorkflowEditor/Report/TextBlock.js:23
 msgid "js.WorkflowEditor.Report.TextBock.cancel"
+msgstr ""
+
+#: assets/js/Report/CellFormatters2.js:26
+msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #: assets/js/WorkflowEditor/StepList.js:138
@@ -2275,20 +2279,20 @@ msgstr ""
 msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr "Διαφορετικά, επικοινωνήστε μαζί μας για να καταλάβουμε τι συμβαίνει."
 
-#: templates/report.html:19
+#: templates/report.html:23
 msgid "py.templates.report.author"
 msgstr "από {workflowOwner}"
 
-#: templates/report.html:20
+#: templates/report.html:24
 msgid "py.templates.report.updated"
 msgstr "Ενημερώθηκε πριν από <time0>{timeAgo}</time0>"
 
 #. This is a link to a workflow
-#: templates/report.html:22
+#: templates/report.html:26
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Δεδομένα προέλευσης"
 
-#: templates/report.html:40
+#: templates/report.html:45
 msgid "py.templates.report.table.download"
 msgstr ""
 

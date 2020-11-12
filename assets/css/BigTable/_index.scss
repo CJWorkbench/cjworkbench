@@ -1,0 +1,139 @@
+.big-table {
+  overflow: auto;
+  max-width: 100%;
+  $row-height: rem(2.25);
+  --row-height: #{$row-height}; // when skipping rows, we'll use calc() with data-skip-n-rows
+  height: 12 * $row-height;
+  max-height: 12 * $row-height;
+  font-size: rem(.875);
+
+  col.row-number {
+    // row number
+    width: rem(2.5);
+  }
+
+  table {
+    position: relative; // for sticky headers
+    table-layout: fixed; // for speed
+    width: 1px; // to make table-layout: fixed work
+  }
+
+  thead {
+    th {
+      position: sticky;
+      top: 0;
+      color: white;
+      background: $heading-bg;
+
+      .column-name {
+        @include content-1;
+        padding: rem(.625) rem(.625) rem(.3125) rem(.625);
+        white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .column-type {
+        @include info-2;
+        padding: 0 rem(.625) rem(.625);
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      height: var(--row-height);
+      background: $table-row-background-even;
+
+      &:nth-child(2n) {
+        background: $table-row-background-odd;
+      }
+
+      &:hover {
+        background: $table-row-background-hover;
+      }
+    }
+
+    td, th {
+      // [2020-11-10, adamhooper] attr(data-n-rows integer) can't be used in calc in latest Chrome/Firefox
+      height: var(--row-height);
+    }
+
+    th {
+      // row-number <th>, selected by <col> class
+      color: $labels;
+      font-weight: 400;
+      text-align: center;
+      font-size: rem(.4375); // smallest possible -- this is the fallback
+      border-right: 1px solid $table-border;
+
+      [data-n-chars="1"], [data-n-chars="2"] {
+        font-size: rem(.75);
+      }
+
+      [data-n-chars="3"] {
+        font-size: rem(.625);
+      }
+
+      [data-n-chars="4"] {
+        font-size: rem(.5625);
+      }
+
+      [data-n-chars="5"] {
+        font-size: rem(.5);
+      }
+    }
+
+    td {
+      color: $brand-text--darker;
+      @include table-content;
+      padding: 0 rem(.625);
+
+      &.type-number {
+        text-align: right; // even nulls, which aren't .cell-number
+      }
+
+      &.type-text {
+        padding: 0 rem(.125) 0 rem(.625); // override regular padding to squeeze in a few pixels
+      }
+
+      &>* {
+        max-height: var(--row-height);
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .cell-number {
+        .number-prefix, .number-suffix {
+          @include font-sans-light;
+        }
+
+        .number-suffix {
+          padding-left: rem(.125);
+        }
+
+        .number-prefix {
+          padding-right: rem(.125);
+        }
+      }
+
+      .cell-text {
+        // The value is already mangled to take only one line. Now, preserve
+        // the whitespace within that one line.
+        white-space: pre;
+      }
+
+      .cell-null {
+        &::before {
+          content: attr(data-text);
+        }
+        @include font-sans-light;
+        color: lighten($brand-text--dark, 30%);
+        font-style: italic; // FIXME we don't ship this font as italic
+        font-weight: 200;
+      }
+    }
+  }
+}

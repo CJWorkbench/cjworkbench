@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from asgiref.sync import async_to_sync
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Q
@@ -66,6 +67,10 @@ def make_init_state(
                 },
                 blocks={
                     block.slug: block.to_clientside() for block in workflow.blocks.all()
+                },
+                settings={
+                    "bigTableRowsPerTile": settings.BIG_TABLE_ROWS_PER_TILE,
+                    "bigTableColumnsPerTile": settings.BIG_TABLE_COLUMNS_PER_TILE,
                 },
             )
     except Workflow.DoesNotExist:
@@ -312,11 +317,14 @@ class Report(View):
 
     @method_decorator(loads_workflow_for_read)
     def get(self, request: HttpRequest, workflow: Workflow):
+        modules = visible_modules(request)
+        init_state = make_init_state(request, workflow=workflow, modules=modules)
         blocks = build_report_for_workflow(workflow)
         return TemplateResponse(
             request,
             "report.html",
             {
+                "initState": init_state,
                 "workflow": workflow,
                 "blocks": blocks,
                 "owner_name": workbench_user_display(workflow.owner),

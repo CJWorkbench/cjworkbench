@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import BlockFrame from './BlockFrame'
+import Table from '../../Report/Table'
 
 export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickMoveDown, onClickMoveUp }) {
   const { slug, tab } = block
@@ -17,11 +18,12 @@ export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickM
       onClickMoveUp={onClickMoveUp}
     >
       <h2>{name}</h2>
-      {outputStep && outputStep.outputStatus === 'ok' ? (
-        <a download href={`/public/moduledata/live/${outputStep.id}.csv`}>
+      {outputStep && outputStep.outputStatus === 'ok' ? ([
+        <Table key='table' stepSlug={outputStep.slug} />,
+        <a key='download' download href={`/public/moduledata/live/${outputStep.id}.csv`}>
           <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download spreadsheet</Trans>
         </a>
-      ) : (
+      ]) : (
         <p className='no-table-data'>
           <Trans id='js.WorkflowEditor.Report.TableBlock.noTableData'>No table data</Trans>
         </p>

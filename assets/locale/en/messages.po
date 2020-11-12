@@ -447,7 +447,7 @@ msgstr "Add chart"
 msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName"
 msgstr "{tabName} – {moduleName}"
 
-#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:16
+#: assets/js/WorkflowEditor/Report/AddTableBlockPrompt.js:17
 msgid "js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText"
 msgstr "Add table from tab"
 
@@ -475,11 +475,11 @@ msgstr "Move down"
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr "Move up"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:21
+#: assets/js/WorkflowEditor/Report/TableBlock.js:24
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr "Download spreadsheet"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:25
+#: assets/js/WorkflowEditor/Report/TableBlock.js:28
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr "No table data"
 
@@ -490,6 +490,10 @@ msgstr "Save"
 #: assets/js/WorkflowEditor/Report/TextBlock.js:23
 msgid "js.WorkflowEditor.Report.TextBock.cancel"
 msgstr "Cancel"
+
+#: assets/js/Report/CellFormatters2.js:26
+msgid "js.WorkflowEditor.Report.nullCell"
+msgstr "null"
 
 #: assets/js/WorkflowEditor/StepList.js:138
 msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
@@ -2216,20 +2220,20 @@ msgstr ""
 msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr "Otherwise, please contact us so we can figure out what's wrong."
 
-#: templates/report.html:19
+#: templates/report.html:23
 msgid "py.templates.report.author"
 msgstr "by {workflowOwner}"
 
-#: templates/report.html:20
+#: templates/report.html:24
 msgid "py.templates.report.updated"
 msgstr "Updated <time0>{timeAgo}</time0> ago"
 
 #. This is a link to a workflow
-#: templates/report.html:22
+#: templates/report.html:26
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Source data"
 
-#: templates/report.html:40
+#: templates/report.html:45
 msgid "py.templates.report.table.download"
 msgstr "Download as spreadsheet"
 

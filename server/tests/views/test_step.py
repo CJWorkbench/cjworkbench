@@ -350,3 +350,79 @@ class StepTests(LoggedInTestCase):
         self.assertEqual(
             json.loads(response.content), {"error": 'column "B" not found'}
         )
+
+    def test_tile_no_cached_result(self):
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/tiles/step-2/delta-2/0,0.json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            json.loads(response.content), {"error": "delta_id result not cached"}
+        )
+
+    def test_tile_cached_result_has_wrong_delta_id(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+        self.step2.cached_render_result_delta_id = 3
+        self.step2.last_relevant_delta_id = 3
+        self.step2.save(
+            update_fields=["cached_render_result_delta_id", "last_relevant_delta_id"]
+        )
+
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/tiles/step-2/delta-2/0,0.json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            json.loads(response.content), {"error": "delta_id result not cached"}
+        )
+
+    def test_tile_tile_row_out_of_bounds(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/tiles/step-2/delta-2/1,0.json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(json.loads(response.content), {"error": "tile out of bounds"})
+
+    def test_tile_corrupt_cache_error(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+        delete_parquet_files_for_step(self.workflow.id, self.step2.id)
+
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/tiles/step-2/delta-2/0,0.json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            json.loads(response.content),
+            {"error": "result went away; please try again with another delta_id"},
+        )
+
+    def test_tile_json(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/tiles/step-2/delta-2/0,0.json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content), {"rows": [["a"], ["b"]]})
