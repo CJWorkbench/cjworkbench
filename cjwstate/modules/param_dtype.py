@@ -8,11 +8,10 @@ import pytz
 
 @dataclass(frozen=True)
 class ParamDType:
-    """
-    Data type -- that is, storage format -- for a parameter.
+    """Data type -- that is, storage format -- for a parameter.
 
     Parameter values are always stored as JSON values. A parameter's DType is
-    the JSON "schema" for its values.
+    the "schema" for its values.
 
     This type applies to user-input data. Since the user may input _anything_
     (even invalid data, especially across multiple versions of a module), we
@@ -23,8 +22,7 @@ class ParamDType:
     """
 
     def coerce(self, value: Any) -> Any:
-        """
-        Convert `value` to something valid.
+        """Convert `value` to something valid.
 
         This cannot raise: it must return _something_ instead. In effect, types
         must have sensible "zero" values (e.g., a String's zero value is "").
@@ -32,14 +30,11 @@ class ParamDType:
         raise NotImplementedError
 
     def validate(self, value: Any) -> Any:
-        """
-        Raise `ValueError` if `value` is not valid.
-        """
+        """Raise `ValueError` if `value` is not valid."""
         raise NotImplementedError
 
     def iter_dfs_dtypes(self):
-        """
-        Depth-first search to yield dtypes.
+        """Depth-first search to yield dtypes.
 
         By default, this yields `self`. "Container"-style dtypes should
         override this method to yield `self` and then yield each "child"
@@ -48,8 +43,7 @@ class ParamDType:
         yield self
 
     def iter_dfs_dtype_values(self, value: Any):
-        """
-        Depth-first search to yield (dtype, value) pairs.
+        """Depth-first search to yield (dtype, value) pairs.
 
         By default, this yields `(self, value)`. "Container"-style dtypes
         should override this method to yield `(self, value)` and then yield
@@ -60,8 +54,7 @@ class ParamDType:
         yield (self, value)
 
     def find_leaf_values_with_dtype(self, dtype: type, value: Any) -> FrozenSet[Any]:
-        """
-        Recurse through `value`, finding sub-values of type `dtype`.
+        """Recurse through `value`, finding sub-values of type `dtype`.
 
         Be sure to coerce() or validate() `value` before passing it here.
 
@@ -83,8 +76,7 @@ class ParamDType:
 
     @classmethod
     def _from_plain_data(cls, **kwargs):
-        """
-        Virtual method used by `ParamDType.parse()`
+        """Virtual method used by `ParamDType.parse()`
 
         `kwargs` are JSON keys/values.
         """
@@ -92,8 +84,7 @@ class ParamDType:
 
     @classmethod
     def parse(cls, json_value):
-        """
-        Deserialize this DType from JSON.
+        """Deserialize this DType from JSON.
 
         Currently, we only JSON-serialize DTypes in module specifications that
         have explicit `param_schema`. That's rare.
@@ -106,9 +97,7 @@ class ParamDType:
 
 @dataclass(frozen=True)
 class ParamDTypeOption(ParamDType):
-    """
-    Decorate a dtype such that it may be None.
-    """
+    """Decorate a dtype such that it may be None."""
 
     inner_dtype: ParamDType
 
@@ -144,10 +133,9 @@ class ParamDTypeOption(ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeString(ParamDType):
-    """
-    Valid Unicode text.
+    r"""Accept valid Unicode text.
 
-    This is stricter than Python `str`. In particular, `"\\ud8002"` is invalid
+    This is stricter than Python `str`. In particular, `"\ud8002"` is invalid
     (because a lone surrogate isn't valid Unicode text) and `"\x00"` is invalid
     (because Postgres doesn't allow null bytes).
     """
@@ -186,6 +174,8 @@ class ParamDTypeString(ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeInteger(ParamDType):
+    """Accept integers."""
+
     default: int = 0
 
     def coerce(self, value):
@@ -201,9 +191,7 @@ class ParamDTypeInteger(ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeFloat(ParamDType):
-    """
-    Accepts floats or integers. Akin to JSON 'number' type.
-    """
+    """Accept floats or integers. Akin to JSON 'number' type."""
 
     default: float = 0.0
 
@@ -226,6 +214,8 @@ class ParamDTypeFloat(ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeBoolean(ParamDType):
+    """Accept `True` or `False`."""
+
     default: bool = False
 
     def coerce(self, value):
@@ -316,13 +306,18 @@ class ParamDTypeEnum(ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeTimezone(ParamDType):
-    """
-    Accepts 'America/Montreal'-style strings or 'UTC'.
+    """Accept 'America/Montreal'-style strings or 'UTC'.
 
     The database is from https://www.iana.org/time-zones
     """
 
     default: str = "UTC"
+
+    def __post_init__(self):
+        if self.default not in pytz.all_timezones_set:
+            raise ValueError(
+                "Value %r is not an IANA timezone identifier" % self.default
+            )
 
     def coerce(self, value):
         if value in pytz.all_timezones_set:
@@ -336,9 +331,7 @@ class ParamDTypeTimezone(ParamDType):
 
 
 class _ListMethods:
-    """
-    Methods that use `self.inner_dtype` and expect values to be list.
-    """
+    """Methods that use `self.inner_dtype` and expect values to be list."""
 
     def coerce(self, value):
         if value is None:
@@ -381,8 +374,7 @@ class ParamDTypeList(_ListMethods, ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeDict(ParamDType):
-    """
-    A grouping of properties with a schema defined in the dtype.
+    """A grouping of properties with a schema defined in the dtype.
 
     This is different from ParamDTypeMap, which allows arbitrary keys and
     forces all values to have the same dtype.
@@ -441,8 +433,7 @@ class ParamDTypeDict(ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeMap(ParamDType):
-    """
-    A key-value store with arbitrary string keys and all-the-same-dtype values.
+    """A key-value store with arbitrary string keys and all-the-same-dtype values.
 
     This is different from ParamDTypeDict, which has dtype-defined properties,
     each with its own dtype.
@@ -488,8 +479,7 @@ class ParamDTypeTab(ParamDTypeString):
 
 @dataclass(frozen=True)
 class ParamDTypeMultitab(_ListMethods, ParamDType):
-    """
-    A 'tabs' parameter: a value is a list of tab slugs.
+    """A 'tabs' parameter: a value is a list of tab slugs.
 
     This dtype behaves like a ParamDTypeList full of ParamDTypeTab values.
     We'll visit all child ParamDTypeTab values when walking a `value`.
@@ -503,8 +493,7 @@ class ParamDTypeMultitab(_ListMethods, ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeMultichartseries(_ListMethods, ParamDType):
-    """
-    A 'y_series' parameter: array of columns+colors.
+    """A 'y_series' parameter: array of columns+colors.
 
     This is like a List[Dict], except when omitting table columns we omit the
     entire Dict if its Column is missing.
@@ -527,8 +516,7 @@ class ParamDTypeMultichartseries(_ListMethods, ParamDType):
 
 @dataclass(frozen=True)
 class ParamDTypeFile(ParamDType):
-    """
-    String-encoded UUID pointing to an UploadedFile (and S3).
+    """String-encoded UUID pointing to an UploadedFile (and S3).
 
     The default, value, `null`, means "No file".
     """
