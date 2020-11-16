@@ -100,7 +100,9 @@ class TabFlow:
             if step.module_zipfile is not None:
                 schema = step.module_zipfile.get_spec().get_param_schema()
                 ret.update(
-                    schema.find_leaf_values_with_dtype(ParamDType.Tab, step.params)
+                    v
+                    for dt, v in schema.iter_dfs_dtype_values(step.params)
+                    if isinstance(dt, ParamDType.Tab)
                 )
         return frozenset(ret)
 

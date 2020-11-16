@@ -651,13 +651,17 @@ class DependencyGraph:
 
                 module_spec = module_zipfile.get_spec()
                 schema = module_spec.get_param_schema()
+
+                # Optimization: don't migrate_params() if we know there are no
+                # tab params. (get_migrated_params() invokes module code, and
+                # we'd prefer for module code to execute only in the renderer.)
                 if all(
                     (
                         (
                             not isinstance(dtype, ParamDType.Tab)
                             and not isinstance(dtype, ParamDType.Multitab)
                         )
-                        for dtype in schema.iter_dfs_dtypes()
+                        for dtype, v in schema.iter_dfs_dtype_values()
                     )
                 ):
                     # There are no tab params.

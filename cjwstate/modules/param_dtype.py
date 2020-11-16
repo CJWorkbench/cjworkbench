@@ -33,15 +33,6 @@ class ParamDType:
         """Raise `ValueError` if `value` is not valid."""
         raise NotImplementedError
 
-    def iter_dfs_dtypes(self):
-        """Depth-first search to yield dtypes.
-
-        By default, this yields `self`. "Container"-style dtypes should
-        override this method to yield `self` and then yield each "child"
-        `dtype`.
-        """
-        yield self
-
     def iter_dfs_dtype_values(self, value: Any):
         """Depth-first search to yield (dtype, value) pairs.
 
@@ -52,27 +43,6 @@ class ParamDType:
         Be sure to coerce() or validate() `value` before passing it here.
         """
         yield (self, value)
-
-    def find_leaf_values_with_dtype(self, dtype: type, value: Any) -> FrozenSet[Any]:
-        """Recurse through `value`, finding sub-values of type `dtype`.
-
-        Be sure to coerce() or validate() `value` before passing it here.
-
-        "Container"-style dtypes should override this method to walk their
-        children.
-
-        Example:
-
-        >>> schema = ParamDTypeList(inner_dtype=ParamDTypeTab())
-        >>> tab_slugs = schema.find_leaf_values_with_dtype(
-        ...     ParamDTypeTab,
-        ...     ['tab-123', 'tab-234']
-        ... })
-        {'tab-123', 'tab-234'}
-        """
-        return frozenset(
-            v for dt, v in self.iter_dfs_dtype_values(value) if isinstance(dt, dtype)
-        )
 
     @classmethod
     def _from_plain_data(cls, **kwargs):
@@ -112,11 +82,6 @@ class ParamDTypeOption(ParamDType):
     def validate(self, value):
         if value is not None:
             self.inner_dtype.validate(value)
-
-    # override
-    def iter_dfs_dtypes(self):
-        yield from super().iter_dfs_dtypes()
-        yield from self.inner_dtype.iter_dfs_dtypes()
 
     # override
     def iter_dfs_dtype_values(self, value: Any):
@@ -350,11 +315,6 @@ class _ListMethods:
             self.inner_dtype.validate(v)
 
     # override
-    def iter_dfs_dtypes(self):
-        yield from super().iter_dfs_dtypes()
-        yield self.inner_dtype
-
-    # override
     def iter_dfs_dtype_values(self, value):
         yield from super().iter_dfs_dtype_values(value)
         for v in value:
@@ -415,11 +375,6 @@ class ParamDTypeDict(ParamDType):
             dtype.validate(value[name])
 
     # override
-    def iter_dfs_dtypes(self):
-        yield from super().iter_dfs_dtypes()
-        yield from self.properties.values()
-
-    # override
     def iter_dfs_dtype_values(self, value):
         yield from super().iter_dfs_dtype_values(value)
         for name, dtype in self.properties.items():
@@ -454,11 +409,6 @@ class ParamDTypeMap(ParamDType):
 
         for _, v in value.items():
             self.value_dtype.validate(v)
-
-    # override
-    def iter_dfs_dtypes(self):
-        yield from super().iter_dfs_dtypes()
-        yield self.value_dtype
 
     # override
     def iter_dfs_dtype_values(self, value):
