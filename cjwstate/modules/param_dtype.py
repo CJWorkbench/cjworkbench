@@ -17,8 +17,8 @@ class ParamDType:
     (even invalid data, especially across multiple versions of a module), we
     provide `coerce()` and `validate()` to ensure type-safety.
 
-    This is the abstract base class for a variety of DTypes which can represent recursive
-    type structures.
+    This is the abstract base class for a variety of DTypes which can represent
+    recursive type structures.
     """
 
     def coerce(self, value: Any) -> Any:
@@ -197,6 +197,175 @@ class ParamDTypeBoolean(ParamDType):
     def validate(self, value):
         if not isinstance(value, bool):
             raise ValueError("Value %r is not a boolean" % value)
+
+
+@dataclass(frozen=True)
+class ParamDTypeCondition(ParamDType):
+    """Valid JSON structure for column comparisons and combinations of them.
+
+    Example valid value:
+
+        {
+            "operation": "text_contains",
+            "column": "A",
+            "value": "foo",
+            "isCaseSensitive": True,
+            "isRegex": False
+        }
+
+    Or:
+
+        {
+            "operation": "number_is_greater_than",
+            "column": "A",
+            "value": "4",
+            "isCaseSensitive": True,
+            "isRegex": True
+        }
+
+    There's nesting, too:
+
+        {
+            "operation": "and",
+            "conditions": [ ... ]
+        }
+
+    List of valid operations (and arguments):
+
+        * `and` (`conditions`)
+        * `or` (`conditions`)
+        * `cell_is_empty` ()
+        * `cell_is_not_empty` ()
+        * `cell_is_null` ()
+        * `cell_is_not_null` ()
+        * `text_contains` (`column`, `value`, `isCaseSensitive`, `isRegex`)
+        * `text_does_not_contain` (`column`, `value`, `isCaseSensitive`, `isRegex`)
+        * `text_is` (`column`, `value`, `isCaseSensitive`, `isRegex`)
+        * `text_is_not` (`column`, `value`, `isCaseSensitive`, `isRegex`)
+        * `timestamp_is` (`column`, `value`)
+        * `timestamp_is_after` (`column`, `value`)
+        * `timestamp_is_after_or_equals` (`column`, `value`)
+        * `timestamp_is_before` (`column`, `value`)
+        * `timestamp_is_before_or_equals` (`column`, `value`)
+        * `timestamp_is_not` (`column`, `value`)
+        * `number_is` (`column`, `value`)
+        * `number_is_greater_than` (`column`, `value`)
+        * `number_is_greater_than_or_equal` (`column`, `value`)
+        * `number_is_less_than` (`column`, `value`)
+        * `number_is_less_than_or_equal` (`column`, `value`)
+        * `number_is_not` (`column`, `value`)
+
+    For ease of UI implementation, some nonsense is allowed: "value" is a String
+    so it may be invalid for number/timestamp operations; "column" may be empty;
+    "isCaseSensitive" and "isRegex" apply to number/timestamp operations;
+    "column" may have the wrong type; and nested "conditions" may be empty. Look
+    to `renderprep` to see how those inconsistencies are removed.
+
+    XXX right now, for UI reasons, conditions with a `column` must be nested
+    exactly two levels depe, and deeper nesting is not allowed. For instance:
+
+        {
+            "operation": "and",
+            "conditions": [
+                {
+                    "operation": "or",
+                    "conditions": [
+                        { ...condition... }
+                    ]
+                }
+            ]
+        }
+
+    XXX This is to handle restrictions built into the user interface.
+
+    More than any other value, `condition` values show one thing in the UI (and
+    the module's `migrate_params()` and another thing entirely when passed to a
+    module's `render()` method. See `renderprep` for details. The gist:
+    `render()` has a `not` (`condition`) operation and all invalid operations
+    are omitted. (It can receive `condition: None`.)
+    """
+
+    def coerce(self, value):
+        try:
+            self.validate(value)
+            return value
+        except ValueError as err:
+            return {"operation": "and", "conditions": []}
+
+    def __validate_common(self, value):
+        if not isinstance(value, dict) or "operation" not in value:
+            raise ValueError("%r must be a dict with an 'operation' key" % value)
+
+    def __validate_common_level_0_or_1(self, value):
+        keys = frozenset(value.keys())
+        if (
+            keys != {"operation", "conditions"}
+            or value["operation"] not in {"and", "or"}
+            or not isinstance(value["conditions"], list)
+        ):
+            raise ValueError(
+                "Value must look like {'operation': 'or|and', 'conditions': [...]}; got %r"
+                % value
+            )
+
+    def __validate_level2(self, value):
+        self.__validate_common(value)
+        keys = frozenset(value.keys())
+        if keys != frozenset(
+            ["operation", "column", "value", "isCaseSensitive", "isRegex"]
+        ):
+            raise ValueError(
+                "Keys must be operation, column, value, isCaseSensitive, isRegex. Got: %r"
+                % value
+            )
+        if value["operation"] not in {
+            "and",
+            "or",
+            "cell_is_empty",
+            "cell_is_not_empty",
+            "cell_is_null",
+            "cell_is_not_null",
+            "text_contains",
+            "text_does_not_contain",
+            "text_is",
+            "text_is_not",
+            "timestamp_is",
+            "timestamp_is_after",
+            "timestamp_is_after_or_equals",
+            "timestamp_is_before",
+            "timestamp_is_before_or_equals",
+            "timestamp_is_not",
+            "number_is",
+            "number_is_greater_than",
+            "number_is_greater_than_or_equals",
+            "number_is_less_than",
+            "number_is_less_than_or_equals",
+            "number_is_not",
+        }:
+            raise ValueError("There is no such operation: %r" % value["operation"])
+        for key, wanted_type in (
+            ("column", str),
+            ("value", str),
+            ("isCaseSensitive", bool),
+            ("isRegex", bool),
+        ):
+            if not isinstance(value[key], wanted_type):
+                raise ValueError(
+                    "Wrong type of %s: expected %s, got %r"
+                    % (key, wanted_type.__name__, value[key])
+                )
+
+    def __validate_level1(self, value):
+        self.__validate_common(value)
+        self.__validate_common_level_0_or_1(value)
+        for condition in value["conditions"]:
+            self.__validate_level2(condition)
+
+    def validate(self, value):
+        self.__validate_common(value)
+        self.__validate_common_level_0_or_1(value)
+        for condition in value["conditions"]:
+            self.__validate_level1(condition)
 
 
 @dataclass(frozen=True)
@@ -495,37 +664,39 @@ class ParamDTypeFile(ParamDType):
 # Aliases to help with import. e.g.:
 # from cjwstate.modules.param_dtype import ParamDType
 # dtype = ParamDType.String()
-ParamDType.String = ParamDTypeString
-ParamDType.Integer = ParamDTypeInteger
-ParamDType.Float = ParamDTypeFloat
 ParamDType.Boolean = ParamDTypeBoolean
-ParamDType.Enum = ParamDTypeEnum
-ParamDType.Timezone = ParamDTypeTimezone
-ParamDType.Option = ParamDTypeOption
-ParamDType.List = ParamDTypeList
-ParamDType.Dict = ParamDTypeDict
-ParamDType.Map = ParamDTypeMap
 ParamDType.Column = ParamDTypeColumn
-ParamDType.Multicolumn = ParamDTypeMulticolumn
-ParamDType.Tab = ParamDTypeTab
-ParamDType.Multitab = ParamDTypeMultitab
-ParamDType.Multichartseries = ParamDTypeMultichartseries
+ParamDType.Condition = ParamDTypeCondition
+ParamDType.Dict = ParamDTypeDict
+ParamDType.Enum = ParamDTypeEnum
 ParamDType.File = ParamDTypeFile
+ParamDType.Float = ParamDTypeFloat
+ParamDType.Integer = ParamDTypeInteger
+ParamDType.List = ParamDTypeList
+ParamDType.Map = ParamDTypeMap
+ParamDType.Multichartseries = ParamDTypeMultichartseries
+ParamDType.Multicolumn = ParamDTypeMulticolumn
+ParamDType.Multitab = ParamDTypeMultitab
+ParamDType.Option = ParamDTypeOption
+ParamDType.String = ParamDTypeString
+ParamDType.Tab = ParamDTypeTab
+ParamDType.Timezone = ParamDTypeTimezone
 
 ParamDType.JsonTypeToDType = {
-    "string": ParamDTypeString,
-    "integer": ParamDTypeInteger,
-    "float": ParamDTypeFloat,
     "boolean": ParamDTypeBoolean,
-    "enum": ParamDTypeEnum,
-    "option": ParamDTypeOption,
-    "list": ParamDTypeList,
+    "column": ParamDTypeColumn,
+    "condition": ParamDTypeCondition,
     "dict": ParamDTypeDict,
+    "enum": ParamDTypeEnum,
+    "file": ParamDTypeFile,
+    "float": ParamDTypeFloat,
+    "integer": ParamDTypeInteger,
+    "list": ParamDTypeList,
     "map": ParamDTypeMap,
+    "multichartseries": ParamDTypeMultichartseries,
+    "multicolumn": ParamDTypeMulticolumn,
+    "option": ParamDTypeOption,
+    "string": ParamDTypeString,
     "tab": ParamDTypeTab,
     "tabs": ParamDTypeMultitab,
-    "column": ParamDTypeColumn,
-    "multicolumn": ParamDTypeMulticolumn,
-    "multichartseries": ParamDTypeMultichartseries,
-    "file": ParamDTypeFile,
 }

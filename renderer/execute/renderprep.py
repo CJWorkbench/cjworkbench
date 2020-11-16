@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from functools import partial, singledispatch
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Tuple
+import iso8601
 from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
@@ -13,31 +14,56 @@ from .types import TabCycleError, TabOutputUnreachableError, PromptingError
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
+SingleDigitMonthOrDay = re.compile(r".*\b\d\b.*")
+
+
+def _validate_iso8601_string(s):
+    try:
+        iso8601.parse_date(s)
+    except iso8601.ParseError:
+        raise ValueError("Invalid ISO8601 date")
+    # but of course, that would be too easy. iso8601.parse_date() allows invalid
+    # dates:
+    if " " in s:
+        raise ValueError("Date and time must be separated by T")
+    if SingleDigitMonthOrDay.match(s):
+        raise ValueError("Month and day must have a leading 0")
+
+
+PromptingErrorSubtype = Union[
+    PromptingError.WrongColumnType,
+    PromptingError.CannotCoerceValueToNumber,
+    PromptingError.CannotCoerceValueToTimestamp,
+]
 
 
 class PromptErrorAggregator:
     def __init__(self):
         self.groups = {}  # found_type => { wanted_types => column_names }
+        self.ungrouped_errors = []
         # Errors are first-come-first-reported, per type. We get that because
         # Python 3.7+ dicts iterate in insertion order.
 
-    def extend(self, errors: List[PromptingError.WrongColumnType]) -> None:
+    def extend(self, errors: List[PromptingErrorSubtype]) -> None:
         for error in errors:
             self.add(error)
 
-    def add(self, error: PromptingError.WrongColumnType) -> None:
-        if "text" in error.wanted_types:
-            found_type = None
+    def add(self, error: PromptingErrorSubtype) -> None:
+        if isinstance(error, PromptingError.WrongColumnType):
+            if "text" in error.wanted_types:
+                found_type = None
+            else:
+                found_type = error.found_type
+            group = self.groups.setdefault(found_type, {})
+            names = group.setdefault(error.wanted_types, [])
+            for name in error.column_names:
+                if name not in names:
+                    names.append(name)
         else:
-            found_type = error.found_type
-        group = self.groups.setdefault(found_type, {})
-        names = group.setdefault(error.wanted_types, [])
-        for name in error.column_names:
-            if name not in names:
-                names.append(name)
+            self.ungrouped_errors.append(error)
 
     def raise_if_nonempty(self):
-        if not self.groups:
+        if not self.groups and not self.ungrouped_errors:
             return
 
         errors = []
@@ -48,6 +74,7 @@ class PromptErrorAggregator:
                         column_names, found_type, wanted_types
                     )
                 )
+        errors.extend(self.ungrouped_errors)
         raise PromptingError(errors)
 
 
@@ -167,6 +194,138 @@ def _(
     # json.parse(), which only gives Numbers so can give "3" instead of
     # "3.0". We want to pass that as `float` in the `params` dict.
     return float(value)
+
+
+_InverseOperations = {
+    "cell_is_not_empty": "cell_is_empty",
+    "cell_is_not_null": "cell_is_null",
+    "number_is_not": "number_is",
+    "text_does_not_contain": "text_contains",
+    "text_is_not": "text_is",
+    "timestamp_is_not": "timestamp_is",
+}
+
+
+def _clean_condition_recursively(
+    value: Dict[str, Any], column_types: Dict[str, str]
+) -> Tuple[Optional[Dict[str, Any]], List[PromptingError]]:
+    if value["operation"] in {"and", "or"}:
+        errors = []
+        conditions = []
+        for entry in value["conditions"]:
+            clean_condition, clean_errors = _clean_condition_recursively(
+                entry, column_types
+            )
+            errors.extend(clean_errors)
+            if clean_condition is not None:
+                conditions.append(clean_condition)
+
+        if len(conditions) == 0:
+            return None, errors
+        elif len(conditions) == 1:
+            return conditions[0], errors
+        else:
+            return {"operation": value["operation"], "conditions": conditions}, errors
+    elif value["operation"] in _InverseOperations:
+        clean_condition, errors = _clean_condition_recursively(
+            {**value, "operation": _InverseOperations[value["operation"]]}, column_types
+        )
+        if clean_condition is None:
+            return None, errors
+        else:
+            return {"operation": "not", "condition": clean_condition}, errors
+    else:
+        clean_condition = None
+        errors = []
+
+        if value["column"] not in column_types:
+            # No valid column selected.
+            #
+            # It would be nice to warn on invalid column ... but [2020-11-16]
+            # we don't have a way to do that, because the default params are
+            # empty and we validate them. More-general problem of the
+            # same flavor: https://www.pivotaltracker.com/story/show/174473146
+            pass
+        else:
+            column_type = column_types[value["column"]]
+            if value["operation"].startswith("text"):
+                if column_type != "text":
+                    errors.append(
+                        PromptingError.WrongColumnType(
+                            [value["column"]], None, frozenset(["text"])
+                        )
+                    )
+                else:
+                    clean_condition = value
+
+            elif value["operation"].startswith("number"):
+                if column_type != "number":
+                    errors.append(
+                        PromptingError.WrongColumnType(
+                            [value["column"]], column_type, frozenset(["number"])
+                        )
+                    )
+                try:
+                    number_value = float(value["value"])
+                except ValueError:
+                    errors.append(
+                        PromptingError.CannotCoerceValueToNumber(value["value"])
+                    )
+
+                if not errors:
+                    clean_condition = {
+                        "operation": value["operation"],
+                        "column": value["column"],
+                        "value": number_value,
+                    }
+
+            elif value["operation"].startswith("timestamp"):
+                if column_type != "timestamp":
+                    errors.append(
+                        PromptingError.WrongColumnType(
+                            [value["column"]], column_type, frozenset(["timestamp"])
+                        )
+                    )
+                try:
+                    _validate_iso8601_string(value["value"])
+                except ValueError:
+                    errors.append(
+                        PromptingError.CannotCoerceValueToTimestamp(value["value"])
+                    )
+
+                if not errors:
+                    clean_condition = {
+                        "operation": value["operation"],
+                        "column": value["column"],
+                        "value": value["value"],
+                    }
+
+            else:
+                assert value["operation"].startswith("cell")
+                clean_condition = {
+                    "operation": value["operation"],
+                    "column": value["column"],
+                }
+
+        return clean_condition, errors
+
+
+@clean_value.register(ParamDType.Condition)
+def _(
+    dtype: ParamDType.Condition, value: Dict[str, Any], context: RenderContext
+) -> Optional[Dict[str, Any]]:
+    condition, errors = _clean_condition_recursively(
+        value,
+        {
+            column.name: column.type.name
+            for column in context.input_table.metadata.columns
+        },
+    )
+    error_agg = PromptErrorAggregator()
+    for error in errors:
+        error_agg.add(error)
+    error_agg.raise_if_nonempty()
+    return condition
 
 
 @clean_value.register(ParamDType.File)

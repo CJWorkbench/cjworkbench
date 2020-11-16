@@ -1,0 +1,217 @@
+.param-condition {
+  @include content-2;
+  line-height: 1.5rem; // FIXME fix class of text that does not wrap
+
+  h5 {
+    @include content-2;
+    color: $brand-orange--darker;
+    text-transform: uppercase;
+    line-height: 1.6rem;
+    margin-bottom: 0;
+    font-weight: bold;
+  }
+
+  .group {
+    border: 1px solid $brand-orange--medium;
+    border-radius: 5px;
+    padding: .5rem;
+
+    & + .group {
+      margin-top: 1rem;
+    }
+
+    .group-heading {
+      position: relative;
+
+      button.delete {
+        position: absolute;
+        right: -.75rem;
+        top: -.25rem;
+        border: 0;
+        color: $brand-orange--darker;
+      }
+    }
+
+    .andor-operator {
+      text-align: left; // in a group, operators stay on the left
+    }
+  }
+
+  .andor-operator {
+    // both &>.andor-operator and .group>.andor-operator
+    text-align: center;
+    margin-top: .6rem;
+    margin-bottom: .5rem;
+
+    button, span {
+      background: none;
+      box-shadow: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-weight: bold;
+
+      &.unselected-operator {
+        cursor: pointer;
+        color: $text-muted;
+        &:hover {
+          color: $brand-orange;
+        }
+      }
+
+      &.selected-operator {
+        //font-weight: bold;
+        color: $brand-orange--darker;
+      }
+
+      &:last-child {
+        margin-left: .5rem;
+        border-left: 1px solid $light-gray;
+        padding-left: .5rem;
+      }
+    }
+  }
+
+  .add-group, .add-comparison {
+    button {
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      color: $text-muted;;
+      font-weight: bold;
+
+      &:hover {
+        color: $brand-orange;
+      }
+    }
+
+    button + button {
+      margin-left: .5rem;
+      border-left: 1px solid $light-gray;
+      padding-left: .4rem;
+    }
+  }
+
+  .add-group {
+    text-align: center;
+    margin-top: .5rem;
+  }
+
+  .add-comparison {
+    margin-top: .5rem;
+  }
+
+  .comparison {
+    position: relative; // to position button.delete
+
+    button.delete { // delete condition
+      margin-top: $param-group-margin;
+      position: absolute;
+      right: 0;
+      border: 0;
+      color: $medium-gray;
+      padding-right: 0;
+      padding-top: 0;
+    }
+
+    .text-options {
+      // There are two options: "case-sensitive" and "Regular expression"
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      justify-content: space-between;
+
+      label {
+        cursor: pointer;
+        margin-top: $param-group-margin;
+        margin-bottom: 0;
+        font-size: 1.3rem;
+        input {
+          vertical-align: -.3rem;
+        }
+      }
+    }
+  }
+
+  .react-select:not(:last-child):not(:last-of-type) .react-select__control { // #1, column always there - round border should only remain if it's the last child
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  select { // #2, select condition, aways there, 3px border-radius when no #3
+    background-color: $table-background;
+    border: 2px solid $Vlight-gray;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 0;
+    &:hover {
+      border-color: darken($Vlight-gray, 7%);
+    }
+    &:focus {
+      border-color: $data-action--border;
+    }
+    &:last-child {
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+      border-bottom-color: $Vlight-gray;
+      &:hover {
+        border-color: darken($Vlight-gray, 7%);
+      }
+    }
+  }
+
+  .value .autosize textarea { // value displayed if required by condition in #2 -- always in last position
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top-color: transparent;
+    &:hover {
+      border-color: darken($Vlight-gray, 7%);
+    }
+    &:focus {
+      border-color: $data-action--border;
+    }
+  }
+
+  .value {
+    .autosize {
+      @extend %autosize-with-textarea;
+      &>* {
+        @extend %module-parameter;
+        height: auto; // unset %module-parameter height: our height varies
+      }
+    }
+  }
+
+  button.delete { // for all button.delette
+    font-size: 1.1rem;
+    background-color: transparent;
+    opacity: .5;
+    cursor: pointer;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  select {
+    @extend %custom-select;
+  }
+}
+
+//read-only edits
+.workflow-root.read-only {
+
+  span.selected-operator {
+    border-left: 0;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  label.case-sensitive {
+    display: none;
+  }
+  .comparison button.delete{
+    display: none;
+  }
+}

@@ -221,8 +221,7 @@ SecretLogic.String = SecretLogicString
 
 @dataclass(frozen=True)
 class ParamSpecButton(_RegisterType("button"), _HasName, ParamSpec):
-    """
-    Button the user can click to submit data.
+    """Button the user can click to submit data.
 
     This does not store a value. It does not send any different data over the
     wire. Some modules show buttons; others use the default "Execute" button.
@@ -238,9 +237,7 @@ class ParamSpecButton(_RegisterType("button"), _HasName, ParamSpec):
 
 @dataclass(frozen=True)
 class ParamSpecString(_RegisterType("string"), _HasPlaceholder, _HasName, ParamSpec):
-    """
-    Text the user can type.
-    """
+    """Text the user can type."""
 
     default: str = ""
 
@@ -260,9 +257,7 @@ class ParamSpecString(_RegisterType("string"), _HasPlaceholder, _HasName, ParamS
 class ParamSpecNumberFormat(
     _RegisterType("numberformat"), _HasPlaceholder, _HasName, ParamSpec
 ):
-    """
-    Textual number-format string, like '${:0,.2f}'
-    """
+    """Textual number-format string, like '${:0,.2f}'"""
 
     default: str = "{:,}"
 
@@ -274,8 +269,7 @@ class ParamSpecNumberFormat(
 
 @dataclass(frozen=True)
 class ParamSpecCustom(_RegisterType("custom"), _HasName, ParamSpec):
-    """
-    Deprecated "custom" value -- behavior depends on id_name.
+    """Deprecated "custom" value -- behavior depends on id_name.
 
     Tread very carefully here. Don't add functionality: remove it. Nobody knows
     how this works.
@@ -317,6 +311,22 @@ class ParamSpecColumn(_RegisterType("column"), _HasPlaceholder, _HasName, ParamS
             column_types=(frozenset(self.column_types) if self.column_types else None),
             tab_parameter=self.tab_parameter,
         )
+
+
+@dataclass(frozen=True)
+class ParamSpecCondition(_RegisterType("condition"), ParamSpec):
+    """Condition and combinatorial logic of conditions.
+
+    Condition JSON is _stored_ (and passed to the user interface) as a
+    2-level-deep nested array of and/or operations. But modules' render()
+    methods see something more normalized: "and/or/not" operations with no
+    unneeded info.
+    """
+
+    # override
+    @property
+    def dtype(self) -> Optional[ParamDType]:
+        return ParamDType.Condition()
 
 
 @dataclass(frozen=True)

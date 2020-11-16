@@ -177,3 +177,159 @@ class DTypeMapTest(unittest.TestCase):
         dtype = ParamDType.Map(value_dtype=ParamDType.String())
         value = dtype.coerce({"a": 1, "b": None})
         self.assertEqual(value, {"a": "1", "b": ""})
+
+
+class DTypeConditionTest(unittest.TestCase):
+    def test_coerce_none(self):
+        self.assertEqual(
+            DT.Condition().coerce(None), {"operation": "and", "conditions": []}
+        )
+
+    def test_coerce_valid(self):
+        value = {
+            "operation": "and",
+            "conditions": [
+                {
+                    "operation": "or",
+                    "conditions": [
+                        {
+                            "operation": "text_is",
+                            "column": "A",
+                            "value": "foo",
+                            "isCaseSensitive": True,
+                            "isRegex": False,
+                        }
+                    ],
+                }
+            ],
+        }
+        self.assertEqual(DT.Condition().coerce(value), value)
+
+    def test_coerce_invalid(self):
+        value = {"operation": "blargh", "subparams": {"foo": "bar"}}
+        self.assertEqual(
+            DT.Condition().coerce(value), {"operation": "and", "conditions": []}
+        )
+
+    def test_validate_missing_conditions(self):
+        with self.assertRaises(ValueError):
+            DT.Condition().validate({"operation": "and", "condition": []})
+
+    def test_validate_conditions_not_list(self):
+        with self.assertRaises(ValueError):
+            DT.Condition().validate({"operation": "and", "conditions": "hi"})
+
+    def test_validate_and_with_extra_property(self):
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(
+                {"operation": "and", "conditions": [], "foo": "bar"}
+            )
+
+    def test_validate_not_2_levels(self):
+        comparison = {
+            "operation": "text_is",
+            "column": "A",
+            "value": "x",
+            "isCaseSensitive": True,
+            "isRegex": False,
+        }
+
+        # level 0
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(comparison)
+
+        # level 1
+        with self.assertRaises(ValueError):
+            DT.Condition().validate({"operation": "and", "conditions": [comparison]})
+
+        # level 2 is okay
+        DT.Condition().validate(
+            {
+                "operation": "and",
+                "conditions": [{"operation": "or", "conditions": [comparison]}],
+            }
+        )
+
+        # level 3
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(
+                {
+                    "operation": "and",
+                    "conditions": [
+                        {
+                            "operation": "or",
+                            "conditions": [
+                                {"operation": "and", "conditions": [comparison]}
+                            ],
+                        }
+                    ],
+                }
+            )
+
+    def test_validate_no_such_operation(self):
+        comparison = {
+            "operation": "text_is_blargy",
+            "column": "A",
+            "value": "x",
+            "isCaseSensitive": True,
+            "isRegex": False,
+        }
+
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(
+                {
+                    "operation": "and",
+                    "conditions": [{"operation": "or", "conditions": [comparison]}],
+                }
+            )
+
+    def test_validate_missing_key(self):
+        comparison = {
+            "operation": "text_is",
+            "column": "A",
+            "value": "x",
+            "isCaseSensitive": True,
+        }
+
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(
+                {
+                    "operation": "and",
+                    "conditions": [{"operation": "or", "conditions": [comparison]}],
+                }
+            )
+
+    def test_validate_extra_key(self):
+        comparison = {
+            "operation": "text_is",
+            "column": "A",
+            "value": "x",
+            "isCaseSensitive": True,
+            "isRegex": True,
+            "isSomethingElse": False,
+        }
+
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(
+                {
+                    "operation": "and",
+                    "conditions": [{"operation": "or", "conditions": [comparison]}],
+                }
+            )
+
+    def test_validate_condition_value_wrong_type(self):
+        comparison = {
+            "operation": "text_is",
+            "column": "A",
+            "value": 312,
+            "isCaseSensitive": True,
+            "isRegex": False,
+        }
+
+        with self.assertRaises(ValueError):
+            DT.Condition().validate(
+                {
+                    "operation": "and",
+                    "conditions": [{"operation": "or", "conditions": [comparison]}],
+                }
+            )

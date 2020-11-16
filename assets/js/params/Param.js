@@ -4,6 +4,7 @@ import { generateFieldId } from './util'
 import deepEqual from 'fast-deep-equal'
 import Checkbox from './Checkbox'
 import Column from './Column'
+import Condition from './Condition'
 import Custom from './Custom'
 import File from './File'
 import Gdrivefile from './Gdrivefile'
@@ -82,6 +83,7 @@ export default class Param extends React.PureComponent {
     switch (this.props.type) {
       case 'checkbox': return Checkbox
       case 'column': return Column
+      case 'condition': return Condition
       case 'custom': return Custom
       case 'float': return Number_
       case 'file': return File

@@ -661,7 +661,9 @@ class DependencyGraph:
                             not isinstance(dtype, ParamDType.Tab)
                             and not isinstance(dtype, ParamDType.Multitab)
                         )
-                        for dtype, v in schema.iter_dfs_dtype_values()
+                        for dtype, v in schema.iter_dfs_dtype_values(
+                            schema.coerce(None)
+                        )
                     )
                 ):
                     # There are no tab params.

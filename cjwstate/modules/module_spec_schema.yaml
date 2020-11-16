@@ -365,6 +365,13 @@ definitions:
                 <<: *common_param_spec_properties
                 type: { const: custom }
                 name: { $ref: '#/definitions/param_specs/_lib/name' }
+        condition:
+            <<: *common_param_spec
+            required: [ id_name, type ]
+            properties:
+                <<: *common_param_spec_properties
+                type: { const: condition }
+                name: { $ref: '#/definitions/param_specs/_lib/name' }
         list:
             <<: *common_param_spec
             required: [ id_name, type, child_parameters ]
@@ -385,6 +392,7 @@ definitions:
                 { $ref: '#/definitions/param_specs/integer' },
                 { $ref: '#/definitions/param_specs/float' },
                 { $ref: '#/definitions/param_specs/checkbox' },
+                { $ref: '#/definitions/param_specs/condition' },
                 { $ref: '#/definitions/param_specs/menu' },
                 { $ref: '#/definitions/param_specs/timezone' },
                 { $ref: '#/definitions/param_specs/radio' },
@@ -415,7 +423,10 @@ definitions:
     # param_schema is specified it must match the definitions below for non-custom types, which in turn
     # must match the DType classes in param_spec.py.
     #
-    # DTypes shouldn't really be here; we only need them for `custom` fields.
+    # DTypes shouldn't really be here; we only need them for `custom` fields. If a DType
+    # is missing, maybe we don't have it because there are no `custom` fields in any
+    # modules that use it?
+    #
     # Look to `models.param_dtype` for the definitive dtype specifications.
     dtypes:
         string:
@@ -424,18 +435,6 @@ definitions:
             properties:
                 type: { const: string }
                 default: { type: string }
-        integer:
-            type: object
-            required: [ type ]
-            properties:
-                type: { const: integer }
-                default: { type: integer }
-        float:
-            type: object
-            required: [ type ]
-            properties:
-                type: { const: float }
-                default: { type: number }
         boolean:
             type: object
             required: [ type ]
@@ -449,12 +448,12 @@ definitions:
                 type: { const: enum }
                 choices: { type: array }
                 default: {}
-        timezone:
+        integer:
             type: object
             required: [ type ]
             properties:
-                type: { const: timezone }
-                default: { type: string }
+                type: { const: integer }
+                default: { type: integer }
         column:
             type: object
             required: [ type ]
@@ -466,28 +465,6 @@ definitions:
             properties:
                 type: { const: multicolumn }
                 tab_parameter: { type: string }
-        tab:
-            type: object
-            required: [ type ]
-            properties:
-                type: { const: tab }
-        multitab:
-            type: object
-            required: [ type ]
-            properties:
-                type: { const: multitab }
-        multichartseries:
-            type: object
-            required: [ type ]
-            properties:
-                type: { const: multichartseries }
-        option:
-            type: object
-            required: [ type, inner_dtype ]
-            properties:
-                type: { const: option }
-                inner_dtype: { '$ref': '#/definitions/dtypes/any' }
-                # We don't support 'default' yet. Default is None.
         list:
             type: object
             requred: [ type, inner_dtype ]
@@ -508,31 +485,21 @@ definitions:
             properties:
                 type: { const: map }
                 value_dtype: { '$ref': '#/definitions/dtypes/any' }
-        file:
+        tab:
             type: object
             required: [ type ]
             properties:
-                type: { const: file }
-        _required:
-            oneOf: [
-                { $ref: '#/definitions/dtypes/string' },
-                { $ref: '#/definitions/dtypes/integer' },
-                { $ref: '#/definitions/dtypes/float' },
-                { $ref: '#/definitions/dtypes/boolean' },
-                { $ref: '#/definitions/dtypes/column' },
-                { $ref: '#/definitions/dtypes/timezone' },
-                { $ref: '#/definitions/dtypes/multicolumn' },
-                { $ref: '#/definitions/dtypes/tab' },
-                { $ref: '#/definitions/dtypes/multitab' },
-                { $ref: '#/definitions/dtypes/multichartseries' },
-                { $ref: '#/definitions/dtypes/enum' },
-                { $ref: '#/definitions/dtypes/list' },
-                { $ref: '#/definitions/dtypes/dict' },
-                { $ref: '#/definitions/dtypes/map' },
-            ]
+                type: { const: tab }
         any:
             oneOf: [
-                { $ref: '#/definitions/dtypes/_required' },
-                { $ref: '#/definitions/dtypes/option' },
-                { $ref: '#/definitions/dtypes/file' },  # file may be null; option[file] would be redundant
+                { $ref: '#/definitions/dtypes/string' },
+                { $ref: '#/definitions/dtypes/boolean' },
+                { $ref: '#/definitions/dtypes/enum' },
+                { $ref: '#/definitions/dtypes/integer' },
+                { $ref: '#/definitions/dtypes/column' },
+                { $ref: '#/definitions/dtypes/multicolumn' },
+                { $ref: '#/definitions/dtypes/list' },
+                { $ref: '#/definitions/dtypes/tab' },
+                { $ref: '#/definitions/dtypes/dict' },
+                { $ref: '#/definitions/dtypes/map' },
             ]

@@ -24,8 +24,7 @@ class TabOutputUnreachableError(Exception):
 
 
 class PromptingError(Exception):
-    """
-    Workbench found an error in the module parameters+dataframe; ask the user.
+    """Workbench found an error in the module parameters+dataframe; ask the user.
 
     This type of error will lead to user-visible error messages with Quick
     Fixes. Workbench won't invoke render(): it doesn't need to because it knows
@@ -34,6 +33,42 @@ class PromptingError(Exception):
     Example: "calculate module expects numbers but you selected text columns.
     [convert to numbers]."
     """
+
+    @dataclass(frozen=True)
+    class CannotCoerceValueToNumber:
+        """The user supplied text that cannot be coerced to the Number."""
+
+        value: str
+
+        def as_render_errors(self) -> List[RenderError]:
+            """Build a RenderError that describes this error."""
+            return [
+                RenderError(
+                    I18nMessage.trans(
+                        "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber",
+                        default="“{value}” is not a number. Please enter a number.",
+                        args={"value": self.value},
+                    )
+                )
+            ]
+
+    @dataclass(frozen=True)
+    class CannotCoerceValueToTimestamp:
+        """The user supplied text that cannot be coerced to Timestamp."""
+
+        value: str
+
+        def as_render_errors(self) -> List[RenderError]:
+            """Build a RenderError that describes this error."""
+            return [
+                RenderError(
+                    I18nMessage.trans(
+                        "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp",
+                        default="“{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.",
+                        args={"value": self.value},
+                    )
+                )
+            ]
 
     @dataclass(frozen=True)
     class WrongColumnType:
@@ -46,8 +81,7 @@ class PromptingError(Exception):
         column_names: List[str]
 
         found_type: Optional[str]
-        """
-        (Wrong) type of columns.
+        """(Wrong) type of columns.
 
         Iff `wanted_types` contains "text", `found_type is None`. That's
         because we allow converting from _multiple_ column types to "text" all
@@ -56,9 +90,7 @@ class PromptingError(Exception):
         """
 
         wanted_types: FrozenSet[str]
-        """
-        Required types of columns.
-        """
+        """Required types of columns."""
 
         def __post_init__(self):
             assert (self.found_type is None) == ("text" in self.wanted_types)

@@ -493,3 +493,463 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(tab_results={tab: RenderResult()})
         with self.assertRaises(TabOutputUnreachableError):
             clean_value(ParamDType.Multitab(), ["tab-1"], context)
+
+    def test_clean_condition_empty_and_and_or_are_none(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "and",
+                    "conditions": [{"operation": "or", "conditions": []}],
+                },
+                context,
+            ),
+            None,
+        )
+
+    def test_clean_condition_empty_column_is_none(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "text_is",
+                    "column": "",
+                    "value": "",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            None,
+        )
+        # And test it in the context of a broader and/or
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "and",
+                    "conditions": [
+                        {
+                            "operation": "or",
+                            "conditions": [
+                                {
+                                    "operation": "text_is",
+                                    "column": "",
+                                    "value": "",
+                                    "isCaseSensitive": False,
+                                    "isRegex": False,
+                                }
+                            ],
+                        }
+                    ],
+                },
+                context,
+            ),
+            None,
+        )
+
+    def test_clean_condition_and_or_simplify(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "and",
+                    "conditions": [
+                        {
+                            "operation": "or",
+                            "conditions": [
+                                {
+                                    "operation": "cell_is_blank",
+                                    "column": "A",
+                                    "value": "",
+                                    "isCaseSensitive": False,
+                                    "isRegex": False,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                context,
+            ),
+            {
+                "operation": "cell_is_blank",
+                "column": "A",
+            },
+        )
+
+    def test_clean_condition_and_or_multiple_conditions(self):
+        context = self._render_context(input_table=arrow_table({"A": ["1"]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "and",
+                    "conditions": [
+                        {
+                            "operation": "or",
+                            "conditions": [
+                                {
+                                    "operation": "cell_is_blank",
+                                    "column": "A",
+                                    "value": "",
+                                    "isCaseSensitive": False,
+                                    "isRegex": False,
+                                },
+                                {
+                                    "operation": "cell_is_null",
+                                    "column": "A",
+                                    "value": "",
+                                    "isCaseSensitive": False,
+                                    "isRegex": False,
+                                },
+                            ],
+                        },
+                        {
+                            "operation": "text_is",
+                            "column": "A",
+                            "value": "",
+                            "isCaseSensitive": False,
+                            "isRegex": False,
+                        },
+                    ],
+                },
+                context,
+            ),
+            {
+                "operation": "and",
+                "conditions": [
+                    {
+                        "operation": "or",
+                        "conditions": [
+                            {
+                                "operation": "cell_is_blank",
+                                "column": "A",
+                            },
+                            {
+                                "operation": "cell_is_null",
+                                "column": "A",
+                            },
+                        ],
+                    },
+                    {
+                        "operation": "text_is",
+                        "column": "A",
+                        "value": "",
+                        "isCaseSensitive": False,
+                        "isRegex": False,
+                    },
+                ],
+            },
+        )
+
+    def test_clean_condition_missing_column_is_none(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "text_is",
+                    "column": "B",
+                    "value": "",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            None,
+        )
+
+    def test_clean_condition_text_wrong_type(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "text_is",
+                    "column": "A",
+                    "value": "",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A"], None, frozenset({"text"}))],
+        )
+
+    def test_clean_condition_text_happy_path(self):
+        context = self._render_context(input_table=arrow_table({"A": ["a"]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "text_is",
+                    "column": "A",
+                    "value": "a",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            {
+                "operation": "text_is",
+                "column": "A",
+                "value": "a",
+                "isCaseSensitive": False,
+                "isRegex": False,
+            },
+        )
+
+    def test_clean_condition_not(self):
+        context = self._render_context(input_table=arrow_table({"A": ["a"]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "text_is_not",
+                    "column": "A",
+                    "value": "a",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            {
+                "operation": "not",
+                "condition": {
+                    "operation": "text_is",
+                    "column": "A",
+                    "value": "a",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+            },
+        )
+
+    def test_clean_condition_not_with_subclause_error(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "text_is",
+                    "column": "A",
+                    "value": "",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A"], None, frozenset({"text"}))],
+        )
+
+    def test_clean_condition_number_wrong_column_type(self):
+        context = self._render_context(input_table=arrow_table({"A": ["a"]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "number_is",
+                    "column": "A",
+                    "value": "1",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [PromptingError.WrongColumnType(["A"], "text", frozenset({"number"}))],
+        )
+
+    def test_clean_condition_number_wrong_value(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "number_is",
+                    "column": "A",
+                    "value": "bad",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors, [PromptingError.CannotCoerceValueToNumber("bad")]
+        )
+
+    def test_clean_condition_number_wrong_column_type_and_wrong_value(self):
+        context = self._render_context(input_table=arrow_table({"A": ["a"]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "number_is",
+                    "column": "A",
+                    "value": "bad",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(["A"], "text", frozenset({"number"})),
+                PromptingError.CannotCoerceValueToNumber("bad"),
+            ],
+        )
+
+    def test_clean_condition_number_happy_path(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "number_is",
+                    "column": "A",
+                    "value": "1",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            {
+                "operation": "number_is",
+                "column": "A",
+                "value": 1,
+            },
+        )
+
+    def test_clean_condition_timestamp_wrong_column_type(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "timestamp_is_greater_than",
+                    "column": "A",
+                    "value": "2020-01-01T00:00Z",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(
+                    ["A"], "number", frozenset({"timestamp"})
+                ),
+            ],
+        )
+
+    def test_clean_condition_timestamp_wrong_value(self):
+        context = self._render_context(
+            input_table=arrow_table(
+                {"A": pa.array([datetime.now()], pa.timestamp("ns"))}
+            )
+        )
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "timestamp_is_greater_than",
+                    "column": "A",
+                    "value": "Yesterday",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.CannotCoerceValueToTimestamp("Yesterday"),
+            ],
+        )
+
+    def test_clean_condition_timestamp_wrong_column_type_and_wrong_value(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        with self.assertRaises(PromptingError) as cm:
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "timestamp_is_greater_than",
+                    "column": "A",
+                    "value": "Yesterday",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            )
+
+        self.assertEqual(
+            cm.exception.errors,
+            [
+                PromptingError.WrongColumnType(
+                    ["A"], "number", frozenset({"timestamp"})
+                ),
+                PromptingError.CannotCoerceValueToTimestamp("Yesterday"),
+            ],
+        )
+
+    def test_clean_condition_timestamp_happy_path(self):
+        context = self._render_context(
+            input_table=arrow_table(
+                {"A": pa.array([datetime.now()], pa.timestamp("ns"))}
+            )
+        )
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "timestamp_is_greater_than",
+                    "column": "A",
+                    "value": "2020-11-01",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            {
+                "operation": "timestamp_is_greater_than",
+                "column": "A",
+                "value": "2020-11-01",
+            },
+        )
+
+    def test_clean_condition_untyped(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "cell_is_blank",
+                    "column": "A",
+                    "value": "2020-11-01",
+                    "isCaseSensitive": True,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            {
+                "operation": "cell_is_blank",
+                "column": "A",
+            },
+        )
