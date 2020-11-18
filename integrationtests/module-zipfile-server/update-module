@@ -15,7 +15,7 @@ TMPDIR=$(mktemp -d)
 git clone --bare "$URL" "$TMPDIR"
 rm -rf "$MODULE_DIR"
 mkdir -p "$MODULE_DIR"
-(cd "$TMPDIR" && git archive --format=tar master) \
+(cd "$TMPDIR" && git archive --format=tar main) \
   | tar xf - -C "$MODULE_DIR"
 
 rm -rf "$TMPDIR"

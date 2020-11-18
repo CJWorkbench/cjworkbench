@@ -1,0 +1,15 @@
+name: Filter by condition
+id_name: filter
+category: Analyze
+icon: filter
+help_url: modules/analyse/filter
+description: "Filter rows by combining simple conditions such as 'if text contains...' or 'if number is greater than...'"
+parameters:
+- id_name: condition
+  type: condition
+- id_name: keep
+  type: radio
+  default: true
+  options:
+  - { value: true, label: Keep }
+  - { value: false, label: Delete }
