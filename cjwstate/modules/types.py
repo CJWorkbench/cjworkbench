@@ -87,8 +87,7 @@ class ModuleSpec:
 
 @dataclass(frozen=True)
 class ModuleZipfile:
-    """
-    Self-contained file holding a module.
+    """Self-contained file holding a module.
 
     A ModuleZipfile can be transmitted between processes that share a
     filesystem, simply by passing `path`.
@@ -98,9 +97,7 @@ class ModuleZipfile:
     """
 
     path: Path
-    """
-    Path to zipfile on the filesystem.
-    """
+    """Path to zipfile on the filesystem."""
 
     _VALID_PATH_PATTERN: ClassVar[Pattern] = re.compile(
         "^(?P<id>[A-Za-z][-a-zA-Z0-9]*)\.(?P<version>(?:dir-)?[a-f0-9]+|internal|develop)\.zip$"
@@ -127,8 +124,7 @@ class ModuleZipfile:
         return (self.module_id, self.version)
 
     def _read_bytes(self, path: str) -> bytes:
-        """
-        Return bytes at `path` in zipfile.
+        """Return bytes at `path` in zipfile.
 
         Raise `KeyError` if `path` does not exist.
 
@@ -144,8 +140,7 @@ class ModuleZipfile:
             return zf.read(path)  # raise KeyError, BadZipFile
 
     def _read_text(self, path: str) -> str:
-        """
-        Return bytes at `path` in zipfile as text.
+        """Return bytes at `path` in zipfile as text.
 
         Raise `KeyError` if `path` does not exist.
 
@@ -159,8 +154,7 @@ class ModuleZipfile:
 
     @lru_cache(1)
     def get_spec(self) -> ModuleSpec:
-        """
-        Load the ModuleSpec from the zipfile.
+        """Load the ModuleSpec from the zipfile.
 
         The spec will be validated to test that it is internally consistent.
 
@@ -198,8 +192,7 @@ class ModuleZipfile:
 
     @lru_cache(1)
     def compile_code_without_executing(self) -> CompiledModule:
-        """
-        Return module code as a Python codeobject.
+        """Return module code as a Python codeobject.
 
         Raise `KeyError` if the module code could not be found.
 
@@ -231,8 +224,7 @@ class ModuleZipfile:
 
     @lru_cache(1)
     def get_optional_html(self) -> Optional[str]:
-        """
-        Return module HTML for Workbench's <iframe>, if provided.
+        """Return module HTML for Workbench's <iframe>, if provided.
 
         Return `None` if there is no `[module_id].html` file in the zipfile.
 
@@ -248,8 +240,7 @@ class ModuleZipfile:
 
     @lru_cache(1)
     def get_optional_js_module(self) -> Optional[str]:
-        """
-        Return JavaScript to pass alongside module, if any.
+        """Return JavaScript to pass alongside module, if any.
 
         Return `None` if is there is no `[module_id].js` file in the zipfile.
 
@@ -264,8 +255,7 @@ class ModuleZipfile:
             return None
 
     def get_param_schema_version(self) -> str:
-        """
-        Version of param_schema. Changes whenever spec.get_param_schema() changes.
+        """Version of param_schema. Changes whenever spec.get_param_schema() changes.
 
         This is used in caching: if params were cached under
         param_schema_version=v1 and now the module has param_schema_version=v2,
