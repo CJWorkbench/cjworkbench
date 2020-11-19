@@ -102,6 +102,7 @@
     <li
       data-highlight='[{"type":"Step","moduleIdName":"renamecolumns"}]'
       data-test="
+        if (workflow.tabs[0].stepModuleIds[3] !== 'renamecolumns') return false;
         const params = workflow.tabs[0].steps[3].params
         return (
           !params.custom_list
@@ -173,33 +174,32 @@
     <li
       data-highlight='[{"type":"Step","moduleIdName":"filter"}]'
       data-test="
-        const filters = workflow.tabs[0].steps[6].params.filters
+        const condition = workflow.tabs[0].steps[6].params.condition
         let filter1 = null
         let filter2 = null
         if (
-          filters.filters.length === 1
-          &amp;&amp; filters.filters[0].operator === 'or'
-          &amp;&amp; filters.filters[0].subfilters.length === 2
+          condition.conditions.length === 1
+          &amp;&amp; condition.conditions[0].operation === 'or'
+          &amp;&amp; condition.conditions[0].conditions.length === 2
         ) {
-          filter1 = filters.filters[0].subfilters[0]
-          filter2 = filters.filters[0].subfilters[1]
+          filter1 = condition.conditions[0].conditions[0]
+          filter2 = condition.conditions[0].conditions[1]
         } else if (
-          filters.filters.length === 2
-          &amp;&amp; filters.operator === 'or'
-          &amp;&amp; filters.filters[0].subfilters.length === 1
-          &amp;&amp; filters.filters[1].subfilters.length === 1
+          condition.conditions.length === 2
+          &amp;&amp; condition.operation === 'or'
+          &amp;&amp; condition.conditions[0].conditions.length === 1
+          &amp;&amp; condition.conditions[1].conditions.length === 1
         ) {
-          filter1 = filters.filters[0].subfilters[0]
-          filter2 = filters.filters[1].subfilters[0]
+          filter1 = condition.conditions[0].conditions[0]
+          filter2 = condition.conditions[1].conditions[0]
         }
-        console.log(filters, filter1, filter2)
         if (filter1 === null || filter2 === null) return false
         return (
-          filter1.colname === 'PM2.5 98th Percentile 24-hr'
-          &amp;&amp; filter1.condition === 'number_is_greater_than'
+          filter1.column === 'PM2.5 98th Percentile 24-hr'
+          &amp;&amp; filter1.operation === 'number_is_greater_than'
           &amp;&amp; filter1.value === '35'
-          &amp;&amp; filter2.colname === 'PM10 2nd Max 24-hr'
-          &amp;&amp; filter2.condition === 'number_is_greater_than'
+          &amp;&amp; filter2.column === 'PM10 2nd Max 24-hr'
+          &amp;&amp; filter2.operation === 'number_is_greater_than'
           &amp;&amp; filter2.value === '150'
         )
       "

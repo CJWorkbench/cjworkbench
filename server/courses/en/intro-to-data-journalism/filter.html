@@ -114,20 +114,20 @@ tabs:
     </li>
     <li
       data-test="
-        const filter = workflow.tabs[0].steps[2].params.filters.filters[0]
+        const filter = workflow.tabs[0].steps[2].params.condition.conditions[0]
         return (
           filter
-          && filter.subfilters[0]
-          && filter.subfilters[0].colname === '% Affordable'
+          && filter.conditions[0]
+          && filter.conditions[0].column === '% Affordable'
         )
       ">Select the column <kbd>% Affordable</kbd>
     </li>
     <li
       data-test="
-        const filter = workflow.tabs[0].steps[2].params.filters.filters[0]
-        const subfilter = filter.subfilters[0]
+        const filter = workflow.tabs[0].steps[2].params.condition.conditions[0]
+        const subfilter = filter.conditions[0]
         return (
-          subfilter.condition === 'number_is_greater_than'
+          subfilter.operation === 'number_is_greater_than'
           && subfilter.value === '50'
         )
       ">Set the condition to <kbd>Number is greater than</kbd> and set the value to <kbd>50</kbd>
@@ -156,32 +156,32 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        const filters = workflow.tabs[0].steps[2].params.filters
+        const condition = workflow.tabs[0].steps[2].params.condition
 
         // true if user added AND inside the first subfilter
         return (
           (
-            filters.filters.length === 1
-            && filters.filters[0].subfilters.length === 2
-            && filters.filters[0].operator == 'and'
+            condition.conditions.length === 1
+            && condition.conditions[0].conditions.length === 2
+            && condition.conditions[0].operation == 'and'
           )
           || (
-            filters.operator === 'and'
-            && filters.filters.length === 2
-            && filters.filters[0].subfilters.length === 1
-            && filters.filters[1].subfilters.length === 1
+            condition.operation === 'and'
+            && condition.conditions.length === 2
+            && condition.conditions[0].conditions.length === 1
+            && condition.conditions[1].conditions.length === 1
           )
         )
       ">In the Filter in step 3, click <kbd>AND</kbd> to add a new condition to the filter
     </li>
     <li
       data-test="
-        const filters = workflow.tabs[0].steps[2].params.filters.filters
+        const filters = workflow.tabs[0].steps[2].params.condition.conditions
         // Accept condition either at subfilter or main filter level
-        const subfilter = filters[1] ? filters[1].subfilters[0] : filters[0].subfilters[1]
+        const subfilter = filters[1] ? filters[1].conditions[0] : filters[0].conditions[1]
         return (
-          subfilter.colname === 'Affordable Units'
-          && subfilter.condition === 'number_is_greater_than_or_equals'
+          subfilter.column === 'Affordable Units'
+          && subfilter.operation === 'number_is_greater_than_or_equals'
           && subfilter.value === '100'
         )
       ">Set this new condition to “<kbd>Affordable Units</kbd> is <kbd>greater than or equals</kbd> <kbd>100</kbd>”

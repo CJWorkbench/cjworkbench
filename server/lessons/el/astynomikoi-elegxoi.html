@@ -70,36 +70,36 @@ tabs:
       data-highlight='[{"type": "Step", "moduleIdName": "filter"}]'
       data-test="
         const p = workflow.tabs[0].steps[4].params;
-        if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false;
-        const sf1 = p.filters.filters[0].subfilters[0];
-        return sf1.colname === 'date' && sf1.condition === 'date_is_after' && sf1.value === '2010-05-31' && p.keep"
+        if (!p.condition.conditions[0] || !p.condition.conditions[0].conditions[0]) return false;
+        const sf1 = p.condition.conditions[0].conditions[0];
+        return sf1.column === 'date' && sf1.operation === 'timestamp_is_after' && sf1.value === '2010-05-31' && p.keep"
       >Επιλέξτε τη στήλη <kbd>date</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι μετά από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2010-05-31</kbd>.</li>
     <li
       data-highlight='[{"type": "Step", "moduleIdName": "filter"}]'
       data-test="
         const p = workflow.tabs[0].steps[4].params
         if (!p.keep) return false
-        const filters = p.filters.filters
+        const conditions = p.condition.conditions
 
         return (
           (
             // Added at subfilter level
-            filters.length === 1
-            && filters[0].operator == 'and'
-            && filters[0].subfilters.length === 2
-            && filters[0].subfilters[1].colname === 'date'
-            && filters[0].subfilters[1].condition === 'date_is_before'
-            && filters[0].subfilters[1].value === '2013-11-01'
+            conditions.length === 1
+            &amp;&amp; conditions[0].operation == 'and'
+            &amp;&amp; conditions[0].conditions.length === 2
+            &amp;&amp; conditions[0].conditions[1].column === 'date'
+            &amp;&amp; conditions[0].conditions[1].operation === 'timestamp_is_before'
+            &amp;&amp; conditions[0].conditions[1].value === '2013-11-01'
           )
           || (
             // Added at outer filter level
-            p.filters.operator === 'and'
-            && filters.length === 2
-            && filters[0].subfilters.length === 1
-            && filters[1].subfilters.length === 1
-            && filters[1].subfilters[0].colname === 'date'
-            && filters[1].subfilters[0].condition === 'date_is_before'
-            && filters[1].subfilters[0].value === '2013-11-01'
+            p.condition.operation === 'and'
+            &amp;&amp; conditions.length === 2
+            &amp;&amp; conditions[0].conditions.length === 1
+            &amp;&amp; conditions[1].conditions.length === 1
+            &amp;&amp; conditions[1].conditions[0].column === 'date'
+            &amp;&amp; conditions[1].conditions[0].operation === 'timestamp_is_before'
+            &amp;&amp; conditions[1].conditions[0].value === '2013-11-01'
           )
         )"
       >Τώρα κάντε κλικ στο <kbd>ΚΑΙ</kbd> ακριβώς κάτω από το πλαίσιο εισαγωγής κειμένου της πρώτης συνθήκης για να προσθέσετε άλλη μία. Επιλέξτε τη στήλη <kbd>date</kbd>, διαλέξτε τη συνθήκη <kbd>Η ημερομηνία είναι πριν από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>2013-11-01</kbd>.</li>

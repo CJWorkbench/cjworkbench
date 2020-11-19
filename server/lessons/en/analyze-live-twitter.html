@@ -62,12 +62,12 @@
   <li
     data-highlight='[{"type":"Step","moduleIdName":"filter"}]'
     data-test="
-      const filters = workflow.tabs[0].steps[1].params.filters.filters
-      if (filters.length !== 1 || filters[0].subfilters.length !== 1) return false
-      const subfilter = filters[0].subfilters[0]
+      const conditions = workflow.tabs[0].steps[1].params.condition.conditions
+      if (conditions.length !== 1 || conditions[0].conditions.length !== 1) return false
+      const subfilter = conditions[0].conditions[0]
       return (
-        subfilter.colname === 'text'
-        && subfilter.condition === 'text_contains'
+        subfilter.column === 'text'
+        && subfilter.operation === 'text_contains'
         && subfilter.value.toLowerCase() === 'science'
       )
     "
@@ -90,7 +90,7 @@
 </section>
 <section>
 <h2>4. Visualize tweets on a timeline.</h2>
-<p>We can now put the tweets on a timeline by using a column chart.</p>
+<p>We can now display a timeline of tweets.</p>
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
   <li
@@ -120,7 +120,7 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Step","moduleIdName":"twitter"}]'
-      data-test="const step = workflow.tabs[0].steps[0]; return step.updateInterval === '5h'"
+      data-test="const step = workflow.tabs[0].steps[0]; return step.updateInterval === 18000"
       >Back in the 'Twitter' module, click <kbd>manual</kbd> to open the Workflow Update window. Set the feature to<kbd>Auto</kbd>, set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply</kbd>.
     </li>
     <li

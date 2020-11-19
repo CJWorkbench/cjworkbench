@@ -26,10 +26,10 @@ class TestNotifications(LoggedInIntegrationTest):
 
         self.add_step("Filter by condition")
         # wait for module load
-        self.select_column("Filter by condition", "filters", "data", wait=True)
-        b.select("filters[0][0][condition]", "Number is greater than")
+        self.select_column("Filter by condition", "condition", "data", wait=True)
+        b.select("condition[0][0][operation]", "Number is greater than")
         # wait for field to appear
-        b.fill_in("filters[0][0][value]", "-0.1", wait=True)
+        b.fill_in("condition[0][0][value]", "-0.1", wait=True)
         self.submit_step()
 
         # Enable notifications

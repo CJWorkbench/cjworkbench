@@ -36,19 +36,22 @@ tabs:
   - module: filter
     slug: step-filter
     params:
-      filters:
-        operator: 'and'
-        filters:
-        - operator: 'and'
-          subfilters:
-          - colname: '% Affordable'
-            condition: number_is_greater_than
+      keep: true
+      condition:
+        operation: 'and'
+        conditions:
+        - operation: 'and'
+          conditions:
+          - column: '% Affordable'
+            operation: number_is_greater_than
             value: '50'
-            case_sensitive: false
-          - colname: 'Project Units'
-            condition: number_is_greater_than
+            isCaseSensitive: false
+            isRegex: false
+          - column: 'Project Units'
+            operation: number_is_greater_than
             value: '100'
-            case_sensitive: false
+            isCaseSensitive: false
+            isRegex: false
     collapsed: true
 - name: Data dictionary
   steps:

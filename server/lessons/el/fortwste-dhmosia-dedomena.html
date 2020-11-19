@@ -61,7 +61,7 @@
       >Προσθέστε το βήμα &quot;Φιλτράρισμα βάσει συνθήκης&quot; μεταξύ του &quot;Προσθήκη από URL&quot; και &quot;Γράφημα στηλών&quot;</li>
     <li
       data-highlight='[{"type":"Step","moduleIdName":"filter"}]'
-      data-test="const p = workflow.tabs[0].steps[1].params; if (!p.filters.filters[0] || !p.filters.filters[0].subfilters[0]) return false; const sf = p.filters.filters[0].subfilters[0]; return sf.colname === 'affordable_units' && sf.condition === 'number_is_greater_than' && sf.value === '200' && p.keep"
+      data-test="const p = workflow.tabs[0].steps[1].params; if (!p.condition.conditions[0] || !p.condition.conditions[0].conditions[0]) return false; const sf = p.condition.conditions[0].conditions[0]; return sf.column === 'affordable_units' && sf.operation === 'number_is_greater_than' && sf.value === '200' && p.keep"
       >Διαλέξτε τη στήλη <kbd>affordable_units</kbd>, διαλέξτε τη συνθήκη <kbd>Μεγαλύτερο από</kbd><br/> και πληκτρολογήστε την τιμή <kbd>200</kbd>.</li>
     <li
       data-highlight='[{"type":"Step","moduleIdName":"columnchart"}]'
