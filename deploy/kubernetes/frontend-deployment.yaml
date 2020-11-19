@@ -131,6 +131,21 @@ spec:
                 secretKeyRef:
                   name: cjw-sendgrid-api-key
                   key: value
+            - name: STRIPE_PUBLIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-stripe-secret
+                  key: STRIPE_PUBLIC_API_KEY
+            - name: STRIPE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-stripe-secret
+                  key: STRIPE_API_KEY
+            - name: STRIPE_WEBHOOK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-stripe-secret
+                  key: STRIPE_WEBHOOK_SIGNING_SECRET
             - name: CJW_SENDGRID_CONFIRMATION_ID
               value: d-cf03717d432e46d38e0b6b5b19f80b57
             - name: CJW_SENDGRID_PASSWORD_RESET_ID

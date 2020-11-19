@@ -19,16 +19,15 @@ from cjworkbench.models.userprofile import UserProfile
 def webhook(request: HttpRequest) -> HttpResponse:
     """Handle data from Stripe.
 
-    Stripe is the authority on all Stripe-related models in our database. If a
-    user request inspires us to set data, we must set it through Stripe and then
-    wait for Stripe to send to the webhook. The webhook is where we write to the
-    database.
+    Stripe is the authority on all Stripe-related fields in our database. If a
+    user request inspires us to set data, that data will not touch our database
+    until Stripe sends it to us -- either via API responses or via this webhook.
 
     Events we handle:
 
-        * checkout.session.completed: user subscribes
-        * invoice.paid: user repays
-        * invoice.payment_failed: user fails to repay
+        * checkout.session.completed
+        * customer.subscription.deleted
+        * customer.subscription.updated
 
     Ref: https://stripe.com/docs/billing/subscriptions/checkout/fixed-price
     """

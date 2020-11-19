@@ -274,6 +274,14 @@ kubectl create secret generic cjw-intercom-secret \
 kubectl create secret generic cjw-sendgrid-api-key \
   --from-literal=value=$CJW_SENDGRID_API_KEY
 
+: ${STRIPE_PUBLIC_API_KEY:?"Muset set STRIPE_PUBLIC_API_KEY"}
+: ${STRIPE_API_KEY:?"Muset set STRIPE_API_KEY"}
+: ${STRIPE_WEBHOOK_SIGNING_SECRET:?"Muset set STRIPE_WEBHOOK_SIGNING_SECRET"}
+kubectl create secret generic cjw-stripe-secret \
+  --from-literal=STRIPE_PUBLIC_API_KEY="$STRIPE_PUBLIC_API_KEY" \
+  --from-literal=STRIPE_API_KEY="$STRIPE_API_KEY" \
+  --from-literal=STRIPE_WEBHOOK_SIGNING_SECRET="$STRIPE_WEBHOOK_SIGNING_SECRET" \
+
 # Never commit these files!
 [ -f google-oauth-secret.json ] # we're set -e, so this will exit if missing
 kubectl create secret generic google-oauth-secret --from-file=json=google-oauth-secret.json
