@@ -319,6 +319,7 @@ class ParamDTypeCondition(ParamDType):
                 % value
             )
         if value["operation"] not in {
+            "",
             "and",
             "or",
             "cell_is_empty",

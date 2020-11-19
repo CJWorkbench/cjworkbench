@@ -283,6 +283,23 @@ class DTypeConditionTest(unittest.TestCase):
                 }
             )
 
+    def test_validate_empty_operation_is_okay(self):
+        # The UI lets users select nothing. We can't stop them.
+        comparison = {
+            "operation": "",
+            "column": "A",
+            "value": "x",
+            "isCaseSensitive": True,
+            "isRegex": False,
+        }
+
+        DT.Condition().validate(
+            {
+                "operation": "and",
+                "conditions": [{"operation": "or", "conditions": [comparison]}],
+            }
+        )
+
     def test_validate_missing_key(self):
         comparison = {
             "operation": "text_is",
