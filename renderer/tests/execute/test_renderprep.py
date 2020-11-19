@@ -953,3 +953,20 @@ class CleanValueTests(DbTestCase):
                 "column": "A",
             },
         )
+
+    def test_clean_condition_no_operation(self):
+        context = self._render_context(input_table=arrow_table({"A": [1]}))
+        self.assertEqual(
+            clean_value(
+                ParamDType.Condition(),
+                {
+                    "operation": "",
+                    "column": "A",
+                    "value": "foo",
+                    "isCaseSensitive": False,
+                    "isRegex": False,
+                },
+                context,
+            ),
+            None,
+        )

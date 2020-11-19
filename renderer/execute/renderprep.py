@@ -209,7 +209,9 @@ _InverseOperations = {
 def _clean_condition_recursively(
     value: Dict[str, Any], column_types: Dict[str, str]
 ) -> Tuple[Optional[Dict[str, Any]], List[PromptingError]]:
-    if value["operation"] in {"and", "or"}:
+    if value["operation"] == "":
+        return None, []
+    elif value["operation"] in {"and", "or"}:
         errors = []
         conditions = []
         for entry in value["conditions"]:
