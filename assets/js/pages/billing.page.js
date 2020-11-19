@@ -17,8 +17,8 @@ ReactDOM.render((
 if (window.APP_ID) {
   window.Intercom('boot', {
     app_id: window.APP_ID,
-    email: window.initState.loggedInUser.email,
-    user_id: window.initState.loggedInUser.id,
+    email: window.initState.user.email,
+    user_id: window.initState.user.id,
     alignment: 'right',
     horizontal_padding: 20,
     vertical_padding: 20
