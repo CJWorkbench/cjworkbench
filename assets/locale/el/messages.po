@@ -12,7 +12,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.0\n"
 
 #: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
@@ -612,12 +612,17 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Σύνδεση"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:40
+#: assets/js/Workflows/Navbar.js:51
+msgid "js.Workflows.NavBar.links.settings"
+msgstr ""
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#: assets/js/Workflows/Navbar.js:47
 msgid "js.Workflows.NavBar.links.training"
 msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:37
+#: assets/js/Workflows/Navbar.js:44
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "ΡΟΕΣ ΕΡΓΑΣΙΩΝ"
 
@@ -756,6 +761,132 @@ msgstr "Εκπαίδευση"
 #: assets/js/params/Column.js:46
 msgid "js.params.Column.select.placeholder"
 msgstr "Επιλογή"
+
+#. The logical AND operator
+#: assets/js/params/Condition/AddButton.js:18
+msgid "js.params.Condition.AddButton.and"
+msgstr ""
+
+#. The logical OR operator
+#: assets/js/params/Condition/AddButton.js:28
+msgid "js.params.Condition.AddButton.or"
+msgstr ""
+
+#. The logical AND operator
+#: assets/js/params/Condition/AndOr.js:22
+msgid "js.params.Condition.AndOr.and"
+msgstr ""
+
+#. The logical OR operator
+#: assets/js/params/Condition/AndOr.js:23
+msgid "js.params.Condition.AndOr.or"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:26
+msgid "js.params.Condition.Comparison.NumberIsGreaterThanOrEqual"
+msgstr ""
+
+#: assets/js/params/Condition/Comparison.js:109
+msgid "js.params.Condition.Comparison.caseSensitive"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:32
+msgid "js.params.Condition.Comparison.cellIsNotNull"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:31
+msgid "js.params.Condition.Comparison.cellIsNull"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:33
+msgid "js.params.Condition.Comparison.cellIsempty"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:34
+msgid "js.params.Condition.Comparison.cellIsnotEmpty"
+msgstr ""
+
+#: assets/js/params/Condition/Comparison.js:69
+msgid "js.params.Condition.Comparison.column.placeholder"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:15
+msgid "js.params.Condition.Comparison.dateIs"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:16
+msgid "js.params.Condition.Comparison.dateIsNot"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:23
+msgid "js.params.Condition.Comparison.numberIs"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:25
+msgid "js.params.Condition.Comparison.numberIsGreaterThan"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:27
+msgid "js.params.Condition.Comparison.numberIsLessThan"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:28
+msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:24
+msgid "js.params.Condition.Comparison.numberIsNot"
+msgstr ""
+
+#: assets/js/params/Condition/Comparison.js:120
+msgid "js.params.Condition.Comparison.regex"
+msgstr ""
+
+#. As in 'select a condition relative to which we will filter'. Comparison here
+#. is something of the form 'IF something IS like that'.
+#: assets/js/params/Condition/ComparisonOperator.js:66
+msgid "js.params.Condition.Comparison.selectComparison"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:9
+msgid "js.params.Condition.Comparison.textContains"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:10
+msgid "js.params.Condition.Comparison.textDoesNotContain"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:11
+msgid "js.params.Condition.Comparison.textIsExactly"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:12
+msgid "js.params.Condition.Comparison.textIsNotExactly"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:17
+msgid "js.params.Condition.Comparison.timestampIsAfter"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:18
+msgid "js.params.Condition.Comparison.timestampIsAfterOrEquals"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:19
+msgid "js.params.Condition.Comparison.timestampIsBefore"
+msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:20
+msgid "js.params.Condition.Comparison.timestampIsBeforeOrEquals"
+msgstr ""
+
+#: assets/js/params/Condition/Comparison.js:90
+msgid "js.params.Condition.Comparison.value.placeholder"
+msgstr ""
+
+#: assets/js/params/Condition/Group.js:68
+msgid "js.params.Condition.Group.heading.title"
+msgstr ""
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:67
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
@@ -1870,7 +2001,7 @@ msgstr "Όνομα"
 msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr "Αν"
 
-#: assets/js/settings/Billing/ManageBilling.js:17
+#: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"
 msgstr ""
 
@@ -1902,7 +2033,7 @@ msgstr ""
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscribe.js:17
+#: assets/js/settings/Billing/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""
 
@@ -2136,7 +2267,15 @@ msgstr ""
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
-#: renderer/execute/types.py:95
+#: renderer/execute/types.py:47
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
+msgstr ""
+
+#: renderer/execute/types.py:65
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
+msgstr ""
+
+#: renderer/execute/types.py:127
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr "Μετατροπή σε κείμενο."
@@ -2144,7 +2283,7 @@ msgstr "Μετατροπή σε κείμενο."
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:101
+#: renderer/execute/types.py:133
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
@@ -2155,7 +2294,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#: renderer/execute/types.py:144
+#: renderer/execute/types.py:176
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρεπει να μετατραπεί σε "
@@ -2169,7 +2308,7 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:157
+#: renderer/execute/types.py:189
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""

@@ -12,7 +12,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.0\n"
 
 #: assets/js/Embed.js:99
 msgid "js.Embed.embedCode"
@@ -592,12 +592,17 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:40
+#: assets/js/Workflows/Navbar.js:51
+msgid "js.Workflows.NavBar.links.settings"
+msgstr "SETTINGS"
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
+#: assets/js/Workflows/Navbar.js:47
 msgid "js.Workflows.NavBar.links.training"
 msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:37
+#: assets/js/Workflows/Navbar.js:44
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "WORKFLOWS"
 
@@ -734,6 +739,132 @@ msgstr "Training"
 #: assets/js/params/Column.js:46
 msgid "js.params.Column.select.placeholder"
 msgstr "Select"
+
+#. The logical AND operator
+#: assets/js/params/Condition/AddButton.js:18
+msgid "js.params.Condition.AddButton.and"
+msgstr "AND"
+
+#. The logical OR operator
+#: assets/js/params/Condition/AddButton.js:28
+msgid "js.params.Condition.AddButton.or"
+msgstr "OR"
+
+#. The logical AND operator
+#: assets/js/params/Condition/AndOr.js:22
+msgid "js.params.Condition.AndOr.and"
+msgstr "AND"
+
+#. The logical OR operator
+#: assets/js/params/Condition/AndOr.js:23
+msgid "js.params.Condition.AndOr.or"
+msgstr "OR"
+
+#: assets/js/params/Condition/ComparisonOperator.js:26
+msgid "js.params.Condition.Comparison.NumberIsGreaterThanOrEqual"
+msgstr "Number is greater than or equals"
+
+#: assets/js/params/Condition/Comparison.js:109
+msgid "js.params.Condition.Comparison.caseSensitive"
+msgstr "Case-sensitive"
+
+#: assets/js/params/Condition/ComparisonOperator.js:32
+msgid "js.params.Condition.Comparison.cellIsNotNull"
+msgstr "Cell is not null"
+
+#: assets/js/params/Condition/ComparisonOperator.js:31
+msgid "js.params.Condition.Comparison.cellIsNull"
+msgstr "Cell is null"
+
+#: assets/js/params/Condition/ComparisonOperator.js:33
+msgid "js.params.Condition.Comparison.cellIsempty"
+msgstr "Cell is empty"
+
+#: assets/js/params/Condition/ComparisonOperator.js:34
+msgid "js.params.Condition.Comparison.cellIsnotEmpty"
+msgstr "Cell is not empty"
+
+#: assets/js/params/Condition/Comparison.js:69
+msgid "js.params.Condition.Comparison.column.placeholder"
+msgstr "Select column"
+
+#: assets/js/params/Condition/ComparisonOperator.js:15
+msgid "js.params.Condition.Comparison.dateIs"
+msgstr "Timestamp is"
+
+#: assets/js/params/Condition/ComparisonOperator.js:16
+msgid "js.params.Condition.Comparison.dateIsNot"
+msgstr "Timestamp is not"
+
+#: assets/js/params/Condition/ComparisonOperator.js:23
+msgid "js.params.Condition.Comparison.numberIs"
+msgstr "Number is"
+
+#: assets/js/params/Condition/ComparisonOperator.js:25
+msgid "js.params.Condition.Comparison.numberIsGreaterThan"
+msgstr "Number is greater than"
+
+#: assets/js/params/Condition/ComparisonOperator.js:27
+msgid "js.params.Condition.Comparison.numberIsLessThan"
+msgstr "Number is less than"
+
+#: assets/js/params/Condition/ComparisonOperator.js:28
+msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
+msgstr "Number is less than or equals"
+
+#: assets/js/params/Condition/ComparisonOperator.js:24
+msgid "js.params.Condition.Comparison.numberIsNot"
+msgstr "Number is not"
+
+#: assets/js/params/Condition/Comparison.js:120
+msgid "js.params.Condition.Comparison.regex"
+msgstr "Regular expression"
+
+#. As in 'select a condition relative to which we will filter'. Comparison here
+#. is something of the form 'IF something IS like that'.
+#: assets/js/params/Condition/ComparisonOperator.js:66
+msgid "js.params.Condition.Comparison.selectComparison"
+msgstr "Select condition"
+
+#: assets/js/params/Condition/ComparisonOperator.js:9
+msgid "js.params.Condition.Comparison.textContains"
+msgstr "Text contains"
+
+#: assets/js/params/Condition/ComparisonOperator.js:10
+msgid "js.params.Condition.Comparison.textDoesNotContain"
+msgstr "Text does not contain"
+
+#: assets/js/params/Condition/ComparisonOperator.js:11
+msgid "js.params.Condition.Comparison.textIsExactly"
+msgstr "Text is exactly"
+
+#: assets/js/params/Condition/ComparisonOperator.js:12
+msgid "js.params.Condition.Comparison.textIsNotExactly"
+msgstr "Text is not exactly"
+
+#: assets/js/params/Condition/ComparisonOperator.js:17
+msgid "js.params.Condition.Comparison.timestampIsAfter"
+msgstr "Timestamp is after"
+
+#: assets/js/params/Condition/ComparisonOperator.js:18
+msgid "js.params.Condition.Comparison.timestampIsAfterOrEquals"
+msgstr "Timestamp is after or equals"
+
+#: assets/js/params/Condition/ComparisonOperator.js:19
+msgid "js.params.Condition.Comparison.timestampIsBefore"
+msgstr "Timestamp is before"
+
+#: assets/js/params/Condition/ComparisonOperator.js:20
+msgid "js.params.Condition.Comparison.timestampIsBeforeOrEquals"
+msgstr "Timestamp is before or equals"
+
+#: assets/js/params/Condition/Comparison.js:90
+msgid "js.params.Condition.Comparison.value.placeholder"
+msgstr "Value"
+
+#: assets/js/params/Condition/Group.js:68
+msgid "js.params.Condition.Group.heading.title"
+msgstr "If"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:67
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
@@ -1828,7 +1959,7 @@ msgstr "Name"
 msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr "If"
 
-#: assets/js/settings/Billing/ManageBilling.js:17
+#: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"
 msgstr "Manage Subscriptions"
 
@@ -1860,7 +1991,7 @@ msgstr "Trialing"
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr "Unpaid"
 
-#: assets/js/settings/Billing/Subscribe.js:17
+#: assets/js/settings/Billing/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr "Subscribe"
 
@@ -1878,7 +2009,7 @@ msgstr "Status"
 
 #: assets/js/settings/Billing/index.js:12
 msgid "js.settings.Billing.h1"
-msgstr "Billing"
+msgstr "Subscriptions"
 
 #: assets/js/table/ColumnContextMenu.js:52
 msgid "js.table.ColumnContextMenu.cleanText"
@@ -2085,14 +2216,24 @@ msgstr "The chosen tab depends on this one. Please choose another tab."
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
-#: renderer/execute/types.py:95
+#: renderer/execute/types.py:47
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
+msgstr "“{value}” is not a number. Please enter a number."
+
+#: renderer/execute/types.py:65
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
+msgstr ""
+"“{value}” is not a timestamp. Please enter a value with the format “YYYY-"
+"MM-DD” or “YYYY-MM-DDThh:mmZ”."
+
+#: renderer/execute/types.py:127
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr "Convert to Text"
 
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:101
+#: renderer/execute/types.py:133
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
 "Convert {found_type, select, text {Text} number {Numbers} timestamp "
@@ -2102,7 +2243,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#: renderer/execute/types.py:144
+#: renderer/execute/types.py:176
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {The column “{0}” must be converted to "
@@ -2115,7 +2256,7 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:157
+#: renderer/execute/types.py:189
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 "{ columns, plural, offset:2 =1 {The column “{0}” must be converted from {"

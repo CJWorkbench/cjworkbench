@@ -700,14 +700,20 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
+#. default-message: SETTINGS
+#: assets/js/Workflows/Navbar.js:51
+msgid "js.Workflows.NavBar.links.settings"
+msgstr ""
+
+#. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: TRAINING
-#: assets/js/Workflows/Navbar.js:40
+#: assets/js/Workflows/Navbar.js:47
 msgid "js.Workflows.NavBar.links.training"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: WORKFLOWS
-#: assets/js/Workflows/Navbar.js:37
+#: assets/js/Workflows/Navbar.js:44
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 
@@ -874,6 +880,162 @@ msgstr ""
 #. default-message: Select
 #: assets/js/params/Column.js:46
 msgid "js.params.Column.select.placeholder"
+msgstr ""
+
+#. The logical AND operator
+#. default-message: AND
+#: assets/js/params/Condition/AddButton.js:18
+msgid "js.params.Condition.AddButton.and"
+msgstr ""
+
+#. The logical OR operator
+#. default-message: OR
+#: assets/js/params/Condition/AddButton.js:28
+msgid "js.params.Condition.AddButton.or"
+msgstr ""
+
+#. The logical AND operator
+#. default-message: AND
+#: assets/js/params/Condition/AndOr.js:22
+msgid "js.params.Condition.AndOr.and"
+msgstr ""
+
+#. The logical OR operator
+#. default-message: OR
+#: assets/js/params/Condition/AndOr.js:23
+msgid "js.params.Condition.AndOr.or"
+msgstr ""
+
+#. default-message: Number is greater than or equals
+#: assets/js/params/Condition/ComparisonOperator.js:26
+msgid "js.params.Condition.Comparison.NumberIsGreaterThanOrEqual"
+msgstr ""
+
+#. default-message: Case-sensitive
+#: assets/js/params/Condition/Comparison.js:109
+msgid "js.params.Condition.Comparison.caseSensitive"
+msgstr ""
+
+#. default-message: Cell is not null
+#: assets/js/params/Condition/ComparisonOperator.js:32
+msgid "js.params.Condition.Comparison.cellIsNotNull"
+msgstr ""
+
+#. default-message: Cell is null
+#: assets/js/params/Condition/ComparisonOperator.js:31
+msgid "js.params.Condition.Comparison.cellIsNull"
+msgstr ""
+
+#. default-message: Cell is empty
+#: assets/js/params/Condition/ComparisonOperator.js:33
+msgid "js.params.Condition.Comparison.cellIsempty"
+msgstr ""
+
+#. default-message: Cell is not empty
+#: assets/js/params/Condition/ComparisonOperator.js:34
+msgid "js.params.Condition.Comparison.cellIsnotEmpty"
+msgstr ""
+
+#. default-message: Select column
+#: assets/js/params/Condition/Comparison.js:69
+msgid "js.params.Condition.Comparison.column.placeholder"
+msgstr ""
+
+#. default-message: Timestamp is
+#: assets/js/params/Condition/ComparisonOperator.js:15
+msgid "js.params.Condition.Comparison.dateIs"
+msgstr ""
+
+#. default-message: Timestamp is not
+#: assets/js/params/Condition/ComparisonOperator.js:16
+msgid "js.params.Condition.Comparison.dateIsNot"
+msgstr ""
+
+#. default-message: Number is
+#: assets/js/params/Condition/ComparisonOperator.js:23
+msgid "js.params.Condition.Comparison.numberIs"
+msgstr ""
+
+#. default-message: Number is greater than
+#: assets/js/params/Condition/ComparisonOperator.js:25
+msgid "js.params.Condition.Comparison.numberIsGreaterThan"
+msgstr ""
+
+#. default-message: Number is less than
+#: assets/js/params/Condition/ComparisonOperator.js:27
+msgid "js.params.Condition.Comparison.numberIsLessThan"
+msgstr ""
+
+#. default-message: Number is less than or equals
+#: assets/js/params/Condition/ComparisonOperator.js:28
+msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
+msgstr ""
+
+#. default-message: Number is not
+#: assets/js/params/Condition/ComparisonOperator.js:24
+msgid "js.params.Condition.Comparison.numberIsNot"
+msgstr ""
+
+#. default-message: Regular expression
+#: assets/js/params/Condition/Comparison.js:120
+msgid "js.params.Condition.Comparison.regex"
+msgstr ""
+
+#. As in 'select a condition relative to which we will filter'. Comparison here
+#. is something of the form 'IF something IS like that'.
+#. default-message: Select condition
+#: assets/js/params/Condition/ComparisonOperator.js:66
+msgid "js.params.Condition.Comparison.selectComparison"
+msgstr ""
+
+#. default-message: Text contains
+#: assets/js/params/Condition/ComparisonOperator.js:9
+msgid "js.params.Condition.Comparison.textContains"
+msgstr ""
+
+#. default-message: Text does not contain
+#: assets/js/params/Condition/ComparisonOperator.js:10
+msgid "js.params.Condition.Comparison.textDoesNotContain"
+msgstr ""
+
+#. default-message: Text is exactly
+#: assets/js/params/Condition/ComparisonOperator.js:11
+msgid "js.params.Condition.Comparison.textIsExactly"
+msgstr ""
+
+#. default-message: Text is not exactly
+#: assets/js/params/Condition/ComparisonOperator.js:12
+msgid "js.params.Condition.Comparison.textIsNotExactly"
+msgstr ""
+
+#. default-message: Timestamp is after
+#: assets/js/params/Condition/ComparisonOperator.js:17
+msgid "js.params.Condition.Comparison.timestampIsAfter"
+msgstr ""
+
+#. default-message: Timestamp is after or equals
+#: assets/js/params/Condition/ComparisonOperator.js:18
+msgid "js.params.Condition.Comparison.timestampIsAfterOrEquals"
+msgstr ""
+
+#. default-message: Timestamp is before
+#: assets/js/params/Condition/ComparisonOperator.js:19
+msgid "js.params.Condition.Comparison.timestampIsBefore"
+msgstr ""
+
+#. default-message: Timestamp is before or equals
+#: assets/js/params/Condition/ComparisonOperator.js:20
+msgid "js.params.Condition.Comparison.timestampIsBeforeOrEquals"
+msgstr ""
+
+#. default-message: Value
+#: assets/js/params/Condition/Comparison.js:90
+msgid "js.params.Condition.Comparison.value.placeholder"
+msgstr ""
+
+#. default-message: If
+#: assets/js/params/Condition/Group.js:68
+msgid "js.params.Condition.Group.heading.title"
 msgstr ""
 
 #. default-message: (default)
@@ -2167,7 +2329,7 @@ msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr ""
 
 #. default-message: Manage Subscriptions
-#: assets/js/settings/Billing/ManageBilling.js:17
+#: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"
 msgstr ""
 
@@ -2207,7 +2369,7 @@ msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
 #. default-message: Subscribe
-#: assets/js/settings/Billing/Subscribe.js:17
+#: assets/js/settings/Billing/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""
 
@@ -2226,7 +2388,7 @@ msgstr ""
 msgid "js.settings.Billing.Subscription.stripeStatus"
 msgstr ""
 
-#. default-message: Billing
+#. default-message: Subscriptions
 #: assets/js/settings/Billing/index.js:12
 msgid "js.settings.Billing.h1"
 msgstr ""
@@ -2479,8 +2641,18 @@ msgstr ""
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr ""
 
+#. default-message: “{value}” is not a number. Please enter a number.
+#: renderer/execute/types.py:47
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
+msgstr ""
+
+#. default-message: “{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.
+#: renderer/execute/types.py:65
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
+msgstr ""
+
 #. default-message: Convert to Text
-#: renderer/execute/types.py:95
+#: renderer/execute/types.py:127
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr ""
 
@@ -2488,7 +2660,7 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
 #. default-message: Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}
-#: renderer/execute/types.py:101
+#: renderer/execute/types.py:133
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
 
@@ -2496,7 +2668,7 @@ msgstr ""
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted to Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other {The columns “{0}”, “{1}” and # others must be converted to Text.}}
-#: renderer/execute/types.py:144
+#: renderer/execute/types.py:176
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 
@@ -2506,7 +2678,7 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}
-#: renderer/execute/types.py:157
+#: renderer/execute/types.py:189
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 
