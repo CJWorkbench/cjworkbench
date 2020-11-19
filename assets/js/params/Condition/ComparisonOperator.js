@@ -14,10 +14,10 @@ const ValidComparisonOperators = {
   timestamp: [
     { name: 'timestamp_is', label: t('js.params.Condition.Comparison.dateIs')`Timestamp is` },
     { name: 'timestamp_is_not', label: t('js.params.Condition.Comparison.dateIsNot')`Timestamp is not` },
-    { name: 'timestamp_is_after', label: t('js.params.Condition.Comparison.dateIsAfter')`Timestamp is after` },
-    { name: 'timestamp_is_after_or_equals', label: t('js.params.Condition.Comparison.dateIsAfter')`Timestamp is after or equals` },
-    { name: 'timestamp_is_before', label: t('js.params.Condition.Comparison.dateIsBefore')`Timestamp is before` },
-    { name: 'timestamp_is_before_or_equals', label: t('js.params.Condition.Comparison.dateIsBefore')`Timestamp is before or equals` }
+    { name: 'timestamp_is_after', label: t('js.params.Condition.Comparison.timestampIsAfter')`Timestamp is after` },
+    { name: 'timestamp_is_after_or_equals', label: t('js.params.Condition.Comparison.timestampIsAfterOrEquals')`Timestamp is after or equals` },
+    { name: 'timestamp_is_before', label: t('js.params.Condition.Comparison.timestampIsBefore')`Timestamp is before` },
+    { name: 'timestamp_is_before_or_equals', label: t('js.params.Condition.Comparison.timestampIsBeforeOrEquals')`Timestamp is before or equals` }
   ],
   number: [
     { name: 'number_is', label: t('js.params.Condition.Comparison.numberIs')`Number is` },
