@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { loadStripe } from '@stripe/stripe-js'
 import Billing from './Billing'
+import Navbar from '../Workflows/Navbar'
 
 export default function BillingPage (props) {
   const { api, user } = props
@@ -21,11 +22,14 @@ export default function BillingPage (props) {
   }, [api])
 
   return (
-    <Billing
-      user={user}
-      onClickCheckout={createCheckoutSessionAndRedirect}
-      onClickManage={createBillingPortalSessionAndRedirect}
-    />
+    <>
+      <Navbar user={user} />
+      <Billing
+        user={user}
+        onClickCheckout={createCheckoutSessionAndRedirect}
+        onClickManage={createBillingPortalSessionAndRedirect}
+      />
+    </>
   )
 }
 BillingPage.propTypes = {

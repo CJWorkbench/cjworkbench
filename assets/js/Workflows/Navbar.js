@@ -5,7 +5,14 @@ import { Trans } from '@lingui/macro'
 import { currentLocaleId } from '../i18n/locales'
 
 function getActiveSection () {
-  return window.location.pathname.startsWith('/workflows') ? 'workflows' : 'lessons'
+  const path = window.location.pathname
+  if (path.startsWith('/workflows')) {
+    return 'workflows'
+  } else if (path.startsWith('/settings')) {
+    return 'settings'
+  } else {
+    return 'lessons'
+  }
 }
 
 function propsForLink (activeSection, name, href) {
@@ -39,6 +46,11 @@ export default class Navbar extends React.Component {
             <a {...propsForLink(activeSection, 'lessons', `/lessons/${currentLocaleId}`)}>
               <Trans id='js.Workflows.NavBar.links.training' description='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
             </a>
+            {activeSection === 'settings' ? (
+              <a {...propsForLink(activeSection, 'settings', '/settings/billing')}>
+                <Trans id='js.Workflows.NavBar.links.settings' description='This is used in navigation bar. It should be all-caps for styling reasons.'>SETTINGS</Trans>
+              </a>
+            ) : null /* we only show "Settings" if the user is on it -- it is hidden, [2020-11-19] for now */}
           </div>
           <WfHamburgerMenu user={user} />
         </nav>

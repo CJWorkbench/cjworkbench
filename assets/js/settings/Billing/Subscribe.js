@@ -12,11 +12,9 @@ export default function Subscribe (props) {
   }, [onClick])
 
   return (
-    <div className='manage-billing'>
-      <button onClick={handleClick} disabled={loading}>
-        <Trans id='js.settings.Billing.Subscribe.buttonText'>Subscribe</Trans>
-      </button>
-    </div>
+    <button className='action-button button-blue--fill' onClick={handleClick} disabled={loading}>
+      <Trans id='js.settings.Billing.Subscribe.buttonText'>Subscribe</Trans>
+    </button>
   )
 }
 Subscribe.propTypes = {

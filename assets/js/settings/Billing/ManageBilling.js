@@ -12,11 +12,9 @@ export default function ManageBilling (props) {
   }, [onClick])
 
   return (
-    <div className='manage-billing'>
-      <button onClick={handleClick} disabled={loading}>
-        <Trans id='js.settings.Billing.ManageBilling.buttonText'>Manage Subscriptions</Trans>
-      </button>
-    </div>
+    <button className='action-button button-gray' onClick={handleClick} disabled={loading}>
+      <Trans id='js.settings.Billing.ManageBilling.buttonText'>Manage Subscriptions</Trans>
+    </button>
   )
 }
 ManageBilling.propTypes = {

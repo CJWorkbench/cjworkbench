@@ -8,8 +8,8 @@ import Subscription from './Subscription'
 export default function Billing (props) {
   const { onClickCheckout, onClickManage, user: { stripeCustomerId, subscriptions } } = props
   return (
-    <div className='billing'>
-      <h1><Trans id='js.settings.Billing.h1'>Billing</Trans></h1>
+    <section className='billing'>
+      <h1><Trans id='js.settings.Billing.h1'>Subscriptions</Trans></h1>
       {subscriptions.length ? (
         <ul className='subscriptions'>
           {subscriptions.map(subscription => (
@@ -22,13 +22,16 @@ export default function Billing (props) {
             </li>
           ))}
         </ul>
-      ) : (
-        <Subscribe stripeCustomerId={stripeCustomerId} onClick={onClickCheckout} />
-      )}
-      {stripeCustomerId ? (
-        <ManageBilling onClick={onClickManage} />
       ) : null}
-    </div>
+      <div className='manage-billing'>
+        {subscriptions.length === 0 ? (
+          <Subscribe stripeCustomerId={stripeCustomerId} onClick={onClickCheckout} />
+        ) : null}
+        {stripeCustomerId ? (
+          <ManageBilling onClick={onClickManage} />
+        ) : null}
+      </div>
+    </section>
   )
 }
 Billing.propTypes = {
