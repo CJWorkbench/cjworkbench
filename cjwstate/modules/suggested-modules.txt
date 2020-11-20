@@ -20,6 +20,7 @@ groupby
 histogram
 intercom
 jointab
+labelbycondition
 linechart
 loadurl
 mergecolumns
