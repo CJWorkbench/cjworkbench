@@ -57,7 +57,7 @@ spec:
       subdomain: minio-etcd  # so each pod gets a DNS name, which we'll use for static clustering
       containers:
         - name: minio-etcd
-          image: gcr.io/etcd-development/etcd:v3.3.12
+          image: gcr.io/etcd-development/etcd:v3.4.13
           env:
             - name: MY_POD_NAME
               valueFrom:
@@ -105,6 +105,10 @@ spec:
               value: "$(MY_POD_NAME)"
             - name: ETCD_DATA_DIR
               value: /mnt/etcd-data/data
+            - name: ETCD_LOGGER
+              value: zap  # default in v3.5
+            - name: ETCD_LOG_OUTPUTS
+              value: stderr  # default in v3.5
           ports:
             - containerPort: 2379
               name: server
@@ -115,10 +119,25 @@ spec:
               mountPath: /mnt/etcd-data
             - name: certs
               mountPath: /etc/etcd/ssl
+            - name: clientcerts  # used for status checks
+              mountPath: /etc/etcd/ctl-ssl
+          livenessProbe:
+            exec:
+              command:
+                - etcdctl
+                - endpoint
+                - health
+                - --key=/etc/etcd/ctl-ssl/client.key
+                - --cert=/etc/etcd/ctl-ssl/client.crt
+                - --cacert=/etc/etcd/ssl/ca.crt
+                - --insecure-skip-tls-verify  # ICKY but really, do we want to make special certs just for this?
       volumes:
         - name: certs
           secret:
             secretName: minio-etcd-server-certs
+        - name: clientcerts
+          secret:
+            secretName: minio-etcd-client-certs
   volumeClaimTemplates:
     - metadata:
         name: data
