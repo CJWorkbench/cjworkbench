@@ -89,5 +89,6 @@ spec:
             - "-ip_address_types=PRIVATE"
             - "-log_debug_stdout=true"
             - "-instances=$(PROJECT_NAME):us-central1:postgres=tcp:5432"
+            - "-term_timeout=10s"
           securityContext:
             runAsNonRoot: true
