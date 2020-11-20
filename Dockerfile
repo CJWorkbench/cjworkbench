@@ -233,14 +233,17 @@ CMD [ "bin/migrate-prod" ]
 
 # 3.2. fetcher: runs fetch
 FROM base AS fetcher
+STOPSIGNAL SIGKILL
 CMD [ "bin/fetcher-prod" ]
 
 # 3.3. fetcher: runs fetch
 FROM base AS renderer
+STOPSIGNAL SIGKILL
 CMD [ "bin/renderer-prod" ]
 
 # 3.4. cron: schedules fetches and runs cleanup SQL
 FROM base AS cron
+STOPSIGNAL SIGKILL
 CMD [ "bin/cron-prod" ]
 
 # 3.5. frontend: serves website
