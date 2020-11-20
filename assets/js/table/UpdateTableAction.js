@@ -187,17 +187,19 @@ function buildEditCellsParams (oldParams, params) {
 
 function buildFilterParams (_oldParams, params) {
   return {
-    filters: {
-      operator: 'and',
-      filters: [
+    keep: true,
+    condition: {
+      operation: 'and',
+      conditions: [
         {
-          operator: 'and',
-          subfilters: [
+          operation: 'and',
+          conditions: [
             {
-              colname: params.columnKey,
-              condition: '',
+              operation: '',
+              column: params.columnKey,
               value: '',
-              case_sensitive: false
+              isCaseSensitive: false,
+              isRegex: false
             }
           ]
         }

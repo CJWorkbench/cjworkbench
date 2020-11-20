@@ -115,17 +115,19 @@ describe('UpdateTableAction actions', () => {
     const dispatch = jest.fn()
     updateTableAction(10, 'filter', true, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith(['addStepAction', 'filter', { afterStepId: 10 }, {
-      filters: {
-        operator: 'and',
-        filters: [
+      keep: true,
+      condition: {
+        operation: 'and',
+        conditions: [
           {
-            operator: 'and',
-            subfilters: [
+            operation: 'and',
+            conditions: [
               {
-                colname: 'B',
-                condition: '',
+                operation: '',
+                column: 'B',
                 value: '',
-                case_sensitive: false
+                isCaseSensitive: false,
+                isRegex: false
               }
             ]
           }
@@ -151,17 +153,19 @@ describe('UpdateTableAction actions', () => {
     const dispatch = jest.fn()
     updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
     expect(dispatch).toHaveBeenCalledWith(['addStepAction', 'filter', { afterStepId: 11 }, {
-      filters: {
-        operator: 'and',
-        filters: [
+      keep: true,
+      condition: {
+        operation: 'and',
+        conditions: [
           {
-            operator: 'and',
-            subfilters: [
+            operation: 'and',
+            conditions: [
               {
-                colname: 'B',
-                condition: '',
+                operation: '',
+                column: 'B',
                 value: '',
-                case_sensitive: false
+                isCaseSensitive: false,
+                isRegex: false
               }
             ]
           }
