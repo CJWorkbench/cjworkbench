@@ -6,4 +6,4 @@ set -e
 
 "$DIR"/bin/wait-for-database
 
-exec python "$DIR"/manage.py migrate-prod
+exec python ./manage.py fetcher

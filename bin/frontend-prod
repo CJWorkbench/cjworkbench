@@ -1,0 +1,14 @@
+#!/bin/bash
+
+DIR="$(dirname "$0")"/..
+PORT="$1"
+
+set -e
+
+"$DIR"/bin/wait-for-database
+
+exec python -m uvicorn \
+  --host 0.0.0.0 \
+  --port "$PORT" \
+  --forwarded-allow-ips 0.0.0.0 \
+  cjworkbench.asgi:application

@@ -6,14 +6,14 @@ FROM workbenchdata/arrow-tools:v1.0.0 AS arrow-tools
 FROM python:3.8.5-slim-buster AS pybase
 
 # We probably don't want these, long-term.
-# postgresql-client: because we poll the DB:
-# * on prod before ./manage.py migrate
-# * on unittest before ./manage.py test
 # curl: handy for testing, NLTK download; not worth uninstalling each time
 # unzip: [adamhooper, 2019-02-21] I'm afraid to uninstall it, in case one
 #        of our Python deps shells to it
 #
 # We do want:
+# postgresql-client: for pg_isready in startup scripts:
+# * on prod, in bin/*-prod
+# * on unittest before ./manage.py test
 # libcap2: used by pyspawner (via ctypes) to drop capabilities
 # iproute2: used by setup-sandboxes.sh to find our IP for NAT
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
@@ -233,15 +233,15 @@ CMD [ "bin/migrate-prod" ]
 
 # 3.2. fetcher: runs fetch
 FROM base AS fetcher
-CMD [ "./manage.py", "fetcher" ]
+CMD [ "bin/fetcher-prod" ]
 
 # 3.3. fetcher: runs fetch
 FROM base AS renderer
-CMD [ "./manage.py", "renderer" ]
+CMD [ "bin/renderer-prod" ]
 
 # 3.4. cron: schedules fetches and runs cleanup SQL
 FROM base AS cron
-CMD [ "./manage.py", "cron" ]
+CMD [ "bin/cron-prod" ]
 
 # 3.5. frontend: serves website
 FROM base AS frontend
@@ -250,4 +250,4 @@ COPY --from=jsbuild /app/webpack-stats.json /app/
 EXPOSE 8080
 # Beware: uvicorn does not serve static files! Use migrate-prod to push them
 # to GCS and publish them there.
-CMD [ "python", "-m", "uvicorn", "--host", "0.0.0.0", "--port", "8080", "--forwarded-allow-ips", "0.0.0.0", "cjworkbench.asgi:application" ]
+CMD [ "bin/frontend-prod", "8080" ]

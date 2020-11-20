@@ -71,7 +71,7 @@ services:
   fetcher:
     #image:
     #build:
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py fetcher' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec bin/fetcher-prod' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
@@ -81,7 +81,7 @@ services:
   renderer:
     #image:
     #build:
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py renderer' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec bin/renderer-prod' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
@@ -100,7 +100,7 @@ services:
     #image:
     #build:
     #no ports: on cloudbuild
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec python -m uvicorn --host 0.0.0.0 --port 8080 --forwarded-allow-ips 0.0.0.0 cjworkbench.asgi:application' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec bin/frontend-prod 8080' ]
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json

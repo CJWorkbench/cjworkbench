@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Finish after a successful DB connection; or exit with status=1 if we never
+# achieve a DB connection.
+
+set -e
+if ! type pg_isready >/dev/null; then
+  echo "pg_isready must be installed" >&2
+  exit 1
+fi
+
+poll_db() {
+  PGPASSWORD="$CJW_DB_PASSWORD" pg_isready --host="$CJW_DB_HOST" --username=cjworkbench "$@"
+}
+
+for i in {1..20}; do
+  if poll_db -q; then
+      exit 0
+  fi
+  sleep 1
+done
+# Something is wrong
+poll_db  # no -q: print the actual error message if there is one
+exit $?

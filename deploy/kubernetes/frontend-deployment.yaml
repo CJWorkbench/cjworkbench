@@ -73,7 +73,12 @@ spec:
         - name: frontend
           image: "gcr.io/workbenchdata-ci/frontend:latest"
           # override port: pick 8081. (We'll use haproxy for 8080.)
-          command: [ "python", "-m", "uvicorn", "--host", "0.0.0.0", "--port", "8081", "--forwarded-allow-ips", "0.0.0.0", "cjworkbench.asgi:application" ]
+          # [2020-11-20, adamhooper] last week, GKE landed SSL redirects:
+          # https://github.com/GoogleCloudPlatform/gke-networking-recipes/tree/master/ingress/secure-ingress
+          # It's only available in v1.18 for now. Let's upgrade when it's
+          # sensible, nix haproxy, and move haproxy's memory+cpu into this
+          # container.
+          command: [ "bin/frontend-prod", "8081" ]
           resources:
             requests:
               # We have no SMT, and we want 1 pod per node. Pods have ~1.5 CPUs
