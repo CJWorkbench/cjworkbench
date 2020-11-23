@@ -3,6 +3,7 @@
 import { generateSlug } from './utils'
 import applyUpdate from './reducers/applyUpdate'
 import { reducerFunctions as ReportReducerFunctions } from './WorkflowEditor/Report/actions'
+import { reducerFunctions as StepListReducerFunctions } from './WorkflowEditor/StepList/actions'
 import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/actions'
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
@@ -67,6 +68,7 @@ const reducerFunc = {
   ...FileReducerFunctions,
   ...ReportReducerFunctions,
   ...ShareReducerFunctions,
+  ...StepListReducerFunctions,
   ...TabReducerFunctions,
   ...WorkflowEditorReducerFunctions
 }

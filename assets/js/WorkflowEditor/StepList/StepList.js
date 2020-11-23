@@ -1,136 +1,12 @@
 /* globals HTMLElement */
 import React from 'react'
 import PropTypes from 'prop-types'
-import AddData from './AddData'
-import ModuleSearch from './ModuleSearch'
-import Step from './step/Step'
-import StepHeader from './step/StepHeader'
-import { deleteStepAction, moveStepAction } from '../workflow-reducer'
-import { scrollTo } from '../utils'
-import { connect } from 'react-redux'
-import lessonSelector from '../lessons/lessonSelector'
+import AddData from '../AddData'
+import Step from '../step/Step'
+import StepHeader from '../step/StepHeader'
+import StepListInsertSpot from './StepListInsertSpot'
+import { scrollTo } from '../../utils'
 import { Trans } from '@lingui/macro'
-
-class ModuleDropSpot extends React.PureComponent {
-  static propTypes = {
-    index: PropTypes.number.isRequired,
-    isDraggingModuleAtIndex: PropTypes.number,
-    moveStepByIndex: PropTypes.func.isRequired // func(oldIndex, newIndex) => undefined
-  }
-
-  state = {
-    isDragHovering: false
-  }
-
-  canDrop () {
-    const { index, isDraggingModuleAtIndex } = this.props
-    if (isDraggingModuleAtIndex === null) return false
-
-    // Can't drag to before or after ourselves
-    return !(index === isDraggingModuleAtIndex || index === isDraggingModuleAtIndex + 1)
-  }
-
-  handleDragOver = (ev) => {
-    if (!this.canDrop()) return
-
-    ev.preventDefault() // unlike default, this is a valid drop target
-  }
-
-  handleDragEnter = (ev) => {
-    if (!this.canDrop(ev)) return
-
-    this.setState({
-      isDragHovering: true
-    })
-  }
-
-  handleDragLeave = (ev) => {
-    if (!this.canDrop(ev)) return
-
-    this.setState({
-      isDragHovering: false
-    })
-  }
-
-  handleDrop = (ev) => {
-    if (!this.canDrop(ev)) return
-
-    ev.preventDefault() // we want no browser defaults
-
-    this.props.moveStepByIndex(this.props.isDraggingModuleAtIndex, this.props.index)
-
-    this.setState({
-      isDragHovering: false // otherwise, will stay hovering next drag
-    })
-  }
-
-  render () {
-    if (this.canDrop()) {
-      let className = 'module-drop-zone'
-      if (this.state.isDragHovering) className += ' is-drag-hovering'
-      return (
-        <div
-          className={className}
-          onDragOver={this.handleDragOver}
-          onDragEnter={this.handleDragEnter}
-          onDragLeave={this.handleDragLeave}
-          onDrop={this.handleDrop}
-        >
-          <div className='highlight'>
-            <i className='icon-add' />
-          </div>
-        </div>
-
-      )
-    } else {
-      return null
-    }
-  }
-}
-
-class StepListInsertSpot extends React.PureComponent {
-  static propTypes = {
-    index: PropTypes.number.isRequired,
-    tabSlug: PropTypes.string.isRequired,
-    isLast: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
-    isLessonHighlight: PropTypes.bool.isRequired,
-    isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
-    moveStepByIndex: PropTypes.func.isRequired // func(oldIndex, newIndex) => undefined
-  }
-
-  renderReadOnly () {
-    return (
-      <div className='in-between-steps read-only' />
-    )
-  }
-
-  render () {
-    const {
-      index, tabSlug, isReadOnly, isLessonHighlight, isLast,
-      isDraggingModuleAtIndex, moveStepByIndex
-    } = this.props
-
-    if (isReadOnly) return this.renderReadOnly()
-
-    return (
-      <div className='in-between-steps'>
-        <ModuleSearch
-          index={index}
-          tabSlug={tabSlug}
-          className={isLast ? 'module-search-last' : 'module-search-in-between'}
-          isLessonHighlight={isLessonHighlight}
-          isLastAddButton={isLast}
-        />
-        <ModuleDropSpot
-          index={index}
-          isDraggingModuleAtIndex={isDraggingModuleAtIndex}
-          moveStepByIndex={moveStepByIndex}
-        />
-      </div>
-    )
-  }
-}
 
 function EmptyReadOnlyStepList () {
   return (
@@ -158,14 +34,14 @@ function partitionSteps (steps, modules) {
   }
 }
 
-export class StepList extends React.Component {
+export default class StepList extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     tabSlug: PropTypes.string,
     selected_step_position: PropTypes.number,
     steps: PropTypes.arrayOf(PropTypes.object).isRequired,
     modules: PropTypes.objectOf(PropTypes.shape({ loads_data: PropTypes.bool.isRequired })).isRequired,
-    moveStepByIndex: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
+    reorderStep: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
     deleteStep: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
     isReadOnly: PropTypes.bool.isRequired,
@@ -180,7 +56,7 @@ export class StepList extends React.Component {
   lastScrolledStep = { tabSlug: null, index: null } // or { tabSlug, index } pair
 
   state = {
-    isDraggingModuleAtIndex: null,
+    draggedStep: null,
     zenModeStepId: null
   }
 
@@ -234,22 +110,26 @@ export class StepList extends React.Component {
 
   handleDragStart = (obj) => {
     this.setState({
-      isDraggingModuleAtIndex: obj.index
+      draggedStep: obj
     })
   }
 
   handleDragEnd = () => {
     this.setState({
-      isDraggingModuleAtIndex: null
+      draggedStep: null
     })
   }
 
-  moveStepByIndex = (oldIndex, newIndex) => {
-    this.props.moveStepByIndex(this.props.tabSlug, oldIndex, newIndex)
+  reorderStep = (...args) => {
+    this.setState({
+      draggedStep: null
+    })
+    this.props.reorderStep(...args)
   }
 
   render () {
     const { isReadOnly, tabSlug, paneRef, steps, modules } = this.props
+    const { draggedStep, zenModeStepId } = this.state
     const [addDataStep, useDataSteps] = partitionSteps(steps, modules)
 
     const spotsAndItems = useDataSteps.map((item, i) => {
@@ -266,11 +146,11 @@ export class StepList extends React.Component {
           <React.Fragment key={`placeholder-${i}`}>
             <StepListInsertSpot
               index={i}
-              tabSlug={this.props.tabSlug}
+              tabSlug={tabSlug}
               isLast={false}
-              isReadOnly={this.props.isReadOnly}
-              isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-              moveStepByIndex={this.moveStepByIndex}
+              isReadOnly={isReadOnly}
+              draggedStep={draggedStep}
+              reorderStep={this.reorderStep}
               isLessonHighlight={this.props.testLessonHighlightIndex(i)}
             />
             <StepHeader
@@ -286,16 +166,17 @@ export class StepList extends React.Component {
           <React.Fragment key={`module-${item.id}`}>
             <StepListInsertSpot
               index={i}
-              tabSlug={this.props.tabSlug}
+              tabSlug={tabSlug}
               isLast={false}
-              isReadOnly={this.props.isReadOnly}
-              isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-              moveStepByIndex={this.moveStepByIndex}
+              isReadOnly={isReadOnly}
+              draggedStep={draggedStep}
+              reorderStep={this.reorderStep}
               isLessonHighlight={this.props.testLessonHighlightIndex(i)}
             />
             <Step
               isReadOnly={isReadOnly}
-              isZenMode={this.state.zenModeStepId === item.id}
+              isZenMode={zenModeStepId === item.id}
+              isDragging={draggedStep ? draggedStep.slug === item.slug : false}
               step={item}
               deleteStep={this.props.deleteStep}
               inputStep={i === 0 ? null : steps[i - 1]}
@@ -313,7 +194,7 @@ export class StepList extends React.Component {
     })
 
     let className = 'step-list'
-    if (this.state.zenModeStepId !== null) className += ' zen-mode'
+    if (zenModeStepId !== null) className += ' zen-mode'
 
     return (
       <div className={className} ref={this.scrollRef}>
@@ -328,7 +209,7 @@ export class StepList extends React.Component {
               isReadOnly={this.props.isReadOnly}
               step={addDataStep}
               isSelected={!!addDataStep && this.props.selected_step_position === 0}
-              isZenMode={addDataStep && this.state.zenModeStepId === addDataStep.id}
+              isZenMode={addDataStep && zenModeStepId === addDataStep.id}
               api={this.props.api}
               deleteStep={this.props.deleteStep}
               setZenMode={this.setZenMode}
@@ -341,10 +222,10 @@ export class StepList extends React.Component {
                 index={steps.length}
                 tabSlug={tabSlug}
                 isLast
-                isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
-                moveStepByIndex={this.moveStepByIndex}
+                draggedStep={draggedStep}
+                reorderStep={this.reorderStep}
                 isLessonHighlight={this.props.testLessonHighlightIndex(steps.length)}
-                isReadOnly={this.props.isReadOnly}
+                isReadOnly={isReadOnly}
               />
             ) : null}
           </>
@@ -353,40 +234,3 @@ export class StepList extends React.Component {
     )
   }
 }
-
-const mapStateToProps = (state) => {
-  const { modules } = state
-  const { testHighlight } = lessonSelector(state)
-  const tabPosition = state.workflow.selected_tab_position
-  const tabSlug = state.workflow.tab_slugs[tabPosition]
-  const tab = state.tabs[tabSlug]
-  const steps = tab.step_ids.map(id => state.steps[String(id)])
-  return {
-    workflow: state.workflow,
-    selected_step_position: tab.selected_step_position,
-    tabSlug,
-    steps,
-    modules,
-    isReadOnly: state.workflow.read_only,
-    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', id_name: null, index: index })
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    moveStepByIndex (tabSlug, oldIndex, newIndex) {
-      const action = moveStepAction(tabSlug, oldIndex, newIndex)
-      dispatch(action)
-    },
-
-    deleteStep (stepId) {
-      const action = deleteStepAction(stepId)
-      dispatch(action)
-    }
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(StepList)

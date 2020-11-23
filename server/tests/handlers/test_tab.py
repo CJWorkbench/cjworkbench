@@ -2,7 +2,7 @@ from unittest.mock import patch
 from django.contrib.auth.models import User
 from server.handlers.tab import (
     add_module,
-    reorder_modules,
+    reorder_steps,
     create,
     delete,
     duplicate,
@@ -178,9 +178,11 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertResponse(response, error="BadRequest: module does not exist")
 
-    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_render", async_noop)
-    def test_reorder_modules(self):
+    def test_reorder_steps(self, send_update):
+        send_update.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         tab = workflow.tabs.first()  # tab-1
@@ -188,32 +190,37 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step2 = tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
-            reorder_modules,
+            reorder_steps,
             user=user,
+            mutationId="mutation-1",
             workflow=workflow,
             tabSlug="tab-1",
-            stepIds=[step2.id, step1.id],
+            slugs=["step-2", "step-1"],
         )
         self.assertResponse(response, data=None)
 
         delta = workflow.deltas.last()
         self.assertEquals(delta.tab_id, tab.id)
+        send_update.assert_called
+        update = send_update.call_args[0][1]
+        self.assertEquals(update.mutation_id, "mutation-1")
 
-    def test_reorder_modules_viewer_denied_access(self):
+    def test_reorder_steps_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)
         tab = workflow.tabs.first()  # tab-1
         step1 = tab.steps.create(order=0, slug="step-1")
         step2 = tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
-            reorder_modules,
+            reorder_steps,
+            mutationId="mutation-1",
             workflow=workflow,
             tabSlug="tab-1",
-            stepIds=[step2.id, step1.id],
+            slugs=["step-2", "step-1"],
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    def test_reorder_modules_invalid_step_ids(self):
+    def test_reorder_steps_invalid_step_slug(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()  # tab-1
@@ -221,15 +228,14 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step2 = tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
-            reorder_modules,
+            reorder_steps,
             user=user,
+            mutationId="mutation-1",
             workflow=workflow,
             tabSlug="tab-1",
-            stepIds=[step2.id, step1.id, 2],
+            slugs=["step-2", "step-nope"],
         )
-        self.assertResponse(
-            response, error="new_order does not have the expected elements"
-        )
+        self.assertResponse(response, error="slugs does not have the expected elements")
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_create(self):

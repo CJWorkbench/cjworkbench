@@ -102,9 +102,7 @@ SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
 
 
 def _parse_slug(slug: str):
-    """
-    Return `slug` or raise ValueError.
-    """
+    """Return `slug` or raise ValueError."""
     slug = str(slug)  # cannot error from JSON params
     if not SlugRegex.match(slug):
         raise HandlerError(
@@ -116,13 +114,21 @@ def _parse_slug(slug: str):
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_tab
-async def reorder_modules(workflow: Workflow, tab: Tab, stepIds: List[int], **kwargs):
+async def reorder_steps(
+    workflow: Workflow, tab: Tab, slugs: List[str], mutationId: str, **kwargs
+):
+    if not isinstance(mutationId, str):
+        raise HandlerError("BadRequest: mutationId must be String")
+    if not isinstance(slugs, list):
+        raise HandlerError(f'BadRequest: slugs must be an Array of "[-a-zA-Z0-9_]+"')
+    slugs = [_parse_slug(slug) for slug in slugs]
     try:
         await commands.do(
             ReorderSteps,
+            mutation_id=mutationId,
             workflow_id=workflow.id,
             tab=tab,
-            new_order=stepIds,
+            slugs=slugs,
         )
     except ValueError as err:
         raise HandlerError(str(err))

@@ -1,4 +1,5 @@
 import reportMutations from './WorkflowEditor/Report/mutations'
+import stepListMutations from './WorkflowEditor/StepList/mutations'
 
 /**
  * Changes to the Workflow ... client-side.
@@ -41,5 +42,6 @@ import reportMutations from './WorkflowEditor/Report/mutations'
  * successfully, anyway.
  */
 export default {
-  ...reportMutations
+  ...reportMutations,
+  ...stepListMutations
 }

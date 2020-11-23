@@ -1,11 +1,47 @@
+from typing import Any, Dict, List
 from .base import BaseCommand
 from .util import ChangesStepOutputs
 
 
-def _apply_order(tab, order):
+def _apply_order(tab, slugs):
     # We validated Step IDs back in `.amend_create_args()`
-    for record in order:
-        tab.steps.filter(pk=record["id"]).update(order=record["order"])
+    for position, slug in enumerate(slugs):
+        tab.live_steps.filter(slug=slug).update(order=position)
+
+
+def _delta_values_to_slugs(tab, values: Dict[str, Any]) -> List[str]:
+    """Find the desired order of slugs from delta.values_for_whatever.
+
+    This handles "old-style" formats:
+
+        {
+            "legacy_format": [
+                {"id": 123, "order": 0},
+                {"id": 234, "order": 1},
+                ...
+            ]
+        }
+
+    (list generated with code:
+    `[{"id": id, "order": order} for order, id in enumerate(old_order)]`)
+
+    And the "new-style" format [2020-11-23]:
+
+        {
+            "slugs": ["step-2", "step-1", ...]
+        }
+
+    (The "new-style" format ignores step IDs, so it can refer to deleted-then-
+    undeleted steps. [These don't exist as of 2020-11-23.])
+    """
+    if "legacy_format" in values:
+        id_to_slug = {id: slug for id, slug in tab.live_steps.values_list("id", "slug")}
+        ordered_ids = [
+            v["id"] for v in sorted(values["legacy_format"], key=lambda v: v["order"])
+        ]
+        return [id_to_slug[id] for id in ordered_ids]
+    else:
+        return values["slugs"]
 
 
 class ReorderSteps(ChangesStepOutputs, BaseCommand):
@@ -22,40 +58,30 @@ class ReorderSteps(ChangesStepOutputs, BaseCommand):
         )
 
     def forward(self, delta):
-        _apply_order(delta.tab, delta.values_for_forward["legacy_format"])
+        slugs = _delta_values_to_slugs(delta.tab, delta.values_for_forward)
+        _apply_order(delta.tab, slugs)
         self.forward_affected_delta_ids(delta)
 
     def backward(self, delta):
-        _apply_order(delta.tab, delta.values_for_backward["legacy_format"])
+        slugs = _delta_values_to_slugs(delta.tab, delta.values_for_backward)
+        _apply_order(delta.tab, slugs)
         self.backward_affected_delta_ids(delta)
 
-    def amend_create_kwargs(self, *, workflow, tab, new_order, **kwargs):
-        old_order = tab.live_steps.values_list("id", flat=True)
+    def amend_create_kwargs(self, *, workflow, tab, slugs, **kwargs):
+        old_slugs = list(tab.live_steps.values_list("slug", flat=True))
 
-        try:
-            if sorted(new_order) != sorted(old_order):
-                raise ValueError("new_order does not have the expected elements")
-        except NameError:
-            raise ValueError("new_order is not a list of numbers")
+        if sorted(slugs) != sorted(old_slugs):
+            raise ValueError("slugs does not have the expected elements")
 
         # Find first _order_ that gets a new Step. Only this and subsequent
         # Steps will produce new output
-        for position in range(len(new_order)):
-            if new_order[position] != old_order[position]:
+        for position, (new_slug, old_slug) in enumerate(zip(slugs, old_slugs)):
+            if old_slug != new_slug:
                 min_diff_order = position
                 break
         else:
             # Nothing was reordered; don't create this Command.
             return None
-
-        # Now write an icky JSON format instead of our nice lists
-        # TODO store arrays of slugs
-        old_order_dicts = [
-            {"id": id, "order": order} for order, id in enumerate(old_order)
-        ]
-        new_order_dicts = [
-            {"id": id, "order": order} for order, id in enumerate(new_order)
-        ]
 
         # step_delta_ids of affected Steps will be all modules in the
         # database _before update_, starting at `order=min_diff_order`.
@@ -69,7 +95,7 @@ class ReorderSteps(ChangesStepOutputs, BaseCommand):
             **kwargs,
             "workflow": workflow,
             "tab": tab,
-            "values_for_backward": {"legacy_format": old_order_dicts},
-            "values_for_forward": {"legacy_format": new_order_dicts},
+            "values_for_backward": {"slugs": old_slugs},
+            "values_for_forward": {"slugs": slugs},
             "step_delta_ids": step_delta_ids,
         }

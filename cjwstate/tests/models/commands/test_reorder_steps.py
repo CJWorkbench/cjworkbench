@@ -41,7 +41,7 @@ class ReorderStepsTest(DbTestCase):
                 ReorderSteps,
                 workflow_id=self.workflow.id,
                 tab=self.tab,
-                new_order=[step1.id, step3.id, step2.id],
+                slugs=["step-1", "step-3", "step-2"],
             )
         )
         v2 = cmd.id
@@ -73,14 +73,56 @@ class ReorderStepsTest(DbTestCase):
             [step1.id, step3.id, step2.id],
         )
 
-    def test_reorder_modules_reject_other_tabs(self):
-        """
-        User cannot game the system: only one tab is allowed.
+    def test_old_style_params(self):
+        all_modules = self.tab.live_steps
+        v1 = self.delta.id
+        step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
+        step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
+        step3 = self.tab.steps.create(last_relevant_delta_id=v1, order=2, slug="step-3")
 
-        (A user should not be able to affect Steps outside of his/her
-        workflow. There's nothing in the architecture that could lead us there,
-        but let's be absolutely sure by testing.)
-        """
+        # Let's build a new-style Delta, then overwrite it to be old-style
+        cmd = self.run_with_async_db(
+            commands.do(
+                ReorderSteps,
+                workflow_id=self.workflow.id,
+                tab=self.tab,
+                slugs=["step-3", "step-2", "step-1"],
+            )
+        )
+        cmd.values_for_backward = {
+            "legacy_format": [
+                {"id": step1.id, "order": 0},
+                {"id": step2.id, "order": 1},
+                {"id": step3.id, "order": 2},
+            ]
+        }
+        cmd.values_for_forward = {
+            "legacy_format": [
+                {"id": step3.id, "order": 0},
+                {"id": step2.id, "order": 1},
+                {"id": step1.id, "order": 2},
+            ]
+        }
+        cmd.save(update_fields=["values_for_backward", "values_for_forward"])
+
+        self.run_with_async_db(commands.undo(cmd))
+        self.assertEqual(
+            list(all_modules.values_list("id", flat=True)),
+            [step1.id, step2.id, step3.id],
+        )
+
+        self.run_with_async_db(commands.redo(cmd))
+        self.assertEqual(
+            list(all_modules.values_list("id", flat=True)),
+            [step3.id, step2.id, step1.id],
+        )
+
+    def test_reorder_modules_reject_other_tabs(self):
+        # User cannot game the system: only one tab is allowed.
+        #
+        # (A user should not be able to affect Steps outside of his/her
+        # workflow. There's nothing in the architecture that could lead us there,
+        # but let's be absolutely sure by testing.)
         v1 = self.delta.id
         step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
         step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
@@ -94,7 +136,7 @@ class ReorderStepsTest(DbTestCase):
                     ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[step1.id, step3.id, step2.id],
+                    slugs=["step-1", "step-3", "step-2"],
                 )
             )
 
@@ -108,18 +150,7 @@ class ReorderStepsTest(DbTestCase):
                     ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[step1.id + 1],
-                )
-            )
-
-    def test_non_array_valueerror(self):
-        with self.assertRaises(ValueError):
-            self.run_with_async_db(
-                commands.do(
-                    ReorderSteps,
-                    workflow_id=self.workflow.id,
-                    tab=self.tab,
-                    new_order={"not": "an array"},
+                    slugs=["step-missing"],
                 )
             )
 
@@ -137,7 +168,7 @@ class ReorderStepsTest(DbTestCase):
                     ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[step1.id],
+                    slugs=["step-2"],
                 )
             )
 
@@ -155,7 +186,7 @@ class ReorderStepsTest(DbTestCase):
                     ReorderSteps,
                     workflow_id=self.workflow.id,
                     tab=self.tab,
-                    new_order=[step1.id, step1.id],
+                    slugs=["step-1", "step-1"],
                 )
             )
 
@@ -172,7 +203,7 @@ class ReorderStepsTest(DbTestCase):
                 ReorderSteps,
                 workflow_id=self.workflow.id,
                 tab=self.tab,
-                new_order=[step1.id, step2.id],
+                slugs=["step-1", "step-2"],
             )
         )
         self.assertIsNone(cmd)

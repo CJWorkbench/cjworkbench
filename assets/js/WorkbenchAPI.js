@@ -115,10 +115,11 @@ export default class WorkbenchAPI {
     })
   }
 
-  reorderSteps (tabSlug, stepIds) {
-    return this._callExpectingNull('tab.reorder_modules', {
+  reorderSteps ({ mutationId, tabSlug, slugs }) {
+    return this._callExpectingNull('tab.reorder_steps', {
+      mutationId,
       tabSlug,
-      stepIds
+      slugs
     })
   }
 

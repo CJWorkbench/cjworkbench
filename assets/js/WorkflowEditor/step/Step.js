@@ -38,6 +38,7 @@ export class Step extends React.PureComponent {
     isAnonymous: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
     isZenModeAllowed: PropTypes.bool.isRequired,
+    isDragging: PropTypes.bool.isRequired,
     module: PropTypes.shape({
       id_name: PropTypes.string.isRequired,
       help_url: PropTypes.string.isRequired,
@@ -104,7 +105,6 @@ export class Step extends React.PureComponent {
   state = {
     editedNotes: null, // when non-null, input is focused
     isDataVersionModalOpen: false,
-    isDragging: false,
     edits: {} // idName => newValue
   }
 
@@ -145,24 +145,18 @@ export class Step extends React.PureComponent {
     const dragObject = {
       type: 'Step',
       index: this.props.index,
-      id: this.props.step.id
+      id: this.props.step.id,
+      slug: this.props.step.slug,
+      tabSlug: this.props.currentTab
     }
     ev.dataTransfer.setData('application/json', JSON.stringify(dragObject))
     ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.dropEffect = 'move'
     this.props.onDragStart(dragObject)
-
-    this.setState({
-      isDragging: true
-    })
   }
 
   handleDragEnd = (ev) => {
     this.props.onDragEnd()
-
-    this.setState({
-      isDragging: false
-    })
   }
 
   handleClickDelete = () => {
@@ -429,7 +423,7 @@ export class Step extends React.PureComponent {
     }
 
     let className = 'step status-' + this.stepStatus
-    className += this.state.isDragging ? ' dragging' : ''
+    className += this.props.isDragging ? ' dragging' : ''
     className += this.props.isSelected ? ' selected' : ''
     className += this.props.isAfterSelected ? ' after-selected' : ''
     className += this.isEditing ? ' editing' : ''

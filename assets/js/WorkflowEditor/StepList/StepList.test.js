@@ -1,7 +1,7 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
-import { StepList } from './StepList'
-import { mountWithI18n } from '../i18n/test-utils'
+import StepList from './StepList'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('StepList', () => {
   const wrapper = (extraProps) => mountWithI18n(
@@ -12,7 +12,7 @@ describe('StepList', () => {
       selected_step_position={null}
       steps={[]}
       modules={{}}
-      moveStepByIndex={jest.fn()}
+      reorderStep={jest.fn()}
       deleteStep={jest.fn()}
       testLessonHighlightIndex={jest.fn((i) => false)}
       paneRef={{ current: null }}

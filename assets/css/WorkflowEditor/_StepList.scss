@@ -92,34 +92,34 @@
     }
   }
 
-  // Drop zone to place a module between others in the stack
-  .module-drop-zone {
+  // Drop zone to place a step between others in the stack
+  .step-drop-spot {
     display: block;
     position: absolute;
     top: -5rem;
     bottom: -5rem;
-    width: 100%;
+    left: 0;
+    right: 0;
     z-index: 2;
 
-    i {
-      display: none;
-    }
-
-    &.is-drag-hovering .highlight {
+    .highlight {
+      opacity: 0;
       pointer-events: none;
       margin: 5rem $module-margin-right 0 $module-margin-left;
       border-radius: 1rem;
       height: 1.5rem;
       background-color: $brand-background--action;
+      color: darken($brand-workspace, 5%);
+      text-align: center;
 
       i {
-        display: block;
-        color: darken($brand-workspace, 5%);
-        position: relative;
-        left: 50%;
-        top: 3px;
         font-size: 1rem;
+        vertical-align: -.1rem;
       }
+    }
+
+    &.is-drag-hovering .highlight {
+      opacity: 1;
     }
   }
 

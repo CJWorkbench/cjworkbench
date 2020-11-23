@@ -15,6 +15,7 @@ const AddData = React.memo(function AddData ({ tabSlug, isLessonHighlight, isRea
         inputStep={null}
         isSelected={isSelected}
         isAfterSelected={false}
+        isDragging={false}
         api={api}
         index={0}
         setZenMode={setZenMode}
