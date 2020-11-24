@@ -87,6 +87,7 @@ describe('Step, not read-only mode', () => {
         tabs={[]}
         currentTab='tab-1'
         index={2}
+        isDragging={false}
         onDragStart={jest.fn()}
         onDragEnd={jest.fn()}
         isLessonHighlight={false}

@@ -16,7 +16,7 @@ export function reorderSteps (state, { tabSlug, slugs }) {
   }
 
   const stepObjects = tab.step_ids.map(id => steps[String(id)])
-  if (stepObjects.some(step => !step)) {
+  if (stepObjects.some(step => step === undefined)) {
     return state // a step has gone away; server will reject request
   }
 

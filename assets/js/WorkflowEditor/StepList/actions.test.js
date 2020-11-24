@@ -1,4 +1,4 @@
-/* globals describe, expect, it, jest */
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import { mockStore } from '../../test-utils'
 import { generateSlug } from '../../utils'
 import selectOptimisticState from '../../selectors/selectOptimisticState'
@@ -67,7 +67,13 @@ describe('StepList.actions', () => {
       // Optimistic update is gone: the real update took its place
       expect(store.getState().pendingMutations).toEqual([])
       expect(selectStepSlugLists(store.getState())).toEqual([{ tabSlug: 'tab-1', stepSlugs: ['step-1', 'step-3', 'step-2'] }])
+      expect(console.warn).not.toHaveBeenCalled()
     })
+
+    // Fiddle with console.warn because workflowReducer logs on unhandled error
+    const originalWarn = console.warn
+    beforeEach(() => { global.console.warn = jest.fn() })
+    afterEach(() => { global.console.warn = originalWarn })
 
     it('should ignore reorder when a step has gone away', async () => {
       let endDelayAndReject
@@ -113,11 +119,13 @@ describe('StepList.actions', () => {
       expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectStepSlugLists(store.getState())).toEqual([{ tabSlug: 'tab-1', stepSlugs: ['step-2', 'step-3'] }])
 
-      endDelayAndReject()
+      endDelayAndReject(new Error('Something from the server'))
       await done
       // Optimistic update is gone
       expect(store.getState().pendingMutations).toEqual([])
       expect(selectStepSlugLists(store.getState())).toEqual([{ tabSlug: 'tab-1', stepSlugs: ['step-2', 'step-3'] }])
+      expect(console.warn).toHaveBeenCalled()
+      expect(console.warn.mock.calls[0][0]).toEqual('reorderSteps failed')
     })
   })
 })
