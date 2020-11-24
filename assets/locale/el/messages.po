@@ -515,7 +515,7 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
-#: assets/js/WorkflowEditor/StepList.js:138
+#: assets/js/WorkflowEditor/StepList/StepList.js:14
 msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
 msgstr "Αυτή η καρτέλα δεν έχει βήματα."
 
@@ -546,35 +546,35 @@ msgstr "Καρτέλα"
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
-#: assets/js/WorkflowEditor/step/Step.js:358
+#: assets/js/WorkflowEditor/step/Step.js:352
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
-#: assets/js/WorkflowEditor/step/Step.js:242
+#: assets/js/WorkflowEditor/step/Step.js:236
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "είσοδος σε λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:242
+#: assets/js/WorkflowEditor/step/Step.js:236
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "έξοδος από λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:375
+#: assets/js/WorkflowEditor/step/Step.js:369
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
-#: assets/js/WorkflowEditor/step/Step.js:375
+#: assets/js/WorkflowEditor/step/Step.js:369
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
-#: assets/js/WorkflowEditor/step/Step.js:410
+#: assets/js/WorkflowEditor/step/Step.js:404
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr "Διαγραφή"
 
-#: assets/js/WorkflowEditor/step/Step.js:387
+#: assets/js/WorkflowEditor/step/Step.js:381
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
-#: assets/js/WorkflowEditor/step/Step.js:397
+#: assets/js/WorkflowEditor/step/Step.js:391
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
 
@@ -765,78 +765,70 @@ msgstr "Επιλογή"
 #. The logical AND operator
 #: assets/js/params/Condition/AddButton.js:18
 msgid "js.params.Condition.AddButton.and"
-msgstr ""
+msgstr "ΚΑΙ"
 
 #. The logical OR operator
 #: assets/js/params/Condition/AddButton.js:28
 msgid "js.params.Condition.AddButton.or"
-msgstr ""
+msgstr "Ή"
 
 #. The logical AND operator
 #: assets/js/params/Condition/AndOr.js:22
 msgid "js.params.Condition.AndOr.and"
-msgstr ""
+msgstr "ΚΑΙ"
 
 #. The logical OR operator
 #: assets/js/params/Condition/AndOr.js:23
 msgid "js.params.Condition.AndOr.or"
-msgstr ""
-
-#: assets/js/params/Condition/ComparisonOperator.js:26
-msgid "js.params.Condition.Comparison.NumberIsGreaterThanOrEqual"
-msgstr ""
+msgstr "Ή"
 
 #: assets/js/params/Condition/Comparison.js:109
 msgid "js.params.Condition.Comparison.caseSensitive"
-msgstr ""
+msgstr "Ταίριασμα πεζών-κεφαλαίων"
+
+#: assets/js/params/Condition/ComparisonOperator.js:33
+msgid "js.params.Condition.Comparison.cellIsEmpty"
+msgstr "Το κελί είναι κενό"
+
+#: assets/js/params/Condition/ComparisonOperator.js:34
+msgid "js.params.Condition.Comparison.cellIsNotEmpty"
+msgstr "Το κελί δεν είναι κενό"
 
 #: assets/js/params/Condition/ComparisonOperator.js:32
 msgid "js.params.Condition.Comparison.cellIsNotNull"
-msgstr ""
+msgstr "Το κελί δεν είναι μηδενικό"
 
 #: assets/js/params/Condition/ComparisonOperator.js:31
 msgid "js.params.Condition.Comparison.cellIsNull"
-msgstr ""
-
-#: assets/js/params/Condition/ComparisonOperator.js:33
-msgid "js.params.Condition.Comparison.cellIsempty"
-msgstr ""
-
-#: assets/js/params/Condition/ComparisonOperator.js:34
-msgid "js.params.Condition.Comparison.cellIsnotEmpty"
-msgstr ""
+msgstr "Το κελί είναι μηδενικό"
 
 #: assets/js/params/Condition/Comparison.js:69
 msgid "js.params.Condition.Comparison.column.placeholder"
-msgstr ""
-
-#: assets/js/params/Condition/ComparisonOperator.js:15
-msgid "js.params.Condition.Comparison.dateIs"
-msgstr ""
-
-#: assets/js/params/Condition/ComparisonOperator.js:16
-msgid "js.params.Condition.Comparison.dateIsNot"
-msgstr ""
+msgstr "Επιλογή στήλης"
 
 #: assets/js/params/Condition/ComparisonOperator.js:23
 msgid "js.params.Condition.Comparison.numberIs"
-msgstr ""
+msgstr "Ο αριθμός είναι"
 
 #: assets/js/params/Condition/ComparisonOperator.js:25
 msgid "js.params.Condition.Comparison.numberIsGreaterThan"
-msgstr ""
+msgstr "Ο αριθμός είναι μεγαλύτερος από"
+
+#: assets/js/params/Condition/ComparisonOperator.js:26
+msgid "js.params.Condition.Comparison.numberIsGreaterThanOrEqual"
+msgstr "Ο αριθμός είναι μεγαλύτερος από ή ίσος με"
 
 #: assets/js/params/Condition/ComparisonOperator.js:27
 msgid "js.params.Condition.Comparison.numberIsLessThan"
-msgstr ""
+msgstr "Ο αριθμός είναι μικρότερος από"
 
 #: assets/js/params/Condition/ComparisonOperator.js:28
 msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
-msgstr ""
+msgstr "Ο αριθμός είναι μικρότερος από ή ίσος με"
 
 #: assets/js/params/Condition/ComparisonOperator.js:24
 msgid "js.params.Condition.Comparison.numberIsNot"
-msgstr ""
+msgstr "Ο αριθμός δεν είναι"
 
 #: assets/js/params/Condition/Comparison.js:120
 msgid "js.params.Condition.Comparison.regex"
@@ -846,27 +838,31 @@ msgstr ""
 #. is something of the form 'IF something IS like that'.
 #: assets/js/params/Condition/ComparisonOperator.js:66
 msgid "js.params.Condition.Comparison.selectComparison"
-msgstr ""
+msgstr "Επιλογή συνθήκης"
 
 #: assets/js/params/Condition/ComparisonOperator.js:9
 msgid "js.params.Condition.Comparison.textContains"
-msgstr ""
+msgstr "Το κείμενο περιέχει"
 
 #: assets/js/params/Condition/ComparisonOperator.js:10
 msgid "js.params.Condition.Comparison.textDoesNotContain"
-msgstr ""
+msgstr "Το κείμενο δεν περιέχει"
 
 #: assets/js/params/Condition/ComparisonOperator.js:11
-msgid "js.params.Condition.Comparison.textIsExactly"
-msgstr ""
+msgid "js.params.Condition.Comparison.textIs"
+msgstr "Το κείμενο είναι ακριβώς"
 
 #: assets/js/params/Condition/ComparisonOperator.js:12
-msgid "js.params.Condition.Comparison.textIsNotExactly"
-msgstr ""
+msgid "js.params.Condition.Comparison.textIsNot"
+msgstr "Το κείμενο δεν είναι ακριβώς"
+
+#: assets/js/params/Condition/ComparisonOperator.js:15
+msgid "js.params.Condition.Comparison.timestampIs"
+msgstr "Η ημερομηνία είναι"
 
 #: assets/js/params/Condition/ComparisonOperator.js:17
 msgid "js.params.Condition.Comparison.timestampIsAfter"
-msgstr ""
+msgstr "Η ημερομηνία είναι μετά από"
 
 #: assets/js/params/Condition/ComparisonOperator.js:18
 msgid "js.params.Condition.Comparison.timestampIsAfterOrEquals"
@@ -874,11 +870,15 @@ msgstr ""
 
 #: assets/js/params/Condition/ComparisonOperator.js:19
 msgid "js.params.Condition.Comparison.timestampIsBefore"
-msgstr ""
+msgstr "Η ημερομηνία είναι πριν από"
 
 #: assets/js/params/Condition/ComparisonOperator.js:20
 msgid "js.params.Condition.Comparison.timestampIsBeforeOrEquals"
 msgstr ""
+
+#: assets/js/params/Condition/ComparisonOperator.js:16
+msgid "js.params.Condition.Comparison.timestampIsNot"
+msgstr "Η ημερομηνία δεν είναι"
 
 #: assets/js/params/Condition/Comparison.js:90
 msgid "js.params.Condition.Comparison.value.placeholder"
@@ -886,7 +886,7 @@ msgstr ""
 
 #: assets/js/params/Condition/Group.js:68
 msgid "js.params.Condition.Group.heading.title"
-msgstr ""
+msgstr "Αν"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:67
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
@@ -980,7 +980,7 @@ msgid "js.params.Custom.Code.AceEditor.help.sql"
 msgstr ""
 
 #. The parameter will the the name of the custom type
-#: assets/js/params/Custom/index.js:34
+#: assets/js/params/Custom/index.js:32
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Δεν έγινε επεξεργασία του προσαρμοσμένου τύπου {name}"
 
@@ -1020,128 +1020,6 @@ msgstr "API"
 #: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
-
-#. This is the logical AND function.
-#: assets/js/params/Custom/Filters/AddFilter.js:18
-msgid "js.params.Custom.Filters.AddFilter.and"
-msgstr "ΚΑΙ"
-
-#. This is the logical OR function.
-#: assets/js/params/Custom/Filters/AddFilter.js:28
-msgid "js.params.Custom.Filters.AddFilter.or"
-msgstr "Ή"
-
-#: assets/js/params/Custom/Filters/Condition.js:27
-msgid "js.params.Custom.Filters.Condition.NumberIsGreaterOrEqual"
-msgstr "Ο αριθμός είναι μεγαλύτερος από ή ίσος με"
-
-#: assets/js/params/Custom/Filters/Condition.js:33
-msgid "js.params.Custom.Filters.Condition.cellIsNotnull"
-msgstr "Το κελί δεν είναι μηδενικό"
-
-#: assets/js/params/Custom/Filters/Condition.js:34
-msgid "js.params.Custom.Filters.Condition.cellIsempty"
-msgstr "Το κελί είναι κενό"
-
-#: assets/js/params/Custom/Filters/Condition.js:35
-msgid "js.params.Custom.Filters.Condition.cellIsnotEmpty"
-msgstr "Το κελί δεν είναι κενό"
-
-#: assets/js/params/Custom/Filters/Condition.js:32
-msgid "js.params.Custom.Filters.Condition.cellIsnull"
-msgstr "Το κελί είναι μηδενικό"
-
-#: assets/js/params/Custom/Filters/Condition.js:18
-msgid "js.params.Custom.Filters.Condition.dateIs"
-msgstr "Η ημερομηνία είναι"
-
-#: assets/js/params/Custom/Filters/Condition.js:21
-msgid "js.params.Custom.Filters.Condition.dateIsAfter"
-msgstr "Η ημερομηνία είναι μετά από"
-
-#: assets/js/params/Custom/Filters/Condition.js:20
-msgid "js.params.Custom.Filters.Condition.dateIsBefore"
-msgstr "Η ημερομηνία είναι πριν από"
-
-#: assets/js/params/Custom/Filters/Condition.js:19
-msgid "js.params.Custom.Filters.Condition.dateIsNot"
-msgstr "Η ημερομηνία δεν είναι"
-
-#: assets/js/params/Custom/Filters/Condition.js:24
-msgid "js.params.Custom.Filters.Condition.numberIs"
-msgstr "Ο αριθμός είναι"
-
-#: assets/js/params/Custom/Filters/Condition.js:26
-msgid "js.params.Custom.Filters.Condition.numberIsGreaterThan"
-msgstr "Ο αριθμός είναι μεγαλύτερος από"
-
-#: assets/js/params/Custom/Filters/Condition.js:29
-msgid "js.params.Custom.Filters.Condition.numberIsLessOrequal"
-msgstr "Ο αριθμός είναι μικρότερος από ή ίσος με"
-
-#: assets/js/params/Custom/Filters/Condition.js:28
-msgid "js.params.Custom.Filters.Condition.numberIsLessthan"
-msgstr "Ο αριθμός είναι μικρότερος από"
-
-#: assets/js/params/Custom/Filters/Condition.js:25
-msgid "js.params.Custom.Filters.Condition.numberIsNot"
-msgstr "Ο αριθμός δεν είναι"
-
-#. As in 'select a condition relative to which we will filter'. Condition here
-#. is something of the form 'IF something IS like that'.
-#: assets/js/params/Custom/Filters/Condition.js:67
-msgid "js.params.Custom.Filters.Condition.selectCondition"
-msgstr "Επιλογή συνθήκης"
-
-#: assets/js/params/Custom/Filters/Condition.js:9
-msgid "js.params.Custom.Filters.Condition.textContains"
-msgstr "Το κείμενο περιέχει"
-
-#: assets/js/params/Custom/Filters/Condition.js:13
-msgid "js.params.Custom.Filters.Condition.textContainsRegex"
-msgstr "Το κείμενο περιέχει regex"
-
-#: assets/js/params/Custom/Filters/Condition.js:10
-msgid "js.params.Custom.Filters.Condition.textDoesNotContain"
-msgstr "Το κείμενο δεν περιέχει"
-
-#: assets/js/params/Custom/Filters/Condition.js:14
-msgid "js.params.Custom.Filters.Condition.textDoesntContainRegex"
-msgstr "Το κείμενο δεν περιέχει regex"
-
-#: assets/js/params/Custom/Filters/Condition.js:11
-msgid "js.params.Custom.Filters.Condition.textIsExactly"
-msgstr "Το κείμενο είναι ακριβώς"
-
-#: assets/js/params/Custom/Filters/Condition.js:12
-msgid "js.params.Custom.Filters.Condition.textIsNotExactly"
-msgstr "Το κείμενο δεν είναι ακριβώς"
-
-#: assets/js/params/Custom/Filters/Condition.js:15
-msgid "js.params.Custom.Filters.Condition.textMatchesRegexExactly"
-msgstr "Το κείμενο αντιστοιχεί ακριβώς στη regex"
-
-#. This is the logical AND function.
-#: assets/js/params/Custom/Filters/FilterOperator.js:22
-msgid "js.params.Custom.Filters.FilterOperator.OneOperator.and"
-msgstr "ΚΑΙ"
-
-#. This is the logical OR function.
-#: assets/js/params/Custom/Filters/FilterOperator.js:23
-msgid "js.params.Custom.Filters.FilterOperator.OneOperator.or"
-msgstr "Ή"
-
-#: assets/js/params/Custom/Filters/Subfilter.js:80
-msgid "js.params.Custom.Filters.Subfilter.Column.placeholder"
-msgstr "Επιλογή στήλης"
-
-#: assets/js/params/Custom/Filters/Subfilter.js:101
-msgid "js.params.Custom.Filters.Subfilter.SingleLineString.placeholder"
-msgstr "Τιμή"
-
-#: assets/js/params/Custom/Filters/Subfilter.js:121
-msgid "js.params.Custom.Filters.Subfilter.matchCase"
-msgstr "Ταίριασμα πεζών-κεφαλαίων"
 
 #: assets/js/params/Custom/Groups/DateGranularities.js:72
 msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
@@ -1996,10 +1874,6 @@ msgstr "Επιλέξτε στήλη"
 #: assets/js/params/Custom/Aggregations/Aggregation.js:95
 msgid "js.params.custom.Aggregations.Aggregation.outname"
 msgstr "Όνομα"
-
-#: assets/js/params/Custom/Filters/Filter.js:75
-msgid "js.params.custom.Filters.Filter.heading.title"
-msgstr "Αν"
 
 #: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"

@@ -581,7 +581,7 @@ msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #. default-message: This Tab has no Steps.
-#: assets/js/WorkflowEditor/StepList.js:138
+#: assets/js/WorkflowEditor/StepList/StepList.js:14
 msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
 msgstr ""
 
@@ -619,42 +619,42 @@ msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note...
-#: assets/js/WorkflowEditor/step/Step.js:358
+#: assets/js/WorkflowEditor/step/Step.js:352
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:242
+#: assets/js/WorkflowEditor/step/Step.js:236
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:242
+#: assets/js/WorkflowEditor/step/Step.js:236
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/step/Step.js:375
+#: assets/js/WorkflowEditor/step/Step.js:369
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/step/Step.js:375
+#: assets/js/WorkflowEditor/step/Step.js:369
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/step/Step.js:410
+#: assets/js/WorkflowEditor/step/Step.js:404
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/step/Step.js:387
+#: assets/js/WorkflowEditor/step/Step.js:381
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/step/Step.js:397
+#: assets/js/WorkflowEditor/step/Step.js:391
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr ""
 
@@ -906,14 +906,19 @@ msgstr ""
 msgid "js.params.Condition.AndOr.or"
 msgstr ""
 
-#. default-message: Number is greater than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:26
-msgid "js.params.Condition.Comparison.NumberIsGreaterThanOrEqual"
-msgstr ""
-
 #. default-message: Case-sensitive
 #: assets/js/params/Condition/Comparison.js:109
 msgid "js.params.Condition.Comparison.caseSensitive"
+msgstr ""
+
+#. default-message: Cell is empty
+#: assets/js/params/Condition/ComparisonOperator.js:33
+msgid "js.params.Condition.Comparison.cellIsEmpty"
+msgstr ""
+
+#. default-message: Cell is not empty
+#: assets/js/params/Condition/ComparisonOperator.js:34
+msgid "js.params.Condition.Comparison.cellIsNotEmpty"
 msgstr ""
 
 #. default-message: Cell is not null
@@ -926,29 +931,9 @@ msgstr ""
 msgid "js.params.Condition.Comparison.cellIsNull"
 msgstr ""
 
-#. default-message: Cell is empty
-#: assets/js/params/Condition/ComparisonOperator.js:33
-msgid "js.params.Condition.Comparison.cellIsempty"
-msgstr ""
-
-#. default-message: Cell is not empty
-#: assets/js/params/Condition/ComparisonOperator.js:34
-msgid "js.params.Condition.Comparison.cellIsnotEmpty"
-msgstr ""
-
 #. default-message: Select column
 #: assets/js/params/Condition/Comparison.js:69
 msgid "js.params.Condition.Comparison.column.placeholder"
-msgstr ""
-
-#. default-message: Timestamp is
-#: assets/js/params/Condition/ComparisonOperator.js:15
-msgid "js.params.Condition.Comparison.dateIs"
-msgstr ""
-
-#. default-message: Timestamp is not
-#: assets/js/params/Condition/ComparisonOperator.js:16
-msgid "js.params.Condition.Comparison.dateIsNot"
 msgstr ""
 
 #. default-message: Number is
@@ -959,6 +944,11 @@ msgstr ""
 #. default-message: Number is greater than
 #: assets/js/params/Condition/ComparisonOperator.js:25
 msgid "js.params.Condition.Comparison.numberIsGreaterThan"
+msgstr ""
+
+#. default-message: Number is greater than or equals
+#: assets/js/params/Condition/ComparisonOperator.js:26
+msgid "js.params.Condition.Comparison.numberIsGreaterThanOrEqual"
 msgstr ""
 
 #. default-message: Number is less than
@@ -1000,12 +990,17 @@ msgstr ""
 
 #. default-message: Text is exactly
 #: assets/js/params/Condition/ComparisonOperator.js:11
-msgid "js.params.Condition.Comparison.textIsExactly"
+msgid "js.params.Condition.Comparison.textIs"
 msgstr ""
 
 #. default-message: Text is not exactly
 #: assets/js/params/Condition/ComparisonOperator.js:12
-msgid "js.params.Condition.Comparison.textIsNotExactly"
+msgid "js.params.Condition.Comparison.textIsNot"
+msgstr ""
+
+#. default-message: Timestamp is
+#: assets/js/params/Condition/ComparisonOperator.js:15
+msgid "js.params.Condition.Comparison.timestampIs"
 msgstr ""
 
 #. default-message: Timestamp is after
@@ -1026,6 +1021,11 @@ msgstr ""
 #. default-message: Timestamp is before or equals
 #: assets/js/params/Condition/ComparisonOperator.js:20
 msgid "js.params.Condition.Comparison.timestampIsBeforeOrEquals"
+msgstr ""
+
+#. default-message: Timestamp is not
+#: assets/js/params/Condition/ComparisonOperator.js:16
+msgid "js.params.Condition.Comparison.timestampIsNot"
 msgstr ""
 
 #. default-message: Value
@@ -1148,7 +1148,7 @@ msgstr ""
 
 #. The parameter will the the name of the custom type
 #. default-message: Custom type {name} not handled
-#: assets/js/params/Custom/index.js:34
+#: assets/js/params/Custom/index.js:32
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr ""
 
@@ -1196,157 +1196,6 @@ msgstr ""
 #. default-message: Open upload API instructions
 #: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
 msgid "js.params.Custom.File.uploadApi.hoverText"
-msgstr ""
-
-#. This is the logical AND function.
-#. default-message: AND
-#: assets/js/params/Custom/Filters/AddFilter.js:18
-msgid "js.params.Custom.Filters.AddFilter.and"
-msgstr ""
-
-#. This is the logical OR function.
-#. default-message: OR
-#: assets/js/params/Custom/Filters/AddFilter.js:28
-msgid "js.params.Custom.Filters.AddFilter.or"
-msgstr ""
-
-#. default-message: Number is greater than or equals
-#: assets/js/params/Custom/Filters/Condition.js:27
-msgid "js.params.Custom.Filters.Condition.NumberIsGreaterOrEqual"
-msgstr ""
-
-#. default-message: Cell is not null
-#: assets/js/params/Custom/Filters/Condition.js:33
-msgid "js.params.Custom.Filters.Condition.cellIsNotnull"
-msgstr ""
-
-#. default-message: Cell is empty
-#: assets/js/params/Custom/Filters/Condition.js:34
-msgid "js.params.Custom.Filters.Condition.cellIsempty"
-msgstr ""
-
-#. default-message: Cell is not empty
-#: assets/js/params/Custom/Filters/Condition.js:35
-msgid "js.params.Custom.Filters.Condition.cellIsnotEmpty"
-msgstr ""
-
-#. default-message: Cell is null
-#: assets/js/params/Custom/Filters/Condition.js:32
-msgid "js.params.Custom.Filters.Condition.cellIsnull"
-msgstr ""
-
-#. default-message: Date is
-#: assets/js/params/Custom/Filters/Condition.js:18
-msgid "js.params.Custom.Filters.Condition.dateIs"
-msgstr ""
-
-#. default-message: Date is after
-#: assets/js/params/Custom/Filters/Condition.js:21
-msgid "js.params.Custom.Filters.Condition.dateIsAfter"
-msgstr ""
-
-#. default-message: Date is before
-#: assets/js/params/Custom/Filters/Condition.js:20
-msgid "js.params.Custom.Filters.Condition.dateIsBefore"
-msgstr ""
-
-#. default-message: Date is not
-#: assets/js/params/Custom/Filters/Condition.js:19
-msgid "js.params.Custom.Filters.Condition.dateIsNot"
-msgstr ""
-
-#. default-message: Number is
-#: assets/js/params/Custom/Filters/Condition.js:24
-msgid "js.params.Custom.Filters.Condition.numberIs"
-msgstr ""
-
-#. default-message: Number is greater than
-#: assets/js/params/Custom/Filters/Condition.js:26
-msgid "js.params.Custom.Filters.Condition.numberIsGreaterThan"
-msgstr ""
-
-#. default-message: Number is less than or equals
-#: assets/js/params/Custom/Filters/Condition.js:29
-msgid "js.params.Custom.Filters.Condition.numberIsLessOrequal"
-msgstr ""
-
-#. default-message: Number is less than
-#: assets/js/params/Custom/Filters/Condition.js:28
-msgid "js.params.Custom.Filters.Condition.numberIsLessthan"
-msgstr ""
-
-#. default-message: Number is not
-#: assets/js/params/Custom/Filters/Condition.js:25
-msgid "js.params.Custom.Filters.Condition.numberIsNot"
-msgstr ""
-
-#. As in 'select a condition relative to which we will filter'. Condition here
-#. is something of the form 'IF something IS like that'.
-#. default-message: Select condition
-#: assets/js/params/Custom/Filters/Condition.js:67
-msgid "js.params.Custom.Filters.Condition.selectCondition"
-msgstr ""
-
-#. default-message: Text contains
-#: assets/js/params/Custom/Filters/Condition.js:9
-msgid "js.params.Custom.Filters.Condition.textContains"
-msgstr ""
-
-#. default-message: Text contains regex
-#: assets/js/params/Custom/Filters/Condition.js:13
-msgid "js.params.Custom.Filters.Condition.textContainsRegex"
-msgstr ""
-
-#. default-message: Text does not contain
-#: assets/js/params/Custom/Filters/Condition.js:10
-msgid "js.params.Custom.Filters.Condition.textDoesNotContain"
-msgstr ""
-
-#. default-message: Text does not contain regex
-#: assets/js/params/Custom/Filters/Condition.js:14
-msgid "js.params.Custom.Filters.Condition.textDoesntContainRegex"
-msgstr ""
-
-#. default-message: Text is exactly
-#: assets/js/params/Custom/Filters/Condition.js:11
-msgid "js.params.Custom.Filters.Condition.textIsExactly"
-msgstr ""
-
-#. default-message: Text is not exactly
-#: assets/js/params/Custom/Filters/Condition.js:12
-msgid "js.params.Custom.Filters.Condition.textIsNotExactly"
-msgstr ""
-
-#. default-message: Text matches regex exactly
-#: assets/js/params/Custom/Filters/Condition.js:15
-msgid "js.params.Custom.Filters.Condition.textMatchesRegexExactly"
-msgstr ""
-
-#. This is the logical AND function.
-#. default-message: AND
-#: assets/js/params/Custom/Filters/FilterOperator.js:22
-msgid "js.params.Custom.Filters.FilterOperator.OneOperator.and"
-msgstr ""
-
-#. This is the logical OR function.
-#. default-message: OR
-#: assets/js/params/Custom/Filters/FilterOperator.js:23
-msgid "js.params.Custom.Filters.FilterOperator.OneOperator.or"
-msgstr ""
-
-#. default-message: Select column
-#: assets/js/params/Custom/Filters/Subfilter.js:80
-msgid "js.params.Custom.Filters.Subfilter.Column.placeholder"
-msgstr ""
-
-#. default-message: Value
-#: assets/js/params/Custom/Filters/Subfilter.js:101
-msgid "js.params.Custom.Filters.Subfilter.SingleLineString.placeholder"
-msgstr ""
-
-#. default-message: Match case
-#: assets/js/params/Custom/Filters/Subfilter.js:121
-msgid "js.params.Custom.Filters.Subfilter.matchCase"
 msgstr ""
 
 #. default-message: Convert columns
@@ -2321,11 +2170,6 @@ msgstr ""
 #. default-message: Name
 #: assets/js/params/Custom/Aggregations/Aggregation.js:95
 msgid "js.params.custom.Aggregations.Aggregation.outname"
-msgstr ""
-
-#. default-message: If
-#: assets/js/params/Custom/Filters/Filter.js:75
-msgid "js.params.custom.Filters.Filter.heading.title"
 msgstr ""
 
 #. default-message: Manage Subscriptions

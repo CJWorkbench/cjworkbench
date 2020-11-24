@@ -8,12 +8,12 @@ const ValidComparisonOperators = {
   text: [
     { name: 'text_contains', label: t('js.params.Condition.Comparison.textContains')`Text contains` },
     { name: 'text_does_not_contain', label: t('js.params.Condition.Comparison.textDoesNotContain')`Text does not contain` },
-    { name: 'text_is', label: t('js.params.Condition.Comparison.textIsExactly')`Text is exactly` },
-    { name: 'text_is_not', label: t('js.params.Condition.Comparison.textIsNotExactly')`Text is not exactly` }
+    { name: 'text_is', label: t('js.params.Condition.Comparison.textIs')`Text is exactly` },
+    { name: 'text_is_not', label: t('js.params.Condition.Comparison.textIsNot')`Text is not exactly` }
   ],
   timestamp: [
-    { name: 'timestamp_is', label: t('js.params.Condition.Comparison.dateIs')`Timestamp is` },
-    { name: 'timestamp_is_not', label: t('js.params.Condition.Comparison.dateIsNot')`Timestamp is not` },
+    { name: 'timestamp_is', label: t('js.params.Condition.Comparison.timestampIs')`Timestamp is` },
+    { name: 'timestamp_is_not', label: t('js.params.Condition.Comparison.timestampIsNot')`Timestamp is not` },
     { name: 'timestamp_is_after', label: t('js.params.Condition.Comparison.timestampIsAfter')`Timestamp is after` },
     { name: 'timestamp_is_after_or_equals', label: t('js.params.Condition.Comparison.timestampIsAfterOrEquals')`Timestamp is after or equals` },
     { name: 'timestamp_is_before', label: t('js.params.Condition.Comparison.timestampIsBefore')`Timestamp is before` },
@@ -23,15 +23,15 @@ const ValidComparisonOperators = {
     { name: 'number_is', label: t('js.params.Condition.Comparison.numberIs')`Number is` },
     { name: 'number_is_not', label: t('js.params.Condition.Comparison.numberIsNot')`Number is not` },
     { name: 'number_is_greater_than', label: t('js.params.Condition.Comparison.numberIsGreaterThan')`Number is greater than` },
-    { name: 'number_is_greater_than_or_equals', label: t('js.params.Condition.Comparison.NumberIsGreaterThanOrEqual')`Number is greater than or equals` },
+    { name: 'number_is_greater_than_or_equals', label: t('js.params.Condition.Comparison.numberIsGreaterThanOrEqual')`Number is greater than or equals` },
     { name: 'number_is_less_than', label: t('js.params.Condition.Comparison.numberIsLessThan')`Number is less than` },
     { name: 'number_is_less_than_or_equals', label: t('js.params.Condition.Comparison.numberIsLessThanOrEqual')`Number is less than or equals` }
   ],
   any: [
     { name: 'cell_is_null', label: t('js.params.Condition.Comparison.cellIsNull')`Cell is null` },
     { name: 'cell_is_not_null', label: t('js.params.Condition.Comparison.cellIsNotNull')`Cell is not null` },
-    { name: 'cell_is_empty', label: t('js.params.Condition.Comparison.cellIsempty')`Cell is empty` },
-    { name: 'cell_is_not_empty', label: t('js.params.Condition.Comparison.cellIsnotEmpty')`Cell is not empty` }
+    { name: 'cell_is_empty', label: t('js.params.Condition.Comparison.cellIsEmpty')`Cell is empty` },
+    { name: 'cell_is_not_empty', label: t('js.params.Condition.Comparison.cellIsNotEmpty')`Cell is not empty` }
   ]
 }
 
