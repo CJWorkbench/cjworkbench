@@ -369,6 +369,7 @@ describe('Step, not read-only mode', () => {
           isAfterSelected={false}
           onDragStart={jest.fn()}
           onDragEnd={jest.fn()}
+          isDragging={false}
           setZenMode={jest.fn()}
           api={mockApi}
         />
@@ -439,6 +440,7 @@ describe('Step, not read-only mode', () => {
             isAfterSelected={false}
             onDragStart={jest.fn()}
             onDragEnd={jest.fn()}
+            isDragging={false}
             setZenMode={jest.fn()}
             api={mockApi}
           />
