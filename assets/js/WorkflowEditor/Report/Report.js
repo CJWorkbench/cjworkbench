@@ -29,11 +29,11 @@ export default function Report ({
   return (
     <div className={`report-container ${isReadOnly ? 'report-read-only' : 'report-read-write'}`}>
       <ReportHeader title={workflow.name} />
+      {isReadOnly ? null : (
+        <AddBlockPrompt position={0} tabs={reportableTabs} onSubmit={addBlock} />
+      )}
       {blocks.map((block, position) => (
         <React.Fragment key={block.slug}>
-          {isReadOnly ? null : (
-            <AddBlockPrompt position={position} tabs={reportableTabs} onSubmit={addBlock} />
-          )}
           <Block
             workflowId={workflow.id}
             block={block}
@@ -43,11 +43,11 @@ export default function Report ({
             onClickMoveDown={position === blocks.length - 1 ? null : handleClickMoveDown}
             setBlockMarkdown={setBlockMarkdown}
           />
+          {isReadOnly ? null : (
+            <AddBlockPrompt position={position + 1} tabs={reportableTabs} onSubmit={addBlock} />
+          )}
         </React.Fragment>
       ))}
-      {isReadOnly ? null : (
-        <AddBlockPrompt position={blocks.length} tabs={reportableTabs} onSubmit={addBlock} />
-      )}
     </div>
   )
 }
