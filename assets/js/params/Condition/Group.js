@@ -48,7 +48,7 @@ export default class Group extends React.PureComponent {
 
   handleDeleteCondition = (conditionIndex) => {
     const { value, onChange, index } = this.props
-    const conditions = value.comparisons.slice() // copy: we'll mutate it
+    const conditions = value.conditions.slice() // copy: we'll mutate it
     conditions.splice(conditionIndex, 1)
     onChange(index, { ...value, conditions })
   }
