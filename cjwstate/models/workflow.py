@@ -535,6 +535,11 @@ class Workflow(models.Model):
         # we'll raise a ProtectedError.
         self.clear_deltas()
 
+        # Next, clear Report blocks. Their Step/Tab ON_DELETE is models.PROTECT,
+        # because [2020-11-30, adamhooper] we want to test for months before
+        # we're confident that we don't delete blocks at the wrong times.
+        self.blocks.all().delete()
+
         # Clear all minio data. We _should_ clear it in pre-delete hooks on
         # StoredObject, UploadedFile, etc.; but [2019-06-03, adamhooper] the
         # database is inconsistent and Django is hard to use so new bugs may

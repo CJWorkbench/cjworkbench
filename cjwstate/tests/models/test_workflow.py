@@ -46,6 +46,19 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.alice = User.objects.create(username="a", email="a@example.org")
         self.bob = User.objects.create(username="b", email="b@example.org")
 
+    def test_delete_with_report_blocks(self):
+        workflow = Workflow.create_and_init(name="Foo")
+        tab = workflow.tabs.first()
+        step = tab.steps.create(order=0, module_id_name="something")
+        workflow.blocks.create(
+            position=0, slug="block-tab", block_type="Table", tab_id=tab.id
+        )
+        workflow.blocks.create(
+            position=1, slug="block-step", block_type="Chart", step_id=step.id
+        )
+
+        workflow.delete()
+
     def test_workflow_duplicate(self):
         # Create workflow with two Steps
         wf1 = Workflow.create_and_init(name="Foo")
