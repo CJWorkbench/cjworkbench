@@ -585,7 +585,7 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
     if message.id == "TODO_i18n" and (
         message.source is None or message.source == "cjwmodule"
     ):
-        return message.args["text"]
+        return message.arguments["text"]
 
     # Get localizer
     try:
@@ -605,7 +605,9 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
 
     # Attempt to localize in the locale given by `ctx`.
     try:
-        return localizer.localize(ctx.locale_id, message.id, arguments=message.args)
+        return localizer.localize(
+            ctx.locale_id, message.id, arguments=message.arguments
+        )
     except ICUError:
         # `localize` handles `ICUError` for the given locale.
         # Hence, if we get here, it means that the message is badly formatted in the default locale.

@@ -47,7 +47,7 @@ class PromptingError(Exception):
                     I18nMessage.trans(
                         "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber",
                         default="“{value}” is not a number. Please enter a number.",
-                        args={"value": self.value},
+                        arguments={"value": self.value},
                     )
                 )
             ]
@@ -65,7 +65,7 @@ class PromptingError(Exception):
                     I18nMessage.trans(
                         "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp",
                         default="“{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.",
-                        args={"value": self.value},
+                        arguments={"value": self.value},
                     )
                 )
             ]
@@ -133,7 +133,7 @@ class PromptingError(Exception):
                 message = I18nMessage.trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
                     default="Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}",
-                    args={
+                    arguments={
                         "found_type": self.found_type,
                         "best_wanted_type": self.best_wanted_type_id,
                     },
@@ -180,7 +180,7 @@ class PromptingError(Exception):
                     " =2 {The columns “{0}” and “{1}” must be converted to Text.}"
                     " =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.}"
                     " other {The columns “{0}”, “{1}” and # others must be converted to Text.}}",
-                    args=icu_args,
+                    arguments=icu_args,
                 )
             else:
                 icu_args["found_type"] = self.found_type
@@ -193,7 +193,7 @@ class PromptingError(Exception):
                     " =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.}"
                     " =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}"
                     " other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}",
-                    args=icu_args,
+                    arguments=icu_args,
                 )
 
     def __init__(self, errors: List[PromptingError.WrongColumnType]):

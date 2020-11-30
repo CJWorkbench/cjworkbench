@@ -410,7 +410,7 @@ class I18nMessage:
     id: str
     """Message ID. For instance, `modules.renamecolumns.duplicateColname`"""
 
-    args: Dict[str, Union[int, float, str]] = field(default_factory=dict)
+    arguments: Dict[str, Union[int, float, str]] = field(default_factory=dict)
     """Arguments (empty if message does not need any -- which is common)."""
 
     source: Optional[str] = None
@@ -425,13 +425,13 @@ class I18nMessage:
     @classmethod
     def from_arrow(cls, value: atypes.I18nMessage) -> I18nMessage:
         if value.source:
-            return cls(value.id, value.args, value.source)
-        return cls(value.id, value.args)
+            return cls(value.id, value.arguments, value.source)
+        return cls(value.id, value.arguments)
 
     def to_arrow(self) -> atypes.I18nMessage:
         if self.source:
-            return atypes.I18nMessage(self.id, self.args, self.source)
-        return atypes.I18nMessage(self.id, self.args)
+            return atypes.I18nMessage(self.id, self.arguments, self.source)
+        return atypes.I18nMessage(self.id, self.arguments)
 
     @classmethod
     def TODO_i18n(cls, text: str) -> I18nMessage:
@@ -501,10 +501,10 @@ class QuickFix:
     """Text on the button."""
 
     action: str
-    """Reducer action to invoke, such as 'prependModule'"""
+    """Reducer action to invoke, such as 'prependModule'."""
 
     args: List
-    """Action arguments, as a list"""
+    """Action arguments, as a list."""
 
     def to_dict(self):
         return asdict(self)
@@ -866,7 +866,7 @@ class ProcessResult:
                         atypes.I18nMessage.trans(
                             "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
                             default="Truncated output from {old_number} rows to {new_number}",
-                            args={"old_number": old_len, "new_number": new_len},
+                            arguments={"old_number": old_len, "new_number": new_len},
                         )
                     )
                 )
@@ -902,7 +902,7 @@ class ProcessResult:
         """
         if self.errors:
             if self.errors[0].message.id == "TODO_i18n":
-                return self.errors[0].message.args["text"]
+                return self.errors[0].message.arguments["text"]
             else:
                 raise RuntimeError("Not supported")
         else:

@@ -15,7 +15,7 @@ def _service_no_longer_configured_error(service: str):
     return I18nMessage.trans(
         "py.fetcher.secrets._service_no_longer_configured_error",
         default='Service "{service}" is no longer configured',
-        args={"service": service},
+        arguments={"service": service},
     )
 
 
@@ -50,7 +50,7 @@ def _secret_error(user_secret: Dict[str, Any], message: I18nMessage) -> Dict[str
         **user_secret,
         "error": {
             "id": message.id,
-            "arguments": message.args,
+            "arguments": message.arguments,
             "source": message.source,
         },
     }
@@ -167,7 +167,7 @@ async def _refresh_oauth2_token(
                         I18nMessage.trans(
                             "py.fetcher.secrets._refresh_oauth2_token.error.general",
                             default="Token server responded with {status_code}: {error} ({description})",
-                            args={
+                            arguments={
                                 "status_code": response.status,
                                 "error": str(body["error"]),
                                 "description": body.get("error_description"),
@@ -180,7 +180,7 @@ async def _refresh_oauth2_token(
                         I18nMessage.trans(
                             "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
                             default="{service_id} responded with HTTP {status_code} {reason}: {description}",
-                            args={
+                            arguments={
                                 "service_id": service.service_id,
                                 "status_code": response.status,
                                 "reason": response.reason,
@@ -204,7 +204,7 @@ async def _refresh_oauth2_token(
             I18nMessage.trans(
                 "py.fetcher.secrets._refresh_oauth2_token.client_error",
                 default="HTTP error during OAuth2 token refresh: {error}",
-                args={"error": str(err)},
+                arguments={"error": str(err)},
             )
         )
 

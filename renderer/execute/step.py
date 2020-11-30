@@ -134,7 +134,7 @@ def _wrap_render_errors(render_call):
                         "py.renderer.execute.step.user_visible_bug_during_render",
                         default="Something unexpected happened. We have been notified and are "
                         "working to fix it. If this persists, contact us. Error code: {message}",
-                        args={"message": format_for_user_debugging(err)},
+                        arguments={"message": format_for_user_debugging(err)},
                     )
                 )
             ]

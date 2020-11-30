@@ -15,9 +15,9 @@ from cjwkernel.types import (
 
 def _i18n_message_to_dict(value: I18nMessage) -> Dict[str, Any]:
     if value.source:
-        return {"id": value.id, "arguments": value.args, "source": value.source}
+        return {"id": value.id, "arguments": value.arguments, "source": value.source}
     else:
-        return {"id": value.id, "arguments": value.args}
+        return {"id": value.id, "arguments": value.arguments}
 
 
 def _dict_to_i18n_message(value: Dict[str, Any]) -> I18nMessage:

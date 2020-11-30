@@ -413,7 +413,7 @@ class I18nMessage(NamedTuple):
     id: str
     """Message ID. For instance, `modules.renamecolumns.duplicateColname`"""
 
-    args: Dict[str, Union[int, float, str]] = {}
+    arguments: Dict[str, Union[int, float, str]] = {}
     """Arguments (empty if message does not need any -- which is common)."""
 
     source: Literal["module", "cjwmodule", None] = None
@@ -441,7 +441,7 @@ class I18nMessage(NamedTuple):
         message_id: str,
         *,
         default: str,
-        args: Dict[str, Union[int, float, str]] = {},
+        arguments: Dict[str, Union[int, float, str]] = {},
     ) -> I18nMessage:
         """
         Build an I18nMessage, marking it for translation.
@@ -450,7 +450,7 @@ class I18nMessage(NamedTuple):
 
         The `default` argument is ignored at runtime, it's only used when parsing code.
         """
-        return cls(message_id, args)
+        return cls(message_id, arguments)
 
 
 ParamValue = Union[
@@ -630,7 +630,7 @@ def arrow_tab_output_to_thrift(value: TabOutput) -> ttypes.Tab:
 def arrow_i18n_message_to_thrift(value: I18nMessage) -> ttypes.I18nMessage:
     return ttypes.I18nMessage(
         value.id,
-        {k: _i18n_argument_to_thrift(v) for k, v in value.args.items()},
+        {k: _i18n_argument_to_thrift(v) for k, v in value.arguments.items()},
         value.source,
     )
 
