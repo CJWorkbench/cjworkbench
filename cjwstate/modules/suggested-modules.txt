@@ -43,6 +43,7 @@ splittimestamp
 startfromtab
 timestampmath
 transpose
+twitter
 upload
 valuefilter
 wordcloud
