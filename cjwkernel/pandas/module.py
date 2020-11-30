@@ -187,8 +187,7 @@ def __render_arrow(
     fetch_result: Optional[types.FetchResult],
     output_path: Path,
 ) -> types.RenderResult:
-    """
-    Render using `cjwkernel.types` data types.
+    """Render using `cjwkernel.types` data types.
 
     Write to `output_path`.
 
@@ -317,8 +316,7 @@ def fetch_pandas(
     input_table_parquet_path: Optional[Path],
     output_path: Path,
 ) -> Union[ptypes.ProcessResult, types.FetchResult]:
-    """
-    Call `fetch()` and validate the result.
+    """Call `fetch()` and validate the result.
 
     Module authors should not replace this function: they should replace
     `fetch()` instead.
@@ -333,6 +331,8 @@ def fetch_pandas(
 
     if varkw or "secrets" in kwonlyargs:
         kwargs["secrets"] = secrets
+    if varkw or "settings" in kwonlyargs:
+        kwargs["settings"] = settings
 
     if varkw or "get_input_dataframe" in kwonlyargs:
 
@@ -399,8 +399,7 @@ def fetch_arrow(
     input_table_parquet_path: Optional[Path],
     output_path: Path,
 ) -> types.FetchResult:
-    """
-    Render using `cjwkernel.types` data types.
+    """Render using `cjwkernel.types` data types.
 
     The result will be encoded as a Parquet file.
 

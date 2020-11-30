@@ -55,8 +55,7 @@ ENCODING_IMPORTS = [
 @dataclass
 class ChildReader:
     fileno: int
-    """
-    File descriptor to read from.
+    """File descriptor to read from.
 
     ChildReader won't call `os.close(fileno)` when closing; be sure
     you close `fileno` elsewhere.
@@ -115,8 +114,7 @@ class ChildReader:
 
 
 class Kernel:
-    """
-    Compiles and runs user-supplied module code.
+    """Compiles and runs user-supplied module code.
 
     Here's the thing about user code: it can only be run in a sandbox.
     `compile()` is safe, but `exec()` is dangerous -- after running user code,
@@ -264,9 +262,7 @@ class Kernel:
     def migrate_params(
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
-        """
-        Call a module's migrate_params().
-        """
+        """Call a module's migrate_params()."""
         request = arrow_raw_params_to_thrift(RawParams(params))
         response = self._run_in_child(
             chroot_dir=READONLY_CHROOT_DIR,
@@ -290,8 +286,7 @@ class Kernel:
         fetch_result: Optional[FetchResult],
         output_filename: str,
     ) -> RenderResult:
-        """
-        Run the module's `render_thrift()` function and return its result.
+        """Run the module's `render_thrift()` function and return its result.
 
         Raise ModuleError if the module has a bug.
         """
@@ -347,8 +342,7 @@ class Kernel:
         input_parquet_filename: Optional[str],
         output_filename: str,
     ) -> FetchResult:
-        """
-        Run the module's `fetch_thrift()` function and return its result.
+        """Run the module's `fetch_thrift()` function and return its result.
 
         Raise ModuleError if the module has a bug.
         """
@@ -400,8 +394,7 @@ class Kernel:
         function: str,
         args: List[Any],
     ) -> None:
-        """
-        Fork a child process to run `function` with `args`.
+        """Fork a child process to run `function` with `args`.
 
         `args` must be Thrift data types. `result` must also be a Thrift type --
         its `.read()` function will be called, which may produce an error if

@@ -518,13 +518,10 @@ class RenderError(NamedTuple):
 
 
 class FetchResult(NamedTuple):
-    """
-    The module executed a Step's fetch() without crashing.
-    """
+    """The module executed a Step's fetch() without crashing."""
 
     path: Path
-    """
-    File storing whatever data fetch() output.
+    """File storing whatever data fetch() output.
 
     If `path` starts and ends with Parquet's magic numbers, "PAR1", then
     fetcher will interpret `path` as tabular data. Otherwise, it will be
@@ -533,9 +530,7 @@ class FetchResult(NamedTuple):
     """
 
     errors: List[RenderError] = []
-    """
-    User-facing errors (or warnings) reported by the module.
-    """
+    """User-facing errors (or warnings) reported by the module."""
 
 
 @dataclass(frozen=True)
