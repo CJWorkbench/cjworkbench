@@ -44,7 +44,7 @@
         border-top-right-radius: .5rem;
 
         font-size: 1.4rem;
-        line-height: 1.5;
+        line-height: 1.5; // 2.1rem
 
         .size-calculator, input[name="tab-name"] {
           white-space: pre; // do not collapse whitespace
@@ -217,11 +217,12 @@
   }
 
   button.new-tab {
+    margin-left: .8rem;
     flex: 0 0 auto;
     align-self: center;
     width: 1.8rem;
     height: 1.8rem;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     line-height: 1;
     border: 0; // disable browser's native button display
     background: $pane-select-tab-bg;

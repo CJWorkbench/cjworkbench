@@ -4,6 +4,7 @@ import * as propTypes from './propTypes'
 import Tabs from './Tabs'
 import { t, Trans } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
+import IconReport from '../../icons/report.svg'
 
 const PaneSelect = React.memo(withI18n()(function PaneSelect ({ selectedPane, selectReportPane, i18n }) {
   return (
@@ -16,7 +17,7 @@ const PaneSelect = React.memo(withI18n()(function PaneSelect ({ selectedPane, se
           onClick={selectReportPane}
           disabled={selectedPane.pane === 'report'}
         >
-          <i className='icon icon-chart' />
+          <IconReport />
           <Trans id='js.WorkflowEditor.PaneSelect.nav.report' description='This is a link to a report'>Report</Trans>
         </button>
       </div>

@@ -25,7 +25,7 @@ nav.pane-select {
       // Sorta copy/pasted from _Tabs.scss
       font: inherit;
       font-size: 1.4rem;
-      line-height: 1.5;
+      line-height: 1.5; // 2.1rem
       border: 0;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
@@ -33,9 +33,9 @@ nav.pane-select {
       background: $pane-select-tab-bg;
       color: $pane-select-tab-fg;
 
-      i {
+      svg {
         margin-right: .5rem;
-        vertical-align: -.2rem; // aargh, chart icon doesn't line up with baseline
+        font-size: 1.6rem;
       }
 
       &:disabled {

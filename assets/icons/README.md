@@ -24,30 +24,42 @@ If you break these rules, you must explain why:
 
 ### Height=32 (unitless)
 
-Every SVG has height=32.
+Every SVG has width=32, height=32.
 
-The width must be a multiple of 2.
+They are square because we show icons in grids: both horizontally (on a
+toolbar) and vertically (in a menu).
+
+The number is 32 because it leads to small file sizes at height=16px.
 
 ### Snap points to even-numbered gridlines (2, 4, 6, ...)
 
-We typically render fonts with height=16px. The top-left pixel spans (0, 0) to
-(2, 2). Anything in between that consumes less than 1px.
+We typically render icons with height=16px. The top-left pixel on the user's
+view of the icon spans (0, 0) to (2, 2) in SVG coordinates. So odd numbers in
+SVG coordinates lie _in between_ monitor pixels.
 
 A square with x=15, y=15, w=2, h=2 can appear blurry, because its corners are
 "in between" the nearest pixel corners, which are at (14, 14) and (16, 16).
 Between-pixel lines are "anti-aliased": they appear blurry and discolored.
-
-(On a Retina display, there _is_ a pixel boundary at (15, 15); so the icon will
-look sharp in that case. Most users don't use Retina displays.)
 
 In this example, prefer x=14, y=14, w=4, h=4. This aligns to the user's pixel
 grid, so the icon is sharp and the user sees exactly what you designed. (If you
 _want_ the blurry discoloration, align to the pixel grid and then choose a
 low-contrast color. That way, all users see the same results.)
 
+If you don't want to double the width of your square, you may instead
+"un-center" your icon to snap it to the grid: use x=14, y=14, w=2, h=2.
+
+(On a Retina display, (15, 15) is sharp. Most users don't have one.)
+
 ### Position icons consistently
 
-The "body" of an icon is between y=8 and y=24.
+We display up fonts next to each other: either horizontally
+(on a toolbar), or vertically (in a menu).
+
+Horizontally: the "body" of an icon should be centered around x=16. If this
+would make break the rule about even-numbered points, then center around x=15.
+
+Vertically: the "body" of an icon should lie between y=8 and y=24.
 
 Full-size icons span from the bottom of text's descenders to the top of its
 ascenders. But many typical icons -- e.g., a "plus" icon -- appear inline with
