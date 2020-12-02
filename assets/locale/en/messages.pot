@@ -586,7 +586,7 @@ msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
 msgstr ""
 
 #. default-message: Create tab
-#: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:14
+#: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:15
 msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
 msgstr ""
 
@@ -1962,17 +1962,17 @@ msgid "js.params.Multichartseries.ColorPicker.pickColor.hoverText"
 msgstr ""
 
 #. default-message: add another column
-#: assets/js/params/Multichartseries/index.js:64
+#: assets/js/params/Multichartseries/index.js:73
 msgid "js.params.Multichartseries.addColumn.hoverText"
 msgstr ""
 
 #. default-message: Loading…
-#: assets/js/params/Multichartseries/index.js:88
+#: assets/js/params/Multichartseries/index.js:86
 msgid "js.params.Multichartseries.loading"
 msgstr ""
 
 #. default-message: remove last column
-#: assets/js/params/Multichartseries/index.js:70
+#: assets/js/params/Multichartseries/index.js:68
 msgid "js.params.Multichartseries.removeLastColumn.hoverText"
 msgstr ""
 
