@@ -3774,18 +3774,18 @@ exports[`Multichartseries should match snapshot 1`] = `
             title="remove last column"
             type="button"
           >
-            <i
-              className="icon-removec"
-            />
+            <SvgrMock>
+              /app/assets/icons/removec-hollow.svg
+            </SvgrMock>
           </button>
           <button
             onClick={[Function]}
             title="add another column"
             type="button"
           >
-            <i
-              className="icon-addc"
-            />
+            <SvgrMock>
+              /app/assets/icons/addc-hollow.svg
+            </SvgrMock>
           </button>
         </div>
       </div>
