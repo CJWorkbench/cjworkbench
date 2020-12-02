@@ -84,8 +84,10 @@ module.exports = {
                 fill: 'currentColor'
               },
               svgoConfig: {
-                removeXMLNS: true,
-                removeAttrs: { attrs: ['stroke', 'fill'] }
+                plugins: [
+                  { removeXMLNS: true },
+                  { removeAttrs: { attrs: ['stroke', 'fill'] } }
+                ]
               }
             }
           }
