@@ -69,15 +69,13 @@ def _thrift_filename_to_path(filename: str, basedir: Path) -> Path:
 @dataclass(frozen=True)
 class CompiledModule:
     module_slug: str
-    """
-    Identifier for the module.
+    """Identifier for the module.
 
     This helps with log messages and debugging.
     """
 
     marshalled_code_object: bytes
-    """
-    `compile()` return value, serialied by "marshal" module.
+    """`compile()` return value, serialied by "marshal" module.
 
     This can be used as: `exec(marshal.loads(marshalled_code_object))`.
 

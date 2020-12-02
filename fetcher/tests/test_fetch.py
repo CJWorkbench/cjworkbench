@@ -281,7 +281,7 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
                 self.basedir,
                 "mod",
                 create_module_zipfile("mod"),
-                ModuleExitedError(1, "Traceback:\n\n\nRuntimeError: bad"),
+                ModuleExitedError("mod", 1, "Traceback:\n\n\nRuntimeError: bad"),
                 {},
                 None,
                 None,
@@ -411,7 +411,7 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
         )
 
     def test_fetch_module_error(self):
-        self.kernel.fetch.side_effect = ModuleExitedError(1, "RuntimeError: bad")
+        self.kernel.fetch.side_effect = ModuleExitedError("mod", 1, "RuntimeError: bad")
         with self.assertLogs(level=logging.ERROR):
             result = fetch.fetch_or_wrap_error(
                 self.ctx,

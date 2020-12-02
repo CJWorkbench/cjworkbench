@@ -244,8 +244,7 @@ class Kernel:
         self._pyspawner.close()
 
     def validate(self, compiled_module: CompiledModule) -> None:
-        """
-        Detect common errors in the user's code.
+        """Detect common errors in the user's code.
 
         Raise ModuleExitedError or ModuleTimeoutError on error.
         """
@@ -319,7 +318,9 @@ class Kernel:
             chroot_context.clear_unowned_edits()
 
         if result.table.filename and result.table.filename != output_filename:
-            raise ModuleExitedError(0, "Module wrote to wrong output file")
+            raise ModuleExitedError(
+                compiled_module.module_slug, 0, "Module wrote to wrong output file"
+            )
 
         try:
             # thrift_render_result_to_arrow() verifies all filenames passed by
@@ -328,7 +329,11 @@ class Kernel:
             # raise ValidateError
             render_result = thrift_render_result_to_arrow(result, basedir)
         except ValidateError as err:
-            raise ModuleExitedError(0, "Module produced invalid data: %s" % str(err))
+            raise ModuleExitedError(
+                compiled_module.module_slug,
+                0,
+                "Module produced invalid data: %s" % str(err),
+            )
         return render_result
 
     def fetch(
@@ -375,7 +380,9 @@ class Kernel:
             chroot_context.clear_unowned_edits()
 
         if result.filename and result.filename != output_filename:
-            raise ModuleExitedError(0, "Module wrote to wrong output file")
+            raise ModuleExitedError(
+                compiled_module.module_slug, 0, "Module wrote to wrong output file"
+            )
 
         # TODO validate result isn't too large. If result is dataframe it makes
         # sense to truncate; but fetch results aren't necessarily data frames.
@@ -432,13 +439,11 @@ class Kernel:
                     if not timed_out:
                         timed_out = True
                         module_process.kill()  # untrusted code could ignore SIGTERM
-                    timeout = None  # wait as long as it takes for everything to die
+                    remaining = None  # wait as long as it takes for everything to die
                     # Fall through. After SIGKILL the child will close each fd,
                     # sending EOF to us. That means the selector _must_ return.
-                else:
-                    timeout = remaining  # wait until we reach our timeout
 
-                events = selector.select(timeout=timeout)
+                events = selector.select(timeout=remaining)
                 ready = frozenset(key.fd for key, _ in events)
                 for reader in (output_reader, log_reader):
                     if reader.fileno in ready:
@@ -470,22 +475,28 @@ class Kernel:
             raise RuntimeError("Unhandled wait() status: %r" % exit_status)
 
         if timed_out:
-            raise ModuleTimeoutError
+            raise ModuleTimeoutError(compiled_module.module_slug, timeout)
 
         if exit_code != 0:
-            raise ModuleExitedError(exit_code, log_reader.to_str())
+            raise ModuleExitedError(
+                compiled_module.module_slug, exit_code, log_reader.to_str()
+            )
 
         transport = thrift.transport.TTransport.TMemoryBuffer(output_reader.buffer)
         protocol = thrift.protocol.TBinaryProtocol.TBinaryProtocol(transport)
         try:
             result.read(protocol)
         except EOFError:  # TODO handle other errors Thrift may throw
-            raise ModuleExitedError(exit_code, log_reader.to_str()) from None
+            raise ModuleExitedError(
+                compiled_module.module_slug, exit_code, log_reader.to_str()
+            ) from None
 
         # We should be at the end of the output now. If we aren't, that means
         # the child wrote too much.
         if transport.read(1) != b"":
-            raise ModuleExitedError(exit_code, log_reader.to_str())
+            raise ModuleExitedError(
+                compiled_module.module_slug, exit_code, log_reader.to_str()
+            )
 
         if log_reader.buffer:
             logger.info("Output from module process: %s", log_reader.to_str())
