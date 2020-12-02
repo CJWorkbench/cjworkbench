@@ -28,12 +28,22 @@ Every SVG has height=32.
 
 The width must be a multiple of 2.
 
-### Snap points to 16-unit grid
+### Snap points to even-numbered gridlines (2, 4, 6, ...)
 
-We typically render fonts with height=16px. A square with x=15, y=15, w=2, h=2
-will appear blurry, because its edges aren't between pixels. It will also look
-different on different browsers. Prefer x=14, y=14, w=4, h=4: this aligns to
-the user's pixel grid, so the icon you produce is the icon the user sees.
+We typically render fonts with height=16px. The top-left pixel spans (0, 0) to
+(2, 2). Anything in between that consumes less than 1px.
+
+A square with x=15, y=15, w=2, h=2 can appear blurry, because its corners are
+"in between" the nearest pixel corners, which are at (14, 14) and (16, 16).
+Between-pixel lines are "anti-aliased": they appear blurry and discolored.
+
+(On a Retina display, there _is_ a pixel boundary at (15, 15); so the icon will
+look sharp in that case. Most users don't use Retina displays.)
+
+In this example, prefer x=14, y=14, w=4, h=4. This aligns to the user's pixel
+grid, so the icon is sharp and the user sees exactly what you designed. (If you
+_want_ the blurry discoloration, align to the pixel grid and then choose a
+low-contrast color. That way, all users see the same results.)
 
 ### Position icons consistently
 
