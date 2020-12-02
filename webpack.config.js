@@ -74,8 +74,29 @@ module.exports = {
         ]
       },
       {
+        test: /assets\/icons\/[^/]+\.svg$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: {
+              icon: true,
+              svgProps: {
+                fill: 'currentColor'
+              },
+              svgoConfig: {
+                removeXMLNS: true,
+                removeAttrs: { attrs: ['stroke', 'fill'] }
+              }
+            }
+          }
+        ]
+      },
+      {
         // static files
-        test: /\.(gif|png|jpg|svg|woff|woff2)$/,
+        test: [
+          /\.(gif|png|jpg|woff|woff2)$/,
+          /assets\/images\/.*\.svg$/
+        ],
         loader: 'url-loader',
         options: {
           limit: 40000,

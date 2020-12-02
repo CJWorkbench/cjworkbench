@@ -40,6 +40,7 @@
     "@lingui/loader": "^2.9.2",
     "@lingui/macro": "^2.9.2",
     "@lingui/react": "^2.9.2",
+    "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "abort-controller": "^3.0.0",
@@ -106,7 +107,8 @@
     },
     "transform": {
       "\\.jsx?$": "babel-jest",
-      "\\.po$": "./assets/js/i18n/__mocks__/poFile"
+      "\\.po$": "./assets/js/i18n/__mocks__/poFile",
+      "\\/icons\\/[^/]+\\.svg$": "<rootDir>/assets/icons/__mocks__/svgrTransformer.js"
     },
     "watchPathIgnorePatterns": [
       "<rootDir>/node_modules/"
@@ -116,7 +118,7 @@
     "type": "git",
     "url": "https://github.com/CJWorkbench/cjworkbench.git"
   },
-  "author": "Jonathan Stray",
+  "author": "Adam Hooper <adam@adamhooper.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/CJWorkbench/cjworkbench/issues"

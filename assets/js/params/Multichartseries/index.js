@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import ChartSeriesSelect from './ChartSeriesSelect'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
+import IconAddcHollow from '../../../icons/addc-hollow.svg'
+import IconRemovecHollow from '../../../icons/removec-hollow.svg'
 
 export class Multichartseries extends React.PureComponent {
   static propTypes = {
@@ -60,22 +62,18 @@ export class Multichartseries extends React.PureComponent {
     if (!showAddButton && !showRemoveButton) {
       return null
     } else {
-      const addButton = !showAddButton ? null : (
-        <button type='button' title={i18n._(t('js.params.Multichartseries.addColumn.hoverText')`add another column`)} onClick={this.handleClickAddPlaceholder}>
-          <i className='icon-addc' />
-        </button>
-      )
-
-      const removeButton = !showRemoveButton ? null : (
-        <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn.hoverText')`remove last column`)} onClick={this.handleClickRemoveLast}>
-          <i className='icon-removec' />
-        </button>
-      )
-
       return (
         <div className='buttons'>
-          {removeButton}
-          {addButton}
+          {showRemoveButton ? (
+            <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn.hoverText')`remove last column`)} onClick={this.handleClickRemoveLast}>
+              <IconRemovecHollow />
+            </button>
+          ) : null}
+          {showAddButton ? (
+            <button type='button' title={i18n._(t('js.params.Multichartseries.addColumn.hoverText')`add another column`)} onClick={this.handleClickAddPlaceholder}>
+              <IconAddcHollow />
+            </button>
+          ) : null}
         </div>
       )
     }

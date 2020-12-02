@@ -219,13 +219,12 @@
   button.new-tab {
     flex: 0 0 auto;
     align-self: center;
-    font-size: 1.2rem;
-    margin-left: .8rem;
-    border: 0;
-    border-radius: 50%;
     width: 1.8rem;
     height: 1.8rem;
-    background: $pane-select-new-tab-button-bg;
+    font-size: 1.8rem;
+    line-height: 1;
+    border: 0; // disable browser's native button display
+    background: $pane-select-tab-bg;
     color: $pane-select-new-tab-button-fg;
     padding: 0;
     cursor: pointer;

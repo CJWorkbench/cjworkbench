@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
+import IconAddc from '../../../icons/addc.svg'
 
 export class NewTabPrompt extends React.PureComponent {
   static propTypes = {
@@ -12,7 +13,7 @@ export class NewTabPrompt extends React.PureComponent {
     const { create, i18n } = this.props
     return (
       <button title={i18n._(t('js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title')`Create tab`)} className='new-tab' onClick={create}>
-        <i className='icon-add' />
+        <IconAddc />
       </button>
     )
   }
