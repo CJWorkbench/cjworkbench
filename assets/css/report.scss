@@ -49,9 +49,8 @@ header {
     font-size: 1.2rem;
     margin-bottom: .2rem;
 
-    .icon {
-      vertical-align: -.15em; // icon doesn't line up with baseline
-      margin-right: .75em;
+    svg {
+      font-size: 1rem;
     }
   }
 

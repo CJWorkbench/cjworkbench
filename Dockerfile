@@ -248,6 +248,7 @@ CMD [ "bin/cron-prod" ]
 
 # 3.5. frontend: serves website
 FROM base AS frontend
+COPY assets/icons/ /app/assets/icons/
 COPY --from=jsbuild /app/webpack-stats.json /app/
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
