@@ -75,6 +75,8 @@ keeping the 16-unit grid in mind, the "body" is between y=8 and y=24.
 |X Height   |1082 (plus 512)|77.83203125% |7.09375              |
 |Ascent     |1692 (in `$`)  |107.6171875% |-2.4375 (not visible)|
 
+Some icons are designed to fit the entire 16px. Call them `-big`.
+
 ### Don't use `stroke`
 
 It's too hard to align stroke to the pixel grid.
@@ -85,3 +87,11 @@ We set colors in CSS using the parent's `color` property.
 
 If you want an SVG with colors, don't place it in this folder. This folder is
 only for (monochrome) icons.
+
+### Name them well
+
+Use lowercase, and use a
+[Font Awesome name](https://fontawesome.com/icons?d=gallery) when it fits.
+
+Add `-big` to any icon that is designed to fill the entire 16px. For instance:
+`addc-big.svg`.

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
+import IconChart from '../../../icons/chart.svg'
 
 function AddChartBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
@@ -13,10 +14,10 @@ function AddChartBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu,
   return (
     <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
       <DropdownToggle
-        className='button-gray'
+        name='add-chart-block'
         title={i18n._(t('js.WorkflowEditor.Report.AddChartBlockPrompt.hoverText')`Add chart`)}
       >
-        <i className='icon icon-chart' />
+        <IconChart />
       </DropdownToggle>
       <DropdownMenu>
         {tabs.map(({ slug: tabSlug, name: tabName, chartSteps }) => (

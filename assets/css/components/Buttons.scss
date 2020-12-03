@@ -15,24 +15,6 @@ button:focus { outline:0 !important; }
   box-shadow: none;
 }
 
-
-
-
-//Context buttons ///////////
-
-.btn-secondary:not(:disabled):not(.disabled):active,
-.btn-secondary:not(:disabled):not(.disabled).active,
-.show > .btn-secondary.dropdown-toggle,
-.btn-secondary:not(:disabled):not(.disabled):active,
-.btn-secondary:not(:disabled):not(.disabled).active,
-.show > .btn-secondary.dropdown-toggle{
-
-  background-color:$Vlight-gray;
-  border: 0;
-}
-
-
-
 //Button when clicked only
 .btn-secondary:not(:disabled):not(.disabled).active:focus,
 .show > .btn-secondary.dropdown-toggle:focus {
@@ -47,7 +29,6 @@ button:focus { outline:0 !important; }
   background-color:$Vlight-gray;
   color:$dark-gray;
   opacity: 1;
-  border:0;
 }
 
 //Button in focus, onClick
@@ -55,14 +36,6 @@ button:focus { outline:0 !important; }
 .btn-secondary:not(:disabled):not(.disabled).active:focus,
 .show > .btn-secondary.dropdown-toggle:focus {
   box-shadow: none;
-}
-
-//In WF list
-.btn-secondary:not(:disabled):not(.disabled):active,
-.btn-secondary:not(:disabled):not(.disabled).active,
-.show > .btn-secondary.dropdown-toggle {
-  color:$dark-gray;
-  border:0;
 }
 
 @mixin context-button {
@@ -91,7 +64,6 @@ button:focus { outline:0 !important; }
 
 .context-button.btn-secondary.active{
   background-color: #E7EAEB;
-  border:0px;
   border-radius: 5rem;
   color:#686768;
   opacity:1;

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
+import IconTable from '../../../icons/table.svg'
 
 function AddTableBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
@@ -13,10 +14,10 @@ function AddTableBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu,
   return (
     <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
       <DropdownToggle
-        className='button-gray'
+        name='add-table-block'
         title={i18n._(t('js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText')`Add table from tab`)}
       >
-        <i className='icon icon-columns' />
+        <IconTable />
       </DropdownToggle>
       <DropdownMenu>
         {tabs.map(tab => (

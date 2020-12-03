@@ -1,0 +1,58 @@
+article.report {
+  .add-block-prompt {
+    text-align: center;
+    position: relative;
+    opacity: .3;
+
+    &:hover, &.active {
+      opacity: 1;
+      &::before {
+        // Show a line on hover
+        display: block;
+        content: '';
+        height: .2rem;
+        position: absolute;
+        top: calc(50% - .1rem);
+        background: $brand-orange;
+        left: 2rem;
+        right: 2rem;
+      }
+
+      &>button, &>.dropdown>button {
+        border-color: $medium-gray;
+      }
+    }
+
+    &>button {
+      // Bootstrap's .btn class has vertical-align: middle, and DropdownItem
+      // uses that. Give our non-Bootstrap button the same vertical-align.
+      vertical-align: middle;
+    }
+
+    &>button, &>.dropdown {
+      display: inline-block;
+      margin: 0 .5rem;
+      position: relative; // Buttons appear above the line
+    }
+
+    &>button, &>.dropdown>button {
+      background: white;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: .25rem;
+      padding: .8rem;
+      color: $medium-gray;
+      font-size: 1.6rem;
+      line-height: 1;
+
+      &:hover {
+        color: $dark-gray;
+        background-color: composite-colors($dark-accent--soft, white);
+      }
+      &:active, &:focus {
+        color: $brand-orange;
+        background-color: composite-colors($dark-accent--soft-M, white);
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
+import IconText from '../../../icons/text.svg'
 
 function AddTextBlockPrompt ({ onSubmit, i18n }) {
   const handleClick = React.useCallback(() => {
@@ -11,11 +12,11 @@ function AddTextBlockPrompt ({ onSubmit, i18n }) {
   }, [onSubmit, i18n])
   return (
     <button
-      className='btn btn-secondary button-gray'
+      name='add-text-block'
       onClick={handleClick}
       title={i18n._(t('js.WorkflowEditor.Report.AddTextBlockPrompt.hoverText')`Add Text Block`)}
     >
-      <i className='icon icon-text' />
+      <IconText />
     </button>
   )
 }

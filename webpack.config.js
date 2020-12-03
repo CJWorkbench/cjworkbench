@@ -86,7 +86,7 @@ module.exports = {
               svgoConfig: {
                 plugins: [
                   { removeXMLNS: true },
-                  { removeAttrs: { attrs: ['stroke', 'fill'] } }
+                  { removeAttrs: { attrs: ['stroke', 'fill', 'shape-rendering'] } }
                 ]
               }
             }

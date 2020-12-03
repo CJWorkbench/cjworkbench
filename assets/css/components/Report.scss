@@ -7,58 +7,6 @@ article.report {
   padding: 2rem;
   background-color: $WF-background;
 
-  .share-card {
-    flex: 0 0 auto;
-    width: 30rem;
-    padding: 2rem;
-    margin-right: 2rem;
-    border-radius: .5rem;
-    background: $item-border;
-    @include font-sans-bold;
-    font-size: 1.4rem;
-    line-height: 1.8rem;
-
-    .prompt {
-      //display: flex;
-      align-items: center;
-      padding-bottom: 1.5rem;
-
-      p {margin-bottom: 1rem;}
-
-      .status {
-        flex: 1 1 auto; // take up most space
-      }
-
-      button {
-        @include action-button;
-        @include button-orange--fill;
-        @include font-sans-bold;
-      }
-    }
-
-
-
-    h4 {
-      margin-top: 2rem;
-      font: inherit;
-    }
-
-    .url {
-      .copy {
-        @include font-sans-regular;
-        border-radius: .3rem;
-        background: white;
-        padding: .8rem 1rem;
-        word-break: break-all;
-      }
-    }
-
-    .accessible-to {
-      @include content-1;
-      margin-top: .5rem;
-    }
-  }
-
   .report-container {
     flex: 1 1 auto;
     max-width: 90rem;
@@ -94,33 +42,6 @@ article.report {
       width: 100%;
       height: 100%;
       border: 0;
-    }
-  }
-
-  .add-block-prompt {
-    text-align: center;
-    position: relative;
-    opacity: .3;
-
-    &:hover, &.active {
-      opacity: 1;
-      &::before {
-        // Show a line on hover
-        display: block;
-        content: '';
-        height: .2rem;
-        position: absolute;
-        top: calc(50% - .1rem);
-        background: $brand-orange;
-        left: 2rem;
-        right: 2rem;
-      }
-    }
-
-    &>* {
-      display: inline-block;
-      margin: .5rem;
-      position: relative; // Buttons appear above the line
     }
   }
 

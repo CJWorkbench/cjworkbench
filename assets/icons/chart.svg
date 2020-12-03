@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="svg14"
+   sodipodi:docname="chart.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <metadata
+     id="metadata20">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>chart</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs18" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10000"
+     gridtolerance="10000"
+     guidetolerance="10000"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1492"
+     inkscape:window-height="1222"
+     id="namedview16"
+     showgrid="true"
+     inkscape:zoom="22.96875"
+     inkscape:cx="16"
+     inkscape:cy="16"
+     inkscape:window-x="1155"
+     inkscape:window-y="91"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg14">
+    <inkscape:grid
+       type="xygrid"
+       id="grid845"
+       spacingx="1"
+       spacingy="1"
+       empspacing="2"
+       color="#3f3fff"
+       opacity="0.06666667" />
+  </sodipodi:namedview>
+  <title
+     id="title2">chart</title>
+  <path
+     fill="#686768"
+     d="m 18,4 h 4 v 20 h -4 z"
+     id="path4"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     fill="#686768"
+     d="m 26,2 h 4 v 22 h -4 z"
+     id="path6"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     fill="#686768"
+     d="m 2,26 h 28 v 2 H 2 Z"
+     id="path8"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     fill="#686768"
+     d="M 2,8 H 6 V 24 H 2 Z"
+     id="path10"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     fill="#686768"
+     d="m 10,12 h 4 v 12 h -4 z"
+     id="path12"
+     sodipodi:nodetypes="ccccc" />
+</svg>
