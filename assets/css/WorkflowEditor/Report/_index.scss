@@ -1,2 +1,34 @@
+article.report {
+  flex: 1 1 auto;
+  display: flex; // share-card on left, report-container on right
+  align-items: flex-start;
+  justify-content: center; // on big page, show everything in the middle horizontally
+  overflow-y: auto; // allow scrolling (report-container is variable height)
+  padding: 2rem;
+  background-color: $WF-background;
+
+  .report-container {
+    flex: 1 1 auto;
+    max-width: 90rem;
+    border: 1px solid $item-border;
+    border-radius: .5rem;
+    overflow-x: hidden;
+    overflow-y: visible;
+    background: white;
+
+    &>:last-child {
+      margin-bottom: 2rem;
+    }
+  }
+
+  header {
+    margin: 2rem;
+  }
+}
+
 @import 'ShareCard';
 @import 'AddBlockPrompt';
+@import 'Block';
+@import 'TextBlock';
+@import 'TableBlock';
+@import 'ChartBlock';

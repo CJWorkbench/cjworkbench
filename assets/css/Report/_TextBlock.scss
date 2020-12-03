@@ -1,0 +1,7 @@
+@import '../mixins/markdown';
+
+article.report section.block-text {
+  .markdown {
+    @include markdown();
+  }
+}

@@ -1,0 +1,22 @@
+article.report .report-container section.block {
+  display: flex;
+  margin: 1rem 2rem;
+
+  .block-main {
+    flex: 1 1 auto;
+  }
+
+  .block-actions {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 0 1rem 0 -1rem;
+  }
+}
+
+article.report .report-container.report-read-only section.block {
+  // Read-only reports don't have .add-block-prompt elements, so we increase
+  // the margin between blocks.
+  margin-top: 3rem; // overrides the previous margin
+}

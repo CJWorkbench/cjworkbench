@@ -1,0 +1,11 @@
+article.report section.block-table {
+  .block-main {
+    font-size: rem(1);
+    overflow: hidden; // table cannot exceed width of report
+
+    a[download] {
+      color: $brand-workspace;
+    }
+  }
+}
+

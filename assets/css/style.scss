@@ -49,7 +49,6 @@ $we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll b
 @import 'components/mobilePrompt.scss';
 @import 'components/OutputPane.scss';
 @import 'components/Outputpane-header.scss';
-@import 'components/Report.scss';
 @import 'components/ShareModal.scss';
 @import 'components/right-pane-messages.scss';
 @import 'components/UnhandledErrorReport';
@@ -60,6 +59,7 @@ $we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll b
 
 @import 'params/index';
 @import 'WorkflowEditor/index';
+@import 'Report/index'; // WorkflowEditor assumes Report/index is loaded
 @import 'BigTable/index';
 @import 'settings/index';
 
