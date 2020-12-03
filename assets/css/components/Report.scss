@@ -15,6 +15,10 @@ article.report {
     overflow-x: hidden;
     overflow-y: visible;
     background: white;
+
+    &>:last-child {
+      margin-bottom: 2rem;
+    }
   }
 
   .report-read-only {
@@ -57,18 +61,14 @@ article.report {
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-
-      button {
-        margin: .25rem;
-        font-size: 1rem;
-      }
+      justify-content: flex-end;
+      margin: 0 1rem 0 -1rem;
     }
   }
 
   .block-text .block-main {
     // Reset awful "1em is 10px"
-    font-size: 1.6rem;
+    font-size: rem(1);
     form {
       textarea {
         font-family: monospace;
@@ -90,6 +90,10 @@ article.report {
   .block-table .block-main {
     font-size: 1.6rem; // Reset awful "1em is 10px"
     overflow: hidden; // table cannot exceed width of report
+
+    a[download] {
+      color: $brand-workspace;
+    }
   }
 
   .markdown {

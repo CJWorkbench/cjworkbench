@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="svg8"
+   sodipodi:docname="edit.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>edit</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1609"
+     inkscape:window-height="1248"
+     id="namedview10"
+     showgrid="true"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:zoom="22.96875"
+     inkscape:cx="17.896302"
+     inkscape:cy="13.177505"
+     inkscape:window-x="1234"
+     inkscape:window-y="64"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8">
+    <inkscape:grid
+       type="xygrid"
+       id="grid839"
+       color="#3f3fff"
+       opacity="0.08235294"
+       empspacing="2" />
+  </sodipodi:namedview>
+  <title
+     id="title2">edit</title>
+  <path
+     id="path4"
+     style="stroke-width:0.742888"
+     d="m 26,3 -2,2 3,3 2,-2 z M 8,6 C 7,6 6,7 6,8 v 16 c 0,1 1,2 2,2 h 16 c 1,0 2,-1 2,-2 v -8 h -2 v 7 c 0,0.917835 -0.165604,1 -1,1 H 9 C 8.1656043,24 8,23.917835 8,23 V 9 C 8,8 8.0005847,7.9658089 9,8 h 7 V 6 Z m 15,0 -7,7 3,3 7,-7 z m -8,8 -1,4 4,-1 z"
+     sodipodi:nodetypes="cccccssssssccssssssccsccccccccc" />
+</svg>

@@ -4,7 +4,7 @@ article.report {
     position: relative;
     opacity: .3;
 
-    &:hover, &.active {
+    &:hover, &.active, &:focus-within {
       opacity: 1;
       &::before {
         // Show a line on hover
@@ -47,10 +47,12 @@ article.report {
 
       &:hover {
         color: $dark-gray;
+        border-color: $dark-gray;
         background-color: composite-colors($dark-accent--soft, white);
       }
-      &:active, &:focus {
+      &:active, &[aria-expanded=true], &:focus {
         color: $brand-orange;
+        border-color: $brand-orange;
         background-color: composite-colors($dark-accent--soft-M, white);
       }
     }

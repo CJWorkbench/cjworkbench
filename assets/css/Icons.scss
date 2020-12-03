@@ -7,7 +7,7 @@
   font-style: normal;
 }
 
-[class^="icon-"], [class*=" icon-"], .icon {
+i[class^="icon-"], i[class*=" icon-"], .icon {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'Workbench' !important;
   speak: none;

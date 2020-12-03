@@ -1,0 +1,28 @@
+button.icon-button {
+  padding: rem(.5);
+  border: 0;
+  border-radius: 50%;
+  font-size: rem(1);
+  line-height: 1;
+
+  color: $brand-text--dark;
+  background-color: transparent;
+  opacity: .6;
+
+  &:disabled {
+    color: $light-gray;
+  }
+
+  &:hover, &:focus, &:active {
+    opacity: 1;
+  }
+
+  &:hover, &:focus {
+    background: $SuperLightGray;
+  }
+
+  &:active {
+    background-color: $page-background;
+    color: $brand-text--darker;
+  }
+}

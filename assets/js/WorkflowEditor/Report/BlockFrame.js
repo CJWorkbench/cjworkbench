@@ -3,46 +3,47 @@ import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { withI18n } from '@lingui/react'
 import { useCurriedCallback, useCurriedCallbackOrNull } from '../../utils'
+import IconButton from '../../components/IconButton'
+import IconMoveUp from '../../../icons/move-up.svg'
+import IconMoveDown from '../../../icons/move-down.svg'
+import IconDelete from '../../../icons/delete.svg'
+import IconEdit from '../../../icons/edit.svg'
 
 function BlockActions ({ onClickDelete, onClickMoveUp, onClickMoveDown, onClickEdit, i18n }) {
   return (
     <aside className='block-actions'>
-      <button
-        className='btn context-button'
-        name='delete'
-        onClick={onClickDelete}
-        title={i18n._(t('js.WorkflowEditor.Report.BlockFrame.delete.hoverText')`Delete`)}
-      >
-        <i className='icon icon-bin' />
-      </button>
       {onClickEdit ? (
-        <button
-          className='btn context-button'
+        <IconButton
           name='edit'
-          onClick={onClickEdit}
           title={i18n._(t('js.WorkflowEditor.Report.BlockFrame.edit.hoverText')`Edit`)}
+          onClick={onClickEdit}
         >
-          <i className='icon icon-note' />
-        </button>
+          <IconEdit />
+        </IconButton>
       ) : null}
-      <button
-        className='btn context-button'
+      <IconButton
         name='move-up'
         disabled={onClickMoveUp === null}
         onClick={onClickMoveUp}
         title={i18n._(t('js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText')`Move up`)}
       >
-        <i className='icon icon-caret-up' />
-      </button>
-      <button
-        className='btn context-button'
+        <IconMoveUp />
+      </IconButton>
+      <IconButton
         name='move-down'
         disabled={onClickMoveDown === null}
         onClick={onClickMoveDown}
         title={i18n._(t('js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText')`Move down`)}
       >
-        <i className='icon icon-caret-down' />
-      </button>
+        <IconMoveDown />
+      </IconButton>
+      <IconButton
+        name='delete'
+        onClick={onClickDelete}
+        title={i18n._(t('js.WorkflowEditor.Report.BlockFrame.delete.hoverText')`Delete`)}
+      >
+        <IconDelete />
+      </IconButton>
     </aside>
   )
 }
@@ -54,7 +55,6 @@ function BlockFrame ({ children, isReadOnly, className, slug, onClickDelete, onC
 
   return (
     <section className={`block ${className}`}>
-      <div className='block-main'>{children}</div>
       {isReadOnly ? null : (
         <BlockActions
           i18n={i18n}
@@ -64,6 +64,7 @@ function BlockFrame ({ children, isReadOnly, className, slug, onClickDelete, onC
           onClickEdit={onClickEdit}
         />
       )}
+      <div className='block-main'>{children}</div>
     </section>
   )
 }
