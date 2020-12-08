@@ -2,8 +2,7 @@
 import React from 'react'
 import { okResponseMock } from '../test-utils'
 import { renderWithI18n } from '../i18n/test-utils'
-import { act } from 'react-dom/test-utils'
-import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import { fireEvent, waitForElementToBeRemoved } from '@testing-library/react'
 import Workflows from './index'
 
 describe('Workflow list page', () => {
