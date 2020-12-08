@@ -1,5 +1,3 @@
-// UI for a single module within a workflow
-
 import React from 'react'
 import DataVersionModal from '../DataVersionModal'
 import ErrorBoundary from '../../ErrorBoundary'
@@ -24,13 +22,12 @@ import { connect } from 'react-redux'
 import deepEqual from 'fast-deep-equal'
 import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
-import { withI18n } from '@lingui/react'
+import { i18n } from '@lingui/core'
 import { t } from '@lingui/macro'
 
-const numberFormat = new Intl.NumberFormat()
-
-// ---- Step ----
-
+/**
+ * A single step within a tab
+ */
 export class Step extends React.PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if true, !isReadOnly and user may edit secrets
@@ -93,11 +90,7 @@ export class Step extends React.PureComponent {
     setStepCollapsed: PropTypes.func.isRequired, // func(stepId, isCollapsed, isReadOnly) => undefined
     setZenMode: PropTypes.func.isRequired, // func(stepId, bool) => undefined
     applyQuickFix: PropTypes.func.isRequired, // func(stepId, action) => undefined
-    setStepNotes: PropTypes.func.isRequired, // func(stepId, notes) => undefined
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    })
+    setStepNotes: PropTypes.func.isRequired // func(stepId, notes) => undefined
   }
 
   notesInputRef = React.createRef()
@@ -233,7 +226,9 @@ export class Step extends React.PureComponent {
     if (!isZenModeAllowed) return null
 
     const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
-    const title = isZenMode ? this.props.i18n._(t('js.WorkflowEditor.step.ZenMode.exit')`exit Zen mode`) : this.props.i18n._(t('js.WorkflowEditor.step.ZenMode.enter')`enter Zen mode`)
+    const title = isZenMode
+      ? t({ id: 'js.WorkflowEditor.step.ZenMode.exit', message: 'exit Zen mode' })
+      : t({ id: 'js.WorkflowEditor.step.ZenMode.enter', message: 'enter Zen mode' })
 
     return (
       <label className={className} title={title}>
@@ -335,7 +330,7 @@ export class Step extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, index, step, module, inputStep, tabs, currentTab, i18n } = this.props
+    const { isReadOnly, index, step, module, inputStep, tabs, currentTab } = this.props
 
     const moduleSlug = module ? module.id_name : '_undefined'
     const moduleName = module ? module.name : '_undefined'
@@ -349,7 +344,7 @@ export class Step extends React.PureComponent {
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
-          placeholder={i18n._(t('js.WorkflowEditor.step.EditableNotes.placeholder')`Type a note...`)}
+          placeholder={t({ id: 'js.WorkflowEditor.step.EditableNotes.placeholder', message: 'Type a note…' })}
           value={this.state.editedNotes === null ? (this.props.step.notes || '') : this.state.editedNotes}
           onChange={this.handleChangeNote}
           onFocus={this.handleFocusNote}
@@ -366,7 +361,9 @@ export class Step extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = notifications ? i18n._(t('js.WorkflowEditor.step.alert.enabled')`Email alerts enabled`) : i18n._(t('js.WorkflowEditor.step.alert.disabled')`Email alerts disabled`)
+      const title = notifications
+        ? t({ id: 'js.WorkflowEditor.step.alert.enabled', message: 'Email alerts enabled' })
+        : t({ id: 'js.WorkflowEditor.step.alert.disabled', message: 'Email alerts disabled' })
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
@@ -378,7 +375,13 @@ export class Step extends React.PureComponent {
     let helpIcon = null
     if (!this.props.isReadOnly) {
       helpIcon = (
-        <a title={i18n._(t('js.WorkflowEditor.step.help.hoverText')`Help for this module`)} className='help-button' href={moduleHelpUrl} target='_blank' rel='noopener noreferrer'>
+        <a
+          title={t({ id: 'js.WorkflowEditor.step.help.hoverText', message: 'Help for this module' })}
+          className='help-button'
+          href={moduleHelpUrl}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           <i className='icon-help' />
         </a>
       )
@@ -388,7 +391,7 @@ export class Step extends React.PureComponent {
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
-          title={i18n._(t('js.WorkflowEditor.step.notes.edit.hoverText')`Edit Note`)}
+          title={t({ id: 'js.WorkflowEditor.step.notes.edit.hoverText', message: 'Edit Note' })}
           className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
           onClick={this.handleClickNoteButton}
         >
@@ -401,7 +404,7 @@ export class Step extends React.PureComponent {
     if (!this.props.isReadOnly) {
       deleteIcon = (
         <button
-          title={i18n._(t('js.WorkflowEditor.step.delete.hoverText')`Delete`)}
+          title={t({ id: 'js.WorkflowEditor.step.delete.hoverText', message: 'Delete' })}
           className='btn delete-button'
           onClick={this.handleClickDelete}
         >
@@ -439,7 +442,7 @@ export class Step extends React.PureComponent {
         onMouseDown={this.handleMouseDown}
       >
         {notes}
-        <h3>{numberFormat.format(index + 1)}</h3>
+        <h3>{i18n.number(index + 1)}</h3>
         <div className='module-card-and-link'>
           <div className='module-card' draggable={!isReadOnly && !!this.props.onDragStart} onDragStart={this.handleDragStart} onDragEnd={this.handleDragEnd}>
             <div className='module-card-header'>
@@ -637,4 +640,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withI18n()(Step))
+)(Step)

@@ -1,11 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
 import IconChart from '../../../icons/chart.svg'
 
-function AddChartBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
+export default function AddChartBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
   const handleClick = React.useCallback(ev => {
     onSubmit({ stepSlug: ev.target.getAttribute('data-step-slug') })
@@ -15,7 +14,10 @@ function AddChartBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu,
     <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
       <DropdownToggle
         name='add-chart-block'
-        title={i18n._(t('js.WorkflowEditor.Report.AddChartBlockPrompt.hoverText')`Add chart`)}
+        title={t({
+          id: 'js.WorkflowEditor.Report.AddChartBlockPrompt.hoverText',
+          message: 'Add chart'
+        })}
       >
         <IconChart />
       </DropdownToggle>
@@ -51,4 +53,3 @@ AddChartBlockPrompt.propTypes = {
   onCloseMenu: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired // func({ tabSlug }) => undefined
 }
-export default withI18n()(AddChartBlockPrompt)

@@ -3,32 +3,6 @@
 exports[`ExportModal should match snapshot 1`] = `
 <ExportModal
   className="menu-test-class"
-  i18n={
-    Object {
-      "_": [Function],
-      "_activeLanguageData": Object {
-        "plurals": [Function],
-      },
-      "_activeMessages": Object {},
-      "_catalogs": Object {
-        "en": Object {
-          "languageData": Object {},
-          "messages": Object {},
-        },
-      },
-      "_dev": Object {
-        "compile": [Function],
-        "loadLanguageData": [Function],
-      },
-      "_language": "en",
-      "_locales": undefined,
-      "_missing": undefined,
-      "plural": [Function],
-      "select": [Function],
-      "selectOrdinal": [Function],
-      "t": [Function],
-    }
-  }
   open={true}
   stepId={415}
   toggle={[MockFunction]}
@@ -68,7 +42,7 @@ exports[`ExportModal should match snapshot 1`] = `
                     <h5
                       class="modal-title"
                     >
-                      js.ExportModal.header.title
+                      EXPORT DATA
                     </h5>
                     <button
                       aria-label="Close"
@@ -91,12 +65,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         class="dl-file"
                       >
-                        js.ExportModal.type.CSV
+                        CSV
                       </div>
                       <div
                         class="clipboard test-csv-copy"
                       >
-                        js.ExportModal.csvCopyLink.copyLiveLink
+                        COPY LIVE LINK
                       </div>
                     </div>
                     <div
@@ -124,12 +98,12 @@ exports[`ExportModal should match snapshot 1`] = `
                       <div
                         class="dl-file"
                       >
-                        js.ExportModal.type.JSON
+                        JSON FEED
                       </div>
                       <div
                         class="clipboard test-json-copy"
                       >
-                        js.ExportModal.jsonCopyLink.copyLiveLink
+                        COPY LIVE LINK
                       </div>
                     </div>
                     <div
@@ -159,7 +133,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       class="button-blue action-button test-done-button"
                       type="button"
                     >
-                      js.ExportModal.footer.doneButton
+                      Done
                     </button>
                   </div>
                 </div>
@@ -192,54 +166,15 @@ exports[`ExportModal should match snapshot 1`] = `
                   <h5
                     className="modal-title"
                   >
-                    <WithI18n
-                      defaults="EXPORT DATA"
-                      description="This should be all-caps for styling reasons"
+                    <Trans
+                      comment="This should be all-caps for styling reasons"
+                      components={Object {}}
                       id="js.ExportModal.header.title"
+                      message="EXPORT DATA"
+                      values={Object {}}
                     >
-                      <I18n
-                        update={true}
-                        withHash={true}
-                      >
-                        <Trans
-                          defaults="EXPORT DATA"
-                          description="This should be all-caps for styling reasons"
-                          i18n={
-                            Object {
-                              "_": [Function],
-                              "_activeLanguageData": Object {
-                                "plurals": [Function],
-                              },
-                              "_activeMessages": Object {},
-                              "_catalogs": Object {
-                                "en": Object {
-                                  "languageData": Object {},
-                                  "messages": Object {},
-                                },
-                              },
-                              "_dev": Object {
-                                "compile": [Function],
-                                "loadLanguageData": [Function],
-                              },
-                              "_language": "en",
-                              "_locales": undefined,
-                              "_missing": undefined,
-                              "plural": [Function],
-                              "select": [Function],
-                              "selectOrdinal": [Function],
-                              "t": [Function],
-                            }
-                          }
-                          id="js.ExportModal.header.title"
-                        >
-                          <Render
-                            value="js.ExportModal.header.title"
-                          >
-                            js.ExportModal.header.title
-                          </Render>
-                        </Trans>
-                      </I18n>
-                    </WithI18n>
+                      EXPORT DATA
+                    </Trans>
                   </h5>
                   <button
                     aria-label="Close"
@@ -265,54 +200,15 @@ exports[`ExportModal should match snapshot 1`] = `
                     <div
                       className="dl-file"
                     >
-                      <WithI18n
-                        defaults="CSV"
-                        description="This should be all-caps for styling reasons"
+                      <Trans
+                        comment="This should be all-caps for styling reasons"
+                        components={Object {}}
                         id="js.ExportModal.type.CSV"
+                        message="CSV"
+                        values={Object {}}
                       >
-                        <I18n
-                          update={true}
-                          withHash={true}
-                        >
-                          <Trans
-                            defaults="CSV"
-                            description="This should be all-caps for styling reasons"
-                            i18n={
-                              Object {
-                                "_": [Function],
-                                "_activeLanguageData": Object {
-                                  "plurals": [Function],
-                                },
-                                "_activeMessages": Object {},
-                                "_catalogs": Object {
-                                  "en": Object {
-                                    "languageData": Object {},
-                                    "messages": Object {},
-                                  },
-                                },
-                                "_dev": Object {
-                                  "compile": [Function],
-                                  "loadLanguageData": [Function],
-                                },
-                                "_language": "en",
-                                "_locales": undefined,
-                                "_missing": undefined,
-                                "plural": [Function],
-                                "select": [Function],
-                                "selectOrdinal": [Function],
-                                "t": [Function],
-                              }
-                            }
-                            id="js.ExportModal.type.CSV"
-                          >
-                            <Render
-                              value="js.ExportModal.type.CSV"
-                            >
-                              js.ExportModal.type.CSV
-                            </Render>
-                          </Trans>
-                        </I18n>
-                      </WithI18n>
+                        CSV
+                      </Trans>
                     </div>
                     <CopyToClipboard
                       className="clipboard test-csv-copy"
@@ -323,54 +219,15 @@ exports[`ExportModal should match snapshot 1`] = `
                         className="clipboard test-csv-copy"
                         onClick={[Function]}
                       >
-                        <WithI18n
-                          defaults="COPY LIVE LINK"
-                          description="This should be all-caps for styling reasons"
+                        <Trans
+                          comment="This should be all-caps for styling reasons"
+                          components={Object {}}
                           id="js.ExportModal.csvCopyLink.copyLiveLink"
+                          message="COPY LIVE LINK"
+                          values={Object {}}
                         >
-                          <I18n
-                            update={true}
-                            withHash={true}
-                          >
-                            <Trans
-                              defaults="COPY LIVE LINK"
-                              description="This should be all-caps for styling reasons"
-                              i18n={
-                                Object {
-                                  "_": [Function],
-                                  "_activeLanguageData": Object {
-                                    "plurals": [Function],
-                                  },
-                                  "_activeMessages": Object {},
-                                  "_catalogs": Object {
-                                    "en": Object {
-                                      "languageData": Object {},
-                                      "messages": Object {},
-                                    },
-                                  },
-                                  "_dev": Object {
-                                    "compile": [Function],
-                                    "loadLanguageData": [Function],
-                                  },
-                                  "_language": "en",
-                                  "_locales": undefined,
-                                  "_missing": undefined,
-                                  "plural": [Function],
-                                  "select": [Function],
-                                  "selectOrdinal": [Function],
-                                  "t": [Function],
-                                }
-                              }
-                              id="js.ExportModal.csvCopyLink.copyLiveLink"
-                            >
-                              <Render
-                                value="js.ExportModal.csvCopyLink.copyLiveLink"
-                              >
-                                js.ExportModal.csvCopyLink.copyLiveLink
-                              </Render>
-                            </Trans>
-                          </I18n>
-                        </WithI18n>
+                          COPY LIVE LINK
+                        </Trans>
                       </div>
                     </CopyToClipboard>
                   </div>
@@ -400,54 +257,15 @@ exports[`ExportModal should match snapshot 1`] = `
                     <div
                       className="dl-file"
                     >
-                      <WithI18n
-                        defaults="JSON FEED"
-                        description="This should be all-caps for styling reasons"
+                      <Trans
+                        comment="This should be all-caps for styling reasons"
+                        components={Object {}}
                         id="js.ExportModal.type.JSON"
+                        message="JSON FEED"
+                        values={Object {}}
                       >
-                        <I18n
-                          update={true}
-                          withHash={true}
-                        >
-                          <Trans
-                            defaults="JSON FEED"
-                            description="This should be all-caps for styling reasons"
-                            i18n={
-                              Object {
-                                "_": [Function],
-                                "_activeLanguageData": Object {
-                                  "plurals": [Function],
-                                },
-                                "_activeMessages": Object {},
-                                "_catalogs": Object {
-                                  "en": Object {
-                                    "languageData": Object {},
-                                    "messages": Object {},
-                                  },
-                                },
-                                "_dev": Object {
-                                  "compile": [Function],
-                                  "loadLanguageData": [Function],
-                                },
-                                "_language": "en",
-                                "_locales": undefined,
-                                "_missing": undefined,
-                                "plural": [Function],
-                                "select": [Function],
-                                "selectOrdinal": [Function],
-                                "t": [Function],
-                              }
-                            }
-                            id="js.ExportModal.type.JSON"
-                          >
-                            <Render
-                              value="js.ExportModal.type.JSON"
-                            >
-                              js.ExportModal.type.JSON
-                            </Render>
-                          </Trans>
-                        </I18n>
-                      </WithI18n>
+                        JSON FEED
+                      </Trans>
                     </div>
                     <CopyToClipboard
                       className="clipboard test-json-copy"
@@ -458,54 +276,15 @@ exports[`ExportModal should match snapshot 1`] = `
                         className="clipboard test-json-copy"
                         onClick={[Function]}
                       >
-                        <WithI18n
-                          defaults="COPY LIVE LINK"
-                          description="This should be all-caps for styling reasons"
+                        <Trans
+                          comment="This should be all-caps for styling reasons"
+                          components={Object {}}
                           id="js.ExportModal.jsonCopyLink.copyLiveLink"
+                          message="COPY LIVE LINK"
+                          values={Object {}}
                         >
-                          <I18n
-                            update={true}
-                            withHash={true}
-                          >
-                            <Trans
-                              defaults="COPY LIVE LINK"
-                              description="This should be all-caps for styling reasons"
-                              i18n={
-                                Object {
-                                  "_": [Function],
-                                  "_activeLanguageData": Object {
-                                    "plurals": [Function],
-                                  },
-                                  "_activeMessages": Object {},
-                                  "_catalogs": Object {
-                                    "en": Object {
-                                      "languageData": Object {},
-                                      "messages": Object {},
-                                    },
-                                  },
-                                  "_dev": Object {
-                                    "compile": [Function],
-                                    "loadLanguageData": [Function],
-                                  },
-                                  "_language": "en",
-                                  "_locales": undefined,
-                                  "_missing": undefined,
-                                  "plural": [Function],
-                                  "select": [Function],
-                                  "selectOrdinal": [Function],
-                                  "t": [Function],
-                                }
-                              }
-                              id="js.ExportModal.jsonCopyLink.copyLiveLink"
-                            >
-                              <Render
-                                value="js.ExportModal.jsonCopyLink.copyLiveLink"
-                              >
-                                js.ExportModal.jsonCopyLink.copyLiveLink
-                              </Render>
-                            </Trans>
-                          </I18n>
-                        </WithI18n>
+                          COPY LIVE LINK
+                        </Trans>
                       </div>
                     </CopyToClipboard>
                   </div>
@@ -540,54 +319,15 @@ exports[`ExportModal should match snapshot 1`] = `
                     onClick={[Function]}
                     type="button"
                   >
-                    <WithI18n
-                      defaults="Done"
-                      description="Acts as closing button"
+                    <Trans
+                      comment="Acts as closing button"
+                      components={Object {}}
                       id="js.ExportModal.footer.doneButton"
+                      message="Done"
+                      values={Object {}}
                     >
-                      <I18n
-                        update={true}
-                        withHash={true}
-                      >
-                        <Trans
-                          defaults="Done"
-                          description="Acts as closing button"
-                          i18n={
-                            Object {
-                              "_": [Function],
-                              "_activeLanguageData": Object {
-                                "plurals": [Function],
-                              },
-                              "_activeMessages": Object {},
-                              "_catalogs": Object {
-                                "en": Object {
-                                  "languageData": Object {},
-                                  "messages": Object {},
-                                },
-                              },
-                              "_dev": Object {
-                                "compile": [Function],
-                                "loadLanguageData": [Function],
-                              },
-                              "_language": "en",
-                              "_locales": undefined,
-                              "_missing": undefined,
-                              "plural": [Function],
-                              "select": [Function],
-                              "selectOrdinal": [Function],
-                              "t": [Function],
-                            }
-                          }
-                          id="js.ExportModal.footer.doneButton"
-                        >
-                          <Render
-                            value="js.ExportModal.footer.doneButton"
-                          >
-                            js.ExportModal.footer.doneButton
-                          </Render>
-                        </Trans>
-                      </I18n>
-                    </WithI18n>
+                      Done
+                    </Trans>
                   </button>
                 </div>
               </ModalFooter>

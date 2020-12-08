@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import SearchResult from './SearchResult'
 import ModuleCategoryName from '../../ModuleCategoryName'
 
-export default class ModuleSearchResultGroup extends React.PureComponent {
+export default class SearchResultGroup extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     activeModule: PropTypes.string, // idName, null if none active

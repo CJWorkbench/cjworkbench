@@ -1,4 +1,5 @@
 import React from 'react'
+import { i18n } from '@lingui/core'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import memoize from 'memoize-one'
@@ -6,7 +7,6 @@ import { setDataVersionAction, setStepNotificationsAction } from '../workflow-re
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { Trans } from '@lingui/macro'
-import { DateFormat } from '@lingui/react'
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -43,17 +43,15 @@ class FetchVersion extends React.PureComponent {
       <label className={className}>
         <input type='radio' name='data-version' value={id} checked={isSelected} onChange={this.handleChange} />
         <time time={date.toISOString()}>
-          <DateFormat
-            value={date} format={{
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-              hour12: true,
-              timeZone: _formatDateUTCforTesting ? 'UTC' : undefined
-            }}
-          />
+          {i18n.date(date, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+            timeZone: _formatDateUTCforTesting ? 'UTC' : undefined
+          })}
         </time>
       </label>
     )
@@ -91,8 +89,8 @@ class NotificationsForm extends React.PureComponent {
         <div className='text'>
           <p className='status'><i className={`icon ${iconAlert}`} />{
             checked
-              ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn' description='The tag adds emphasis'>Alerts are <strong>on</strong></Trans>
-              : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff' description='The tag adds emphasis'>Alerts are <strong>off</strong></Trans>
+              ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn' comment='The tag adds emphasis'>Alerts are <strong>on</strong></Trans>
+              : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff' comment='The tag adds emphasis'>Alerts are <strong>off</strong></Trans>
           }
           </p>
           <p className='description'>{

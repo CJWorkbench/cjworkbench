@@ -1,8 +1,8 @@
 // ---- Utilities ---
 import React from 'react'
+import { t } from '@lingui/macro'
 import * as Cookies from 'js-cookie'
 import { fromByteArray as base64Encode } from 'base64-js'
-import { t } from '@lingui/macro'
 
 export function goToUrl (url) {
   window.location.href = url
@@ -43,17 +43,17 @@ export function timeDifference (start, end, i18n) {
   const years = Math.floor(days / 365.25)
 
   if (years > 0) {
-    return i18n._(t('js.util.timeDifference.ago.years')`${years}y ago`)
+    return t({ id: 'js.util.timeDifference.ago.years', message: '{years}y ago', values: { years } })
   } else if (days > 0) {
-    return i18n._(t('js.util.timeDifference.ago.days')`${days}d ago`)
+    return t({ id: 'js.util.timeDifference.ago.days', message: '{days}d ago', values: { days } })
   } else if (hours > 0) {
-    return i18n._(t('js.util.timeDifference.ago.hours')`${hours}h ago`)
+    return t({ id: 'js.util.timeDifference.ago.hours', message: '{hours}h ago', values: { hours } })
   } else if (minutes > 0) {
-    return i18n._(t('js.util.timeDifference.ago.minutes')`${minutes}m ago`)
+    return t({ id: 'js.util.timeDifference.ago.minutes', message: '{minutes}m ago', values: { minutes } })
   } else if (seconds > 0) {
-    return i18n._(t('js.util.timeDifference.ago.seconds')`${seconds}s ago`)
+    return t({ id: 'js.util.timeDifference.ago.seconds', message: '{seconds}s ago', values: { seconds } })
   } else {
-    return i18n._(t('js.util.timeDifference.now')`just now`)
+    return t({ id: 'js.util.timeDifference.now', message: 'just now' })
   }
 }
 

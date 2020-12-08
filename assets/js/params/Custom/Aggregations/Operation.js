@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export function Operation ({ i18n, isReadOnly, name, value, onChange }) {
+export default function Operation ({ isReadOnly, name, value, onChange }) {
   // Mimic <MenuParam>'s HTML, but with string values. As of [2019-01-04],
   // <MenuParam> still only allows integer values, even though _every_ use
   // case warrants strings.
@@ -15,14 +14,14 @@ export function Operation ({ i18n, isReadOnly, name, value, onChange }) {
       onChange={onChange}
       readOnly={isReadOnly}
     >
-      <option value='size'>{i18n._(t('js.params.Custom.Aggregations.Operation.count.option')`Count`)}</option>
-      <option value='nunique'>{i18n._(t('js.params.Custom.Aggregations.Operation.countUnique.option')`Count unique`)}</option>
-      <option value='sum'>{i18n._(t('js.params.Custom.Aggregations.Operation.sum.option')`Sum`)}</option>
-      <option value='mean'>{i18n._(t('js.params.Custom.Aggregations.Operation.mean.option')`Average (Mean)`)}</option>
-      <option value='median'>{i18n._(t('js.params.Custom.Aggregations.Operation.median.option')`Median`)}</option>
-      <option value='min'>{i18n._(t('js.params.Custom.Aggregations.Operation.minimum.option')`Minimum`)}</option>
-      <option value='max'>{i18n._(t('js.params.Custom.Aggregations.Operation.maximum.option')`Maximum`)}</option>
-      <option value='first'>{i18n._(t('js.params.Custom.Aggregations.Operation.first.option')`First`)}</option>
+      <option value='size'>{t({ id: 'js.params.Custom.Aggregations.Operation.count.option', message: 'Count' })}</option>
+      <option value='nunique'>{t({ id: 'js.params.Custom.Aggregations.Operation.countUnique.option', message: 'Count unique' })}</option>
+      <option value='sum'>{t({ id: 'js.params.Custom.Aggregations.Operation.sum.option', message: 'Sum' })}</option>
+      <option value='mean'>{t({ id: 'js.params.Custom.Aggregations.Operation.mean.option', message: 'Average (Mean)' })}</option>
+      <option value='median'>{t({ id: 'js.params.Custom.Aggregations.Operation.median.option', message: 'Median' })}</option>
+      <option value='min'>{t({ id: 'js.params.Custom.Aggregations.Operation.minimum.option', message: 'Minimum' })}</option>
+      <option value='max'>{t({ id: 'js.params.Custom.Aggregations.Operation.maximum.option', message: 'Maximum' })}</option>
+      <option value='first'>{t({ id: 'js.params.Custom.Aggregations.Operation.first.option', message: 'First' })}</option>
     </select>
   )
 }
@@ -30,8 +29,5 @@ Operation.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   value: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
-  onChange: PropTypes.func.isRequired, // func(ev) => undefined
-  i18n: PropTypes.object
+  onChange: PropTypes.func.isRequired // func(ev) => undefined
 }
-
-export default withI18n()(Operation)

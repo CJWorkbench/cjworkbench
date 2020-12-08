@@ -1,12 +1,13 @@
-// Display of output from currently selected module
-
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { Trans } from '@lingui/macro'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
-import { connect } from 'react-redux'
-import { Trans } from '@lingui/react'
 
+/**
+ * Output of currently-selected module.
+ */
 export class OutputPane extends React.Component {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
@@ -33,11 +34,7 @@ export class OutputPane extends React.Component {
       nRows: PropTypes.number // or null
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    })
+    isReadOnly: PropTypes.bool.isRequired
   }
 
   /**
@@ -93,30 +90,19 @@ export class OutputPane extends React.Component {
     )
   }
 
-  renderShowingInput () {
-    if (this.props.stepBeforeError) {
-      return (
-        <p
-          key='error'
-          className='showing-input-because-error'
-        >
-          <Trans id='js.WorkflowEditor.OutputPane.showingInput.becauseError'>This was the data that led to an error. Please correct the error in the left pane.</Trans>
-        </p>
-      )
-    } else {
-      return null
-    }
-  }
-
   render () {
-    const { isReadOnly, loadRows, step } = this.props
+    const { isReadOnly, loadRows, step, stepBeforeError } = this.props
     const stepForTable = this.stepForTable
     const className = 'outputpane module-' + (step ? step.status : 'unreachable')
 
     return (
       <div className={className}>
         {this.renderOutputIFrame()}
-        {this.renderShowingInput()}
+        {stepBeforeError ? (
+          <p key='error' className='showing-input-because-error'>
+            <Trans id='js.WorkflowEditor.OutputPane.showingInput.becauseError'>This was the data that led to an error. Please correct the error in the left pane.</Trans>
+          </p>
+        ) : null}
         <DelayedTableSwitcher
           key='table'
           stepId={stepForTable ? stepForTable.id : null}

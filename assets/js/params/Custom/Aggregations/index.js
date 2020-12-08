@@ -67,7 +67,7 @@ export default class Aggregations extends React.PureComponent {
 
     return (
       <>
-        <label><Trans id='js.params.Custom.Aggregations.operations' description='As in mathematical operations'>Operations</Trans></label>
+        <label><Trans id='js.params.Custom.Aggregations.operations' comment='As in mathematical operations'>Operations</Trans></label>
         <ul>
           {value.map((aggregation, index) => (
             <Aggregation

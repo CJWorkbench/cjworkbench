@@ -1,11 +1,10 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { tick, okResponseMock } from '../test-utils'
-import { mountWithI18n } from '../i18n/test-utils'
+import { okResponseMock } from '../test-utils'
+import { renderWithI18n } from '../i18n/test-utils'
 import { act } from 'react-dom/test-utils'
-import { Workflows } from './index'
-import Workflow from './Workflow'
-import CreateWorkflowButton from './CreateWorkflowButton'
+import { fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+import Workflows from './index'
 
 describe('Workflow list page', () => {
   const testWorkflows = {
@@ -69,7 +68,7 @@ describe('Workflow list page', () => {
     duplicateWorkflow: jest.fn(),
     deleteWorkflow: okResponseMock()
   }
-  const wrapper = (props) => mountWithI18n(
+  const renderUi = (props) => renderWithI18n(
     <Workflows
       api={api}
       user={{ id: 1 }}
@@ -86,52 +85,48 @@ describe('Workflow list page', () => {
     global.confirm = globalConfirm
   })
 
-  it('renders correctly', () => {
-    const w = wrapper({ workflows: testWorkflows })
-    expect(w).toMatchSnapshot()
+  it('renders My workflows correctly', () => {
+    const { container, getByText } = renderUi({ workflows: testWorkflows })
+    fireEvent.click(getByText('My workflows'))
+    expect(container).toMatchSnapshot()
 
     // owned tab should have 3 workflows
-    w.find('.nav-link').find("Trans[defaults='My workflows']").simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(3)
+    expect(container.querySelectorAll('.tab-pane.active .workflow')).toHaveLength(3)
     // Make sure there is a context menu for each workflow
-    expect(w.find('.tab-pane.active WorkflowContextMenu')).toHaveLength(3)
+    expect(container.querySelectorAll('.tab-pane.active .workflow .dropdown')).toHaveLength(3)
     // Make sure there is a metadata line for each workflow in the list
-    expect(w.find('.tab-pane.active WorkflowMetadata')).toHaveLength(3)
-
-    // shared tab should have 2 workflows
-    w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(2)
-
-    // template tab should have 1 workflow1
-    w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(1)
+    expect(container.querySelectorAll('.tab-pane.active .workflow .metadata')).toHaveLength(3)
   })
 
-  it('delete a workflow', (done) => {
-    const w = wrapper({ workflows: testWorkflows })
-    global.confirm.mockReturnValue(true) // pretend the user clicked OK
-    // We've clicked delete and now we have to wait for everything to update.
-    // see https://facebook.github.io/jest/docs/asynchronous.html
-    setImmediate(() => {
-      // Shared tab should start with 2 workflows and have 1 after delete
-      w.update()
-      expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(3)
-      w.instance().deleteWorkflow(3)
+  it('renders Shared correctly', () => {
+    const { container, getByText } = renderUi({ workflows: testWorkflows })
+    fireEvent.click(getByText('Shared with me'))
+    expect(container).toMatchSnapshot()
 
-      setImmediate(() => {
-        w.update()
-        expect(api.deleteWorkflow.mock.calls.length).toBe(1)
-        expect(api.deleteWorkflow.mock.calls[0][0]).toBe(3)
-        expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(2) // one fewer workflow
-        done()
-      })
-    })
+    expect(container.querySelectorAll('.tab-pane.active .workflow')).toHaveLength(2)
+  })
+
+  it('renders Recipes correctly', () => {
+    const { container, getByText } = renderUi({ workflows: testWorkflows })
+    fireEvent.click(getByText('Recipes'))
+    expect(container).toMatchSnapshot()
+
+    expect(container.querySelectorAll('.tab-pane.active .workflow')).toHaveLength(1)
+  })
+
+  it('deletes a workflow', async () => {
+    const { container, getByText } = renderUi({ workflows: testWorkflows })
+    global.confirm.mockReturnValue(true) // pretend the user clicked OK
+
+    fireEvent.click(container.querySelector('.workflow .dropdown button'))
+    fireEvent.click(getByText('Delete')) // and now "confirm" will happen
+    await waitForElementToBeRemoved(getByText('Analysis')) // alphabetically-first was deleted
   })
 
   it('duplicates a workflow', async () => {
     // let 2 workflows load in user's shared tab, duplicate 1 and activeTab should get set
     // to owned list with +1 workflow
-    const w = wrapper({
+    const { container, getByText, findByText } = renderUi({
       workflows: testWorkflows,
       api: {
         ...api,
@@ -144,109 +139,88 @@ describe('Workflow list page', () => {
       }
     })
 
-    // Owned list should start with 3 WFs, shared with 2
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(3)
-    w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(2)
-
-    act(() => {
-      w.find('.tab-pane.active').find(Workflow).first().prop('duplicateWorkflow')(7)
-    })
-    expect(w.prop('api').duplicateWorkflow).toHaveBeenCalledWith(7)
-    await tick()
-    w.update()
-
-    // Expect owned tab to now have 4 workflows
-    // should be a new item at the top of the owned list
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(4)
+    fireEvent.click(getByText('Shared with me'))
+    fireEvent.click(container.querySelector('.tab-pane.active .workflow .dropdown button'))
+    fireEvent.click(getByText('Duplicate'))
+    await findByText('Copy of Visualization')
   })
 
   it('owned pane should have create workflow link when no workflows', () => {
     const workflows = { ...testWorkflows, owned: [] }
-    const w = wrapper({ workflows })
+    const { container, getByText } = renderUi({ workflows })
 
     // Owned list should have no workflows, instead a create workflow link
-    w.find('.nav-link').find("Trans[defaults='My workflows']").simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(0)
-    expect(w.find('.tab-pane.active').find(CreateWorkflowButton)).toHaveLength(1)
+    fireEvent.click(getByText('My workflows'))
+    expect(container.querySelectorAll('.tab-pane.active .workflow')).toHaveLength(0)
+    expect(getByText('Create your first workflow')).toBeTruthy()
   })
 
-  it('shared and template panes should have a placeholder when no workflows', (done) => {
-    const w = wrapper({
-      workflows: {
-        owned: testWorkflows.owned,
-        shared: [],
-        templates: []
-      }
+  it('should have a placeholder in the Shared pane', () => {
+    const { getByText } = renderUi({
+      workflows: { ...testWorkflows, shared: [] }
     })
-    setImmediate(() => {
-      w.update()
-      w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
-      expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(0)
-      expect(w.find('.tab-pane.active .placeholder')).toHaveLength(1)
-      w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
-      expect(w.find('.tab-pane.active').find(Workflow)).toHaveLength(0)
-      expect(w.find('.tab-pane.active .placeholder')).toHaveLength(1)
-      done()
+    fireEvent.click(getByText('Shared with me'))
+    expect(getByText(/Workflows shared with you as collaborator will appear here/)).toBeTruthy()
+  })
+
+  it('should have a placeholder in the Recipes pane', () => {
+    const { getByText } = renderUi({
+      workflows: { ...testWorkflows, templates: [] }
     })
+    fireEvent.click(getByText('Recipes'))
+    expect(getByText('Publish new recipes via the Django admin')).toBeTruthy()
   })
 
   it('should sort properly by date and name', async () => {
-    const w = wrapper({ workflows: testWorkflows })
+    const { container, getByText } = renderUi({ workflows: testWorkflows })
 
     // sort by date ascending
-    w.find('.sort-menu DropdownToggle button').simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    w.find('button[data-comparator="last_update|ascending"]').simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('2')
-    expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('1')
-    expect(w.find('.tab-pane.active').find(Workflow).get(2).key).toEqual('3')
+    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText('Oldest modified'))
+    expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Charting.*Cleaning.*Analysis/)
 
     // sort by date descending
-    w.find('.sort-menu DropdownToggle button').simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    w.find('button[data-comparator="last_update|descending"]').simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('3')
-    expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('1')
-    expect(w.find('.tab-pane.active').find(Workflow).get(2).key).toEqual('2')
+    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText('Last modified'))
+    expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Analysis.*Cleaning.*Charting/)
 
     // sort by name ascending
-    w.find('.sort-menu DropdownToggle button').simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    w.find('button[data-comparator="name|ascending"]').simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('3')
-    expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('2')
-    expect(w.find('.tab-pane.active').find(Workflow).get(2).key).toEqual('1')
+    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText('Alphabetical'))
+    expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Analysis.*Charting.*Cleaning/)
 
     // sort by name descending
-    w.find('.sort-menu DropdownToggle button').simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    w.find('button[data-comparator="name|descending"]').simulate('click')
-    expect(w.find('.tab-pane.active').find(Workflow).get(0).key).toEqual('1')
-    expect(w.find('.tab-pane.active').find(Workflow).get(1).key).toEqual('2')
-    expect(w.find('.tab-pane.active').find(Workflow).get(2).key).toEqual('3')
+    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText('Reverse alphabetical'))
+    expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Cleaning.*Charting.*Analysis/)
   })
 
-  it('should allow delete of owned workflows', async () => {
-    const w = wrapper({ workflows: testWorkflows })
-    w.find('.tab-pane.active .context-button').at(0).simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(1)
+  it('should delete owned workflows', () => {
+    const { container, queryByText } = renderUi({ workflows: testWorkflows })
+    fireEvent.click(container.querySelector('.tab-pane.active .dropdown button'))
+    expect(queryByText('Delete')).toBeTruthy()
+    // Close the menu. Otherwise, Popper will cause an error during unmount.
+    // https://github.com/popperjs/react-popper/issues/350
+    fireEvent.click(container.querySelector('.tab-pane.active .dropdown button'))
   })
 
-  it('should not allow delete of shared-with-me workflows', async () => {
-    const w = wrapper({ workflows: testWorkflows })
-    w.find('.nav-link').find("Trans[defaults='Shared with me']").simulate('click')
-    w.find('.tab-pane.active .context-button').at(0).simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
+  it('should not allow delete of shared-with-me workflows', () => {
+    const { container, getByText, queryByText } = renderUi({ workflows: testWorkflows })
+    fireEvent.click(getByText('Shared with me'))
+    fireEvent.click(container.querySelector('.tab-pane.active .dropdown button'))
+    expect(queryByText('Delete')).toBeNull()
+    // Close the menu. Otherwise, Popper will cause an error during unmount.
+    // https://github.com/popperjs/react-popper/issues/350
+    fireEvent.click(container.querySelector('.tab-pane.active .dropdown button'))
   })
 
-  it('should not allow delete of templates', async () => {
-    const w = wrapper({ workflows: testWorkflows })
-    w.find('.nav-link').find("Trans[defaults='Recipes']").simulate('click')
-    w.find('.tab-pane.active .context-button').at(0).simulate('click')
-    await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-    expect(w.find('.tab-pane.active button.delete-workflow')).toHaveLength(0)
+  it('should not allow delete of templates', () => {
+    const { container, getByText, queryByText } = renderUi({ workflows: testWorkflows })
+    fireEvent.click(getByText('Recipes'))
+    fireEvent.click(container.querySelector('.tab-pane.active .dropdown button'))
+    expect(queryByText('Delete')).toBeNull()
+    // Close the menu. Otherwise, Popper will cause an error during unmount.
+    // https://github.com/popperjs/react-popper/issues/350
+    fireEvent.click(container.querySelector('.tab-pane.active .dropdown button'))
   })
 })

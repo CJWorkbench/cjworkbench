@@ -4,15 +4,11 @@ import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import { trySetStepAutofetchAction, setStepNotificationsAction } from '../../../workflow-reducer'
 import { connect } from 'react-redux'
+import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect extends React.PureComponent {
+export const UpdateFrequencySelect = class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     workflowId: PropTypes.number.isRequired,
     stepId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
@@ -57,7 +53,7 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
   }
 
   render () {
-    const { i18n, lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, stepId } = this.props
+    const { lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, stepId } = this.props
     const { isModalOpen } = this.state
 
     return (
@@ -66,18 +62,18 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
           <span className='version-box-option'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>Update</Trans> </span>
           <a
             href='#'
-            title={i18n._(t('js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText')`change auto-update settings`)}
+            title={t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText', message: 'change auto-update settings' })}
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
             {isAutofetch
-              ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto' description="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Auto</Trans>
-              : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual' description="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Manual</Trans>}
+              ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto' comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Auto</Trans>
+              : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual' comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Manual</Trans>}
           </a>
         </div>
         {lastCheckDate ? (
           <div className='last-checked'>
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked' description="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag.">
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked' comment="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag.">
                 Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
             </Trans>
           </div>
@@ -97,7 +93,7 @@ export const UpdateFrequencySelect = withI18n()(class UpdateFrequencySelect exte
       </div>
     )
   }
-})
+}
 
 const mapStateToProps = (state, ownProps) => {
   const workflow = state.workflow || {}

@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 /**
  * A search input box.
@@ -10,7 +9,7 @@ import { withI18n } from '@lingui/react'
  * user presses Escape. The caller is expected to manage the `value` of the
  * search input.
  */
-export function FacetSearch ({ onChange, onReset, value, i18n }) {
+export default function FacetSearch ({ onChange, onReset, value }) {
   const onKeyDown = React.useCallback(ev => {
     switch (ev.key) {
       case 'Escape':
@@ -18,14 +17,14 @@ export function FacetSearch ({ onChange, onReset, value, i18n }) {
       case 'Enter':
         ev.preventDefault() // prevent form submit
     }
-  })
-  const onChangeCallback = React.useCallback(ev => onChange(ev.target.value))
+  }, [onReset])
+  const onChangeCallback = React.useCallback(ev => onChange(ev.target.value), [onChange])
 
   return (
     <fieldset className='facet-search' onReset={onReset}>
       <input
         type='search'
-        placeholder={i18n._(t('js.params.common.FacetSearch.searchFacets.placeholder')`Search facets...`)}
+        placeholder={t({ id: 'js.params.common.FacetSearch.searchFacets.placeholder', message: 'Search facets…' })}
         autoComplete='off'
         value={value}
         onChange={onChangeCallback}
@@ -35,7 +34,7 @@ export function FacetSearch ({ onChange, onReset, value, i18n }) {
         type='button'
         onClick={onReset}
         className='close'
-        title={i18n._(t('js.params.common.FacetSearch.clearSearch.hoverText')`Clear Search`)}
+        title={t({ id: 'js.params.common.FacetSearch.clearSearch.hoverText', message: 'Clear Search' })}
       >
         <i className='icon-close' />
       </button>
@@ -43,13 +42,7 @@ export function FacetSearch ({ onChange, onReset, value, i18n }) {
   )
 }
 FacetSearch.propTypes = {
-  i18n: PropTypes.shape({
-    // i18n object injected by LinguiJS withI18n()
-    _: PropTypes.func.isRequired
-  }),
   onReset: PropTypes.func.isRequired, // func() => undefined
   onChange: PropTypes.func.isRequired, // func(value) => undefined
   value: PropTypes.string.isRequired // current input
 }
-
-export default withI18n()(FacetSearch)

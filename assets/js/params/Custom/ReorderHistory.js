@@ -21,9 +21,9 @@ export class ReorderHistory extends React.Component {
         <thead>
           <tr>
             <td className='reorder-info'>#</td>
-            <td className='reorder-info'><Trans id='js.params.Custom.ReorderHistory.column.heading' description='This should be all-caps for styling reasons'>COLUMN</Trans></td>
-            <td className='reorder-position'><Trans id='js.params.Custom.ReorderHistory.from.heading' description='This should be all-caps for styling reasons'>FROM</Trans></td>
-            <td className='reorder-position'><Trans id='js.params.Custom.ReorderHistory.to.heading' description='This should be all-caps for styling reasons'>TO</Trans></td>
+            <td className='reorder-info'><Trans id='js.params.Custom.ReorderHistory.column.heading' comment='This should be all-caps for styling reasons'>COLUMN</Trans></td>
+            <td className='reorder-position'><Trans id='js.params.Custom.ReorderHistory.from.heading' comment='This should be all-caps for styling reasons'>FROM</Trans></td>
+            <td className='reorder-position'><Trans id='js.params.Custom.ReorderHistory.to.heading' comment='This should be all-caps for styling reasons'>TO</Trans></td>
           </tr>
         </thead>
         <tbody>

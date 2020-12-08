@@ -1,16 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export class DateGranularity extends React.PureComponent {
+export default class DateGranularity extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <select name=...>
     colname: PropTypes.string.isRequired,
     value: PropTypes.oneOf('STHDWMQY'.split('')), // or null
-    onChange: PropTypes.func.isRequired, // func(colname, value) => undefined
-    i18n: PropTypes.object
+    onChange: PropTypes.func.isRequired // func(colname, value) => undefined
   }
 
   handleChange = (ev) => {
@@ -19,7 +17,7 @@ export class DateGranularity extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, colname, value, i18n } = this.props
+    const { isReadOnly, name, colname, value } = this.props
 
     // Mimic <MenuParam>'s HTML, but with string values. As of [2019-01-04],
     // <MenuParam> still only allows integer values, even though _every_ use
@@ -35,15 +33,15 @@ export class DateGranularity extends React.PureComponent {
           onChange={this.handleChange}
           readOnly={isReadOnly}
         >
-          <option value=''>{i18n._(t('js.params.Custom.Groups.DateGranularity.asIs.option')`as is`)}</option>
-          <option value='S'>{i18n._(t('js.params.Custom.Groups.DateGranularity.bySecond.option')`by second`)}</option>
-          <option value='T'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byMinute.option')`by minute`)}</option>
-          <option value='H'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byHour.option')`by hour`)}</option>
-          <option value='D'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byDay.option')`by day`)}</option>
-          <option value='W'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byWeek.option')`by week`)}</option>
-          <option value='M'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byMonth.option')`by month`)}</option>
-          <option value='Q'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byQuarter.option')`by quarter`)}</option>
-          <option value='Y'>{i18n._(t('js.params.Custom.Groups.DateGranularity.byYear.option')`by year`)}</option>
+          <option value=''>{t({ id: 'js.params.Custom.Groups.DateGranularity.asIs.option', message: 'as is' })}</option>
+          <option value='S'>{t({ id: 'js.params.Custom.Groups.DateGranularity.bySecond.option', message: 'by second' })}</option>
+          <option value='T'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byMinute.option', message: 'by minute' })}</option>
+          <option value='H'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byHour.option', message: 'by hour' })}</option>
+          <option value='D'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byDay.option', message: 'by day' })}</option>
+          <option value='W'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byWeek.option', message: 'by week' })}</option>
+          <option value='M'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byMonth.option', message: 'by month' })}</option>
+          <option value='Q'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byQuarter.option', message: 'by quarter' })}</option>
+          <option value='Y'>{t({ id: 'js.params.Custom.Groups.DateGranularity.byYear.option', message: 'by year' })}</option>
         </select>
         {value === 'W' ? (
           <p><Trans id='js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday'>Weeks begin Monday at midnight UTC.</Trans></p>
@@ -52,5 +50,3 @@ export class DateGranularity extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(DateGranularity)

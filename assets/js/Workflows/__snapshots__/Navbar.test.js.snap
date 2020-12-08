@@ -24,24 +24,28 @@ exports[`Navbar Renders correctly 1`] = `
         className="inactive"
         href="/workflows"
       >
-        <WithI18n
-          defaults="WORKFLOWS"
-          description="This is used in navigation bar. It should be all-caps for styling reasons."
+        <Trans
+          comment="This is used in navigation bar. It should be all-caps for styling reasons."
+          components={Object {}}
           id="js.Workflows.NavBar.links.workflows"
+          message="WORKFLOWS"
+          values={Object {}}
         />
       </a>
       <a
         className="active"
         href={null}
       >
-        <WithI18n
-          defaults="TRAINING"
-          description="This is used in navigation bar. It should be all-caps for styling reasons."
+        <Trans
+          comment="This is used in navigation bar. It should be all-caps for styling reasons."
+          components={Object {}}
           id="js.Workflows.NavBar.links.training"
+          message="TRAINING"
+          values={Object {}}
         />
       </a>
     </div>
-    <WithI18n />
+    <WfHamburgerMenu />
   </nav>
 </div>
 `;

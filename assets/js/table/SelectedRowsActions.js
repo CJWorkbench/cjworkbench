@@ -6,9 +6,6 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { addStepAction, setStepParamsAction, setSelectedStepAction } from '../workflow-reducer'
 import { Plural, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
-
-const numberFormat = new Intl.NumberFormat()
 
 class Action extends React.PureComponent {
   static propTypes = {
@@ -90,7 +87,7 @@ export class SelectedRowsActions extends React.PureComponent {
   }
 
   render () {
-    const { selectedRowIndexes, stepId, rowActionModules, i18n } = this.props
+    const { selectedRowIndexes, stepId, rowActionModules } = this.props
 
     const actions = rowActionModules.map(({ idName, title }) => (
       <Action key={idName} idName={idName} title={title} onClick={this.handleClickAction} />
@@ -102,10 +99,13 @@ export class SelectedRowsActions extends React.PureComponent {
 
     return (
       <UncontrolledDropdown disabled={disabled}>
-        <DropdownToggle title={i18n._(t('js.table.SelectedRowsActions.menu')`menu`)} className={rowSelect}>
+        <DropdownToggle
+          title={t({ id: 'js.table.SelectedRowsActions.menu', message: 'menu' })}
+          className={rowSelect}
+        >
           <Plural
             id='js.table.SelectedRowsActions.numberOfSelectedRows'
-            value={disabled ? 0 : numberFormat.format(selectedRowIndexes.length)}
+            value={disabled ? 0 : selectedRowIndexes.length}
             _0='No rows selected'
             one='# row selected'
             other='# rows selected'
@@ -254,4 +254,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withI18n()(SelectedRowsActions))
+export default connect(mapStateToProps, mapDispatchToProps)(SelectedRowsActions)

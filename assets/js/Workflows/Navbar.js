@@ -41,14 +41,14 @@ export default class Navbar extends React.Component {
           </div>
           <div className='links'>
             <a {...propsForLink(activeSection, 'workflows', '/workflows')}>
-              <Trans id='js.Workflows.NavBar.links.workflows' description='This is used in navigation bar. It should be all-caps for styling reasons.'>WORKFLOWS</Trans>
+              <Trans id='js.Workflows.NavBar.links.workflows' comment='This is used in navigation bar. It should be all-caps for styling reasons.'>WORKFLOWS</Trans>
             </a>
             <a {...propsForLink(activeSection, 'lessons', `/lessons/${currentLocaleId}`)}>
-              <Trans id='js.Workflows.NavBar.links.training' description='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
+              <Trans id='js.Workflows.NavBar.links.training' comment='This is used in navigation bar. It should be all-caps for styling reasons.'>TRAINING</Trans>
             </a>
             {activeSection === 'settings' ? (
               <a {...propsForLink(activeSection, 'settings', '/settings/billing')}>
-                <Trans id='js.Workflows.NavBar.links.settings' description='This is used in navigation bar. It should be all-caps for styling reasons.'>SETTINGS</Trans>
+                <Trans id='js.Workflows.NavBar.links.settings' comment='This is used in navigation bar. It should be all-caps for styling reasons.'>SETTINGS</Trans>
               </a>
             ) : null /* we only show "Settings" if the user is on it -- it is hidden, [2020-11-19] for now */}
           </div>

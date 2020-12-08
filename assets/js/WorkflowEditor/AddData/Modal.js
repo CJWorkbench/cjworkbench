@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Trans, t } from '@lingui/macro'
 import { createSelector } from 'reselect'
 import { ModulePropType } from '../ModuleSearch/PropTypes'
 import lessonSelector from '../../lessons/lessonSelector'
@@ -7,10 +8,8 @@ import { addStepAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
 import Modules from './Modules'
 import Search from './Search'
-import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close, addStep }) {
+export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addStep }) {
   const onSelectModule = React.useCallback(moduleIdName => addStep(tabSlug, moduleIdName))
   const [search, setSearch] = React.useState('')
 
@@ -19,12 +18,20 @@ export const Modal = React.memo(function Modal ({ i18n, modules, tabSlug, close,
       <header>
         <div className='title'>
           <h5>
-            <Trans id='js.WorkflowEditor.AddData.Modal.header.title' description='This should be all-caps for styling reasons'>
+            <Trans id='js.WorkflowEditor.AddData.Modal.header.title' comment='This should be all-caps for styling reasons'>
               CHOOSE A DATA SOURCE
             </Trans>
           </h5>
 
-          <button type='button' className='close' aria-label='Close' title={i18n._(t('js.WorkflowEditor.AddData.Modal.closeButton.hoverText')`Close`)} onClick={close}>×</button>
+          <button
+            type='button'
+            className='close'
+            aria-label='Close'
+            title={t({ id: 'js.WorkflowEditor.AddData.Modal.closeButton.hoverText', message: 'Close' })}
+            onClick={close}
+          >
+            ×
+          </button>
 
         </div>
         <Search value={search} onChange={setSearch} />
@@ -67,4 +74,4 @@ const mapDispatchToProps = (dispatch) => ({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withI18n()(Modal))
+export default connect(mapStateToProps, mapDispatchToProps)(Modal)

@@ -3,9 +3,8 @@ import PropTypes from 'prop-types'
 import Operation from './Operation'
 import ColumnParam from '../../Column'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-class Aggregation extends React.PureComponent {
+export default class Aggregation extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
@@ -18,11 +17,7 @@ class Aggregation extends React.PureComponent {
     onDelete: PropTypes.func, // func(index) => undefined, or null if delete not allowed
     operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
     colname: PropTypes.string.isRequired,
-    outname: PropTypes.string.isRequired, // may be empty
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    })
+    outname: PropTypes.string.isRequired // may be empty
   }
 
   handleChangeOperation = (ev) => {
@@ -46,10 +41,12 @@ class Aggregation extends React.PureComponent {
   }
 
   get placeholder () {
-    // Duplicated from grroupby/groupby.py
-    const { operation, colname, i18n } = this.props
+    // Duplicated from groupby/groupby.py
+    const { operation, colname } = this.props
 
-    if (operation === 'size') return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.size')`Group Size`)
+    if (operation === 'size') {
+      return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.size', message: 'Group Size' })
+    }
 
     if (colname === '') {
       // reduce clutter -- groupby.py won't add this operation anyway
@@ -57,19 +54,19 @@ class Aggregation extends React.PureComponent {
     }
 
     switch (operation) {
-      case 'nunique': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.nunique')`Unique count of ${colname}`)
-      case 'sum': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.sum')`Sum of ${colname}`)
-      case 'mean': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.mean')`Average of ${colname}`)
-      case 'median': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.median')`Median of ${colname}`)
-      case 'min': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.min')`Minimum of ${colname}`)
-      case 'max': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.max')`Maximum of ${colname}`)
-      case 'first': return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.first')`First of ${colname}`)
-      default: return i18n._(t('js.params.Custom.Aggregations.Aggregation.placeholder.default')`(default)`)
+      case 'nunique': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.nunique', message: 'Unique count of {colname}', values: { colname } })
+      case 'sum': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.sum', message: 'Sum of {colname}', values: { colname } })
+      case 'mean': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.mean', message: 'Average of {colname}', values: { colname } })
+      case 'median': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.median', message: 'Median of {colname}', values: { colname } })
+      case 'min': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.min', message: 'Minimum of {colname}', values: { colname } })
+      case 'max': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.max', message: 'Maximum of {colname}', values: { colname } })
+      case 'first': return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.first', message: 'First of {colname}', values: { colname } })
+      default: return t({ id: 'js.params.Custom.Aggregations.Aggregation.placeholder.default', message: '(default, message: ' })
     }
   }
 
   render () {
-    const { name, fieldId, onDelete, operation, colname, outname, inputColumns, isReadOnly, i18n } = this.props
+    const { name, fieldId, onDelete, operation, colname, outname, inputColumns, isReadOnly } = this.props
 
     return (
       <li className='aggregation'>
@@ -85,7 +82,7 @@ class Aggregation extends React.PureComponent {
             name={`${name}[colname]`}
             fieldId={`${fieldId}_colname`}
             value={colname}
-            prompt={i18n._(t('js.params.custom.Aggregations.Aggregation.ColumnParam.prompt')`Select a column`)}
+            prompt={t({ id: 'js.params.custom.Aggregations.Aggregation.ColumnParam.prompt', message: 'Select a column' })}
             isReadOnly={isReadOnly}
             inputColumns={inputColumns}
             onChange={this.handleChangeColname}
@@ -118,5 +115,3 @@ class Aggregation extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(Aggregation)

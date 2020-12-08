@@ -32,7 +32,7 @@ export default class _Modal extends React.PureComponent {
     return (
       <Modal className='share-modal' isOpen toggle={onClickClose}>
         <ModalHeader>
-          <Trans id='js.ShareModal.Modal.header.title' description='This should be all-caps for styling reasons'>
+          <Trans id='js.ShareModal.Modal.header.title' comment='This should be all-caps for styling reasons'>
                 SHARING SETTINGS
           </Trans>
         </ModalHeader>

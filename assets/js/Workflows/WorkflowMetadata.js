@@ -1,18 +1,14 @@
-// WorkflowMetadata: that line below the workflow title
-// which shows owner, last modified date, public/private
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import { timeDifference } from '../utils'
-import { withI18n } from '@lingui/react'
+import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
 
-export class WorkflowMetadata extends React.Component {
+/**
+ * Line below workflow title showing owner, last modified date, public/private
+ */
+export default class WorkflowMetadata extends React.Component {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     workflow: PropTypes.object.isRequired,
     openShareModal: PropTypes.func.isRequired, // func(workflowId) => undefined
     test_now: PropTypes.object // optional injection for testing, avoid time zone issues for Last Update time
@@ -32,7 +28,7 @@ export class WorkflowMetadata extends React.Component {
   render () {
     const now = this.props.test_now || new Date()
     const owner = this.props.workflow.owner_name.trim()
-    const timeAgo = timeDifference(this.props.workflow.last_update, now, this.props.i18n)
+    const timeAgo = timeDifference(this.props.workflow.last_update, now, i18n)
 
     // don't show author if this workflow is anonymous
     const attribution = !this.props.workflow.is_anonymous ? (
@@ -47,7 +43,12 @@ export class WorkflowMetadata extends React.Component {
     const modalLink = !(this.props.workflow.read_only || this.props.workflow.is_anonymous) ? (
       <li>
         <span className='separator'>-</span>
-        <button type='button' className='public-private' title={this.props.i18n._(t('js.Workflows.WorkflowMetadata.changePrivacy.button')`Change privacy`)} onClick={this.handleClickOpenShareModal}>
+        <button
+          type='button'
+          className='public-private'
+          title={t({ id: 'js.Workflows.WorkflowMetadata.changePrivacy.button', message: 'Change privacy' })}
+          onClick={this.handleClickOpenShareModal}
+        >
           {this.props.workflow.public ? (
             <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
           ) : (
@@ -61,7 +62,7 @@ export class WorkflowMetadata extends React.Component {
       <ul className='metadata-container'>
         {attribution}
         <li>
-          <Trans id='js.Workflows.WorkflowMetadata.update' description="The parameter will contain a time difference (i.e. something like '5h ago')">
+          <Trans id='js.Workflows.WorkflowMetadata.update' comment="The parameter will contain a time difference (i.e. something like '5h ago')">
             Updated {timeAgo}
           </Trans>
         </li>
@@ -70,4 +71,3 @@ export class WorkflowMetadata extends React.Component {
     )
   }
 }
-export default withI18n()(WorkflowMetadata)

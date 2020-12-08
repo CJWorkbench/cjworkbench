@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
 import filesize from 'filesize'
 import { t, Trans } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 const FilesizeOptions = { standard: 'iec', round: 1 }
 function formatNBytes (nBytes) {
@@ -54,7 +53,7 @@ class UploadedFileSelectModal extends React.PureComponent {
 
     return (
       <Modal className='uploaded-file-select-modal' isOpen toggle={close}>
-        <ModalHeader><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title' description='This should be all-caps for styling reasons'>FILE HISTORY</Trans></ModalHeader>
+        <ModalHeader><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title' comment='This should be all-caps for styling reasons'>FILE HISTORY</Trans></ModalHeader>
         <ModalBody>
           {files.length === 0 ? (
             <p className='no-files'><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles'>You have not uploaded any files to this Step</Trans></p>
@@ -68,7 +67,7 @@ class UploadedFileSelectModal extends React.PureComponent {
                       <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
                         {formatNBytes(size)}
                       </abbr>
-                      <time className='created-at' dateTime={createdAt} title={createdAt}><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at' description='The parameter will contain a specific date'>Uploaded {dateFormat.format(new Date(createdAt))}</Trans></time>
+                      <time className='created-at' dateTime={createdAt} title={createdAt}><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at' comment='The parameter will contain a specific date'>Uploaded {dateFormat.format(new Date(createdAt))}</Trans></time>
                     </div>
                   </a>
                 </li>
@@ -98,7 +97,7 @@ class UploadedFileSelectModal extends React.PureComponent {
   }
 }
 
-const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, files, onChange, i18n }) {
+export default function UploadedFileSelect ({ value, files, onChange }) {
   const [isOpen, setOpen] = React.useState(false)
   const open = React.useCallback(() => setOpen(true))
   const close = React.useCallback(() => setOpen(false))
@@ -108,14 +107,27 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
   const valueIndex = files.findIndex(({ uuid }) => uuid === value)
   const canOpen = files.findIndex(({ uuid }) => uuid !== value) !== -1 // do not open when nothing to select
   const nFiles = files.length
-  const fileNumber = valueIndex === -1 ? <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.none' description="Means 'no file'">[NONE]</Trans> : (valueIndex + 1)
+  const fileNumber = valueIndex + 1
 
   return (
     <>
-      <button className='uploaded-file-select' onClick={open} title={canOpen ? i18n._(t('js.params.File.UploadedFileSelect.choosePreviousFile.hoverText')`Choose a previously-uploaded file`) : undefined} disabled={!canOpen}>
-        <Trans id='js.params.File.UploadedFileSelect.choosePreviousFile.text' description='The parameter {fileNumber} is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is the total number of files'>
-            File {fileNumber} of {nFiles}
-        </Trans>
+      <button
+        className='uploaded-file-select'
+        onClick={open}
+        title={canOpen ? t({ id: 'js.params.File.UploadedFileSelect.choosePreviousFile.hoverText', message: 'Choose a previously-uploaded file' }) : undefined}
+        disabled={!canOpen}
+      >
+        {valueIndex === -1 ? t({
+          id: 'js.params.File.UploadedFileSelect.choosePreviousFile.none',
+          comment: 'Means "No files exist". Very rare; most users will see js.params.File.UploadFileSelect.choosePreviousFile.text first',
+          message: 'File [NONE] of {nFiles}',
+          values: { nFiles }
+        }) : t({
+          id: 'js.params.File.UploadedFileSelect.choosePreviousFile.text',
+          comment: 'The parameter {fileNumber} is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is the total number of files',
+          message: 'File {fileNumber} of {nFiles}',
+          values: { fileNumber, nFiles }
+        })}
       </button>
       {isOpen ? (
         <UploadedFileSelectModal
@@ -127,7 +139,7 @@ const UploadedFileSelect = React.memo(function UploadedFileSelect ({ value, file
       ) : null}
     </>
   )
-})
+}
 UploadedFileSelect.propTypes = {
   value: PropTypes.string, // null if no file is selected (also: value might not be in files)
   files: PropTypes.arrayOf(PropTypes.shape({
@@ -138,4 +150,3 @@ UploadedFileSelect.propTypes = {
   }).isRequired).isRequired,
   onChange: PropTypes.func.isRequired // func(uuid) => undefined
 }
-export default withI18n()(UploadedFileSelect)

@@ -2,7 +2,8 @@
 import React from 'react'
 import { Lesson } from './Lesson'
 import LessonSection from './LessonSection'
-import { mount, shallow } from 'enzyme'
+import { shallow } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 
 describe('Lesson', () => {
   const lesson = {
@@ -111,7 +112,7 @@ describe('Lesson', () => {
   describe('navigation', () => {
     // integration-test-y: this tests that Lesson and LessonNav play nice
     function wrapper (extraProps) {
-      return mount(
+      return mountWithI18n(
         <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
       )
     }

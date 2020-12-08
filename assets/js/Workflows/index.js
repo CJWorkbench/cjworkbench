@@ -1,6 +1,4 @@
 /* globals confirm */
-// Elements of /workflows. Navbar plus a list
-
 import React from 'react'
 import Navbar from './Navbar'
 import PropTypes from 'prop-types'
@@ -9,15 +7,13 @@ import { logUserEvent } from '../utils'
 import CreateWorkflowButton from './CreateWorkflowButton'
 import WorkflowLists from './WorkflowLists'
 import { WorkflowListPropType } from './WorkflowList'
-import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import { Trans, t } from '@lingui/macro'
 
-export class Workflows extends React.Component {
+/**
+ * Navbar plus a list.
+ */
+export default class Workflows extends React.Component {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     api: PropTypes.shape({
       deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
       duplicateWorkflow: PropTypes.func.isRequired // func(id) => Promise[{ id, name }]
@@ -92,7 +88,11 @@ export class Workflows extends React.Component {
     const tabName = this.workflowIdToTabName(workflowId)
     if (!tabName) return
 
-    if (!confirm(this.props.i18n._(t('js.Workflows.delete.permanentyDeleteWarning')`Permanently delete this workflow?`))) return
+    if (!confirm(
+      t({ id: 'js.Workflows.delete.permanentyDeleteWarning', message: 'Permanently delete this workflow?' })
+    )) {
+      return
+    }
 
     this.props.api.deleteWorkflow(workflowId)
       .then(() => {
@@ -184,23 +184,25 @@ export class Workflows extends React.Component {
 
   render () {
     const { workflows } = this.state
-    const { user, i18n } = this.props
+    const { user } = this.props
 
     return (
       <div className='workflows-page'>
         <Navbar user={user} />
         <a href='/lessons/' className='lesson-banner mx-auto'>
           <div>
-            <div className='content-1'>{i18n._(/* i18n: This should be all-caps for styling reasons */t('js.Workflows.new')`NEW`)}</div>
+            <div className='content-1'>
+              <Trans id='js.Workflows.new' comment='This should be all-caps for styling reasons'>NEW</Trans>
+            </div>
             <div className='d-flex'>
               <span className='icon-star' />
-              <div className=' title-1 '>{i18n._(/* i18n: This should be all-caps for styling reasons */t('js.Workflows.training.title')`TRAINING`)}</div>
+              <Trans id='js.Workflows.training.title' comment='This should be all-caps for styling reasons'>TRAINING</Trans>
             </div>
           </div>
-          <p>{i18n._(t('js.Workflows.learnHowToWorkWithData')`Learn how to work with data without coding`)}</p>
+          <p><Trans id='js.Workflows.learnHowToWorkWithData'>Learn how to work with data without coding</Trans></p>
         </a>
         <CreateWorkflowButton>
-          {i18n._(t('js.Workflows.createWorkflowButton')`Create Workflow`)}
+          <Trans id='js.Workflows.createWorkflowButton'>Create Workflow</Trans>
         </CreateWorkflowButton>
         <WorkflowLists
           workflows={workflows}
@@ -213,5 +215,3 @@ export class Workflows extends React.Component {
     )
   }
 }
-
-export default withI18n()(Workflows)

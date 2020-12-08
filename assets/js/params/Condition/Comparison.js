@@ -4,10 +4,9 @@ import { ComparisonPropType } from './PropTypes'
 import Column from '../Column'
 import ComparisonOperator from './ComparisonOperator'
 import SingleLineString from '../String/SingleLineString'
-import { withI18n } from '@lingui/react'
 import { t, Trans } from '@lingui/macro'
 
-class Comparison extends React.PureComponent {
+export default class Comparison extends React.PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>
@@ -66,7 +65,7 @@ class Comparison extends React.PureComponent {
           name={`${name}[column]`}
           fieldId={`${fieldId}_column`}
           value={value.column}
-          placeholder={this.props.i18n._(t('js.params.Condition.Comparison.column.placeholder')`Select column`)}
+          placeholder={t({ id: 'js.params.Condition.Comparison.column.placeholder', message: 'Select column' })}
           inputColumns={inputColumns}
           onChange={this.handleChangeColumn}
         />
@@ -87,7 +86,7 @@ class Comparison extends React.PureComponent {
               label=''
               name={`${name}[value]`}
               fieldId={`${fieldId}_value`}
-              placeholder={this.props.i18n._(t('js.params.Condition.Comparison.value.placeholder')`Value`)}
+              placeholder={t({ id: 'js.params.Condition.Comparison.value.placeholder', message: 'Value' })}
               value={value.value}
               upstreamValue={value.value}
               onChange={this.handleChangeValue}
@@ -134,5 +133,3 @@ class Comparison extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(Comparison)

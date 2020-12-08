@@ -1,19 +1,15 @@
-// "Hamburger" drop down on workflow and workflows page. Fixed contents.
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownDivider, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export class WfHamburgerMenu extends React.Component {
+/**
+ * "Hamburger" drop down on workflow and workflows page.
+ */
+export default class WfHamburgerMenu extends React.Component {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     api: PropTypes.object, // not required: WorkflowListNavBar doesn't allow import from github
     workflowId: PropTypes.number, // not required: WorkflowListNavBar has no workflow
     user: PropTypes.object // if null/undefined, user is not logged in
@@ -41,14 +37,17 @@ export class WfHamburgerMenu extends React.Component {
   }
 
   render () {
-    const { api, workflowId, user, i18n } = this.props
+    const { api, workflowId, user } = this.props
     const loggedIn = !!user
 
     return (
       <>
         <UncontrolledDropdown>
 
-          <DropdownToggle title={i18n._(t('js.WfHamburgerMenu.toggle.hoverText')`menu`)} className='context-button'>
+          <DropdownToggle
+            title={t({ id: 'js.WfHamburgerMenu.toggle.hoverText', message: 'menu' })}
+            className='context-button'
+          >
             <i className='icon-more' />
           </DropdownToggle>
 
@@ -83,5 +82,3 @@ export class WfHamburgerMenu extends React.Component {
     )
   }
 }
-
-export default withI18n()(WfHamburgerMenu)

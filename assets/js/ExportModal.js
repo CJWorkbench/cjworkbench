@@ -59,8 +59,8 @@ export default class ExportModal extends React.PureComponent {
     if (this.state.csvCopied) {
       return (
         <div className='clipboard copied' onMouseLeave={this.handleLeaveCsv}>
-          <Trans id='js.ExportModal.csvCopyLink.copiedToClipboard' description='This should be all-caps for styling reasons'>
-                CSV LINK COPIED TO CLIPBOARD
+          <Trans id='js.ExportModal.csvCopyLink.copiedToClipboard' comment='This should be all-caps for styling reasons'>
+            CSV LINK COPIED TO CLIPBOARD
           </Trans>
         </div>
       )
@@ -68,7 +68,7 @@ export default class ExportModal extends React.PureComponent {
       return (
         <CopyToClipboard text={this.csvUrlString} onCopy={this.handleCopyCsv} className='clipboard test-csv-copy'>
           <div>
-            <Trans id='js.ExportModal.csvCopyLink.copyLiveLink' description='This should be all-caps for styling reasons'>
+            <Trans id='js.ExportModal.csvCopyLink.copyLiveLink' comment='This should be all-caps for styling reasons'>
                 COPY LIVE LINK
             </Trans>
           </div>
@@ -81,8 +81,8 @@ export default class ExportModal extends React.PureComponent {
     if (this.state.jsonCopied) {
       return (
         <div className='clipboard copied' onMouseLeave={this.handleLeaveJson}>
-          <Trans id='js.ExportModal.jsonCopyLink.copiedToClipboard' description='This should be all-caps for styling reasons'>
-                JSON FEED LINK COPIED TO CLIPBOARD
+          <Trans id='js.ExportModal.jsonCopyLink.copiedToClipboard' comment='This should be all-caps for styling reasons'>
+            JSON FEED LINK COPIED TO CLIPBOARD
           </Trans>
         </div>
       )
@@ -90,8 +90,8 @@ export default class ExportModal extends React.PureComponent {
       return (
         <CopyToClipboard text={this.jsonUrlString} onCopy={this.handleCopyJson} className='clipboard test-json-copy'>
           <div>
-            <Trans id='js.ExportModal.jsonCopyLink.copyLiveLink' description='This should be all-caps for styling reasons'>
-                COPY LIVE LINK
+            <Trans id='js.ExportModal.jsonCopyLink.copyLiveLink' comment='This should be all-caps for styling reasons'>
+              COPY LIVE LINK
             </Trans>
           </div>
         </CopyToClipboard>
@@ -108,15 +108,15 @@ export default class ExportModal extends React.PureComponent {
     return (
       <Modal isOpen={this.props.open} className={this.props.className} toggle={this.props.toggle}>
         <ModalHeader>
-          <Trans id='js.ExportModal.header.title' description='This should be all-caps for styling reasons'>
-                EXPORT DATA
+          <Trans id='js.ExportModal.header.title' comment='This should be all-caps for styling reasons'>
+            EXPORT DATA
           </Trans>
         </ModalHeader>
         <ModalBody>
           <div className='d-flex justify-content-between flex-row'>
             <div className='dl-file'>
-              <Trans id='js.ExportModal.type.CSV' description='This should be all-caps for styling reasons'>
-                    CSV
+              <Trans id='js.ExportModal.type.CSV' comment='This should be all-caps for styling reasons'>
+                CSV
               </Trans>
             </div>
             {csvCopyLink}
@@ -132,8 +132,8 @@ export default class ExportModal extends React.PureComponent {
           </div>
           <div className='d-flex justify-content-between flex-row'>
             <div className='dl-file'>
-              <Trans id='js.ExportModal.type.JSON' description='This should be all-caps for styling reasons'>
-                    JSON FEED
+              <Trans id='js.ExportModal.type.JSON' comment='This should be all-caps for styling reasons'>
+                JSON FEED
               </Trans>
             </div>
             {jsonCopyLink}
@@ -150,7 +150,7 @@ export default class ExportModal extends React.PureComponent {
         </ModalBody>
         <ModalFooter>
           <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'>
-            <Trans id='js.ExportModal.footer.doneButton' description='Acts as closing button'>Done</Trans>
+            <Trans id='js.ExportModal.footer.doneButton' comment='Acts as closing button'>Done</Trans>
           </button>
         </ModalFooter>
       </Modal>

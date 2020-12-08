@@ -1,10 +1,10 @@
 /* globals describe, expect, it */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 import Button from './Button'
 
 describe('Button', () => {
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <Button
       tabSlug='tab-1'
       index={2}

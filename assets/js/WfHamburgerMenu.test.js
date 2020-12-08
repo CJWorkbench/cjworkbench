@@ -1,7 +1,7 @@
 /* globals afterEach, describe, expect, it */
 import React from 'react'
 import { act } from 'react-dom/test-utils'
-import { WfHamburgerMenu } from './WfHamburgerMenu'
+import WfHamburgerMenu from './WfHamburgerMenu'
 import { mountWithI18n } from './i18n/test-utils'
 
 describe('WfHamburgerMenu', () => {
@@ -24,8 +24,8 @@ describe('WfHamburgerMenu', () => {
     expect(wrapper).toMatchSnapshot() // one snapshot only, in most common case
 
     expect(wrapper.find('a[href="/workflows/"]')).toHaveLength(1)
-    expect(wrapper.find('DropdownItem Trans[defaults="Import Module"]')).toHaveLength(1)
-    expect(wrapper.find('DropdownItem Trans[defaults="Log Out"]')).toHaveLength(1)
+    expect(wrapper.find('DropdownItem Trans[message="Import Module"]')).toHaveLength(1)
+    expect(wrapper.find('DropdownItem Trans[message="Log Out"]')).toHaveLength(1)
   })
 
   it('renders logged in, read only', async () => {
@@ -42,8 +42,8 @@ describe('WfHamburgerMenu', () => {
     await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
 
     expect(wrapper.find('a[href="/workflows/"]')).toHaveLength(1)
-    expect(wrapper.find('DropdownItem Trans[defaults="Import Module"]')).toHaveLength(1)
-    expect(wrapper.find('DropdownItem Trans[defaults="Log Out"]')).toHaveLength(1)
+    expect(wrapper.find('DropdownItem Trans[message="Import Module"]')).toHaveLength(1)
+    expect(wrapper.find('DropdownItem Trans[message="Log Out"]')).toHaveLength(1)
   })
 
   it('renders logged out, read only', async () => {
@@ -79,6 +79,6 @@ describe('WfHamburgerMenu', () => {
 
     expect(wrapper.find('a[href="//workbenchdata.com"]')).toHaveLength(1)
     expect(wrapper.find('DropdownItem[children="Import Module"]')).toHaveLength(0)
-    expect(wrapper.find('DropdownItem Trans[defaults="Log Out"]')).toHaveLength(1)
+    expect(wrapper.find('DropdownItem Trans[message="Log Out"]')).toHaveLength(1)
   })
 })

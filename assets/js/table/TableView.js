@@ -64,7 +64,9 @@ export class TableView extends React.PureComponent {
             <div className='text'>
               <Trans id='js.table.TableView.maxOf100ColumnsCanbeDIsplayed'>A maximum of 100 columns can be displayed</Trans>
             </div>
-            <button className='add-select-module' onClick={this.handleClickSelectColumns}><Trans id='js.table.TableView.selectColumns.button'>Select columns</Trans></button>
+            <button className='add-select-module' onClick={this.handleClickSelectColumns}>
+              <Trans id='js.table.TableView.selectColumns.button'>Select columns</Trans>
+            </button>
           </div>
         </div>
       )

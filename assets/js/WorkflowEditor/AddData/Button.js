@@ -23,7 +23,7 @@ const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef
       <button type='button' onClick={open}>
         <i className='icon-add' />{' '}
         <span>
-          <Trans id='js.WorkflowEditor.AddData.button' description='This should be all-caps for styling reasons'>ADD DATA</Trans>
+          <Trans id='js.WorkflowEditor.AddData.button' comment='This should be all-caps for styling reasons'>ADD DATA</Trans>
         </span>
       </button>
       {isOpen && paneRef.current ? ReactDOM.createPortal((

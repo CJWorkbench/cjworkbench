@@ -1,11 +1,11 @@
 /* globals describe, it, expect */
 import React from 'react'
 import DeprecationNotice from './DeprecationNotice'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('DeprecationNotice', () => {
   const wrapper = (extraProps = {}) => {
-    return mount(
+    return mountWithI18n(
       <DeprecationNotice
         helpUrl='https://example.org'
         message='Message'

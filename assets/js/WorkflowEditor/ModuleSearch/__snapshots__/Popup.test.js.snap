@@ -3,32 +3,6 @@
 exports[`ModuleSearch Popup matches snapshot 1`] = `
 <Popup
   addStep={[MockFunction]}
-  i18n={
-    Object {
-      "_": [Function],
-      "_activeLanguageData": Object {
-        "plurals": [Function],
-      },
-      "_activeMessages": Object {},
-      "_catalogs": Object {
-        "en": Object {
-          "languageData": Object {},
-          "messages": Object {},
-        },
-      },
-      "_dev": Object {
-        "compile": [Function],
-        "loadLanguageData": [Function],
-      },
-      "_language": "en",
-      "_locales": undefined,
-      "_missing": undefined,
-      "plural": [Function],
-      "select": [Function],
-      "selectOrdinal": [Function],
-      "t": [Function],
-    }
-  }
   index={2}
   isLessonHighlight={false}
   modules={
@@ -60,73 +34,36 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
   <div
     className="module-search-popup"
   >
-    <WithI18n
+    <Prompt
       cancel={[MockFunction]}
       onChange={[Function]}
       value=""
     >
-      <I18n
-        update={true}
-        withHash={true}
+      <form
+        className="module-search-field"
+        onReset={[MockFunction]}
+        onSubmit={[Function]}
       >
-        <Prompt
-          cancel={[MockFunction]}
-          i18n={
-            Object {
-              "_": [Function],
-              "_activeLanguageData": Object {
-                "plurals": [Function],
-              },
-              "_activeMessages": Object {},
-              "_catalogs": Object {
-                "en": Object {
-                  "languageData": Object {},
-                  "messages": Object {},
-                },
-              },
-              "_dev": Object {
-                "compile": [Function],
-                "loadLanguageData": [Function],
-              },
-              "_language": "en",
-              "_locales": undefined,
-              "_missing": undefined,
-              "plural": [Function],
-              "select": [Function],
-              "selectOrdinal": [Function],
-              "t": [Function],
-            }
-          }
+        <input
+          autoComplete="off"
+          name="moduleQ"
           onChange={[Function]}
+          onKeyDown={[Function]}
+          placeholder="Search…"
+          type="search"
           value=""
+        />
+        <button
+          className="reset"
+          title="Close Search"
+          type="reset"
         >
-          <form
-            className="module-search-field"
-            onReset={[MockFunction]}
-            onSubmit={[Function]}
-          >
-            <input
-              autoComplete="off"
-              name="moduleQ"
-              onChange={[Function]}
-              onKeyDown={[Function]}
-              placeholder="Search…"
-              type="search"
-              value=""
-            />
-            <button
-              className="reset"
-              title="Close Search"
-              type="reset"
-            >
-              <i
-                className="icon-close"
-              />
-            </button>
-          </form>
-        </Prompt>
-      </I18n>
-    </WithI18n>
+          <i
+            className="icon-close"
+          />
+        </button>
+      </form>
+    </Prompt>
     <SearchResults
       modules={
         Array [
@@ -156,7 +93,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
       <ul
         className="module-search-result-groups"
       >
-        <ModuleSearchResultGroup
+        <SearchResultGroup
           activeModule={null}
           key="Add data"
           modules={
@@ -181,46 +118,18 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
             data-name="Add data"
           >
             <h4>
-              <WithI18n
+              <ModuleCategoryName
                 category="Add data"
               >
-                <I18n
-                  update={true}
-                  withHash={true}
+                <Trans
+                  components={Object {}}
+                  id="js.util.ModuleCategoryName.CategoryNames.AddData"
+                  message="Add data"
+                  values={Object {}}
                 >
-                  <Component
-                    category="Add data"
-                    i18n={
-                      Object {
-                        "_": [Function],
-                        "_activeLanguageData": Object {
-                          "plurals": [Function],
-                        },
-                        "_activeMessages": Object {},
-                        "_catalogs": Object {
-                          "en": Object {
-                            "languageData": Object {},
-                            "messages": Object {},
-                          },
-                        },
-                        "_dev": Object {
-                          "compile": [Function],
-                          "loadLanguageData": [Function],
-                        },
-                        "_language": "en",
-                        "_locales": undefined,
-                        "_missing": undefined,
-                        "plural": [Function],
-                        "select": [Function],
-                        "selectOrdinal": [Function],
-                        "t": [Function],
-                      }
-                    }
-                  >
-                    Add data
-                  </Component>
-                </I18n>
-              </WithI18n>
+                  Add data
+                </Trans>
+              </ModuleCategoryName>
             </h4>
             <ul
               className="module-search-results"
@@ -264,8 +173,8 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
               </SearchResult>
             </ul>
           </li>
-        </ModuleSearchResultGroup>
-        <ModuleSearchResultGroup
+        </SearchResultGroup>
+        <SearchResultGroup
           activeModule={null}
           key="Analyze"
           modules={
@@ -290,46 +199,18 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
             data-name="Analyze"
           >
             <h4>
-              <WithI18n
+              <ModuleCategoryName
                 category="Analyze"
               >
-                <I18n
-                  update={true}
-                  withHash={true}
+                <Trans
+                  components={Object {}}
+                  id="js.util.ModuleCategoryName.CategoryNames.Analyze"
+                  message="Analyze"
+                  values={Object {}}
                 >
-                  <Component
-                    category="Analyze"
-                    i18n={
-                      Object {
-                        "_": [Function],
-                        "_activeLanguageData": Object {
-                          "plurals": [Function],
-                        },
-                        "_activeMessages": Object {},
-                        "_catalogs": Object {
-                          "en": Object {
-                            "languageData": Object {},
-                            "messages": Object {},
-                          },
-                        },
-                        "_dev": Object {
-                          "compile": [Function],
-                          "loadLanguageData": [Function],
-                        },
-                        "_language": "en",
-                        "_locales": undefined,
-                        "_missing": undefined,
-                        "plural": [Function],
-                        "select": [Function],
-                        "selectOrdinal": [Function],
-                        "t": [Function],
-                      }
-                    }
-                  >
-                    Analyze
-                  </Component>
-                </I18n>
-              </WithI18n>
+                  Analyze
+                </Trans>
+              </ModuleCategoryName>
             </h4>
             <ul
               className="module-search-results"
@@ -373,7 +254,7 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
               </SearchResult>
             </ul>
           </li>
-        </ModuleSearchResultGroup>
+        </SearchResultGroup>
       </ul>
     </SearchResults>
   </div>

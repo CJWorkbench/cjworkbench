@@ -1,11 +1,11 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
 import OAuth from './OAuth'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('OAuth', () => {
   const wrapper = (extraProps) => {
-    return mount(
+    return mountWithI18n(
       <OAuth
         name='x'
         startCreateSecret={jest.fn()}

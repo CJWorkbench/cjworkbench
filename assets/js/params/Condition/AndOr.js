@@ -19,8 +19,8 @@ class AndOr extends React.PureComponent {
   render () {
     const { name, operator, checked } = this.props
     const text = operator === 'and'
-      ? <Trans id='js.params.Condition.AndOr.and' description='The logical AND operator'>AND</Trans>
-      : <Trans id='js.params.Condition.AndOr.or' description='The logical OR operator'>OR</Trans>
+      ? <Trans id='js.params.Condition.AndOr.and' comment='The logical AND operator'>AND</Trans>
+      : <Trans id='js.params.Condition.AndOr.or' comment='The logical OR operator'>OR</Trans>
 
     return checked ? (
       <span className='selected-operator'>{text}</span>

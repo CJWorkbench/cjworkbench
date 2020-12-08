@@ -1,6 +1,6 @@
 /* global describe, it, expect, jest */
 import React from 'react'
-import { Trans } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 import { OutputPane } from './OutputPane'
 import OutputIframe from '../OutputIframe'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
@@ -54,7 +54,7 @@ describe('OutputPane', () => {
     })
     expect(w.find(DelayedTableSwitcher).prop('stepId')).toEqual(1)
     expect(w.find(DelayedTableSwitcher).prop('deltaId')).toEqual(2)
-    expect(w.find(Trans).filter({ id: 'js.WorkflowEditor.OutputPane.showingInput.becauseError' })).toHaveLength(1)
+    expect(w.find("Trans[id='js.WorkflowEditor.OutputPane.showingInput.becauseError']")).toHaveLength(1)
     expect(w.find(OutputIframe).prop('stepId')).toEqual(3)
     expect(w.find(OutputIframe).prop('deltaId')).toEqual(4)
   })

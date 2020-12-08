@@ -18,7 +18,7 @@ const EditorProps = {
 function SyntaxHelp ({ syntax }) {
   switch (syntax) {
     case 'python': return (
-      <Trans id='js.params.Custom.Code.AceEditor.help' description='The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please keep code and names of libraries untranslated.'>
+      <Trans id='js.params.Custom.Code.AceEditor.help' comment='The tags <3>, <6>, and <8> are URLs. The rest are code formatting. Please keep code and names of libraries untranslated.'>
         Define a <kbd>process(table)</kbd> function that accepts
         a <kbd>pd.DataFrame</kbd> and returns
         a <kbd>pd.DataFrame</kbd>. You may use

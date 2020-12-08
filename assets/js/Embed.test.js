@@ -1,6 +1,6 @@
 /* globals beforeEach, describe, expect, it */
 import React from 'react'
-import { Embed } from './Embed'
+import Embed from './Embed'
 import { shallowWithI18n } from './i18n/test-utils'
 
 describe('Embed', () => {

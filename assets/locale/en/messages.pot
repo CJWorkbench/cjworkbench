@@ -1,33 +1,33 @@
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/Embed.js:99
+#: assets/js/Embed.js:93
 msgid "js.Embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/Embed.js:98
+#: assets/js/Embed.js:92
 msgid "js.Embed.embedThisChart"
 msgstr ""
 
 #. default-message: by {0}
-#: assets/js/Embed.js:77
+#: assets/js/Embed.js:69
 msgid "js.Embed.metadata.author"
 msgstr ""
 
 #. {timeAgo} will contain a time difference (i.e. something like '4h ago')
 #. default-message: Updated {timeAgo}
-#: assets/js/Embed.js:84
+#: assets/js/Embed.js:74
 msgid "js.Embed.metadata.updated"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: WORKBENCH
-#: assets/js/Embed.js:37
+#: assets/js/Embed.js:29
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr ""
 
 #. default-message: This workflow is not available
-#: assets/js/Embed.js:29
+#: assets/js/Embed.js:21
 msgid "js.Embed.workflowNotAvailable.title"
 msgstr ""
 
@@ -121,59 +121,59 @@ msgstr ""
 
 #. This is a success message
 #. default-message: Imported module {module} under category {category}
-#: assets/js/ImportModuleFromGitHub.js:47
+#: assets/js/ImportModuleFromGitHub.js:42
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr ""
 
-#. default-message: Processing...
-#: assets/js/ImportModuleFromGitHub.js:33
+#. default-message: Processing…
+#: assets/js/ImportModuleFromGitHub.js:28
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr ""
 
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/OutputIframe.js:147
+#: assets/js/OutputIframe.js:146
 msgid "js.OutputIframe.embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/OutputIframe.js:140
+#: assets/js/OutputIframe.js:139
 msgid "js.OutputIframe.embed.header.title"
 msgstr ""
 
 #. default-message: OK
-#: assets/js/OutputIframe.js:157
+#: assets/js/OutputIframe.js:156
 msgid "js.OutputIframe.footer.OKButton"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/OutputIframe.js:123
+#: assets/js/OutputIframe.js:122
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr ""
 
 #. default-message: Set public
-#: assets/js/OutputIframe.js:126
+#: assets/js/OutputIframe.js:125
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr ""
 
 #. default-message: Get an embeddable URL
-#: assets/js/OutputIframe.js:178
+#: assets/js/OutputIframe.js:180
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: SHARE THIS WORKFLOW
-#: assets/js/OutputIframe.js:106
+#: assets/js/OutputIframe.js:105
 msgid "js.OutputIframe.private.header.title"
 msgstr ""
 
 #. default-message: Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
-#: assets/js/OutputIframe.js:116
+#: assets/js/OutputIframe.js:115
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 
 #. default-message: This workflow is currently private
-#: assets/js/OutputIframe.js:113
+#: assets/js/OutputIframe.js:112
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
@@ -271,38 +271,38 @@ msgid "js.ShareModal.ShareButton.button.hoverText"
 msgstr ""
 
 #. default-message: Copy to clipboard
-#: assets/js/ShareModal/Url.js:77
+#: assets/js/ShareModal/Url.js:78
 msgid "js.ShareModal.Url.copyToClipboardButton"
 msgstr ""
 
 #. default-message: Private link (only accessible to collaborators)
-#: assets/js/ShareModal/Url.js:69
+#: assets/js/ShareModal/Url.js:70
 msgid "js.ShareModal.Url.heading.private"
 msgstr ""
 
 #. default-message: Public link (accessible to anyone)
-#: assets/js/ShareModal/Url.js:68
+#: assets/js/ShareModal/Url.js:69
 msgid "js.ShareModal.Url.heading.public"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/ShareModal/Url.js:57
+#: assets/js/ShareModal/Url.js:58
 msgid "js.ShareModal.Url.socialLinks.facebook"
 msgstr ""
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
 #. default-message: Check out this chart I made using {workbenchMention}:
-#: assets/js/ShareModal/Url.js:43
+#: assets/js/ShareModal/Url.js:40
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/ShareModal/Url.js:52
+#: assets/js/ShareModal/Url.js:53
 msgid "js.ShareModal.Url.socialLinks.twitter"
 msgstr ""
 
 #. default-message: Redo
-#: assets/js/UndoRedoButtons.js:63
+#: assets/js/UndoRedoButtons.js:69
 msgid "js.UndoRedoButtons.redo.hoverText"
 msgstr ""
 
@@ -354,32 +354,32 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:64
+#: assets/js/WfHamburgerMenu.js:63
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:61
+#: assets/js/WfHamburgerMenu.js:60
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:56
+#: assets/js/WfHamburgerMenu.js:55
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:67
+#: assets/js/WfHamburgerMenu.js:66
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:59
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:51
+#: assets/js/WfHamburgerMenu.js:48
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -405,13 +405,13 @@ msgid "js.Workflow.suggestion.signInToSaveChanges"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/WorkflowEditor/AddData/Modal.js:27
+#: assets/js/WorkflowEditor/AddData/Modal.js:30
 msgid "js.WorkflowEditor.AddData.Modal.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: CHOOSE A DATA SOURCE
-#: assets/js/WorkflowEditor/AddData/Modal.js:22
+#: assets/js/WorkflowEditor/AddData/Modal.js:21
 msgid "js.WorkflowEditor.AddData.Modal.header.title"
 msgstr ""
 
@@ -426,7 +426,7 @@ msgid "js.WorkflowEditor.AddData.Search.clearButton.hoverText"
 msgstr ""
 
 #. default-message: Search…
-#: assets/js/WorkflowEditor/AddData/Search.js:16
+#: assets/js/WorkflowEditor/AddData/Search.js:14
 msgid "js.WorkflowEditor.AddData.Search.placeholder"
 msgstr ""
 
@@ -437,44 +437,44 @@ msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/WorkflowEditor/DataVersionModal.js:196
+#: assets/js/WorkflowEditor/DataVersionModal.js:194
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
 #. default-message: Data Versions
-#: assets/js/WorkflowEditor/DataVersionModal.js:166
+#: assets/js/WorkflowEditor/DataVersionModal.js:164
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr ""
 
 #. default-message: You will receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:100
+#: assets/js/WorkflowEditor/DataVersionModal.js:98
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr ""
 
 #. default-message: Turn alerts ON to receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:101
+#: assets/js/WorkflowEditor/DataVersionModal.js:99
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
 
 #. default-message: Turn off
-#: assets/js/WorkflowEditor/DataVersionModal.js:108
+#: assets/js/WorkflowEditor/DataVersionModal.js:106
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr ""
 
 #. default-message: Turn on
-#: assets/js/WorkflowEditor/DataVersionModal.js:108
+#: assets/js/WorkflowEditor/DataVersionModal.js:106
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: Alerts are <0>off</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:95
+#: assets/js/WorkflowEditor/DataVersionModal.js:93
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: Alerts are <0>on</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:94
+#: assets/js/WorkflowEditor/DataVersionModal.js:92
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 
@@ -485,23 +485,23 @@ msgid "js.WorkflowEditor.ModuleSearch.Button.addStep"
 msgstr ""
 
 #. default-message: Close Search
-#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:49
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:51
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText"
 msgstr ""
 
 #. default-message: Search…
-#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:41
+#: assets/js/WorkflowEditor/ModuleSearch/Prompt.js:40
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr ""
 
 #. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:103
+#: assets/js/WorkflowEditor/OutputPane.js:100
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
 #. This is a link to a report
 #. default-message: Report
-#: assets/js/WorkflowEditor/PaneSelect.js:20
+#: assets/js/WorkflowEditor/PaneSelect.js:23
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
 msgstr ""
 
@@ -516,7 +516,7 @@ msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.hoverText"
 msgstr ""
 
 #. default-message: {tabName} – {moduleName}
-#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:30
+#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:33
 msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName"
 msgstr ""
 
@@ -526,32 +526,33 @@ msgid "js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText"
 msgstr ""
 
 #. default-message: Add Text Block
-#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:16
+#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:20
 msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.hoverText"
 msgstr ""
 
+#. When an editor adds a text block to a report, this placeholder text appears
 #. default-message: Enter MarkDown text here
 #: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:9
 msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:14
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
 msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
 msgstr ""
 
 #. default-message: Edit
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:23
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:17
 msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
 msgstr ""
 
 #. default-message: Move down
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:35
 msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
 msgstr ""
 
 #. default-message: Move up
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:33
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:27
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
@@ -586,7 +587,7 @@ msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
 msgstr ""
 
 #. default-message: Create tab
-#: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:15
+#: assets/js/WorkflowEditor/Tabs/NewTabPrompt.js:12
 msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
 msgstr ""
 
@@ -605,11 +606,8 @@ msgstr ""
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
 msgstr ""
 
-#. The tab prefix will be used as the first part of the default name of tabs,
-#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
-#. etc
 #. default-message: Tab
-#: assets/js/WorkflowEditor/Tabs/Tabs.js:33
+#: assets/js/WorkflowEditor/Tabs/Tabs.js:28
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr ""
 
@@ -618,43 +616,43 @@ msgstr ""
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
-#. default-message: Type a note...
-#: assets/js/WorkflowEditor/step/Step.js:352
+#. default-message: Type a note…
+#: assets/js/WorkflowEditor/step/Step.js:347
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:236
+#: assets/js/WorkflowEditor/step/Step.js:231
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:236
+#: assets/js/WorkflowEditor/step/Step.js:230
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/step/Step.js:369
+#: assets/js/WorkflowEditor/step/Step.js:366
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/step/Step.js:369
+#: assets/js/WorkflowEditor/step/Step.js:365
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/step/Step.js:404
+#: assets/js/WorkflowEditor/step/Step.js:407
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/step/Step.js:381
+#: assets/js/WorkflowEditor/step/Step.js:379
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/step/Step.js:391
+#: assets/js/WorkflowEditor/step/Step.js:394
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr ""
 
@@ -685,17 +683,17 @@ msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/WorkflowNavBar.js:208
+#: assets/js/WorkflowNavBar.js:207
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/WorkflowNavBar.js:210
+#: assets/js/WorkflowNavBar.js:211
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr ""
 
 #. default-message: Sign in
-#: assets/js/WorkflowNavBar.js:177
+#: assets/js/WorkflowNavBar.js:174
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
@@ -718,29 +716,29 @@ msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 
 #. default-message: Alphabetical
-#: assets/js/Workflows/SortMenu.js:34
+#: assets/js/Workflows/SortMenu.js:35
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
 msgstr ""
 
 #. Last update descending
 #. default-message: Last modified
-#: assets/js/Workflows/SortMenu.js:31
+#: assets/js/Workflows/SortMenu.js:32
 msgid "js.Workflows.SortMenu.lastModified.dropdownItem"
 msgstr ""
 
 #. Last update ascending
 #. default-message: Oldest modified
-#: assets/js/Workflows/SortMenu.js:32
+#: assets/js/Workflows/SortMenu.js:33
 msgid "js.Workflows.SortMenu.oldestModified.dropdownItem"
 msgstr ""
 
 #. default-message: Reverse alphabetical
-#: assets/js/Workflows/SortMenu.js:35
+#: assets/js/Workflows/SortMenu.js:36
 msgid "js.Workflows.SortMenu.reverseAlphabet.dropdownItem"
 msgstr ""
 
 #. default-message: Sort
-#: assets/js/Workflows/SortMenu.js:28
+#: assets/js/Workflows/SortMenu.js:29
 msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr ""
 
@@ -755,86 +753,86 @@ msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr ""
 
 #. default-message: Create your first workflow
-#: assets/js/Workflows/WorkflowLists.js:51
+#: assets/js/Workflows/WorkflowLists.js:50
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr ""
 
 #. default-message: My workflows
-#: assets/js/Workflows/WorkflowLists.js:111
+#: assets/js/Workflows/WorkflowLists.js:110
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr ""
 
 #. default-message: Recipes
-#: assets/js/Workflows/WorkflowLists.js:113
+#: assets/js/Workflows/WorkflowLists.js:112
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr ""
 
 #. As in 'Workflows shared with me'
 #. default-message: Shared with me
-#: assets/js/Workflows/WorkflowLists.js:112
+#: assets/js/Workflows/WorkflowLists.js:111
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr ""
 
 #. default-message: Publish new recipes via the Django admin
-#: assets/js/Workflows/WorkflowLists.js:76
+#: assets/js/Workflows/WorkflowLists.js:75
 msgid "js.Workflows.WorkflowLists.publishNewRecipes"
 msgstr ""
 
 #. default-message: Workflows shared with you as collaborator will appear here
-#: assets/js/Workflows/WorkflowLists.js:64
+#: assets/js/Workflows/WorkflowLists.js:63
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
 #. default-message: Change privacy
-#: assets/js/Workflows/WorkflowMetadata.js:50
+#: assets/js/Workflows/WorkflowMetadata.js:49
 msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
 msgstr ""
 
 #. default-message: by {owner}
-#: assets/js/Workflows/WorkflowMetadata.js:41
+#: assets/js/Workflows/WorkflowMetadata.js:37
 msgid "js.Workflows.WorkflowMetadata.owner"
 msgstr ""
 
 #. The parameter will contain a time difference (i.e. something like '5h ago')
 #. default-message: Updated {timeAgo}
-#: assets/js/Workflows/WorkflowMetadata.js:64
+#: assets/js/Workflows/WorkflowMetadata.js:65
 msgid "js.Workflows.WorkflowMetadata.update"
 msgstr ""
 
 #. default-message: private
-#: assets/js/Workflows/WorkflowMetadata.js:54
+#: assets/js/Workflows/WorkflowMetadata.js:55
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
 #. default-message: public
-#: assets/js/Workflows/WorkflowMetadata.js:52
+#: assets/js/Workflows/WorkflowMetadata.js:53
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Create Workflow
-#: assets/js/Workflows/index.js:203
+#: assets/js/Workflows/index.js:205
 msgid "js.Workflows.createWorkflowButton"
 msgstr ""
 
 #. default-message: Permanently delete this workflow?
-#: assets/js/Workflows/index.js:95
+#: assets/js/Workflows/index.js:92
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr ""
 
 #. default-message: Learn how to work with data without coding
-#: assets/js/Workflows/index.js:200
+#: assets/js/Workflows/index.js:202
 msgid "js.Workflows.learnHowToWorkWithData"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: NEW
-#: assets/js/Workflows/index.js:194
+#: assets/js/Workflows/index.js:195
 msgid "js.Workflows.new"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: TRAINING
-#: assets/js/Workflows/index.js:197
+#: assets/js/Workflows/index.js:199
 msgid "js.Workflows.training.title"
 msgstr ""
 
@@ -878,7 +876,7 @@ msgid "js.lessons.LessonSection.training.link"
 msgstr ""
 
 #. default-message: Select
-#: assets/js/params/Column.js:46
+#: assets/js/params/Column.js:33
 msgid "js.params.Column.select.placeholder"
 msgstr ""
 
@@ -907,129 +905,129 @@ msgid "js.params.Condition.AndOr.or"
 msgstr ""
 
 #. default-message: Case-sensitive
-#: assets/js/params/Condition/Comparison.js:109
+#: assets/js/params/Condition/Comparison.js:108
 msgid "js.params.Condition.Comparison.caseSensitive"
 msgstr ""
 
 #. default-message: Cell is empty
-#: assets/js/params/Condition/ComparisonOperator.js:33
+#: assets/js/params/Condition/ComparisonOperator.js:147
 msgid "js.params.Condition.Comparison.cellIsEmpty"
 msgstr ""
 
 #. default-message: Cell is not empty
-#: assets/js/params/Condition/ComparisonOperator.js:34
+#: assets/js/params/Condition/ComparisonOperator.js:153
 msgid "js.params.Condition.Comparison.cellIsNotEmpty"
 msgstr ""
 
 #. default-message: Cell is not null
-#: assets/js/params/Condition/ComparisonOperator.js:32
+#: assets/js/params/Condition/ComparisonOperator.js:141
 msgid "js.params.Condition.Comparison.cellIsNotNull"
 msgstr ""
 
 #. default-message: Cell is null
-#: assets/js/params/Condition/ComparisonOperator.js:31
+#: assets/js/params/Condition/ComparisonOperator.js:135
 msgid "js.params.Condition.Comparison.cellIsNull"
 msgstr ""
 
 #. default-message: Select column
-#: assets/js/params/Condition/Comparison.js:69
+#: assets/js/params/Condition/Comparison.js:68
 msgid "js.params.Condition.Comparison.column.placeholder"
 msgstr ""
 
 #. default-message: Number is
-#: assets/js/params/Condition/ComparisonOperator.js:23
+#: assets/js/params/Condition/ComparisonOperator.js:97
 msgid "js.params.Condition.Comparison.numberIs"
 msgstr ""
 
 #. default-message: Number is greater than
-#: assets/js/params/Condition/ComparisonOperator.js:25
+#: assets/js/params/Condition/ComparisonOperator.js:109
 msgid "js.params.Condition.Comparison.numberIsGreaterThan"
 msgstr ""
 
 #. default-message: Number is greater than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:26
+#: assets/js/params/Condition/ComparisonOperator.js:115
 msgid "js.params.Condition.Comparison.numberIsGreaterThanOrEqual"
 msgstr ""
 
 #. default-message: Number is less than
-#: assets/js/params/Condition/ComparisonOperator.js:27
+#: assets/js/params/Condition/ComparisonOperator.js:121
 msgid "js.params.Condition.Comparison.numberIsLessThan"
 msgstr ""
 
 #. default-message: Number is less than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:28
+#: assets/js/params/Condition/ComparisonOperator.js:127
 msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
 msgstr ""
 
 #. default-message: Number is not
-#: assets/js/params/Condition/ComparisonOperator.js:24
+#: assets/js/params/Condition/ComparisonOperator.js:103
 msgid "js.params.Condition.Comparison.numberIsNot"
 msgstr ""
 
 #. default-message: Regular expression
-#: assets/js/params/Condition/Comparison.js:120
+#: assets/js/params/Condition/Comparison.js:119
 msgid "js.params.Condition.Comparison.regex"
 msgstr ""
 
-#. As in 'select a condition relative to which we will filter'. Comparison here
-#. is something of the form 'IF something IS like that'.
+#. As in "select a condition relative to which we will filter". Comparison here
+#. is something of the form "IF something IS like that"
 #. default-message: Select condition
-#: assets/js/params/Condition/ComparisonOperator.js:66
+#: assets/js/params/Condition/ComparisonOperator.js:20
 msgid "js.params.Condition.Comparison.selectComparison"
 msgstr ""
 
 #. default-message: Text contains
-#: assets/js/params/Condition/ComparisonOperator.js:9
+#: assets/js/params/Condition/ComparisonOperator.js:29
 msgid "js.params.Condition.Comparison.textContains"
 msgstr ""
 
 #. default-message: Text does not contain
-#: assets/js/params/Condition/ComparisonOperator.js:10
+#: assets/js/params/Condition/ComparisonOperator.js:35
 msgid "js.params.Condition.Comparison.textDoesNotContain"
 msgstr ""
 
 #. default-message: Text is exactly
-#: assets/js/params/Condition/ComparisonOperator.js:11
+#: assets/js/params/Condition/ComparisonOperator.js:41
 msgid "js.params.Condition.Comparison.textIs"
 msgstr ""
 
 #. default-message: Text is not exactly
-#: assets/js/params/Condition/ComparisonOperator.js:12
+#: assets/js/params/Condition/ComparisonOperator.js:47
 msgid "js.params.Condition.Comparison.textIsNot"
 msgstr ""
 
 #. default-message: Timestamp is
-#: assets/js/params/Condition/ComparisonOperator.js:15
+#: assets/js/params/Condition/ComparisonOperator.js:57
 msgid "js.params.Condition.Comparison.timestampIs"
 msgstr ""
 
 #. default-message: Timestamp is after
-#: assets/js/params/Condition/ComparisonOperator.js:17
+#: assets/js/params/Condition/ComparisonOperator.js:69
 msgid "js.params.Condition.Comparison.timestampIsAfter"
 msgstr ""
 
 #. default-message: Timestamp is after or equals
-#: assets/js/params/Condition/ComparisonOperator.js:18
+#: assets/js/params/Condition/ComparisonOperator.js:75
 msgid "js.params.Condition.Comparison.timestampIsAfterOrEquals"
 msgstr ""
 
 #. default-message: Timestamp is before
-#: assets/js/params/Condition/ComparisonOperator.js:19
+#: assets/js/params/Condition/ComparisonOperator.js:81
 msgid "js.params.Condition.Comparison.timestampIsBefore"
 msgstr ""
 
 #. default-message: Timestamp is before or equals
-#: assets/js/params/Condition/ComparisonOperator.js:20
+#: assets/js/params/Condition/ComparisonOperator.js:87
 msgid "js.params.Condition.Comparison.timestampIsBeforeOrEquals"
 msgstr ""
 
 #. default-message: Timestamp is not
-#: assets/js/params/Condition/ComparisonOperator.js:16
+#: assets/js/params/Condition/ComparisonOperator.js:63
 msgid "js.params.Condition.Comparison.timestampIsNot"
 msgstr ""
 
 #. default-message: Value
-#: assets/js/params/Condition/Comparison.js:90
+#: assets/js/params/Condition/Comparison.js:89
 msgid "js.params.Condition.Comparison.value.placeholder"
 msgstr ""
 
@@ -1038,88 +1036,88 @@ msgstr ""
 msgid "js.params.Condition.Group.heading.title"
 msgstr ""
 
-#. default-message: (default)
-#: assets/js/params/Custom/Aggregations/Aggregation.js:67
+#. default-message: (default, message:
+#: assets/js/params/Custom/Aggregations/Aggregation.js:64
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
 msgstr ""
 
 #. default-message: First of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:66
+#: assets/js/params/Custom/Aggregations/Aggregation.js:63
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.first"
 msgstr ""
 
 #. default-message: Maximum of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:65
+#: assets/js/params/Custom/Aggregations/Aggregation.js:62
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.max"
 msgstr ""
 
 #. default-message: Average of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:62
+#: assets/js/params/Custom/Aggregations/Aggregation.js:59
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.mean"
 msgstr ""
 
 #. default-message: Median of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:63
+#: assets/js/params/Custom/Aggregations/Aggregation.js:60
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.median"
 msgstr ""
 
 #. default-message: Minimum of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:64
+#: assets/js/params/Custom/Aggregations/Aggregation.js:61
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.min"
 msgstr ""
 
 #. default-message: Unique count of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:60
+#: assets/js/params/Custom/Aggregations/Aggregation.js:57
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.nunique"
 msgstr ""
 
 #. default-message: Group Size
-#: assets/js/params/Custom/Aggregations/Aggregation.js:52
+#: assets/js/params/Custom/Aggregations/Aggregation.js:48
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.size"
 msgstr ""
 
 #. default-message: Sum of {colname}
-#: assets/js/params/Custom/Aggregations/Aggregation.js:61
+#: assets/js/params/Custom/Aggregations/Aggregation.js:58
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.sum"
 msgstr ""
 
 #. default-message: Count
-#: assets/js/params/Custom/Aggregations/Operation.js:18
+#: assets/js/params/Custom/Aggregations/Operation.js:17
 msgid "js.params.Custom.Aggregations.Operation.count.option"
 msgstr ""
 
 #. default-message: Count unique
-#: assets/js/params/Custom/Aggregations/Operation.js:19
+#: assets/js/params/Custom/Aggregations/Operation.js:18
 msgid "js.params.Custom.Aggregations.Operation.countUnique.option"
 msgstr ""
 
 #. default-message: First
-#: assets/js/params/Custom/Aggregations/Operation.js:25
+#: assets/js/params/Custom/Aggregations/Operation.js:24
 msgid "js.params.Custom.Aggregations.Operation.first.option"
 msgstr ""
 
 #. default-message: Maximum
-#: assets/js/params/Custom/Aggregations/Operation.js:24
+#: assets/js/params/Custom/Aggregations/Operation.js:23
 msgid "js.params.Custom.Aggregations.Operation.maximum.option"
 msgstr ""
 
 #. default-message: Average (Mean)
-#: assets/js/params/Custom/Aggregations/Operation.js:21
+#: assets/js/params/Custom/Aggregations/Operation.js:20
 msgid "js.params.Custom.Aggregations.Operation.mean.option"
 msgstr ""
 
 #. default-message: Median
-#: assets/js/params/Custom/Aggregations/Operation.js:22
+#: assets/js/params/Custom/Aggregations/Operation.js:21
 msgid "js.params.Custom.Aggregations.Operation.median.option"
 msgstr ""
 
 #. default-message: Minimum
-#: assets/js/params/Custom/Aggregations/Operation.js:23
+#: assets/js/params/Custom/Aggregations/Operation.js:22
 msgid "js.params.Custom.Aggregations.Operation.minimum.option"
 msgstr ""
 
 #. default-message: Sum
-#: assets/js/params/Custom/Aggregations/Operation.js:20
+#: assets/js/params/Custom/Aggregations/Operation.js:19
 msgid "js.params.Custom.Aggregations.Operation.sum.option"
 msgstr ""
 
@@ -1153,48 +1151,48 @@ msgid "js.params.Custom.ComponentNotFound.error"
 msgstr ""
 
 #. default-message: Browse
-#: assets/js/params/File/File.js:232
+#: assets/js/params/File/File.js:248
 msgid "js.params.Custom.File.browse.label"
 msgstr ""
 
 #. default-message: Cancel Upload
-#: assets/js/params/File/File.js:188
+#: assets/js/params/File/File.js:194
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr ""
 
 #. default-message: Cancel upload
-#: assets/js/params/File/File.js:187
+#: assets/js/params/File/File.js:192
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr ""
 
 #. default-message: Drag file here
-#: assets/js/params/File/File.js:223
+#: assets/js/params/File/File.js:234
 msgid "js.params.Custom.File.dragfilehere"
 msgstr ""
 
 #. default-message: Drop file here
-#: assets/js/params/File/File.js:245
+#: assets/js/params/File/File.js:261
 msgid "js.params.Custom.File.dropFileHere"
 msgstr ""
 
 #. This is shown after js.params.Custom.File.dragfilehere
 #. default-message: or
-#: assets/js/params/File/File.js:224
+#: assets/js/params/File/File.js:235
 msgid "js.params.Custom.File.or"
 msgstr ""
 
 #. default-message: Replace
-#: assets/js/params/File/File.js:208
+#: assets/js/params/File/File.js:219
 msgid "js.params.Custom.File.replace"
 msgstr ""
 
 #. default-message: API
-#: assets/js/params/File/File.js:204 assets/js/params/File/File.js:228
+#: assets/js/params/File/File.js:215 assets/js/params/File/File.js:244
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
 #. default-message: Open upload API instructions
-#: assets/js/params/File/File.js:203 assets/js/params/File/File.js:227
+#: assets/js/params/File/File.js:213 assets/js/params/File/File.js:242
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
@@ -1214,57 +1212,57 @@ msgid "js.params.Custom.Groups.DateGranularities.selectTimestampToGroup"
 msgstr ""
 
 #. default-message: as is
-#: assets/js/params/Custom/Groups/DateGranularity.js:38
+#: assets/js/params/Custom/Groups/DateGranularity.js:36
 msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
 msgstr ""
 
 #. default-message: by day
-#: assets/js/params/Custom/Groups/DateGranularity.js:42
+#: assets/js/params/Custom/Groups/DateGranularity.js:40
 msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
 msgstr ""
 
 #. default-message: by hour
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
+#: assets/js/params/Custom/Groups/DateGranularity.js:39
 msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
 msgstr ""
 
 #. default-message: by minute
-#: assets/js/params/Custom/Groups/DateGranularity.js:40
+#: assets/js/params/Custom/Groups/DateGranularity.js:38
 msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
 msgstr ""
 
 #. default-message: by month
-#: assets/js/params/Custom/Groups/DateGranularity.js:44
+#: assets/js/params/Custom/Groups/DateGranularity.js:42
 msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
 msgstr ""
 
 #. default-message: by quarter
-#: assets/js/params/Custom/Groups/DateGranularity.js:45
+#: assets/js/params/Custom/Groups/DateGranularity.js:43
 msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
 msgstr ""
 
 #. default-message: by second
-#: assets/js/params/Custom/Groups/DateGranularity.js:39
+#: assets/js/params/Custom/Groups/DateGranularity.js:37
 msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
 msgstr ""
 
 #. default-message: by week
-#: assets/js/params/Custom/Groups/DateGranularity.js:43
+#: assets/js/params/Custom/Groups/DateGranularity.js:41
 msgid "js.params.Custom.Groups.DateGranularity.byWeek.option"
 msgstr ""
 
 #. default-message: Weeks begin Monday at midnight UTC.
-#: assets/js/params/Custom/Groups/DateGranularity.js:49
+#: assets/js/params/Custom/Groups/DateGranularity.js:47
 msgid "js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday"
 msgstr ""
 
 #. default-message: by year
-#: assets/js/params/Custom/Groups/DateGranularity.js:46
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr ""
 
 #. default-message: Granularity of “{colname}”
-#: assets/js/params/Custom/Groups/DateGranularity.js:30
+#: assets/js/params/Custom/Groups/DateGranularity.js:28
 msgid "js.params.Custom.Groups.DateGranularity.heading.title"
 msgstr ""
 
@@ -1274,45 +1272,45 @@ msgid "js.params.Custom.Groups.groupDates"
 msgstr ""
 
 #. default-message: Add all columns
-#: assets/js/params/Custom/JoinColumns.js:107
+#: assets/js/params/Custom/JoinColumns.js:111
 msgid "js.params.Custom.JoinColumns.addAllColumns"
 msgstr ""
 
 #. default-message: Add columns
-#: assets/js/params/Custom/JoinColumns.js:95
+#: assets/js/params/Custom/JoinColumns.js:99
 msgid "js.params.Custom.JoinColumns.addColumns"
 msgstr ""
 
 #. This refers to a join operation, as the term join is used in SQL database
 #. language. It is followed by one or more column names.
 #. default-message: Join on
-#: assets/js/params/Custom/JoinColumns.js:81
+#: assets/js/params/Custom/JoinColumns.js:76
 msgid "js.params.Custom.JoinColumns.joinOn"
 msgstr ""
 
 #. The parameter will contain a tab name
 #. default-message: There is no column to join on in {0}. Columns in both tabs must have identical names and capitalization. Please edit column names.
-#: assets/js/params/Custom/JoinColumns.js:84
+#: assets/js/params/Custom/JoinColumns.js:83
 msgid "js.params.Custom.JoinColumns.noColumnToJoin"
 msgstr ""
 
 #. default-message: New Value
-#: assets/js/params/Custom/Refine/RefineBins.js:62
+#: assets/js/params/Custom/Refine/RefineBins.js:63
 msgid "js.params.Custom.RefineBins.RefineBin.newValue.placeholder"
 msgstr ""
 
 #. default-message: Cluster size
-#: assets/js/params/Custom/Refine/RefineBins.js:119
+#: assets/js/params/Custom/Refine/RefineBins.js:120
 msgid "js.params.Custom.RefineBins.clusterSize.heading"
 msgstr ""
 
 #. default-message: # rows
-#: assets/js/params/Custom/Refine/RefineBins.js:121
+#: assets/js/params/Custom/Refine/RefineBins.js:122
 msgid "js.params.Custom.RefineBins.countRows.heading"
 msgstr ""
 
 #. default-message: New value
-#: assets/js/params/Custom/Refine/RefineBins.js:122
+#: assets/js/params/Custom/Refine/RefineBins.js:123
 msgid "js.params.Custom.RefineBins.newValue.heading"
 msgstr ""
 
@@ -1322,17 +1320,17 @@ msgid "js.params.Custom.RefineBins.newValue.placeholder"
 msgstr ""
 
 #. default-message: No clusters found. Try different settings.
-#: assets/js/params/Custom/Refine/RefineBins.js:108
+#: assets/js/params/Custom/Refine/RefineBins.js:109
 msgid "js.params.Custom.RefineBins.noClustersFound"
 msgstr ""
 
 #. default-message: Values
-#: assets/js/params/Custom/Refine/RefineBins.js:120
+#: assets/js/params/Custom/Refine/RefineBins.js:121
 msgid "js.params.Custom.RefineBins.values.heading"
 msgstr ""
 
 #. default-message: Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".
-#: assets/js/params/Custom/Refine/RefineClusterer.js:14
+#: assets/js/params/Custom/Refine/RefineClusterer.js:17
 msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.description"
 msgstr ""
 
@@ -1341,8 +1339,8 @@ msgstr ""
 msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.name"
 msgstr ""
 
-#. default-message: Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to 'Maximum distance'. For instance, the distance between "Cafés" and "cafe" is 3.
-#: assets/js/params/Custom/Refine/RefineClusterer.js:22
+#. default-message: Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to ‘Maximum distance’. For instance, the distance between "Cafés" and "cafe" is 3.
+#: assets/js/params/Custom/Refine/RefineClusterer.js:32
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
 msgstr ""
 
@@ -1350,17 +1348,17 @@ msgstr ""
 #. levenstein algorithm works (i.e. it compares strings relative to the number
 #. of characters in which they differ, hence the term edit distance).
 #. default-message: Edit distance
-#: assets/js/params/Custom/Refine/RefineClusterer.js:21
+#: assets/js/params/Custom/Refine/RefineClusterer.js:27
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.name"
 msgstr ""
 
 #. default-message: Maximum distance
-#: assets/js/params/Custom/Refine/RefineClusterer.js:26
+#: assets/js/params/Custom/Refine/RefineClusterer.js:39
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label"
 msgstr ""
 
 #. default-message: Method
-#: assets/js/params/Custom/Refine/RefineClusterer.js:179
+#: assets/js/params/Custom/Refine/RefineClusterer.js:188
 msgid "js.params.Custom.RefineClusterer.method"
 msgstr ""
 
@@ -1370,28 +1368,28 @@ msgid "js.params.Custom.RefineClustererProgress.findingClusters"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/params/Custom/Refine/RefineModal.js:82
+#: assets/js/params/Custom/Refine/RefineModal.js:78
 msgid "js.params.Custom.RefineModal.footer.cancelButton"
 msgstr ""
 
 #. default-message: Merge selected
-#: assets/js/params/Custom/Refine/RefineModal.js:90
+#: assets/js/params/Custom/Refine/RefineModal.js:86
 msgid "js.params.Custom.RefineModal.footer.mergeSelectedButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: CLUSTER
-#: assets/js/params/Custom/Refine/RefineModal.js:65
+#: assets/js/params/Custom/Refine/RefineModal.js:61
 msgid "js.params.Custom.RefineModal.header.title"
 msgstr ""
 
 #. default-message: Clustering
-#: assets/js/params/Custom/Refine/RefineStatus.js:21
+#: assets/js/params/Custom/Refine/RefineStatus.js:9
 msgid "js.params.Custom.RefineStatus.clustering"
 msgstr ""
 
 #. default-message: {nBinsTotal, plural, one {# cluster found} other {# clusters found}}
-#: assets/js/params/Custom/Refine/RefineStatus.js:23
+#: assets/js/params/Custom/Refine/RefineStatus.js:10
 msgid "js.params.Custom.RefineStatus.numberOfClustersFound"
 msgstr ""
 
@@ -1414,12 +1412,12 @@ msgid "js.params.Custom.ReorderHistory.to.heading"
 msgstr ""
 
 #. default-message: Ascending
-#: assets/js/params/Custom/SortColumn/SortColumn.js:10
+#: assets/js/params/Custom/SortColumn/SortColumn.js:9
 msgid "js.params.Custom.SortColumn.AscendingParam.ascending"
 msgstr ""
 
 #. default-message: Descending
-#: assets/js/params/Custom/SortColumn/SortColumn.js:11
+#: assets/js/params/Custom/SortColumn/SortColumn.js:10
 msgid "js.params.Custom.SortColumn.AscendingParam.descending"
 msgstr ""
 
@@ -1429,12 +1427,12 @@ msgid "js.params.Custom.SortColumn.add"
 msgstr ""
 
 #. default-message: By
-#: assets/js/params/Custom/SortColumn/SortColumn.js:71
+#: assets/js/params/Custom/SortColumn/SortColumn.js:66
 msgid "js.params.Custom.SortColumn.by.label"
 msgstr ""
 
 #. default-message: Then by
-#: assets/js/params/Custom/SortColumn/SortColumn.js:71
+#: assets/js/params/Custom/SortColumn/SortColumn.js:66
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr ""
 
@@ -1631,51 +1629,51 @@ msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 
 #. default-message: Include these rows
-#: assets/js/params/Custom/ValueSelect.js:55
+#: assets/js/params/Custom/ValueSelect.js:54
 msgid "js.params.Custom.ValueSelect.ValueItem.includeTheseRows"
 msgstr ""
 
 #. default-message: Loading values…
-#: assets/js/params/Custom/ValueSelect.js:121
+#: assets/js/params/Custom/ValueSelect.js:120
 msgid "js.params.Custom.ValueSelect.ValueList.loadingValues"
 msgstr ""
 
 #. default-message: Column does not have any values
-#: assets/js/params/Custom/ValueSelect.js:123
+#: assets/js/params/Custom/ValueSelect.js:122
 msgid "js.params.Custom.ValueSelect.ValueList.noValuesInColumn"
 msgstr ""
 
 #. default-message: No values match your search
-#: assets/js/params/Custom/ValueSelect.js:125
+#: assets/js/params/Custom/ValueSelect.js:124
 msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
 msgstr ""
 
 #. default-message: Version
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:37
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:32
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
 msgstr ""
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #. default-message: Version {0} of {nVersions}
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:47
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:42
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
 msgstr ""
 
 #. default-message: Select version
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:62
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:57
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
 msgstr ""
 
 #. default-message: Version
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:56
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:51
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
 msgstr ""
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #. default-message: {0} of {nVersions}
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:65
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:60
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr ""
 
@@ -1736,89 +1734,84 @@ msgstr ""
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
 #. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:74
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:70
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr ""
 
 #. default-message: change auto-update settings
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:69
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:65
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr ""
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
 #. default-message: Checked <0>{0}</0>
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr ""
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
 #. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:75
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:71
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr ""
 
 #. default-message: Update
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:66
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:62
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr ""
 
 #. default-message: Apply
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
 msgstr ""
 
 #. default-message: Automatically update this workflow with the newest data (old versions will be saved).
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:158
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:160
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:155
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr ""
 
 #. default-message: days
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:185
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
 msgstr ""
 
 #. default-message: hours
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:186
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:181
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
 msgstr ""
 
 #. default-message: Check for update every
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:164
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:159
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr ""
 
 #. default-message: minutes
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:187
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:182
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
 msgstr ""
 
 #. default-message: seconds
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:188
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:183
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
 msgstr ""
 
 #. default-message: weeks
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:184
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:179
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
 msgstr ""
 
 #. default-message: Email me when data changes
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:237
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
-msgstr ""
-
-#. default-message: Close
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:247
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.close.placeholder"
 msgstr ""
 
 #. default-message: Close
@@ -1826,26 +1819,31 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr ""
 
+#. default-message: Close
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:245
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
+msgstr ""
+
 #. This should be all-caps for styling reasons
 #. default-message: WORKFLOW UPDATE
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:140
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:135
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr ""
 
 #. default-message: Check for new data manually.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:225
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:220
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:222
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:217
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr ""
 
 #. default-message: Retry
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:197
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr ""
 
@@ -1865,45 +1863,46 @@ msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr ""
 
 #. default-message: {0}% uploaded
-#: assets/js/params/File/File.js:10
+#: assets/js/params/File/File.js:11
 msgid "js.params.File.UploadProgress.hoverText"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/params/File/UploadedFileSelect.js:93
+#: assets/js/params/File/UploadedFileSelect.js:92
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/params/File/UploadedFileSelect.js:86
+#: assets/js/params/File/UploadedFileSelect.js:85
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: FILE HISTORY
-#: assets/js/params/File/UploadedFileSelect.js:57
+#: assets/js/params/File/UploadedFileSelect.js:56
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title"
 msgstr ""
 
 #. default-message: You have not uploaded any files to this Step
-#: assets/js/params/File/UploadedFileSelect.js:60
+#: assets/js/params/File/UploadedFileSelect.js:59
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles"
 msgstr ""
 
 #. The parameter will contain a specific date
 #. default-message: Uploaded {0}
-#: assets/js/params/File/UploadedFileSelect.js:71
+#: assets/js/params/File/UploadedFileSelect.js:70
 msgid "js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at"
 msgstr ""
 
 #. default-message: Choose a previously-uploaded file
-#: assets/js/params/File/UploadedFileSelect.js:115
+#: assets/js/params/File/UploadedFileSelect.js:117
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.hoverText"
 msgstr ""
 
-#. Means 'no file'
-#. default-message: [NONE]
-#: assets/js/params/File/UploadedFileSelect.js:111
+#. Means "No files exist". Very rare; most users will see
+#. js.params.File.UploadFileSelect.choosePreviousFile.text first
+#. default-message: File [NONE] of {nFiles}
+#: assets/js/params/File/UploadedFileSelect.js:120
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
 msgstr ""
 
@@ -1911,43 +1910,43 @@ msgstr ""
 #. js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is
 #. the total number of files
 #. default-message: File {fileNumber} of {nFiles}
-#: assets/js/params/File/UploadedFileSelect.js:116
+#: assets/js/params/File/UploadedFileSelect.js:125
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.text"
 msgstr ""
 
 #. default-message: (please choose a file)
-#: assets/js/params/Gdrivefile.js:95
+#: assets/js/params/Gdrivefile.js:94
 msgid "js.params.Gdrivefile.FileInfo.chooseFile"
 msgstr ""
 
 #. {name} is the name of a file
 #. default-message: Open in Google Sheets: {name}
-#: assets/js/params/Gdrivefile.js:103
+#: assets/js/params/Gdrivefile.js:100
 msgid "js.params.Gdrivefile.FileInfo.openInGoogleSheets"
 msgstr ""
 
 #. default-message: Change
-#: assets/js/params/Gdrivefile.js:287
+#: assets/js/params/Gdrivefile.js:288
 msgid "js.params.Gdrivefile.change.button"
 msgstr ""
 
 #. default-message: Choose
-#: assets/js/params/Gdrivefile.js:287
+#: assets/js/params/Gdrivefile.js:288
 msgid "js.params.Gdrivefile.choose.button"
 msgstr ""
 
 #. default-message: failure: please reconnect
-#: assets/js/params/Gdrivefile.js:267
+#: assets/js/params/Gdrivefile.js:268
 msgid "js.params.Gdrivefile.status.failureRecconect"
 msgstr ""
 
 #. default-message: Loading...
-#: assets/js/params/Gdrivefile.js:263
+#: assets/js/params/Gdrivefile.js:264
 msgid "js.params.Gdrivefile.status.loading"
 msgstr ""
 
 #. default-message: (please sign in)
-#: assets/js/params/Gdrivefile.js:271
+#: assets/js/params/Gdrivefile.js:272
 msgid "js.params.Gdrivefile.status.pleaseSignin"
 msgstr ""
 
@@ -1957,104 +1956,104 @@ msgid "js.params.List.add"
 msgstr ""
 
 #. default-message: Pick color
-#: assets/js/params/Multichartseries/ColorPicker.js:247
+#: assets/js/params/Multichartseries/ColorPicker.js:246
 msgid "js.params.Multichartseries.ColorPicker.pickColor.hoverText"
 msgstr ""
 
 #. default-message: add another column
-#: assets/js/params/Multichartseries/index.js:73
+#: assets/js/params/Multichartseries/index.js:78
 msgid "js.params.Multichartseries.addColumn.hoverText"
 msgstr ""
 
 #. default-message: Loading…
-#: assets/js/params/Multichartseries/index.js:86
+#: assets/js/params/Multichartseries/index.js:93
 msgid "js.params.Multichartseries.loading"
 msgstr ""
 
 #. default-message: remove last column
-#: assets/js/params/Multichartseries/index.js:68
+#: assets/js/params/Multichartseries/index.js:69
 msgid "js.params.Multichartseries.removeLastColumn.hoverText"
 msgstr ""
 
 #. default-message: clear
-#: assets/js/params/Multicolumn.js:45
+#: assets/js/params/Multicolumn.js:44
 msgid "js.params.Multicolumn.MenuList.clearButton"
 msgstr ""
 
 #. default-message: Select all
-#: assets/js/params/Multicolumn.js:37
+#: assets/js/params/Multicolumn.js:36
 msgid "js.params.Multicolumn.MenuList.selectAllButton"
 msgstr ""
 
 #. default-message: Select columns
-#: assets/js/params/Multicolumn.js:122
+#: assets/js/params/Multicolumn.js:121
 msgid "js.params.Multicolumn.selectColumn.placeholder"
 msgstr ""
 
 #. default-message: Select Tabs
-#: assets/js/params/Multitab.js:43
+#: assets/js/params/Multitab.js:25
 msgid "js.params.MultitabParam.selectTabs.placeholder"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Currency: {0}
-#: assets/js/params/NumberFormat.js:57
+#: assets/js/params/NumberFormat.js:63
 msgid "js.params.NumberFormat.currency"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Decimal: {0}
-#: assets/js/params/NumberFormat.js:27
+#: assets/js/params/NumberFormat.js:25
 msgid "js.params.NumberFormat.decimal.default"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Decimal, fixed precision: {0}
-#: assets/js/params/NumberFormat.js:20
+#: assets/js/params/NumberFormat.js:16
 msgid "js.params.NumberFormat.decimal.fixed"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Decimal, no commas: {0}
 #: assets/js/params/NumberFormat.js:34
 msgid "js.params.NumberFormat.decimal.noCommas"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Integer: {0}
-#: assets/js/params/NumberFormat.js:42
+#: assets/js/params/NumberFormat.js:44
 msgid "js.params.NumberFormat.integer.default"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Integer, no commas: {0}
-#: assets/js/params/NumberFormat.js:49
+#: assets/js/params/NumberFormat.js:53
 msgid "js.params.NumberFormat.integer.noCommas"
 msgstr ""
 
-#. The parameter contains an example
+#. The parameter {0} contains an example
 #. default-message: Percentage: {0}
-#: assets/js/params/NumberFormat.js:64
+#: assets/js/params/NumberFormat.js:72
 msgid "js.params.NumberFormat.percentage"
 msgstr ""
 
 #. default-message: Loading values…
-#: assets/js/params/Custom/Refine/index.js:453
+#: assets/js/params/Custom/Refine/index.js:454
 msgid "js.params.Refine.GroupList.loadingValues"
 msgstr ""
 
 #. default-message: This column does not have any values
-#: assets/js/params/Custom/Refine/index.js:455
+#: assets/js/params/Custom/Refine/index.js:456
 msgid "js.params.Refine.GroupList.noValuesInColumn"
 msgstr ""
 
 #. default-message: No values match your search
-#: assets/js/params/Custom/Refine/index.js:457
+#: assets/js/params/Custom/Refine/index.js:458
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
 msgstr ""
 
 #. default-message: Cancel edits of these values
-#: assets/js/params/Custom/Refine/index.js:276
+#: assets/js/params/Custom/Refine/index.js:277
 msgid "js.params.Refine.RefineGroup.cancelEdits"
 msgstr ""
 
@@ -2064,22 +2063,22 @@ msgid "js.params.Refine.RefineGroup.expandStatus.expanded"
 msgstr ""
 
 #. default-message: Show original values
-#: assets/js/params/Custom/Refine/index.js:264
+#: assets/js/params/Custom/Refine/index.js:265
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
 msgstr ""
 
 #. default-message: Select these rows
-#: assets/js/params/Custom/Refine/index.js:312
+#: assets/js/params/Custom/Refine/index.js:313
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr ""
 
 #. default-message: Find clusters...
-#: assets/js/params/Custom/Refine/index.js:133
+#: assets/js/params/Custom/Refine/index.js:132
 msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
 msgstr ""
 
 #. default-message: Merge facets
-#: assets/js/params/Custom/Refine/index.js:808
+#: assets/js/params/Custom/Refine/index.js:809
 msgid "js.params.Refine.mergeFacets.button"
 msgstr ""
 
@@ -2104,51 +2103,51 @@ msgid "js.params.Secret.String.StringDisplay.clear.button"
 msgstr ""
 
 #. default-message: Not authenticated. Only the workflow owner may authenticate.
-#: assets/js/params/Secret/String.js:127
+#: assets/js/params/Secret/String.js:126
 msgid "js.params.Secret.String.onlyOwnerCanEnterSecret"
 msgstr ""
 
 #. default-message: Select Tab
-#: assets/js/params/Tab.js:47
+#: assets/js/params/Tab.js:46
 msgid "js.params.Tab.selectTab.placeholder"
 msgstr ""
 
 #. Usually meaning 'All values'
 #. default-message: All
-#: assets/js/params/common/AllNoneButtons.js:16
+#: assets/js/params/common/AllNoneButtons.js:19
 msgid "js.params.common.AllNoneButtons.selectAll.button"
 msgstr ""
 
 #. Usually meaning 'Select all values'
 #. default-message: Select All
-#: assets/js/params/common/AllNoneButtons.js:13
+#: assets/js/params/common/AllNoneButtons.js:12
 msgid "js.params.common.AllNoneButtons.selectAll.hoverText"
 msgstr ""
 
 #. Usually meaning 'No value'
 #. default-message: None
-#: assets/js/params/common/AllNoneButtons.js:25
+#: assets/js/params/common/AllNoneButtons.js:32
 msgid "js.params.common.AllNoneButtons.selectNone.button"
 msgstr ""
 
 #. Usually meaning 'Select no value'
 #. default-message: Select None
-#: assets/js/params/common/AllNoneButtons.js:22
+#: assets/js/params/common/AllNoneButtons.js:25
 msgid "js.params.common.AllNoneButtons.selectNone.hoverText"
 msgstr ""
 
 #. default-message: Clear Search
-#: assets/js/params/common/FacetSearch.js:38
+#: assets/js/params/common/FacetSearch.js:37
 msgid "js.params.common.FacetSearch.clearSearch.hoverText"
 msgstr ""
 
-#. default-message: Search facets...
-#: assets/js/params/common/FacetSearch.js:28
+#. default-message: Search facets…
+#: assets/js/params/common/FacetSearch.js:27
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
 msgstr ""
 
 #. default-message: No options
-#: assets/js/params/common/react-select.js:123
+#: assets/js/params/common/react-select.js:119
 msgid "js.params.common.ReactSelect.noOptionsMessage"
 msgstr ""
 
@@ -2163,12 +2162,12 @@ msgid "js.params.common.ValueSortSelect.value"
 msgstr ""
 
 #. default-message: Select a column
-#: assets/js/params/Custom/Aggregations/Aggregation.js:88
+#: assets/js/params/Custom/Aggregations/Aggregation.js:85
 msgid "js.params.custom.Aggregations.Aggregation.ColumnParam.prompt"
 msgstr ""
 
 #. default-message: Name
-#: assets/js/params/Custom/Aggregations/Aggregation.js:95
+#: assets/js/params/Custom/Aggregations/Aggregation.js:92
 msgid "js.params.custom.Aggregations.Aggregation.outname"
 msgstr ""
 
@@ -2178,37 +2177,37 @@ msgid "js.settings.Billing.ManageBilling.buttonText"
 msgstr ""
 
 #. default-message: Active
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:7
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:11
 msgid "js.settings.Billing.StripeSubscriptionStatus.active"
 msgstr ""
 
 #. default-message: Canceled
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:11
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:19
 msgid "js.settings.Billing.StripeSubscriptionStatus.canceled"
 msgstr ""
 
 #. default-message: Incomplete
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:8
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:13
 msgid "js.settings.Billing.StripeSubscriptionStatus.incomplete"
 msgstr ""
 
 #. default-message: Expired
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:9
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:15
 msgid "js.settings.Billing.StripeSubscriptionStatus.incomplete_expired"
 msgstr ""
 
 #. default-message: Past due
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:10
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:17
 msgid "js.settings.Billing.StripeSubscriptionStatus.past_due"
 msgstr ""
 
 #. default-message: Trialing
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:6
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:9
 msgid "js.settings.Billing.StripeSubscriptionStatus.trialing"
 msgstr ""
 
 #. default-message: Unpaid
-#: assets/js/settings/Billing/StripeSubscriptionStatus.js:12
+#: assets/js/settings/Billing/StripeSubscriptionStatus.js:21
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
@@ -2297,7 +2296,7 @@ msgstr ""
 msgid "js.table.ColumnHeader.types.number"
 msgstr ""
 
-#. default-message: text
+#. default-message: text'
 #: assets/js/table/ColumnHeader.js:11
 msgid "js.table.ColumnHeader.types.text"
 msgstr ""
@@ -2313,7 +2312,7 @@ msgid "js.table.SelectedRowsActions.menu"
 msgstr ""
 
 #. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
-#: assets/js/table/SelectedRowsActions.js:106
+#: assets/js/table/SelectedRowsActions.js:108
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
 
@@ -2346,42 +2345,42 @@ msgid "js.table.TableView.selectColumns.button"
 msgstr ""
 
 #. default-message: Add data
-#: assets/js/ModuleCategoryName.js:12
+#: assets/js/ModuleCategoryName.js:21
 msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
 msgstr ""
 
 #. default-message: Analyze
-#: assets/js/ModuleCategoryName.js:9
+#: assets/js/ModuleCategoryName.js:15
 msgid "js.util.ModuleCategoryName.CategoryNames.Analyze"
 msgstr ""
 
 #. default-message: Clean
-#: assets/js/ModuleCategoryName.js:8
+#: assets/js/ModuleCategoryName.js:13
 msgid "js.util.ModuleCategoryName.CategoryNames.Clean"
 msgstr ""
 
 #. default-message: Code
-#: assets/js/ModuleCategoryName.js:11
+#: assets/js/ModuleCategoryName.js:19
 msgid "js.util.ModuleCategoryName.CategoryNames.Code"
 msgstr ""
 
 #. default-message: Combine
-#: assets/js/ModuleCategoryName.js:6
+#: assets/js/ModuleCategoryName.js:9
 msgid "js.util.ModuleCategoryName.CategoryNames.Combine"
 msgstr ""
 
 #. default-message: Other
-#: assets/js/ModuleCategoryName.js:13
+#: assets/js/ModuleCategoryName.js:23
 msgid "js.util.ModuleCategoryName.CategoryNames.Other"
 msgstr ""
 
 #. default-message: Scrape
-#: assets/js/ModuleCategoryName.js:7
+#: assets/js/ModuleCategoryName.js:11
 msgid "js.util.ModuleCategoryName.CategoryNames.Scrape"
 msgstr ""
 
 #. default-message: Visualize
-#: assets/js/ModuleCategoryName.js:10
+#: assets/js/ModuleCategoryName.js:17
 msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr ""
 
@@ -2633,23 +2632,23 @@ msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
 #. default-message: by {workflowOwner}
-#: templates/report.html:23
+#: templates/report.html:24
 msgid "py.templates.report.author"
 msgstr ""
 
 #. default-message: Updated <time0>{timeAgo}</time0> ago
-#: templates/report.html:24
+#: templates/report.html:25
 msgid "py.templates.report.updated"
 msgstr ""
 
 #. This is a link to a workflow
 #. default-message: Source data
-#: templates/report.html:26
+#: templates/report.html:27
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
 #. default-message: Download as spreadsheet
-#: templates/report.html:45
+#: templates/report.html:46
 msgid "py.templates.report.table.download"
 msgstr ""
 

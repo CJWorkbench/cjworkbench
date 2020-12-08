@@ -3,14 +3,9 @@ import PropTypes from 'prop-types'
 import Checkbox from '../Checkbox'
 import Multicolumn from '../Multicolumn'
 import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export class JoinColumns extends React.PureComponent {
+export default class JoinColumns extends React.PureComponent {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func({ on: '...', right: '...' }) => undefined
     fieldId: PropTypes.string.isRequired, // <input id=...>
@@ -60,7 +55,7 @@ export class JoinColumns extends React.PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, value, inputColumns, fieldId, tabs, selectedTab, i18n } = this.props
+    const { isReadOnly, name, value, inputColumns, fieldId, tabs, selectedTab } = this.props
     const rightTab = tabs.find(({ slug }) => selectedTab === slug)
 
     const inputColnames = (inputColumns || []).map(({ name }) => name)
@@ -78,10 +73,19 @@ export class JoinColumns extends React.PureComponent {
             name={`${name}[on]`}
             fieldId={`${fieldId}_on`}
             onChange={this.handleChangeOn}
-            label={i18n._(/* i18n: This refers to a join operation, as the term join is used in SQL database language. It is followed by one or more column names. */t('js.params.Custom.JoinColumns.joinOn')`Join on`)}
+            label={t({
+              id: 'js.params.Custom.JoinColumns.joinOn',
+              comment: 'This refers to a join operation, as the term join is used in SQL database language. It is followed by one or more column names.',
+              message: 'Join on'
+            })}
             inputColumns={bothColumns}
             addMenuListClassName='join-on'
-            noOptionsMessage={rightTab ? i18n._(/* i18n: The parameter will contain a tab name */t('js.params.Custom.JoinColumns.noColumnToJoin')`There is no column to join on in ${rightTab.name}. Columns in both tabs must have identical names and capitalization. Please edit column names.`) : undefined}
+            noOptionsMessage={rightTab ? t({
+              comment: 'The parameter will contain a tab name',
+              id: 'js.params.Custom.JoinColumns.noColumnToJoin',
+              message: 'There is no column to join on in {0}. Columns in both tabs must have identical names and capitalization. Please edit column names.',
+              values: { 0: rightTab.name }
+            }) : undefined}
             value={value.on}
           />
         </div>
@@ -92,7 +96,7 @@ export class JoinColumns extends React.PureComponent {
               name={`${name}[right]`}
               fieldId={`${fieldId}_right`}
               onChange={this.handleChangeRight}
-              label={i18n._(t('js.params.Custom.JoinColumns.addColumns')`Add columns`)}
+              label={t({ id: 'js.params.Custom.JoinColumns.addColumns', message: 'Add columns' })}
               inputColumns={rightColumnsNotInOn}
               value={value.right}
             />
@@ -104,7 +108,7 @@ export class JoinColumns extends React.PureComponent {
             name={`${name}[rightAll]`}
             fieldId={`${fieldId}_rightAll`}
             onChange={this.handleChangeRightAll}
-            label={i18n._(t('js.params.Custom.JoinColumns.addAllColumns')`Add all columns`)}
+            label={t({ id: 'js.params.Custom.JoinColumns.addAllColumns', message: 'Add all columns' })}
             value={value.rightAll}
           />
         </div>
@@ -112,5 +116,3 @@ export class JoinColumns extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(JoinColumns)

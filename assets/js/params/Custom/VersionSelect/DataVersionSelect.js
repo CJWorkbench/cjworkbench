@@ -3,14 +3,9 @@ import PropTypes from 'prop-types'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
 import { connect } from 'react-redux'
 import { t, Trans } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 export class DataVersionSelect extends React.PureComponent {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     stepId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version
     nVersions: PropTypes.number.isRequired, // may be 0
@@ -25,7 +20,7 @@ export class DataVersionSelect extends React.PureComponent {
   handleCloseModal = () => this.setState({ isDataVersionModalOpen: false })
 
   render () {
-    const { stepId, currentVersionIndex, nVersions, isReadOnly, i18n } = this.props
+    const { stepId, currentVersionIndex, nVersions, isReadOnly } = this.props
     const { isDataVersionModalOpen } = this.state
 
     let inner
@@ -44,7 +39,7 @@ export class DataVersionSelect extends React.PureComponent {
     } else if (isReadOnly) {
       inner = (
         <div className='read-only'>
-          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label' description='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
+          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label' comment='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
             Version {nVersions - currentVersionIndex} of {nVersions}
           </Trans>
         </div>
@@ -59,10 +54,13 @@ export class DataVersionSelect extends React.PureComponent {
           </div>
           <button
             type='button'
-            title={i18n._(t('js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText')`Select version`)}
+            title={t({ id: 'js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText', message: 'Select version' })}
             onClick={this.handleClickOpenModal}
           >
-            <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.versionCount' description='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
+            <Trans
+              id='js.params.Custom.VersionSelect.DataVersionSelect.versionCount'
+              comment='The parameter {0} will be the current version and {nVersions} will be the number of versions'
+            >
               {nVersions - currentVersionIndex} of {nVersions}
             </Trans>
           </button>
@@ -108,4 +106,4 @@ function mapStateToProps (state, { stepId }) {
 
 export default connect(
   mapStateToProps
-)(withI18n()(DataVersionSelect))
+)(DataVersionSelect)

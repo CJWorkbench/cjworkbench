@@ -27,7 +27,7 @@ export default function LocaleSwitcher ({ closeModal }) {
   return (
     <Modal isOpen className='locale-switcher' toggle={closeModal}>
       <ModalHeader toggle={closeModal}>
-        <Trans id='js.i18n.LocaleSwitcher.header.title' description='This should be all-caps for styling reasons'>
+        <Trans id='js.i18n.LocaleSwitcher.header.title' comment='This should be all-caps for styling reasons'>
           LANGUAGE
         </Trans>
       </ModalHeader>
@@ -58,7 +58,7 @@ export default function LocaleSwitcher ({ closeModal }) {
       </ModalBody>
       <ModalFooter>
         <button className='action-button button-gray' onClick={closeModal}>
-          <Trans id='js.i18n.LocaleSwitcher.footer.close' description='Close the dialog box'>Close</Trans>
+          <Trans id='js.i18n.LocaleSwitcher.footer.close' comment='Close the dialog box'>Close</Trans>
         </button>
       </ModalFooter>
     </Modal>

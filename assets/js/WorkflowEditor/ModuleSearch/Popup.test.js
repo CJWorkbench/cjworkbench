@@ -44,7 +44,7 @@ describe('ModuleSearch Popup', () => {
   const modulesArray = [modules.enigma, modules.filter]
 
   const wrapper = (extraProps = {}) => {
-    const ret = mountWithI18n(
+    return mountWithI18n(
       <Popup
         tabSlug='tab-1'
         index={2}
@@ -56,7 +56,6 @@ describe('ModuleSearch Popup', () => {
         {...extraProps}
       />
     )
-    return ret
   }
 
   it('matches snapshot', () => {

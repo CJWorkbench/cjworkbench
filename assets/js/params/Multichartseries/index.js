@@ -2,11 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ChartSeriesSelect from './ChartSeriesSelect'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 import IconAddcHollow from '../../../icons/addc-hollow.svg'
 import IconRemovecHollow from '../../../icons/removec-hollow.svg'
 
-export class Multichartseries extends React.PureComponent {
+export default class Multichartseries extends React.PureComponent {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
       column: PropTypes.string.isRequired,
@@ -54,7 +53,7 @@ export class Multichartseries extends React.PureComponent {
 
   renderButtons () {
     const { isAddingPlaceholder } = this.state
-    const { inputColumns, value, isReadOnly, i18n } = this.props
+    const { inputColumns, value, isReadOnly } = this.props
 
     const showAddButton = !isReadOnly && !isAddingPlaceholder && value.length < (inputColumns || []).length
     const showRemoveButton = !isReadOnly && (value.length > 1 || (value.length === 1 && isAddingPlaceholder))
@@ -65,12 +64,20 @@ export class Multichartseries extends React.PureComponent {
       return (
         <div className='buttons'>
           {showRemoveButton ? (
-            <button type='button' title={i18n._(t('js.params.Multichartseries.removeLastColumn.hoverText')`remove last column`)} onClick={this.handleClickRemoveLast}>
+            <button
+              type='button'
+              title={t({ id: 'js.params.Multichartseries.removeLastColumn.hoverText', message: 'remove last column' })}
+              onClick={this.handleClickRemoveLast}
+            >
               <IconRemovecHollow />
             </button>
           ) : null}
           {showAddButton ? (
-            <button type='button' title={i18n._(t('js.params.Multichartseries.addColumn.hoverText')`add another column`)} onClick={this.handleClickAddPlaceholder}>
+            <button
+              type='button'
+              title={t({ id: 'js.params.Multichartseries.addColumn.hoverText', message: 'add another column' })}
+              onClick={this.handleClickAddPlaceholder}
+            >
               <IconAddcHollow />
             </button>
           ) : null}
@@ -138,5 +145,3 @@ export class Multichartseries extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(Multichartseries)

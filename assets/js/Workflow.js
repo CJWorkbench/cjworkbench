@@ -23,7 +23,7 @@ export function MaybeNotYourWorkflow (props) {
   } else {
     suggestion = (
       <h3 className='suggestion'>
-        <Trans id='js.Workflow.suggestion.signInToSaveChanges' description='The tag is a link to the login page'>
+        <Trans id='js.Workflow.suggestion.signInToSaveChanges' comment='The tag is a link to the login page'>
           <a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a> to save your changes
         </Trans>
       </h3>

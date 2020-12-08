@@ -1,11 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
 import IconTable from '../../../icons/table.svg'
 
-function AddTableBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
+export default function AddTableBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
   const handleClick = React.useCallback(ev => {
     onSubmit({ tabSlug: ev.target.getAttribute('data-tab-slug') })
@@ -15,7 +14,10 @@ function AddTableBlockPrompt ({ tabs, i18n, isMenuOpen, onOpenMenu, onCloseMenu,
     <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
       <DropdownToggle
         name='add-table-block'
-        title={i18n._(t('js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText')`Add table from tab`)}
+        title={t({
+          id: 'js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText',
+          message: 'Add table from tab'
+        })}
       >
         <IconTable />
       </DropdownToggle>
@@ -43,4 +45,3 @@ AddTableBlockPrompt.propTypes = {
   onCloseMenu: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired // func({ tabSlug }) => undefined
 }
-export default withI18n()(AddTableBlockPrompt)

@@ -1,6 +1,6 @@
 /* globals beforeEach, describe, expect, it, jest */
 import React from 'react'
-import { WorkflowNavBar } from './WorkflowNavBar'
+import WorkflowNavBar from './WorkflowNavBar'
 import { tick } from './test-utils'
 import { shallowWithI18n, mountWithI18n } from './i18n/test-utils'
 
@@ -43,7 +43,7 @@ describe('WorkflowNavBar', () => {
 
     const a = wrapper.find('.course a')
     expect(a.prop('href')).toEqual('/lessons/en')
-    expect(a.find('Trans').prop('defaults')).toEqual('Training') // hard-coded
+    expect(a.find('Trans').prop('message')).toEqual('Training') // hard-coded
   })
 
   it('should link back to /courses/slug when viewing a lesson in a course', () => {

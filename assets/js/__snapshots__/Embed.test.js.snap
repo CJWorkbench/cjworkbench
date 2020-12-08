@@ -52,9 +52,10 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <WithI18n
-                  defaults="by {0}"
+                <Trans
+                  components={Object {}}
                   id="js.Embed.metadata.author"
+                  message="by {0}"
                   values={
                     Object {
                       "0": "Workflow Owner Name",
@@ -69,7 +70,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Updated {timeAgo}
+                Updated just now
               </a>
             </li>
           </ul>
@@ -95,16 +96,20 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
     >
       <h1>
-        <WithI18n
-          defaults="EMBED THIS CHART"
-          description="This should be all-caps for styling reasons"
+        <Trans
+          comment="This should be all-caps for styling reasons"
+          components={Object {}}
           id="js.Embed.embedThisChart"
+          message="EMBED THIS CHART"
+          values={Object {}}
         />
       </h1>
       <h2>
-        <WithI18n
-          defaults="Paste this code into any webpage HTML"
+        <Trans
+          components={Object {}}
           id="js.Embed.embedCode"
+          message="Paste this code into any webpage HTML"
+          values={Object {}}
         />
       </h2>
       <div
@@ -129,9 +134,11 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     className="embed-not-available"
   >
     <h1>
-      <WithI18n
-        defaults="This workflow is not available"
+      <Trans
+        components={Object {}}
         id="js.Embed.workflowNotAvailable.title"
+        message="This workflow is not available"
+        values={Object {}}
       />
     </h1>
   </div>
@@ -150,10 +157,12 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       className="embed-footer-meta"
     >
       <h1>
-        <WithI18n
-          defaults="WORKBENCH"
-          description="This should be all-caps for styling reasons"
+        <Trans
+          comment="This should be all-caps for styling reasons"
+          components={Object {}}
           id="js.Embed.workflowNotAvailable.footer.logo"
+          message="WORKBENCH"
+          values={Object {}}
         />
       </h1>
     </div>

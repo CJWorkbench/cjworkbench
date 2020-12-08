@@ -1,16 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 const numberFormat = new Intl.NumberFormat()
 
-const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
+class RefineBin extends React.PureComponent {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     index: PropTypes.number.isRequired,
     bin: PropTypes.shape({
       name: PropTypes.string.isRequired, // editable by user
@@ -41,7 +36,7 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
   }
 
   render () {
-    const { index, i18n } = this.props
+    const { index } = this.props
     const { name, isSelected, count } = this.props.bin
     const values = this.bucketList
 
@@ -49,7 +44,13 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
       <>
         <tr className='bin'>
           <td rowSpan={values.length} className='is-selected'>
-            <input type='checkbox' name={`selected-${index}`} checked={isSelected} onChange={this.handleChangeIsSelected} placeholder={i18n._(t('js.params.Custom.RefineBins.newValue.placeholder')`New Value`)} />
+            <input
+              type='checkbox'
+              name={`selected-${index}`}
+              checked={isSelected}
+              onChange={this.handleChangeIsSelected}
+              placeholder={t({ id: 'js.params.Custom.RefineBins.newValue.placeholder', message: 'New Value' })}
+            />
           </td>
           <td rowSpan={values.length} className='cluster-size'>{numberFormat.format(count)}</td>
           <td className='value'>{values[0].value}</td>
@@ -59,7 +60,7 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
               <span className='autosize-cluster-text'>{name}</span>
               <textarea
                 name={`value-${index}`}
-                placeholder={i18n._(t('js.params.Custom.RefineBins.RefineBin.newValue.placeholder')`New Value`)}
+                placeholder={t({ id: 'js.params.Custom.RefineBins.RefineBin.newValue.placeholder', message: 'New Value' })}
                 value={name}
                 onChange={this.handleChangeName}
               />
@@ -75,9 +76,9 @@ const RefineBin = withI18n()(class RefineBin extends React.PureComponent {
       </>
     )
   }
-})
+}
 
-class RefineBins extends React.PureComponent {
+export default class RefineBins extends React.PureComponent {
   static propTypes = {
     bins: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired, // editable by user
@@ -130,5 +131,3 @@ class RefineBins extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(RefineBins)

@@ -44,7 +44,7 @@ describe('ImportModuleFromGitHub', () => {
       b: { id_name: 'b', author: 'Aut', category: 'Other', name: 'yay' }
     })
 
-    expect(w.find('.import-github-success').text()).toEqual('js.ImportModuleFromGithub.status.importedModule')
+    expect(w.find('.import-github-success').text()).toEqual('Imported module yay')
   })
 
   it('should display a link but no form for non-staff users', () => {
@@ -55,6 +55,6 @@ describe('ImportModuleFromGitHub', () => {
     }, null)
     const w = wrapper(store, { api })
     expect(w.find('input')).toHaveLength(0)
-    expect(w.find('Trans[defaults*="<0>here</0>"]')).toHaveLength(1) // external link => to docs
+    expect(w.find('Trans[message*="<0>here</0>"]')).toHaveLength(1) // external link => to docs
   })
 })

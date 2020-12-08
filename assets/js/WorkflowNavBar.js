@@ -5,8 +5,8 @@ import UndoRedoButtons from './UndoRedoButtons'
 import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
-import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import { i18n } from '@lingui/core'
+import { Trans } from '@lingui/macro'
 
 function NoOp () {}
 
@@ -42,7 +42,7 @@ function LessonWorkflowTitle ({ lesson }) {
   )
 }
 
-const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, workflow }) {
+function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
   const owner = workflow.owner_name.trim()
   const timeAgo = timeDifference(workflow.last_update, new Date(), i18n)
   return (
@@ -56,7 +56,7 @@ const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, w
           </li>
         ) : null}
         <li>
-          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' description="{timeAgo} will contain something like '4h ago'">
+          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' comment="{timeAgo} will contain something like '4h ago'">
             Updated {timeAgo}
           </Trans>
         </li>
@@ -71,7 +71,7 @@ const OwnedWorkflowTitleAndMetadata = withI18n()(function ({ i18n, isReadOnly, w
       </ul>
     </div>
   )
-})
+}
 
 function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   if (lesson) {
@@ -90,12 +90,8 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   }
 }
 
-export class WorkflowNavBar extends React.Component {
+export default class WorkflowNavBar extends React.Component {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     api: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,
     lesson: PropTypes.shape({
@@ -159,7 +155,7 @@ export class WorkflowNavBar extends React.Component {
   }
 
   render () {
-    const { api, isReadOnly, loggedInUser, lesson, workflow, i18n } = this.props
+    const { api, isReadOnly, loggedInUser, lesson, workflow } = this.props
 
     // menu only if there is a logged-in user
     let contextMenu
@@ -174,7 +170,9 @@ export class WorkflowNavBar extends React.Component {
       )
     } else {
       contextMenu = (
-        <a href='/account/login' className='nav--link'>{i18n._(t('js.WorkflowNavBar.signIn.accountLink')`Sign in`)}</a>
+        <a href='/account/login' className='nav--link'>
+          <Trans id='js.WorkflowNavBar.signIn.accountLink'>Sign in</Trans>
+        </a>
       )
     }
 
@@ -205,9 +203,13 @@ export class WorkflowNavBar extends React.Component {
               {isReadOnly ? null : (
                 <UndoRedoButtons undo={this.undo} redo={this.redo} />
               )}
-              <button name='duplicate' onClick={this.handleDuplicate}>{i18n._(t('js.WorkflowNavBar.duplicate.button')`Duplicate`)}</button>
+              <button name='duplicate' onClick={this.handleDuplicate}>
+                <Trans id='js.WorkflowNavBar.duplicate.button'>Duplicate</Trans>
+              </button>
               {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
-                <ShareButton>{i18n._(t('js.WorkflowNavBar.share.shareButton')`Share`)}</ShareButton>
+                <ShareButton>
+                  <Trans id='js.WorkflowNavBar.share.shareButton'>Share</Trans>
+                </ShareButton>
               )}
               {contextMenu}
             </div>
@@ -217,4 +219,3 @@ export class WorkflowNavBar extends React.Component {
     )
   }
 }
-export default withI18n()(WorkflowNavBar)

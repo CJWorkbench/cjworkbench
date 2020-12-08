@@ -5,7 +5,6 @@ import ReactSelect from './common/react-select'
 import { components } from 'react-select'
 import { MaybeLabel } from './util'
 import { t, Trans } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 class MenuList extends React.PureComponent {
   handleClickSelectAll = () => {
@@ -55,7 +54,7 @@ const Components = {
   MenuList
 }
 
-export class Multicolumn extends React.PureComponent {
+export default class Multicolumn extends React.PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -94,7 +93,7 @@ export class Multicolumn extends React.PureComponent {
   }
 
   render () {
-    const { inputColumns, isReadOnly, fieldId, name, placeholder, label, addMenuListClassName, noOptionsMessage, i18n } = this.props
+    const { inputColumns, isReadOnly, fieldId, name, placeholder, label, addMenuListClassName, noOptionsMessage } = this.props
 
     const columnOptions = (inputColumns || []).map(column => (
       {
@@ -119,10 +118,9 @@ export class Multicolumn extends React.PureComponent {
           noOptionsMessage={noOptionsMessage}
           components={Components}
           value={this.value}
-          placeholder={placeholder || i18n._(t('js.params.Multicolumn.selectColumn.placeholder')`Select columns`)}
+          placeholder={placeholder || t({ id: 'js.params.Multicolumn.selectColumn.placeholder', message: 'Select columns' })}
         />
       </>
     )
   }
 }
-export default withI18n()(Multicolumn)

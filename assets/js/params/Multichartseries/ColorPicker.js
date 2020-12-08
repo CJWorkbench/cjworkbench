@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { Popper } from 'react-popper'
 import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 class ColorChoice extends React.PureComponent {
   static propTypes = {
@@ -204,7 +203,7 @@ class ColorPickerPopover extends React.PureComponent {
  * A simulation for `<input type="color" list=...`, which has lousy
  * cross-browser support in 2018.
  */
-export class ColorPicker extends React.PureComponent {
+export default class ColorPicker extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // Like '#abcdef'
     choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
@@ -236,7 +235,7 @@ export class ColorPicker extends React.PureComponent {
   }
 
   render () {
-    const { value, choices, i18n } = this.props
+    const { value, choices } = this.props
     const { isOpen, context } = this.state
     const safeValue = value || '#000000'
 
@@ -244,7 +243,7 @@ export class ColorPicker extends React.PureComponent {
       <ColorPickerContext.Provider value={context}>
         <button
           type='button'
-          title={i18n._(t('js.params.Multichartseries.ColorPicker.pickColor.hoverText')`Pick color`)}
+          title={t({ id: 'js.params.Multichartseries.ColorPicker.pickColor.hoverText', message: 'Pick color' })}
           onClick={this.handleClickButton}
           className='btn color-picker'
           style={{ background: safeValue }}
@@ -264,5 +263,3 @@ export class ColorPicker extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(ColorPicker)

@@ -1,10 +1,10 @@
 /* globals describe, expect, it, jest */
 import React from 'react'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 import NewAclEntry from './NewAclEntry'
 
 describe('NewAclEntry', () => {
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <NewAclEntry
       ownerEmail='owner@example.org'
       updateAclEntry={jest.fn()}

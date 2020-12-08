@@ -1,12 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { Trans, t } from '@lingui/macro'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { setStepParamsAction } from './workflow-reducer'
 import { setWorkflowPublicAction } from './ShareModal/actions'
-import { connect } from 'react-redux'
 import { escapeHtml } from './utils'
-import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
@@ -103,8 +102,8 @@ export class OutputIframe extends React.PureComponent {
       <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
           <div className='modal-title'>
-            <Trans id='js.OutputIframe.private.header.title' description='This should be all-caps for styling reasons'>
-                SHARE THIS WORKFLOW
+            <Trans id='js.OutputIframe.private.header.title' comment='This should be all-caps for styling reasons'>
+              SHARE THIS WORKFLOW
             </Trans>
           </div>
         </ModalHeader>
@@ -114,7 +113,7 @@ export class OutputIframe extends React.PureComponent {
           </div>
           <div className='info-3 t-d-gray'>
             <Trans id='js.OutputIframe.private.setToPublic'>
-                Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+              Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
             </Trans>
           </div>
         </ModalBody>
@@ -137,8 +136,8 @@ export class OutputIframe extends React.PureComponent {
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
           <div className='modal-title'>
-            <Trans id='js.OutputIframe.embed.header.title' description='This should be all-caps for styling reasons'>
-                EMBED THIS CHART
+            <Trans id='js.OutputIframe.embed.header.title' comment='This should be all-caps for styling reasons'>
+              EMBED THIS CHART
             </Trans>
           </div>
         </ModalHeader>
@@ -162,7 +161,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { stepId, deltaId, visible, i18n } = this.props
+    const { stepId, deltaId, visible } = this.props
     const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${stepId}/output#revision=${deltaId}`
 
@@ -175,7 +174,12 @@ export class OutputIframe extends React.PureComponent {
           <>
             <iframe src={src} />
             <div className='outputpane-iframe-control-overlay'>
-              <button name='embed' className='btn' title={i18n._(t('js.OutputIframe.getEmbeddableUrl.hoverText')`Get an embeddable URL`)} onClick={this.handleClickOpenEmbedModal}>
+              <button
+                name='embed'
+                className='btn'
+                title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
+                onClick={this.handleClickOpenEmbedModal}
+              >
                 <i className='icon icon-code' />
               </button>
             </div>
@@ -204,4 +208,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withI18n()(OutputIframe))
+)(OutputIframe)

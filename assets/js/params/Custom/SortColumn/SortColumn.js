@@ -3,12 +3,11 @@ import PropTypes from 'prop-types'
 import ColumnParam from '../../Column'
 import RadioParam from '../../Radio.js'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-const AscendingParam = withI18n()(function ({ i18n, ...props }) {
+function AscendingParam (props) {
   const AscendingParamOptions = [
-    { value: true, label: i18n._(t('js.params.Custom.SortColumn.AscendingParam.ascending')`Ascending`) },
-    { value: false, label: i18n._(t('js.params.Custom.SortColumn.AscendingParam.descending')`Descending`) }
+    { value: true, label: t({ id: 'js.params.Custom.SortColumn.AscendingParam.ascending', message: 'Ascending' }) },
+    { value: false, label: t({ id: 'js.params.Custom.SortColumn.AscendingParam.descending', message: 'Descending' }) }
   ]
 
   return (
@@ -20,17 +19,13 @@ const AscendingParam = withI18n()(function ({ i18n, ...props }) {
       />
     </div>
   )
-})
+}
 AscendingParam.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // for <input name=...>
   fieldId: PropTypes.string.isRequired, // <input id=...>
   onChange: PropTypes.func.isRequired, // func(index, value) => undefined
-  value: PropTypes.bool.isRequired,
-  i18n: PropTypes.shape({
-    // i18n object injected by LinguiJS withI18n()
-    _: PropTypes.func.isRequired
-  })
+  value: PropTypes.bool.isRequired
 }
 
 export default class SortColumn extends React.PureComponent {

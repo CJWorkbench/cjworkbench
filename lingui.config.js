@@ -1,7 +1,13 @@
 module.exports = {
-  localeDir: 'assets/locale/',
-  srcPathDirs: ['assets/js'],
+  catalogs: [
+    {
+      path: '<rootDir>/assets/locale/{locale}/messages',
+      include: ['<rootDir>/assets/js'],
+      exclude: ['**/node_modules/**']
+    }
+  ],
+  rootDir: '.',
   format: 'po',
-  sourceLocale: 'en',
-  fallbackLocale: 'en'
+  locales: ['en', 'el'],
+  sourceLocale: 'en'
 }

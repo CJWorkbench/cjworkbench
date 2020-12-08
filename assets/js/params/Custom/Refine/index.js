@@ -10,7 +10,6 @@ import AllNoneButtons from '../../common/AllNoneButtons'
 import FacetSearch from '../../common/FacetSearch'
 import ValueSortSelect from '../../common/ValueSortSelect'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 const NumberFormatter = new Intl.NumberFormat() // user's locale
 
@@ -144,7 +143,7 @@ class RefineModalPrompt extends React.PureComponent {
   }
 }
 
-const RefineGroup = withI18n()(class RefineGroup extends React.Component { // uses react-window's shouldComponentUpdate, not PureComponent
+class RefineGroup extends React.Component { // uses react-window's shouldComponentUpdate, not PureComponent
   static propTypes = {
     style: PropTypes.object.isRequired, // CSS styles
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
@@ -251,7 +250,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
   }
 
   render () {
-    const { style, group, valueCounts, i18n } = this.props
+    const { style, group, valueCounts } = this.props
     // isEdited is from _props_, not state.
     // If user is _editing_, that doesn't mean the group is _edited_.
     const className = `refine-group ${group.isEdited ? 'edited' : 'original'}`
@@ -261,7 +260,9 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
         <input
           type='checkbox'
           name='expand'
-          title={group.isExpanded ? i18n._(t('js.params.Refine.RefineGroup.expandStatus.expanded')`Hide original values`) : i18n._(t('js.params.Refine.RefineGroup.expandStatus.notExpanded')`Show original values`)}
+          title={group.isExpanded
+            ? t({ id: 'js.params.Refine.RefineGroup.expandStatus.expanded', message: 'Hide original values' })
+            : t({ id: 'js.params.Refine.RefineGroup.expandStatus.notExpanded', message: 'Show original values' })}
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
@@ -273,7 +274,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
       <button
         name='reset'
         type='button'
-        title={i18n._(t('js.params.Refine.RefineGroup.cancelEdits')`Cancel edits of these values`)}
+        title={t({ id: 'js.params.Refine.RefineGroup.cancelEdits', message: 'Cancel edits of these values' })}
         onClick={this.handleClickReset}
       >
         <i className='icon-undo' />
@@ -309,7 +310,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
             className='select'
             name={`select[${group.name}]`}
             type='checkbox'
-            title={i18n._(t('js.params.Refine.RefineGroup.selectTheseRows')`Select these rows`)}
+            title={t({ id: 'js.params.Refine.RefineGroup.selectTheseRows', message: 'Select these rows' })}
             checked={group.isSelected}
             onChange={this.handleChangeIsSelected}
           />
@@ -335,7 +336,7 @@ const RefineGroup = withI18n()(class RefineGroup extends React.Component { // us
       </div>
     )
   }
-})
+}
 
 const buildSpecModifier = (_this, helperName, shouldSubmit = false) => {
   const func = util[helperName]

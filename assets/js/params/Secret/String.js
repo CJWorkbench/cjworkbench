@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 import { timeDifference } from '../../utils'
-import { withI18n } from '@lingui/react'
+import { i18n } from '@lingui/core'
 import { Trans } from '@lingui/macro'
 
 /**
@@ -64,7 +64,7 @@ function StringPrompt ({ label, name, fieldId, placeholder, pattern, help, helpU
   )
 }
 
-function StringDisplay ({ i18n, isOwner, secretMetadata, label, name, fieldId, deleteSecret }) {
+function StringDisplay ({ isOwner, secretMetadata, label, name, fieldId, deleteSecret }) {
   const [isSubmitted, setSubmitted] = React.useState(false)
   const handleSubmit = React.useCallback(() => {
     deleteSecret(name)
@@ -93,11 +93,10 @@ function StringDisplay ({ i18n, isOwner, secretMetadata, label, name, fieldId, d
   )
 }
 
-const String_ = React.memo(function String_ ({ i18n, secretMetadata, isOwner, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
+export default function String_ ({ secretMetadata, isOwner, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
   if (secretMetadata) {
     return (
       <StringDisplay
-        i18n={i18n}
         isOwner={isOwner}
         secretMetadata={secretMetadata}
         label={label}
@@ -128,7 +127,7 @@ const String_ = React.memo(function String_ ({ i18n, secretMetadata, isOwner, na
       </p>
     )
   }
-})
+}
 String_.propTypes = {
   isOwner: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired, // <input name=...>
@@ -147,4 +146,3 @@ String_.propTypes = {
     helpUrlPrompt: PropTypes.string.isRequired
   })
 }
-export default withI18n()(String_)

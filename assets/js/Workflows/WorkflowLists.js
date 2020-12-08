@@ -4,7 +4,6 @@ import CreateWorkflowButton from './CreateWorkflowButton'
 import SortMenu from './SortMenu'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
 import { Trans } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
 const Tab = React.memo(function Tab ({ name, isActive, setIsActive, children }) {
   return (
@@ -79,7 +78,7 @@ const TemplatesWorkflowList = React.memo(function TemplatesWorkflowList ({ workf
   )
 })
 
-function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal, i18n }) {
+function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShareModal }) {
   const [activeTab, setActiveTab] = useState(workflows.owned.length ? 'owned' : 'templates')
   const [comparator, setComparator] = useState('last_update|descending')
   const tabProps = (name) => ({
@@ -109,7 +108,7 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
       <div className='nav'>
         <ul className='workflow-tabs' id='workflow-tabs' role='tablist'>
           <Tab {...tabProps('owned')}><Trans id='js.Workflows.WorkflowLists.nav.myWorkflows'>My workflows</Trans></Tab>
-          <Tab {...tabProps('shared')}><Trans id='js.Workflows.WorkflowLists.nav.sharedWithMe' description="As in 'Workflows shared with me'">Shared with me</Trans></Tab>
+          <Tab {...tabProps('shared')}><Trans id='js.Workflows.WorkflowLists.nav.sharedWithMe' comment="As in 'Workflows shared with me'">Shared with me</Trans></Tab>
           <Tab {...tabProps('templates')}><Trans id='js.Workflows.WorkflowLists.nav.recipes'>Recipes</Trans></Tab>
         </ul>
         <SortMenu comparator={comparator} setComparator={setComparator} />
@@ -123,10 +122,6 @@ function WorkflowLists ({ workflows, deleteWorkflow, duplicateWorkflow, openShar
   )
 }
 WorkflowLists.propTypes = {
-  i18n: PropTypes.shape({
-    // i18n object injected by LinguiJS withI18n()
-    _: PropTypes.func.isRequired
-  }),
   workflows: PropTypes.shape({
     owned: WorkflowListPropType.isRequired,
     shared: WorkflowListPropType.isRequired,
@@ -136,4 +131,4 @@ WorkflowLists.propTypes = {
   duplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
   openShareModal: PropTypes.func.isRequired // func(id) => undefined
 }
-export default React.memo(withI18n()(WorkflowLists))
+export default React.memo(WorkflowLists)

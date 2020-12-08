@@ -2,10 +2,10 @@
 import React from 'react'
 import { act } from 'react-dom/test-utils'
 import WorkflowContextMenu from './WorkflowContextMenu'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 
 describe('WorkflowContextMenu', () => {
-  const wrapper = (extraProps = {}) => mount(
+  const wrapper = (extraProps = {}) => mountWithI18n(
     <WorkflowContextMenu
       workflowId={3}
       deleteWorkflow={jest.fn()}

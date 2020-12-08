@@ -4,16 +4,10 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
-import ModuleCategoryName from './ModuleCategoryName'
 
 class StaffImportModuleFromGitHub extends React.PureComponent {
   static propTypes = {
     closeModal: PropTypes.func.isRequired,
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     api: PropTypes.shape({
       importModuleFromGitHub: PropTypes.func.isRequired // func(url) => Promise[moduleObject or Error]
     }).isRequired,
@@ -30,7 +24,7 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
     ev.preventDefault() // don't submit browser-default GET/POST
 
     this.setState({
-      status: { message: this.props.i18n._(t('js.ImportModuleFromGithub.status.processing')`Processing...`) }
+      status: { message: t({ id: 'js.ImportModuleFromGithub.status.processing', message: 'Processing…' }) }
     })
 
     const url = this.inputRef.current.value
@@ -41,10 +35,14 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
   onImportSuccess = (data) => {
     this.props.addModuleToState(data)
     const module = data.name
-    const category = <ModuleCategoryName category={data.category} />
     this.setState({
       status: {
-        message: <Trans id='js.ImportModuleFromGithub.status.importedModule' description='This is a success message'>Imported module {module} under category {category}</Trans>
+        message: t({
+          id: 'js.ImportModuleFromGithub.status.importedModule',
+          comment: 'This is a success message',
+          message: 'Imported module {module}',
+          values: { module }
+        })
       }
     })
   }
@@ -151,4 +149,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withI18n()(ImportModuleFromGitHub))
+)(ImportModuleFromGitHub)

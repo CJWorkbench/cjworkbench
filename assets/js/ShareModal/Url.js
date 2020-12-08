@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-class Url extends React.PureComponent {
+export default class Url extends React.PureComponent {
   static propTypes = {
     isPublic: PropTypes.bool.isRequired,
     url: PropTypes.string.isRequired,
@@ -36,12 +35,14 @@ class Url extends React.PureComponent {
   }
 
   renderSocialLinks = () => {
-    const { url, i18n } = this.props
+    const { url } = this.props
     const workbenchMention = '@workbenchdata'
-    const shareText = i18n._(
-      /* i18n: The parameter will be a mention to workbench account (i.e. "@cjworkbench") */
-      t('js.ShareModal.Url.socialLinks.shareText')`Check out this chart I made using ${workbenchMention}:`
-    )
+    const shareText = t({
+      id: 'js.ShareModal.Url.socialLinks.shareText',
+      comment: 'The parameter will be a mention to workbench account (i.e. "@cjworkbench")',
+      message: 'Check out this chart I made using {workbenchMention}:',
+      values: { workbenchMention }
+    })
     const facebookUrl = `https://www.facebook.com/sharer.php?u=${encodeURIComponent(url)}`
     const twitterUrl = `https://www.twitter.com/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`
 
@@ -84,5 +85,3 @@ class Url extends React.PureComponent {
     )
   }
 }
-
-export default withI18n()(Url)

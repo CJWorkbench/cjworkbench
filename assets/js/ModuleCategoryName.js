@@ -1,26 +1,28 @@
 import React from 'react'
-import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 
-const CategoryNames = {
-  Combine: t('js.util.ModuleCategoryName.CategoryNames.Combine')`Combine`,
-  Scrape: t('js.util.ModuleCategoryName.CategoryNames.Scrape')`Scrape`,
-  Clean: t('js.util.ModuleCategoryName.CategoryNames.Clean')`Clean`,
-  Analyze: t('js.util.ModuleCategoryName.CategoryNames.Analyze')`Analyze`,
-  Visualize: t('js.util.ModuleCategoryName.CategoryNames.Visualize')`Visualize`,
-  Code: t('js.util.ModuleCategoryName.CategoryNames.Code')`Code`,
-  'Add data': t('js.util.ModuleCategoryName.CategoryNames.AddData')`Add data`,
-  Other: t('js.util.ModuleCategoryName.CategoryNames.Other')`Other`
+export default function ModuleCategoryName (props) {
+  const { category } = props
+  switch (category) {
+    case 'Combine':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Combine'>Combine</Trans>
+    case 'Scrape':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Scrape'>Scrape</Trans>
+    case 'Clean':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Clean'>Clean</Trans>
+    case 'Analyze':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Analyze'>Analyze</Trans>
+    case 'Visualize':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Visualize'>Visualize</Trans>
+    case 'Code':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Code'>Code</Trans>
+    case 'Add data':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.AddData'>Add data</Trans>
+    case 'Other':
+      return <Trans id='js.util.ModuleCategoryName.CategoryNames.Other'>Other</Trans>
+  }
 }
-
-export default withI18n()(({ category, i18n }) => {
-  return <>{getCategoryName(category, i18n)}</>
-})
-
-/**
- * When you need the category name as a string, you may use this function
- */
-export function getCategoryName (category, i18n) {
-  if (CategoryNames[category]) return i18n._(CategoryNames[category])
-  else throw new Error('No such category: ' + category)
+ModuleCategoryName.propTypes = {
+  category: PropTypes.oneOf(['Combine', 'Scrape', 'Clean', 'Analyze', 'Visualize', 'Code', 'Add data', 'Other']).isRequired
 }

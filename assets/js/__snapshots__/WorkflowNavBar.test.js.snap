@@ -31,7 +31,7 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
       <div
         className="nav-buttons"
       >
-        <WithI18n
+        <UndoRedoButtons
           redo={[Function]}
           undo={[Function]}
         />
@@ -39,12 +39,22 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
           name="duplicate"
           onClick={[Function]}
         >
-          Duplicate
+          <Trans
+            components={Object {}}
+            id="js.WorkflowNavBar.duplicate.button"
+            message="Duplicate"
+            values={Object {}}
+          />
         </button>
-        <WithI18n>
-          Share
-        </WithI18n>
-        <WithI18n
+        <ShareButton>
+          <Trans
+            components={Object {}}
+            id="js.WorkflowNavBar.share.shareButton"
+            message="Share"
+            values={Object {}}
+          />
+        </ShareButton>
+        <WfHamburgerMenu
           api={
             Object {
               "duplicateWorkflow": [MockFunction],
@@ -95,7 +105,7 @@ exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplica
       <div
         className="nav-buttons"
       >
-        <WithI18n
+        <UndoRedoButtons
           redo={[Function]}
           undo={[Function]}
         />
@@ -103,16 +113,31 @@ exports[`WorkflowNavBar should redirect to sign-in page when user clicks duplica
           name="duplicate"
           onClick={[Function]}
         >
-          Duplicate
+          <Trans
+            components={Object {}}
+            id="js.WorkflowNavBar.duplicate.button"
+            message="Duplicate"
+            values={Object {}}
+          />
         </button>
-        <WithI18n>
-          Share
-        </WithI18n>
+        <ShareButton>
+          <Trans
+            components={Object {}}
+            id="js.WorkflowNavBar.share.shareButton"
+            message="Share"
+            values={Object {}}
+          />
+        </ShareButton>
         <a
           className="nav--link"
           href="/account/login"
         >
-          Sign in
+          <Trans
+            components={Object {}}
+            id="js.WorkflowNavBar.signIn.accountLink"
+            message="Sign in"
+            values={Object {}}
+          />
         </a>
       </div>
     </div>

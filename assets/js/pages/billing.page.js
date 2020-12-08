@@ -2,7 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import BillingPage from '../settings/BillingPage'
 import WorkbenchAPI from '../WorkbenchAPI'
-import { InternationalizedPage } from '../i18n/InternationalizedPage'
+import InternationalizedPage from '../i18n/InternationalizedPage'
+import setupI18nGlobal from '../i18n/setupI18nGlobal'
+
+setupI18nGlobal()
 
 const api = new WorkbenchAPI(null) // no websocket
 const { user } = window.initState

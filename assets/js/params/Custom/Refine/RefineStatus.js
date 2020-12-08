@@ -1,36 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { t, plural } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import { plural, t } from '@lingui/macro'
 
-export class RefineStatus extends React.PureComponent {
-  static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
-    clustererProgress: PropTypes.number, // or null when clustered
-    nBinsTotal: PropTypes.number // or null when clustering
-  }
+export default function RefineStatus (props) {
+  const { nBinsTotal } = props
 
-  render () {
-    const { nBinsTotal, i18n } = this.props
-
-    let statusText
-    if (nBinsTotal === null) {
-      statusText = i18n._(t('js.params.Custom.RefineStatus.clustering')`Clustering`)
-    } else {
-      statusText = i18n._(plural('js.params.Custom.RefineStatus.numberOfClustersFound', {
-        value: nBinsTotal,
+  const statusText = (nBinsTotal === null)
+    ? t({ id: 'js.params.Custom.RefineStatus.clustering', message: 'Clustering' })
+    : t({
+      id: 'js.params.Custom.RefineStatus.numberOfClustersFound',
+      message: plural(nBinsTotal, {
         one: '# cluster found',
         other: '# clusters found'
-      }))
-    }
+      })
+    })
 
-    return (
-      <div className='refine-status'>{statusText}</div>
-    )
-  }
+  return (
+    <div className='refine-status'>{statusText}</div>
+  )
 }
-
-export default withI18n()(RefineStatus)
+RefineStatus.propTypes = {
+  nBinsTotal: PropTypes.number // or null when clustering
+}

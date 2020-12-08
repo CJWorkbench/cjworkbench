@@ -1,11 +1,11 @@
 /* global describe, it, expect, jest */
 import React from 'react'
 import Column from './Column'
-import { mount } from 'enzyme'
+import { mountWithI18n } from '../i18n/test-utils'
 import { tick } from '../test-utils'
 
 describe('Column', () => {
-  const wrapper = (props) => mount(
+  const wrapper = (props) => mountWithI18n(
     <Column
       value={null}
       name='col'

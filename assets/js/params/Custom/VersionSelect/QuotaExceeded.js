@@ -28,9 +28,9 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, m
 
   return (
     <div className='quota-exceeded'>
-      <h5><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.title' description='This must be all-caps for styling reasons'>AUTO-UPDATE QUOTA EXCEEDED</Trans></h5>
+      <h5><Trans id='js.params.Custom.VersionSelect.QuotaExceeded.title' comment='This must be all-caps for styling reasons'>AUTO-UPDATE QUOTA EXCEEDED</Trans></h5>
       <p>
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit' description='The two tags add emphasis'>
+        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit' comment='The two tags add emphasis'>
             You're requesting {''}
           <strong className='n-fetches-per-day'>{Math.ceil(numberFormatter.format(nFetchesPerDay))}</strong> {''}
             updates per day across all your workflows. Your daily limit is {''}
@@ -76,7 +76,7 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, m
                       {workflowId === workflow.id && stepId === step.id ? (
                         <>(<Trans id='js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay'>You asked for this step to make {numberFormatter.format(86400 / step.fetchInterval)} updates per day.</Trans>)</>
                       ) : (
-                        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay' description='The {1} argument is a tab name'>Step {step.order + 1} on {tab.name} makes {numberFormatter.format(86400 / step.fetchInterval)} updates per day.</Trans>
+                        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay' comment='The {1} argument is a tab name'>Step {step.order + 1} on {tab.name} makes {numberFormatter.format(86400 / step.fetchInterval)} updates per day.</Trans>
                       )}
                     </li>
                   ))}
@@ -87,7 +87,7 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, m
         </tbody>
       </table>
       <p className='request-lift'>
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestLift' description='The tag is a mailto url'>
+        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestLift' comment='The tag is a mailto url'>
             Need a higher limit?
             Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank' rel='noopener noreferrer'>email</a>.
         </Trans>

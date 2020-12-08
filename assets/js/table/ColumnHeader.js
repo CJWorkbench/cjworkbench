@@ -4,13 +4,17 @@ import ColumnContextMenu from './ColumnContextMenu'
 import { connect } from 'react-redux'
 import { idxToLetter } from '../utils'
 import { updateTableAction } from './UpdateTableAction'
-import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import { Trans } from '@lingui/macro'
 
-const columnTypeDisplay = {
-  text: t('js.table.ColumnHeader.types.text')`text`,
-  number: t('js.table.ColumnHeader.types.number')`number`,
-  timestamp: t('js.table.ColumnHeader.types.timestamp')`timestamp`
+function ColumnType (props) {
+  switch (props.columnType) {
+    case 'text': return <Trans id='js.table.ColumnHeader.types.text'>text'</Trans>
+    case 'number': return <Trans id='js.table.ColumnHeader.types.number'>number</Trans>
+    case 'timestamp': return <Trans id='js.table.ColumnHeader.types.timestamp'>timestamp</Trans>
+  }
+}
+ColumnType.propTypes = {
+  columnType: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
 }
 
 class ReorderColumnDropZone extends React.PureComponent {
@@ -67,11 +71,12 @@ class ReorderColumnDropZone extends React.PureComponent {
   }
 }
 
-export const EditableColumnName = withI18n({ withRef: true /* so parent can call getWrappedInstance() */ })(class EditableColumnName extends React.Component {
+export class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
     onRename: PropTypes.func.isRequired,
+    inputRef: PropTypes.shape({ current: PropTypes.instanceOf(window.HTMLElement) }).isRequired,
     isReadOnly: PropTypes.bool.isRequired
   }
 
@@ -80,11 +85,9 @@ export const EditableColumnName = withI18n({ withRef: true /* so parent can call
     editMode: false
   }
 
-  inputRef = React.createRef()
-
   componentDidUpdate (_, prevState) {
     if (!prevState.editMode && this.state.editMode) {
-      const input = this.inputRef.current
+      const input = this.props.inputRef.current
       if (input) {
         input.focus()
         input.select()
@@ -141,7 +144,7 @@ export const EditableColumnName = withI18n({ withRef: true /* so parent can call
         <input
           name='new-column-key'
           type='prout'
-          ref={this.inputRef}
+          ref={this.props.inputRef}
           value={this.state.newName}
           onChange={this.handleInputChange}
           onBlur={this.handleInputBlur}
@@ -158,13 +161,13 @@ export const EditableColumnName = withI18n({ withRef: true /* so parent can call
             {this.state.newName}
           </div>
           <div className='column-type'>
-            {this.props.i18n._(columnTypeDisplay[this.props.columnType])}
+            <ColumnType columnType={this.props.columnType} />
           </div>
         </span>
       )
     }
   }
-})
+}
 
 // Sort arrows, A-Z letter identifiers
 export class ColumnHeader extends React.PureComponent {
@@ -198,7 +201,7 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   startRename = () => {
-    this.inputRef.current.getWrappedInstance().handleEnterEditMode()
+    this.inputRef.current.handleEnterEditMode()
   }
 
   handleRename = ({ prevName, newName }) => {
@@ -295,7 +298,7 @@ export class ColumnHeader extends React.PureComponent {
             columnType={columnType}
             onRename={this.handleRename}
             isReadOnly={this.props.isReadOnly}
-            ref={this.inputRef}
+            inputRef={this.inputRef}
           />
           {columnMenuSection}
           {maybeDropZone('right', index + 1)}

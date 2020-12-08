@@ -23,7 +23,7 @@ export default function Button (props) {
     <div className={className}>
       <button type='button' className={buttonClassNames.join(' ')} onClick={handleClickAnchor}>
         <i className='icon-add' />{' '}
-        <span><Trans id='js.WorkflowEditor.ModuleSearch.Button.addStep' description='This should be all-caps for styling reasons'>ADD STEP</Trans></span>
+        <span><Trans id='js.WorkflowEditor.ModuleSearch.Button.addStep' comment='This should be all-caps for styling reasons'>ADD STEP</Trans></span>
       </button>
       {popperAnchor ? (
         <Popup

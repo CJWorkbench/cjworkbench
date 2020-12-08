@@ -17,7 +17,7 @@ export function UnhandledErrorReport ({ error }) {
   if (typeof window.Intercom === 'function') {
     helpText = (
       <ol>
-        <li><Trans id='js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow' description='The tag adds emphasis'>We opened a messaging window and included details for our developers to fix the issue. <em>Please send the message</em>.</Trans></li>
+        <li><Trans id='js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow' comment='The tag adds emphasis'>We opened a messaging window and included details for our developers to fix the issue. <em>Please send the message</em>.</Trans></li>
         <li><Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
       </ol>
     )
@@ -44,7 +44,7 @@ export function UnhandledErrorReport ({ error }) {
     helpText = (
       <ol>
         <li>
-          <Trans id='js.UnhandledErrorReport.helpText.debuggingDetails' description="The parameter is an email address and the tag is a 'mailto:' url">
+          <Trans id='js.UnhandledErrorReport.helpText.debuggingDetails' comment="The parameter is an email address and the tag is a 'mailto:' url">
                 Copy the debugging details below and send them to <a href={url} target='_blank' rel='noopener noreferrer'>{email}</a>.
           </Trans>
         </li>

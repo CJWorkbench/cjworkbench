@@ -15,7 +15,7 @@ export default function AddButton ({ isReadOnly, className, name, operation, isF
           className='and'
           onClick={onClickAddAnd}
         >
-          <Trans id='js.params.Condition.AddButton.and' description='The logical AND operator'>AND</Trans>
+          <Trans id='js.params.Condition.AddButton.and' comment='The logical AND operator'>AND</Trans>
         </button>
       ) : null}
       {(isFirst || operation === 'or') ? (
@@ -25,7 +25,7 @@ export default function AddButton ({ isReadOnly, className, name, operation, isF
           className='or'
           onClick={onClickAddOr}
         >
-          <Trans id='js.params.Condition.AddButton.or' description='The logical OR operator'>OR</Trans>
+          <Trans id='js.params.Condition.AddButton.or' comment='The logical OR operator'>OR</Trans>
         </button>
       ) : null}
     </div>

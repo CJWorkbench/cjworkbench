@@ -4,22 +4,35 @@ import memoize from 'memoize-one'
 import { clusterByKey, clusterByKnn } from 'clustring'
 import fingerprint from 'clustring/key/fingerprint'
 import levenshtein from 'clustring/knn/levenshtein'
-import { Trans, t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
+import { i18n } from '@lingui/core'
+import { Trans, defineMessage } from '@lingui/macro'
 
 const Algorithms = [
   {
     name: 'fingerprint',
-    selectName: t('js.params.Custom.RefineClusterer.Algorithms.fingerprint.name')`Fingerprint`,
-    description: t('js.params.Custom.RefineClusterer.Algorithms.fingerprint.description')`Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".`,
+    selectName: defineMessage({
+      id: 'js.params.Custom.RefineClusterer.Algorithms.fingerprint.name',
+      message: 'Fingerprint'
+    }),
+    description: defineMessage({
+      id: 'js.params.Custom.RefineClusterer.Algorithms.fingerprint.description',
+      message: 'Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".'
+    }),
     defaultOptions: null,
     optionFields: null,
     buildClusterer: (bucket) => clusterByKey(bucket, fingerprint())
   },
   {
     name: 'levenshtein',
-    selectName: /* i18n: This is not an editing action. It's a short description of how the levenstein algorithm works (i.e. it compares strings relative to the number of characters in which they differ, hence the term edit distance). */t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.name')`Edit distance`,
-    description: t('js.params.Custom.RefineClusterer.Algorithms.levenshtein.description')`Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to 'Maximum distance'. For instance, the distance between "Cafés" and "cafe" is 3.`,
+    selectName: defineMessage({
+      comment: "This is not an editing action. It's a short description of how the levenstein algorithm works (i.e. it compares strings relative to the number of characters in which they differ, hence the term edit distance).",
+      id: 'js.params.Custom.RefineClusterer.Algorithms.levenshtein.name',
+      message: 'Edit distance'
+    }),
+    description: defineMessage({
+      id: 'js.params.Custom.RefineClusterer.Algorithms.levenshtein.description',
+      message: 'Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to ‘Maximum distance’. For instance, the distance between "Cafés" and "cafe" is 3.'
+    }),
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
       <div className='form-group'>
@@ -31,12 +44,8 @@ const Algorithms = [
   }
 ]
 
-export class RefineClusterer extends React.PureComponent {
+export default class RefineClusterer extends React.PureComponent {
   static propTypes = {
-    i18n: PropTypes.shape({
-      // i18n object injected by LinguiJS withI18n()
-      _: PropTypes.func.isRequired
-    }),
     bucket: PropTypes.object.isRequired, // { "str": Number(count), ... }
     onProgress: PropTypes.func.isRequired, // onProgress(0.2) => undefined (means 20% clustered)
     onComplete: PropTypes.func.isRequired // onComplete(bins) => undefined (bins is [ { name, count, bucket }, ... ])
@@ -147,7 +156,7 @@ export class RefineClusterer extends React.PureComponent {
 
   renderSelect = () => {
     const { algorithm } = this.state
-    const options = Algorithms.map(({ name, selectName }) => <option key={name} value={name}>{this.props.i18n._(selectName)}</option>)
+    const options = Algorithms.map(({ name, selectName }) => <option key={name} value={name}>{i18n._(selectName)}</option>)
 
     return (
       <select name='algorithm' className='custom-select' value={algorithm.name} onChange={this.handleChangeAlgorithm}>
@@ -183,7 +192,7 @@ export class RefineClusterer extends React.PureComponent {
           </div>
           <div className='method-form'>
             <div className='method-description'>
-              {this.props.i18n._(algorithm.description)}
+              {i18n._(algorithm.description)}
             </div>
             {this.renderOptions()}
           </div>
@@ -192,4 +201,3 @@ export class RefineClusterer extends React.PureComponent {
     )
   }
 }
-export default withI18n()(RefineClusterer)

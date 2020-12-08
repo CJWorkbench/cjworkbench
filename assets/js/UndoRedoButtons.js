@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
-import { withI18n } from '@lingui/react'
 
-export class UndoRedoButtons extends React.PureComponent {
+export default class UndoRedoButtons extends React.PureComponent {
   static propTypes = {
     undo: PropTypes.func.isRequired, // func() => undefined
     redo: PropTypes.func.isRequired // func() => undefined
@@ -54,17 +53,25 @@ export class UndoRedoButtons extends React.PureComponent {
   }
 
   render () {
-    const { undo, redo, i18n } = this.props
+    const { undo, redo } = this.props
 
     return (
-
       <div className='group--undo-redo'>
-        <button name='undo' title={i18n._(t('js.UndoRedoButtons.undo.hoverText')`Undo`)} onClick={undo}><i className='icon-undo' /></button>
-        <button name='redo' title={i18n._(t('js.UndoRedoButtons.redo.hoverText')`Redo`)} onClick={redo}><i className='icon-redo' /></button>
+        <button
+          name='undo'
+          title={t({ id: 'js.UndoRedoButtons.undo.hoverText', message: 'Undo' })}
+          onClick={undo}
+        >
+          <i className='icon-undo' />
+        </button>
+        <button
+          name='redo'
+          title={t({ id: 'js.UndoRedoButtons.redo.hoverText', message: 'Redo' })}
+          onClick={redo}
+        >
+          <i className='icon-redo' />
+        </button>
       </div>
-
     )
   }
 }
-
-export default withI18n()(UndoRedoButtons)

@@ -2,32 +2,6 @@
 
 exports[`WorkflowMetadata renders private workflow correctly 1`] = `
 <WorkflowMetadata
-  i18n={
-    Object {
-      "_": [Function],
-      "_activeLanguageData": Object {
-        "plurals": [Function],
-      },
-      "_activeMessages": Object {},
-      "_catalogs": Object {
-        "en": Object {
-          "languageData": Object {},
-          "messages": Object {},
-        },
-      },
-      "_dev": Object {
-        "compile": [Function],
-        "loadLanguageData": [Function],
-      },
-      "_language": "en",
-      "_locales": undefined,
-      "_missing": undefined,
-      "plural": [Function],
-      "select": [Function],
-      "selectOrdinal": [Function],
-      "t": [Function],
-    }
-  }
   openShareModal={[MockFunction]}
   test_now={2017-09-20T21:03:52.000Z}
   workflow={
@@ -49,62 +23,18 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
       <span
         className="metadata"
       >
-        <WithI18n
-          defaults="by {owner}"
+        <Trans
+          components={Object {}}
           id="js.Workflows.WorkflowMetadata.owner"
+          message="by {owner}"
           values={
             Object {
               "owner": "Harry Harrison",
             }
           }
         >
-          <I18n
-            update={true}
-            withHash={true}
-          >
-            <Trans
-              defaults="by {owner}"
-              i18n={
-                Object {
-                  "_": [Function],
-                  "_activeLanguageData": Object {
-                    "plurals": [Function],
-                  },
-                  "_activeMessages": Object {},
-                  "_catalogs": Object {
-                    "en": Object {
-                      "languageData": Object {},
-                      "messages": Object {},
-                    },
-                  },
-                  "_dev": Object {
-                    "compile": [Function],
-                    "loadLanguageData": [Function],
-                  },
-                  "_language": "en",
-                  "_locales": undefined,
-                  "_missing": undefined,
-                  "plural": [Function],
-                  "select": [Function],
-                  "selectOrdinal": [Function],
-                  "t": [Function],
-                }
-              }
-              id="js.Workflows.WorkflowMetadata.owner"
-              values={
-                Object {
-                  "owner": "Harry Harrison",
-                }
-              }
-            >
-              <Render
-                value="js.Workflows.WorkflowMetadata.owner"
-              >
-                js.Workflows.WorkflowMetadata.owner
-              </Render>
-            </Trans>
-          </I18n>
-        </WithI18n>
+          by Harry Harrison
+        </Trans>
       </span>
       <span
         className="separator"
@@ -113,64 +43,19 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
       </span>
     </li>
     <li>
-      <WithI18n
-        defaults="Updated {timeAgo}"
-        description="The parameter will contain a time difference (i.e. something like '5h ago')"
+      <Trans
+        comment="The parameter will contain a time difference (i.e. something like '5h ago')"
+        components={Object {}}
         id="js.Workflows.WorkflowMetadata.update"
+        message="Updated {timeAgo}"
         values={
           Object {
             "timeAgo": "just now",
           }
         }
       >
-        <I18n
-          update={true}
-          withHash={true}
-        >
-          <Trans
-            defaults="Updated {timeAgo}"
-            description="The parameter will contain a time difference (i.e. something like '5h ago')"
-            i18n={
-              Object {
-                "_": [Function],
-                "_activeLanguageData": Object {
-                  "plurals": [Function],
-                },
-                "_activeMessages": Object {},
-                "_catalogs": Object {
-                  "en": Object {
-                    "languageData": Object {},
-                    "messages": Object {},
-                  },
-                },
-                "_dev": Object {
-                  "compile": [Function],
-                  "loadLanguageData": [Function],
-                },
-                "_language": "en",
-                "_locales": undefined,
-                "_missing": undefined,
-                "plural": [Function],
-                "select": [Function],
-                "selectOrdinal": [Function],
-                "t": [Function],
-              }
-            }
-            id="js.Workflows.WorkflowMetadata.update"
-            values={
-              Object {
-                "timeAgo": "just now",
-              }
-            }
-          >
-            <Render
-              value="js.Workflows.WorkflowMetadata.update"
-            >
-              js.Workflows.WorkflowMetadata.update
-            </Render>
-          </Trans>
-        </I18n>
-      </WithI18n>
+        Updated just now
+      </Trans>
     </li>
     <li>
       <span
@@ -184,52 +69,14 @@ exports[`WorkflowMetadata renders private workflow correctly 1`] = `
         title="Change privacy"
         type="button"
       >
-        <WithI18n
-          defaults="private"
+        <Trans
+          components={Object {}}
           id="js.Workflows.WorkflowMetadata.visibility.private"
+          message="private"
+          values={Object {}}
         >
-          <I18n
-            update={true}
-            withHash={true}
-          >
-            <Trans
-              defaults="private"
-              i18n={
-                Object {
-                  "_": [Function],
-                  "_activeLanguageData": Object {
-                    "plurals": [Function],
-                  },
-                  "_activeMessages": Object {},
-                  "_catalogs": Object {
-                    "en": Object {
-                      "languageData": Object {},
-                      "messages": Object {},
-                    },
-                  },
-                  "_dev": Object {
-                    "compile": [Function],
-                    "loadLanguageData": [Function],
-                  },
-                  "_language": "en",
-                  "_locales": undefined,
-                  "_missing": undefined,
-                  "plural": [Function],
-                  "select": [Function],
-                  "selectOrdinal": [Function],
-                  "t": [Function],
-                }
-              }
-              id="js.Workflows.WorkflowMetadata.visibility.private"
-            >
-              <Render
-                value="js.Workflows.WorkflowMetadata.visibility.private"
-              >
-                js.Workflows.WorkflowMetadata.visibility.private
-              </Render>
-            </Trans>
-          </I18n>
-        </WithI18n>
+          private
+        </Trans>
       </button>
     </li>
   </ul>
