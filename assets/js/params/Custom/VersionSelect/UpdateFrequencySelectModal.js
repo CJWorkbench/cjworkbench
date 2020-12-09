@@ -5,7 +5,6 @@ import QuotaExceeded from './QuotaExceeded'
 import { Trans, t } from '@lingui/macro'
 
 const TimeUnits = {
-  seconds: 1,
   minutes: 60,
   hours: 3600,
   days: 86400,
@@ -13,12 +12,12 @@ const TimeUnits = {
 }
 
 function findBestTimeUnitForNSeconds (nSeconds) {
-  for (const timeUnit of ['weeks', 'days', 'hours', 'minutes']) {
+  for (const timeUnit of ['weeks', 'days', 'hours']) {
     if (nSeconds % TimeUnits[timeUnit] === 0) {
       return timeUnit
     }
   }
-  return 'seconds'
+  return 'minutes'
 }
 
 function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
@@ -180,7 +179,6 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                         <option value='days'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option', message: 'days' })}</option>
                         <option value='hours'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option', message: 'hours' })}</option>
                         <option value='minutes'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option', message: 'minutes' })}</option>
-                        <option value='seconds'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option', message: 'seconds' })}</option>
                       </select>
                       <div className='input-group-append'>
                         <button

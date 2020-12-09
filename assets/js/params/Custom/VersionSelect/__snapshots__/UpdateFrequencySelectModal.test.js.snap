@@ -140,11 +140,6 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   >
                                     minutes
                                   </option>
-                                  <option
-                                    value="seconds"
-                                  >
-                                    seconds
-                                  </option>
                                 </select>
                                 <div
                                   class="input-group-append"
@@ -376,11 +371,6 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                                   value="minutes"
                                 >
                                   minutes
-                                </option>
-                                <option
-                                  value="seconds"
-                                >
-                                  seconds
                                 </option>
                               </select>
                               <div
