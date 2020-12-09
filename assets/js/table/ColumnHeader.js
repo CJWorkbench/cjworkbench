@@ -8,7 +8,7 @@ import { Trans } from '@lingui/macro'
 
 function ColumnType (props) {
   switch (props.columnType) {
-    case 'text': return <Trans id='js.table.ColumnHeader.types.text'>text'</Trans>
+    case 'text': return <Trans id='js.table.ColumnHeader.types.text'>text</Trans>
     case 'number': return <Trans id='js.table.ColumnHeader.types.number'>number</Trans>
     case 'timestamp': return <Trans id='js.table.ColumnHeader.types.timestamp'>timestamp</Trans>
   }
