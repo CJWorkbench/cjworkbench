@@ -9,7 +9,7 @@ import { t } from '@lingui/macro'
  * Its `value` is a string such as "" ('default') or "${:,.2f}" (a Python
  * format string, guaranteed to have a single `{:...}` in it.
  */
-export default function NumberFormat ({ i18n, ...props }) {
+export default function NumberFormat (props) {
   // TODO implement something legit. For now we just offer a few common options.
   const enumOptions = [
     {
