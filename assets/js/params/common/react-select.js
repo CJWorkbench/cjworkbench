@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import { Popper } from 'react-popper'
-import { i18n } from '@lingui/core'
 import { t } from '@lingui/macro'
 import { PopperSameWidth } from '../../components/PopperHelpers'
 
@@ -116,7 +115,7 @@ export default class ReactSelect extends React.PureComponent {
     ...(this.props.components || {})
   }
 
-  noOptionsMessage = () => this.props.noOptionsMessage || i18n._(t({ id: 'js.params.common.ReactSelect.noOptionsMessage', message: 'No options' }))
+  noOptionsMessage = () => this.props.noOptionsMessage || t({ id: 'js.params.common.ReactSelect.noOptionsMessage', message: 'No options' })
 
   handleChange = (reactSelectValue) => {
     const { isMulti, onChange } = this.props
