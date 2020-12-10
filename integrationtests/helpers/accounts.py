@@ -40,7 +40,7 @@ def _clear_minio():
         bucket = f"integrationtest-{bucket_name}"
         keys = [
             o.object_name
-            for o in mc.list_objects_v2(bucket, "", recursive=True)
+            for o in mc.list_objects(bucket, "", recursive=True)
             if not o.is_dir
         ]
         if keys:
