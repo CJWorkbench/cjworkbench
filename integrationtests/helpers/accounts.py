@@ -3,6 +3,7 @@ import email
 import email.message
 import hashlib
 import minio
+import minio.deleteobjects
 import os
 from typing import Optional
 import weakref
@@ -39,7 +40,7 @@ def _clear_minio():
     ):
         bucket = f"integrationtest-{bucket_name}"
         keys = [
-            o.object_name
+            minio.deleteobjects.DeleteObject(o.object_name)
             for o in mc.list_objects(bucket, "", recursive=True)
             if not o.is_dir
         ]

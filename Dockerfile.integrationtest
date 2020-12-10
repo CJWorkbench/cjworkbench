@@ -1,7 +1,7 @@
 # 1.1 integration-test deps
 # Depends on pybuild because integration tests run Django shell to fiddle
 # with database.
-FROM python:3.8.5-slim-buster AS deps
+FROM python:3.8.6-slim-buster AS deps
 
 # Install Firefox deps (and curl, xvfb, vnc). Debian Buster has Firefox v68;
 # we'll install its dependencies and hope they satisfy _our_ Firefox version.
