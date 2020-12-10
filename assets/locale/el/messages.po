@@ -89,40 +89,41 @@ msgstr "CSV"
 msgid "js.ExportModal.type.JSON"
 msgstr "ΡΟΗ JSON"
 
-#: assets/js/ImportModuleFromGitHub.js:123
+#: assets/js/ImportModuleFromGitHub.js:121
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr "Κλείσιμο"
 
-#: assets/js/ImportModuleFromGitHub.js:97
+#: assets/js/ImportModuleFromGitHub.js:95
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr "Εισαγωγή"
 
-#: assets/js/ImportModuleFromGitHub.js:113
+#: assets/js/ImportModuleFromGitHub.js:111
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) "
 "<0>εδώ</0>"
 
-#: assets/js/ImportModuleFromGitHub.js:109
+#: assets/js/ImportModuleFromGitHub.js:107
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
-#: assets/js/ImportModuleFromGitHub.js:86
+#: assets/js/ImportModuleFromGitHub.js:84
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
 msgstr ""
 "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) "
 "<0>εδώ</0>"
 
-#: assets/js/ImportModuleFromGitHub.js:66
+#: assets/js/ImportModuleFromGitHub.js:64
 msgid "js.ImportModuleFromGithub.staff.header.title"
 msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
 #. This is a success message
-#: assets/js/ImportModuleFromGitHub.js:42
+#: assets/js/ImportModuleFromGitHub.js:40
+#, fuzzy
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr "Έγινε εισαγωγή της μονάδας {module} στην κατηγορία {category}"
 
-#: assets/js/ImportModuleFromGitHub.js:28
+#: assets/js/ImportModuleFromGitHub.js:27
 #, fuzzy
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
@@ -445,7 +446,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:100
+#: assets/js/WorkflowEditor/OutputPane.js:103
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -537,7 +538,10 @@ msgstr "Δημιουργία αντιγράφου"
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
 msgstr "Μετονομασία"
 
-#: assets/js/WorkflowEditor/Tabs/Tabs.js:28
+#. The tab prefix will be used as the first part of the default name of tabs,
+#. i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2',
+#. etc
+#: assets/js/WorkflowEditor/Tabs/Tabs.js:27
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr "Καρτέλα"
 
@@ -1544,11 +1548,11 @@ msgstr "Μη αυτόματο"
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr "Ενημέρωση"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:190
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
 msgstr "Εφαρμογή"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:158
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:157
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 "Αυτόματη ενημέρωση αυτής της ροής εργασιών με τα πιο πρόσφατα δεδομένα "
@@ -1556,62 +1560,58 @@ msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:155
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:154
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr "Αυτόματη"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:179
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
 msgstr "ημέρες"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:181
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:180
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
 msgstr "ώρες"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:159
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:158
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr "Ελέγξτε για ενημέρωση κάθε"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:182
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:181
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
 msgstr "λεπτά"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:183
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.seconds.option"
-msgstr "δευτερόλεπτα"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:179
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:178
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
 msgstr "εβδομάδες"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:237
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:235
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
 msgstr "Να μου στέλνετε ηλ. μήνυμα κάθε φορά που αλλάζουν τα δεδομένα"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:248
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:246
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr "Κλείσιμο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:245
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:135
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:134
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr "ΕΝΗΜΕΡΩΣΗ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:220
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:218
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr "Ελέγξτε τα νέα δεδομένα με μη αυτόματο τρόπο."
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:217
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:215
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr "Μη αυτόματο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:190
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr "Προσπαθήστε ξανά"
 
@@ -1860,7 +1860,7 @@ msgstr "Καθαρισμός αναζήτησης"
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
 msgstr "Αναζήτηση πτυχών..."
 
-#: assets/js/params/common/react-select.js:119
+#: assets/js/params/common/react-select.js:118
 msgid "js.params.common.ReactSelect.noOptionsMessage"
 msgstr "Δεν υπάρχουν επιλογές"
 
@@ -1990,28 +1990,28 @@ msgstr "κείμενο"
 msgid "js.table.ColumnHeader.types.timestamp"
 msgstr "ημερομηνία & ώρα"
 
-#: assets/js/table/SelectedRowsActions.js:105
+#: assets/js/table/SelectedRowsActions.js:103
 msgid "js.table.SelectedRowsActions.menu"
 msgstr "μενού"
 
-#: assets/js/table/SelectedRowsActions.js:108
+#: assets/js/table/SelectedRowsActions.js:106
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
 "{0, plural, =0 {Δεν επιλέχτηκαν σειρές} one {Επιλέχτηκε # σειρά} other "
 "{Επιλέχτηκαν # σειρές}}"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:45
+#: assets/js/table/TableInfo.js:50
 msgid "js.table.TableInfo.columns"
 msgstr "ΣΤΗΛΕΣ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:60
+#: assets/js/table/TableInfo.js:68
 msgid "js.table.TableInfo.export"
 msgstr "ΕΞΑΓΩΓΗ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:41
+#: assets/js/table/TableInfo.js:42
 msgid "js.table.TableInfo.rows"
 msgstr "ΣΕΙΡΕΣ"
 
@@ -2019,7 +2019,7 @@ msgstr "ΣΕΙΡΕΣ"
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr "Μπορούν να εμφανιστούν 100 στήλες το πολύ"
 
-#: assets/js/table/TableView.js:67
+#: assets/js/table/TableView.js:68
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Επιλογή στηλών"
 
