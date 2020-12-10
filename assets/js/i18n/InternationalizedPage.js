@@ -11,7 +11,7 @@ __webpack_public_path__ = window.STATIC_URL + 'bundles/' // eslint-disable-line
 async function loadLocale (localeId) {
   const { messages } = await import(
     /* webpackChunkName: "[request]" */
-    `@lingui/loader!../../locale/${localeId}/messages.po`
+    '@lingui/loader!../../locale/' + localeId + '/messages.po'
   )
   i18n.loadLocaleData({
     en: { plurals: en },
