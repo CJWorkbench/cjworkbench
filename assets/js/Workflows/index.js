@@ -23,7 +23,7 @@ export default class Workflows extends React.Component {
       shared: WorkflowListPropType.isRequired,
       templates: WorkflowListPropType.isRequired
     }).isRequired,
-    user: PropTypes.shape({ id: PropTypes.number.isRequired }) // null/undefined if logged out
+    user: PropTypes.object // null/undefined if logged out
   }
 
   state = {

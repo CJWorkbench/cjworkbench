@@ -11,11 +11,6 @@ import WorkflowWebsocket from '../WorkflowWebsocket'
 import WorkbenchAPI from '../WorkbenchAPI'
 import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
-import setupI18nGlobal from '../i18n/setupI18nGlobal'
-
-__webpack_public_path__ = window.STATIC_URL + 'bundles/' // eslint-disable-line
-
-setupI18nGlobal()
 
 // --- Main ----
 const websocket = new WorkflowWebsocket(

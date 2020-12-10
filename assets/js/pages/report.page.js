@@ -8,11 +8,6 @@ import Table from '../Report/Table'
 import WorkflowWebsocket from '../WorkflowWebsocket'
 import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
-import setupI18nGlobal from '../i18n/setupI18nGlobal'
-
-setupI18nGlobal()
-
-__webpack_public_path__ = window.STATIC_URL + 'bundles/' // eslint-disable-line
 
 // --- Main ----
 const websocket = new WorkflowWebsocket(

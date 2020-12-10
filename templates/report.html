@@ -3,10 +3,19 @@
 {% load i18n_icu %}
 {% load json_filters %}
 {% load markdown %}
+{% load static %}
 {% load svg_icon %}
 
 {% block title %}
   {{ workflow.name }} | Workbench
+{% endblock %}
+
+{% block headscripts %}
+  <script>
+    window.initState = {{initState|json_in_script_tag}}
+    window.i18nConfig = {locale: '{{ i18n.locale_id }}', localesData: {{ i18n.locales_data|json_in_script_tag }}}
+    window.STATIC_URL = '{% get_static_prefix %}'
+  </script>
 {% endblock %}
 
 {% block stylesheets %}
@@ -14,9 +23,6 @@
 {% endblock %}
 
 {% block body %}
-  <script>
-    window.initState = {{initState|json_in_script_tag}}
-  </script>
   <article class="report">
     <header>
       <h1>{% svg_icon "report.svg" %} {{workflow.name}}</h1>
