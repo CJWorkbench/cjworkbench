@@ -45,7 +45,7 @@ setuptools = "*"  # django-polymorphic depends on it but doesn't declare it
 google-re2 = "==0.0.5"  # 0.0.5 is the latest to work on libre2-5 (newer ones use deprecated symbols)
 cjwparse = "~=1.1"
 cjwparquet = "~=2.1"
-uvicorn = "*"
+uvicorn = "~=0.13"
 lz4 = "*"
 natsort = "*"
 stripe = "~=2.54"
