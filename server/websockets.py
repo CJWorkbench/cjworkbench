@@ -1,33 +1,23 @@
-# Receive and send websockets messages.
-# Clients open a socket on a specific workflow, and all clients viewing that
-# workflow are a "group"
-from collections import namedtuple
 import json
 import logging
 import pickle
+from collections import namedtuple
 from typing import Dict, Any
+
+import websockets
+
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Step, Workflow
+from cjwstate.models.module_registry import MODULE_REGISTRY
 from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
-from cjwstate.models.module_registry import MODULE_REGISTRY
 
 logger = logging.getLogger(__name__)
 WorkflowUpdateData = namedtuple("WorkflowUpdateData", ("update", "delta_id"))
-
-
-def _workflow_group_name(workflow_id: int) -> str:
-    """
-    Build a channel_layer group name, given a workflow ID.
-
-    Messages sent to this group will be sent to all clients connected to
-    this workflow.
-    """
-    return f"workflow-{str(workflow_id)}"
 
 
 @database_sync_to_async
@@ -65,13 +55,24 @@ def _get_workflow_as_clientside_update(
 
 
 class WorkflowConsumer(AsyncJsonWebsocketConsumer):
+    """Receive and send websockets messages.
+
+    Clients open a socket on a specific workflow, and all clients viewing that
+    workflow are a "group".
+    """
+
     @property
     def workflow_id(self):
         return int(self.scope["url_route"]["kwargs"]["workflow_id"])
 
     @property
     def workflow_channel_name(self):
-        return _workflow_group_name(self.workflow_id)
+        """A channel_layer group name, given a workflow ID.
+
+        Messages sent to this group will be sent to all clients connected to
+        this workflow.
+        """
+        return "workflow-%d" % self.workflow_id
 
     def get_workflow_sync(self):
         """The current user's Workflow, if exists and authorized; else None"""
@@ -184,11 +185,41 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             module_zipfiles,
         )
         json_dict = jsonize_clientside_update(update, ctx)
-        await self.send_json({"type": "apply-delta", "data": json_dict})
+        await self.send_json_ignoring_connection_closed(
+            {"type": "apply-delta", "data": json_dict}
+        )
+
+    async def send_json_ignoring_connection_closed(self, message) -> None:
+        """Call AsyncJsonWebsocketConsumer.send_json(message); ignore an error.
+
+        The error in question, "websockets.exceptions.ConnectionClosed", happens
+        when the user disconnects at just the wrong time: either by closing the
+        browser window, or by dropping the TCP connection. (A closed connection
+        leads to disconnect; this error error happens during a race. As of
+        [2020-12-15], it's ~150 times per week.)
+
+        Call this method instead of `send_json()` when it's okay for the message
+        to be lost. This should be _all_ cases.
+        """
+        try:
+            await self.send_json(message)
+        except websockets.exceptions.ConnectionClosed as err:
+            if (
+                err.code == 1001  # "going away" - user closed browser tab
+                or err.code == 1006  # "connection closed abnormally"
+            ):
+                # We're sending an update, but the user's browser isn't
+                # connected any more. This is not a problem.
+                logger.debug(
+                    "Websocket disconnected before we could send, for Workflow %d",
+                    self.workflow_id,
+                )
+            else:
+                # Undefined behavior. [2020-12-15] we've never seen this.
+                raise
 
     async def queue_render(self, message):
-        """
-        Request a render of `workflow_id` at delta `delta_id`
+        """Request a render of `workflow_id` at delta `delta_id`
 
         A producer somewhere has requested, "please render, but only if
         somebody wants to see the render." Well, `self` is here representing a
@@ -199,13 +230,10 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         await rabbitmq.queue_render(self.workflow_id, delta_id)
 
     async def receive_json(self, content):
-        """
-        Handle a query from the client.
-        """
+        """Handle a query from the client."""
 
         async def send_early_error(message):
-            """
-            Respond that the request is invalid.
+            """Respond that the request is invalid.
 
             Sometimes we won't be able to figure out requestId; we'll pass
             `null` in that case.
@@ -215,7 +243,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             except (KeyError, TypeError, ValueError):
                 request_id = None
 
-            return await self.send_json(
+            return await self.send_json_ignoring_connection_closed(
                 {"response": {"requestId": request_id, "error": message}}
             )
 
@@ -234,4 +262,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         response = await handlers.handle(request)
 
-        await self.send_json({"response": response.to_dict()})
+        await self.send_json_ignoring_connection_closed(
+            {"response": response.to_dict()}
+        )
