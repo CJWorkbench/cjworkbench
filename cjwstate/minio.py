@@ -1,13 +1,14 @@
-from contextlib import contextmanager
-from dataclasses import dataclass
 import errno
 import json
 import logging
 import pathlib
-from typing import Any, ContextManager, Dict
-import urllib.parse
 import urllib3
+import urllib.parse
+from contextlib import contextmanager
+from typing import Any, ContextManager, Dict, NamedTuple
+
 from django.conf import settings
+
 from cjwkernel.util import tempfile_context
 
 
@@ -52,9 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 def encode_content_disposition(filename: str) -> str:
-    """
-    Build a Content-Disposition header value for the given filename.
-    """
+    """Build a Content-Disposition header value for the given filename."""
     enc_filename = urllib.parse.quote(filename, encoding="utf-8")
     return "attachment; filename*=UTF-8''" + enc_filename
 
@@ -76,8 +75,7 @@ transfer_config = TransferConfig()
 transfer = S3Transfer(client, transfer_config)
 # boto3 exceptions are a bit odd -- https://github.com/boto/boto3/issues/1195
 error = client.exceptions
-"""
-Namespace for exceptions.
+"""Namespace for exceptions.
 
 Usage:
 
@@ -136,18 +134,20 @@ def ensure_bucket_exists(bucket_name):
 
 
 def list_file_keys(bucket: str, prefix: str):
-    """
-    List keys of non-directory objects, non-recursively, in `prefix`.
+    """List keys of non-directory objects, non-recursively, in `prefix`.
 
     >>> minio.list_file_keys('bucket', 'filter/a132b3f/')
     ['filter/a132b3f/spec.json', 'filter/a132b3f/filter.py']
     """
-    response = client.list_objects_v2(
+    # Use list_objects, not list_objects_v2, because Google Cloud Storage's
+    # AWS emulation doesn't support v2.
+    response = client.list_objects(
         Bucket=bucket, Prefix=prefix, Delimiter="/"  # avoid recursive
     )
-    if "Contents" not in response:
-        return []
-    return [o["Key"] for o in response["Contents"]]
+    if response.get("IsTruncated"):
+        # ... I guess we should paginate?
+        raise NotImplementedError("list_objects() returned truncated result")
+    return [o["Key"] for o in response.get("Contents", [])]
 
 
 def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
@@ -174,8 +174,7 @@ def exists(bucket: str, key: str) -> bool:
 
 
 def assume_role_to_write(bucket: str, key: str, duration_seconds: int = 18000) -> str:
-    """
-    Build temporary S3 credentials to let an external client write bucket/key.
+    """Build temporary S3 credentials to let an external client write bucket/key.
 
     Return a dict of secretAccessKey, sessionToken, expiration, accessKeyId.
     """
@@ -212,8 +211,7 @@ def assume_role_to_write(bucket: str, key: str, duration_seconds: int = 18000) -
 
 
 def abort_multipart_uploads_by_prefix(bucket: str, prefix: str) -> None:
-    """
-    Abort all multipart upload to the given prefix.
+    """Abort all multipart upload to the given prefix.
 
     This costs an API request to list uploads, and then an API request per
     multipart upload.
@@ -228,8 +226,7 @@ def abort_multipart_uploads_by_prefix(bucket: str, prefix: str) -> None:
         client.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
 
 
-@dataclass
-class Stat:
+class Stat(NamedTuple):
     size: int
 
 
@@ -237,17 +234,6 @@ def stat(bucket: str, key: str) -> Stat:
     """Return an object's metadata or raise an error."""
     response = client.head_object(Bucket=bucket, Key=key)
     return Stat(response["ContentLength"])
-
-
-def fput_directory_contents(bucket: str, prefix: str, dirpath: pathlib.Path) -> None:
-    if not prefix.endswith("/"):
-        prefix = prefix + "/"
-
-    paths = dirpath.glob("**/*")
-    file_paths = [p for p in paths if p.is_file()]
-    for file_path in file_paths:
-        key = prefix + str(file_path.relative_to(dirpath))
-        fput_file(bucket, key, file_path)
 
 
 def remove(bucket: str, key: str) -> None:
@@ -263,35 +249,63 @@ def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
 
 
 def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
-    """
-    Remove all objects in `bucket` whose keys begin with `prefix`.
+    """Remove all objects in `bucket` whose keys begin with `prefix`.
+
+    This is _not atomic_. An aborted delete may leave some objects deleted
+    and others not-deleted.
 
     If you mean to use a directory-style `prefix` -- that is, one that ends in
     `"/"` -- then use `remove_recursive()` to signal your intent.
 
-    If you really mean to use `prefix=''` -- which will wipe the entire bucket,
-    up to 1,000 keys -- pass `force=True`. Otherwise, there is a safeguard
-    against `prefix=''` specifically.
+    If you really mean to use `prefix=''` -- which will wipe the entire
+    bucket -- pass `force=True`. Otherwise, this function raises ValueError
+    when `prefix=''`.
     """
     if prefix in ("/", "") and not force:
         raise ValueError("Refusing to remove prefix=/ when force=False")
 
-    # recursive list_objects_v2
-    list_response = client.list_objects_v2(Bucket=bucket, Prefix=prefix)
-    if "Contents" not in list_response:
-        return
-    delete_response = client.delete_objects(
-        Bucket=bucket,
-        Delete={"Objects": [{"Key": o["Key"]} for o in list_response["Contents"]]},
-    )
-    if "Errors" in delete_response:
-        for err in delete_response["Errors"]:
-            raise Exception("Error %{Code}s removing %{Key}s: %{Message}" % err)
+    # Use list_objects, not list_objects_v2, because Google Cloud Storage's
+    # AWS emulation doesn't support v2.
+    #
+    # Loop, deleting 1,000 keys at a time. S3 DELETE is strongly-consistent:
+    # after we delete 1,000 keys, we're guaranteed list_objects() won't re-list
+    # them. Same with Google Cloud Storage, which we configure to emulate AWS on
+    # production. (cjwstate.minio talks with the Minio server, which delegates
+    # to S3, or to GCS over the GCS "interoperability" layer.)
+    #
+    # ref: https://docs.aws.amazon.com/AmazonS3/latest/dev/Introduction.html#ConsistencyModel
+    # ref: https://cloud.google.com/storage/docs/consistency#strongly_consistent_operations
+    # ref: https://cloud.google.com/storage/docs/interoperability
+    done = False
+    while not done:
+        # no Delimiter="/" means it's a recursive request
+        list_response = client.list_objects(Bucket=bucket, Prefix=prefix)
+        done = not list_response.get("IsTruncated", False)
+        keys = [o["Key"] for o in list_response.get("Contents", [])]
+        if keys:
+            to_delete = {"Objects": [{"Key": k} for k in keys]}
+            delete_response = client.delete_objects(Bucket=bucket, Delete=to_delete)
+            errors = [
+                e for e in delete_response.get("Errors", []) if e["Code"] != "NoSuchKey"
+            ]
+            if errors:
+                raise NotImplementedError(
+                    (
+                        "%(n_errors)d errors removing %(n_keys)d objects. "
+                        "First error, on key %(key)s: Code %(code)s: %(message)s"
+                    )
+                    % dict(
+                        n_errors=len(errors),
+                        n_keys=len(keys),
+                        key=errors[0]["Key"],
+                        code=errors[0]["Code"],
+                        message=errors[0]["Message"],
+                    )
+                )
 
 
 def remove_recursive(bucket: str, prefix: str, force=False) -> None:
-    """
-    Remove all objects in `bucket` whose keys begin with `prefix`.
+    """Remove all objects in `bucket` whose keys begin with `prefix`.
 
     `prefix` must appear to be a directory -- that is, it must end with a slash.
 
@@ -306,8 +320,7 @@ def remove_recursive(bucket: str, prefix: str, force=False) -> None:
 
 
 def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
-    """
-    Like client.get_object(), but response['Body'] is bytes.
+    """Like client.get_object(), but response['Body'] is bytes.
 
     Why? Because if we're streaming it and we receive a urllib3.ProtocolError,
     there's no retry logic. Better to use the normal botocore retry logic.
@@ -348,8 +361,7 @@ def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
 def temporarily_download(
     bucket: str, key: str, dir=None
 ) -> ContextManager[pathlib.Path]:
-    """
-    Copy a file from S3 to a pathlib.Path; yield; and delete.
+    """Copy a file from S3 to a pathlib.Path; yield; and delete.
 
     Raise FileNotFoundError if the key is not on S3.
 
@@ -366,8 +378,7 @@ def temporarily_download(
 
 
 def download(bucket: str, key: str, path: pathlib.Path) -> None:
-    """
-    Copy a file from S3 to a pathlib.Path.
+    """Copy a file from S3 to a pathlib.Path.
 
     Raise FileNotFoundError if the key is not on S3.
     """
