@@ -6,7 +6,7 @@ from cjwkernel.tests.util import tempfile_context
 
 
 class EnforceStorageLimitsTests(DbTestCase):
-    @override_settings(MAX_STORAGE_PER_MODULE=99999999)
+    @override_settings(MAX_BYTES_FETCHES_PER_MODULE=99999999)
     def test_common_case_no_op(self):
         workflow = Workflow.create_and_init()
         step = workflow.tabs.first().steps.create(order=1, module_id_name="x")
@@ -21,7 +21,7 @@ class EnforceStorageLimitsTests(DbTestCase):
         enforce_storage_limits(step)
         self.assertEqual(step.stored_objects.count(), 2)
 
-    @override_settings(MAX_STORAGE_PER_MODULE=70)
+    @override_settings(MAX_BYTES_FETCHES_PER_MODULE=70)
     def test_delete_oldest(self):
         # ... and we also test that we can delete _multiple_ objects to make
         # way for a single one
@@ -47,7 +47,7 @@ class EnforceStorageLimitsTests(DbTestCase):
             [so4.id, so3.id],
         )
 
-    @override_settings(MAX_STORAGE_PER_MODULE=20)
+    @override_settings(MAX_BYTES_FETCHES_PER_MODULE=20)
     def test_always_leave_one(self):
         # ... and we also test that we can delete _multiple_ objects to make
         # way for a single one

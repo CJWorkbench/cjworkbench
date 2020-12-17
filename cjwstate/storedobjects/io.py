@@ -70,13 +70,13 @@ def create_stored_object(
 
 
 def enforce_storage_limits(step: Step) -> None:
-    """Delete old versions that bring us past MAX_STORAGE_PER_MODULE.
+    """Delete old versions that bring us past MAX_BYTES_FETCHES_PER_MODULE.
 
     This is important on frequently-updating modules that add to the previous
     table, such as Twitter search, because every version we store is an entire
     table. Without deleting old versions, we'd grow too quickly.
     """
-    limit = settings.MAX_STORAGE_PER_MODULE
+    limit = settings.MAX_BYTES_FETCHES_PER_MODULE
 
     # walk over this WfM's StoredObjects from newest to oldest, deleting all
     # that are over the limit
