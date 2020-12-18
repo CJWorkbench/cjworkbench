@@ -1,7 +1,9 @@
 import contextlib
+
 from django.utils import timezone
-from cjworkbench.sync import database_sync_to_async
+
 from cjwkernel.types import FetchResult
+from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, rabbitmq, storedobjects
 from cjwstate.models import Step, Workflow
 from cjwstate.models.commands import SetStepDataVersion
@@ -54,7 +56,8 @@ def _do_create_result(
         storedobjects.create_stored_object(
             workflow_id, step.id, result.path, stored_at=now
         )
-        storedobjects.enforce_storage_limits(step)
+        storedobjects.delete_old_files_to_enforce_storage_limits(step=step)
+        # Assume caller sends new list to clients via SetStepDataVersion
 
         step.fetch_errors = result.errors
         step.is_busy = False

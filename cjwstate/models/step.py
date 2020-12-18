@@ -1,7 +1,7 @@
 import json
 import logging
 import secrets
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
 from django.contrib.postgres.fields import JSONField
@@ -213,7 +213,7 @@ class Step(models.Model):
 
     @property
     def uploaded_file_prefix(self):
-        """"Folder" on S3 where uploads go.
+        """ "Folder" on S3 where uploads go.
 
         This ends in "/", so it can be used as a prefix in s3 operations.
         """
@@ -508,6 +508,27 @@ class Step(models.Model):
         )
         super().delete(*args, **kwargs)
 
+    def get_clientside_files(self) -> List[clientside.UploadedFile]:
+        return [
+            clientside.UploadedFile(
+                name=name, uuid=uuid, size=size, created_at=created_at
+            )
+            for name, uuid, size, created_at in self.uploaded_files.order_by(
+                "-created_at"
+            ).values_list("name", "uuid", "size", "created_at")
+        ]
+
+    def get_clientside_fetched_version_list(self) -> clientside.FetchedVersionList:
+        return clientside.FetchedVersionList(
+            versions=[
+                clientside.FetchedVersion(created_at=created_at, is_seen=is_seen)
+                for created_at, is_seen in self.stored_objects.order_by(
+                    "-stored_at"
+                ).values_list("stored_at", "read")
+            ],
+            selected=self.stored_data_version,
+        )
+
     def to_clientside(self) -> clientside.StepUpdate:
         # params
         from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -547,14 +568,7 @@ class Step(models.Model):
             tab_slug=self.tab_slug,
             is_busy=self.is_busy,
             render_result=crr,
-            files=[
-                clientside.UploadedFile(
-                    name=name, uuid=uuid, size=size, created_at=created_at
-                )
-                for name, uuid, size, created_at in self.uploaded_files.order_by(
-                    "-created_at"
-                ).values_list("name", "uuid", "size", "created_at")
-            ],
+            files=self.get_clientside_files(),
             params=params,
             secrets=self.secret_metadata,
             is_collapsed=self.is_collapsed,
@@ -565,13 +579,5 @@ class Step(models.Model):
             is_notify_on_change=self.notifications,
             has_unseen_notification=self.has_unseen_notification,
             last_relevant_delta_id=self.last_relevant_delta_id,
-            versions=clientside.FetchedVersionList(
-                versions=[
-                    clientside.FetchedVersion(created_at=created_at, is_seen=is_seen)
-                    for created_at, is_seen in self.stored_objects.order_by(
-                        "-stored_at"
-                    ).values_list("stored_at", "read")
-                ],
-                selected=self.stored_data_version,
-            ),
+            versions=self.get_clientside_fetched_version_list(),
         )

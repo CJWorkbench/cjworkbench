@@ -1,17 +1,20 @@
 import functools
-from typing import Any, Dict
 import uuid as uuidgen
+from typing import Any, Dict
+
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Workflow, Step, InProgressUpload
+from cjwstate.models import InProgressUpload, Step, Workflow
+from cjwstate.models.uploaded_file import delete_old_files_to_enforce_storage_limits
 from server import serializers
+
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
 
 
 @database_sync_to_async
 def _load_step(workflow: Workflow, step_id: int) -> Step:
-    """Returns a Step or raises HandlerError."""
+    """Return a Step or raises HandlerError."""
     try:
         return Step.live_in_workflow(workflow).get(id=step_id)
     except Step.DoesNotExist:
@@ -44,8 +47,7 @@ def _do_abort_upload(workflow: Workflow, step: Step, uuid: uuidgen.UUID) -> None
 @websockets_handler("write")
 @_loading_step
 async def abort_upload(workflow: Workflow, step: Step, key: str, **kwargs) -> None:
-    """
-    Delete all resources associated with an InProgressFileUpload.
+    """Delete all resources associated with an InProgressFileUpload.
 
     Do nothing if the file upload is not for `step`.
     """
@@ -105,8 +107,11 @@ def _do_finish_upload(
                 "BadRequest: file not found. "
                 "You must upload the file before calling finish_upload."
             )
+
+        delete_old_files_to_enforce_storage_limits(step=step)
+
         return clientside.Update(
-            steps={step.id: clientside.StepUpdate(files=step.to_clientside().files)}
+            steps={step.id: clientside.StepUpdate(files=step.get_clientside_files())}
         )
 
 

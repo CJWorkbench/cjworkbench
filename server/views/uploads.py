@@ -1,21 +1,23 @@
-from functools import wraps
 import hashlib
 import json
 import re
+from functools import wraps
 from typing import Any, Dict
 from uuid import UUID
+
 from asgiref.sync import async_to_sync
 from django import forms
 from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+
+from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 from cjwstate import commands
-from cjwstate.models import InProgressUpload, Workflow, Step
+from cjwstate.models import InProgressUpload, Step, Workflow
 from cjwstate.models.commands import SetStepParams
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
-
+from cjwstate.models.uploaded_file import delete_old_files_to_enforce_storage_limits
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)
 
@@ -206,6 +208,9 @@ class Upload(View):
             uploaded_file = in_progress_upload.convert_to_uploaded_file(filename)
         except FileNotFoundError:
             return ErrorResponse(409, "file-not-uploaded")
+
+        delete_old_files_to_enforce_storage_limits(step=step)
+        # new file list will be sent to clients via SetStepParams
 
         # After the cooperative lock ends, update the Step.
         want_params = {file_param_id_name: uploaded_file.uuid}

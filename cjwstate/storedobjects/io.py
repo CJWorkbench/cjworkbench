@@ -1,12 +1,14 @@
+import uuid
 from pathlib import Path
 from typing import ContextManager, Optional
-import uuid
+
 from django.conf import settings
 from django.utils import timezone
+
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
-from cjwstate.models import StoredObject, Step
-
+from cjwstate.models import Step, StoredObject
+from cjwstate.util import find_deletable_ids
 
 BUCKET = minio.StoredObjectsBucket
 
@@ -69,25 +71,21 @@ def create_stored_object(
     return stored_object
 
 
-def enforce_storage_limits(step: Step) -> None:
-    """Delete old versions that bring us past MAX_BYTES_FETCHES_PER_MODULE.
+def delete_old_files_to_enforce_storage_limits(*, step: Step) -> None:
+    """Delete old fetches that bring us past MAX_BYTES_FETCHES_PER_STEP or
+    MAX_N_FETCHES_PER_STEP.
 
-    This is important on frequently-updating modules that add to the previous
-    table, such as Twitter search, because every version we store is an entire
-    table. Without deleting old versions, we'd grow too quickly.
+    We can't let every workflow grow forever.
     """
-    limit = settings.MAX_BYTES_FETCHES_PER_MODULE
+    to_delete = find_deletable_ids(
+        ids_and_sizes=step.stored_objects.order_by("-stored_at").values_list(
+            "id", "size"
+        ),
+        n_limit=settings.MAX_N_FETCHES_PER_STEP,
+        size_limit=settings.MAX_BYTES_FETCHES_PER_STEP,
+    )
 
-    # walk over this WfM's StoredObjects from newest to oldest, deleting all
-    # that are over the limit
-    sos = step.stored_objects.order_by("-stored_at")
-    used = 0
-    first = True
-
-    for so in list(sos):
-        used += so.size
-        # allow most recent version to be stored even if it is itself over
-        # limit
-        if used > limit and not first:
-            so.delete()
-        first = False
+    if to_delete:
+        # QuerySet.delete() sends pre_delete signal, which deletes from S3
+        # ref: https://docs.djangoproject.com/en/2.2/ref/models/querysets/#django.db.models.query.QuerySet.delete
+        step.stored_objects.filter(id__in=to_delete).delete()
