@@ -1,8 +1,11 @@
+import contextlib
 import io
 import json
 import selectors
 import subprocess
 from http import HTTPStatus as status
+from pathlib import Path
+from typing import ContextManager
 
 import numpy as np
 import pyarrow as pa
@@ -383,44 +386,49 @@ class SubprocessOutputFileLike(io.RawIOBase):
         super().close()  # sets self.closed
 
 
+def _downloaded_current_cache_result(step: Step) -> ContextManager[Path]:
+    """Yield a Path that will be deleted when the block closes.
+
+    Raise CorruptCacheError if `step` has no current cache result, or if the
+    download fails.
+    """
+    cached_result = step.cached_render_result
+    if not cached_result:
+        raise CorruptCacheError
+
+    return downloaded_parquet_file(cached_result)  # raise CorruptCacheError
+
+
 @require_GET
 @_with_step_for_read_by_id
 def step_public_json(request: HttpRequest, step: Step):
-    def schedule_render_and_suggest_retry():
-        """Schedule a render and return a response asking the user to retry.
-
-        It is a *bug* that we publish URLs that aren't guaranteed to work.
-        Because we publish URLs that do not work, let's be transparent and
-        give them the 500-level error code they deserve.
-        """
+    try:
+        with _downloaded_current_cache_result(step) as parquet_path:
+            output = SubprocessOutputFileLike(
+                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "json"]
+            )
+            # It's okay to delete the file now (i.e., exit the context manager)
+    except CorruptCacheError:
+        # Schedule a render and return a response asking the user to retry.
+        #
         # We don't have a cached result, and we don't know how long it'll
         # take to get one. The user will simply need to try again....
-        nonlocal step
+        #
+        # It is a *bug* that we publish URLs that aren't guaranteed to work.
+        # Because we publish URLs that do not work, let's be transparent and
+        # give them the 500-level error code they deserve.
         workflow = step.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
         response = JsonResponse([], safe=False, status=status.SERVICE_UNAVAILABLE)
         response["Retry-After"] = "30"
         return response
 
-    cached_result = step.cached_render_result
-    if not cached_result:
-        return schedule_render_and_suggest_retry()
-
-    try:
-        with downloaded_parquet_file(cached_result) as parquet_path:
-            output = SubprocessOutputFileLike(
-                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "json"]
-            )
-            # It's okay to delete the file now (i.e., exit the context manager)
-    except CorruptCacheError:
-        return schedule_render_and_suggest_retry()
-
     return FileResponse(
         output,
         as_attachment=True,
         filename=(
             "Workflow %d - %s-%d.json"
-            % (cached_result.workflow_id, step.module_id_name, step.id)
+            % (step.workflow.id, step.module_id_name, step.id)
         ),
         content_type="application/json",
     )
@@ -428,16 +436,21 @@ def step_public_json(request: HttpRequest, step: Step):
 
 @_with_step_for_read_by_id
 def step_public_csv(request: HttpRequest, step: Step):
-    def schedule_render_and_suggest_retry():
-        """Schedule a render and return a response asking the user to retry.
-
-        It is a *bug* that we publish URLs that aren't guaranteed to work.
-        Because we publish URLs that do not work, let's be transparent and
-        give them the 500-level error code they deserve.
-        """
+    try:
+        with _downloaded_current_cache_result(step) as parquet_path:
+            output = SubprocessOutputFileLike(
+                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "csv"]
+            )
+            # It's okay to delete the file now (i.e., exit the context manager)
+    except CorruptCacheError:
+        # Schedule a render and return a response asking the user to retry.
+        #
         # We don't have a cached result, and we don't know how long it'll
         # take to get one. The user will simply need to try again....
-        nonlocal step
+        #
+        # It is a *bug* that we publish URLs that aren't guaranteed to work.
+        # Because we publish URLs that do not work, let's be transparent and
+        # give them the 500-level error code they deserve.
         workflow = step.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
         response = HttpResponse(
@@ -446,25 +459,11 @@ def step_public_csv(request: HttpRequest, step: Step):
         response["Retry-After"] = "30"
         return response
 
-    cached_result = step.cached_render_result
-    if not cached_result:
-        return schedule_render_and_suggest_retry()
-
-    try:
-        with downloaded_parquet_file(cached_result) as parquet_path:
-            output = SubprocessOutputFileLike(
-                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "csv"]
-            )
-            # It's okay to delete the file now (i.e., exit the context manager)
-    except CorruptCacheError:
-        return schedule_render_and_suggest_retry()
-
     return FileResponse(
         output,
         as_attachment=True,
         filename=(
-            "Workflow %d - %s-%d.csv"
-            % (cached_result.workflow_id, step.module_id_name, step.id)
+            "Workflow %d - %s-%d.csv" % (step.workflow.id, step.module_id_name, step.id)
         ),
         content_type="text/csv; charset=utf-8; header=present",
     )
