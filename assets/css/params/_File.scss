@@ -241,14 +241,12 @@
 .upload-api-modal {
   font-size: 1.4rem;
 
-  .state-ok {
-    p {
-      margin: 0;
-    }
+  dl {
+    margin-top: 1rem;
+  }
 
-    code {
-      padding: 0 1rem;
-    }
+  dd {
+    @include code-1;
   }
 
   h5 {

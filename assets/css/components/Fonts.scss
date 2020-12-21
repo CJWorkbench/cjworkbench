@@ -48,13 +48,9 @@
 	font-size: badrem(1.6);
 	line-height: badrem(2.3);
 }
-%content-3 {
-  @include content-3;
-}
 
-.content-1 { @include content-1; }
-.content-2 { @include content-2; }
-.content-3 { @include content-3; }
+.content-1 { @include content-1; } // deprecated: use mixin instead
+.content-2 { @include content-2; } // deprecated: use mixin instead
 
 @mixin table-content { // Only for content in the table -- do not use anywhere else
 	font-size: badrem(1.4);
@@ -62,9 +58,9 @@
 	font-weight: normal;
 }
 
-.code-1 { // used in code snipets
-	@include content-1;
-  font-family: "PT Mono";
+@mixin code-1 { // used in code snipets
+	@include content-1; // TODO nix
+  font-family: "PT Mono", monospace;
 	line-height: badrem(2.4);
 }
 

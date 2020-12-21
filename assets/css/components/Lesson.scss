@@ -9,7 +9,7 @@ article.lesson {
   overflow-x: hidden; // be _strict_ about width: we assume later it's exactly what we set it to
 
   .description, ol.steps {
-    @extend .content-3;
+    @include content-3;
     font-weight: lighter;
   }
 
@@ -115,12 +115,11 @@ article.lesson {
       word-break: break-all;
       border-radius: .3rem;
       cursor: text;
-      @extend %content-3;
+      @include content-3;
     }
 
-    .code-block {
-      @extend .copy-txt;
-      @extend .code-1;
+    .copy-txt, .code-block {
+      @include code-1;
     }
 
     .highlight {
@@ -167,7 +166,7 @@ article.lesson {
 
 
     code {
-      @extend .code-1;
+      @include code-1;
       background-color: $dark-accent--medium;
       color: white;
       padding: 0.5rem;
