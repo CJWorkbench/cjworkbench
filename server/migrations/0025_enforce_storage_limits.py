@@ -59,7 +59,8 @@ def delete_excess_stored_objects(*, step: "Step") -> None:
                 "  Step %d, StoredObject %d (%d bytes)"
                 % (step.id, stored_object.id, stored_object.size)
             )
-            minio.remove(minio.StoredObjectsBucket, stored_object.key)
+            if stored_object.key:
+                minio.remove(minio.StoredObjectsBucket, stored_object.key)
             stored_object.delete()
 
 
