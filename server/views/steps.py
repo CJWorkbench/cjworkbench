@@ -2,6 +2,10 @@ import io
 import json
 import selectors
 import subprocess
+from http import HTTPStatus as status
+
+import numpy as np
+import pyarrow as pa
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -9,12 +13,8 @@ from django.http import FileResponse, HttpRequest, HttpResponse, Http404, JsonRe
 from django.shortcuts import get_object_or_404
 from django.utils.cache import add_never_cache_headers, patch_response_headers
 from django.views.decorators.clickjacking import xframe_options_exempt
-import numpy as np
-import pyarrow as pa
-from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
+from django.views.decorators.http import require_GET
+
 from cjwkernel.types import ColumnType
 from cjwstate import rabbitmq
 from cjwstate.rendercache import (
@@ -136,8 +136,7 @@ def int_or_none(x):
 
 
 # /render: return output table of this module
-@api_view(["GET"])
-@renderer_classes((JSONRenderer,))
+@require_GET
 @_with_step_for_read_by_id
 def step_render(request: HttpRequest, step: Step, format=None):
     # Get first and last row from query parameters, or default to all if not
@@ -146,9 +145,9 @@ def step_render(request: HttpRequest, step: Step, format=None):
         startrow = int_or_none(request.GET.get("startrow"))
         endrow = int_or_none(request.GET.get("endrow"))
     except ValueError:
-        return Response(
+        return JsonResponse(
             {"message": "bad row number", "status_code": 400},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.BAD_REQUEST,
         )
 
     with step.workflow.cooperative_lock():
@@ -175,7 +174,7 @@ def step_render(request: HttpRequest, step: Step, format=None):
 
 
 # /tiles/:slug/v:delta_id/:tile_row,:tile_column.json: table data
-@api_view(["GET"])
+@require_GET
 @_with_unlocked_step_for_read
 def step_tile(
     request: HttpRequest, step: Step, delta_id: int, tile_row: int, tile_column: int
@@ -189,13 +188,15 @@ def step_tile(
 
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
-        return JsonResponse({"error": "delta_id result not cached"}, status=404)
+        return JsonResponse(
+            {"error": "delta_id result not cached"}, status=status.NOT_FOUND
+        )
 
     if (
         cached_result.table_metadata.n_rows <= row_begin
         or len(cached_result.table_metadata.columns) <= column_begin
     ):
-        return JsonResponse({"error": "tile out of bounds"}, status=404)
+        return JsonResponse({"error": "tile out of bounds"}, status=status.NOT_FOUND)
 
     try:
         record_json = read_cached_render_result_slice_as_text(
@@ -208,7 +209,7 @@ def step_tile(
         # A different 404 message to help during debugging
         return JsonResponse(
             {"error": "result went away; please try again with another delta_id"},
-            status=404,
+            status=status.NOT_FOUND,
         )
 
     # Convert from [{"a": "b", "c": "d"}, ...] to [["b", "d"], ...]
@@ -221,7 +222,7 @@ def step_tile(
     return response
 
 
-@api_view(["GET"])
+@require_GET
 @xframe_options_exempt
 @_with_step_for_read_by_id
 def step_output(request: HttpRequest, step: Step, format=None):
@@ -233,8 +234,7 @@ def step_output(request: HttpRequest, step: Step, format=None):
     return HttpResponse(content=html)
 
 
-@api_view(["GET"])
-@renderer_classes((JSONRenderer,))
+@require_GET
 @_with_step_for_read_by_id
 def step_embeddata(request: HttpRequest, step: Step):
     # Speedy bypassing of locks: we don't care if we get out-of-date data
@@ -250,14 +250,15 @@ def step_embeddata(request: HttpRequest, step: Step):
     return JsonResponse(result_json, safe=False)
 
 
-@api_view(["GET"])
-@renderer_classes((JSONRenderer,))
+@require_GET
 @_with_step_for_read_by_id
 def step_value_counts(request: HttpRequest, step: Step):
     try:
         colname = request.GET["column"]
     except KeyError:
-        return JsonResponse({"error": 'Missing a "column" parameter'}, status=400)
+        return JsonResponse(
+            {"error": 'Missing a "column" parameter'}, status=status.BAD_REQUEST
+        )
 
     if not colname:
         # User has not yet chosen a column. Empty response.
@@ -275,7 +276,9 @@ def step_value_counts(request: HttpRequest, step: Step):
             if c.name == colname
         )
     except StopIteration:
-        return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
+        return JsonResponse(
+            {"error": f'column "{colname}" not found'}, status=status.NOT_FOUND
+        )
 
     if not isinstance(column.type, ColumnType.Text):
         # We only return text values.
@@ -297,7 +300,9 @@ def step_value_counts(request: HttpRequest, step: Step):
         # "don't crash" and this 404 seems to be the simplest implementation.
         # (We assume that if the data is deleted, the user has moved elsewhere
         # and this response is going to be ignored.)
-        return JsonResponse({"error": f'column "{colname}" not found'}, status=404)
+        return JsonResponse(
+            {"error": f'column "{colname}" not found'}, status=status.NOT_FOUND
+        )
 
     if chunked_array.num_chunks == 0:
         value_counts = {}
@@ -378,7 +383,7 @@ class SubprocessOutputFileLike(io.RawIOBase):
         super().close()  # sets self.closed
 
 
-@api_view(["GET"])
+@require_GET
 @_with_step_for_read_by_id
 def step_public_json(request: HttpRequest, step: Step):
     def schedule_render_and_suggest_retry():
@@ -393,7 +398,7 @@ def step_public_json(request: HttpRequest, step: Step):
         nonlocal step
         workflow = step.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
-        response = JsonResponse([], safe=False, status=503)
+        response = JsonResponse([], safe=False, status=status.SERVICE_UNAVAILABLE)
         response["Retry-After"] = "30"
         return response
 
@@ -435,7 +440,9 @@ def step_public_csv(request: HttpRequest, step: Step):
         nonlocal step
         workflow = step.workflow
         async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
-        response = HttpResponse(b"", content_type="text/csv", status=503)
+        response = HttpResponse(
+            b"", content_type="text/csv", status=status.SERVICE_UNAVAILABLE
+        )
         response["Retry-After"] = "30"
         return response
 

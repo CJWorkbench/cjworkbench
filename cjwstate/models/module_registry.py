@@ -27,8 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 class ModuleRegistry:
-    """
-    Cache and find the most recent modules, by tracking versions.
+    """Cache and find the most recent modules, by tracking versions.
 
     Rules:
 
@@ -69,9 +68,7 @@ class ModuleRegistry:
             return self._download_or_reuse_zipfile(db_module)
 
     def all_latest(self) -> Dict[str, ModuleZipfile]:
-        """
-        Return all modules, unordered, indexed by ID.
-        """
+        """Return all modules, unordered, indexed by ID."""
         # https://docs.djangoproject.com/en/2.2/ref/models/expressions/#subquery-expressions
         latest = Subquery(
             (
@@ -89,8 +86,7 @@ class ModuleRegistry:
         return ret
 
     def _download_or_reuse_zipfile(self, db_module: DbModuleVersion) -> ModuleZipfile:
-        """
-        Ensure `self._cache` contains a `ModuleZipfile` for `db_module`, and return it.
+        """Ensure `self._cache` contains a `ModuleZipfile` for `db_module`, and return it.
 
         Raise `KeyError` if the module does not exist in minio.
         """
@@ -141,8 +137,7 @@ class ModuleRegistry:
             # the lock, now it should check self._cache again.
 
     def clear(self):
-        """
-        Empty the cache.
+        """Empty the cache.
 
         This is great for unit tests. It isn't production-ready.
         """
@@ -162,8 +157,7 @@ def _download_module_zipfile_modern(
 
 
 def _is_basename_python_code(key: str) -> bool:
-    """
-    True iff the given filename is a module's Python code file.
+    """True iff the given filename is a module's Python code file.
 
     >>> _is_basename_python_code('filter.py')
     True
@@ -235,8 +229,7 @@ def download_module_zipfile(
     deprecated_spec: Dict[str, Any],
     deprecated_js_module: str,
 ) -> ModuleZipfile:
-    """
-    Produce a local-path ModuleZipfile by downloading from minio.
+    """Produce a local-path ModuleZipfile by downloading from minio.
 
     Raise `RuntimeError` (_from_ another kind of error -- `FileNotFoundError`,
     `KeyError`, `ValueError`, `SyntaxError`, `BadZipFile`,

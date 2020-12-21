@@ -24,6 +24,7 @@ class KernelTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         # Kernel takes a while to start up -- it's loading pyarrow+pandas in a
         # separate process. So we'll only load it once.
         cls.kernel = Kernel()

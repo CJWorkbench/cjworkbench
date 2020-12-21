@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 import django.utils
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from cjwstate import clientside
@@ -92,13 +92,13 @@ class Delta(models.Model):
     called. Afterwards, its last_relevant_delta_id will be self.id.
     """
 
-    values_for_backward = JSONField(default=dict)
+    values_for_backward = models.JSONField(default=dict)
     """Data required to call .backward().
 
     Data format is Command-dependent.
     """
 
-    values_for_forward = JSONField(default=dict)
+    values_for_forward = models.JSONField(default=dict)
     """Data required to call .forward().
 
     Data format is Command-dependent.

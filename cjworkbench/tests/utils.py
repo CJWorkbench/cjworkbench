@@ -22,6 +22,7 @@ def _inherit_main_thread_connections():
 
 class DbTestCase(SimpleTestCase):
     allow_database_queries = True
+    databases = "__all__"
 
     # run_with_async_db() tasks all share a single database connection. To
     # avoid concurrency issues, run them all in a single thread.

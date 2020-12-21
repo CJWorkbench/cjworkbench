@@ -177,7 +177,6 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "channels",
     "webpack_loader",
-    "rest_framework",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -228,13 +227,6 @@ TEMPLATES = [
     }
 ]
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-    )
-}
-
-WSGI_APPLICATION = "cjworkbench.wsgi.application"
 ASGI_APPLICATION = "cjworkbench.asgi.application"
 
 

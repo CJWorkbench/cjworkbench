@@ -4,7 +4,6 @@ import secrets
 from typing import Any, Dict, Optional, Union
 from uuid import UUID
 
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
 
@@ -115,7 +114,7 @@ class Step(models.Model):
     # true means user has not acknowledged email
     has_unseen_notification = models.BooleanField(default=False)
 
-    cached_migrated_params = JSONField(null=True, blank=True)
+    cached_migrated_params = models.JSONField(null=True, blank=True)
     """
     Non-secret parameter values -- after a call to migrate_params().
 
@@ -146,7 +145,7 @@ class Step(models.Model):
     )
     cached_render_result_errors = RenderErrorsField(blank=True, default=list)
 
-    # should be JSONField but we need backwards-compatibility
+    # should be models.JSONField but we need backwards-compatibility
     cached_render_result_json = models.BinaryField(blank=True)
     cached_render_result_columns = ColumnsField(null=True, blank=True)
     cached_render_result_nrows = models.IntegerField(null=True, blank=True)
@@ -169,7 +168,7 @@ class Step(models.Model):
     # to the Step, so we'd be left with a chicken-and-egg problem.
     last_relevant_delta_id = models.IntegerField(default=0, null=False)
 
-    params = JSONField(default=dict)
+    params = models.JSONField(default=dict)
     """
     Non-secret parameter values, valid at time of writing.
 
@@ -179,7 +178,7 @@ class Step(models.Model):
     These values were set by a human.
     """
 
-    secrets = JSONField(default=dict)
+    secrets = models.JSONField(default=dict)
     """
     Dict of {'name': ..., 'secret': ...} values that are private.
 

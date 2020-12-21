@@ -1,5 +1,4 @@
 from typing import Any
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_delete
@@ -38,7 +37,7 @@ class ModuleVersion(models.Model):
     # time this module was last updated
     last_update_time = models.DateTimeField(auto_now=True)
 
-    spec = JSONField("spec", validators=[_django_validate_module_spec])
+    spec = models.JSONField("spec", validators=[_django_validate_module_spec])
 
     js_module = models.TextField("js_module", default="")
 

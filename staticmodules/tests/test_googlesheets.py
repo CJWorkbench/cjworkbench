@@ -54,6 +54,7 @@ def secrets(secret: Optional[Dict[str, Any]]) -> Dict[str, Any]:
 class FetchTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         ssl_path = Path(__file__).parent / "test_data" / "ssl"
 
         cls.ssl_server_ctx = ssl.SSLContext()

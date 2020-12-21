@@ -14,6 +14,7 @@ from cjwstate.tests.utils import DbTestCase
 class ModuleRegistryTest(DbTestCase):
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         init_module_system()
         minio.ensure_bucket_exists(minio.StaticFilesBucket)
 

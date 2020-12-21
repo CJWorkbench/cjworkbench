@@ -1,7 +1,9 @@
 import json
+from http import HTTPStatus as status
 from unittest.mock import patch
+
 from django.contrib.auth.models import User
-from rest_framework import status
+
 from cjwkernel.tests.util import arrow_table
 from cjwkernel.types import RenderResult
 from cjwstate import rabbitmq
@@ -64,7 +66,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.client.force_login(self.user)
         response = self.client.get("/workflows/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
         workflows = response.context_data["initState"]["workflows"]
         # should not pick up other user's workflows, even public ones
@@ -98,7 +100,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.client.force_login(self.user)
         response = self.client.get("/workflows/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
         workflows = response.context_data["initState"]["workflows"]
         self.assertEqual(len(workflows["owned"]), 2)
@@ -116,7 +118,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.client.force_login(self.user)
         response = self.client.get("/workflows/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
         workflows = response.context_data["initState"]["workflows"]
         self.assertEqual(len(workflows["owned"]), 2)
@@ -130,7 +132,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.client.force_login(self.user)
         response = self.client.get("/workflows/")
         workflows = response.context_data["initState"]["workflows"]
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
         self.assertEqual(len(workflows["owned"]), 1)
 
     def test_index_post(self):
@@ -145,7 +147,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # View own non-public workflow
         self.client.force_login(self.user)
         response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
     def test_workflow_view_update_last_viewed_at(self):
         # View own non-public workflow
@@ -165,7 +167,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         lock.side_effect = Workflow.DoesNotExist
         self.client.force_login(self.user)
         response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.NOT_FOUND)
 
     def test_workflow_view_triggers_render_if_stale_cache(self):
         step = self.tab1.steps.create(
@@ -202,7 +204,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # 404 with bad id
         self.client.force_login(self.user)
         response = self.client.get("/workflows/%d/" % 999_999)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.NOT_FOUND)
 
     def test_workflow_view_shared(self):
         public_workflow = Workflow.create_and_init(
@@ -211,7 +213,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # View someone else's public workflow
         self.client.force_login(self.user)
         response = self.client.get("/workflows/%d/" % public_workflow.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
     def test_workflow_view_unauthorized_403(self):
         # 403 viewing someone else' private workflow (don't 404 as sometimes
@@ -219,7 +221,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # them public, and we need to help them debug that case)
         self.client.force_login(self.otheruser)
         response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
 
     @patch.dict(
         "os.environ",
@@ -235,7 +237,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         response = self.client.get(
             "/workflows/%d/" % self.workflow1.id
         )  # need trailing slash or 301
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
         self.assertContains(response, '"loggedInUser"')
         self.assertContains(response, self.user.email)
@@ -290,7 +292,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         # don't log in
         response = self.client.get("/workflows/%d/" % public_workflow.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
 
         self.assertEqual(
             Workflow.objects.filter(owner=None).count(), 1
@@ -330,7 +332,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         self.client.session._session_key = "session-b"
         response = self.client.get("/workflows/%d/" % public_workflow.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.OK)
         # Assert there is only _one_ extra workflow.
         self.assertEqual(Workflow.objects.filter(owner=None).count(), 1)
         # This request "lost" the race; assert it has the same workflow as the
@@ -345,7 +347,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         ]  # list of all current workflow ids
         self.client.force_login(self.user)
         response = self.client.post("/api/workflows/%d/duplicate" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.CREATED)
         data = json.loads(response.content)
         self.assertFalse(data["id"] in old_ids)  # created at entirely new id
         self.assertEqual(data["name"], "Copy of Workflow 1")
@@ -355,7 +357,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # Ensure 404 with bad id
         self.client.force_login(self.user)
         response = self.client.post("/api/workflows/99999/duplicate")
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.NOT_FOUND)
 
     def test_workflow_duplicate_restricted_gives_403(self):
         # Ensure 403 when another user tries to clone private workflow
@@ -363,20 +365,20 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
         response = self.client.post("/api/workflows/%d/duplicate" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
 
     def test_workflow_duplicate_public(self):
         self.workflow1.public = True
         self.workflow1.save()
         self.client.force_login(self.otheruser)
         response = self.client.post("/api/workflows/%d/duplicate" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.CREATED)
 
     def test_workflow_delete(self):
         pk_workflow = self.workflow1.id
         self.client.force_login(self.user)
         response = self.client.delete("/api/workflows/%d/" % pk_workflow)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.NO_CONTENT)
         self.assertEqual(Workflow.objects.filter(name="Workflow 1").count(), 0)
 
     def test_workflow_delete_missing_is_404(self):
@@ -386,7 +388,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         pk_workflow = self.workflow1.id + 999  # does not exist
         self.client.force_login(self.user)
         response = self.client.delete("/api/workflows/%d/" % pk_workflow)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.NOT_FOUND)
         self.assertEqual(Workflow.objects.count(), count_before)
 
     def test_workflow_delete_unauthorized_is_403(self):
@@ -394,7 +396,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         pk_workflow = self.workflow1.id
         self.client.force_login(self.otheruser)  # has no permission
         response = self.client.delete("/api/workflows/%d/" % pk_workflow)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
         self.assertEqual(Workflow.objects.count(), count_before)
 
     def test_workflow_post_public(self):
@@ -404,7 +406,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
             {"public": True},
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.NO_CONTENT)
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.public, True)
 
@@ -415,6 +417,6 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
             {"public": True},
             content_type="application/json",
         )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.public, False)

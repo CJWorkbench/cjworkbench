@@ -1,6 +1,6 @@
 from dataclasses import asdict
 from typing import Any, Dict
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.core.exceptions import ValidationError
 from cjwkernel.types import (
     Column,
@@ -109,6 +109,7 @@ class ColumnsField(JSONField):
     description = "List of Column metadata, stored as JSON"
 
     def from_db_value(self, value, *args, **kwargs):
+        value = super().from_db_value(value, *args, **kwargs)
         if value is None:
             return None
 
@@ -138,13 +139,12 @@ class ColumnsField(JSONField):
 
 
 class RenderErrorsField(JSONField):
-    """
-    Maps a List[RenderError] to a database JSON column.
-    """
+    """Maps a List[RenderError] to a database JSON column."""
 
     description = "List of RenderErrors, stored as JSON"
 
     def from_db_value(self, value, *args, **kwargs):
+        value = super().from_db_value(value, *args, **kwargs)
         if value is None:
             return None
 

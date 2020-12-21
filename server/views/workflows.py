@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import json
 from dataclasses import dataclass
+from http import HTTPStatus as status
 from typing import Any, Dict, List, Optional
 
 from asgiref.sync import async_to_sync
@@ -16,7 +17,6 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
-from rest_framework import status
 
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow, Step, Tab
@@ -241,14 +241,14 @@ class ApiDetail(View):
         if request.content_type != "application/json":
             return HttpResponse(
                 "request must have type application/json",
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.BAD_REQUEST,
             )
         try:
             body = json.loads(request.body)
         except ValueError:
             return JsonResponse(
                 {"message": "request is invalid JSON"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.BAD_REQUEST,
             )
         if (
             type(body) != dict
@@ -260,11 +260,11 @@ class ApiDetail(View):
                 {
                     "message": 'request JSON must be an Object with a "public" property of type Boolean'
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.BAD_REQUEST,
             )
         workflow.public = body["public"]
         workflow.save(update_fields=["public"])
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        return HttpResponse(status=status.NO_CONTENT)
 
     @method_decorator(login_required)
     def delete(self, request: HttpRequest, workflow_id: int):
@@ -274,17 +274,17 @@ class ApiDetail(View):
             ) as workflow_lock:
                 workflow = workflow_lock.workflow
                 workflow.delete()
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            return HttpResponse(status=status.NO_CONTENT)
         except Workflow.DoesNotExist as err:
             if err.args[0] == "owner access denied":
                 return JsonResponse(
                     {"message": str(err), "status_code": 403},
-                    status=status.HTTP_403_FORBIDDEN,
+                    status=status.FORBIDDEN,
                 )
             else:
                 return JsonResponse(
                     {"message": "Workflow not found", "status_code": 404},
-                    status=status.HTTP_404_NOT_FOUND,
+                    status=status.NOT_FOUND,
                 )
 
 
@@ -309,7 +309,7 @@ class Duplicate(View):
 
         async_to_sync(rabbitmq.queue_render)(workflow2.id, workflow2.last_delta_id)
 
-        return JsonResponse(json_dict, status=status.HTTP_201_CREATED)
+        return JsonResponse(json_dict, status=status.CREATED)
 
 
 class Report(View):

@@ -6,8 +6,7 @@ kernel = None
 
 
 def init_module_system():
-    """
-    Initialize the module system.
+    """Initialize the module system.
 
     This must be called during startup. It will:
 
