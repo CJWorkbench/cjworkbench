@@ -1,7 +1,9 @@
 from unittest.mock import patch
+
 from django.utils import timezone
-from cjwkernel.types import FetchResult, I18nMessage, RenderError
+
 from cjwkernel.tests.util import parquet_file
+from cjwkernel.types import FetchResult, I18nMessage, RenderError
 from cjwstate import clientside, rabbitmq, storedobjects
 from cjwstate.models import Step, Workflow
 from cjwstate.models.commands import SetStepDataVersion
@@ -91,7 +93,7 @@ class SaveTests(DbTestCase):
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
-    @patch.object(storedobjects, "enforce_storage_limits")
+    @patch.object(storedobjects, "delete_old_files_to_enforce_storage_limits")
     def test_storage_limits(self, limit):
         workflow = Workflow.create_and_init()
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
@@ -102,7 +104,7 @@ class SaveTests(DbTestCase):
                     workflow.id, step, FetchResult(parquet_path), timezone.now()
                 )
             )
-        limit.assert_called_with(step)
+        limit.assert_called_with(step=step)
 
     def test_race_deleted_workflow(self):
         workflow = Workflow.create_and_init()

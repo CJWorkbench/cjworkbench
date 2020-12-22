@@ -25,6 +25,7 @@ cd "$(dirname "$0")"/..
 # https://github.com/docker/compose/issues/1896 gives docker-compose's rationale
 # for keeping our 'migrate' and 'test' runners outside of docker-compose.yml.
 docker_compose_with_commands() {
+  touch ./stripe.env  # services.stripe.env_file[0] == stripe.env. Empty is allowed.
   docker_compose -f docker-compose.yml -f docker-compose.commands.yml "$@"
 }
 
@@ -51,7 +52,7 @@ stripe_setup() {
 }
 
 stripe_run() {
-  if ! docker_compose_with_commands --env-file stripe.env run -T --rm stripe "$@"; then
+  if ! docker_compose_with_commands run -T --rm stripe "$@"; then
     echo "Failure connecting to Stripe. Run 'bin/dev stripe-setup pk_... sk_...' to pass valid credentials." >&2
     exit 1
   fi

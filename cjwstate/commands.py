@@ -1,13 +1,13 @@
 from typing import Any, Dict, Optional, Tuple
+
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Delta, Step, Workflow
-from cjwstate.models.commands import SetStepDataVersion, NAME_TO_COMMAND
+from cjwstate.models.commands import NAME_TO_COMMAND, SetStepDataVersion
 
 
 async def websockets_notify(workflow_id: int, update: clientside.Update) -> None:
-    """
-    Notify Websockets clients of `update`; return immediately.
+    """Notify Websockets clients of `update`; return immediately.
 
     This is an alias; its main purpose is for white-box unit testing.
     """
@@ -15,8 +15,7 @@ async def websockets_notify(workflow_id: int, update: clientside.Update) -> None
 
 
 async def queue_render(workflow_id: int, delta_id: int) -> None:
-    """
-    Tell renderer to render workflow; return immediately.
+    """Tell renderer to render workflow; return immediately.
 
     This is an alias; its main purpose is for white-box unit testing.
     """
@@ -32,8 +31,7 @@ def _workflow_has_notifications(workflow_id: int) -> bool:
 async def _maybe_queue_render(
     workflow_id: int, relevant_delta_id: int, delta: Delta
 ) -> None:
-    """
-    Tell renderer to render workflow; return immediately.
+    """Tell renderer to render workflow; return immediately.
 
     `delta` is used to check for SetStepDataVersion, which gets special
     logic. But to be clear: the `delta` in question might have been undo()-ne.

@@ -194,8 +194,7 @@ class StepUpdate:
     """
 
     files: Optional[List[UploadedFile]] = None
-    """List of all files uploaded by the user to this Step.
-    """
+    """List of all files uploaded by the user to this Step."""
 
     params: Optional[Dict[str, Any]] = None
     """User-supplied params."""

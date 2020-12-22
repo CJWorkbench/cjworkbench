@@ -1,7 +1,11 @@
+import datetime
 import json
 import logging
 from unittest.mock import patch
-from cjwstate import minio, rabbitmq
+
+from django.test import override_settings
+
+from cjwstate import clientside, minio, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistry,
@@ -412,4 +416,77 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.params, {"file": uuid})
         # Send deltas
         send_update.assert_called()
+        self.assertEqual(
+            send_update.mock_calls[0][1][1].steps[step.id].files,
+            [
+                clientside.UploadedFile(
+                    name="test.csv",
+                    uuid=uuid,
+                    size=7,
+                    created_at=uploaded_file.created_at,
+                )
+            ],
+        )
         queue_render.assert_called()
+
+    @override_settings(MAX_N_FILES_PER_STEP=2)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
+    def test_complete_enforce_storage_limits(self):
+        _init_module("x")
+        self.kernel.migrate_params.side_effect = lambda m, p: p
+        workflow = Workflow.create_and_init()
+        step = workflow.tabs.first().steps.create(
+            order=0,
+            slug="step-123",
+            module_id_name="x",
+            file_upload_api_token="abc123",
+            params={"file": None},
+        )
+        minio.put_bytes(minio.UserFilesBucket, "foo/1.txt", b"1")
+        step.uploaded_files.create(
+            created_at=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
+            name="file1.txt",
+            size=1,
+            uuid="df46244d-268a-0001-9b47-360502dd9b32",
+            key="foo/1.txt",
+        )
+        minio.put_bytes(minio.UserFilesBucket, "foo/2.txt", b"22")
+        step.uploaded_files.create(
+            created_at=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc),
+            name="file2.txt",
+            size=2,
+            uuid="df46244d-268a-0002-9b47-360502dd9b32",
+            key="foo/2.txt",
+        )
+        minio.put_bytes(minio.UserFilesBucket, "foo/3.txt", b"333")
+        step.uploaded_files.create(
+            created_at=datetime.datetime(2020, 1, 3, tzinfo=datetime.timezone.utc),
+            name="file3.txt",
+            size=3,
+            uuid="df46244d-268a-0003-9b47-360502dd9b32",
+            key="foo/3.txt",
+        )
+
+        # Upload the new file, "file4.txt"
+        upload = step.in_progress_uploads.create()
+        uuid = str(upload.id)
+        key = upload.get_upload_key()
+        minio.put_bytes(upload.Bucket, key, b"4444")
+        with self.assertLogs(level=logging.INFO):
+            # Logs SetStepParams's migrate_params()
+            response = self.client.post(
+                f"/api/v1/workflows/{workflow.id}/steps/step-123/uploads/{upload.id}",
+                {"filename": "file4.txt"},
+                content_type="application/json",
+                HTTP_AUTHORIZATION="Bearer abc123",
+            )
+        self.assertEqual(response.status_code, 200)
+
+        # Test excess uploaded files were deleted
+        self.assertEqual(
+            list(step.uploaded_files.order_by("id").values_list("name", flat=True)),
+            ["file3.txt", "file4.txt"],
+        )
+        self.assertFalse(minio.exists(minio.UserFilesBucket, "foo/1.txt"))
+        self.assertFalse(minio.exists(minio.UserFilesBucket, "foo/2.txt"))
