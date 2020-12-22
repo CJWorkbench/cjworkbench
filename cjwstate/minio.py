@@ -64,7 +64,9 @@ session = boto3.session.Session(
     region_name="us-east-1",
 )
 client = session.client(
-    "s3", endpoint_url=settings.MINIO_URL  # e.g., 'https://localhost:9001/'
+    "s3",
+    endpoint_url=settings.MINIO_URL,  # e.g., 'https://localhost:9001/'
+    config=botocore.client.Config(max_pool_connections=50),
 )
 sts_client = session.client("sts", endpoint_url=settings.MINIO_URL)
 # Create the one transfer manager we'll reuse for all transfers. Otherwise,
