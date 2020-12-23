@@ -71,8 +71,8 @@
             "name": "MINIO_ACCESS_KEY",
             "valueFrom": {
               "secretKeyRef": {
-                "name": "minio-access-key",
-                "key": "access_key"
+                "name": "gcs-s3-migrate-sa-credentials",
+                "key": "AWS_ACCESS_KEY_ID"
               }
             }
           },
@@ -80,8 +80,8 @@
             "name": "MINIO_SECRET_KEY",
             "valueFrom": {
               "secretKeyRef": {
-                "name": "minio-access-key",
-                "key": "secret_key"
+                "name": "gcs-s3-migrate-sa-credentials",
+                "key": "AWS_SECRET_ACCESS_KEY"
               }
             }
           },
@@ -91,7 +91,7 @@
           },
           {
             "name": "MINIO_URL",
-            "value": "http://minio-service"
+            "value": "https://storage.googleapis.com"
           },
           {
             "name": "MINIO_BUCKET_SUFFIX",

@@ -263,13 +263,18 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_URL = "/account/login"
 LOGIN_REDIRECT_URL = "/workflows"
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.10/topics/i18n/
-
+# TODO nix USE_I18N
+#
+# Currently, we only use it for Django login-form error translation. We have our
+# own i18n system for everything else. [2020-12-22] Django + async views won't
+# work with i18n, and we must avoid touching Django's `activate()` in async
+# views.
 LANGUAGE_CODE = default_locale
-TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
+
+# TODO nix USE_TZ. It's the opposite of what we want.
+TIME_ZONE = "UTC"
 USE_TZ = True
 
 LANGUAGES = [(locale, locale) for locale in supported_locales]
@@ -345,7 +350,6 @@ LOGGING = {
             # Ignore those WARNINGs and only log ERRORs.
             "level": "ERROR"
         },
-        "django.channels.server": {"level": "ERROR"},  # ditto djano.request
         # DEBUG only gets messages when settings.DEBUG==True
         "django.db.backends": {"level": "INFO"},
         "websockets.protocol": {"level": "INFO"},

@@ -1,50 +1,57 @@
-from cjworkbench.i18n import default_locale, is_supported, LANGUAGE_COOKIE_NAME
+import asyncio
+from typing import Dict, Any, Optional
+
+from django.utils.decorators import sync_and_async_middleware
 from django.utils.translation import activate
 from django.utils.translation.trans_real import (
     language_code_re,
     get_supported_language_variant,
     parse_accept_lang_header,
 )
-from typing import Dict, Any, Optional
+
+from cjworkbench.i18n import default_locale, is_supported, LANGUAGE_COOKIE_NAME
 
 
-class SetCurrentLocaleMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-        # One-time configuration and initialization.
+def _augment_request(request):
+    locale = LocaleDecider(
+        cookies=request.COOKIES,
+        accept_language_header=request.META.get("HTTP_ACCEPT_LANGUAGE", ""),
+        request_locale_override=request.GET.get("locale"),
+    ).decide()
 
-    def __call__(self, request):
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
+    request.locale_id = locale
 
-        locale = LocaleDecider(
-            cookies=request.COOKIES,
-            accept_language_header=request.META.get("HTTP_ACCEPT_LANGUAGE", ""),
-            request_locale_override=request.GET.get("locale"),
-        ).decide()
 
-        request.locale_id = locale
-        # We set the locale of django, in order to
-        # a) activate the automatic translation of its translatable elements
-        #    (e.g. placeholders of password form inputs)
-        # b) have a global source of the current locale
-        #    (e.g. for use in lazy translations)
-        activate(locale)
+@sync_and_async_middleware
+def SetCurrentLocaleMiddleware(get_response):
+    if asyncio.iscoroutinefunction(get_response):
 
-        response = self.get_response(request)
+        async def middleware(request):
+            _augment_request(request)
+            return await get_response(request)
 
-        # Code to be executed for each request/response after
-        # the view is called.
+    else:
 
-        return response
+        def middleware(request):
+            _augment_request(request)
+            # Sync-only: Switch Django's global i18n language
+            # [2020-12-22, adamhooper] I'm not sure this works, in a Channels
+            # multi-process environment. But it handles the common case.
+            #
+            # If it doesn't work, then users will see wrong-language messages
+            # from Django: for example, sign-in form placeholders and errors.
+            activate(request.locale_id)
+            return get_response(request)
+
+    return middleware
 
 
 class SetCurrentLocaleAsgiMiddleware:
     def __init__(self, inner):
         self.inner = inner
 
-    def __call__(self, scope):
-        return self.inner(
+    async def __call__(self, scope, receive, send):
+        return await self.inner(
             dict(
                 scope,
                 locale_id=LocaleDecider(
@@ -53,7 +60,9 @@ class SetCurrentLocaleAsgiMiddleware:
                     .get(b"accept-language", b"")
                     .decode("utf8"),
                 ).decide(),
-            )
+            ),
+            receive,
+            send,
         )
 
 

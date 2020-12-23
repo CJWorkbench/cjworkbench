@@ -1,24 +1,24 @@
+import asyncio
 import contextlib
 import io
 import json
-import selectors
 import subprocess
 from http import HTTPStatus as status
 from pathlib import Path
-from typing import ContextManager
+from typing import Awaitable, ContextManager, Literal, Tuple
 
 import numpy as np
 import pyarrow as pa
-from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.cache import add_never_cache_headers, patch_response_headers
-from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_GET
 
 from cjwkernel.types import ColumnType
+from cjworkbench.middleware.clickjacking import xframe_options_exempt
+from cjworkbench.sync import database_sync_to_async
 from cjwstate import rabbitmq
 from cjwstate.rendercache import (
     CorruptCacheError,
@@ -59,6 +59,45 @@ def _with_unlocked_step_for_read(fn):
         return fn(request, step, *args, **kwargs)
 
     return inner
+
+
+@database_sync_to_async
+def _load_step_by_id_oops_where_is_workflow(
+    request: HttpRequest, step_id: int
+) -> Tuple[Workflow, Tab, Step]:
+    """Load Step from database, or raise Http404 or PermissionDenied.
+
+    `step.tab` and `step.workflow` will be loaded from the database. The Step,
+    Tab and Workflow data will all be consistent.
+
+    Don't use this in new code. Put workflow ID in the URL instead.
+    """
+    # TODO simplify this a ton by putting `workflow` in the URL. That way,
+    # we can lock it _before_ we query it, so we won't have to check any of
+    # the zillions of races herein.
+    step = get_object_or_404(Step, id=step_id, is_deleted=False)
+
+    try:
+        workflow = step.tab.workflow  # raise Tab.DoesNotExist, Workflow.DoesNotExist
+        if workflow is None:
+            raise Workflow.DoesNotExist  # race: workflow is gone
+
+        # raise Workflow.DoesNotExist
+        # also, implies workflow.refresh_from_db()
+        with workflow.cooperative_lock() as workflow_lock:
+            if not workflow_lock.workflow.request_authorized_read(request):
+                raise PermissionDenied()
+
+            step.refresh_from_db()  # raise Step.DoesNotExist
+            if step.is_deleted:
+                raise Step.DoesNotExist
+            step.tab.refresh_from_db()
+            if step.tab.is_deleted:
+                raise Tab.DoesNotExist
+
+            return step.tab.workflow, step.tab, step
+    except (Workflow.DoesNotExist, Tab.DoesNotExist, Step.DoesNotExist):
+        raise Http404()  # race: tab/step was deleted
 
 
 def _with_step_for_read_by_id(fn):
@@ -139,9 +178,7 @@ def int_or_none(x):
 
 
 # /render: return output table of this module
-@require_GET
-@_with_step_for_read_by_id
-def step_render(request: HttpRequest, step: Step, format=None):
+async def step_render(request: HttpRequest, step_id: int):
     # Get first and last row from query parameters, or default to all if not
     # specified
     try:
@@ -153,20 +190,20 @@ def step_render(request: HttpRequest, step: Step, format=None):
             status=status.BAD_REQUEST,
         )
 
-    with step.workflow.cooperative_lock():
-        step.refresh_from_db()
-        cached_result = step.cached_render_result
-        if cached_result is None:
-            # assume we'll get another request after execute finishes
-            return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
+    # raise Http404, PermissionDenied
+    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    cached_result = step.cached_render_result
+    if cached_result is None:
+        # assume we'll get another request after execute finishes
+        return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
-        try:
-            startrow, endrow, record_json = _make_render_tuple(
-                cached_result, startrow, endrow
-            )
-        except CorruptCacheError:
-            # assume we'll get another request after execute finishes
-            return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
+    try:
+        startrow, endrow, record_json = _make_render_tuple(
+            cached_result, startrow, endrow
+        )
+    except CorruptCacheError:
+        # assume we'll get another request after execute finishes
+        return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
 
     data = '{"start_row":%d,"end_row":%d,"rows":%s}' % (startrow, endrow, record_json)
     response = HttpResponse(
@@ -225,21 +262,24 @@ def step_tile(
     return response
 
 
-@require_GET
 @xframe_options_exempt
-@_with_step_for_read_by_id
-def step_output(request: HttpRequest, step: Step, format=None):
+async def step_output(request: HttpRequest, step_id: int):
+    # raise Http404, PermissionDenied
+    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
     try:
-        module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
+        module_zipfile = await database_sync_to_async(MODULE_REGISTRY.latest)(
+            step.module_id_name
+        )
         html = module_zipfile.get_optional_html()
     except KeyError:
         html = None
     return HttpResponse(content=html)
 
 
-@require_GET
-@_with_step_for_read_by_id
-def step_embeddata(request: HttpRequest, step: Step):
+async def step_embeddata(request: HttpRequest, step_id: int):
+    # raise Http404, PermissionDenied
+    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+
     # Speedy bypassing of locks: we don't care if we get out-of-date data
     # because we assume the client will re-request when it gets a new
     # cached_render_result_delta_id.
@@ -253,9 +293,7 @@ def step_embeddata(request: HttpRequest, step: Step):
     return JsonResponse(result_json, safe=False)
 
 
-@require_GET
-@_with_step_for_read_by_id
-def step_value_counts(request: HttpRequest, step: Step):
+async def step_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
     try:
         colname = request.GET["column"]
     except KeyError:
@@ -267,6 +305,8 @@ def step_value_counts(request: HttpRequest, step: Step):
         # User has not yet chosen a column. Empty response.
         return JsonResponse({"values": {}})
 
+    # raise Http404, PermissionDenied
+    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
     cached_result = step.cached_render_result
     if cached_result is None:
         # assume we'll get another request after execute finishes
@@ -326,21 +366,37 @@ def step_value_counts(request: HttpRequest, step: Step):
 class SubprocessOutputFileLike(io.RawIOBase):
     """Run a subrocess; .read() reads its stdout and stderr (combined).
 
-    __init__() will only return after the process starts producing output.
-    This requirement lets us raise OSError during startup; it also means a
-    caller with knowledge of the subprocess's behavior may safely delete a file
-    the subprocess is reading from, before the subprocess is finished reading
-    it.
-
     On close(), kill the subprocess (if it's still running) and wait for it.
 
     close() is the only way to wait for the subprocess. Don't worry: __del__()
     calls close().
 
+    If the process cannot be started, raise OSError.
+
     If read() is called after the subprocess terminates and the subprocess's
     exit code is not 0, raise IOError.
 
     Not thread-safe.
+
+    HACK: this is only safe for Django 3.1 async-view responses.
+    `django.core.handlers.asgi.ASGIHandler#send_response()` has this loop:
+
+        for part in response:  # calls .read() -- SYNCHRONOUS!!!
+            await send(...)  # async (safe)
+
+    We make assumptions about Django, the caller, the client....:
+
+        * The caller can `await filelike.stdout_ready()` to ensure the first
+          bytes of stdout are available. This ensures the streaming has begun:
+          the subprocess's has started up (which may be slow). If the subprocess
+          opened temporary files, it's safe to delete them now.
+        * The process must stream stdout _quickly_. Django calls `.readinto()`
+          synchronously in the event-loop thread: it stalls the web server.
+        * Django `send()` must back-pressure. That's when other HTTP request
+          processing happens.
+        * The process must not consume much RAM/disk/CPU; or the caller must
+          arrange throttling. Django won't limit the number of concurrent
+          ASGI requests.
     """
 
     def __init__(self, args):
@@ -350,20 +406,32 @@ class SubprocessOutputFileLike(io.RawIOBase):
         self.process = subprocess.Popen(
             args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
-        # Wait for subprocess to begin outputting data. After that, the caller
-        # may delete input files safely, assuming the subprocess already has
-        # them open and thus can continue reading from them after they're
-        # deleted.
-        self._await_stdout_ready()
 
-    def _await_stdout_ready(self):
+    async def stdout_ready(self) -> Awaitable[None]:
+        """Return when `self.process.stdout.read()` is guaranteed not to block.
+
+        After this returns, the subprocess is "started up". If it's streaming
+        from a file, it has certainly opened that file -- and so on UNIX, that
+        file may be safely deleted.
+
+        This uses loop.add_reader() to watch the file descriptor. That only
+        works because [2020-12-22] Django 3.1 _doesn't_ use loop.add_reader()!
+        When Django allows streaming async output, let's use that.
         """
-        Wait until `self.process.stdout.read()` is guaranteed not to block.
-        """
-        with selectors.DefaultSelector() as selector:
-            selector.register(self.process.stdout, selectors.EVENT_READ)
-            while len(selector.select()) == 0:
-                pass
+        loop = asyncio.get_running_loop()
+        event = asyncio.Event()
+        fd = self.process.stdout.fileno()
+
+        def ready():
+            event.set()
+            loop.remove_reader(fd)
+
+        loop.add_reader(fd, ready)
+
+        try:
+            await event.wait()
+        finally:
+            loop.remove_reader(fd)  # in case ready() was never called
 
     def readable(self):
         return True
@@ -372,6 +440,7 @@ class SubprocessOutputFileLike(io.RawIOBase):
         return self.process.stdout.fileno()
 
     def readinto(self, b):
+        # Assume this is fast. (It's called synchronously.)
         ret = self.process.stdout.readinto(b)
         return ret
 
@@ -386,28 +455,36 @@ class SubprocessOutputFileLike(io.RawIOBase):
         super().close()  # sets self.closed
 
 
-def _downloaded_current_cache_result(step: Step) -> ContextManager[Path]:
-    """Yield a Path that will be deleted when the block closes.
+async def _step_to_text_stream(
+    step: Step, format: Literal["csv", "json"]
+) -> Awaitable[SubprocessOutputFileLike]:
+    """Download the step's cached result and streaming it as CSV/JSON.
 
-    Raise CorruptCacheError if `step` has no current cache result, or if the
-    download fails.
+    Raise CorruptCacheError if there is no cached result or it is invalid.
+
+    Raise OSError if `/usr/bin/parquet-to-text-stream` cannot start.
     """
     cached_result = step.cached_render_result
     if not cached_result:
         raise CorruptCacheError
 
-    return downloaded_parquet_file(cached_result)  # raise CorruptCacheError
+    # raise CorruptCacheError
+    with downloaded_parquet_file(cached_result) as parquet_path:
+        output = SubprocessOutputFileLike(
+            ["/usr/bin/parquet-to-text-stream", str(parquet_path), format]
+        )
+        await output.stdout_ready()
+        # It's okay to delete the file now (i.e., exit the context manager)
+
+        return output
 
 
-@require_GET
-@_with_step_for_read_by_id
-def step_public_json(request: HttpRequest, step: Step):
+async def step_public_json(request: HttpRequest, step_id: int) -> FileResponse:
+    # raise Http404, PermissionDenied
+    workflow, _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+
     try:
-        with _downloaded_current_cache_result(step) as parquet_path:
-            output = SubprocessOutputFileLike(
-                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "json"]
-            )
-            # It's okay to delete the file now (i.e., exit the context manager)
+        output = await _step_to_text_stream(step, "json")
     except CorruptCacheError:
         # Schedule a render and return a response asking the user to retry.
         #
@@ -417,8 +494,7 @@ def step_public_json(request: HttpRequest, step: Step):
         # It is a *bug* that we publish URLs that aren't guaranteed to work.
         # Because we publish URLs that do not work, let's be transparent and
         # give them the 500-level error code they deserve.
-        workflow = step.workflow
-        async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
+        await rabbitmq.queue_render(workflow.id, workflow.last_delta_id)
         response = JsonResponse([], safe=False, status=status.SERVICE_UNAVAILABLE)
         response["Retry-After"] = "30"
         return response
@@ -427,21 +503,18 @@ def step_public_json(request: HttpRequest, step: Step):
         output,
         as_attachment=True,
         filename=(
-            "Workflow %d - %s-%d.json"
-            % (step.workflow.id, step.module_id_name, step.id)
+            "Workflow %d - %s-%d.json" % (workflow.id, step.module_id_name, step.id)
         ),
         content_type="application/json",
     )
 
 
-@_with_step_for_read_by_id
-def step_public_csv(request: HttpRequest, step: Step):
+async def step_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
+    # raise Http404, PermissionDenied
+    workflow, _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+
     try:
-        with _downloaded_current_cache_result(step) as parquet_path:
-            output = SubprocessOutputFileLike(
-                ["/usr/bin/parquet-to-text-stream", str(parquet_path), "csv"]
-            )
-            # It's okay to delete the file now (i.e., exit the context manager)
+        output = await _step_to_text_stream(step, "csv")
     except CorruptCacheError:
         # Schedule a render and return a response asking the user to retry.
         #
@@ -451,8 +524,7 @@ def step_public_csv(request: HttpRequest, step: Step):
         # It is a *bug* that we publish URLs that aren't guaranteed to work.
         # Because we publish URLs that do not work, let's be transparent and
         # give them the 500-level error code they deserve.
-        workflow = step.workflow
-        async_to_sync(rabbitmq.queue_render)(workflow.id, workflow.last_delta_id)
+        await rabbitmq.queue_render(workflow.id, workflow.last_delta_id)
         response = HttpResponse(
             b"", content_type="text/csv", status=status.SERVICE_UNAVAILABLE
         )
@@ -463,7 +535,7 @@ def step_public_csv(request: HttpRequest, step: Step):
         output,
         as_attachment=True,
         filename=(
-            "Workflow %d - %s-%d.csv" % (step.workflow.id, step.module_id_name, step.id)
+            "Workflow %d - %s-%d.csv" % (workflow.id, step.module_id_name, step.id)
         ),
         content_type="text/csv; charset=utf-8; header=present",
     )

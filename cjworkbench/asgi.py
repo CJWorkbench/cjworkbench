@@ -19,18 +19,13 @@ if not settings.I_AM_TESTING:
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from django.conf.urls import url
+from django.core.asgi import get_asgi_application
 
 from server.websockets import WorkflowConsumer
 from cjwstate.models.module_registry import MODULE_REGISTRY
 import cjwstate.modules
 from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
 from cjworkbench.sync import database_sync_to_async
-
-
-def create_url_router() -> AuthMiddlewareStack:
-    return AuthMiddlewareStack(
-        URLRouter([url(r"workflows/(?P<workflow_id>\d+)", WorkflowConsumer)])
-    )
 
 
 def create_application() -> ProtocolTypeRouter:
@@ -57,9 +52,19 @@ def create_application() -> ProtocolTypeRouter:
 
     return ProtocolTypeRouter(
         {
+            "http": get_asgi_application(),
             "websocket": AuthMiddlewareStack(
-                SetCurrentLocaleAsgiMiddleware(create_url_router())
-            )
+                SetCurrentLocaleAsgiMiddleware(
+                    URLRouter(
+                        [
+                            url(
+                                r"workflows/(?P<workflow_id>\d+)",
+                                WorkflowConsumer.as_asgi(),
+                            )
+                        ]
+                    )
+                )
+            ),
         }
     )
 
