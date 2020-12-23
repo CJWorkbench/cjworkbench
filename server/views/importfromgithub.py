@@ -1,3 +1,5 @@
+import json
+
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -14,7 +16,14 @@ def import_from_github(request):
         return JsonResponse({"error": "Only an admin can call this method"}, status=403)
 
     try:
-        clientside_module, module_zipfile = import_module_from_url(request.data["url"])
+        url = str(json.loads(request.body)["url"])
+    except (ValueError, KeyError, TypeError):
+        return JsonResponse(
+            {"error": "You must pass a 'url' to a Git repository"}, status=400
+        )
+
+    try:
+        clientside_module, module_zipfile = import_module_from_url(url)
         ctx = JsonizeContext(
             request.user,
             request.session,
