@@ -1445,12 +1445,12 @@ msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr ""
 
 #. default-message: Enable API
-#: assets/js/params/File/UploadApiModal.js:58
+#: assets/js/params/File/UploadApiModal.js:60
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr ""
 
 #. default-message: No API token
-#: assets/js/params/File/UploadApiModal.js:57
+#: assets/js/params/File/UploadApiModal.js:59
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
 msgstr ""
 
@@ -1459,88 +1459,78 @@ msgstr ""
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr ""
 
-#. default-message: Step ID
-#: assets/js/params/File/UploadApiModal.js:51
-msgid "js.params.Custom.UploadApiModal.ApiTokenOk.stepId"
-msgstr ""
-
-#. default-message: Workflow ID
-#: assets/js/params/File/UploadApiModal.js:47
-msgid "js.params.Custom.UploadApiModal.ApiTokenOk.workflowId"
-msgstr ""
-
 #. The tags are links to external info. The parameter is the name of a library.
 #. default-message: <0>{0}</0> is the AWS SDK for Python. There is an <1>AWS SDK</1> for most any programming language; and there are dozens of third-party libraries that are compatible with Workbench. Use any library that supports custom endpoints, session tokens and "path" addressing style.
-#: assets/js/params/File/UploadApiModal.js:136
+#: assets/js/params/File/UploadApiModal.js:134
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.boto3"
 msgstr ""
 
 #. The tags are links to external info. The parameters are names of libraries.
 #. default-message: <0>{0}</0> is an HTTP library with simpler requests than Python's built-in <1>{1}</1>.
-#: assets/js/params/File/UploadApiModal.js:141
+#: assets/js/params/File/UploadApiModal.js:139
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib"
 msgstr ""
 
 #. default-message: Install and load dependencies
-#: assets/js/params/File/UploadApiModal.js:132
+#: assets/js/params/File/UploadApiModal.js:130
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.title"
 msgstr ""
 
 #. default-message: Your program will need to make HTTP requests and upload to S3.
-#: assets/js/params/File/UploadApiModal.js:133
+#: assets/js/params/File/UploadApiModal.js:131
 msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed"
 msgstr ""
 
 #. The tag is a link to Amazon s3
 #. default-message: Each file you upload belongs in a unique <0>Amazon S3</0>-compatible endpoint. You cannot reuse the same endpoint for two files: to replace a file, you must follow all these steps again.
-#: assets/js/params/File/UploadApiModal.js:118
+#: assets/js/params/File/UploadApiModal.js:116
 msgid "js.params.Custom.UploadApiModal.Instructions.eachFileBelongs"
 msgstr ""
 
 #. default-message: Tell Workbench to finish the upload, and give it a filename
-#: assets/js/params/File/UploadApiModal.js:196
+#: assets/js/params/File/UploadApiModal.js:204
 msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename"
 msgstr ""
 
 #. default-message: In your workflow, this Step will be updated to use the new file.
-#: assets/js/params/File/UploadApiModal.js:198
+#: assets/js/params/File/UploadApiModal.js:206
 msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal"
 msgstr ""
 
 #. default-message: A good way to start your project is to copy and paste all this code into a script (one step at a time), and then edit.
-#: assets/js/params/File/UploadApiModal.js:128
+#: assets/js/params/File/UploadApiModal.js:126
 msgid "js.params.Custom.UploadApiModal.Instructions.goodWaytoStart"
 msgstr ""
 
 #. The parameters contain code. The tags wrap them for correct presentation.
-#. default-message: Send an HTTP POST request to <0>{postUrl}</0>. It should have no parameters or content. (Do not upload the file to this URL.) It must have an <1>{0}</1> header that looks like <2>{1}</2>.
-#: assets/js/params/File/UploadApiModal.js:154
+#. default-message: Send an HTTP POST request to <0>{uploadCredentialsUrl}</0>. It should have no parameters or content. (Do not upload the file to this URL.) It must have an <1>{0}</1> header that looks like <2>{1}</2>.
+#: assets/js/params/File/UploadApiModal.js:152
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest"
 msgstr ""
 
 #. default-message: S3 bucket name where your file should be uploaded
-#: assets/js/params/File/UploadApiModal.js:176
+#: assets/js/params/File/UploadApiModal.js:177
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket"
 msgstr ""
 
 #. The parameters contain code. The tags wrap them for correct presentation.
 #. default-message: Dictionary with <0>{0}</0>, <1>{1}</1> and <2>{2}</2> keys
-#: assets/js/params/File/UploadApiModal.js:182
+#: assets/js/params/File/UploadApiModal.js:187
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials"
 msgstr ""
 
 #. default-message: URL of S3-compatible upload server
-#: assets/js/params/File/UploadApiModal.js:166
+#: assets/js/params/File/UploadApiModal.js:165
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint"
 msgstr ""
 
 #. default-message: (non-S3) URL to notify when we're done using the S3 API
-#: assets/js/params/File/UploadApiModal.js:186
+#: assets/js/params/File/UploadApiModal.js:193
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl"
 msgstr ""
 
 #. default-message: S3 key name where your file should be uploaded
-#: assets/js/params/File/UploadApiModal.js:180
+#: assets/js/params/File/UploadApiModal.js:183
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key"
 msgstr ""
 
@@ -1551,83 +1541,83 @@ msgstr ""
 
 #. The parameter contains code. The tag wraps it for correct presentation.
 #. default-message: <0>{0}</0> will be a dictionary with the following keys:
-#: assets/js/params/File/UploadApiModal.js:160
+#: assets/js/params/File/UploadApiModal.js:158
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root"
 msgstr ""
 
 #. The parameters are 'bucket' and 'key' respectively. The tags wrap them for
 #. correct presentation.
 #. default-message: The credentials will only allow you to upload your file to the specified <0>{0}</0> and <1>{1}</1>. The credentials will expire in a few hours.
-#: assets/js/params/File/UploadApiModal.js:189
+#: assets/js/params/File/UploadApiModal.js:197
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey"
 msgstr ""
 
 #. default-message: Query Workbench for upload credentials
-#: assets/js/params/File/UploadApiModal.js:152
+#: assets/js/params/File/UploadApiModal.js:150
 msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: <0>Do not share the API token or commit it to any code repository.</0> Anybody with access to the token can alter this step. Keep it safe. If you suspect your API token has been compromised, reset the API token.
-#: assets/js/params/File/UploadApiModal.js:148
+#: assets/js/params/File/UploadApiModal.js:146
 msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken"
 msgstr ""
 
-#. default-message: Store variables and secrets
-#: assets/js/params/File/UploadApiModal.js:145
+#. default-message: Understand parameters and API token
+#: assets/js/params/File/UploadApiModal.js:143
 msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title"
 msgstr ""
 
 #. default-message: These instructions use Python 3, for illustration. You may use any programming language.
-#: assets/js/params/File/UploadApiModal.js:123
+#: assets/js/params/File/UploadApiModal.js:121
 msgid "js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython"
 msgstr ""
 
 #. default-message: How to upload
-#: assets/js/params/File/UploadApiModal.js:116
+#: assets/js/params/File/UploadApiModal.js:114
 msgid "js.params.Custom.UploadApiModal.Instructions.title"
 msgstr ""
 
 #. The tag is a URL to external info
 #. default-message: See the <0>AWS SDK documentation</0> for your library to learn how to upload a file.
-#: assets/js/params/File/UploadApiModal.js:195
+#: assets/js/params/File/UploadApiModal.js:203
 msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation"
 msgstr ""
 
 #. default-message: Upload to S3-compatible bucket
-#: assets/js/params/File/UploadApiModal.js:193
+#: assets/js/params/File/UploadApiModal.js:201
 msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title"
 msgstr ""
 
 #. default-message: The file-upload API is disabled. Please enable it to allow uploading.
-#: assets/js/params/File/UploadApiModal.js:227
+#: assets/js/params/File/UploadApiModal.js:235
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: The file-upload API is <0>enabled</0>.
-#: assets/js/params/File/UploadApiModal.js:225
+#: assets/js/params/File/UploadApiModal.js:233
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/File/UploadApiModal.js:246
+#: assets/js/params/File/UploadApiModal.js:251
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: UPLOAD BY API
-#: assets/js/params/File/UploadApiModal.js:220
+#: assets/js/params/File/UploadApiModal.js:228
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr ""
 
 #. default-message: These instructions are for programmers.
-#: assets/js/params/File/UploadApiModal.js:222
+#: assets/js/params/File/UploadApiModal.js:230
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr ""
 
 #. default-message: The file-upload API is perfect for loading data from cronjobs or other external scripts. You can send data to Workbench using any programming language.
-#: assets/js/params/File/UploadApiModal.js:223
+#: assets/js/params/File/UploadApiModal.js:231
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 
@@ -1856,8 +1846,13 @@ msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr ""
 
 #. default-message: API Token
-#: assets/js/params/File/UploadApiModal.js:41
+#: assets/js/params/File/UploadApiModal.js:49
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
+msgstr ""
+
+#. default-message: Credentials URL
+#: assets/js/params/File/UploadApiModal.js:47
+msgid "js.params.File.UploadApiModal.ApiTokenOk.uploadCredentialsUrl"
 msgstr ""
 
 #. default-message: {0}% uploaded
@@ -2630,23 +2625,23 @@ msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
 #. default-message: by {workflowOwner}
-#: templates/report.html:24
+#: templates/report.html:30
 msgid "py.templates.report.author"
 msgstr ""
 
 #. default-message: Updated <time0>{timeAgo}</time0> ago
-#: templates/report.html:25
+#: templates/report.html:31
 msgid "py.templates.report.updated"
 msgstr ""
 
 #. This is a link to a workflow
 #. default-message: Source data
-#: templates/report.html:27
+#: templates/report.html:33
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
 #. default-message: Download as spreadsheet
-#: templates/report.html:46
+#: templates/report.html:52
 msgid "py.templates.report.table.download"
 msgstr ""
 
