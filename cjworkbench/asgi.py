@@ -28,6 +28,21 @@ from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
 from cjworkbench.sync import database_sync_to_async
 
 
+def create_url_router():  # used in unit tests
+    return AuthMiddlewareStack(
+        SetCurrentLocaleAsgiMiddleware(
+            URLRouter(
+                [
+                    url(
+                        r"workflows/(?P<workflow_id>\d+)",
+                        WorkflowConsumer.as_asgi(),
+                    )
+                ]
+            )
+        )
+    )
+
+
 def create_application() -> ProtocolTypeRouter:
     """Create an ASGI application."""
     # Load static modules on startup.
@@ -53,18 +68,7 @@ def create_application() -> ProtocolTypeRouter:
     return ProtocolTypeRouter(
         {
             "http": get_asgi_application(),
-            "websocket": AuthMiddlewareStack(
-                SetCurrentLocaleAsgiMiddleware(
-                    URLRouter(
-                        [
-                            url(
-                                r"workflows/(?P<workflow_id>\d+)",
-                                WorkflowConsumer.as_asgi(),
-                            )
-                        ]
-                    )
-                )
-            ),
+            "websocket": create_url_router(),
         }
     )
 
