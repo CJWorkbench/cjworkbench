@@ -1,17 +1,32 @@
 article.report .report-container section.block {
+  padding: 1rem 2rem;
   display: flex;
-  margin: 1rem 2rem;
+  flex-direction: column;
 
   .block-main {
     flex: 1 1 auto;
-  }
 
+  }
   .block-actions {
     flex: 0 0 auto;
     display: flex;
-    flex-direction: column;
     justify-content: flex-end;
     margin: 0 1rem 0 -1rem;
+    button {
+      font-size: 2rem;
+    }
+  }
+  &:hover {
+    background-color: $hover-background;
+    button.icon-button {
+      opacity: 1;
+      background-color: white;
+      color: $light-gray;
+      &:hover {
+        color: white;
+        background-color: $brand-text--dark;
+      }
+    }
   }
 }
 

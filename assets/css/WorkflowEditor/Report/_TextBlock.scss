@@ -1,14 +1,19 @@
 article.report .report-container section.block-text {
   form {
-    // Reset awful "1em is 10px"
+    // Reset problematic "1em is 10px"
     font-size: rem(1);
 
     textarea {
       font-family: monospace;
-      padding: .5em;
+      color: $brand-text--dark;
+      margin-top: 1rem;
+      padding: 2rem;
       display: block;
       width: 100%;
       height: 10em;
+      border: 2px solid $dark-accent--soft;
+      background-color: $Vlight-gray;
+
     }
     .buttons {
       display: flex;

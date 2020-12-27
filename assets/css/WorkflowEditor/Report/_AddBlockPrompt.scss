@@ -2,24 +2,24 @@ article.report {
   .add-block-prompt {
     text-align: center;
     position: relative;
-    opacity: .3;
 
     &:hover, &.active, &:focus-within {
-      opacity: 1;
       &::before {
         // Show a line on hover
         display: block;
         content: '';
-        height: .2rem;
+        height: .3rem;
         position: absolute;
-        top: calc(50% - .1rem);
+        top: calc(50% - .2rem);
         background: $brand-orange;
         left: 2rem;
         right: 2rem;
+        border-radius: 1rem;
       }
 
       &>button, &>.dropdown>button {
-        border-color: $medium-gray;
+        border: 2px solid $brand-orange;
+        color: $brand-orange;
       }
     }
 
@@ -38,17 +38,16 @@ article.report {
     &>button, &>.dropdown>button {
       background: white;
       cursor: pointer;
-      border: 1px solid transparent;
-      border-radius: .25rem;
+      border: 2px solid transparent;
+      border-radius: 5rem; // round
       padding: .8rem;
       color: $medium-gray;
       font-size: 1.6rem;
       line-height: 1;
 
       &:hover {
-        color: $dark-gray;
-        border-color: $dark-gray;
-        background-color: composite-colors($dark-accent--soft, white);
+        color: white ;
+        background-color: $brand-orange;
       }
       &:active, &[aria-expanded=true], &:focus {
         color: $brand-orange;

@@ -1,70 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   width="32"
-   height="32"
-   viewBox="0 0 32 32"
-   id="svg14"
-   sodipodi:docname="text.svg"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
-  <metadata
-     id="metadata20">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>text</dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs18" />
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10000"
-     gridtolerance="10000"
-     guidetolerance="10000"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1618"
-     inkscape:window-height="1067"
-     id="namedview16"
-     showgrid="true"
-     inkscape:snap-perpendicular="true"
-     inkscape:snap-tangential="true"
-     inkscape:snap-path-clip="true"
-     inkscape:snap-path-mask="true"
-     inkscape:zoom="22.627417"
-     inkscape:cx="12.884845"
-     inkscape:cy="10.626066"
-     inkscape:window-x="93"
-     inkscape:window-y="134"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg14">
-    <inkscape:grid
-       type="xygrid"
-       id="grid845"
-       spacingx="1"
-       spacingy="1"
-       empspacing="2"
-       originx="0"
-       originy="0" />
-  </sodipodi:namedview>
-  <title
-     id="title2">text</title>
-  <path
-     id="path12"
-     style="stroke-width:0.687502"
-     d="M 5.4648438 2 C 4.6549619 2 3.9995379 2.656922 4 3.4667969 L 4 5 L 4 9 L 7 9 L 7 5 L 14 5 L 14 21 L 10 21 L 10 24 L 20 24 L 20 21 L 16 21 L 16 5 L 23 5 L 23 9 L 26 9 L 26 5 L 26 3.4667969 C 26 2.6569219 25.343084 2 24.533203 2 L 5.4667969 2 L 5.4648438 2 z " />
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="3" y="4.73334" width="3.46667" height="6.93333" fill="#686768"/>
+<rect x="25.5333" y="4.73334" width="3.46667" height="6.93333" fill="#686768"/>
+<rect x="14.2667" y="3" width="3.46667" height="26" fill="#686768"/>
+<path d="M3 4C3 3.44772 3.44772 3 4 3H28C28.5523 3 29 3.44772 29 4V6.46667H3V4Z" fill="#686768"/>
+<rect x="9.93333" y="25.5333" width="12.1333" height="3.46667" fill="#686768"/>
 </svg>
