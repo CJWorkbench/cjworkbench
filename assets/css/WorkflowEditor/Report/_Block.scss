@@ -11,9 +11,9 @@ article.report .report-container section.block {
     flex: 0 0 auto;
     display: flex;
     justify-content: flex-end;
-    margin: 0 1rem 0 -1rem;
     button {
       font-size: 2rem;
+      margin-left: .5rem;
     }
   }
   &:hover {
