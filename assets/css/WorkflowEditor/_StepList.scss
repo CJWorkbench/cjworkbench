@@ -1,7 +1,7 @@
 .step-list {
   flex: 0 0 auto; // auto-width: width of contents (including scrollbar)
   padding-top: 1.5rem;
-  padding-bottom: 40rem // big space for confortable scrolling to the bottom of the list
+  padding-bottom: 40rem; // big space for confortable scrolling to the bottom of the list
   background-color: $WF-background;
   overflow-y: scroll;
   position: relative;
