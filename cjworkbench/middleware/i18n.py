@@ -28,18 +28,13 @@ def SetCurrentLocaleMiddleware(get_response):
 
         async def middleware(request):
             _augment_request(request)
+            activate(request.locale_id)  # Django sets an asgiref.local.Local
             return await get_response(request)
 
     else:
 
         def middleware(request):
             _augment_request(request)
-            # Sync-only: Switch Django's global i18n language
-            # [2020-12-22, adamhooper] I'm not sure this works, in a Channels
-            # multi-process environment. But it handles the common case.
-            #
-            # If it doesn't work, then users will see wrong-language messages
-            # from Django: for example, sign-in form placeholders and errors.
             activate(request.locale_id)
             return get_response(request)
 
