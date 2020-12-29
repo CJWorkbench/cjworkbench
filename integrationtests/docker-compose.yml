@@ -48,6 +48,10 @@ services:
       MINIO_ACCESS_KEY: minio_root_access
       MINIO_SECRET_KEY: minio_root_secret
     command: server /data
+    networks:
+      default:
+        aliases:
+          - minio.django-issue-32304.com
 
   addminiouser:
     image: minio/mc:RELEASE.2020-10-03T02-54-56Z
@@ -107,7 +111,7 @@ services:
     privileged: true  # for setup-sandboxes.sh
     environment:
       <<: *common_env
-      STATIC_URL: http://minio:9000/integrationtest-static/
+      STATIC_URL: http://minio.django-issue-32304.com:9000/integrationtest-static/
     volumes:
       - local_mail:/app/local_mail
 
