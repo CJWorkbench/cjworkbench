@@ -92,13 +92,6 @@
   @include info-3;
 }
 
-@mixin report-content { // used in report
-	@include font-sans-regular;
-	font-size: 1.8rem;
-	line-height: 1.8rem;
-	font-weight: normal;
-}
-
 .info-1 { @include info-1; }
 .info-2 { @include info-2; }
 .info-3 { @include info-3; }

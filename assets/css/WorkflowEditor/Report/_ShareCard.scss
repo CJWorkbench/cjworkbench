@@ -1,21 +1,23 @@
 article.report {
   .share-card {
-    flex: 0 0 auto;
-    width: 30rem;
-    padding: 2rem;
-    margin-right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    max-width: rem(70);
+    padding: 0 0 .5rem 0;
     border-radius: .5rem;
-    background: $item-border;
     @include font-sans-bold;
     font-size: 1.4rem;
     line-height: 1.8rem;
+    cursor:default;
+    margin-left: auto;
+    margin-right: auto;
 
     .prompt {
-      //display: flex;
-      align-items: center;
-      padding-bottom: 1.5rem;
+      display: flex;
 
-      p {margin-bottom: 1rem;}
+      p {
+        margin-top: 0;
+      }
 
       .status {
         flex: 1 1 auto; // take up most space
@@ -26,23 +28,38 @@ article.report {
         @include button-orange--fill;
         @include font-sans-bold;
         font-size: 1.6rem;
+        margin-left: 2rem;
+        cursor: pointer;
       }
     }
 
 
 
     h4 {
-      margin-top: 2rem;
       font: inherit;
+      margin-bottom: .2rem;
     }
 
     .url {
+      display: flex;
+      margin-left: 5rem;
+
+      p {
+        font-weight: normal;
+        margin-top: 0;
+      }
+
       .copy {
         @include font-sans-regular;
         border-radius: .3rem;
         background: white;
         padding: .8rem 1rem;
         word-break: break-all;
+        border: 2px solid $item-border;
+        height: 3.5rem;
+        margin-left: 2rem;
+        cursor: text;
+
       }
     }
 

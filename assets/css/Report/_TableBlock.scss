@@ -1,11 +1,16 @@
 article.report section.block-table {
   .block-main {
     font-size: rem(1);
+    margin-top: rem(1);
     overflow: hidden; // table cannot exceed width of report
+
+    .big-table {
+      margin: rem(1) 0;
+      border: 1px solid $item-border;
+    }
 
     a[download] {
       color: $brand-workspace;
     }
   }
 }
-

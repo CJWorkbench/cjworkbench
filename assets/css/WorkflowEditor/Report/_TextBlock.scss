@@ -2,25 +2,26 @@ article.report .report-container section.block-text {
   form {
     // Reset problematic "1em is 10px"
     font-size: rem(1);
+    padding-top: rem(.5);
 
     textarea {
       font-family: monospace;
       color: $brand-text--dark;
-      margin-top: 1rem;
-      padding: 2rem;
+      padding: rem(1);
       display: block;
       width: 100%;
       height: 10em;
       border: 2px solid $dark-accent--soft;
+      border-radius: 3px;
       background-color: $Vlight-gray;
 
     }
     .buttons {
       display: flex;
       justify-content: flex-end;
-
+      padding-top: rem(.5);
       button {
-        margin: 1em .5em 0 0;
+        margin-left: rem(.5);
       }
     }
   }

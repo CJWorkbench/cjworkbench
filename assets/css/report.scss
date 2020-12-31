@@ -19,61 +19,57 @@
  */
 
 body {
-  padding: 2rem 1rem;
   background: white;
   @include font-sans-regular;
   color: $brand-text--darker;
 }
 
 article {
-  width: 100%;
-  /*
-   * On Linux/Chrome74 and Linux/Firefox66, setting a width higher than ~42rem
-   * made "print" unusable. We can't choose a different print scaling in the
-   * `@media print` section because charts are iframes; iframes don't resize
-   * the way we want during print.
-   *
-   * Long-term, we'll make this report wider by rendering PNGs and/or SVGs.
-   *
-   * Short-term, we're stuck with a somewhat-thin page.
-   */
-  max-width: 48rem;
-  margin: 0 auto;
-}
 
-header {
-  margin: 1rem 0;
+  header {
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid $item-border;
 
-  h1 {
-    @include font-sans-bold;
-    font-size: 1.2rem;
-    margin-bottom: .2rem;
-
-    svg {
-      font-size: 1rem;
+    h1 {
+      @include font-sans-bold;
+      margin-bottom: .2rem;
     }
-  }
 
-  .metadata {
-    font-size: .8rem;
-    color: $brand-text--medium;
-    margin-bottom: 1rem;
-
-    span::after {
-      content: '-';
-      padding: 0 .15rem 0 .3rem;
+    .metadata {
+      font-size: .8rem;
       color: $brand-text--medium;
-    }
+      margin-bottom: 0;
 
-    a {
-      color: $brand-workspace;
+      span::after {
+        content: '-';
+        padding: 0 .15rem 0 .3rem;
+        color: $brand-text--medium;
+      }
+
+      a {
+        color: $brand-workspace;
+      }
     }
+  }
+
+  section {
+    /*
+     * On Linux/Chrome74 and Linux/Firefox66, setting a width higher than ~42rem
+     * made "print" unusable. We can't choose a different print scaling in the
+     * `@media print` section because charts are iframes; iframes don't resize
+     * the way we want during print.
+     *
+     * Long-term, we'll make this report wider by rendering PNGs and/or SVGs.
+     *
+     * Short-term, we're stuck with a somewhat-thin page.
+     */
+    max-width: 48rem;
+    margin: 2.5rem auto;
+    padding: 0 1rem;
   }
 }
 
-section {
-  margin: 2.5rem 0;
-}
+
 
 @media print {
   body {

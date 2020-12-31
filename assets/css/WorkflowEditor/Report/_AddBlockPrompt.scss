@@ -2,24 +2,36 @@ article.report {
   .add-block-prompt {
     text-align: center;
     position: relative;
-
+    margin: rem(1.5) 0;
     &:hover, &.active, &:focus-within {
       &::before {
-        // Show a line on hover
+        // Show a line on hover to the left of buttons
         display: block;
         content: '';
         height: .3rem;
         position: absolute;
         top: calc(50% - .2rem);
-        background: $brand-orange;
+        background: $heading-bg;
         left: 2rem;
-        right: 2rem;
-        border-radius: 1rem;
+        right: calc(52% + 6rem);
       }
 
       &>button, &>.dropdown>button {
-        border: 2px solid $brand-orange;
-        color: $brand-orange;
+        border: 1px solid $heading-bg;
+        color: $heading-bg;
+      }
+
+      &::after {
+        // Show a line on hover to the right of buttons
+        display: block;
+        content: '';
+        height: .3rem;
+        position: absolute;
+        top: calc(20% + .8rem);
+        background: $heading-bg;
+        left: calc(52% + 6rem);
+        right: 2rem;
+        border-radius: 1rem;
       }
     }
 
@@ -31,28 +43,28 @@ article.report {
 
     &>button, &>.dropdown {
       display: inline-block;
-      margin: 0 .2rem;
-      position: relative; // Buttons appear above the line
+      margin: 0 .5rem;
+      //position: relative; // Buttons appear above the line
     }
 
     &>button, &>.dropdown>button {
       background: white;
       cursor: pointer;
-      border: 2px solid transparent;
+      border: 1px solid $light-gray;
       border-radius: 5rem; // round
       padding: .8rem;
-      color: $medium-gray;
+      color: $light-gray;
       font-size: 1.6rem;
       line-height: 1;
 
       &:hover {
         color: white ;
-        background-color: $brand-orange;
+        background-color: $heading-bg;
       }
       &:active, &[aria-expanded=true], &:focus {
-        color: $brand-orange;
-        border-color: $brand-orange;
-        background-color: composite-colors($dark-accent--soft-M, white);
+        color: white;
+        border-color: $header-hover;
+        background-color: $header-hover;
       }
     }
   }
