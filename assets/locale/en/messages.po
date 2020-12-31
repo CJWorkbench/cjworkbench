@@ -478,7 +478,7 @@ msgstr "Move up"
 
 #: assets/js/WorkflowEditor/Report/TableBlock.js:24
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
-msgstr "Download spreadsheet"
+msgstr "Download data as CSV"
 
 #: assets/js/WorkflowEditor/Report/TableBlock.js:28
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
@@ -2244,7 +2244,7 @@ msgstr "Source data"
 
 #: templates/report.html:52
 msgid "py.templates.report.table.download"
-msgstr "Download as spreadsheet"
+msgstr "Download data as CSV"
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"
@@ -2676,4 +2676,3 @@ msgstr "The social account has been disconnected."
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr "Use {providerName} account"
-
