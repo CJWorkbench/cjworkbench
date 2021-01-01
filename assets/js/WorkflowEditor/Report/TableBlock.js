@@ -20,9 +20,11 @@ export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickM
       <h2>{name}</h2>
       {outputStep && outputStep.outputStatus === 'ok' ? ([
         <Table key='table' stepSlug={outputStep.slug} />,
-        <a key='download' download href={`/public/moduledata/live/${outputStep.id}.csv`}>
-          <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download data</Trans>
-        </a>
+        <button className='export-table'>
+          <a key='download' download href={`/public/moduledata/live/${outputStep.id}.csv`}>
+            <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download data</Trans>
+          </a>
+        </button>
       ]) : (
         <p className='no-table-data'>
           <Trans id='js.WorkflowEditor.Report.TableBlock.noTableData'>No table data</Trans>

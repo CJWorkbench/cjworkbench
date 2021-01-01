@@ -457,3 +457,24 @@ button:focus { outline:0 !important; }
 .action-link {
 	@include action-link;
 }
+
+// button to export data in table header and report
+
+.export-table {
+  @include action-button();
+  @include button-blue();
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  &:not(:hover):not(:focus):not(:active) {
+    // De-buttonize it when nobody's around, so it doesn't distract
+    border-color: transparent;
+    background-color: white;
+  }
+
+  svg {
+    margin-right: 1rem;
+  }
+}

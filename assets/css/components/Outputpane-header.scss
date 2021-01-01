@@ -91,23 +91,5 @@
         }
       }
     }
-
-  }
-
-  // button to export data in table header
-  .export-table {
-    @include action-button();
-    @include button-blue();
-
-    &:not(:hover):not(:focus):not(:active) {
-      // De-buttonize it when nobody's around, so it doesn't distract
-      border-color: transparent;
-      background-color: white;
-    }
-
-    .icon-download {
-      font-size: 1.5rem;
-      margin-right: 1rem;
-    }
   }
 }
