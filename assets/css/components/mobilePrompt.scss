@@ -36,12 +36,45 @@
     .metadata-container {
       font-size: 1.3rem;
     }
-
   }
 
   .nav-tabs .tab-group .nav-item .nav-link {
       padding: 1.4rem 2rem 1rem!important;
       font-size: 1.2rem!important;
+  }
+
+  article.report {
+
+    .share-card .prompt, .url {
+      p {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 800px) {
+
+  article.report {
+    padding-top: rem(.8)!important;
+
+    .share-card {
+      padding-bottom: rem(.8);
+
+      .prompt, .url{
+        display: block!important;
+
+        &>button, .copy {
+          margin-left: 0!important;
+          margin-top: rem(.3);
+        }
+
+        p {
+          font-size: 1.2rem;
+        }
+      }
+
+    }
   }
 }
 
@@ -55,7 +88,6 @@
     .metadata-container {
       font-size: 1.2rem!important;
     }
-
 }
 
 @media screen and (max-width: 650px) {
