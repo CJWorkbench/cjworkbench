@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import BlockFrame from './BlockFrame'
 import Table from '../../Report/Table'
+import IconDownload from '../../../icons/download.svg'
 
 export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickMoveDown, onClickMoveUp }) {
   const { slug, tab } = block
@@ -21,6 +22,7 @@ export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickM
       {outputStep && outputStep.outputStatus === 'ok' ? ([
         <Table key='table' stepSlug={outputStep.slug} />,
         <a key='download' download href={`/public/moduledata/live/${outputStep.id}.csv`}>
+          <IconDownload />
           <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download data as CSV</Trans>
         </a>
       ]) : (
