@@ -478,7 +478,7 @@ msgstr "Move up"
 
 #: assets/js/WorkflowEditor/Report/TableBlock.js:24
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
-msgstr "Download data as CSV"
+msgstr "Download data"
 
 #: assets/js/WorkflowEditor/Report/TableBlock.js:28
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
@@ -2244,7 +2244,7 @@ msgstr "Source data"
 
 #: templates/report.html:52
 msgid "py.templates.report.table.download"
-msgstr "Download data as CSV"
+msgstr "Download data"
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"

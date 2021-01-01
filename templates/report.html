@@ -49,7 +49,7 @@
             {% if block.tab.live_steps.exists and block.tab.live_steps.last.cached_render_result_status == 'ok' %}
               <div class="data-table" data-step-slug="{{block.tab.live_steps.last.slug}}"></div>
               <a download href="/public/moduledata/live/{{block.tab.live_steps.last.id}}.csv">
-                {% trans_html "py.templates.report.table.download" default="Download data as CSV" %}
+                {% trans_html "py.templates.report.table.download" default="Download data" %}
               </a>
             {% endif %}
           {% endif %}

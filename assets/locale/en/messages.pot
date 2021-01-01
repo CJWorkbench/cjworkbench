@@ -556,7 +556,7 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
-#. default-message: Download data as CSV
+#. default-message: Download data
 #: assets/js/WorkflowEditor/Report/TableBlock.js:24
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
@@ -2640,7 +2640,7 @@ msgstr ""
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
-#. default-message: Download data as CSV
+#. default-message: Download data
 #: templates/report.html:52
 msgid "py.templates.report.table.download"
 msgstr ""
