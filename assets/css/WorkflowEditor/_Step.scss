@@ -233,7 +233,7 @@
       }
 
       .module-icon {
-        margin-right: .6rem;
+        margin-right: 1rem;
         font-size: 1.4rem;
       }
 
@@ -290,33 +290,26 @@
         align-items: center;
         flex: 0 0 auto; // fixed space
         white-space: nowrap;
-        margin-right: .5rem;
+        margin-right: rem(.3);
 
         &>a, &>button, &>label {
           display: inline-block;
-          font-size: 1.2rem;
-          width: 2.2rem;
-          height: 2.2rem;
-          border-radius: 5rem;
-          line-height: 1;
+          font-size: rem(1);
+          width: rem(1.3);
+          height: rem(1.5);
+          border-radius: 0;
           text-align: center;
           vertical-align: middle;
           padding: 0;
           margin: 0;
           border: 0;
           background: transparent;
-          color: $medium-gray;
+          color: $light-gray;
           &:hover {
             color: $brand-text--dark;
-            background-color: $dark-accent--soft;
           }
-        }
 
-        button.notifications {
-          cursor: pointer;
-          color: $medium-gray;
-
-          &.enabled {
+          .notification-enabled {
             color: $workspace-action;
           }
         }
@@ -338,28 +331,8 @@
             background-color: $dark-accent--soft;
           }
         }
-
         a.help-button, button.edit-note, button.delete-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
-          opacity: .2; // only show context buttons when hovering over step card
-        }
-
-        i.icon-help {
-          vertical-align: -.6rem; // icky glyph sizing in the font?
-          font-size: 1.25rem;
-        }
-
-        .edit-note {
-          margin-left: .1rem;
-          margin-right: .2rem;
-          i.icon-note {
-            margin-left: .2rem;
-          }
-        }
-
-        i.icon-notification, .has-unseen {
-          position: relative;
-          font-size: 1.35rem;
-          top: .1rem;
+          opacity: .4; // only show context buttons when hovering over step card
         }
       }
     }

@@ -1,1 +1,8 @@
-<svg version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>report</title><path d="m8 0v2h-6v26h26v-26h-6v-2h-14zm2 2h10v2h-10v-2zm-6 2h4v2h14v-2h4v22h-22v-22zm16 6v10h2v-10h-2zm-4 2v8h2v-8h-2zm-8 2v6h2v-6h-2zm4 2v4h2v-4h-2zm-4 6v2h14v-2h-14z" stroke-width="1.0018"/></svg>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M29 5C29 3.89543 28.1046 3 27 3H22V2C22 1.44772 21.5523 1 21 1H19.625L12.5187 1.00361H10.9885C10.4362 1.00361 9.98852 1.45133 9.98852 2.00361L9.98851 3H5C3.89543 3 3 3.89543 3 5V29C3 30.1046 3.89543 31 5 31H27C28.1046 31 29 30.1046 29 29V5ZM11 2H14H18H21V6H11V2ZM5 29H27V5H22V6C22 6.55228 21.5523 7 21 7H10.9885C10.4362 7 9.98851 6.55228 9.98851 6V5H5V29Z" fill="#686768"/>
+<rect x="9" y="24" width="14" height="1" fill="#686768"/>
+<path d="M9 15H11V23H9V15Z" fill="#686768"/>
+<path d="M13 18H15V23H13V18Z" fill="#686768"/>
+<path d="M17 16H19V23H17V16Z" fill="#686768"/>
+<path d="M21 12H23V23H21V12Z" fill="#686768"/>
+</svg>

@@ -24,6 +24,12 @@ import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/macro'
+import IconHelp from './../../../icons/help.svg'
+import IconNote from './../../../icons/note.svg'
+import IconDelete from './../../../icons/delete.svg'
+import IconNotification from './../../../icons/notification.svg'
+import IconChevronDown from './../../../icons/chevron-down.svg'
+import IconChevronRight from './../../../icons/chevron-right.svg'
 
 /**
  * A single step within a tab
@@ -367,7 +373,9 @@ export class Step extends React.PureComponent {
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
-          <i className={` ${hasUnseen ? 'icon-notification-filled' : 'icon-notification'}`} />
+          <div className={` ${hasUnseen ? 'notification-enabled' : 'notification-inactive' }`} >
+            <IconNotification />
+          </div>
         </button>
       )
     }
@@ -382,7 +390,7 @@ export class Step extends React.PureComponent {
           target='_blank'
           rel='noopener noreferrer'
         >
-          <i className='icon-help' />
+          <IconHelp />
         </a>
       )
     }
@@ -395,7 +403,7 @@ export class Step extends React.PureComponent {
           className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
           onClick={this.handleClickNoteButton}
         >
-          <i className='icon-note' />
+          <IconNote />
         </button>
       )
     }
@@ -408,7 +416,7 @@ export class Step extends React.PureComponent {
           className='btn delete-button'
           onClick={this.handleClickDelete}
         >
-          <i className='icon-bin' />
+          <IconDelete />
         </button>
       )
     }
