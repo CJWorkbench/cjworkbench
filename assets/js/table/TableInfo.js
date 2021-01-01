@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import ExportModal from '../ExportModal'
 import SelectedRowsActions from './SelectedRowsActions'
 import { Trans } from '@lingui/macro'
+import IconDownload from '../../icons/download.svg'
 
 const numberFormat = new Intl.NumberFormat('en-US')
 
@@ -64,7 +65,7 @@ export default class TableInfo extends React.PureComponent {
         {!stepId ? null : (
           <>
             <button className='export-table' onClick={this.handleClickExport}>
-              <i className='icon-download' />
+              <IconDownload />
               <Trans id='js.table.TableInfo.export' comment='This should be all-caps for styling reasons'>
                 EXPORT
               </Trans>
