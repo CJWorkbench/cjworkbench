@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, DropdownDivider } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
-
+import IconChevronDown from './../../icons/chevron-down.svg'
+import IconChevronUp from './../../icons/chevron-up.svg'
 /**
  * Drop-down menu on Workflows List page to sort the list
  */
@@ -18,7 +19,7 @@ export default class SortMenu extends React.Component {
   }
 
   get icon () {
-    return this.props.sortDirection === 'ascending' ? 'icon-caret-up' : 'icon-caret-down'
+    return this.props.sortDirection === 'ascending' ? <IconChevronUp /> : <IconChevronDown /> // Not working before the change
   }
 
   render () {
@@ -26,7 +27,7 @@ export default class SortMenu extends React.Component {
       <div className='sort-menu'>
         <UncontrolledDropdown>
           <DropdownToggle>
-            <Trans id='js.Workflows.SortMenu.sort.DropdownTitle'>Sort</Trans> <i className={this.icon} />
+            <Trans id='js.Workflows.SortMenu.sort.DropdownTitle'>Sort</Trans> {this.icon}
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem data-comparator='last_update|descending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.lastModified.dropdownItem' comment='Last update descending'>Last modified</Trans></DropdownItem>

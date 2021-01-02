@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Popup from './Popup'
 import { Trans } from '@lingui/macro'
+import IconAddcHollow from './../../../icons/addc-hollow.svg'
 
 export default function Button (props) {
   const { className, index, tabSlug, isLessonHighlight, isLastAddButton } = props
@@ -22,7 +23,6 @@ export default function Button (props) {
   return (
     <div className={className}>
       <button type='button' className={buttonClassNames.join(' ')} onClick={handleClickAnchor}>
-        <i className='icon-add' />{' '}
         <span><Trans id='js.WorkflowEditor.ModuleSearch.Button.addStep' comment='This should be all-caps for styling reasons'>ADD STEP</Trans></span>
       </button>
       {popperAnchor ? (

@@ -10,6 +10,8 @@ import AllNoneButtons from '../../common/AllNoneButtons'
 import FacetSearch from '../../common/FacetSearch'
 import ValueSortSelect from '../../common/ValueSortSelect'
 import { Trans, t } from '@lingui/macro'
+import IconChevronDown from './../../../../icons/chevron-down.svg'
+import IconChevronRight from './../../../../icons/chevron-right.svg'
 
 const NumberFormatter = new Intl.NumberFormat() // user's locale
 
@@ -266,7 +268,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
-        <i className={group.isExpanded ? 'icon-caret-down' : 'icon-caret-right'} />
+        <i className={group.isExpanded ? <IconChevronDown /> : <IconChevronRight />} />
       </label>
     ) : null
 

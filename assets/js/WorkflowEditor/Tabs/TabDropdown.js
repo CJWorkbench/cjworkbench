@@ -2,12 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
 import { Trans } from '@lingui/macro'
+import IconChevronDown from './../../../icons/chevron-down.svg'
 
 export default function TabDropdown ({ onClickRename, onClickDelete, onClickDuplicate }) {
   return (
     <UncontrolledDropdown>
       <DropdownToggle className='toggle'>
-        <i className='icon-caret-down' />
+        <IconChevronDown />
       </DropdownToggle>
       <DropdownMenu>
         <DropdownItem onClick={onClickRename} icon='icon-edit'>

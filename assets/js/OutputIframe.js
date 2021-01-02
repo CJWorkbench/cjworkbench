@@ -6,6 +6,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { setStepParamsAction } from './workflow-reducer'
 import { setWorkflowPublicAction } from './ShareModal/actions'
 import { escapeHtml } from './utils'
+import IconCode from './../icons/code.svg'
 
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
@@ -180,7 +181,7 @@ export class OutputIframe extends React.PureComponent {
                 title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
                 onClick={this.handleClickOpenEmbedModal}
               >
-                <i className='icon icon-code' />
+                <IconCode />
               </button>
             </div>
             {this.renderPublicModal()}

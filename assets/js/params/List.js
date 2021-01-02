@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Param from './Param'
 import { MaybeLabel, paramFieldToParamProps } from './util'
 import { Trans } from '@lingui/macro'
+import IconAddcHollow from './../../icons/addc-hollow.svg'
 
 // A single repetition of the set of parameters defined by param_fields.child_parameters
 // which is ultimately set by the 'child_parameters' key of the 'list' parameter type in the module YAML
@@ -145,7 +146,7 @@ export default class List extends React.PureComponent {
             name={`${name}[add]`}
             onClick={this.handleAdd}
           >
-            <i className='icon-add' />
+            <IconAddcHollow />
             <Trans id='js.params.List.add'>Add</Trans>
           </button>
         )}

@@ -7,6 +7,9 @@ import { setDataVersionAction, setStepNotificationsAction } from '../workflow-re
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { Trans } from '@lingui/macro'
+import IconNotificationDisabled from './../../icons/notification-disabled.svg'
+import IconNotificationOff from './../../icons/notification-off.svg'
+
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -82,12 +85,12 @@ class NotificationsForm extends React.PureComponent {
   render () {
     const checked = this.props.notificationsEnabled
     const className = checked ? 'notifications-enabled' : 'notifications-disabled'
-    const iconAlert = checked ? 'icon-notification' : 'icon-no-notification'
+    const iconAlert = checked ? <IconNotificationDisabled /> : <IconNotificationOff />
 
     return (
       <form onSubmit={this.handleSubmit} className={`notifications ${className}`}>
         <div className='text'>
-          <p className='status'><i className={`icon ${iconAlert}`} />{
+          <p className='status'> {iconAlert} {
             checked
               ? <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn' comment='The tag adds emphasis'>Alerts are <strong>on</strong></Trans>
               : <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff' comment='The tag adds emphasis'>Alerts are <strong>off</strong></Trans>

@@ -13,13 +13,12 @@
     min-height: 0;
     width: auto;
     height: auto;
-    font-size: 1.1rem;
+    font-size: rem(1);
 
-
-    i::before {
-      vertical-align: -2px; // font bug? glyph isn't centered?
-      margin-left: 3px;
+    svg {
+      margin-top: -1px; // not sure why.. not vertically centered 
     }
+
     &:disabled {
       @extend .button-blue;
       opacity: .6;

@@ -82,9 +82,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
       type="button"
     >
-      <i
-        className="icon icon-code"
-      />
+      <IconCode/>
     </button>
   </div>
   <div

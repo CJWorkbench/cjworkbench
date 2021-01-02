@@ -62,10 +62,17 @@
 
     form.notifications {
       display: flex;
+      border-bottom: 1px solid $item-border;
       margin: 0;
-      margin-right: 2rem;
-      padding-right: 2rem;
-      border-right: 1px solid $Vlight-gray;
+      margin-bottom: rem(1);
+      padding-bottom: rem(1);
+
+      &.notifications-enabled svg {
+       color:$brand-workspace;
+     }
+      &.notifications-disabled svg {
+       color:$brand-red;
+     }
 
       .text {
         flex: 1 1 auto;
@@ -78,15 +85,14 @@
           display: flex;
           align-items: center;
 
-          .on {color:$brand-workspace;}
-
-          i {
-            margin-top: 0rem;
-            margin-right:.5rem;
+          .on {
+            color:$brand-workspace;
           }
 
-          .icon-notification {color:$brand-workspace;}
-          .icon-no-notification {color:$brand-red;}
+          svg {
+            margin-right: .5rem;
+          }
+
           strong {
             text-transform: uppercase;
             margin-left: .5rem;
@@ -96,7 +102,7 @@
 
       .options {
         flex: 0 0 auto;
-        align-self: center;
+        align-self: flex-start;
         margin-left: 2rem;
 
         label {

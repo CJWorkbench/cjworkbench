@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import IconAddcHollow from './../../../icons/addc-hollow.svg'
 
 export default function StepDropSpot (props) {
   const { index, draggedStep, reorderStep } = props
@@ -32,7 +33,7 @@ export default function StepDropSpot (props) {
       onDrop={handleDrop}
     >
       <div className='highlight'>
-        <i className='icon-add' />
+        <IconAddcHollow />
       </div>
     </div>
   )

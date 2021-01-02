@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Aggregation from './Aggregation'
 import { Trans } from '@lingui/macro'
+import IconAddcHollow from './../../../../icons/addc-hollow.svg'
 
 const DefaultValue = [{ operation: 'size', colname: '', outname: '' }]
 const DefaultAddValue = { operation: 'sum', colname: '', outname: '' }
@@ -90,7 +91,7 @@ export default class Aggregations extends React.PureComponent {
             name={`${name}[add]`}
             onClick={this.handleClickAdd}
           >
-            <i className='icon-add' /> {' '}
+            <IconAddcHollow /> {' '}
             <Trans id='js.params.Custom.Aggregations.addButton'>Add</Trans>
           </button>
         )}

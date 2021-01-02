@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import IconPlay from './../../icons/play.svg'
 
 const SubmitButton = ({ name, onClick, disabled }) => {
   return (
@@ -9,7 +10,7 @@ const SubmitButton = ({ name, onClick, disabled }) => {
         type='submit'
         disabled={disabled}
       >
-        <i className='icon-play' />
+        <IconPlay />
       </button>
     </div>
   )

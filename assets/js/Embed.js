@@ -2,6 +2,7 @@ import React from 'react'
 import { escapeHtml, timeDifference } from './utils'
 import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
+import IconCode from './../icons/code.svg'
 
 export default class Embed extends React.Component {
   state = {
@@ -84,7 +85,7 @@ export default class Embed extends React.Component {
             </div>
           </div>
           <button type='button' onClick={this.handleToggleOverlay} className='embed-footer-button'>
-            <i className='icon icon-code' />
+            <IconCode />
           </button>
         </div>
         <div className={'embed-overlay' + (this.state.overlayOpen ? ' open' : '')} onClick={this.handleToggleOverlay}>

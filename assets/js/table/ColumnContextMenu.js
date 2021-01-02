@@ -5,6 +5,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem, DropdownDivider } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
+import IconChevronDown from './../../icons/chevron-down.svg'
 
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {
@@ -39,7 +40,7 @@ export default class ColumnContextMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <i className='icon-caret-down' />
+          <IconChevronDown />
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem onClick={this.handleRenameColumn} className='rename-column-header' icon='icon-edit'><Trans id='js.table.ColumnContextMenu.rename.'>Rename</Trans></DropdownItem>

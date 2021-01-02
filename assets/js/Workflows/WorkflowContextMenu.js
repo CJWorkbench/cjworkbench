@@ -5,6 +5,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
+import IconMore from './../../icons/more.svg'
+import IconDelete from './../../icons/delete.svg'
+import IconDuplicate from './../../icons/duplicate.svg'
 
 export default class WorkflowContextMenu extends React.Component {
   static propTypes = {
@@ -27,16 +30,16 @@ export default class WorkflowContextMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <i className='icon-more' />
+          <IconMore />
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem onClick={this.handleClickDuplicate} className='duplicate-workflow'>
-            <i className='icon-duplicate' />
+            <IconDuplicate />
             <span><Trans id='js.Workflows.WorkflowContextMenu.duplicate'>Duplicate</Trans></span>
           </DropdownItem>
           {this.props.deleteWorkflow ? (
             <DropdownItem onClick={this.handleClickDelete} className='delete-workflow'>
-              <i className='icon-bin' />
+              <IconDelete />
               <span><Trans id='js.Workflows.WorkflowContextMenu.delete'>Delete</Trans></span>
             </DropdownItem>
           ) : null}

@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
+import IconUndo from './../icons/undo.svg'
+import IconRedo from './../icons/redo.svg'
 
 export default class UndoRedoButtons extends React.PureComponent {
   static propTypes = {
@@ -62,14 +64,14 @@ export default class UndoRedoButtons extends React.PureComponent {
           title={t({ id: 'js.UndoRedoButtons.undo.hoverText', message: 'Undo' })}
           onClick={undo}
         >
-          <i className='icon-undo' />
+          <IconUndo />
         </button>
         <button
           name='redo'
           title={t({ id: 'js.UndoRedoButtons.redo.hoverText', message: 'Redo' })}
           onClick={redo}
         >
-          <i className='icon-redo' />
+          <IconRedo />
         </button>
       </div>
     )

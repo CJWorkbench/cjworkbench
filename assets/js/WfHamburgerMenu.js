@@ -4,6 +4,8 @@ import { UncontrolledDropdown, DropdownDivider, DropdownToggle, DropdownMenu, Dr
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
 import { Trans, t } from '@lingui/macro'
+import IconMore from './../icons/more.svg'
+import IconLanguage from './../icons/language.svg'
 
 /**
  * "Hamburger" drop down on workflow and workflows page.
@@ -48,11 +50,11 @@ export default class WfHamburgerMenu extends React.Component {
             title={t({ id: 'js.WfHamburgerMenu.toggle.hoverText', message: 'menu' })}
             className='context-button'
           >
-            <i className='icon-more' />
+            <IconMore />
           </DropdownToggle>
 
           <DropdownMenu>
-            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><i className='icon icon-language' /><Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans></DropdownItem>
+            <DropdownItem onClick={this.handleClickOpenLocaleSwitcher}><IconLanguage /><Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans></DropdownItem>
             <DropdownDivider />
             {loggedIn && workflowId ? (
               <>

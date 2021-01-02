@@ -27,7 +27,8 @@ import { t } from '@lingui/macro'
 import IconHelp from './../../../icons/help.svg'
 import IconNote from './../../../icons/note.svg'
 import IconDelete from './../../../icons/delete.svg'
-import IconNotification from './../../../icons/notification.svg'
+import IconNotificationDisabled from './../../../icons/notification-disabled.svg'
+import IconNotificationEnabled from './../../../icons/notification-enabled.svg'
 import IconChevronDown from './../../../icons/chevron-down.svg'
 import IconChevronRight from './../../../icons/chevron-right.svg'
 
@@ -373,9 +374,7 @@ export class Step extends React.PureComponent {
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
-          <div className={` ${hasUnseen ? 'notification-enabled' : 'notification-inactive' }`} >
-            <IconNotification />
-          </div>
+          {hasUnseen ? <IconNotificationEnabled /> : <IconNotificationDisabled /> }
         </button>
       )
     }
@@ -547,13 +546,13 @@ class StepCollapseButton extends React.PureComponent {
   render () {
     const { isCollapsed, isLessonHighlight, onCollapse, onExpand } = this.props
 
-    const iconClass = isCollapsed ? 'icon-caret-right' : 'icon-caret-down'
+    const iconClass = isCollapsed ? <IconChevronRight /> : <IconChevronDown />
     const onClick = isCollapsed ? onExpand : onCollapse
     const name = isCollapsed ? 'expand module' : 'collapse module'
     const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''
     return (
       <button name={name} className='workflow-step-collapse' onClick={onClick}>
-        <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`} />
+        {iconClass} {lessonHighlightClass}
       </button>
     )
   }

@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Modal from './Modal'
 import { Trans } from '@lingui/macro'
+import IconAddcHollow from './../../../icons/addc-hollow.svg'
 
 const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef }) {
   const [isOpen, setOpen] = React.useState(false)
@@ -21,7 +22,7 @@ const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef
   return (
     <div className='add-data-button'>
       <button type='button' onClick={open}>
-        <i className='icon-add' />{' '}
+        <IconAddcHollow />
         <span>
           <Trans id='js.WorkflowEditor.AddData.button' comment='This should be all-caps for styling reasons'>ADD DATA</Trans>
         </span>
