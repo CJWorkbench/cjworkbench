@@ -294,7 +294,7 @@ class OAuth2(OAuthService):
     def extract_username_from_token(self, token: OfflineToken) -> str:
         try:
             # Google provides a JWT-encoded id_token
-            data = jwt.decode(token["id_token"], verify=False)
+            data = jwt.decode(token["id_token"], options={"verify_signature": False})
             return data["email"]
         except KeyError:
             # Intercom provides no information at all about the user
