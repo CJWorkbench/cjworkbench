@@ -1,8 +1,8 @@
 .tabs {
   // If you're editing these, consider editing paddings and widths in
   // _PaneSelect.scss.
-  $tab-button-padding: .8rem .5rem .6rem;
-  $tab-name-padding: .8rem .5rem .6rem 1.5rem;
+  $tab-button-padding: 0 rem(.5) 0 rem(.5);
+  $tab-name-padding: rem(.5) rem(.5) rem(.5) rem(1);
   $tab-button-width: 3rem; // for an absolute-positioning hack
   $overlap-width: 3px;
 
@@ -103,27 +103,18 @@
             background: transparent; // override bootstrap
             height: 100%;
 
-            i {
-              display: inline-block;
-              // icon font's caret is hard to size and position...:
-              font-size: .6rem;
-              width: 2rem;
-              height: 2rem;
-              padding-top: .7rem;
-              padding-left: .1rem;
-              line-height: 1;
-              border-radius: 50%;
-              opacity: .5;
+            svg {
+              font-size: rem(1);
+              opacity: .6;
               outline: 0; // even when :focusing in Webkit
             }
 
-            &:hover i {
+            &:hover svg {
               opacity: 1;
             }
 
-            &:focus i {
-              color: $brand-text--darker;
-              background-color: $dark-accent--soft;
+            &:focus svg {
+              color: $brand-orange;
               opacity: 1;
             }
           }
@@ -217,7 +208,7 @@
   }
 
   button.new-tab {
-    margin-left: .8rem;
+    margin-left: rem(1);
     flex: 0 0 auto;
     align-self: center;
     width: 1.8rem;

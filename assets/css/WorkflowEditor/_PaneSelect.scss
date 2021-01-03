@@ -5,6 +5,7 @@ nav.pane-select {
   $overlap-width: 3px;
 
   display: flex;
+  justify-content: space-between;
   line-height: 0; // there are some `display: inline-block` elements and we want them to line up
   //border-top: 2px solid $tabs-border;
   background: $pane-select-tab-bg;
@@ -35,7 +36,7 @@ nav.pane-select {
 
       svg {
         margin-right: .5rem;
-        font-size: 1.6rem;
+        font-size: rem(1);
       }
 
       &:disabled {
