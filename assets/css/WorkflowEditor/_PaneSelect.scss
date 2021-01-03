@@ -33,9 +33,10 @@ nav.pane-select {
       padding: $report-button-padding;
       background: $pane-select-tab-bg;
       color: $pane-select-tab-fg;
+      align-items: center;
 
       svg {
-        margin-right: .5rem;
+        margin-right: rem(.5);
         font-size: rem(1);
       }
 
