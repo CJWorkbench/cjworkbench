@@ -17,7 +17,7 @@
     display: block;
     width: 100%;
     color: $brand-text--dark;
-    background: white;
+    background-color: white;
     border-radius: 2rem;
     border: 2px solid transparent;
 
@@ -40,11 +40,12 @@
     position: absolute;
     top: .7rem;
     left: 1.4rem;
-    font-size: 1.6rem;
+    font-size: rem(1);
     font-family: 'Workbench';
     color: $item-border;
     content: '\e920'; // .icon-search
     opacity: 1;
+    color: $light-gray;
   }
 
   button.reset {
@@ -52,21 +53,21 @@
     background: transparent;
     position: absolute;
     right: 1.4rem;
-    top: .9rem;
-    font-size: 1.4rem;
+    top: rem(.4);
+    font-size: rem(1);
     margin: 0;
     padding: 0;
     text-shadow: none;
-    color: $placeholder;
+    color: $light-gray;
     opacity: 0;
+
     &:hover {
       color: $brand-text--dark;
-      opacity: 1;
     }
   }
 
   &:hover button.reset {
-    opacity: .5;
+    opacity: 1;
   }
 }
 
@@ -168,8 +169,7 @@
 
     input {
       border-color: $item-border;
-      background-color: $dark-accent--soft;;
-
+      background-color: $dark-accent--soft;
     }
 
     &::before {
@@ -247,7 +247,7 @@
     }
 
     &:hover {
-      color: $brand-text--darker;
+      color: $brand-text--dark;
       background-color: $dark-accent--soft;
     }
 

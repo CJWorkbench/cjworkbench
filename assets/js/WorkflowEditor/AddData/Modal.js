@@ -8,6 +8,7 @@ import { addStepAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
 import Modules from './Modules'
 import Search from './Search'
+import IconCloseC from './../../../icons/close-c.svg'
 
 export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addStep }) {
   const onSelectModule = React.useCallback(moduleIdName => addStep(tabSlug, moduleIdName))
@@ -30,7 +31,7 @@ export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addSt
             title={t({ id: 'js.WorkflowEditor.AddData.Modal.closeButton.hoverText', message: 'Close' })}
             onClick={close}
           >
-            ×
+            <IconCloseC/>
           </button>
 
         </div>

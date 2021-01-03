@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
+import IconClose from './../../../icons/close.svg'
 
 export default class Prompt extends React.PureComponent {
   static propTypes = {
@@ -50,7 +51,7 @@ export default class Prompt extends React.PureComponent {
           className='reset'
           title={t({ id: 'js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText', message: 'Close Search' })}
         >
-          <i className='icon-close' />
+          <IconClose />
         </button>
       </form>
     )

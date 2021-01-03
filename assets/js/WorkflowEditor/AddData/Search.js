@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
+import IconClose from './../../../icons/close.svg'
 
 const Search = React.memo(function Search ({ value, onChange }) {
   const handleReset = React.useCallback(() => onChange(''))
@@ -23,7 +24,7 @@ const Search = React.memo(function Search ({ value, onChange }) {
         className='reset'
         title={t({ id: 'js.WorkflowEditor.AddData.Search.clearButton.hoverText', message: 'Clear Search' })}
       >
-        <i className='icon-close' />
+        <IconClose />
       </button>
     </form>
   )
