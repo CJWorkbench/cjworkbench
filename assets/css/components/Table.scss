@@ -249,9 +249,7 @@
 
             button {
               flex: 0 0 auto;
-              height:2.5rem;
-              width: 2.5rem;
-              font-size: .7rem;
+              font-size: rem(1);
               border: 0;
               background-color: transparent;
               color: inherit;
@@ -261,9 +259,6 @@
               &:hover {
                 background-color:$brand-orange;
                 color: white;
-              }
-              i {
-                margin-left: 1px;
               }
             }
           }
