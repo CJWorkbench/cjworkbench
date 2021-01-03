@@ -10,7 +10,6 @@ import { Trans } from '@lingui/macro'
 import IconNotificationDisabled from './../../icons/notification-disabled.svg'
 import IconNotificationOff from './../../icons/notification-off.svg'
 
-
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
 let _formatDateUTCforTesting = false

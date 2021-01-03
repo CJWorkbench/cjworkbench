@@ -374,7 +374,7 @@ export class Step extends React.PureComponent {
 
       alertButton = (
         <button title={title} className={className} onClick={this.handleClickNotification}>
-          {hasUnseen ? <IconNotificationEnabled /> : <IconNotificationDisabled /> }
+          {hasUnseen ? <IconNotificationEnabled /> : <IconNotificationDisabled />}
         </button>
       )
     }
