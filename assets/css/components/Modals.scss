@@ -141,7 +141,7 @@
 
   .dl-file {
     @include content-1;
-    color: $labels;
+    color: $brand-text--dark;
   }
 
   .clipboard {
@@ -149,7 +149,7 @@
     margin-bottom: .3rem;
     text-transform: uppercase;
     cursor: pointer;
-    color: $brand-workspace;
+    color: $workspace-action;
     &.copied {
       color: $brand-orange;
     }

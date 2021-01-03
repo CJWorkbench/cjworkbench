@@ -4,6 +4,7 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import { logUserEvent } from './utils'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { Trans } from '@lingui/macro'
+import IconDownload from '../icons/download.svg'
 
 export default class ExportModal extends React.PureComponent {
   static propTypes = {
@@ -126,8 +127,10 @@ export default class ExportModal extends React.PureComponent {
             <div className='download-icon-box'>
               <a
                 href={this.csvUrlString} onClick={() => this.logExport('CSV')}
-                className='icon-download t-d-gray button-icon test-csv-download' download
-              />
+                className='button-icon test-csv-download' download
+              >
+                <IconDownload />
+              </a>
             </div>
           </div>
           <div className='d-flex justify-content-between flex-row'>
@@ -143,8 +146,10 @@ export default class ExportModal extends React.PureComponent {
             <div className='download-icon-box'>
               <a
                 href={this.jsonUrlString} onClick={() => this.logExport('JSON')}
-                className='icon-download t-d-gray button-icon test-json-download' download
-              />
+                className='button-icon test-json-download' download
+              >
+                <IconDownload />
+              </a>
             </div>
           </div>
         </ModalBody>
