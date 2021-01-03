@@ -45,13 +45,11 @@
       opacity: 0.5;
     }
 
-    i {
+    svg {
       display: inline-block;
-      margin-right: .75rem;
+      margin-right: rem(.5);
       text-align: center;
-      width: 1.8rem; // BUG in Workbench.woff: "icon-duplicate" has width>1em -- see https://www.pivotaltracker.com/story/show/164803718
-      margin-left: -.25rem; // to counteract BUG in Workbench.woff -- see https://www.pivotaltracker.com/story/show/164803718
-      font-size: 1.3rem;
+      font-size: rem(1);
     }
   }
 }
