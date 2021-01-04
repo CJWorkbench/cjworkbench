@@ -24,9 +24,9 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
             disabled={false}
             onClick={[Function]}
           >
-            <i
-              className="icon-caret-down"
-            />
+            <SvgrMock>
+              /app/assets/icons/chevron-down.svg
+            </SvgrMock>
           </button>
         </DropdownToggle>
         <DropdownMenu />

@@ -30,9 +30,9 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
             onClick={[Function]}
             title="menu"
           >
-            <i
-              className="icon-more"
-            />
+            <SvgrMock>
+              /app/assets/icons/more.svg
+            </SvgrMock>
           </button>
         </DropdownToggle>
         <DropdownMenu>
@@ -56,9 +56,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                         role="menuitem"
                         tabindex="0"
                       >
-                        <i
-                          class="icon icon-language"
-                        />
+                        /app/assets/icons/language.svg
                         Language
                       </button>
                       <div
@@ -115,9 +113,9 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                       role="menuitem"
                       tabIndex={0}
                     >
-                      <i
-                        className="icon icon-language"
-                      />
+                      <SvgrMock>
+                        /app/assets/icons/language.svg
+                      </SvgrMock>
                       <Trans
                         components={Object {}}
                         id="js.WfHamburgerMenu.menu.language"

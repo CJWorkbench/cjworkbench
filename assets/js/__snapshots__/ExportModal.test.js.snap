@@ -49,11 +49,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       class="close"
                       type="button"
                     >
-                      <span
-                        aria-hidden="true"
-                      >
-                        ×
-                      </span>
+                      /app/assets/icons/close-c.svg
                     </button>
                   </div>
                   <div
@@ -86,10 +82,12 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="download-icon-box"
                       >
                         <a
-                          class="icon-download t-d-gray button-icon test-csv-download"
+                          class="button-icon test-csv-download"
                           download=""
                           href="http://localhost/public/moduledata/live/415.csv"
-                        />
+                        >
+                          /app/assets/icons/download.svg
+                        </a>
                       </div>
                     </div>
                     <div
@@ -119,10 +117,12 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="download-icon-box"
                       >
                         <a
-                          class="icon-download t-d-gray button-icon test-json-download"
+                          class="button-icon test-json-download"
                           download=""
                           href="http://localhost/public/moduledata/live/415.json"
-                        />
+                        >
+                          /app/assets/icons/download.svg
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -182,11 +182,9 @@ exports[`ExportModal should match snapshot 1`] = `
                     onClick={[MockFunction]}
                     type="button"
                   >
-                    <span
-                      aria-hidden="true"
-                    >
-                      ×
-                    </span>
+                    <SvgrMock>
+                      /app/assets/icons/close-c.svg
+                    </SvgrMock>
                   </button>
                 </div>
               </ModalHeader>
@@ -244,11 +242,15 @@ exports[`ExportModal should match snapshot 1`] = `
                       className="download-icon-box"
                     >
                       <a
-                        className="icon-download t-d-gray button-icon test-csv-download"
+                        className="button-icon test-csv-download"
                         download={true}
                         href="http://localhost/public/moduledata/live/415.csv"
                         onClick={[Function]}
-                      />
+                      >
+                        <SvgrMock>
+                          /app/assets/icons/download.svg
+                        </SvgrMock>
+                      </a>
                     </div>
                   </div>
                   <div
@@ -301,11 +303,15 @@ exports[`ExportModal should match snapshot 1`] = `
                       className="download-icon-box"
                     >
                       <a
-                        className="icon-download t-d-gray button-icon test-json-download"
+                        className="button-icon test-json-download"
                         download={true}
                         href="http://localhost/public/moduledata/live/415.json"
                         onClick={[Function]}
-                      />
+                      >
+                        <SvgrMock>
+                          /app/assets/icons/download.svg
+                        </SvgrMock>
+                      </a>
                     </div>
                   </div>
                 </div>

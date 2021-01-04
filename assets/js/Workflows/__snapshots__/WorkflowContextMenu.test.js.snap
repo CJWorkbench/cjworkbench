@@ -23,9 +23,9 @@ exports[`WorkflowContextMenu renders correctly 1`] = `
             disabled={false}
             onClick={[Function]}
           >
-            <i
-              className="icon-more"
-            />
+            <SvgrMock>
+              /app/assets/icons/more.svg
+            </SvgrMock>
           </button>
         </DropdownToggle>
         <DropdownMenu />

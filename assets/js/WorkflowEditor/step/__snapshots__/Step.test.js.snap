@@ -67,27 +67,21 @@ exports[`Step, not read-only mode matches snapshot 1`] = `
               target="_blank"
               title="Help for this module"
             >
-              <i
-                className="icon-help"
-              />
+              <SvgrMock />
             </a>
             <button
               className="btn edit-note"
               onClick={[Function]}
               title="Edit Note"
             >
-              <i
-                className="icon-note"
-              />
+              <SvgrMock />
             </button>
             <button
               className="btn delete-button"
               onClick={[Function]}
               title="Delete"
             >
-              <i
-                className="icon-bin"
-              />
+              <SvgrMock />
             </button>
           </div>
         </div>

@@ -53,11 +53,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                       class="close"
                       type="button"
                     >
-                      <span
-                        aria-hidden="true"
-                      >
-                        ×
-                      </span>
+                      /app/assets/icons/close-c.svg
                     </button>
                   </div>
                   <div
@@ -254,11 +250,9 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
                     onClick={[MockFunction]}
                     type="button"
                   >
-                    <span
-                      aria-hidden="true"
-                    >
-                      ×
-                    </span>
+                    <SvgrMock>
+                      /app/assets/icons/close-c.svg
+                    </SvgrMock>
                   </button>
                 </div>
               </ModalHeader>

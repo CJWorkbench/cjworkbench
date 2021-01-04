@@ -82,7 +82,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
       type="button"
     >
-      <IconCode/>
+      <SvgrMock />
     </button>
   </div>
   <div

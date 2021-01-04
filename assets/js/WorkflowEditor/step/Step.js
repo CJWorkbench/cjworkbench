@@ -546,13 +546,13 @@ class StepCollapseButton extends React.PureComponent {
   render () {
     const { isCollapsed, isLessonHighlight, onCollapse, onExpand } = this.props
 
-    const iconClass = isCollapsed ? <IconChevronRight /> : <IconChevronDown />
+    const icon = isCollapsed ? <IconChevronRight /> : <IconChevronDown />
     const onClick = isCollapsed ? onExpand : onCollapse
     const name = isCollapsed ? 'expand module' : 'collapse module'
     const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''
     return (
-      <button name={name} className='workflow-step-collapse' onClick={onClick}>
-        {iconClass} {lessonHighlightClass}
+      <button name={name} className={`workflow-step-collapse ${lessonHighlightClass}`} onClick={onClick}>
+        {icon}
       </button>
     )
   }

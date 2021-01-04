@@ -467,17 +467,17 @@ describe('Step, not read-only mode', () => {
 
     it('highlights the "collapse" button', () => {
       highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'loadurl', button: 'collapse' }])
-      expect(wrapper.find('i.context-collapse-button').prop('className')).toMatch(/\blesson-highlight\b/)
+      expect(wrapper.find('button.workflow-step-collapse').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights the "collapse" button', () => {
       // wrong moduleIdName
       highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'TestModule2', button: 'collapse' }])
-      expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
+      expect(wrapper.find('button.workflow-step-collapse').prop('className')).not.toMatch(/\blesson-highlight\b/)
 
       // wrong button
       highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'loadurl', button: 'notes' }])
-      expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
+      expect(wrapper.find('button.workflow-step-collapse').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
     it('highlights the notes button', () => {

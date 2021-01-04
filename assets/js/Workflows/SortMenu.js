@@ -18,16 +18,13 @@ export default class SortMenu extends React.Component {
     this.props.setComparator(comparator)
   }
 
-  get icon () {
-    return this.props.sortDirection === 'ascending' ? <IconChevronUp /> : <IconChevronDown /> // Not working before the change
-  }
-
   render () {
     return (
       <div className='sort-menu'>
         <UncontrolledDropdown>
           <DropdownToggle>
-            <Trans id='js.Workflows.SortMenu.sort.DropdownTitle'>Sort</Trans> {this.icon}
+            <Trans id='js.Workflows.SortMenu.sort.DropdownTitle'>Sort</Trans>
+            <IconChevronDown />
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem data-comparator='last_update|descending' onClick={this.handleClickComparator}><Trans id='js.Workflows.SortMenu.lastModified.dropdownItem' comment='Last update descending'>Last modified</Trans></DropdownItem>

@@ -174,22 +174,22 @@ describe('Workflow list page', () => {
     const { container, getByText } = renderUi({ workflows: testWorkflows })
 
     // sort by date ascending
-    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText(/Sort/))
     fireEvent.click(getByText('Oldest modified'))
     expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Charting.*Cleaning.*Analysis/)
 
     // sort by date descending
-    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText(/Sort/))
     fireEvent.click(getByText('Last modified'))
     expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Analysis.*Cleaning.*Charting/)
 
     // sort by name ascending
-    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText(/Sort/))
     fireEvent.click(getByText('Alphabetical'))
     expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Analysis.*Charting.*Cleaning/)
 
     // sort by name descending
-    fireEvent.click(getByText('Sort'))
+    fireEvent.click(getByText(/Sort/))
     fireEvent.click(getByText('Reverse alphabetical'))
     expect(container.querySelector('.tab-pane.active').textContent).toMatch(/Cleaning.*Charting.*Analysis/)
   })

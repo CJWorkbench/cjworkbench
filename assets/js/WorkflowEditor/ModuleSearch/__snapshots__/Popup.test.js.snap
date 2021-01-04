@@ -58,9 +58,9 @@ exports[`ModuleSearch Popup matches snapshot 1`] = `
           title="Close Search"
           type="reset"
         >
-          <i
-            className="icon-close"
-          />
+          <SvgrMock>
+            /app/assets/icons/close.svg
+          </SvgrMock>
         </button>
       </form>
     </Prompt>

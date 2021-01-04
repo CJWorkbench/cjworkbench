@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Popup from './Popup'
 import { Trans } from '@lingui/macro'
-import IconAddcHollow from './../../../icons/addc-hollow.svg'
 
 export default function Button (props) {
   const { className, index, tabSlug, isLessonHighlight, isLastAddButton } = props

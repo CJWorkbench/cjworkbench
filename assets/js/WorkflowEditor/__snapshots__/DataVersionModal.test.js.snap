@@ -70,11 +70,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       class="close"
                       type="button"
                     >
-                      <span
-                        aria-hidden="true"
-                      >
-                        ×
-                      </span>
+                      /app/assets/icons/close-c.svg
                     </button>
                   </div>
                   <div
@@ -130,9 +126,9 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         <p
                           class="status"
                         >
-                          <i
-                            class="icon icon-no-notification"
-                          />
+                           
+                          /app/assets/icons/notification-off.svg
+                           
                           Alerts are 
                           <strong>
                             off
@@ -218,11 +214,9 @@ exports[`DataVersionModal matches snapshot 1`] = `
                     onClick={[MockFunction]}
                     type="button"
                   >
-                    <span
-                      aria-hidden="true"
-                    >
-                      ×
-                    </span>
+                    <SvgrMock>
+                      /app/assets/icons/close-c.svg
+                    </SvgrMock>
                   </button>
                 </div>
               </ModalHeader>
@@ -313,9 +307,11 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         <p
                           className="status"
                         >
-                          <i
-                            className="icon icon-no-notification"
-                          />
+                           
+                          <SvgrMock>
+                            /app/assets/icons/notification-off.svg
+                          </SvgrMock>
+                           
                           <Trans
                             comment="The tag adds emphasis"
                             components={
