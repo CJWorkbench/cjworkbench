@@ -107,7 +107,7 @@ try:
 except KeyError:
     sys.exit("Must set CJW_DB_HOST and CJW_DB_PASSWORD")
 
-N_SYNC_DATABASE_CONNECTIONS = 2
+N_SYNC_DATABASE_CONNECTIONS = 3
 """
 Number of simultaneous Django database transactions.
 
