@@ -40,6 +40,21 @@ services:
       MINIO_SECRET_KEY: minio_root_secret
     command: server /data
 
+  testtusd:
+    image: tusproject/tusd:v1.4.0
+    networks: [ 'test' ]
+    depends_on: [ 'testminio' ]
+    environment:
+      AWS_ACCESS_KEY_ID: minio_root_access
+      AWS_SECRET_ACCESS_KEY: minio_root_secret
+      AWS_REGION: us-east-1
+    command: [
+      '-port=80',
+      # no hooks in unit tests
+      '-s3-endpoint=http://testminio:9000',
+      '-s3-bucket=unittest-upload',
+    ]
+
   # RACE! Let's add a minio user as quickly as we can, and _hope_ we add the
   # user before unit tests start.
   addminiouser:
@@ -77,3 +92,4 @@ services:
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: unittest
+      TUS_CREATE_UPLOAD_URL: http://testtusd/files

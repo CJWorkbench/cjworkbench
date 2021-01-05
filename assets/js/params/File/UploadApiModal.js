@@ -4,7 +4,6 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Mod
 import { getApiToken, clearApiToken, resetApiToken } from './actions'
 import { connect } from 'react-redux'
 import { Trans } from '@lingui/macro'
-import { hideFromTrans } from '../../i18n/messages'
 
 class ApiTokenState {
   constructor (flag, apiToken) {
@@ -33,178 +32,51 @@ function ApiTokenSending () {
 }
 
 function ApiTokenOk ({ workflowId, stepSlug, apiToken, clearApiToken, resetApiToken }) {
-  const uploadCredentialsUrl = `${window.location.origin}/api/v1/workflows/${workflowId}/steps/${stepSlug}/uploads`
+  const createFileUrl = `${window.location.origin}/api/v1/workflows/${workflowId}/steps/${stepSlug}/files`
 
   return (
     <div className='state-ok'>
       {apiToken ? (
         <>
           <p className='actions'>
-            <button type='button' name='reset-api-token' onClick={resetApiToken}><Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken'>Reset API token</Trans></button>
-            <button type='button' name='clear-api-token' onClick={clearApiToken}><Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.disableApi'>Disable API</Trans></button>
+            <button
+              type='button'
+              name='reset-api-token'
+              onClick={resetApiToken}
+            >
+              <Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken'>Reset API token</Trans>
+            </button>
+            <button
+              type='button'
+              name='clear-api-token'
+              onClick={clearApiToken}
+            >
+              <Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.disableApi'>Disable API</Trans>
+            </button>
           </p>
           <dl>
-            <dt><Trans id='js.params.File.UploadApiModal.ApiTokenOk.uploadCredentialsUrl'>Credentials URL</Trans></dt>
-            <dd>{uploadCredentialsUrl}</dd>
+            <dt><Trans id='js.params.File.UploadApiModal.ApiTokenOk.createFileUrl'>Create-file URL</Trans></dt>
+            <dd>{createFileUrl}</dd>
             <dt><Trans id='js.params.File.UploadApiModal.ApiTokenOk.apiToken'>API Token</Trans></dt>
             <dd>{apiToken}</dd>
           </dl>
-          <Instructions
-            uploadCredentialsUrl={`${window.location.origin}/api/v1/workflows/${workflowId}/steps/${stepSlug}/uploads`}
-            apiToken={apiToken}
-          />
+          <p>
+            <Trans id='js.params.File.UploadApiModal.ApiTokenOk.instructions'>Follow our <a href='https://github.com/CJWorkbench/cjworkbench/wiki/File-Upload-API' target='_blank' rel='noopener noreferrer'>File-Upload API instructions</a> to upload files to this Step.</Trans>
+          </p>
         </>
       ) : (
         <p className='no-api-token'>
           <span><Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken'>No API token</Trans></span>
-          <button type='button' name='reset-api-token' onClick={resetApiToken}><Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.enableApi'>Enable API</Trans></button>
+          <button
+            type='button'
+            name='reset-api-token'
+            onClick={resetApiToken}
+          >
+            <Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.enableApi'>Enable API</Trans>
+          </button>
         </p>
       )}
     </div>
-  )
-}
-
-function Instructions ({ workflowId, uploadCredentialsUrl, apiToken }) {
-  const varsCode = [
-    `UploadCredentialsUrl = "${uploadCredentialsUrl}"`,
-    `ApiToken = "${apiToken}"`,
-    'FileToUpload = "/path/to/test.csv"',
-    'Filename = "test.csv"  # name that appears in Workbench'
-  ].join('\n')
-
-  const importsCode = [
-    'import boto3',
-    'import botocore',
-    'import requests'
-  ].join('\n')
-
-  const postCode = [
-    'credentials_response = requests.post(',
-    '    UploadCredentialsUrl,',
-    '    headers={"Authorization": f"Bearer {ApiToken}"}',
-    ')',
-    'credentials_response.raise_for_status()  # expect 200 OK',
-    's3_config = credentials_response.json()'
-  ].join('\n')
-
-  const uploadCode = [
-    's3_client = boto3.client(',
-    '    \'s3\',',
-    '    aws_access_key_id=s3_config["credentials"]["accessKeyId"],',
-    '    aws_secret_access_key=s3_config["credentials"]["secretAccessKey"],',
-    '    aws_session_token=s3_config["credentials"]["sessionToken"],',
-    '    region_name=s3_config["region"],',
-    '    endpoint_url=s3_config["endpoint"],',
-    '    config=botocore.client.Config(s3={"addressing_style": "path"}),',
-    ')',
-    's3_client.upload_file(FileToUpload, s3_config["bucket"], s3_config["key"])'
-  ].join('\n')
-
-  const finishCode = [
-    'finish_response = requests.post(',
-    '    s3_config["finishUrl"],',
-    '    headers={"Authorization": f"Bearer {ApiToken}"},',
-    '    json={"filename": Filename},',
-    ')',
-    'finish_response.raise_for_status()  # expect 200 OK'
-  ].join('\n')
-
-  return (
-    <>
-      <h5><Trans id='js.params.Custom.UploadApiModal.Instructions.title'>How to upload</Trans></h5>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.eachFileBelongs' comment='The tag is a link to Amazon s3'>
-          Each file you upload belongs in a unique <a href='https://aws.amazon.com/s3/'>Amazon S3</a>-compatible endpoint. You cannot reuse the same endpoint for two files: to replace a file, you must follow all these steps again.
-        </Trans>
-      </p>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython'>
-          These instructions use Python 3, for illustration. You may use any programming language.
-        </Trans>
-      </p>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.goodWaytoStart'>
-          A good way to start your project is to copy and paste all this code into a script (one step at a time), and then edit.
-        </Trans>
-      </p>
-      <h6>1. <Trans id='js.params.Custom.UploadApiModal.Instructions.dependencies.title'>Install and load dependencies</Trans></h6>
-      <p><Trans id='js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed'>Your program will need to make HTTP requests and upload to S3.</Trans></p>
-      <pre>{importsCode}</pre>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.dependencies.boto3' comment='The tags are links to external info. The parameter is the name of a library.'>
-          <a href='https://aws.amazon.com/sdk-for-python/'>{hideFromTrans('boto3')}</a> is the AWS SDK for Python. There is an <a href='https://aws.amazon.com/tools/'>AWS SDK</a> for most any programming language; and there are dozens of third-party libraries that are compatible with Workbench. Use any library that supports custom endpoints, session tokens and "path" addressing style.
-        </Trans>
-      </p>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib' comment='The tags are links to external info. The parameters are names of libraries.'>
-          <a href='https://2.python-requests.org/en/master/'>{hideFromTrans('requests')}</a> is an HTTP library with simpler requests than Python's built-in <a href='https://docs.python.org/3/library/urllib.request.html'>{hideFromTrans('urllib.request')}</a>.
-        </Trans>
-      </p>
-      <h6>2. <Trans id='js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title'>Understand parameters and API token</Trans></h6>
-      <pre>{varsCode}</pre>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken' comment='The tag adds emphasis'>
-          <strong>Do not share the API token or commit it to any code repository.</strong> Anybody with access to the token can alter this step. Keep it safe. If you suspect your API token has been compromised, reset the API token.
-        </Trans>
-      </p>
-      <h6>3. <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title'>Query Workbench for upload credentials</Trans></h6>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest' comment='The parameters contain code. The tags wrap them for correct presentation.'>
-        Send an HTTP POST request to <code>{uploadCredentialsUrl}</code>. It should have no parameters or content. (Do not upload the file to this URL.) It must have an <code>{hideFromTrans('Authorization')}</code> header that looks like <code>{hideFromTrans('Bearer [ApiToken]')}</code>.
-        </Trans>
-      </p>
-      <pre>{postCode}</pre>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root' comment='The parameter contains code. The tag wraps it for correct presentation.'>
-          <code>{hideFromTrans('s3_config')}</code> will be a dictionary with the following keys:
-        </Trans>
-      </p>
-      <ul>
-        <li>
-          <code>endpoint</code>:{' '}
-          <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint'>
-            URL of S3-compatible upload server
-          </Trans>
-        </li>
-        <li>
-          <code>region</code>:{' '}
-          <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.region'>
-            S3-compatible region code
-          </Trans>
-        </li>
-        <li>
-          <code>bucket</code>:{' '}
-          <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket'>
-            S3 bucket name where your file should be uploaded
-          </Trans>
-        </li>
-        <li>
-          <code>key</code>:{' '}
-          <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key'>S3 key name where your file should be uploaded</Trans>
-        </li>
-        <li>
-          <code>credentials</code>:{' '}
-          <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials' comment='The parameters contain code. The tags wrap them for correct presentation.'>
-            Dictionary with <code>{hideFromTrans('accessKeyId')}</code>, <code>{hideFromTrans('secretAccessKey')}</code> and <code>{hideFromTrans('sessionToken')}</code> keys
-          </Trans>
-        </li>
-        <li>
-          <code>finishUrl</code>:{' '}
-          <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl'>(non-S3) URL to notify when we're done using the S3 API</Trans>
-        </li>
-      </ul>
-      <p>
-        <Trans id='js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey' comment="The parameters are 'bucket' and 'key' respectively. The tags wrap them for correct presentation.">
-          The credentials will only allow you to upload your file to the specified <code>{hideFromTrans('bucket')}</code> and <code>{hideFromTrans('key')}</code>. The credentials will expire in a few hours.
-        </Trans>
-      </p>
-      <h6>4. <Trans id='js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title'>Upload to S3-compatible bucket</Trans></h6>
-      <pre>{uploadCode}</pre>
-      <p><Trans id='js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation' comment='The tag is a URL to external info'>See the <a href='https://aws.amazon.com/tools/'>AWS SDK documentation</a> for your library to learn how to upload a file.</Trans></p>
-      <h6>5. <Trans id='js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename'>Tell Workbench to finish the upload, and give it a filename</Trans></h6>
-      <pre>{finishCode}</pre>
-      <p><Trans id='js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal'>In your workflow, this Step will be updated to use the new file.</Trans></p>
-    </>
   )
 }
 
