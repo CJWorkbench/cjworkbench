@@ -37,7 +37,7 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member=serviceAccount:$CLUSTER_NAME-migrate-sa@$PROJECT_NAME.iam.gserviceaccount.com \
   --role=roles/storage.admin
 
-# renderer, frontend and fetcher are more restricted.
+# renderer, frontend, fetcher and tusd are more restricted.
 # [2020-12-16] frontend doesn't use GCS directly: it goes through minio. But
 # we're writing these policies as documentation.
 
@@ -65,6 +65,12 @@ gsutil iam ch \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   gs://cached-render-results.$DOMAIN_NAME
+# upload: tusd writes; frontend reads and writes (when deleting upon completed upload)
+gsutil iam ch \
+  serviceAccount:$CLUSTER_NAME-tusd-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
+  serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
+  gs://upload.$DOMAIN_NAME
+
 
 # Generate new root key+certificate. (We'll delete the key forever -- it has no
 # long-term value.)

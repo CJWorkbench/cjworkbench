@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tusd-deployment
+spec:
+  selector:
+    matchLabels:
+      app: tusd-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: tusd-app
+    spec:
+      serviceAccountName: tusd-sa
+      affinity:  #  don't put them all on the same node
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - tusd-app
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: tusd
+        image: tusproject/tusd:v1.4.0
+        resources:
+          requests:
+            cpu: 0.3
+            memory: 512Mi
+          limits:
+            cpu: 0.3
+            memory: 512Mi
+        env:
+        - name: DOMAIN_NAME_WITH_LEADING_DOT
+          valueFrom:
+            configMapKeyRef:
+              name: workbench-config
+              key: domainNameWithLeadingDot
+        - name: GCS_SERVICE_ACCOUNT_FILE
+          value: /tusd-gcs-credentials/application_default_credentials.json
+        volumeMounts:
+        - mountPath: /tusd-gcs-credentials
+          name: tusd-gcs-credentials
+          readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+        args:
+        - -port=8080
+        - -behind-proxy
+        - "-gcs-bucket=upload$(DOMAIN_NAME_WITH_LEADING_DOT)"
+        - "-hooks-http=http://frontend-internal-tusd-hooks-service/tusd-hooks"
+        - -hooks-enabled-events=pre-finish
+      volumes:
+      - name: tusd-gcs-credentials
+        secret:
+          secretName: tusd-gcs-credentials
+          items:
+          - key: application_default_credentials.json
+            path: application_default_credentials.json
