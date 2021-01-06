@@ -133,7 +133,7 @@ export default class ParamsForm extends React.PureComponent {
   }
 
   isFieldVersionSelect = ({ type, idName }) => {
-    return type === 'custom' && (idName === 'version_select' || idName === 'version_select_simpler')
+    return type === 'custom' && idName === 'version_select'
   }
 
   isFieldVisible = (field, recurseDetector = []) => {

@@ -10,7 +10,7 @@ import Renames from './Renames'
 import ReorderHistory from './ReorderHistory'
 import SortColumns from './SortColumn'
 import ValueSelect from './ValueSelect'
-import VersionSelect, { VersionSelectSimpler } from './VersionSelect'
+import VersionSelect from './VersionSelect'
 import { Trans } from '@lingui/macro'
 
 const Components = {
@@ -23,7 +23,6 @@ const Components = {
   'reorder-history': ReorderHistory,
   sort_columns: SortColumns,
   valueselect: ValueSelect,
-  version_select_simpler: VersionSelectSimpler,
   version_select: VersionSelect,
   y_columns: ChartSeriesMultiSelect
 }

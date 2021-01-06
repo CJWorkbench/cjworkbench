@@ -102,7 +102,7 @@ export class Step extends React.PureComponent {
   }
 
   get hasFetch () {
-    return this.props.fields.some(f => f.type === 'custom' && (f.idName === 'version_select' || f.idName === 'version_select_simpler'))
+    return this.props.fields.some(f => f.type === 'custom' && f.idName === 'version_select')
   }
 
   get isEditing () {
