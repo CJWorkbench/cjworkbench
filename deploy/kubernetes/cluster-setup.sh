@@ -242,6 +242,11 @@ gsutil ubla set on gs://stored-objects.$DOMAIN_NAME
 gsutil ubla set on gs://external-modules.$DOMAIN_NAME
 gsutil ubla set on gs://cached-render-results.$DOMAIN_NAME
 gsutil ubla set on gs://upload.$DOMAIN_NAME
+# Uploads expire after 1d
+echo '{"lifecycle":{"rule":[{"action":{"type":"Delete"},"condition":{"age":1}}]}}' \
+  > 1d-lifecycle.json
+gsutil lifecycle set 1d-lifecycle.json gs://upload.$DOMAIN_NAME
+rm 1d-lifecycle.json
 gsutil iam ch allUsers:objectViewer gs://static.$DOMAIN_NAME
 echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
   && gsutil cors set static-cors.json gs://static.$DOMAIN_NAME \
