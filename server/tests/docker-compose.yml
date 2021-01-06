@@ -35,14 +35,12 @@ services:
       - type: tmpfs
         target: /data
     environment:
-      # The "mc" command will create the minio_access/minio_secret user
       MINIO_ACCESS_KEY: minio_root_access
       MINIO_SECRET_KEY: minio_root_secret
     command: server /data
 
   testtusd:
     image: tusproject/tusd:v1.4.0
-    networks: [ 'test' ]
     depends_on: [ 'testminio' ]
     environment:
       AWS_ACCESS_KEY_ID: minio_root_access
@@ -55,19 +53,10 @@ services:
       '-s3-bucket=unittest-upload',
     ]
 
-  # RACE! Let's add a minio user as quickly as we can, and _hope_ we add the
-  # user before unit tests start.
-  addminiouser:
-    image: minio/mc:RELEASE.2020-10-03T02-54-56Z
-    depends_on: [ 'testminio' ]
-    entrypoint: ''
-    command: [ 'sh', '-c', 'while ! wget -q http://testminio:9000/minio/health/ready 2>/dev/null; do sleep 0.1; done; sleep 1; mc config host add workbench http://testminio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret && mc admin policy set workbench readwrite user=minio_access && sleep 999999' ]
-
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    # RACE! Sleep 10 so that `addminiouser` can finish
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && sleep 10 && exec ./manage.py test -v2' ]
-    depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'addminiouser' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py test -v2' ]
+    depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'testtusd' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     cap_add:
@@ -88,8 +77,8 @@ services:
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
       MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: unittest
       TUS_CREATE_UPLOAD_URL: http://testtusd/files
