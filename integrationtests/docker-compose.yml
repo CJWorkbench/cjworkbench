@@ -37,8 +37,8 @@ services:
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: integrationtest
 
@@ -52,12 +52,6 @@ services:
       default:
         aliases:
           - minio.django-issue-32304.com
-
-  addminiouser:
-    image: minio/mc:RELEASE.2020-10-03T02-54-56Z
-    depends_on: [ 'minio' ]
-    entrypoint: ''
-    command: [ 'sh', '-c', 'while ! wget -q http://minio:9000/minio/health/ready 2>/dev/null; do sleep 0.1; done; sleep 1; mc config host add workbench http://minio:9000 minio_root_access minio_root_secret && mc admin user add workbench minio_access minio_secret && mc admin policy set workbench readwrite user=minio_access' ]
 
   # In Kubernetes, we use sidecar processes to manage chroots. But we can't
   # mimic those in pure Docker, because we can't adjust mount propagation.
@@ -115,6 +109,22 @@ services:
     volumes:
       - local_mail:/app/local_mail
 
+  tusd:
+    image: tusproject/tusd:v1.4.0
+    depends_on: [ 'minio' ]
+    environment:
+      AWS_ACCESS_KEY_ID: minio_root_access
+      AWS_SECRET_ACCESS_KEY: minio_root_secret
+      AWS_REGION: us-east-1
+    command: [
+      '-port=80',
+      '-hooks-http=http://frontend:8080/tusd-hooks',
+      '-hooks-enabled-events=pre-finish',
+      '-s3-endpoint=http://testminio:9000',
+      '-s3-bucket=integrationtest-upload',
+    ]
+
+
   integration-test:
     #image:
     #build:
@@ -128,8 +138,8 @@ services:
       - local_mail:/app/local_mail
     environment:
       PYTHONUNBUFFERED: '1'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
+      MINIO_ACCESS_KEY: minio_root_access
+      MINIO_SECRET_KEY: minio_root_secret
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: integrationtest
 

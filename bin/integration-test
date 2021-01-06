@@ -63,9 +63,6 @@ docker_compose down -v
 echo 'Building…' >&2
 docker_compose build
 
-echo 'Creating minio user…' >&2
-docker_compose run addminiouser
-
 echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run migrate
 

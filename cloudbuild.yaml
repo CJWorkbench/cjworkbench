@@ -56,16 +56,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-# Integration-test: addminiouser, migrate, then run the integration-test image
-- name: 'docker/compose:1.25.3'
-  args: [ '-f', 'integrationtests/docker-compose.yml',
-          '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
-          'run',
-          'addminiouser'
-        ]
-  env:
-    - 'PROJECT_ID=$PROJECT_ID'
-    - 'COMMIT_SHA=$COMMIT_SHA'
+# Integration-test: migrate, then run the integration-test image
 - name: 'docker/compose:1.25.3'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
