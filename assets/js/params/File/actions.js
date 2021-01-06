@@ -8,19 +8,15 @@ const API_TOKEN_NO_OP = 'API_TOKEN_NO_OP'
  *
  * File docs: https://developer.mozilla.org/en-US/docs/Web/API/File
  */
-export function upload (stepId, file) {
+export function upload (stepSlug, file) {
   return (dispatch, getState, api) => {
-    const onProgress = (nBytesUploaded) => dispatch(setProgress(stepId, nBytesUploaded))
+    const onProgress = (nBytesUploaded) => dispatch(setProgress(stepSlug, nBytesUploaded))
     return dispatch({
       type: FILE_UPLOAD,
       payload: {
         // `api.uploadFile` will never error. At worst, it will retry indefinitely.
-        promise: api.uploadFile(stepId, file, onProgress)
-          .then(result => ({
-            stepId,
-            uuid: result === null ? null : result.uuid
-          })),
-        data: { stepId, name: file.name, size: file.size }
+        promise: api.uploadFile(stepSlug, file, onProgress).then(result => ({ stepSlug })),
+        data: { stepSlug, name: file.name, size: file.size }
       }
     })
   }
@@ -29,14 +25,13 @@ export function upload (stepId, file) {
 /**
  * Modify step.inProgressUpload in `state`.
  */
-function updateStepInProgressFileUpload (state, stepId, updateOrNull) {
-  const { steps } = state
-  const step = steps[String(stepId)]
-  return {
+function updateStepInProgressFileUpload (state, stepSlug, updateOrNull) {
+  const step = findStep(state, stepSlug)
+  return step === null ? state : {
     ...state,
     steps: {
-      ...steps,
-      [stepId]: {
+      ...state.steps,
+      [String(step.id)]: {
         ...step,
         inProgressUpload: updateOrNull === null ? null : {
           ...(step.inProgressUpload || {}),
@@ -48,41 +43,47 @@ function updateStepInProgressFileUpload (state, stepId, updateOrNull) {
 }
 
 function reduceUploadPending (state, action) {
-  const { stepId, name, size } = action.payload
+  const { stepSlug, name, size } = action.payload
   // `nBytesUploaded === null` will render as an "indeterminate" progressbar.
-  return updateStepInProgressFileUpload(state, stepId, { name, size, nBytesUploaded: null })
+  return updateStepInProgressFileUpload(state, stepSlug, { name, size, nBytesUploaded: null })
 }
 
 function reduceUploadFulfilled (state, action) {
-  const { stepId } = action.payload
-  return updateStepInProgressFileUpload(state, stepId, null)
+  const { stepSlug } = action.payload
+  return updateStepInProgressFileUpload(state, stepSlug, null)
+}
+
+function findStep (state, stepSlug) {
+  // https://www.pivotaltracker.com/story/show/167600824
+  return Object.values(state.steps).find(({ slug }) => slug === stepSlug) || null
 }
 
 /**
  * Cancel any upload on `step`.
  */
-export function cancel (stepId) {
+export function cancel (stepSlug) {
   return (dispatch, getState, api) => {
-    const hasUpload = !!getState().steps[String(stepId)].inProgressUpload
+    const step = findStep(getState(), stepSlug)
+    const hasUpload = Boolean(step && step.inProgressUpload)
     return dispatch({
       type: FILE_UPLOAD_CANCEL,
       payload: {
-        promise: (hasUpload ? api.cancelFileUpload(stepId) : Promise.resolve(null)).then(() => ({ stepId })),
-        data: { stepId }
+        promise: (hasUpload ? api.cancelFileUpload(stepSlug) : Promise.resolve(null)).then(() => ({ stepSlug })),
+        data: { stepSlug }
       }
     })
   }
 }
 
 function reduceCancelPending (state, action) {
-  const { stepId } = action.payload
+  const { stepSlug } = action.payload
   // `nBytesUploaded === null` will render as an "indeterminate" progressbar.
-  return updateStepInProgressFileUpload(state, stepId, { nBytesUploaded: null })
+  return updateStepInProgressFileUpload(state, stepSlug, { nBytesUploaded: null })
 }
 
 function reduceCancelFulfilled (state, action) {
-  const { stepId } = action.payload
-  return updateStepInProgressFileUpload(state, stepId, null)
+  const { stepSlug } = action.payload
+  return updateStepInProgressFileUpload(state, stepSlug, null)
 }
 
 /**
@@ -108,12 +109,12 @@ function reduceSetProgress (state, action) {
  *
  * Return a url-safe string.
  */
-export function getApiToken (stepId) {
+export function getApiToken (stepSlug) {
   return (dispatch, getState, api) => {
     return dispatch({
       type: API_TOKEN_NO_OP,
       payload: {
-        promise: api.getStepFileUploadApiToken(stepId)
+        promise: api.getStepFileUploadApiToken(stepSlug)
       }
     })
   }

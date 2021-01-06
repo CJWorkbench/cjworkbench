@@ -48,13 +48,15 @@ def _finish_upload(data: Dict[str, Any]) -> Dict[str, Any]:
     ):  # raise UploadError
         # Ensure upload's API token is the same as the one we sent tusd.
         #
-        # Two reasons:
+        # This doesn't give security: an attacker can simulate a request from
+        # tusd with api_token=None and it will look like a browser-initiated
+        # one.
         #
-        # 1. Security: we've assumed tusd sent us this message; let's be
-        #    extra-careful. (Better would be to spin up a separate server....)
-        # 2. Timing: if a user resets a module's API tokens, all incomplete
-        #    uploads become invalid.
-        upload.raise_if_api_token_is_wrong(step, api_token)  # raise UploadError
+        # It's for timing: if the user resets a module's API token, we should
+        # disallow all prior uploads.
+        if api_token:  # empty when React client uploads
+            upload.raise_if_api_token_is_wrong(step, api_token)  # raise UploadError
+
         final_key = step.uploaded_file_prefix + str(file_uuid) + suffix
 
         # Tricky leak here: if there's an exception or crash, the transaction

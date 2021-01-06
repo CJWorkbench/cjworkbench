@@ -76,7 +76,7 @@ def _postgresize_str(s: str) -> str:
 
 
 @database_sync_to_async
-def _load_step(workflow: Workflow, step_id: int) -> Step:
+def _load_step_by_id(workflow: Workflow, step_id: int) -> Step:
     """Return a Step or raises HandlerError."""
     try:
         return Step.live_in_workflow(workflow).get(id=step_id)
@@ -84,10 +84,28 @@ def _load_step(workflow: Workflow, step_id: int) -> Step:
         raise HandlerError("DoesNotExist: Step not found")
 
 
-def _loading_step(func):
+@database_sync_to_async
+def _load_step_by_slug(workflow: Workflow, step_slug: str) -> Step:
+    """Return a Step or raises HandlerError."""
+    try:
+        return Step.live_in_workflow(workflow).get(slug=step_slug)
+    except Step.DoesNotExist:
+        raise HandlerError("DoesNotExist: Step not found")
+
+
+def _loading_step_by_id(func):
     @functools.wraps(func)
     async def inner(workflow: Workflow, stepId: int, **kwargs):
-        step = await _load_step(workflow, stepId)
+        step = await _load_step_by_id(workflow, int(stepId))
+        return await func(workflow=workflow, step=step, **kwargs)
+
+    return inner
+
+
+def _loading_step_by_slug(func):
+    @functools.wraps(func)
+    async def inner(workflow: Workflow, stepSlug: str, **kwargs):
+        step = await _load_step_by_slug(workflow, str(stepSlug))
         return await func(workflow=workflow, step=step, **kwargs)
 
     return inner
@@ -95,7 +113,7 @@ def _loading_step(func):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def set_params(workflow: Workflow, step: Step, values: Dict[str, Any], **kwargs):
     if not isinstance(values, dict):
         raise HandlerError("BadRequest: values must be an Object")
@@ -115,7 +133,7 @@ async def set_params(workflow: Workflow, step: Step, values: Dict[str, Any], **k
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def delete(workflow: Workflow, step: Step, **kwargs):
     await commands.do(DeleteStep, workflow_id=workflow.id, step=step)
 
@@ -148,7 +166,7 @@ def _mark_stored_object_read(step: Step, version: datetime.datetime) -> None:
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def set_stored_data_version(
     workflow: Workflow, step: Step, version: str, **kwargs
 ):
@@ -173,7 +191,7 @@ async def set_stored_data_version(
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def set_notes(workflow: Workflow, step: Step, notes: str, **kwargs):
     notes = str(notes)  # cannot error from JSON input
     await commands.do(
@@ -192,7 +210,7 @@ def _do_set_collapsed(step: Step, is_collapsed: bool):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def set_collapsed(workflow: Workflow, step: Step, isCollapsed: bool, **kwargs):
     is_collapsed = bool(isCollapsed)  # cannot error from JSON input
     await _do_set_collapsed(step, is_collapsed)
@@ -210,7 +228,7 @@ def _do_set_notifications(scope, step: Step, notifications: bool):
 
 @register_websockets_handler
 @websockets_handler("owner")
-@_loading_step
+@_loading_step_by_id
 async def set_notifications(
     workflow: Workflow, step: Step, notifications: bool, scope, **kwargs
 ):
@@ -226,7 +244,7 @@ def _do_clear_unseen_notification(step: Step):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def clear_unseen_notifications(step: Step, **kwargs):
     await _do_clear_unseen_notification(step)
 
@@ -286,7 +304,7 @@ def _do_try_set_autofetch(
 
 @register_websockets_handler
 @websockets_handler("owner")
-@_loading_step
+@_loading_step_by_id
 async def try_set_autofetch(
     step: Step, isAutofetch: bool, fetchInterval: int, scope, **kwargs
 ):
@@ -306,7 +324,7 @@ def _set_step_busy(step):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_id
 async def fetch(workflow: Workflow, step: Step, **kwargs):
     await _set_step_busy(step)
     await rabbitmq.queue_fetch(workflow.id, step.id)
@@ -349,7 +367,7 @@ def _lookup_service(step: Step, param: str) -> oauth.OAuthService:
 
 @register_websockets_handler
 @websockets_handler("owner")
-@_loading_step
+@_loading_step_by_id
 async def generate_secret_access_token(
     workflow: Workflow, step: Step, param: str, **kwargs
 ):
@@ -428,7 +446,7 @@ def _step_delete_secret_and_build_delta(
 
 @register_websockets_handler
 @websockets_handler("owner")
-@_loading_step
+@_loading_step_by_id
 async def delete_secret(workflow: Workflow, step: Step, param: str, **kwargs):
     update = await _step_delete_secret_and_build_delta(workflow, step, param)
     if update:
@@ -488,7 +506,7 @@ def _step_set_secret_and_build_delta(
 
 @register_websockets_handler
 @websockets_handler("owner")
-@_loading_step
+@_loading_step_by_id
 async def set_secret(workflow: Workflow, step: Step, param: str, secret: str, **kwargs):
     """Set a secret value `secret` on param `param`.
 
@@ -514,7 +532,7 @@ def _do_set_file_upload_api_token(step: Step, api_token: Optional[str]):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_slug
 async def get_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
     """Query the file-upload API token.
 
@@ -526,7 +544,7 @@ async def get_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_slug
 async def reset_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
     api_token = secrets.token_urlsafe()
     await _do_set_file_upload_api_token(step, api_token)
@@ -535,6 +553,6 @@ async def reset_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
 
 @register_websockets_handler
 @websockets_handler("write")
-@_loading_step
+@_loading_step_by_slug
 async def clear_file_upload_api_token(workflow: Workflow, step: Step, **kwargs):
     await _do_set_file_upload_api_token(step, None)

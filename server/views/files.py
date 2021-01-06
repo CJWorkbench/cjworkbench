@@ -1,15 +1,12 @@
-import base64
 import json
 import re
 from typing import Any, Dict
-from urllib.parse import urljoin
 
-import httpx
 from django import forms
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
+from cjworkbench.sync import database_sync_to_async
 from cjwstate import upload
 
 AuthTokenHeaderRegex = re.compile(r"\ABearer ([-a-zA-Z0-9_]+)\Z", re.IGNORECASE)
@@ -33,8 +30,17 @@ def get_request_bearer_token(request: HttpRequest) -> str:
     return auth_header_match.group(1)
 
 
-@csrf_exempt
-def create_tus_upload_for_workflow_and_step(
+@database_sync_to_async
+def _raise_if_unauthorized(workflow_id: int, step_slug: str, api_token: str) -> None:
+    with upload.locked_and_loaded_step(workflow_id, step_slug) as (
+        workflow_lock,
+        step,
+        _,
+    ):  # raise UploadError
+        upload.raise_if_api_token_is_wrong(step, api_token)  # raise UploadError
+
+
+async def create_tus_upload_for_workflow_and_step(
     request: HttpRequest, workflow_id: int, step_slug: str
 ) -> JsonResponse:
     """Request that tusd create a file for this workflow and step.
@@ -108,46 +114,23 @@ def create_tus_upload_for_workflow_and_step(
 
     try:
         api_token = get_request_bearer_token(request)  # raise UploadError
-        with upload.locked_and_loaded_step(workflow_id, step_slug) as (
-            workflow_lock,
-            step,
-            _,
-        ):  # raise UploadError
-            upload.raise_if_api_token_is_wrong(step, api_token)  # raise UploadError
-            upload_metadata_header = b"filename %s,workflowId %s,stepSlug %s,apiToken %s" % (
-                base64.b64encode(filename.encode("utf-8")),
-                base64.b64encode(str(workflow_id).encode("utf-8")),
-                base64.b64encode(step_slug.encode("utf-8")),
-                # We include apiToken: after a user resets apiToken,
-                # all prior uploads must break. Rely on storage-layer
-                # encryption to encrypt the API token, and on object
-                # lifecycle to delete the API token reasonably swiftly.
-                # Assume that users can't guess the response location:
-                # therefore, the only users who can access the location
-                # (and thus read the API token from a HEAD response
-                # header) are the ones who already have the API token.
-                base64.b64encode(api_token.encode("utf-8")),
-            )
-            response = httpx.post(
-                settings.TUS_CREATE_UPLOAD_URL,
-                headers={
-                    "Tus-Resumable": "1.0.0",
-                    "Upload-Length": str(size).encode("utf-8"),
-                    "Upload-Metadata": upload_metadata_header,
-                },
-            )
+        await _raise_if_unauthorized(
+            workflow_id, step_slug, api_token
+        )  # raise UploadError
     except upload.UploadError as err:
         return ErrorResponse(err.status_code, err.error_code, err.extra_data)
 
-    if response.status_code != 201:
-        raise RuntimeError("Unexpected TUS response: %r" % response)
-
-    original_tus_upload_url = urljoin(
-        settings.TUS_CREATE_UPLOAD_URL, response.headers["location"]
-    )
-
-    tus_upload_url = original_tus_upload_url.replace(
-        settings.TUS_CREATE_UPLOAD_URL, settings.TUS_EXTERNAL_URL_PREFIX_OVERRIDE
+    tus_upload_url = await upload.create_tus_upload(
+        workflow_id=workflow_id,
+        step_slug=step_slug,
+        api_token=api_token,
+        filename=filename,
+        size=size,
     )
 
     return JsonResponse({"tusUploadUrl": tus_upload_url})
+
+
+create_tus_upload_for_workflow_and_step.csrf_exempt = (
+    True  # Django 3.1 decorator isn't async
+)

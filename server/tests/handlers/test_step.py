@@ -933,28 +933,28 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         # restrict the actual _uploads_, so this oversight isn't a big deal.
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        step = workflow.tabs.first().steps.create(
+        workflow.tabs.first().steps.create(
             module_id_name="x", order=0, slug="step-1", file_upload_api_token="abcd1234"
         )
         response = self.run_handler(
             get_file_upload_api_token,
             user=user,
             workflow=workflow,
-            stepId=step.id,
+            stepSlug="step-1",
         )
         self.assertResponse(response, data={"apiToken": "abcd1234"})
 
     def test_get_file_upload_api_token_null(self):
         user = User.objects.create()
         workflow = Workflow.create_and_init(owner=user)
-        step = workflow.tabs.first().steps.create(
+        workflow.tabs.first().steps.create(
             module_id_name="x", order=0, slug="step-1", file_upload_api_token=None
         )
         response = self.run_handler(
             get_file_upload_api_token,
             user=user,
             workflow=workflow,
-            stepId=step.id,
+            stepSlug="step-1",
         )
         self.assertResponse(response, data={"apiToken": None})
 
@@ -970,7 +970,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             reset_file_upload_api_token,
             user=user,
             workflow=workflow,
-            stepId=step.id,
+            stepSlug="step-1",
         )
         step.refresh_from_db()
         self.assertEqual(
@@ -990,7 +990,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             clear_file_upload_api_token,
             user=user,
             workflow=workflow,
-            stepId=step.id,
+            stepSlug="step-1",
         )
         step.refresh_from_db()
         self.assertResponse(response, data=None)

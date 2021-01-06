@@ -12,7 +12,7 @@ def _init_module(id_name, param_id_name="file", param_type="file"):
     )
 
 
-class UploadListTest(DbTestCaseWithModuleRegistry):
+class FilesTest(DbTestCaseWithModuleRegistry):
     def test_create(self):
         workflow = Workflow.create_and_init()
         _init_module("x")

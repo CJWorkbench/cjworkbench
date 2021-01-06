@@ -274,10 +274,13 @@ export default class ParamsForm extends React.PureComponent {
           })}
         </div>
         <ParamsFormFooter
+          workflowId={workflowId}
           stepId={stepId}
+          stepSlug={stepSlug}
           isStepBusy={isStepBusy}
           isEditing={isEditing}
           isReadOnly={isReadOnly}
+          isOwner={isOwner}
           fields={fields}
         />
       </form>

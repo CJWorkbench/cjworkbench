@@ -2,129 +2,58 @@ import functools
 import uuid as uuidgen
 from typing import Any, Dict
 
+from django.conf import settings
+
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import clientside, rabbitmq
+from cjwstate import clientside, rabbitmq, upload
 from cjwstate.models import InProgressUpload, Step, Workflow
 from cjwstate.models.uploaded_file import delete_old_files_to_enforce_storage_limits
 from server import serializers
-
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
 
 
 @database_sync_to_async
-def _load_step(workflow: Workflow, step_id: int) -> Step:
-    """Return a Step or raises HandlerError."""
+def _load_step(workflow: Workflow, step_slug: str) -> Step:
+    """Return a Step or raise HandlerError."""
     try:
-        return Step.live_in_workflow(workflow).get(id=step_id)
-    except Step.DoesNotExist:
-        raise HandlerError("DoesNotExist: Step not found")
+        with upload.locked_and_loaded_step(workflow.id, step_slug) as (_, step, __):
+            pass
+    except upload.UploadError as err:
+        raise HandlerError("UploadError: %s" % err.error_code)
+    return step
 
 
 def _loading_step(func):
     @functools.wraps(func)
-    async def inner(workflow: Workflow, stepId: int, **kwargs):
-        step = await _load_step(workflow, stepId)
+    async def inner(workflow: Workflow, stepSlug: str, **kwargs):
+        step = await _load_step(workflow, str(stepSlug))
         return await func(workflow=workflow, step=step, **kwargs)
 
     return inner
 
 
-@database_sync_to_async
-def _do_abort_upload(workflow: Workflow, step: Step, uuid: uuidgen.UUID) -> None:
-    with workflow.cooperative_lock():
-        try:
-            in_progress_upload = step.in_progress_uploads.get(id=uuid)
-        except InProgressUpload.DoesNotExist:
-            return  # no-op
-        in_progress_upload.delete_s3_data()
-        # Aborted upload should disappear, as far as the user is concerned
-        in_progress_upload.is_completed = True
-        in_progress_upload.save(update_fields=["is_completed"])
-
-
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_step
-async def abort_upload(workflow: Workflow, step: Step, key: str, **kwargs) -> None:
-    """Delete all resources associated with an InProgressFileUpload.
-
-    Do nothing if the file upload is not for `step`.
-    """
-    try:
-        uuid = InProgressUpload.upload_key_to_uuid(key)
-    except ValueError as err:
-        raise HandlerError(str(err))
-    await _do_abort_upload(workflow, step, uuid)
-
-
-@database_sync_to_async
-def _do_create_upload(workflow: Workflow, step: Step) -> Dict[str, Any]:
-    with workflow.cooperative_lock():
-        step.refresh_from_db()
-        in_progress_upload = step.in_progress_uploads.create()
-        return in_progress_upload.generate_upload_parameters()
-
-
-@register_websockets_handler
-@websockets_handler("write")
-@_loading_step
-async def create_upload(workflow: Workflow, step: Step, **kwargs):
-    """Prepare a key and credentials for the caller to upload a file."""
-    result = await _do_create_upload(workflow, step)
-    result = {
-        **result,
-        "credentials": {
-            **result["credentials"],
-            "expiration": serializers.jsonize_datetime(
-                result["credentials"]["expiration"]
-            ),
-        },
-    }
-    return result
-
-
-@database_sync_to_async
-def _do_finish_upload(
-    workflow: Workflow, step: Step, uuid: uuidgen.UUID, filename: str
-) -> clientside.Update:
-    with workflow.cooperative_lock():
-        step.refresh_from_db()
-        try:
-            in_progress_upload = step.in_progress_uploads.get(
-                id=uuid, is_completed=False
-            )
-        except InProgressUpload.DoesNotExist:
-            raise HandlerError(
-                "BadRequest: key is not being uploaded for this Step right now. "
-                "(Even a valid key becomes invalid after you create, finish or abort "
-                "an upload on its Step.)"
-            )
-        try:
-            in_progress_upload.convert_to_uploaded_file(filename)
-        except FileNotFoundError:
-            raise HandlerError(
-                "BadRequest: file not found. "
-                "You must upload the file before calling finish_upload."
-            )
-
-        delete_old_files_to_enforce_storage_limits(step=step)
-
-        return clientside.Update(
-            steps={step.id: clientside.StepUpdate(files=step.get_clientside_files())}
+async def create_upload(
+    workflow: Workflow, step: Step, filename: str, size: int, **kwargs
+):
+    """Prepare a file for the caller to upload to."""
+    filename = str(filename)
+    size = int(size)
+    if len(filename) < 0 or len(filename) > 100:
+        raise HandlerError("filename must be between 0 and 100 characters long")
+    if size < 0 or size > settings.MINIO_MAX_FILE_SIZE:
+        raise HandlerError(
+            f"file size must be between 0 and {settings.MINIO_MAX_FILE_SIZE} bytes"
         )
 
-
-@register_websockets_handler
-@websockets_handler("write")
-@_loading_step
-async def finish_upload(
-    workflow: Workflow, step: Step, key: str, filename: str, **kwargs
-):
-    try:
-        uuid = InProgressUpload.upload_key_to_uuid(key)
-    except ValueError as err:
-        raise HandlerError(str(err))
-    update = await _do_finish_upload(workflow, step, uuid, filename)
-    await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
-    return {"uuid": str(uuid)}
+    tus_upload_url = await upload.create_tus_upload(
+        workflow_id=workflow.id,
+        step_slug=step.slug,
+        api_token="",
+        filename=filename,
+        size=size,
+    )
+    return {"tusUploadUrl": tus_upload_url}

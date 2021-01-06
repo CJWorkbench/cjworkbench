@@ -985,44 +985,45 @@ msgid "js.params.Custom.Code.AceEditor.help.sql"
 msgstr ""
 
 #. The parameter will the the name of the custom type
-#: assets/js/params/Custom/index.js:32
+#: assets/js/params/Custom/index.js:31
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Δεν έγινε επεξεργασία του προσαρμοσμένου τύπου {name}"
 
-#: assets/js/params/File/File.js:248
+#: assets/js/params/File/File.js:210
 msgid "js.params.Custom.File.browse.label"
 msgstr "Αναζήτηση"
 
-#: assets/js/params/File/File.js:194
+#: assets/js/params/File/File.js:176
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr "Ακύρωση ανεβάσματος"
 
-#: assets/js/params/File/File.js:192
+#: assets/js/params/File/File.js:174
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr "Ακύρωση ανεβάσματος"
 
-#: assets/js/params/File/File.js:234
+#: assets/js/params/File/File.js:206
 msgid "js.params.Custom.File.dragfilehere"
 msgstr "Σύρσιμο του αρχείου εδώ"
 
-#: assets/js/params/File/File.js:261
+#: assets/js/params/File/File.js:223
 msgid "js.params.Custom.File.dropFileHere"
 msgstr "Απόθεση του αρχείου εδώ"
 
 #. This is shown after js.params.Custom.File.dragfilehere
-#: assets/js/params/File/File.js:235
+#: assets/js/params/File/File.js:207
 msgid "js.params.Custom.File.or"
 msgstr "ή"
 
-#: assets/js/params/File/File.js:219
+#: assets/js/params/File/File.js:191
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
-#: assets/js/params/File/File.js:215 assets/js/params/File/File.js:244
+#: assets/js/params/ParamsFormFooter.js:62
+#, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/File/File.js:213 assets/js/params/File/File.js:242
+#: assets/js/params/ParamsFormFooter.js:60
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
@@ -1234,193 +1235,47 @@ msgstr "Κατά"
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr "Κατόπιν, κατά"
 
-#: assets/js/params/File/UploadApiModal.js:44
+#: assets/js/params/File/UploadApiModal.js:54
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr "Απενεργοποίηση του API"
 
-#: assets/js/params/File/UploadApiModal.js:60
+#: assets/js/params/File/UploadApiModal.js:75
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Ενεργοποίηση API"
 
-#: assets/js/params/File/UploadApiModal.js:59
+#: assets/js/params/File/UploadApiModal.js:69
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
 msgstr "Δεν υπάρχει διακριτικό API"
 
-#: assets/js/params/File/UploadApiModal.js:43
+#: assets/js/params/File/UploadApiModal.js:47
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Δημιουργία νέου αναγνωριστικού API"
 
-#. The tags are links to external info. The parameter is the name of a library.
-#: assets/js/params/File/UploadApiModal.js:134
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.boto3"
-msgstr ""
-"Το <0>{0}</0> είναι το AWS SDK για την Python. Υπάρχει ένα <1>AWS SDK</1>"
-" για τις περισσότερες γλώσσες προγραμματισμού, και δεκάδες βιβλιοθήκες "
-"τρίτων που είναι συμβατές με το Workbench. Χρησιμοποιήστε βιβλιοθήκη που "
-"υποστηρίζει προσαρμοζόμενα τελικά σημεία (endpoints), διακριτικά περιόδων"
-" λειτουργίας (session tokens) και σύστημα διευθύνσεων διαδρομής (path "
-"addressing)."
-
-#. The tags are links to external info. The parameters are names of libraries.
-#: assets/js/params/File/UploadApiModal.js:139
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib"
-msgstr ""
-"Η <0>{0}</0> είναι μια βιβλιοθήκη HTTP με απλούστερα αιτήματα (requests) "
-"από την ενσωματωμένη <1>{1}</1> της Python."
-
-#: assets/js/params/File/UploadApiModal.js:130
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.title"
-msgstr "Εγκατάσταση και φόρτωση εξαρτήσεων"
-
-#: assets/js/params/File/UploadApiModal.js:131
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed"
-msgstr ""
-"Το πρόγραμμά σας θα χρειαστεί να κάνει αιτήματα HTTP και να ανεβάσει "
-"αρχεία στο S3."
-
-#. The tag is a link to Amazon s3
-#: assets/js/params/File/UploadApiModal.js:116
-msgid "js.params.Custom.UploadApiModal.Instructions.eachFileBelongs"
-msgstr ""
-"Κάθε αρχείο που ανεβάζετε ανήκει σε ένα μοναδικό τελικό σημείο (endpoint)"
-" συμβατό με <0>Amazon S3</0>. Δεν μπορείτε να ξαναχρησιμοποιήσετε το ίδιο"
-" τελικό σημείο για άλλο αρχείο: για να αντικαταστήσετε ένα αρχείο, πρέπει"
-" να ακολουθήσετε όλα αυτά τα βήματα ξανά."
-
-#: assets/js/params/File/UploadApiModal.js:204
-msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename"
-msgstr ""
-"Ενημερώστε το Workbench να ολοκληρώσει τη μεταφόρτωση και να δώσει όνομα "
-"αρχείου"
-
-#: assets/js/params/File/UploadApiModal.js:206
-msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal"
-msgstr ""
-"Στη ροή εργασιών σας, αυτό το βήμα θα ενημερωθεί για να χρησιμοποιήσει το"
-" νέο αρχείο."
-
-#: assets/js/params/File/UploadApiModal.js:126
-msgid "js.params.Custom.UploadApiModal.Instructions.goodWaytoStart"
-msgstr ""
-"Ένας καλός τρόπος για να ξεκινήσετε το έργο σας είναι να αντιγράψετε και "
-"να επικολλήσετε όλον αυτόν τον κώδικα σε ένα σενάριο (script), βήμα προς "
-"βήμα, και στη συνέχεια να τον επεξεργαστείτε."
-
-#. The parameters contain code. The tags wrap them for correct presentation.
-#: assets/js/params/File/UploadApiModal.js:152
-#, fuzzy
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest"
-msgstr ""
-"Στείλτε ένα αίτημα HTTP POST στο <0>{postUrl}<0>. Δεν πρέπει να έχει "
-"παραμέτρους ή περιεχόμενο. (Μην ανεβάσετε το αρχείο σε αυτή τη διεύθυνση "
-"URL.) Πρέπει να έχει κεφαλίδα <1>{0}</1> που μοιάζει με <2>{1}</2>."
-
-#: assets/js/params/File/UploadApiModal.js:177
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket"
-msgstr "Όνομα κάδου S3 όπου θα πρέπει να ανεβάσετε το αρχείο σας"
-
-#. The parameters contain code. The tags wrap them for correct presentation.
-#: assets/js/params/File/UploadApiModal.js:187
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials"
-msgstr "Λεξικό με κλειδιά <0>{0}</0>, <1>{1}</1> και <2>{2}</2>"
-
-#: assets/js/params/File/UploadApiModal.js:165
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint"
-msgstr "Διεύθυνση URL διακομιστή για ανεβάσματα συμβατού με S3"
-
-#: assets/js/params/File/UploadApiModal.js:193
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl"
-msgstr "URL (μη S3) για να ειδοποιήσουμε όταν πάψουμε να χρησιμοποιούμε το S3 API"
-
-#: assets/js/params/File/UploadApiModal.js:183
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key"
-msgstr "Όνομα κλειδιού S3 όπου θα πρέπει να ανεβάσετε το αρχείο σας"
-
-#: assets/js/params/File/UploadApiModal.js:171
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.region"
-msgstr "Κωδικός περιοχής συμβατός με S3"
-
-#. The parameter contains code. The tag wraps it for correct presentation.
-#: assets/js/params/File/UploadApiModal.js:158
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root"
-msgstr "Το <0>{0}</0> θα είναι ένα λεξικό με τα ακόλουθα κλειδιά:"
-
-#. The parameters are 'bucket' and 'key' respectively. The tags wrap them for
-#. correct presentation.
-#: assets/js/params/File/UploadApiModal.js:197
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey"
-msgstr ""
-"Τα διαπιστευτήρια θα επιτρέπουν μόνο το ανέβασμα του αρχείου σας στα "
-"καθορισμένα <0>{0}</0> και <1>{1}</1>. Τα διαπιστευτήρια θα λήξουν σε "
-"λίγες ώρες."
-
-#: assets/js/params/File/UploadApiModal.js:150
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title"
-msgstr ""
-"Εκτέλεση ερωτήματος προς το Workbench για διαπιστευτήρια ανεβάσματος "
-"αρχείων"
-
-#. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:146
-msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken"
-msgstr ""
-"<0>Μην κοινοποιείτε το διακριτικό του API ούτε να το καταθέτετε σε "
-"αποθετήριο κωδικών.</0> Οποιοσδήποτε έχει πρόσβαση στο διακριτικό μπορεί "
-"να αλλάξει αυτό το βήμα. Μην το αποκαλύπτετε. Αν υποψιαστείτε ότι το "
-"διακριτικό σας έχει γίνει γνωστό, φροντίστε να δημιουργήσετε νέο "
-"διακριτικό API."
-
-#: assets/js/params/File/UploadApiModal.js:143
-#, fuzzy
-msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title"
-msgstr "Αποθήκευση μεταβλητών και μυστικών"
-
-#: assets/js/params/File/UploadApiModal.js:121
-msgid "js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython"
-msgstr ""
-"Αυτές οι οδηγίες χρησιμοποιούν Python 3 για τα παραδείγματα. Μπορείτε να "
-"χρησιμοποιήσετε οποιαδήποτε γλώσσα προγραμματισμού."
-
-#: assets/js/params/File/UploadApiModal.js:114
-msgid "js.params.Custom.UploadApiModal.Instructions.title"
-msgstr "Πώς να ανεβάσετε αρχείο"
-
-#. The tag is a URL to external info
-#: assets/js/params/File/UploadApiModal.js:203
-msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation"
-msgstr ""
-"Ανατρέξτε στην <0>τεκμηρίωση AWS SDK</0> για τη βιβλιοθήκη σας για να "
-"μάθετε πώς μπορείτε να ανεβάσετε ένα αρχείο."
-
-#: assets/js/params/File/UploadApiModal.js:201
-msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title"
-msgstr "Ανέβασμα σε κάδο συμβατό με S3"
-
-#: assets/js/params/File/UploadApiModal.js:235
+#: assets/js/params/File/UploadApiModal.js:107
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι απενεργοποιημένο. Ενεργοποιήστε το για "
 "να επιτραπεί το ανέβασμα."
 
 #. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:233
+#: assets/js/params/File/UploadApiModal.js:105
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "Το API ανεβάσματος αρχείων είναι <0>ενεργοποιημένο</0>."
 
-#: assets/js/params/File/UploadApiModal.js:251
+#: assets/js/params/File/UploadApiModal.js:124
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/File/UploadApiModal.js:228
+#: assets/js/params/File/UploadApiModal.js:100
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr "ΑΝΕΒΑΣΜΑ ΜΕΣΩ API"
 
-#: assets/js/params/File/UploadApiModal.js:230
+#: assets/js/params/File/UploadApiModal.js:102
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "Αυτές οι οδηγίες απευθύνονται σε προγραμματιστές."
 
-#: assets/js/params/File/UploadApiModal.js:231
+#: assets/js/params/File/UploadApiModal.js:103
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι ιδανικό για τη φόρτωση δεδομένων από "
@@ -1613,19 +1468,23 @@ msgstr "Προσπαθήστε ξανά"
 msgid "js.params.Custom.code.loadingEditor"
 msgstr "Φόρτωση επεξεργαστή..."
 
-#: assets/js/params/File/UploadApiModal.js:28
+#: assets/js/params/File/UploadApiModal.js:27
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr "Φορτώνω"
 
-#: assets/js/params/File/UploadApiModal.js:49
+#: assets/js/params/File/UploadApiModal.js:60
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr "Διακριτικό API"
 
-#: assets/js/params/File/UploadApiModal.js:47
-msgid "js.params.File.UploadApiModal.ApiTokenOk.uploadCredentialsUrl"
+#: assets/js/params/File/UploadApiModal.js:58
+msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
-#: assets/js/params/File/File.js:11
+#: assets/js/params/File/UploadApiModal.js:64
+msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
+msgstr ""
+
+#: assets/js/params/File/File.js:10
 msgid "js.params.File.UploadProgress.hoverText"
 msgstr "{0}% έχει ανέβει"
 

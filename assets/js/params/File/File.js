@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import UploadApiModal from './UploadApiModal'
 import UploadedFileSelect from './UploadedFileSelect'
 import { Trans, t } from '@lingui/macro'
 
@@ -19,8 +18,6 @@ const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytes
     </div>
   )
 })
-
-const FeatureFlagUploadApi = /(^#|;)feature:uploadapi($|;)/.test(window.location.hash)
 
 /**
  * A file-upload field.
@@ -50,7 +47,6 @@ export default class File extends React.PureComponent {
       size: PropTypes.number.isRequired,
       createdAt: PropTypes.string.isRequired // ISO8601-formatted date
     }).isRequired).isRequired,
-    workflowId: PropTypes.number.isRequired,
     stepId: PropTypes.number.isRequired,
     stepSlug: PropTypes.string.isRequired,
     inProgressUpload: PropTypes.shape({
@@ -61,29 +57,19 @@ export default class File extends React.PureComponent {
     fieldId: PropTypes.string.isRequired,
     value: PropTypes.string, // String-encoded UUID or null
     upstreamValue: PropTypes.string, // String-encoded UUID or null
-    uploadFile: PropTypes.func.isRequired, // func(stepId, file) => Promise(<{uuid: ...}, or null if aborted>)
-    cancelUpload: PropTypes.func.isRequired // func(stepId) => undefined
+    uploadFile: PropTypes.func.isRequired, // func(stepSlug, file) => Promise(<{uuid: ...}, or null if aborted>)
+    cancelUpload: PropTypes.func.isRequired // func(stepSlug) => undefined
   }
 
   state = {
     isUploadApiModalOpen: false
   }
 
-  handleClickOpenUploadApiModal = () => this.setState({ isUploadApiModalOpen: true })
-  handleClickCloseUploadApiModal = () => this.setState({ isUploadApiModalOpen: false })
-
   _upload = (file) => {
-    const { name, uploadFile, setStepParams, stepId } = this.props
-    uploadFile(stepId, file)
-      .then(result => {
-        // The upload completed; now change the param server-side. That way
-        // the user won't need to click the Go button after upload.
-        //
-        // Assumes SetStepParams allows partial params.
-        if (result.value && result.value.uuid) { // ignore abort, which wouldn't set value/uuid
-          setStepParams(stepId, { [name]: result.value.uuid })
-        }
-      })
+    const { uploadFile, stepSlug } = this.props
+    uploadFile(stepSlug, file)
+    // Once the upload completes, the handler will change SetStepParams
+    // server-side. We'll get a Websockets notification when that's done.
   }
 
   handleDragOver = (ev) => {
@@ -154,98 +140,49 @@ export default class File extends React.PureComponent {
   }
 
   handleClickCancelUpload = () => {
-    const { stepId, cancelUpload } = this.props
-    cancelUpload(stepId)
+    const { stepSlug, cancelUpload } = this.props
+    cancelUpload(stepSlug)
   }
 
   render () {
-    const { workflowId, stepId, stepSlug, name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
-    const { isUploadApiModalOpen } = this.state
+    const { name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
     const file = files.find(f => f.uuid === value)
 
     return (
-      <>
-        {isUploadApiModalOpen ? (
-          <UploadApiModal
-            workflowId={workflowId}
-            stepId={stepId}
-            stepSlug={stepSlug}
-            onClickClose={this.handleClickCloseUploadApiModal}
-          />
-        ) : null}
-        <div
-          className='drop-zone'
-          onDrop={this.handleDrop}
-          onDragOver={this.handleDragOver}
-          onDragEnter={this.handleDragEnter}
-          onDragLeave={this.handleDragLeave}
-        >
-          {inProgressUpload ? (
-            <div className='uploading-file'>
-              <div className='filename'>{inProgressUpload.name}</div>
-              <div className='status'>
-                <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
-                <button
-                  type='button'
-                  onClick={this.handleClickCancelUpload}
-                  name='cancel-upload'
-                  title={t({ id: 'js.params.Custom.File.cancelUpload.hoverText', message: 'Cancel upload' })}
-                >
-                  <Trans id='js.params.Custom.File.cancelUpload.button'>Cancel Upload</Trans>
-                </button>
-              </div>
-              <UploadProgress
-                nBytesTotal={inProgressUpload.size}
-                nBytesUploaded={inProgressUpload.nBytesUploaded}
-              />
+      <div
+        className='drop-zone'
+        onDrop={this.handleDrop}
+        onDragOver={this.handleDragOver}
+        onDragEnter={this.handleDragEnter}
+        onDragLeave={this.handleDragLeave}
+      >
+        {inProgressUpload ? (
+          <div className='uploading-file'>
+            <div className='filename'>{inProgressUpload.name}</div>
+            <div className='status'>
+              <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
+              <button
+                type='button'
+                onClick={this.handleClickCancelUpload}
+                name='cancel-upload'
+                title={t({ id: 'js.params.Custom.File.cancelUpload.hoverText', message: 'Cancel upload' })}
+              >
+                <Trans id='js.params.Custom.File.cancelUpload.button'>Cancel Upload</Trans>
+              </button>
             </div>
-          ) : (file ? (
-            <div className='existing-file'>
-              <div className='filename'>{file.name}</div>
-              <div className='status'>
-                <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
-                <p className='file-select-button'>
-                  {FeatureFlagUploadApi ? (
-                    <button
-                      type='button'
-                      onClick={this.handleClickOpenUploadApiModal}
-                      name='open-upload-api'
-                      title={t({ id: 'js.params.Custom.File.uploadApi.hoverText', message: 'Open upload API instructions' })}
-                    >
-                      <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
-                    </button>
-                  ) : null}
-                  <label htmlFor={fieldId}>
-                    <Trans id='js.params.Custom.File.replace'>Replace</Trans>
-                  </label>
-                  <input
-                    name={name}
-                    type='file'
-                    id={fieldId}
-                    readOnly={isReadOnly}
-                    onChange={this.handleChangeFileInput}
-                  />
-                </p>
-              </div>
-              <hr />
-            </div>
-          ) : (
-            <div className='no-file'>
-              <p><Trans id='js.params.Custom.File.dragfilehere'>Drag file here</Trans></p>
-              <p><Trans id='js.params.Custom.File.or' comment='This is shown after js.params.Custom.File.dragfilehere'>or</Trans></p>
+            <UploadProgress
+              nBytesTotal={inProgressUpload.size}
+              nBytesUploaded={inProgressUpload.nBytesUploaded}
+            />
+          </div>
+        ) : (file ? (
+          <div className='existing-file'>
+            <div className='filename'>{file.name}</div>
+            <div className='status'>
+              <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
               <p className='file-select-button'>
-                {FeatureFlagUploadApi ? (
-                  <button
-                    type='button'
-                    onClick={this.handleClickOpenUploadApiModal}
-                    name='open-upload-api'
-                    title={t({ id: 'js.params.Custom.File.uploadApi.hoverText', message: 'Open upload API instructions' })}
-                  >
-                    <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
-                  </button>
-                ) : null}
                 <label htmlFor={fieldId}>
-                  <Trans id='js.params.Custom.File.browse.label'>Browse</Trans>
+                  <Trans id='js.params.Custom.File.replace'>Replace</Trans>
                 </label>
                 <input
                   name={name}
@@ -256,12 +193,30 @@ export default class File extends React.PureComponent {
                 />
               </p>
             </div>
-          ))}
-          <div className='drop-here'>
-            <p><Trans id='js.params.Custom.File.dropFileHere'>Drop file here</Trans> </p>
+            <hr />
           </div>
+        ) : (
+          <div className='no-file'>
+            <p><Trans id='js.params.Custom.File.dragfilehere'>Drag file here</Trans></p>
+            <p><Trans id='js.params.Custom.File.or' comment='This is shown after js.params.Custom.File.dragfilehere'>or</Trans></p>
+            <p className='file-select-button'>
+              <label htmlFor={fieldId}>
+                <Trans id='js.params.Custom.File.browse.label'>Browse</Trans>
+              </label>
+              <input
+                name={name}
+                type='file'
+                id={fieldId}
+                readOnly={isReadOnly}
+                onChange={this.handleChangeFileInput}
+              />
+            </p>
+          </div>
+        ))}
+        <div className='drop-here'>
+          <p><Trans id='js.params.Custom.File.dropFileHere'>Drop file here</Trans> </p>
         </div>
-      </>
+      </div>
     )
   }
 }

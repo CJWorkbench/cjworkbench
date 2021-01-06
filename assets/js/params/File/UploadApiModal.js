@@ -80,19 +80,19 @@ function ApiTokenOk ({ workflowId, stepSlug, apiToken, clearApiToken, resetApiTo
   )
 }
 
-export const UploadApiModal = React.memo(function UploadApiModal ({ stepId, stepSlug, workflowId, onClickClose, getApiToken, resetApiToken, clearApiToken }) {
+export function UploadApiModal ({ stepSlug, workflowId, onClickClose, getApiToken, resetApiToken, clearApiToken }) {
   const [apiTokenState, setApiTokenState] = React.useState(new ApiTokenState(ApiTokenState.LOADING, null))
   const { apiToken } = apiTokenState
   React.useEffect(() => {
-    getApiToken(stepId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
-  }, [stepId])
+    getApiToken(stepSlug).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
+  }, [stepSlug])
   const doResetApiToken = React.useCallback(() => {
     setApiTokenState(new ApiTokenState(ApiTokenState.SENDING, apiTokenState.apiToken))
-    resetApiToken(stepId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
+    resetApiToken(stepSlug).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
   })
   const doClearApiToken = React.useCallback(() => {
     setApiTokenState(new ApiTokenState(ApiTokenState.SENDING, null))
-    clearApiToken(stepId).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, null)))
+    clearApiToken(stepSlug).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, null)))
   })
 
   return (
@@ -117,6 +117,7 @@ export const UploadApiModal = React.memo(function UploadApiModal ({ stepId, step
       <ModalFooter>
         <div className='actions'>
           <button
+            type='button'
             name='close'
             className='action-button button-gray'
             onClick={onClickClose}
@@ -126,10 +127,9 @@ export const UploadApiModal = React.memo(function UploadApiModal ({ stepId, step
       </ModalFooter>
     </Modal>
   )
-})
+}
 UploadApiModal.propTypes = {
   workflowId: PropTypes.number.isRequired,
-  stepId: PropTypes.number.isRequired,
   stepSlug: PropTypes.string.isRequired,
   onClickClose: PropTypes.func.isRequired // () => undefined
 }

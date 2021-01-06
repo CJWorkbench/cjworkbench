@@ -1,6 +1,11 @@
+import base64
 import contextlib
 import hashlib
 from typing import Any, Dict, ContextManager, NamedTuple, Tuple
+from urllib.parse import urljoin
+
+import httpx
+from django.conf import settings
 
 from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -85,3 +90,48 @@ def locked_and_loaded_step(
             yield workflow_lock, step, file_param_id_name
     except Workflow.DoesNotExist:
         raise UploadError(404, "workflow-not-found")
+
+
+async def create_tus_upload(
+    *, workflow_id: int, step_slug: str, api_token: str, filename: str, size: int
+) -> str:
+    """Create a URL for end users.
+
+    Raise on error communicating with tusd.
+    """
+    upload_metadata_header = b"apiToken %s,filename %s,workflowId %s,stepSlug %s" % (
+        # We include apiToken: after a user resets apiToken, prior API uploads
+        # must break. Rely on storage-layer encryption to encrypt the API token,
+        # and on object lifecycle to delete the API token reasonably swiftly.
+        # Assume that users can't guess the response location: therefore, the
+        # only users who can access the location (and thus read the API token
+        # from a HEAD response header) are the ones who already have the API
+        # token.
+        #
+        # The apiToken is empty when users authenticate via session. Don't put
+        # apiToken last, so the header never ends with b' ' (which is invalid).
+        base64.b64encode(api_token.encode("utf-8")),
+        base64.b64encode(filename.encode("utf-8")),
+        base64.b64encode(str(workflow_id).encode("utf-8")),
+        base64.b64encode(step_slug.encode("utf-8")),
+    )
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            settings.TUS_CREATE_UPLOAD_URL,
+            headers={
+                "Tus-Resumable": "1.0.0",
+                "Upload-Length": str(size).encode("utf-8"),
+                "Upload-Metadata": upload_metadata_header,
+            },
+        )  # raise all sorts of errors
+        if response.status_code != 201:
+            raise RuntimeError("Unexpected TUS response: %r" % response)
+
+    # TUS spec says the server may return a relative path
+    original_tus_upload_url = urljoin(
+        settings.TUS_CREATE_UPLOAD_URL, response.headers["location"]
+    )
+
+    return original_tus_upload_url.replace(
+        settings.TUS_CREATE_UPLOAD_URL, settings.TUS_EXTERNAL_URL_PREFIX_OVERRIDE
+    )
