@@ -41,7 +41,6 @@ services:
 
   testtusd:
     image: tusproject/tusd:v1.4.0
-    depends_on: [ 'testminio' ]
     environment:
       AWS_ACCESS_KEY_ID: minio_root_access
       AWS_SECRET_ACCESS_KEY: minio_root_secret
