@@ -37,7 +37,7 @@ services:
     environment:
       MINIO_ACCESS_KEY: minio_root_access
       MINIO_SECRET_KEY: minio_root_secret
-    command: server /data
+    command: [ 'server', '/data' ]
 
   testtusd:
     image: tusproject/tusd:v1.4.0
