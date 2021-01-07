@@ -107,7 +107,7 @@ try:
 except KeyError:
     sys.exit("Must set CJW_DB_HOST and CJW_DB_PASSWORD")
 
-N_SYNC_DATABASE_CONNECTIONS = 2
+N_SYNC_DATABASE_CONNECTIONS = 3
 """
 Number of simultaneous Django database transactions.
 
@@ -478,6 +478,11 @@ _maybe_load_oauth_service(
 KB_ROOT_URL = "http://help.workbenchdata.com/"
 
 TEST_RUNNER = "server.tests.runner.TimeLoggingDiscoverRunner"
+
+TUS_CREATE_UPLOAD_URL = os.environ.get("TUS_CREATE_UPLOAD_URL", "")
+TUS_EXTERNAL_URL_PREFIX_OVERRIDE = os.environ.get(
+    "TUS_EXTERNAL_URL_PREFIX_OVERRIDE", TUS_CREATE_UPLOAD_URL
+)
 
 if "MINIO_URL" not in os.environ:
     sys.exit("Must set MINIO_URL")

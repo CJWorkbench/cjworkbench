@@ -3,19 +3,9 @@
 set -e
 
 setup_env() {
-  # the /share subdir prevents spurious messages:
-  # mc: Successfully created `/root/.mc/share`.
-  # mc: Initialized share uploads `/root/.mc/share/uploads.json` file.
-  # mc: Initialized share downloads `/root/.mc/share/downloads.json` file.
-  mkdir -p /root/.mc/share
-  echo '{"version":"10","aliases":{"workbench":{"url":"'$MINIO_URL'","accessKey":"minio_root_access","secretKey":"minio_root_secret","api":"s3v4","path":"auto"}}}' > /root/.mc/config.json
-
   while ! curl --silent --fail $MINIO_URL/minio/health/ready; do
     sleep 0.1
   done
-
-  mc admin user add workbench $MINIO_ACCESS_KEY $MINIO_SECRET_KEY
-  mc admin policy set workbench readwrite user=$MINIO_ACCESS_KEY
 }
 
 # Skip setup_env if we are only testing within `cjwkernel/`.

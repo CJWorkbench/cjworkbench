@@ -130,6 +130,7 @@ def clear_minio():
         minio.StoredObjectsBucket,
         minio.ExternalModulesBucket,
         minio.CachedRenderResultsBucket,
+        minio.TusUploadBucket,
     )
 
     if not hasattr(clear_minio, "_initialized"):

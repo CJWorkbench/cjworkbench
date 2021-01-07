@@ -22,9 +22,15 @@ data:
 
       frontend httporhttps
           bind *:8080
+
           acl is_health_check path /healthz
           acl is_forwarded_https req.hdr(x-forwarded-proto) https
           http-request redirect scheme https if !is_health_check !is_forwarded_https
+
+          # See server/urls.py: tusd sends requests here, and we trust the
+          # data coming in to be coming from tusd.
+          http-request deny if { path_beg /tusd-hooks }
+
           default_backend workbench
 
       backend workbench
@@ -177,15 +183,21 @@ spec:
               value: 'http://minio-service'
             - name: MINIO_BUCKET_PREFIX
               value: ""
-            - name: MINIO_BUCKET_SUFFIX
+            - name: DOMAIN_NAME_WITH_LEADING_DOT
               valueFrom:
                 configMapKeyRef:
                   name: workbench-config
                   key: domainNameWithLeadingDot
+            - name: MINIO_BUCKET_SUFFIX
+              value: "$(DOMAIN_NAME_WITH_LEADING_DOT)"
             - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/static$(MINIO_BUCKET_SUFFIX)/'
+              value: 'https://storage.googleapis.com/static$(DOMAIN_NAME_WITH_LEADING_DOT)/'
             - name: MINIO_EXTERNAL_URL
-              value: "https://user-files$(MINIO_BUCKET_SUFFIX)"
+              value: "https://user-files$(DOMAIN_NAME_WITH_LEADING_DOT)"
+            - name: TUS_CREATE_UPLOAD_URL
+              value: "http://tusd-internal-service/files"
+            - name: TUS_EXTERNAL_URL_PREFIX_OVERRIDE
+              value: "https://upload$(DOMAIN_NAME_WITH_LEADING_DOT)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:

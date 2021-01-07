@@ -285,6 +285,7 @@ describe('Step, not read-only mode', () => {
     // 2. User clicks "submit" button
     const step = {
       id: 999,
+      slug: 'step-999',
       notes: '',
       is_collapsed: false,
       params: {
@@ -364,7 +365,7 @@ describe('Step, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          step={{ id: 20, module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [quickFix] }], files: [] }}
+          step={{ id: 20, slug: 'step-20', module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [quickFix] }], files: [] }}
           isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -435,7 +436,7 @@ describe('Step, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            step={{ id: 20, module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [] }], files: [] }}
+            step={{ id: 20, slug: 'step-20', module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [] }], files: [] }}
             isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}

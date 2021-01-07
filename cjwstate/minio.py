@@ -108,6 +108,7 @@ StaticFilesBucket = _build_bucket_name("static")
 StoredObjectsBucket = _build_bucket_name("stored-objects")
 ExternalModulesBucket = _build_bucket_name("external-modules")
 CachedRenderResultsBucket = _build_bucket_name("cached-render-results")
+TusUploadBucket = _build_bucket_name("upload")
 
 
 def ensure_bucket_exists(bucket_name):

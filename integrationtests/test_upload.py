@@ -22,7 +22,7 @@ class TestUpload(LoggedInIntegrationTest):
             ".react-grid-Row:nth-child(1) .react-grid-Cell:nth-child(1)", text="1"
         )
 
-    def test_upload_multipart_csv(self):
+    def test_upload_bigger_file(self):
         b = self.browser
         b.click_button("Create Workflow")
 
@@ -33,7 +33,7 @@ class TestUpload(LoggedInIntegrationTest):
         self.add_data_step("Upload")
         b.wait_for_element("label", text="Browse")
         b.attach_file(
-            "file", Path(__file__).parent / "files" / "multipart.csv", wait=True
+            "file", Path(__file__).parent / "files" / "bigger.csv", wait=True
         )  # Wait for file input to exist
         # submit happens automatically
 

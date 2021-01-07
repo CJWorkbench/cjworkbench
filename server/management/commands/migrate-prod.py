@@ -45,6 +45,7 @@ class Command(BaseCommand):
         minio.ensure_bucket_exists(minio.StoredObjectsBucket)
         minio.ensure_bucket_exists(minio.ExternalModulesBucket)
         minio.ensure_bucket_exists(minio.CachedRenderResultsBucket)
+        minio.ensure_bucket_exists(minio.TusUploadBucket)
 
         # ICK ugly hack. TODO there must be a better place to make uploaded
         # files readable for integration tests....

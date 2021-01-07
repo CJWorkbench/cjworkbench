@@ -1,4 +1,4 @@
-import S3 from 'aws-sdk/clients/s3'
+import { Upload } from 'tus-js-client'
 
 /**
  * Uploads to S3, signing requests via Websockets.
@@ -6,7 +6,7 @@ import S3 from 'aws-sdk/clients/s3'
 export default class UploadManager {
   constructor (websocket) {
     this.websocket = websocket
-    this.inProgress = {} // stepId => cancel callback
+    this.inProgress = {} // stepId => tus.Upload
   }
 
   /**
@@ -15,50 +15,36 @@ export default class UploadManager {
    * The steps:
    *
    * 1. Client (that's us!) asks Server (Workbench) to allocate an upload
-   * 2. Server responds with request-specific S3 auth info
-   * 3. Client starts uploading to S3 -- and registers a cancel callback in this.inProgress.
+   * 2. Server responds with tusUploadUrl
+   * 3. Client starts uploading to tusUploadUrl -- writing this.inProgress.
    * 4. Client finishes uploading
    *
-   * * The server only tracks one file upload per Step -- there's no way
-   *   for two users to upload concurrently. That makes `cancel()` straightforward.
-   * * When completing, the server will send a Delta, adding the new files to the Step.
-   * * The Promise returned will resolve to `{uuid: uuid}`; if the user aborts,
-   *   it will resolve to `null`.
+   * * We only store one Upload per Step.
+   * * When completing (before step 4 finishes), the server will send a Delta,
+   *   adding the new files to the Step.
    * * `onProgress(nBytesUploaded)` will be called periodically.
    * * The Promise returned may be rejected on network error.
    */
-  async upload (stepId, file, onProgress) {
+  async upload (stepSlug, file, onProgress) {
     const filename = file.name
-    const response = await this.websocket.callServerHandler('upload.create_upload', { stepId })
-    const { region, bucket, key, endpoint, credentials } = response
-    const s3 = new S3({
-      apiVersion: '2006-03-01',
-      endpoint,
-      region,
-      s3ForcePathStyle: true,
-      credentials
-    })
+    const size = file.size
 
-    const upload = s3.upload({
-      Body: file,
-      Bucket: bucket,
-      Key: key,
-      ContentLength: file.size
-    })
-    upload.on('httpUploadProgress', ({ loaded }) => onProgress(loaded))
+    const response = await this.websocket.callServerHandler('upload.create_upload', { stepSlug, filename, size })
+    const { tusUploadUrl } = response
 
-    this.inProgress[String(stepId)] = async () => {
-      upload.abort() // synchronous -- kicks off more requests
-      try {
-        await upload.promise()
-      } catch {
-        // it's caught elsewhere
-      }
-      await this.websocket.callServerHandler('upload.abort_upload', { stepId, key })
-    }
+    const promise = new Promise((resolve, reject) => {
+      const upload = new Upload(file, {
+        uploadUrl: tusUploadUrl,
+        onProgress,
+        onSuccess: resolve,
+        onError: reject
+      })
+      this.inProgress[stepSlug] = upload
+      upload.start()
+    })
 
     try {
-      await upload.promise() // or throw error
+      await promise // or throw error
     } catch (err) {
       if (err.code === 'RequestAbortedError') {
         return null // this isn't an error
@@ -67,24 +53,16 @@ export default class UploadManager {
       }
     }
 
-    delete this.inProgress[String(stepId)]
-
-    const finishResult = await this.websocket.callServerHandler('upload.finish_upload', {
-      stepId,
-      key,
-      filename
-    })
-    return finishResult // { uuid }
+    delete this.inProgress[stepSlug]
   }
 
   /**
    * Cancel a pending upload, if there is one.
    */
-  async cancel (stepId) {
-    const cancel = this.inProgress[String(stepId)]
-    if (cancel) {
-      delete this.inProgress[String(stepId)]
-      await cancel()
+  async cancel (stepSlug) {
+    const upload = this.inProgress[stepSlug]
+    if (upload) {
+      await upload.abort(true)
     }
   }
 }

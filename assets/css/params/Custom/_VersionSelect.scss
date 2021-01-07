@@ -1,4 +1,4 @@
-.version-select, .version-select-simpler {
+.version-select {
   margin-top: 1rem;
 
   .update-frequency-select {
@@ -74,12 +74,6 @@
       background-color: $brand-orange--light;
     }
   }
-}
-
-.version-select-simpler {
-  border-top: 1px solid $Vlight-gray;
-  padding-top: 2rem;
-  margin-bottom: 0.8rem;
 }
 
 .update-frequency-modal {

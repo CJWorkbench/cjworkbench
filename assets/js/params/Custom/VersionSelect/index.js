@@ -52,11 +52,3 @@ export default class VersionSelect extends React.PureComponent {
     )
   }
 }
-
-export function VersionSelectSimpler ({ stepId }) {
-  return (
-    <div className='version-select-simpler'>
-      <DataVersionSelect stepId={stepId} />
-    </div>
-  )
-}

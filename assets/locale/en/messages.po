@@ -961,44 +961,44 @@ msgstr ""
 "table."
 
 #. The parameter will the the name of the custom type
-#: assets/js/params/Custom/index.js:32
+#: assets/js/params/Custom/index.js:31
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Custom type {name} not handled"
 
-#: assets/js/params/File/File.js:248
+#: assets/js/params/File/File.js:210
 msgid "js.params.Custom.File.browse.label"
 msgstr "Browse"
 
-#: assets/js/params/File/File.js:194
+#: assets/js/params/File/File.js:176
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr "Cancel Upload"
 
-#: assets/js/params/File/File.js:192
+#: assets/js/params/File/File.js:174
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr "Cancel upload"
 
-#: assets/js/params/File/File.js:234
+#: assets/js/params/File/File.js:206
 msgid "js.params.Custom.File.dragfilehere"
 msgstr "Drag file here"
 
-#: assets/js/params/File/File.js:261
+#: assets/js/params/File/File.js:223
 msgid "js.params.Custom.File.dropFileHere"
 msgstr "Drop file here"
 
 #. This is shown after js.params.Custom.File.dragfilehere
-#: assets/js/params/File/File.js:235
+#: assets/js/params/File/File.js:207
 msgid "js.params.Custom.File.or"
 msgstr "or"
 
-#: assets/js/params/File/File.js:219
+#: assets/js/params/File/File.js:191
 msgid "js.params.Custom.File.replace"
 msgstr "Replace"
 
-#: assets/js/params/File/File.js:215 assets/js/params/File/File.js:244
+#: assets/js/params/ParamsFormFooter.js:62
 msgid "js.params.Custom.File.uploadApi.button"
-msgstr "API"
+msgstr "File-Upload API"
 
-#: assets/js/params/File/File.js:213 assets/js/params/File/File.js:242
+#: assets/js/params/ParamsFormFooter.js:60
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Open upload API instructions"
 
@@ -1205,174 +1205,45 @@ msgstr "By"
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr "Then by"
 
-#: assets/js/params/File/UploadApiModal.js:44
+#: assets/js/params/File/UploadApiModal.js:54
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr "Disable API"
 
-#: assets/js/params/File/UploadApiModal.js:60
+#: assets/js/params/File/UploadApiModal.js:75
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Enable API"
 
-#: assets/js/params/File/UploadApiModal.js:59
+#: assets/js/params/File/UploadApiModal.js:69
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
 msgstr "No API token"
 
-#: assets/js/params/File/UploadApiModal.js:43
+#: assets/js/params/File/UploadApiModal.js:47
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Reset API token"
 
-#. The tags are links to external info. The parameter is the name of a library.
-#: assets/js/params/File/UploadApiModal.js:134
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.boto3"
-msgstr ""
-"<0>{0}</0> is the AWS SDK for Python. There is an <1>AWS SDK</1> for most"
-" any programming language; and there are dozens of third-party libraries "
-"that are compatible with Workbench. Use any library that supports custom "
-"endpoints, session tokens and \"path\" addressing style."
-
-#. The tags are links to external info. The parameters are names of libraries.
-#: assets/js/params/File/UploadApiModal.js:139
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.requestsHttpLib"
-msgstr ""
-"<0>{0}</0> is an HTTP library with simpler requests than Python's built-"
-"in <1>{1}</1>."
-
-#: assets/js/params/File/UploadApiModal.js:130
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.title"
-msgstr "Install and load dependencies"
-
-#: assets/js/params/File/UploadApiModal.js:131
-msgid "js.params.Custom.UploadApiModal.Instructions.dependencies.yourProgramWillneed"
-msgstr "Your program will need to make HTTP requests and upload to S3."
-
-#. The tag is a link to Amazon s3
-#: assets/js/params/File/UploadApiModal.js:116
-msgid "js.params.Custom.UploadApiModal.Instructions.eachFileBelongs"
-msgstr ""
-"Each file you upload belongs in a unique <0>Amazon S3</0>-compatible "
-"endpoint. You cannot reuse the same endpoint for two files: to replace a "
-"file, you must follow all these steps again."
-
-#: assets/js/params/File/UploadApiModal.js:204
-msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename"
-msgstr "Tell Workbench to finish the upload, and give it a filename"
-
-#: assets/js/params/File/UploadApiModal.js:206
-msgid "js.params.Custom.UploadApiModal.Instructions.finishUploadAndGiveFilename.workflowUploadModal"
-msgstr "In your workflow, this Step will be updated to use the new file."
-
-#: assets/js/params/File/UploadApiModal.js:126
-msgid "js.params.Custom.UploadApiModal.Instructions.goodWaytoStart"
-msgstr ""
-"A good way to start your project is to copy and paste all this code into "
-"a script (one step at a time), and then edit."
-
-#. The parameters contain code. The tags wrap them for correct presentation.
-#: assets/js/params/File/UploadApiModal.js:152
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.postRequest"
-msgstr ""
-"Send an HTTP POST request to <0>{uploadCredentialsUrl}</0>. It should "
-"have no parameters or content. (Do not upload the file to this URL.) It "
-"must have an <1>{0}</1> header that looks like <2>{1}</2>."
-
-#: assets/js/params/File/UploadApiModal.js:177
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.bucket"
-msgstr "S3 bucket name where your file should be uploaded"
-
-#. The parameters contain code. The tags wrap them for correct presentation.
-#: assets/js/params/File/UploadApiModal.js:187
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.credentials"
-msgstr "Dictionary with <0>{0}</0>, <1>{1}</1> and <2>{2}</2> keys"
-
-#: assets/js/params/File/UploadApiModal.js:165
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.endpoint"
-msgstr "URL of S3-compatible upload server"
-
-#: assets/js/params/File/UploadApiModal.js:193
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.finishUrl"
-msgstr "(non-S3) URL to notify when we're done using the S3 API"
-
-#: assets/js/params/File/UploadApiModal.js:183
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.key"
-msgstr "S3 key name where your file should be uploaded"
-
-#: assets/js/params/File/UploadApiModal.js:171
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.region"
-msgstr "S3-compatible region code"
-
-#. The parameter contains code. The tag wraps it for correct presentation.
-#: assets/js/params/File/UploadApiModal.js:158
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.s3Config.root"
-msgstr "<0>{0}</0> will be a dictionary with the following keys:"
-
-#. The parameters are 'bucket' and 'key' respectively. The tags wrap them for
-#. correct presentation.
-#: assets/js/params/File/UploadApiModal.js:197
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.theCredsAllowBucketKey"
-msgstr ""
-"The credentials will only allow you to upload your file to the specified "
-"<0>{0}</0> and <1>{1}</1>. The credentials will expire in a few hours."
-
-#: assets/js/params/File/UploadApiModal.js:150
-msgid "js.params.Custom.UploadApiModal.Instructions.queryWorkbenchForUploadCreds.title"
-msgstr "Query Workbench for upload credentials"
-
-#. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:146
-msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.notShareApitoken"
-msgstr ""
-"<0>Do not share the API token or commit it to any code repository.</0> "
-"Anybody with access to the token can alter this step. Keep it safe. If "
-"you suspect your API token has been compromised, reset the API token."
-
-#: assets/js/params/File/UploadApiModal.js:143
-msgid "js.params.Custom.UploadApiModal.Instructions.storeVariablesAndsecrets.title"
-msgstr "Understand parameters and API token"
-
-#: assets/js/params/File/UploadApiModal.js:121
-msgid "js.params.Custom.UploadApiModal.Instructions.theseInstructionsUsepython"
-msgstr ""
-"These instructions use Python 3, for illustration. You may use any "
-"programming language."
-
-#: assets/js/params/File/UploadApiModal.js:114
-msgid "js.params.Custom.UploadApiModal.Instructions.title"
-msgstr "How to upload"
-
-#. The tag is a URL to external info
-#: assets/js/params/File/UploadApiModal.js:203
-msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.seeAwsSdkDocumentation"
-msgstr ""
-"See the <0>AWS SDK documentation</0> for your library to learn how to "
-"upload a file."
-
-#: assets/js/params/File/UploadApiModal.js:201
-msgid "js.params.Custom.UploadApiModal.Instructions.uploadS3CompatibleBucket.title"
-msgstr "Upload to S3-compatible bucket"
-
-#: assets/js/params/File/UploadApiModal.js:235
+#: assets/js/params/File/UploadApiModal.js:107
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr "The file-upload API is disabled. Please enable it to allow uploading."
 
 #. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:233
+#: assets/js/params/File/UploadApiModal.js:105
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "The file-upload API is <0>enabled</0>."
 
-#: assets/js/params/File/UploadApiModal.js:251
+#: assets/js/params/File/UploadApiModal.js:124
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr "Close"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/File/UploadApiModal.js:228
+#: assets/js/params/File/UploadApiModal.js:100
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr "UPLOAD BY API"
 
-#: assets/js/params/File/UploadApiModal.js:230
+#: assets/js/params/File/UploadApiModal.js:102
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "These instructions are for programmers."
 
-#: assets/js/params/File/UploadApiModal.js:231
+#: assets/js/params/File/UploadApiModal.js:103
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 "The file-upload API is perfect for loading data from cronjobs or other "
@@ -1564,19 +1435,25 @@ msgstr "Retry"
 msgid "js.params.Custom.code.loadingEditor"
 msgstr "Loading editor..."
 
-#: assets/js/params/File/UploadApiModal.js:28
+#: assets/js/params/File/UploadApiModal.js:27
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr "Loading"
 
-#: assets/js/params/File/UploadApiModal.js:49
+#: assets/js/params/File/UploadApiModal.js:60
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr "API Token"
 
-#: assets/js/params/File/UploadApiModal.js:47
-msgid "js.params.File.UploadApiModal.ApiTokenOk.uploadCredentialsUrl"
-msgstr "Credentials URL"
+#: assets/js/params/File/UploadApiModal.js:58
+msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
+msgstr "Create-file URL"
 
-#: assets/js/params/File/File.js:11
+#: assets/js/params/File/UploadApiModal.js:64
+msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
+msgstr ""
+"Follow our <0>File-Upload API instructions</0> to upload files to this "
+"Step."
+
+#: assets/js/params/File/File.js:10
 msgid "js.params.File.UploadProgress.hoverText"
 msgstr "{0}% uploaded"
 

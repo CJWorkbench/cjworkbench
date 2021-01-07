@@ -11,18 +11,20 @@ describe('File.actions', () => {
       }
       const store = mockStore({
         steps: {
-          1: { foo: 'bar' },
-          2: { foo: 'baz' }
+          1: { id: 1, foo: 'bar', slug: 'step-1' },
+          2: { id: 2, foo: 'baz', slug: 'step-2' }
         }
       }, api)
       const file = new File(['A\nab'], 't.csv')
 
       // upload
-      const done = store.dispatch(actions.upload(2, file))
+      const done = store.dispatch(actions.upload('step-2', file))
       expect(api.uploadFile).toHaveBeenCalled()
-      expect(api.uploadFile.mock.calls[0].slice(0, 2)).toEqual([2, file])
+      expect(api.uploadFile.mock.calls[0].slice(0, 2)).toEqual(['step-2', file])
       const setProgress = api.uploadFile.mock.calls[0][2]
       expect(store.getState().steps['2']).toEqual({
+        id: 2,
+        slug: 'step-2',
         foo: 'baz',
         inProgressUpload: {
           name: 't.csv',
@@ -36,23 +38,22 @@ describe('File.actions', () => {
       expect(store.getState().steps['2'].inProgressUpload.nBytesUploaded).toEqual(3)
 
       // completion
-      setUploadComplete({ uuid: '1234' })
-      const result = await done
+      setUploadComplete(undefined)
+      await done
       expect(store.getState().steps['2']).toEqual({
+        id: 2,
+        slug: 'step-2',
         foo: 'baz',
         inProgressUpload: null
       })
-
-      // should return UUID
-      expect(result.value.uuid).toEqual('1234')
     })
   })
 
   describe('cancel', () => {
     it('should no-op when there is no upload', async () => {
       const api = { cancel: jest.fn() }
-      const store = mockStore({ steps: { 1: {} } }, api)
-      await store.dispatch(actions.cancel(1))
+      const store = mockStore({ steps: { 1: { id: 1, slug: 'step-1' } } }, api)
+      await store.dispatch(actions.cancel('step-1'))
       expect(api.cancel).not.toHaveBeenCalled()
       expect(store.getState().steps['1'].inProgressUpload).toBe(null)
     })
@@ -64,15 +65,17 @@ describe('File.actions', () => {
       }
       const store = mockStore({
         steps: {
-          1: { foo: 'bar' },
-          2: { foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
+          1: { id: 1, slug: 'step-1', foo: 'bar' },
+          2: { id: 2, slug: 'step-2', foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
         }
       }, api)
 
       // Begin the cancellation (sending a message to the server)
-      const done = store.dispatch(actions.cancel(2))
-      expect(api.cancelFileUpload).toHaveBeenCalledWith(2)
+      const done = store.dispatch(actions.cancel('step-2'))
+      expect(api.cancelFileUpload).toHaveBeenCalledWith('step-2')
       expect(store.getState().steps['2']).toEqual({
+        id: 2,
+        slug: 'step-2',
         foo: 'baz',
         inProgressUpload: {
           name: 't.csv',
@@ -84,7 +87,12 @@ describe('File.actions', () => {
       // Server says cancellation succeeded
       setCancelled()
       await done
-      expect(store.getState().steps['2']).toEqual({ foo: 'baz', inProgressUpload: null })
+      expect(store.getState().steps['2']).toEqual({
+        id: 2,
+        slug: 'step-2',
+        foo: 'baz',
+        inProgressUpload: null
+      })
     })
   })
 })

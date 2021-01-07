@@ -52,7 +52,7 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member "serviceAccount:$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
   --role roles/monitoring.viewer
 
-for service in frontend fetcher renderer cron migrate; do
+for service in frontend fetcher renderer cron migrate tusd; do
   gcloud iam service-accounts create $CLUSTER_NAME-$service-sa \
     --display-name=$CLUSTER_NAME-$service-sa
 
@@ -60,7 +60,9 @@ for service in frontend fetcher renderer cron migrate; do
     --role roles/iam.workloadIdentityUser \
     --member "serviceAccount:$PROJECT_NAME.svc.id.goog[default/$service-sa]" \
     "$CLUSTER_NAME-$service-sa@$PROJECT_NAME.iam.gserviceaccount.com"
+done
 
+for service in frontend fetcher renderer cron migrate; do
   gcloud projects add-iam-policy-binding $PROJECT_NAME \
     --member "serviceAccount:$CLUSTER_NAME-$service-sa@$PROJECT_NAME.iam.gserviceaccount.com" \
     --role roles/cloudsql.client
@@ -96,7 +98,7 @@ kubectl create clusterrolebinding cluster-admin-binding \
   --clusterrole cluster-admin \
   --user $(gcloud config get-value account)
 
-for service in frontend fetcher renderer cron migrate; do
+for service in frontend fetcher renderer cron migrate tusd; do
   kubectl create serviceaccount "$service-sa"
 
   kubectl annotate serviceaccount "$service-sa" \
@@ -216,39 +218,30 @@ kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketpl
 # Enable SSD storage class
 kubectl apply -f ssd-storageclass.yaml
 
-# 1 Prepare Google Cloud Storage and Minio
-# 1.1 GCS account, so minio can create buckets/objects
-gcloud iam service-accounts create $CLUSTER_NAME-minio --display-name $CLUSTER_NAME-minio
-# minio needs storage.buckets.list, or it prints lots of errors.
-# (which seems like a bug.... https://github.com/minio/mc/issues/2652)
-# Minio uses this permission to poll for bucket policies.
-gcloud iam roles create Minio \
-  --project=$PROJECT_NAME \
-  --permissions=storage.buckets.list,storage.buckets.get,storage.objects.create,storage.objects.delete,storage.objects.get,storage.objects.list,storage.objects.update
-gcloud projects add-iam-policy-binding $PROJECT_NAME \
-  --member=serviceAccount:$CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com \
-  --role=roles/storage.admin
+# 1 Prepare Google Cloud Storage, Minio and tusd
+# 1.1 GCS account, so minio/tusd can create buckets/objects
 gsutil mb gs://user-files.$DOMAIN_NAME
 gsutil mb gs://static.$DOMAIN_NAME
 gsutil mb gs://stored-objects.$DOMAIN_NAME
 gsutil mb gs://external-modules.$DOMAIN_NAME
 gsutil mb gs://cached-render-results.$DOMAIN_NAME
+gsutil mb gs://upload.$DOMAIN_NAME
 gsutil ubla set on gs://user-files.$DOMAIN_NAME
 gsutil ubla set on gs://static.$DOMAIN_NAME
 gsutil ubla set on gs://stored-objects.$DOMAIN_NAME
 gsutil ubla set on gs://external-modules.$DOMAIN_NAME
 gsutil ubla set on gs://cached-render-results.$DOMAIN_NAME
-gsutil iam ch allUsers:objectViewer gs://static.$DOMAIN_NAME
-echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
-  && gsutil cors set static-cors.json gs://static.$DOMAIN_NAME \
-  && rm -f static-cors.json
-gcloud dns record-sets transaction start --zone=$ZONE_NAME
-gcloud dns record-sets transaction add --zone $ZONE_NAME --name static.$DOMAIN_NAME. --ttl 7200 --type CNAME c.storage.googleapis.com.
-gcloud dns record-sets transaction execute --zone $ZONE_NAME
+gsutil ubla set on gs://upload.$DOMAIN_NAME
 
 gcloud iam service-accounts keys create application_default_credentials.json \
   --iam-account $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com
 kubectl create secret generic minio-gcs-credentials \
+  --from-file=./application_default_credentials.json
+rm application_default_credentials.json
+
+gcloud iam service-accounts keys create application_default_credentials.json \
+  --iam-account $CLUSTER_NAME-tusd@$PROJECT_NAME.iam.gserviceaccount.com
+kubectl create secret generic tusd-gcs-credentials \
   --from-file=./application_default_credentials.json
 rm application_default_credentials.json
 
@@ -257,7 +250,7 @@ source ./02-sql.sh
 
 # 3. Start rabbitmq+minio
 rabbitmq/init.sh
-minio/init.sh $ENV
+source ./03-storage.sh
 
 # 4. Create secrets! You'll need to be very careful here....
 : ${CJW_SECRET_KEY:?"Must set CJW_SECRET_KEY"}
@@ -322,3 +315,6 @@ STATIC_IP=$(gcloud compute addresses describe $APP_STATIC_IP_NAME --global | gre
 gcloud dns record-sets transaction start --zone=$ZONE_NAME
 gcloud dns record-sets transaction add --zone=$ZONE_NAME --name $APP_FQDN. --ttl 300 --type A $STATIC_IP
 gcloud dns record-sets transaction execute --zone=$ZONE_NAME
+
+# 8. Set up ingress to terminate SSL and direct traffic to tusd
+source 08-tusd.sh

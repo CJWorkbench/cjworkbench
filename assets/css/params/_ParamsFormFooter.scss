@@ -1,11 +1,10 @@
-.submit-button {
+.params-form-footer {
   margin-top: 1rem;
-  text-align: right;
-
+  display: flex;
+  justify-content: flex-end;
 
   button {
-    @extend .action-button;
-    @extend .button-orange--fill;
+    @include action-button();
     display: inline-block; // override whatever .action-button does
 
     // Now resize: this button can be a good deal smaller than a typical .action-button
@@ -14,21 +13,29 @@
     width: auto;
     height: auto;
     font-size: 1.1rem;
+  }
 
+  button[type="button"] {
+    @include button-blue();
+    margin-right: auto; // put it as far to the left as possible
+  }
+
+  button[type="submit"] {
+    @include button-orange--fill();
 
     i::before {
       vertical-align: -2px; // font bug? glyph isn't centered?
       margin-left: 3px;
     }
     &:disabled {
-      @extend .button-blue;
+      @include button-blue();
       opacity: .6;
       cursor: default;
 
       &:hover {
-      background-color: transparent;
-      color: $brand-workspace;
-      cursor: default;
+        background-color: transparent;
+        color: $brand-workspace;
+        cursor: default;
       }
       &:active {
         color: $brand-workspace;

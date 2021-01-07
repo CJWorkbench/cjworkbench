@@ -408,26 +408,26 @@ export default class WorkbenchAPI {
     return this._uploadManagerPromise
   }
 
-  async uploadFile (stepId, file, onProgress) {
+  async uploadFile (stepSlug, file, onProgress) {
     const uploadManager = await this._getUploadManagerPromise()
-    return uploadManager.upload(stepId, file, onProgress)
+    return uploadManager.upload(stepSlug, file, onProgress)
   }
 
-  async cancelFileUpload (stepId) {
+  async cancelFileUpload (stepSlug) {
     const uploadManager = await this._getUploadManagerPromise()
-    return uploadManager.cancel(stepId)
+    return uploadManager.cancel(stepSlug)
   }
 
-  async getStepFileUploadApiToken (stepId) {
-    return this.websocket.callServerHandler('step.get_file_upload_api_token', { stepId }).then(({ apiToken }) => apiToken)
+  async getStepFileUploadApiToken (stepSlug) {
+    return this.websocket.callServerHandler('step.get_file_upload_api_token', { stepSlug }).then(({ apiToken }) => apiToken)
   }
 
-  async resetStepFileUploadApiToken (stepId) {
-    return this.websocket.callServerHandler('step.reset_file_upload_api_token', { stepId }).then(({ apiToken }) => apiToken)
+  async resetStepFileUploadApiToken (stepSlug) {
+    return this.websocket.callServerHandler('step.reset_file_upload_api_token', { stepSlug }).then(({ apiToken }) => apiToken)
   }
 
-  async clearStepFileUploadApiToken (stepId) {
-    return this._callExpectingNull('step.clear_file_upload_api_token', { stepId })
+  async clearStepFileUploadApiToken (stepSlug) {
+    return this._callExpectingNull('step.clear_file_upload_api_token', { stepSlug })
   }
 
   /**

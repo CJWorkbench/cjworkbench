@@ -7,7 +7,18 @@ from django.urls import path
 
 import server.views.jsdata.timezones
 from . import views
-from .views import acl, health, jsdata, lessons, oauth, workflows, uploads, settings
+from .views import (
+    acl,
+    files,
+    health,
+    jsdata,
+    lessons,
+    oauth,
+    settings,
+    tusd_hooks,
+    uploads,
+    workflows,
+)
 
 
 def redirect(url: str):
@@ -76,6 +87,11 @@ urlpatterns = [
         "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/uploads/<uuid:uuid>",
         uploads.Upload.as_view(),
     ),
+    path(
+        "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/files",
+        files.create_tus_upload_for_workflow_and_step,
+    ),
+    path("tusd-hooks", tusd_hooks.tusd_hooks),  # haproxy blocks this one
     # Not-really-an-API API endpoints
     # TODO rename all these so they don't start with `/api`. (The only way to
     # use them is as a logged-in user.)
