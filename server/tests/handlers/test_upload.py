@@ -52,4 +52,4 @@ class UploadTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         # "c3RlcC0x": "step-1"
         self.assertIn("stepSlug c3RlcC0x", response.headers["Upload-Metadata"])
         # apiToken should be empty
-        self.assertRegex(response.headers["Upload-Metadata"], "apiToken (?:$|,)")
+        self.assertRegex(response.headers["Upload-Metadata"], "apiToken ?(?:$|,)")
