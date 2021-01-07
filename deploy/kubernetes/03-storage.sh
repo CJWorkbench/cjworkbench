@@ -13,6 +13,23 @@ else
   PROJECT_NAME="workbench-staging"
 fi
 
+# Uploads expire after 1d
+echo '{"lifecycle":{"rule":[{"action":{"type":"Delete"},"condition":{"age":1}}]}}' \
+  > 1d-lifecycle.json
+gsutil lifecycle set 1d-lifecycle.json gs://upload.$DOMAIN_NAME
+rm 1d-lifecycle.json
+
+gcloud iam service-accounts create $CLUSTER_NAME-minio --display-name $CLUSTER_NAME-minio
+# minio needs storage.buckets.list, or it prints lots of errors.
+# (which seems like a bug.... https://github.com/minio/mc/issues/2652)
+# Minio uses this permission to poll for bucket policies.
+gcloud iam roles create Minio \
+  --project=$PROJECT_NAME \
+  --permissions=storage.buckets.list,storage.buckets.get,storage.objects.create,storage.objects.delete,storage.objects.get,storage.objects.list,storage.objects.update
+gcloud projects add-iam-policy-binding $PROJECT_NAME \
+  --member=serviceAccount:$CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com \
+  --role=roles/storage.admin
+
 # We give minio, migrate, renderer and fetcher direct access to Google Cloud
 # Storage using its interoperability ("S3") API. The `cjwstate.minio` module
 # accesses GCS using botocore and boto3, as though it were S3.
@@ -72,142 +89,11 @@ gsutil iam ch \
   gs://upload.$DOMAIN_NAME
 
 
-# Generate new root key+certificate. (We'll delete the key forever -- it has no
-# long-term value.)
-openssl req \
-  -nodes \
-  -sha256 \
-  -x509 \
-  -days 99999 \
-  -newkey rsa:2048 \
-  -keyout "$DIR"/ca.key \
-  -out "$DIR"/ca.crt \
-  -subj "/CN=ca.minio-etcd.default.cluster.local"
-
-for name in minio-etcd-0 minio-etcd-1 minio-etcd-2; do
-  # Generate a peer keys+certificates signed by ca.crt
-  openssl req \
-    -nodes \
-    -sha256 \
-    -newkey rsa:2048 \
-    -days 99999 \
-    -keyout "$DIR"/$name-peer.key \
-    -out "$DIR"/$name-peer.csr \
-    -subj "/CN=$name.minio-etcd-peer.default.svc.cluster.local"
-
-  openssl x509 \
-    -sha256 \
-    -req -in "$DIR"/$name-peer.csr \
-    -days 99999 \
-    -CA "$DIR"/ca.crt \
-    -CAkey "$DIR"/ca.key \
-    -CAcreateserial \
-    -out "$DIR"/$name-peer.crt
-done
-
-# Generate server certificate, which points to service name
-openssl req \
-  -nodes \
-  -sha256 \
-  -newkey rsa:2048 \
-  -keyout "$DIR"/server.key \
-  -out "$DIR"/server.csr \
-  -days 99999 \
-  -subj "/CN=minio-etcd.default.svc.cluster.local"
-
-openssl x509 \
-  -req -in "$DIR"/server.csr \
-  -sha256 \
-  -CA "$DIR"/ca.crt \
-  -CAkey "$DIR"/ca.key \
-  -CAcreateserial \
-  -days 99999 \
-  -out "$DIR"/server.crt
-
-# Generate client certificate -- one that etcd is happy with
-# etcd likes to see "clientAuth" and doesn't care about DNS or IP addresses
-
-openssl req \
-  -nodes \
-  -sha256 \
-  -newkey rsa:2048 \
-  -keyout "$DIR"/client.key \
-  -out "$DIR"/client.csr \
-  -days 99999 \
-  -subj "/CN=client"
-
-openssl x509 \
-  -req -in "$DIR"/client.csr \
-  -sha256 \
-  -CA "$DIR"/ca.crt \
-  -CAkey "$DIR"/ca.key \
-  -CAcreateserial \
-  -days 99999 \
-  -extensions client_server_ssl \
-  -extfile <(printf "[client_server_ssl]\nextendedKeyUsage=clientAuth") \
-  -out "$DIR"/client.crt
-
-kubectl create secret generic minio-etcd-server-certs \
-  --from-file="$DIR"/ca.crt \
-  --from-file=minio-etcd-0-peer.crt="$DIR"/minio-etcd-0-peer.crt \
-  --from-file=minio-etcd-0-peer.key="$DIR"/minio-etcd-0-peer.key \
-  --from-file=minio-etcd-1-peer.crt="$DIR"/minio-etcd-1-peer.crt \
-  --from-file=minio-etcd-1-peer.key="$DIR"/minio-etcd-1-peer.key \
-  --from-file=minio-etcd-2-peer.crt="$DIR"/minio-etcd-2-peer.crt \
-  --from-file=minio-etcd-2-peer.key="$DIR"/minio-etcd-2-peer.key \
-  --from-file=server.crt="$DIR"/server.crt \
-  --from-file=server.key="$DIR"/server.key
-
-kubectl create secret generic minio-etcd-client-certs \
-  --from-file=ca.crt="$DIR"/ca.crt \
-  --from-file=server.crt="$DIR"/server.crt \
-  --from-file=client.crt="$DIR"/client.crt \
-  --from-file=client.key="$DIR"/client.key
-
-rm "$DIR"/*.{crt,csr,key,srl}
-
-kubectl apply -f "$DIR"/minio-etcd-statefulset.yaml
-
-sleep 60
-kubectl set env statefulset/minio-etcd ETCD_INITIAL_CLUSTER_STATE=existing
-
 # We'll use openssl rand to generate a password that only uses base64
 # characters. Then we'll base64-encode it for use in kubectl commands.
 kubectl create secret generic minio-access-key \
   --from-literal=access_key=$(openssl rand -base64 24 | base64) \
   --from-literal=secret_key=$(openssl rand -base64 24 | base64)
-
-kubectl create secret generic minio-root-access-key \
-  --from-literal=access_key=$(openssl rand -base64 24 | base64) \
-  --from-literal=secret_key=$(openssl rand -base64 24 | base64)
-
-kubectl apply -f "$DIR"/minio-deployment.yaml
-kubectl apply -f "$DIR"/minio-service.yaml
-
-# Now use the root user to generate the non-root user.
-kubectl run minio-adduser \
-  -i --rm=true \
-  --restart=Never \
-  --image=minio/mc:RELEASE.2020-10-03T02-54-56Z \
-  --overrides='
-    {
-      "spec": {
-        "containers": [{
-          "name": "minio-adduser",
-          "image": "minio/mc:RELEASE.2020-10-03T02-54-56Z",
-          "command": [
-            "sh", "-c",
-            "while ! nc -z minio-service 80; do sleep 0.1; done; mc config host add workbench http://minio-service \"$ROOT_ACCESS_KEY\" \"$ROOT_SECRET_KEY\" && mc admin user add workbench \"$ACCESS_KEY\" \"$SECRET_KEY\" && mc admin policy set workbench readwrite user=\"$ACCESS_KEY\""
-          ],
-          "env": [
-            {"name": "ROOT_ACCESS_KEY", "valueFrom": {"secretKeyRef": {"name": "minio-root-access-key", "key": "access_key"}}},
-            {"name": "ROOT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "minio-root-access-key", "key": "secret_key"}}},
-            {"name": "ACCESS_KEY", "valueFrom": {"secretKeyRef": {"name": "minio-access-key", "key": "access_key"}}},
-            {"name": "SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "minio-access-key", "key": "secret_key"}}}
-          ]
-        }]
-      }
-    }'
 
 # Set up load balancer
 kubectl apply -f "$DIR"/minio-service.yaml
@@ -219,3 +105,11 @@ STATIC_IP=$(gcloud compute addresses describe user-files --global | grep address
 gcloud dns record-sets transaction start --zone=workbench-zone
 gcloud dns record-sets transaction add --zone=workbench-zone --name user-files.$DOMAIN_NAME. --ttl 7200 --type A $STATIC_IP
 gcloud dns record-sets transaction execute --zone=workbench-zone
+
+gsutil iam ch allUsers:objectViewer gs://static.$DOMAIN_NAME
+echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
+  && gsutil cors set static-cors.json gs://static.$DOMAIN_NAME \
+  && rm -f static-cors.json
+gcloud dns record-sets transaction start --zone=$ZONE_NAME
+gcloud dns record-sets transaction add --zone $ZONE_NAME --name static.$DOMAIN_NAME. --ttl 7200 --type CNAME c.storage.googleapis.com.
+gcloud dns record-sets transaction execute --zone $ZONE_NAME
