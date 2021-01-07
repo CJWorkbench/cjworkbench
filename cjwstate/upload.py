@@ -99,6 +99,10 @@ async def create_tus_upload(
 
     Raise on error communicating with tusd.
     """
+
+    if not settings.TUS_CREATE_UPLOAD_URL:
+        raise RuntimeError("Environment error: you must set TUS_CREATE_UPLOAD_URL")
+
     upload_metadata_header = b"apiToken %s,filename %s,workflowId %s,stepSlug %s" % (
         # We include apiToken: after a user resets apiToken, prior API uploads
         # must break. Rely on storage-layer encryption to encrypt the API token,
@@ -132,6 +136,10 @@ async def create_tus_upload(
         settings.TUS_CREATE_UPLOAD_URL, response.headers["location"]
     )
 
-    return original_tus_upload_url.replace(
+    # TUS_CREATE_UPLOAD_URL is only visible on our intranet (where it isn't
+    # firewalled away). Give customers the Internet-visible URL.
+    tus_upload_url = original_tus_upload_url.replace(
         settings.TUS_CREATE_UPLOAD_URL, settings.TUS_EXTERNAL_URL_PREFIX_OVERRIDE
     )
+
+    return tus_upload_url

@@ -479,9 +479,7 @@ KB_ROOT_URL = "http://help.workbenchdata.com/"
 
 TEST_RUNNER = "server.tests.runner.TimeLoggingDiscoverRunner"
 
-if "TUS_CREATE_UPLOAD_URL" not in os.environ:
-    sys.exit("Must set TUS_CREATE_UPLOAD_URL")
-TUS_CREATE_UPLOAD_URL = os.environ["TUS_CREATE_UPLOAD_URL"]
+TUS_CREATE_UPLOAD_URL = os.environ.get("TUS_CREATE_UPLOAD_URL", "")
 TUS_EXTERNAL_URL_PREFIX_OVERRIDE = os.environ.get(
     "TUS_EXTERNAL_URL_PREFIX_OVERRIDE", TUS_CREATE_UPLOAD_URL
 )
