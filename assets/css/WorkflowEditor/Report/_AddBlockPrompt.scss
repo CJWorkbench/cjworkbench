@@ -2,24 +2,33 @@ article.report {
   .add-block-prompt {
     text-align: center;
     position: relative;
-    opacity: .3;
+    margin: rem(1.5) 0;
 
     &:hover, &.active, &:focus-within {
-      opacity: 1;
-      &::before {
-        // Show a line on hover
+      &::before, &::after {
+        // Line to left and right of buttons
         display: block;
         content: '';
-        height: .2rem;
+        height: .3rem;
         position: absolute;
-        top: calc(50% - .1rem);
-        background: $brand-orange;
+        top: calc(50% - .15rem);
+        background: $heading-bg;
+        border-radius: .15rem;
+        // we'll position them so the left one has right: [half buttons width + extra]
+        // and the right one has left: [half buttons width + extra]
+      }
+      &::before {
         left: 2rem;
+        right: calc(50% + 8rem);
+      }
+      &::after {
         right: 2rem;
+        left: calc(50% + 8rem);
       }
 
       &>button, &>.dropdown>button {
-        border-color: $medium-gray;
+        border-color: $heading-bg;
+        color: $heading-bg;
       }
     }
 
@@ -38,22 +47,21 @@ article.report {
     &>button, &>.dropdown>button {
       background: white;
       cursor: pointer;
-      border: 1px solid transparent;
-      border-radius: .25rem;
+      border: 1px solid $light-gray;
+      border-radius: 50%;
       padding: .8rem;
-      color: $medium-gray;
+      color: $light-gray;
       font-size: 1.6rem;
       line-height: 1;
 
       &:hover {
-        color: $dark-gray;
-        border-color: $dark-gray;
-        background-color: composite-colors($dark-accent--soft, white);
+        color: $white;
+        background-color: $heading-bg;
       }
       &:active, &[aria-expanded=true], &:focus {
-        color: $brand-orange;
-        border-color: $brand-orange;
-        background-color: composite-colors($dark-accent--soft-M, white);
+        color: white;
+        border-color: $header-hover;
+        background-color: $header-hover;
       }
     }
   }
