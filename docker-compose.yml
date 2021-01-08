@@ -259,7 +259,7 @@ services:
       AWS_SECRET_ACCESS_KEY: minio_root_secret
       AWS_REGION: us-east-1
     command: [
-      '-port=80',
+      '-port=8080',  # no permission to bind port 80 on google-cloud-build won't bind port 80
       # no hooks in unit tests
       '-s3-endpoint=http://testminio:9000',
       '-s3-bucket=unittest-upload',
