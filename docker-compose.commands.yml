@@ -91,7 +91,7 @@ services:
       - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
-      TUS_CREATE_UPLOAD_URL: http://testtusd/files
+      TUS_CREATE_UPLOAD_URL: http://testtusd:8080/files
       CJW_DB_HOST: testdatabase
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
       MINIO_URL: http://testminio:9000

@@ -41,7 +41,6 @@ services:
       MINIO_SECRET_KEY: minio_root_secret
       MINIO_URL: http://minio:9000
       MINIO_BUCKET_PREFIX: integrationtest
-      TUS_CREATE_UPLOAD_URL: http://tusd/files
 
   minio:
     image: minio/minio:RELEASE.2020-10-12T21-53-21Z
@@ -107,6 +106,7 @@ services:
     environment:
       <<: *common_env
       STATIC_URL: http://minio.django-issue-32304.com:9000/integrationtest-static/
+      TUS_CREATE_UPLOAD_URL: http://tusd:8080/files
     volumes:
       - local_mail:/app/local_mail
 
@@ -118,7 +118,7 @@ services:
       AWS_SECRET_ACCESS_KEY: minio_root_secret
       AWS_REGION: us-east-1
     command: [
-      '-port=80',
+      '-port=8080',
       '-hooks-http=http://frontend:8080/tusd-hooks',
       '-hooks-enabled-events=pre-finish',
       '-s3-endpoint=http://minio:9000',

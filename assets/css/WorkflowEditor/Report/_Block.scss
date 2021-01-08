@@ -1,6 +1,7 @@
 article.report .report-container section.block {
-  padding: 0 rem(2) 0 rem(1.7); // no padding at the top -- it's provided by `block-actions` // 1.7 left for highlight margin
-  border-left: rem(.3) solid transparent; // in order to highlight the block when hover
+  padding: 0 3.2rem 0 2.72rem; // no padding at the top -- it's provided by `block-actions`
+  // 1.7 left for highlight margin
+  border-left: 0.5rem solid transparent; // to highlight the block when hover
 
   .block-main {
     flex: 1 1 auto;
@@ -9,22 +10,44 @@ article.report .report-container section.block {
     }
   }
   .block-actions {
-    flex: 0 0 auto;
-    display: flex;
-    padding: 0;
+
     button {
-      opacity: 1;
-      margin-right: rem(.5);
-      background-color: white;
-      color: $light-gray;
+      padding: .8rem;
+      margin-right: .8rem;
       border: 1px solid $light-gray;
+      border-radius: 50%;
+      font-size: 1.6rem;
+      line-height: 0;
+
+      color: $light-gray;
+      background-color: white;
+
+      &:disabled {
+        color: $light-gray;
+      }
+
+      &:hover, &:focus, &:active {
+        opacity: 1;
+      }
+
+      &:hover, &:focus {
+        background: $SuperLightGray;
+      }
+
+      &:active {
+        background-color: $page-background;
+        color: $brand-text--darker;
+      }
     }
   }
+
   &:hover {
     border-left-color: $heading-bg; // in order to highlight the block
+
     .block-actions button {
       border: 1px solid $heading-bg;
       color: $heading-bg;
+
       &:hover {
         color: white;
         background-color: $heading-bg;

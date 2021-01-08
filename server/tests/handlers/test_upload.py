@@ -40,7 +40,7 @@ class UploadTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(response.error, "")
         # Test that response has tusUploadUrl
         tus_upload_url = response.data["tusUploadUrl"]
-        self.assertRegex(tus_upload_url, "http://testtusd/files/[0-9a-z]+")
+        self.assertRegex(tus_upload_url, "http://testtusd:8080/files/[0-9a-z]+")
 
         # Upload was created on tusd
         response = httpx.head(tus_upload_url, headers={"Tus-Resumable": "1.0.0"})
