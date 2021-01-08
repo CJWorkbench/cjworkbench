@@ -1,17 +1,55 @@
 article.report .report-container section.block {
-  display: flex;
-  margin: 1rem 2rem;
+  padding: 0 3.2rem 0 2.72rem; // no padding at the top -- it's provided by `block-actions`
+  // 1.7 left for highlight margin
+  border-left: 0.5rem solid transparent; // to highlight the block when hover
 
   .block-main {
     flex: 1 1 auto;
   }
 
   .block-actions {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    margin: 0 1rem 0 -1rem;
+    button {
+      padding: .8rem;
+      margin-right: .8rem;
+      border: 1px solid $light-gray;
+      border-radius: 50%;
+      font-size: 1.6rem;
+      line-height: 0;
+
+      color: $light-gray;
+      background-color: white;
+
+      &:disabled {
+        color: $light-gray;
+      }
+
+      &:hover, &:focus, &:active {
+        opacity: 1;
+      }
+
+      &:hover, &:focus {
+        background: $SuperLightGray;
+      }
+
+      &:active {
+        background-color: $page-background;
+        color: $brand-text--darker;
+      }
+    }
+  }
+
+  &:hover {
+    border-left-color: $heading-bg; // in order to highlight the block
+
+    .block-actions button {
+      border: 1px solid $heading-bg;
+      color: $heading-bg;
+
+      &:hover {
+        color: white;
+        background-color: $heading-bg;
+      }
+    }
   }
 }
 
