@@ -50,13 +50,12 @@ steps:
 # Unit-test
 - name: 'docker/compose:1.27.4'
   args: [ '-f', 'server/tests/docker-compose.yml',
-          'up',
-          '--exit-code-from', 'unittest',
+          'run',
+          'unittest'
         ]
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-
 # Integration-test: migrate, then run the integration-test image
 - name: 'docker/compose:1.27.4'
   args: [ '-f', 'integrationtests/docker-compose.yml',
