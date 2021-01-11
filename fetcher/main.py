@@ -1,3 +1,7 @@
+import asyncio
+
+from django.conf import settings
+
 from cjwstate import rabbitmq
 from .fetch import handle_fetch
 
@@ -8,5 +12,4 @@ async def main_loop():
     connection.declare_queue_consume(
         rabbitmq.Fetch, rabbitmq.acking_callback(handle_fetch)
     )
-    # Run forever
-    await connection._closed_event.wait()
+    await connection.wait_closed()

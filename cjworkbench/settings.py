@@ -334,7 +334,7 @@ LOGGING = {
         "": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
         # It's nice to have level=DEBUG, but we have experience with lots of
         # modules that we think are now better off as INFO.
-        "aioamqp": {"level": "INFO"},
+        "aiormq": {"level": "INFO"},
         "asyncio": {"level": "INFO"},
         "botocore": {"level": "INFO"},
         "channels_rabbitmq": {"level": "INFO"},

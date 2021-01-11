@@ -18,8 +18,12 @@ its Django Channels channel layer.
 import asyncio
 import functools
 import logging
+import pickle
 from typing import Callable, Dict
+
 import msgpack
+from aiormq.exceptions import DeliveryError
+
 from .. import clientside
 from .connection import RetryingConnection, get_connection
 
@@ -29,6 +33,15 @@ logger = logging.getLogger(__name__)
 
 Render = "render"
 Fetch = "fetch"
+
+
+def _workflow_group_name(workflow_id: int) -> str:
+    """Build a channel_layer group name, given a workflow ID.
+
+    Messages sent to this group will be sent to all clients connected to
+    this workflow.
+    """
+    return f"workflow-{str(workflow_id)}"
 
 
 def acking_callback(fn):
@@ -46,56 +59,14 @@ def acking_callback(fn):
     """
 
     @functools.wraps(fn)
-    async def inner(channel, body, envelope, properties):
+    async def inner(message):
+        channel = message.channel
+        delivery_tag = message.delivery.delivery_tag
         try:
-            message = msgpack.unpackb(body, raw=False)
-            await fn(message)
+            body = msgpack.unpackb(message.body)
+            await fn(body)
         finally:
-            await channel.basic_client_ack(envelope.delivery_tag)
-
-    return inner
-
-
-def manual_acking_callback(fn):
-    """
-    Decode `message` and supply a no-arg `ack()` function to a callback.
-
-    Usage:
-
-        @rabbitmq.manual_acking_callback
-        async def handle_render_message(message: Dict[str, Any],
-                                        ack: Callable[[], Awaitable[None]]):
-            # You _must_ ack. If you do not, a RuntimeError will be raised.
-            await ack()
-
-        # Begin consuming
-        await connection.consume(rabbitmq.Render, handle_render_message, 3)
-    """
-
-    @functools.wraps(fn)
-    async def inner(channel, body, envelope, properties):
-        acked = False
-
-        async def ack():
-            nonlocal acked
-            if acked:
-                try:
-                    raise RuntimeError
-                except RuntimeError:
-                    logger.exception("You called `ack()` twice")
-            await channel.basic_client_ack(envelope.delivery_tag)
-            acked = True
-
-        try:
-            message = msgpack.unpackb(body, raw=False)
-            await fn(message, ack)
-        finally:
-            if not acked:
-                try:
-                    raise RuntimeError
-                except RuntimeError:
-                    logger.exception("You did not call ack()")
-                await ack()
+            await channel.basic_ack(delivery_tag)
 
     return inner
 
@@ -129,7 +100,7 @@ async def queue_render(workflow_id: int, delta_id: int) -> None:
     isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
     """
     connection = await _get_connection_async()
-    await connection.queue_render(workflow_id, delta_id)
+    await connection.publish("render", dict(workflow_id=workflow_id, delta_id=delta_id))
 
 
 async def queue_fetch(workflow_id: int, step_id: int) -> None:
@@ -149,7 +120,26 @@ async def queue_fetch(workflow_id: int, step_id: int) -> None:
     isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
     """
     connection = await _get_connection_async()
-    await connection.queue_fetch(workflow_id, step_id)
+    await connection.publish("fetch", dict(workflow_id=workflow_id, step_id=step_id))
+
+
+async def _queue_for_group(*, workflow_id: int, **kwargs) -> None:
+    connection = await _get_connection_async()
+    group_name = _workflow_group_name(workflow_id)
+    data = dict(__asgi_group__=group_name, workflow_id=workflow_id, **kwargs)
+    try:
+        await connection.publish(
+            group_name,
+            data,
+            # exchange="groups" magic string is defined here:
+            # https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange
+            exchange="groups",
+        )
+    except DeliveryError:
+        logger.warning(
+            "Did not deliver to all queues on group %r: a queue is at capacity",
+            group_name,
+        )
 
 
 async def send_update_to_workflow_clients(
@@ -163,9 +153,24 @@ async def send_update_to_workflow_clients(
 
     Start and cache a RetryingConnection on the current event loop if there
     isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
+
+    This sends on a RabbitMQ topic exchange called "groups". (That magic
+    string is described at
+    https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.)
+    RabbitMQ will deliver the message to each matching queue.
+
+    If one of those queues is full, we may warn about a DeliveryError
+    error. The message will still be delivered to other queues. (See
+    https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
+    "full queue" usually means "shaky HTTP connection" or "stalled web
+    browser", the user probably won't notice that we drop the message.
     """
-    connection = await _get_connection_async()
-    await connection.send_update_to_workflow_clients(workflow_id, update)
+    pickled_update = pickle.dumps(update)
+    await _queue_for_group(
+        workflow_id=workflow_id,
+        type="send_pickled_update",
+        pickled_update=pickled_update,
+    )
 
 
 async def queue_render_if_consumers_are_listening(
@@ -181,6 +186,21 @@ async def queue_render_if_consumers_are_listening(
     Each consumer will (presumably) call `cjwstate.rabbitmq.queue_render()`.
     (Renderers will ignore spurious calls. And there are no consumers,
     queue_render() won't be called.)
+
+    Start and cache a RetryingConnection on the current event loop if there
+    isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
+
+    This sends on a RabbitMQ topic exchange called "groups". (That magic
+    string is described at
+    https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.)
+    RabbitMQ will deliver the message to each matching queue.
+
+    If one of those queues is full, we may warn about a DeliveryError
+    error. The message will still be delivered to other queues. (See
+    https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
+    "full queue" usually means "shaky HTTP connection" or "stalled web
+    browser", the user probably won't notice that we drop the message.
     """
-    connection = await _get_connection_async()
-    await connection.queue_render_if_consumers_are_listening(workflow_id, delta_id)
+    await _queue_for_group(
+        workflow_id=workflow_id, type="queue_render", delta_id=delta_id
+    )

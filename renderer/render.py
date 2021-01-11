@@ -72,7 +72,6 @@ async def render_workflow_and_maybe_requeue(
     pg_render_locker: PgRenderLocker,
     workflow_id: int,
     delta_id: int,
-    ack: Callable[[], Awaitable[None]],
     requeue: Callable[[int, int], Awaitable[None]],
 ) -> None:
     """
@@ -90,15 +89,12 @@ async def render_workflow_and_maybe_requeue(
         workflow = await _lookup_workflow(workflow_id)
     except Workflow.DoesNotExist:
         logger.info("Skipping render of deleted Workflow %d", workflow_id)
-        await ack()
         return
 
     try:
         async with pg_render_locker.render_lock(workflow_id) as lock:
-            try:
-                result = await render_workflow_once(workflow, delta_id)
-            except (asyncio.CancelledError, DatabaseError, InterfaceError):
-                raise  # all undefined behavior
+            # any error leads to undefined behavior
+            result = await render_workflow_once(workflow, delta_id)
 
             # requeue if needed
             await lock.stall_others()
@@ -130,38 +126,8 @@ async def render_workflow_and_maybe_requeue(
             # schedule a render, there is always an un-acked render for that
             # workflow queued in RabbitMQ until the workflow is up-to-date. (At
             # this exact moment, there are briefly two un-acked renders.)
-            await ack()
     except WorkflowAlreadyLocked:
         logger.info("Workflow %d is being rendered elsewhere; ignoring", workflow_id)
-        await ack()
-    except (DatabaseError, InterfaceError):
-        # Possibilities:
-        #
-        # 1. There's a bug in renderer.execute. This may leave the event
-        # loop's executor thread's database connection in an inconsistent
-        # state. [2018-11-06 saw this on production.] The best way to clear
-        # up the leaked, broken connection is to die. (Our parent process
-        # should restart us, and RabbitMQ will give the job to someone
-        # else.)
-        #
-        # 2. The database connection died (e.g., Postgres went away). The
-        # best way to clear up the leaked, broken connection is to die.
-        # (Our parent process should restart us, and RabbitMQ will give the
-        # job to someone else.)
-        #
-        # 3. PgRenderLocker's database connection died (e.g., Postgres went
-        # away). We haven't seen this much in practice; so let's die and let
-        # the parent process restart us.
-        #
-        # 4. There's some design flaw we haven't thought of, and we
-        # shouldn't ever render this workflow. If this is the case, we're
-        # doomed.
-        #
-        # If you're seeing this error that means there's a bug somewhere
-        # _else_. If you're staring at a case-3 situation, please remember
-        # that cases 1 and 2 are important, too.
-        logger.exception("Fatal database error; exiting")
-        os._exit(1)
 
 
 async def _queue_render(workflow_id, delta_id):
@@ -172,7 +138,6 @@ async def _queue_render(workflow_id, delta_id):
 
 async def handle_render(
     message: Dict[str, Any],
-    ack: Callable[[], Awaitable[None]],
     pg_render_locker: PgRenderLocker,
 ) -> None:
     try:
@@ -187,9 +152,8 @@ async def handle_render(
             ),
             message,
         )
-        await ack()
         return
 
     await render_workflow_and_maybe_requeue(
-        pg_render_locker, workflow_id, delta_id, ack, _queue_render
+        pg_render_locker, workflow_id, delta_id, _queue_render
     )
