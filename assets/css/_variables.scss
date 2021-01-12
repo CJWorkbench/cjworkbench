@@ -31,7 +31,7 @@ $Vlight-gray: lighten($dark-gray,39%);
 $font-family-sans-serif: Roboto, Helvetica, sans-serif; // override Bootstrap
 $modal-footer: $WF-background;
 $dark-orange:#F88630;
-$document-blue--light: lighten($document-blue, 13%);
+$document-blue--light: #5C88A1;
 $heading-bg: $document-blue--light;
 $header-hover: $document-blue;
 $input-alt-bg: #96afc3;
@@ -89,7 +89,7 @@ $brand-workspace--medium: lighten($workspace-action,15%);
 $brand-background: rgba($brand-workspace--medium, .25); // used for blending in backgrounds // DO NOT USE
 $brand-background--action:rgba($brand-workspace--medium, .60); // DO NOT USE
 
-$brand-orange--light: lighten($brand-orange,26%);
+$brand-orange--light: #FFF1E7; //Should be renamed $brand-action
 $brand-orange--medium: #fcbe90;
 $brand-orange--medium-dark: lighten($brand-orange,9%);
 $brand-orange--darker: darken($brand-orange, 10%);
