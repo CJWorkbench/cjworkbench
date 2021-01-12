@@ -169,29 +169,29 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+#: assets/js/WorkflowEditor/Report/ShareCard.js:22
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:24
+#: assets/js/WorkflowEditor/Report/ShareCard.js:26
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Επεξεργασία απορρήτου"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:27
+#: assets/js/WorkflowEditor/Report/ShareCard.js:30
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Διεύθυνση URL αναφοράς"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:15
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "Αυτή η ροή εργασιών είναι ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "Αυτή η ροή εργασιών είναι δημόσια"
 
@@ -330,27 +330,27 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Γλώσσα"
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:81
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WfHamburgerMenu.js:48
+#: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "μενού"
 
@@ -482,19 +482,19 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:41
 msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:17
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:16
 msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:35
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:34
 msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:27
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:26
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
@@ -989,41 +989,41 @@ msgstr ""
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Δεν έγινε επεξεργασία του προσαρμοσμένου τύπου {name}"
 
-#: assets/js/params/File/File.js:210
+#: assets/js/params/File/File.js:204
 msgid "js.params.Custom.File.browse.label"
 msgstr "Αναζήτηση"
 
-#: assets/js/params/File/File.js:176
+#: assets/js/params/File/File.js:170
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr "Ακύρωση ανεβάσματος"
 
-#: assets/js/params/File/File.js:174
+#: assets/js/params/File/File.js:168
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr "Ακύρωση ανεβάσματος"
 
-#: assets/js/params/File/File.js:206
+#: assets/js/params/File/File.js:200
 msgid "js.params.Custom.File.dragfilehere"
 msgstr "Σύρσιμο του αρχείου εδώ"
 
-#: assets/js/params/File/File.js:223
+#: assets/js/params/File/File.js:217
 msgid "js.params.Custom.File.dropFileHere"
 msgstr "Απόθεση του αρχείου εδώ"
 
 #. This is shown after js.params.Custom.File.dragfilehere
-#: assets/js/params/File/File.js:207
+#: assets/js/params/File/File.js:201
 msgid "js.params.Custom.File.or"
 msgstr "ή"
 
-#: assets/js/params/File/File.js:191
+#: assets/js/params/File/File.js:185
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
-#: assets/js/params/ParamsFormFooter.js:62
+#: assets/js/params/ParamsFormFooter.js:63
 #, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:60
+#: assets/js/params/ParamsFormFooter.js:61
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
@@ -2280,22 +2280,6 @@ msgstr "Ξεχάσατε τον κωδικό;"
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
 msgstr "Σύνδεση"
-
-#: templates/account/logout.html:5
-msgid "py.templates.account.logout.title"
-msgstr "Αποσύνδεση"
-
-#: templates/account/logout.html:9
-msgid "py.templates.account.logout.formHeader"
-msgstr "Αποσύνδεση"
-
-#: templates/account/logout.html:12
-msgid "py.templates.account.logout.confirmation"
-msgstr "Είστε βέβαιος ότι θέλετε να αποσυνδεθείτε;"
-
-#: templates/account/logout.html:13
-msgid "py.templates.account.logout.button"
-msgstr "Αποσύνδεση"
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"

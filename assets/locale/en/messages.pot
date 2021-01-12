@@ -178,34 +178,34 @@ msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
 #. default-message: Only collaborators can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+#: assets/js/WorkflowEditor/Report/ShareCard.js:22
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr ""
 
 #. default-message: Anyone can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr ""
 
 #. As in 'Edit privacy settings'
 #. default-message: Edit privacy
-#: assets/js/WorkflowEditor/Report/ShareCard.js:24
+#: assets/js/WorkflowEditor/Report/ShareCard.js:26
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
 #. As in 'URL of report'
 #. default-message: Report URL
-#: assets/js/WorkflowEditor/Report/ShareCard.js:27
+#: assets/js/WorkflowEditor/Report/ShareCard.js:30
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
 
 #. default-message: This workflow is private
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:15
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr ""
 
 #. default-message: This workflow is public
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr ""
 
@@ -354,32 +354,32 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:81
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:48
+#: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -537,22 +537,22 @@ msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:41
 msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
 msgstr ""
 
 #. default-message: Edit
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:17
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:16
 msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
 msgstr ""
 
 #. default-message: Move down
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:35
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:34
 msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
 msgstr ""
 
 #. default-message: Move up
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:27
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:26
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
@@ -1154,48 +1154,48 @@ msgid "js.params.Custom.ComponentNotFound.error"
 msgstr ""
 
 #. default-message: Browse
-#: assets/js/params/File/File.js:210
+#: assets/js/params/File/File.js:204
 msgid "js.params.Custom.File.browse.label"
 msgstr ""
 
 #. default-message: Cancel Upload
-#: assets/js/params/File/File.js:176
+#: assets/js/params/File/File.js:170
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr ""
 
 #. default-message: Cancel upload
-#: assets/js/params/File/File.js:174
+#: assets/js/params/File/File.js:168
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr ""
 
 #. default-message: Drag file here
-#: assets/js/params/File/File.js:206
+#: assets/js/params/File/File.js:200
 msgid "js.params.Custom.File.dragfilehere"
 msgstr ""
 
 #. default-message: Drop file here
-#: assets/js/params/File/File.js:223
+#: assets/js/params/File/File.js:217
 msgid "js.params.Custom.File.dropFileHere"
 msgstr ""
 
 #. This is shown after js.params.Custom.File.dragfilehere
 #. default-message: or
-#: assets/js/params/File/File.js:207
+#: assets/js/params/File/File.js:201
 msgid "js.params.Custom.File.or"
 msgstr ""
 
 #. default-message: Replace
-#: assets/js/params/File/File.js:191
+#: assets/js/params/File/File.js:185
 msgid "js.params.Custom.File.replace"
 msgstr ""
 
 #. default-message: File-Upload API
-#: assets/js/params/ParamsFormFooter.js:62
+#: assets/js/params/ParamsFormFooter.js:63
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
 #. default-message: Open upload API instructions
-#: assets/js/params/ParamsFormFooter.js:60
+#: assets/js/params/ParamsFormFooter.js:61
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
@@ -2647,26 +2647,6 @@ msgstr ""
 #. default-message: Sign In
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
-msgstr ""
-
-#. default-message: Log out
-#: templates/account/logout.html:5
-msgid "py.templates.account.logout.title"
-msgstr ""
-
-#. default-message: Log out
-#: templates/account/logout.html:9
-msgid "py.templates.account.logout.formHeader"
-msgstr ""
-
-#. default-message: Are you sure you want to log out?
-#: templates/account/logout.html:12
-msgid "py.templates.account.logout.confirmation"
-msgstr ""
-
-#. default-message: Log out
-#: templates/account/logout.html:13
-msgid "py.templates.account.logout.button"
 msgstr ""
 
 #. default-message: Change password

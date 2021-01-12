@@ -51,17 +51,24 @@ def _clear_minio():
 
 def login(browser: Browser, email: str, password: str) -> None:
     """Log in through `/account/login` as the given user."""
+    # Selectors designed to work in any locale_id
     browser.visit("/account/login")
     browser.fill_in("login", email)
     browser.fill_in("password", password)
-    browser.click_button("Sign In")
-    browser.wait_for_element("a", text="MY WORKFLOWS", wait=True)
+    browser.click_whatever('.account_form.login button[type="submit"]')
+    browser.wait_for_element(".create-workflow")
 
 
 def logout(browser: Browser) -> None:
-    """Log out through `/account/logout` as the given user."""
-    browser.visit("/account/logout")
-    browser.click_button("Log out")
+    """Log out through `/account/logout/` as the given user.
+
+    This page exists because the framework generates it. We don't ever show
+    it to users.
+    """
+    # Selectors designed to work in any locale_id
+    browser.visit("/account/logout/")
+    browser.click_whatever('.account_form button[type="submit"]')
+    browser.wait_for_element(".account_form.login")
 
 
 def _close_connection(conn):

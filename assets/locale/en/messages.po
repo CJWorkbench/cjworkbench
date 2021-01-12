@@ -162,29 +162,29 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "This workflow is currently private"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+#: assets/js/WorkflowEditor/Report/ShareCard.js:22
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Only collaborators can view this report"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Anyone can view this report"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:24
+#: assets/js/WorkflowEditor/Report/ShareCard.js:26
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Edit privacy"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:27
+#: assets/js/WorkflowEditor/Report/ShareCard.js:30
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Report URL"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:15
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "This workflow is private"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "This workflow is public"
 
@@ -310,27 +310,27 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:81
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 
-#: assets/js/WfHamburgerMenu.js:48
+#: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "menu"
 
@@ -460,19 +460,19 @@ msgstr "Add Text Block"
 msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr "Enter MarkDown text here"
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:41
 msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
 msgstr "Delete"
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:17
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:16
 msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
 msgstr "Edit"
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:35
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:34
 msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
 msgstr "Move down"
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:27
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:26
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr "Move up"
 
@@ -965,40 +965,40 @@ msgstr ""
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Custom type {name} not handled"
 
-#: assets/js/params/File/File.js:210
+#: assets/js/params/File/File.js:204
 msgid "js.params.Custom.File.browse.label"
 msgstr "Browse"
 
-#: assets/js/params/File/File.js:176
+#: assets/js/params/File/File.js:170
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr "Cancel Upload"
 
-#: assets/js/params/File/File.js:174
+#: assets/js/params/File/File.js:168
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr "Cancel upload"
 
-#: assets/js/params/File/File.js:206
+#: assets/js/params/File/File.js:200
 msgid "js.params.Custom.File.dragfilehere"
 msgstr "Drag file here"
 
-#: assets/js/params/File/File.js:223
+#: assets/js/params/File/File.js:217
 msgid "js.params.Custom.File.dropFileHere"
 msgstr "Drop file here"
 
 #. This is shown after js.params.Custom.File.dragfilehere
-#: assets/js/params/File/File.js:207
+#: assets/js/params/File/File.js:201
 msgid "js.params.Custom.File.or"
 msgstr "or"
 
-#: assets/js/params/File/File.js:191
+#: assets/js/params/File/File.js:185
 msgid "js.params.Custom.File.replace"
 msgstr "Replace"
 
-#: assets/js/params/ParamsFormFooter.js:62
+#: assets/js/params/ParamsFormFooter.js:63
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "File-Upload API"
 
-#: assets/js/params/ParamsFormFooter.js:60
+#: assets/js/params/ParamsFormFooter.js:61
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Open upload API instructions"
 
@@ -2234,22 +2234,6 @@ msgstr "Forgot Password?"
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
 msgstr "Sign In"
-
-#: templates/account/logout.html:5
-msgid "py.templates.account.logout.title"
-msgstr "Log out"
-
-#: templates/account/logout.html:9
-msgid "py.templates.account.logout.formHeader"
-msgstr "Log out"
-
-#: templates/account/logout.html:12
-msgid "py.templates.account.logout.confirmation"
-msgstr "Are you sure you want to log out?"
-
-#: templates/account/logout.html:13
-msgid "py.templates.account.logout.button"
-msgstr "Log out"
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"

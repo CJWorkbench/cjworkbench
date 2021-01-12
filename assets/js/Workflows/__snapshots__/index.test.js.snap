@@ -49,6 +49,20 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
             />
           </button>
         </div>
+        <form
+          action="/account/logout/"
+          method="post"
+          style="display: none;"
+        >
+          <input
+            name="csrfmiddlewaretoken"
+            type="hidden"
+            value=""
+          />
+          <input
+            type="submit"
+          />
+        </form>
       </nav>
     </div>
     <a
@@ -611,6 +625,20 @@ exports[`Workflow list page renders Recipes correctly 1`] = `
             />
           </button>
         </div>
+        <form
+          action="/account/logout/"
+          method="post"
+          style="display: none;"
+        >
+          <input
+            name="csrfmiddlewaretoken"
+            type="hidden"
+            value=""
+          />
+          <input
+            type="submit"
+          />
+        </form>
       </nav>
     </div>
     <a
@@ -1173,6 +1201,20 @@ exports[`Workflow list page renders Shared correctly 1`] = `
             />
           </button>
         </div>
+        <form
+          action="/account/logout/"
+          method="post"
+          style="display: none;"
+        >
+          <input
+            name="csrfmiddlewaretoken"
+            type="hidden"
+            value=""
+          />
+          <input
+            type="submit"
+          />
+        </form>
       </nav>
     </div>
     <a
