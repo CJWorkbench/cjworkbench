@@ -1,9 +1,11 @@
 import asyncio
-from enum import Enum
 import logging
 import os
+from enum import Enum
 from typing import Any, Awaitable, Callable, Dict
+
 from django.db import DatabaseError, InterfaceError
+
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
@@ -72,7 +74,6 @@ async def render_workflow_and_maybe_requeue(
     pg_render_locker: PgRenderLocker,
     workflow_id: int,
     delta_id: int,
-    requeue: Callable[[int, int], Awaitable[None]],
 ) -> None:
     """
     Acquire an advisory lock and render, or re-queue task if the lock is held.
@@ -118,7 +119,7 @@ async def render_workflow_and_maybe_requeue(
                     logger.info("Skipping requeue of deleted Workflow %d", workflow_id)
                     want_requeue = False
             if want_requeue:
-                await requeue(workflow_id, workflow.last_delta_id)
+                await rabbitmq.queue_render(workflow_id, workflow.last_delta_id)
                 # This is why we used `lock.stall_others()`: after requeue,
                 # another renderer may try to lock this workflow and we want
                 # that lock to _succeed_ -- not raise WorkflowAlreadyLocked.
@@ -128,12 +129,6 @@ async def render_workflow_and_maybe_requeue(
             # this exact moment, there are briefly two un-acked renders.)
     except WorkflowAlreadyLocked:
         logger.info("Workflow %d is being rendered elsewhere; ignoring", workflow_id)
-
-
-async def _queue_render(workflow_id, delta_id):
-    # a separate function for dependency injection
-    connection = rabbitmq.get_connection()
-    await connection.queue_render(workflow_id, delta_id)
 
 
 async def handle_render(
@@ -154,6 +149,4 @@ async def handle_render(
         )
         return
 
-    await render_workflow_and_maybe_requeue(
-        pg_render_locker, workflow_id, delta_id, _queue_render
-    )
+    await render_workflow_and_maybe_requeue(pg_render_locker, workflow_id, delta_id)

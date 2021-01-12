@@ -209,7 +209,7 @@ def get_connection(loop=None):
     Usage:
 
         def start():
-            connection = RetryingConnection(url, 10, 1.5)
+            connection = get_connection()
             connection.declare_consume('render', 2, handle_render)
             connection.declare_consume('fetch', 2, handle_fetch)
 
