@@ -169,29 +169,29 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+#: assets/js/WorkflowEditor/Report/ShareCard.js:22
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:24
+#: assets/js/WorkflowEditor/Report/ShareCard.js:26
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Επεξεργασία απορρήτου"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:27
+#: assets/js/WorkflowEditor/Report/ShareCard.js:30
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Διεύθυνση URL αναφοράς"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:15
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "Αυτή η ροή εργασιών είναι ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "Αυτή η ροή εργασιών είναι δημόσια"
 
@@ -482,19 +482,19 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:41
 msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:17
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:16
 msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:35
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:34
 msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:27
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:26
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
@@ -989,32 +989,32 @@ msgstr ""
 msgid "js.params.Custom.ComponentNotFound.error"
 msgstr "Δεν έγινε επεξεργασία του προσαρμοσμένου τύπου {name}"
 
-#: assets/js/params/File/File.js:210
+#: assets/js/params/File/File.js:204
 msgid "js.params.Custom.File.browse.label"
 msgstr "Αναζήτηση"
 
-#: assets/js/params/File/File.js:176
+#: assets/js/params/File/File.js:170
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr "Ακύρωση ανεβάσματος"
 
-#: assets/js/params/File/File.js:174
+#: assets/js/params/File/File.js:168
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr "Ακύρωση ανεβάσματος"
 
-#: assets/js/params/File/File.js:206
+#: assets/js/params/File/File.js:200
 msgid "js.params.Custom.File.dragfilehere"
 msgstr "Σύρσιμο του αρχείου εδώ"
 
-#: assets/js/params/File/File.js:223
+#: assets/js/params/File/File.js:217
 msgid "js.params.Custom.File.dropFileHere"
 msgstr "Απόθεση του αρχείου εδώ"
 
 #. This is shown after js.params.Custom.File.dragfilehere
-#: assets/js/params/File/File.js:207
+#: assets/js/params/File/File.js:201
 msgid "js.params.Custom.File.or"
 msgstr "ή"
 
-#: assets/js/params/File/File.js:191
+#: assets/js/params/File/File.js:185
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
@@ -1235,47 +1235,47 @@ msgstr "Κατά"
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr "Κατόπιν, κατά"
 
-#: assets/js/params/File/UploadApiModal.js:54
+#: assets/js/params/File/UploadApiModal.js:48
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr "Απενεργοποίηση του API"
 
-#: assets/js/params/File/UploadApiModal.js:75
+#: assets/js/params/File/UploadApiModal.js:78
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Ενεργοποίηση API"
 
-#: assets/js/params/File/UploadApiModal.js:69
-msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
-msgstr "Δεν υπάρχει διακριτικό API"
-
-#: assets/js/params/File/UploadApiModal.js:47
+#: assets/js/params/File/UploadApiModal.js:65
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Δημιουργία νέου αναγνωριστικού API"
 
-#: assets/js/params/File/UploadApiModal.js:107
+#: assets/js/params/File/UploadApiModal.js:115
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι απενεργοποιημένο. Ενεργοποιήστε το για "
 "να επιτραπεί το ανέβασμα."
 
 #. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:105
+#: assets/js/params/File/UploadApiModal.js:113
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "Το API ανεβάσματος αρχείων είναι <0>ενεργοποιημένο</0>."
 
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:136
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/File/UploadApiModal.js:100
+#: assets/js/params/File/UploadApiModal.js:103
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr "ΑΝΕΒΑΣΜΑ ΜΕΣΩ API"
 
-#: assets/js/params/File/UploadApiModal.js:102
+#: assets/js/params/File/UploadApiModal.js:106
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "Αυτές οι οδηγίες απευθύνονται σε προγραμματιστές."
 
-#: assets/js/params/File/UploadApiModal.js:103
+#: assets/js/params/File/UploadApiModal.js:109
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι ιδανικό για τη φόρτωση δεδομένων από "
@@ -1472,15 +1472,15 @@ msgstr "Φόρτωση επεξεργαστή..."
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr "Φορτώνω"
 
-#: assets/js/params/File/UploadApiModal.js:60
+#: assets/js/params/File/UploadApiModal.js:56
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr "Διακριτικό API"
 
-#: assets/js/params/File/UploadApiModal.js:58
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
-#: assets/js/params/File/UploadApiModal.js:64
+#: assets/js/params/File/UploadApiModal.js:126
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 
@@ -2155,20 +2155,20 @@ msgstr ""
 msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr "Διαφορετικά, επικοινωνήστε μαζί μας για να καταλάβουμε τι συμβαίνει."
 
-#: templates/report.html:30
+#: templates/report.html:29
 msgid "py.templates.report.author"
 msgstr "από {workflowOwner}"
 
-#: templates/report.html:31
+#: templates/report.html:30
 msgid "py.templates.report.updated"
 msgstr "Ενημερώθηκε πριν από <time0>{timeAgo}</time0>"
 
 #. This is a link to a workflow
-#: templates/report.html:33
+#: templates/report.html:32
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Δεδομένα προέλευσης"
 
-#: templates/report.html:52
+#: templates/report.html:51
 msgid "py.templates.report.table.download"
 msgstr ""
 

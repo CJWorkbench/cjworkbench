@@ -178,34 +178,34 @@ msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
 #. default-message: Only collaborators can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+#: assets/js/WorkflowEditor/Report/ShareCard.js:22
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr ""
 
 #. default-message: Anyone can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr ""
 
 #. As in 'Edit privacy settings'
 #. default-message: Edit privacy
-#: assets/js/WorkflowEditor/Report/ShareCard.js:24
+#: assets/js/WorkflowEditor/Report/ShareCard.js:26
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
 #. As in 'URL of report'
 #. default-message: Report URL
-#: assets/js/WorkflowEditor/Report/ShareCard.js:27
+#: assets/js/WorkflowEditor/Report/ShareCard.js:30
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
 
 #. default-message: This workflow is private
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:15
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr ""
 
 #. default-message: This workflow is public
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr ""
 
@@ -537,22 +537,22 @@ msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:42
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:41
 msgid "js.WorkflowEditor.Report.BlockFrame.delete.hoverText"
 msgstr ""
 
 #. default-message: Edit
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:17
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:16
 msgid "js.WorkflowEditor.Report.BlockFrame.edit.hoverText"
 msgstr ""
 
 #. default-message: Move down
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:35
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:34
 msgid "js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText"
 msgstr ""
 
 #. default-message: Move up
-#: assets/js/WorkflowEditor/Report/BlockFrame.js:27
+#: assets/js/WorkflowEditor/Report/BlockFrame.js:26
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
@@ -1154,42 +1154,42 @@ msgid "js.params.Custom.ComponentNotFound.error"
 msgstr ""
 
 #. default-message: Browse
-#: assets/js/params/File/File.js:210
+#: assets/js/params/File/File.js:204
 msgid "js.params.Custom.File.browse.label"
 msgstr ""
 
 #. default-message: Cancel Upload
-#: assets/js/params/File/File.js:176
+#: assets/js/params/File/File.js:170
 msgid "js.params.Custom.File.cancelUpload.button"
 msgstr ""
 
 #. default-message: Cancel upload
-#: assets/js/params/File/File.js:174
+#: assets/js/params/File/File.js:168
 msgid "js.params.Custom.File.cancelUpload.hoverText"
 msgstr ""
 
 #. default-message: Drag file here
-#: assets/js/params/File/File.js:206
+#: assets/js/params/File/File.js:200
 msgid "js.params.Custom.File.dragfilehere"
 msgstr ""
 
 #. default-message: Drop file here
-#: assets/js/params/File/File.js:223
+#: assets/js/params/File/File.js:217
 msgid "js.params.Custom.File.dropFileHere"
 msgstr ""
 
 #. This is shown after js.params.Custom.File.dragfilehere
 #. default-message: or
-#: assets/js/params/File/File.js:207
+#: assets/js/params/File/File.js:201
 msgid "js.params.Custom.File.or"
 msgstr ""
 
 #. default-message: Replace
-#: assets/js/params/File/File.js:191
+#: assets/js/params/File/File.js:185
 msgid "js.params.Custom.File.replace"
 msgstr ""
 
-#. default-message: File-Upload API
+#. default-message: API
 #: assets/js/params/ParamsFormFooter.js:62
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
@@ -1440,54 +1440,49 @@ msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr ""
 
 #. default-message: Disable API
-#: assets/js/params/File/UploadApiModal.js:54
+#: assets/js/params/File/UploadApiModal.js:48
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr ""
 
 #. default-message: Enable API
-#: assets/js/params/File/UploadApiModal.js:75
+#: assets/js/params/File/UploadApiModal.js:78
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr ""
 
-#. default-message: No API token
-#: assets/js/params/File/UploadApiModal.js:69
-msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
-msgstr ""
-
-#. default-message: Reset API token
-#: assets/js/params/File/UploadApiModal.js:47
+#. default-message: Reset API Token
+#: assets/js/params/File/UploadApiModal.js:65
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr ""
 
-#. default-message: The file-upload API is disabled. Please enable it to allow uploading.
-#: assets/js/params/File/UploadApiModal.js:107
+#. default-message: The file-upload API is disabled. Enable it to upload from a program.
+#: assets/js/params/File/UploadApiModal.js:115
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 
 #. The tag adds emphasis
-#. default-message: The file-upload API is <0>enabled</0>.
-#: assets/js/params/File/UploadApiModal.js:105
+#. default-message: The file-upload API is enabled.
+#: assets/js/params/File/UploadApiModal.js:113
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:136
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: UPLOAD BY API
-#: assets/js/params/File/UploadApiModal.js:100
+#: assets/js/params/File/UploadApiModal.js:103
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr ""
 
 #. default-message: These instructions are for programmers.
-#: assets/js/params/File/UploadApiModal.js:102
+#: assets/js/params/File/UploadApiModal.js:106
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr ""
 
-#. default-message: The file-upload API is perfect for loading data from cronjobs or other external scripts. You can send data to Workbench using any programming language.
-#: assets/js/params/File/UploadApiModal.js:103
+#. default-message: You can upload files to Workbench from any cronjob, script or app.
+#: assets/js/params/File/UploadApiModal.js:109
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 
@@ -1716,17 +1711,17 @@ msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr ""
 
 #. default-message: API Token
-#: assets/js/params/File/UploadApiModal.js:60
+#: assets/js/params/File/UploadApiModal.js:56
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr ""
 
 #. default-message: Create-file URL
-#: assets/js/params/File/UploadApiModal.js:58
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
 #. default-message: Follow our <0>File-Upload API instructions</0> to upload files to this Step.
-#: assets/js/params/File/UploadApiModal.js:64
+#: assets/js/params/File/UploadApiModal.js:126
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 
@@ -2500,23 +2495,23 @@ msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
 #. default-message: by {workflowOwner}
-#: templates/report.html:30
+#: templates/report.html:29
 msgid "py.templates.report.author"
 msgstr ""
 
 #. default-message: Updated <time0>{timeAgo}</time0> ago
-#: templates/report.html:31
+#: templates/report.html:30
 msgid "py.templates.report.updated"
 msgstr ""
 
 #. This is a link to a workflow
 #. default-message: Source data
-#: templates/report.html:33
+#: templates/report.html:32
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
 #. default-message: Download as spreadsheet
-#: templates/report.html:52
+#: templates/report.html:51
 msgid "py.templates.report.table.download"
 msgstr ""
 

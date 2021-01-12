@@ -241,24 +241,54 @@
 .upload-api-modal {
   font-size: 1.4rem;
 
+  h5 {
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  h5, p {
+    margin: 1rem 0;
+  }
+
+  p.status {
+    font-weight: bold;
+  }
+
   dl {
     margin-top: 1rem;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 1rem;
+    row-gap: .5rem;
+    justify-content: start;
+    align-items: center;
+  }
+
+  dt {
+    white-space: nowrap;
   }
 
   dd {
+    display: flex;
+    margin: 0;
+    align-items: center;
+
+    button {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      margin-left: 1rem;
+    }
+  }
+
+  kbd {
+    flex: 0 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     @include code-1;
-  }
-
-  h5 {
-    font-size: 1.2em;
-    font-weight: bold;
-    padding-top: 2rem;
-  }
-
-  h6 {
-    font-size: 1em;
-    font-weight: bold;
-    padding-top: 2rem;
+    padding: 0;
+    background: transparent;
+    color: $brand-text--learn;
   }
 
   pre {
