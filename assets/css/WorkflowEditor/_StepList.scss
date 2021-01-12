@@ -9,9 +9,6 @@
   .in-between-steps {
     position: relative;
     margin: 0;
-    &:last-child {
-      height: 1rem;
-    }
   }
 
   .caught-error { // when a module does not load
