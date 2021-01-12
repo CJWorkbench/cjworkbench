@@ -67,7 +67,7 @@ def logout(browser: Browser) -> None:
     """
     # Selectors designed to work in any locale_id
     browser.visit("/account/logout/")
-    browser.click_whatever('.account_form button[type="submit"]')
+    browser.click_whatever('form[action="/account/logout/"] button[type="submit"]')
     browser.wait_for_element(".account_form.login")
 
 
