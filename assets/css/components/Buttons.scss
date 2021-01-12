@@ -457,3 +457,26 @@ button:focus { outline:0 !important; }
 .action-link {
 	@include action-link;
 }
+
+@mixin export-link {
+  // Appears at top-left of OutputPane and in reports.
+  // 
+  // HTML:
+  // <div className='export-link'>
+  //   <i className='icon-download' />
+  //   Download spreadsheet
+  // </div>
+  @include action-button();
+  @include button-blue();
+
+  .icon-download {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+  }
+
+  &:not(:hover):not(:focus):not(:active) {	
+    // De-buttonize it when nobody's around, so it doesn't distract	
+    border-color: transparent;	
+    background: transparent;
+  }
+}
