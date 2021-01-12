@@ -1,24 +1,17 @@
 article.report {
   flex: 1 1 auto;
-  display: flex; // share-card on left, report-container on right
-  align-items: flex-start;
-  justify-content: center; // on big page, show everything in the middle horizontally
   overflow-y: auto; // allow scrolling (report-container is variable height)
-  padding: 2rem;
+  padding: 0 2rem 3.2rem;
   background-color: $WF-background;
 
   .report-container {
-    flex: 1 1 auto;
-    max-width: 90rem;
-    border: 1px solid $item-border;
+    max-width: 112rem;
+    margin: 2rem auto 0;
+    border: 2px solid $item-border;
     border-radius: .5rem;
     overflow-x: hidden;
     overflow-y: visible;
     background: white;
-
-    &>:last-child {
-      margin-bottom: 2rem;
-    }
   }
 
   header {

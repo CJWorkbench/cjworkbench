@@ -1,24 +1,33 @@
 article.report {
   .share-card {
-    flex: 0 0 auto;
-    width: 30rem;
-    padding: 2rem;
-    margin-right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 112rem;
+    margin: 0 auto;
     border-radius: .5rem;
-    background: $item-border;
-    @include font-sans-bold;
+    @include content-1;
     font-size: 1.4rem;
     line-height: 1.8rem;
 
-    .prompt {
-      //display: flex;
-      align-items: center;
-      padding-bottom: 1.5rem;
+    p, h4 {
+      margin: .3rem 0 0;
+    }
 
-      p {margin-bottom: 1rem;}
+    h4 {
+      @include font-sans-bold;
+    }
+
+    &>* {
+      margin-top: 2rem;
+    }
+
+    .prompt {
+      display: flex;
+      align-items: center;
 
       .status {
-        flex: 1 1 auto; // take up most space
+        margin-right: 1.6rem;
       }
 
       button {
@@ -29,26 +38,22 @@ article.report {
       }
     }
 
-
-
-    h4 {
-      margin-top: 2rem;
-      font: inherit;
-    }
-
     .url {
+      display: flex;
+      align-items: center;
+
+      .title {
+        margin-right: 1.6rem;
+      }
+
       .copy {
         @include font-sans-regular;
+        border: 2px solid $item-border;
         border-radius: .3rem;
         background: white;
-        padding: .8rem 1rem;
+        padding: .7rem 1rem;
         word-break: break-all;
       }
-    }
-
-    .accessible-to {
-      @include content-1;
-      margin-top: .5rem;
     }
   }
 }
