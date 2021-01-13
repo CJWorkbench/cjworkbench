@@ -27,15 +27,19 @@ export default function Viewport ({ nRows, columns, cells, nSkipRows, nSkipColum
       // revert to non-empty.
       return
     }
+    if (cell1.offsetParent === null) {
+      // We're display:none. No need to resize.
+      return
+    }
     const cell1Rect = cell1.getBoundingClientRect()
     const thWidth = cell1Rect.width
     const rowHeight = cell1Rect.height / cell1.rowSpan
     const headerHeight = tbody.offsetTop
 
     const x0 = viewport.scrollLeft
-    const x1 = x0 + viewport.offsetWidth - thWidth
+    const x1 = x0 + Math.max(0, viewport.offsetWidth - thWidth)
     const y0 = viewport.scrollTop
-    const y1 = y0 + viewport.offsetHeight - headerHeight
+    const y1 = y0 + Math.max(0, viewport.offsetHeight - headerHeight)
 
     const r0 = Math.floor(y0 / rowHeight)
     const r1 = Math.min(Math.ceil(y1 / rowHeight), nRows)
