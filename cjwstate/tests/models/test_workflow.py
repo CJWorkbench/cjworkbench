@@ -47,7 +47,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.bob = User.objects.create(username="b", email="b@example.org")
 
     def test_delete_with_report_blocks(self):
-        workflow = Workflow.create_and_init(name="Foo")
+        workflow = Workflow.create_and_init(name="Foo", has_custom_report=True)
         tab = workflow.tabs.first()
         step = tab.steps.create(order=0, module_id_name="something")
         workflow.blocks.create(
@@ -74,6 +74,26 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(wf2.last_delta.command_name, InitWorkflow.__name__)
         self.assertFalse(wf2.public)
         self.assertEqual(wf1.tabs.first().steps.count(), wf2.tabs.first().steps.count())
+
+    def test_duplicate_custom_report(self):
+        workflow = Workflow.create_and_init(name="Foo", has_custom_report=True)
+        tab = workflow.tabs.first()
+        step = tab.steps.create(order=0, module_id_name="something")
+        workflow.blocks.create(
+            position=0, slug="block-text", block_type="Text", text_markdown="hi"
+        )
+        workflow.blocks.create(
+            position=1, slug="block-tab", block_type="Table", tab_id=tab.id
+        )
+        workflow.blocks.create(
+            position=2, slug="block-step", block_type="Chart", step_id=step.id
+        )
+        workflow2 = workflow.duplicate(self.bob)
+        self.assertEqual(workflow2.has_custom_report, True)
+        blocks = list(workflow2.blocks.all())
+        self.assertEqual(blocks[0].text_markdown, "hi")
+        self.assertEqual(blocks[1].tab_id, workflow2.tabs.first().id)
+        self.assertEqual(blocks[2].step_id, workflow2.tabs.first().steps.first().id)
 
     def test_auth_shared_workflow(self):
         wf = Workflow.objects.create(owner=self.alice, public=True)

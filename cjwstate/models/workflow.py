@@ -396,6 +396,7 @@ class Workflow(models.Model):
                 original_workflow_id=self.pk,
                 anonymous_owner_session_key=session_key,
                 selected_tab_position=self.selected_tab_position,
+                has_custom_report=self.has_custom_report,
                 public=False,
                 last_delta=None,
             )
