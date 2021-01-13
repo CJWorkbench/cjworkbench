@@ -994,11 +994,11 @@ msgstr "or"
 msgid "js.params.Custom.File.replace"
 msgstr "Replace"
 
-#: assets/js/params/ParamsFormFooter.js:63
+#: assets/js/params/ParamsFormFooter.js:62
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:61
+#: assets/js/params/ParamsFormFooter.js:60
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Open upload API instructions"
 

@@ -76,6 +76,7 @@ export default function TextBlock ({ block, isReadOnly, onClickDelete, onClickMo
 }
 TextBlock.propTypes = {
   block: PropTypes.shape({
+    slug: PropTypes.string.isRequired,
     markdown: PropTypes.string.isRequired
   }).isRequired,
   isReadOnly: PropTypes.bool.isRequired,

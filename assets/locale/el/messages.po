@@ -1018,12 +1018,12 @@ msgstr "ή"
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
-#: assets/js/params/ParamsFormFooter.js:63
+#: assets/js/params/ParamsFormFooter.js:62
 #, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:61
+#: assets/js/params/ParamsFormFooter.js:60
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 

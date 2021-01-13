@@ -1195,7 +1195,7 @@ msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
 #. default-message: Open upload API instructions
-#: assets/js/params/ParamsFormFooter.js:61
+#: assets/js/params/ParamsFormFooter.js:60
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
