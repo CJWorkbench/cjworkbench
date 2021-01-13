@@ -41,14 +41,8 @@ function ApiTokenOk ({ workflowId, stepSlug, apiToken, clearApiToken, resetApiTo
           <p className='actions'>
             <button
               type='button'
-              name='reset-api-token'
-              onClick={resetApiToken}
-            >
-              <Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken'>Reset API token</Trans>
-            </button>
-            <button
-              type='button'
               name='clear-api-token'
+              className='action-button button-orange--fill'
               onClick={clearApiToken}
             >
               <Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.disableApi'>Disable API</Trans>
@@ -56,19 +50,28 @@ function ApiTokenOk ({ workflowId, stepSlug, apiToken, clearApiToken, resetApiTo
           </p>
           <dl>
             <dt><Trans id='js.params.File.UploadApiModal.ApiTokenOk.createFileUrl'>Create-file URL</Trans></dt>
-            <dd>{createFileUrl}</dd>
+            <dd>
+              <kbd>{createFileUrl}</kbd>
+            </dd>
             <dt><Trans id='js.params.File.UploadApiModal.ApiTokenOk.apiToken'>API Token</Trans></dt>
-            <dd>{apiToken}</dd>
+            <dd>
+              <kbd>{apiToken}</kbd>
+              <button
+                type='button'
+                name='reset-api-token'
+                className='action-button button-blue'
+                onClick={resetApiToken}
+              >
+                <Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken'>Reset API Token</Trans>
+              </button>
+            </dd>
           </dl>
-          <p>
-            <Trans id='js.params.File.UploadApiModal.ApiTokenOk.instructions'>Follow our <a href='https://github.com/CJWorkbench/cjworkbench/wiki/File-Upload-API' target='_blank' rel='noopener noreferrer'>File-Upload API instructions</a> to upload files to this Step.</Trans>
-          </p>
         </>
       ) : (
-        <p className='no-api-token'>
-          <span><Trans id='js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken'>No API token</Trans></span>
+        <p className='actions'>
           <button
             type='button'
+            className='action-button button-orange--fill'
             name='reset-api-token'
             onClick={resetApiToken}
           >
@@ -99,13 +102,19 @@ export function UploadApiModal ({ stepSlug, workflowId, onClickClose, getApiToke
     <Modal className='upload-api-modal' isOpen size='lg' toggle={onClickClose}>
       <ModalHeader><Trans id='js.params.Custom.UploadApiModal.header.title' comment='This should be all-caps for styling reasons'>UPLOAD BY API</Trans></ModalHeader>
       <ModalBody>
-        <h5><Trans id='js.params.Custom.UploadApiModal.programmerInstructions'>These instructions are for programmers.</Trans></h5>
-        <p><Trans id='js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect'>The file-upload API is perfect for loading data from cronjobs or other external scripts. You can send data to Workbench using any programming language.</Trans></p>
-        {apiToken ? (
-          <p><Trans id='js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled' comment='The tag adds emphasis'>The file-upload API is <strong>enabled</strong>.</Trans></p>
-        ) : (
-          <p><Trans id='js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled'>The file-upload API is disabled. Please enable it to allow uploading.</Trans></p>
-        )}
+        <h5>
+          <Trans id='js.params.Custom.UploadApiModal.programmerInstructions'>These instructions are for programmers.</Trans>
+        </h5>
+        <p>
+          <Trans id='js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect'>You can upload files to Workbench from any cronjob, script or app.</Trans>
+        </p>
+        <p className='status'>
+          {apiToken ? (
+            <Trans id='js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled' comment='The tag adds emphasis'>The file-upload API is enabled.</Trans>
+          ) : (
+            <Trans id='js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled'>The file-upload API is disabled. Enable it to upload from a program.</Trans>
+          )}
+        </p>
         <ApiToken
           workflowId={workflowId}
           stepSlug={stepSlug}
@@ -113,6 +122,9 @@ export function UploadApiModal ({ stepSlug, workflowId, onClickClose, getApiToke
           resetApiToken={doResetApiToken}
           clearApiToken={doClearApiToken}
         />
+        <p>
+          <Trans id='js.params.File.UploadApiModal.ApiTokenOk.instructions'>Follow our <a href='https://github.com/CJWorkbench/cjworkbench/wiki/File-Upload-API' target='_blank' rel='noopener noreferrer'>File-Upload API instructions</a> to upload files to this Step.</Trans>
+        </p>
       </ModalBody>
       <ModalFooter>
         <div className='actions'>

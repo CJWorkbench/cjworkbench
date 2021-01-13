@@ -498,11 +498,11 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:24
+#: assets/js/WorkflowEditor/Report/TableBlock.js:25
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:28
+#: assets/js/WorkflowEditor/Report/TableBlock.js:29
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 
@@ -1235,47 +1235,47 @@ msgstr "Κατά"
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr "Κατόπιν, κατά"
 
-#: assets/js/params/File/UploadApiModal.js:54
+#: assets/js/params/File/UploadApiModal.js:48
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr "Απενεργοποίηση του API"
 
-#: assets/js/params/File/UploadApiModal.js:75
+#: assets/js/params/File/UploadApiModal.js:78
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Ενεργοποίηση API"
 
-#: assets/js/params/File/UploadApiModal.js:69
-msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
-msgstr "Δεν υπάρχει διακριτικό API"
-
-#: assets/js/params/File/UploadApiModal.js:47
+#: assets/js/params/File/UploadApiModal.js:65
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Δημιουργία νέου αναγνωριστικού API"
 
-#: assets/js/params/File/UploadApiModal.js:107
+#: assets/js/params/File/UploadApiModal.js:115
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι απενεργοποιημένο. Ενεργοποιήστε το για "
 "να επιτραπεί το ανέβασμα."
 
 #. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:105
+#: assets/js/params/File/UploadApiModal.js:113
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "Το API ανεβάσματος αρχείων είναι <0>ενεργοποιημένο</0>."
 
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:136
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/File/UploadApiModal.js:100
+#: assets/js/params/File/UploadApiModal.js:103
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr "ΑΝΕΒΑΣΜΑ ΜΕΣΩ API"
 
-#: assets/js/params/File/UploadApiModal.js:102
+#: assets/js/params/File/UploadApiModal.js:106
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "Αυτές οι οδηγίες απευθύνονται σε προγραμματιστές."
 
-#: assets/js/params/File/UploadApiModal.js:103
+#: assets/js/params/File/UploadApiModal.js:109
+#, fuzzy
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι ιδανικό για τη φόρτωση δεδομένων από "
@@ -1472,15 +1472,15 @@ msgstr "Φόρτωση επεξεργαστή..."
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr "Φορτώνω"
 
-#: assets/js/params/File/UploadApiModal.js:60
+#: assets/js/params/File/UploadApiModal.js:56
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr "Διακριτικό API"
 
-#: assets/js/params/File/UploadApiModal.js:58
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
-#: assets/js/params/File/UploadApiModal.js:64
+#: assets/js/params/File/UploadApiModal.js:126
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 
@@ -2155,20 +2155,20 @@ msgstr ""
 msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr "Διαφορετικά, επικοινωνήστε μαζί μας για να καταλάβουμε τι συμβαίνει."
 
-#: templates/report.html:30
+#: templates/report.html:29
 msgid "py.templates.report.author"
 msgstr "από {workflowOwner}"
 
-#: templates/report.html:31
+#: templates/report.html:30
 msgid "py.templates.report.updated"
 msgstr "Ενημερώθηκε πριν από <time0>{timeAgo}</time0>"
 
 #. This is a link to a workflow
-#: templates/report.html:33
+#: templates/report.html:32
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Δεδομένα προέλευσης"
 
-#: templates/report.html:52
+#: templates/report.html:51
 msgid "py.templates.report.table.download"
 msgstr ""
 

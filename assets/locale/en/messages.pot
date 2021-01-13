@@ -556,13 +556,13 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
-#. default-message: Download spreadsheet
-#: assets/js/WorkflowEditor/Report/TableBlock.js:24
+#. default-message: Download data as CSV
+#: assets/js/WorkflowEditor/Report/TableBlock.js:25
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
 #. default-message: No table data
-#: assets/js/WorkflowEditor/Report/TableBlock.js:28
+#: assets/js/WorkflowEditor/Report/TableBlock.js:29
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 
@@ -1189,8 +1189,8 @@ msgstr ""
 msgid "js.params.Custom.File.replace"
 msgstr ""
 
-#. default-message: File-Upload API
-#: assets/js/params/ParamsFormFooter.js:63
+#. default-message: API
+#: assets/js/params/ParamsFormFooter.js:62
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
@@ -1440,54 +1440,49 @@ msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr ""
 
 #. default-message: Disable API
-#: assets/js/params/File/UploadApiModal.js:54
+#: assets/js/params/File/UploadApiModal.js:48
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr ""
 
 #. default-message: Enable API
-#: assets/js/params/File/UploadApiModal.js:75
+#: assets/js/params/File/UploadApiModal.js:78
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr ""
 
-#. default-message: No API token
-#: assets/js/params/File/UploadApiModal.js:69
-msgid "js.params.Custom.UploadApiModal.ApiTokenOk.noApiToken"
-msgstr ""
-
-#. default-message: Reset API token
-#: assets/js/params/File/UploadApiModal.js:47
+#. default-message: Reset API Token
+#: assets/js/params/File/UploadApiModal.js:65
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr ""
 
-#. default-message: The file-upload API is disabled. Please enable it to allow uploading.
-#: assets/js/params/File/UploadApiModal.js:107
+#. default-message: The file-upload API is disabled. Enable it to upload from a program.
+#: assets/js/params/File/UploadApiModal.js:115
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 
 #. The tag adds emphasis
-#. default-message: The file-upload API is <0>enabled</0>.
-#: assets/js/params/File/UploadApiModal.js:105
+#. default-message: The file-upload API is enabled.
+#: assets/js/params/File/UploadApiModal.js:113
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:136
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: UPLOAD BY API
-#: assets/js/params/File/UploadApiModal.js:100
+#: assets/js/params/File/UploadApiModal.js:103
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr ""
 
 #. default-message: These instructions are for programmers.
-#: assets/js/params/File/UploadApiModal.js:102
+#: assets/js/params/File/UploadApiModal.js:106
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr ""
 
-#. default-message: The file-upload API is perfect for loading data from cronjobs or other external scripts. You can send data to Workbench using any programming language.
-#: assets/js/params/File/UploadApiModal.js:103
+#. default-message: You can upload files to Workbench from any cronjob, script or app.
+#: assets/js/params/File/UploadApiModal.js:109
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 
@@ -1716,17 +1711,17 @@ msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr ""
 
 #. default-message: API Token
-#: assets/js/params/File/UploadApiModal.js:60
+#: assets/js/params/File/UploadApiModal.js:56
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr ""
 
 #. default-message: Create-file URL
-#: assets/js/params/File/UploadApiModal.js:58
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
 #. default-message: Follow our <0>File-Upload API instructions</0> to upload files to this Step.
-#: assets/js/params/File/UploadApiModal.js:64
+#: assets/js/params/File/UploadApiModal.js:126
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 
@@ -2500,23 +2495,23 @@ msgid "py.templates.oauth_token_request_denied.contactUs"
 msgstr ""
 
 #. default-message: by {workflowOwner}
-#: templates/report.html:30
+#: templates/report.html:29
 msgid "py.templates.report.author"
 msgstr ""
 
 #. default-message: Updated <time0>{timeAgo}</time0> ago
-#: templates/report.html:31
+#: templates/report.html:30
 msgid "py.templates.report.updated"
 msgstr ""
 
 #. This is a link to a workflow
 #. default-message: Source data
-#: templates/report.html:33
+#: templates/report.html:32
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
-#. default-message: Download as spreadsheet
-#: templates/report.html:52
+#. default-message: Download data as CSV
+#: templates/report.html:51
 msgid "py.templates.report.table.download"
 msgstr ""
 

@@ -29,7 +29,7 @@ export default function ShareCard ({ workflowId, isPublic }) {
         <div className='title'>
           <h4><Trans id='js.Report.ShareCard.reportUrl.header' comment="As in 'URL of report'">Report URL</Trans></h4>
           <p>Share report with collaborators</p>
-        </div>git st
+        </div>
         <div className='copy'>
           {window.location.origin}/workflows/{workflowId}/report
         </div>

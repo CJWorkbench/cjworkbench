@@ -1,4 +1,7 @@
 .step-list {
+  $in-between-steps-height: 2.2rem;
+  $in-between-steps-vpadding: .4rem; // included in $in-between-steps-height
+
   flex: 0 0 auto; // auto-width: width of contents (including scrollbar)
   padding-top: 1.5rem;
   background-color: $WF-background;
@@ -9,9 +12,8 @@
   .in-between-steps {
     position: relative;
     margin: 0;
-    &:last-child {
-      height: 1rem;
-    }
+    height: $in-between-steps-height;
+    padding: $in-between-steps-vpadding 0;
   }
 
   .caught-error { // when a module does not load
@@ -51,7 +53,6 @@
     width: $module-width;
     margin-left: $module-margin-left;
     position: relative;
-    height: 2.2rem;
 
     &:hover, &:focus-within {
       z-index: 2; // appear above the next module
@@ -61,13 +62,12 @@
       display: block;
       position: absolute;
       width: $module-width;
-      height: 1.4rem;
+      height: $in-between-steps-height - 2 * $in-between-steps-vpadding;
       cursor: pointer;
       border: 0;
       opacity: 0;
       background: lighten($brand-orange,8%);
       color: white;
-      margin-top: .4rem;
       font-size: 1rem;
       border-radius: 1rem;
       transition-property: opacity;
@@ -96,7 +96,7 @@
   .step-drop-spot {
     display: block;
     position: absolute;
-    top: -5rem;
+    top: -5rem + $in-between-steps-vpadding;
     bottom: -5rem;
     left: 0;
     right: 0;
@@ -107,7 +107,7 @@
       pointer-events: none;
       margin: 5rem $module-margin-right 0 $module-margin-left;
       border-radius: 1rem;
-      height: 1.5rem;
+      height: $in-between-steps-height - 2 * $in-between-steps-vpadding;
       background-color: $brand-background--action;
       color: darken($brand-workspace, 5%);
       text-align: center;

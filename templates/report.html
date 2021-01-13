@@ -4,7 +4,6 @@
 {% load json_filters %}
 {% load markdown %}
 {% load static %}
-{% load svg_icon %}
 
 {% block title %}
   {{ workflow.name }} | Workbench
@@ -25,7 +24,7 @@
 {% block body %}
   <article class="report">
     <header>
-      <h1>{% svg_icon "report.svg" %} {{workflow.name}}</h1>
+      <h1>{{workflow.name}}</h1>
       <p class="metadata">
         <span class="author"><a rel="author">{% trans_html "py.templates.report.author" default="by {workflowOwner}" arg_workflowOwner=owner_name %}</a></span>
         <span class="updated-at">{% trans_html "py.templates.report.updated" default="Updated <time0>{timeAgo}</time0> ago" arg_timeAgo=workflow.last_delta.datetime|timesince tag_time0_datetime=workflow.last_delta.datetime|date:"c" %}</span>
@@ -49,7 +48,7 @@
             {% if block.tab.live_steps.exists and block.tab.live_steps.last.cached_render_result_status == 'ok' %}
               <div class="data-table" data-step-slug="{{block.tab.live_steps.last.slug}}"></div>
               <a download href="/public/moduledata/live/{{block.tab.live_steps.last.id}}.csv">
-                {% trans_html "py.templates.report.table.download" default="Download as spreadsheet" %}
+                {% trans_html "py.templates.report.table.download" default="Download data as CSV" %}
               </a>
             {% endif %}
           {% endif %}

@@ -21,7 +21,8 @@ export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickM
       {outputStep && outputStep.outputStatus === 'ok' ? ([
         <Table key='table' stepSlug={outputStep.slug} />,
         <a key='download' download href={`/public/moduledata/live/${outputStep.id}.csv`}>
-          <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download spreadsheet</Trans>
+          <i className='icon-download' />
+          <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download data as CSV</Trans>
         </a>
       ]) : (
         <p className='no-table-data'>

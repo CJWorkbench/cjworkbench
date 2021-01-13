@@ -31,7 +31,6 @@ export default function ParamsFormFooter ({ workflowId, stepId, stepSlug, isStep
     () => setIsUploadApiModalOpen(false),
     [setIsUploadApiModalOpen]
   )
-  const FeatureFlagUploadApi = /(^#|;)feature:uploadapi($|;)/.test(window.location.hash)
 
   const versionSelectField = fields.find(isFieldVersionSelect)
   if (versionSelectField) {
@@ -53,14 +52,14 @@ export default function ParamsFormFooter ({ workflowId, stepId, stepSlug, isStep
   const fileField = fields.find(isFileField)
   return (
     <div className='params-form-footer'>
-      {(fileField && isOwner && FeatureFlagUploadApi) ? (
+      {(fileField && isOwner) ? (
         <button
           type='button'
           onClick={handleClickOpenUploadApiModal}
           name='open-upload-api'
           title={t({ id: 'js.params.Custom.File.uploadApi.hoverText', message: 'Open upload API instructions' })}
         >
-          <Trans id='js.params.Custom.File.uploadApi.button'>File-Upload API</Trans>
+          <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
         </button>
       ) : null}
       {isUploadApiModalOpen ? (

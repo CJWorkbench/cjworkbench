@@ -19,7 +19,7 @@ function EditMarkdown ({ value, onChange, onSubmit, onCancel }) {
     <form method='post' action='#' onSubmit={handleSubmit} onCancel={handleCancel}>
       <textarea autoFocus name='markdown' value={value} onChange={handleChange} />
       <div className='buttons'>
-        <button className='action-button' type='cancel'>
+        <button className='action-button button-gray' type='cancel'>
           <Trans id='js.WorkflowEditor.Report.TextBock.cancel'>Cancel</Trans>
         </button>
         <button className='action-button button-blue' type='submit'>

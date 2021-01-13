@@ -1,2 +1,8 @@
-// article.report .report-container section.block-table {
-// }
+article.report .report-container section.block-table {
+  a[download] {
+    @include export-link();
+    display: inline-block;
+    height: 3.5rem;
+    line-height: 3.5rem;
+  }
+}
