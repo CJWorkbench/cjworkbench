@@ -354,32 +354,32 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:81
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:48
+#: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -1195,7 +1195,7 @@ msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
 #. default-message: Open upload API instructions
-#: assets/js/params/ParamsFormFooter.js:60
+#: assets/js/params/ParamsFormFooter.js:61
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
@@ -2642,26 +2642,6 @@ msgstr ""
 #. default-message: Sign In
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
-msgstr ""
-
-#. default-message: Log out
-#: templates/account/logout.html:5
-msgid "py.templates.account.logout.title"
-msgstr ""
-
-#. default-message: Log out
-#: templates/account/logout.html:9
-msgid "py.templates.account.logout.formHeader"
-msgstr ""
-
-#. default-message: Are you sure you want to log out?
-#: templates/account/logout.html:12
-msgid "py.templates.account.logout.confirmation"
-msgstr ""
-
-#. default-message: Log out
-#: templates/account/logout.html:13
-msgid "py.templates.account.logout.button"
 msgstr ""
 
 #. default-message: Change password

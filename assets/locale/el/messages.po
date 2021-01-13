@@ -330,27 +330,27 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Γλώσσα"
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:81
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WfHamburgerMenu.js:48
+#: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "μενού"
 
@@ -1018,12 +1018,12 @@ msgstr "ή"
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
-#: assets/js/params/ParamsFormFooter.js:62
+#: assets/js/params/ParamsFormFooter.js:63
 #, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:60
+#: assets/js/params/ParamsFormFooter.js:61
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
@@ -2280,22 +2280,6 @@ msgstr "Ξεχάσατε τον κωδικό;"
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
 msgstr "Σύνδεση"
-
-#: templates/account/logout.html:5
-msgid "py.templates.account.logout.title"
-msgstr "Αποσύνδεση"
-
-#: templates/account/logout.html:9
-msgid "py.templates.account.logout.formHeader"
-msgstr "Αποσύνδεση"
-
-#: templates/account/logout.html:12
-msgid "py.templates.account.logout.confirmation"
-msgstr "Είστε βέβαιος ότι θέλετε να αποσυνδεθείτε;"
-
-#: templates/account/logout.html:13
-msgid "py.templates.account.logout.button"
-msgstr "Αποσύνδεση"
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"

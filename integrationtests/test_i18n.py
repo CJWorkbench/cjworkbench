@@ -1,26 +1,6 @@
-from integrationtests.utils import WorkbenchBase, find_url_in_email
 from integrationtests.browser import Browser
-
-
-def login(browser: Browser, email: str, password: str) -> None:
-    """Log in through `/account/login` as the given user.
-    The login page must be in `locale_id`, while the workflows page must be in `after_login_locale_id`
-    """
-    browser.visit("/account/login")
-    browser.fill_in("login", email)
-    browser.fill_in("password", password)
-    browser.click_whatever('.account_form.login button[type="submit"]')
-    browser.wait_for_element(".create-workflow")
-
-
-def logout(browser: Browser) -> None:
-    """Log out through `/account/logout` as the given user.
-
-    The logout page must be in `locale_id`
-    """
-    browser.visit("/account/logout")
-    browser.click_whatever('.account_form button[type="submit"]')
-    browser.wait_for_element(".account_form.login")
+from integrationtests.helpers.accounts import login, logout
+from integrationtests.utils import WorkbenchBase, find_url_in_email
 
 
 def switch_locale_django(browser: Browser, to_locale_name: str):

@@ -310,27 +310,27 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:63
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:60
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:55
+#: assets/js/WfHamburgerMenu.js:62
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:66
+#: assets/js/WfHamburgerMenu.js:81
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:59
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 
-#: assets/js/WfHamburgerMenu.js:48
+#: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "menu"
 
@@ -994,11 +994,11 @@ msgstr "or"
 msgid "js.params.Custom.File.replace"
 msgstr "Replace"
 
-#: assets/js/params/ParamsFormFooter.js:62
+#: assets/js/params/ParamsFormFooter.js:63
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:60
+#: assets/js/params/ParamsFormFooter.js:61
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Open upload API instructions"
 
@@ -2227,22 +2227,6 @@ msgstr "Forgot Password?"
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
 msgstr "Sign In"
-
-#: templates/account/logout.html:5
-msgid "py.templates.account.logout.title"
-msgstr "Log out"
-
-#: templates/account/logout.html:9
-msgid "py.templates.account.logout.formHeader"
-msgstr "Log out"
-
-#: templates/account/logout.html:12
-msgid "py.templates.account.logout.confirmation"
-msgstr "Are you sure you want to log out?"
-
-#: templates/account/logout.html:13
-msgid "py.templates.account.logout.button"
-msgstr "Log out"
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"

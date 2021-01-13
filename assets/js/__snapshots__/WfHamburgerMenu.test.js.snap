@@ -79,14 +79,13 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                       >
                         Import Module
                       </button>
-                      <a
+                      <button
                         class="dropdown-item"
-                        href="/account/logout"
                         role="menuitem"
                         tabindex="0"
                       >
                         Log Out
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </body>
@@ -172,11 +171,11 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                     </button>
                   </DropdownItem>
                   <DropdownItem
-                    href="/account/logout"
+                    onClick={[Function]}
                   >
-                    <a
+                    <button
                       className="dropdown-item"
-                      href="/account/logout"
+                      onClick={[Function]}
                       role="menuitem"
                       tabIndex={0}
                     >
@@ -188,7 +187,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                       >
                         Log Out
                       </Trans>
-                    </a>
+                    </button>
                   </DropdownItem>
                 </div>
               </div>
@@ -198,5 +197,22 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
       </div>
     </Dropdown>
   </UncontrolledDropdown>
+  <form
+    action="/account/logout/"
+    method="post"
+    style={
+      Object {
+        "display": "none",
+      }
+    }
+  >
+    <input
+      name="csrfmiddlewaretoken"
+      type="hidden"
+    />
+    <input
+      type="submit"
+    />
+  </form>
 </WfHamburgerMenu>
 `;
