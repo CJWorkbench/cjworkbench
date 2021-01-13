@@ -41,7 +41,11 @@ export default function TextBlock ({ block, isReadOnly, onClickDelete, onClickMo
   const handleChange = setEditedMarkdown
   const handleCancel = React.useCallback(() => setEditedMarkdown(null), [setEditedMarkdown])
   const handleSubmit = React.useCallback(() => {
-    setBlockMarkdown(slug, editedMarkdown)
+    if (editedMarkdown === '') {
+      onClickDelete(slug)
+    } else {
+      setBlockMarkdown(slug, editedMarkdown)
+    }
     setEditedMarkdown(null) // stop editing
   }, [slug, editedMarkdown, setBlockMarkdown])
 
