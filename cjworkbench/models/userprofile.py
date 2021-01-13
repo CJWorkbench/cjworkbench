@@ -58,7 +58,7 @@ class UserProfile(models.Model):
     "new data available" notifications (for which there are no HTTP requests).
     """
 
-    stripe_customer_id = models.SlugField(null=True, default=None)
+    stripe_customer_id = models.SlugField(null=True, blank=True, default=None)
     """Stripe Customer ID, if set.
 
     We set a Stripe Customer ID when a user clicks on a "Pay" button. A User
