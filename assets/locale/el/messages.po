@@ -498,11 +498,11 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:24
+#: assets/js/WorkflowEditor/Report/TableBlock.js:25
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:28
+#: assets/js/WorkflowEditor/Report/TableBlock.js:29
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 

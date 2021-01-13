@@ -476,11 +476,11 @@ msgstr "Move down"
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr "Move up"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:24
+#: assets/js/WorkflowEditor/Report/TableBlock.js:25
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
-msgstr "Download spreadsheet"
+msgstr "Download data as CSV"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:28
+#: assets/js/WorkflowEditor/Report/TableBlock.js:29
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr "No table data"
 
@@ -2114,7 +2114,7 @@ msgstr "Source data"
 
 #: templates/report.html:51
 msgid "py.templates.report.table.download"
-msgstr "Download as spreadsheet"
+msgstr "Download data as CSV"
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"
