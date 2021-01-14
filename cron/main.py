@@ -76,7 +76,6 @@ async def main():
         {
             queue_fetches_forever(),
             delete_expired_sessions_and_workflows_forever(),
-            delete_stale_inprogress_file_uploads_forever(),
             disable_stale_lesson_auto_update_forever(),
         },
         return_when=asyncio.FIRST_EXCEPTION,
