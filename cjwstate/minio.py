@@ -203,6 +203,8 @@ def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
     This is _not atomic_. An aborted delete may leave some objects deleted
     and others not-deleted.
 
+    It's also slow. Be certain there aren't many files to delete.
+
     If you mean to use a directory-style `prefix` -- that is, one that ends in
     `"/"` -- then use `remove_recursive()` to signal your intent.
 
@@ -219,8 +221,7 @@ def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
     # Loop, deleting 1,000 keys at a time. S3 DELETE is strongly-consistent:
     # after we delete 1,000 keys, we're guaranteed list_objects() won't re-list
     # them. Same with Google Cloud Storage, which we configure to emulate AWS on
-    # production. (cjwstate.minio talks with the Minio server, which delegates
-    # to S3, or to GCS over the GCS "interoperability" layer.)
+    # production.
     #
     # ref: https://docs.aws.amazon.com/AmazonS3/latest/dev/Introduction.html#ConsistencyModel
     # ref: https://cloud.google.com/storage/docs/consistency#strongly_consistent_operations
@@ -231,26 +232,13 @@ def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
         list_response = client.list_objects(Bucket=bucket, Prefix=prefix)
         done = not list_response.get("IsTruncated", False)
         keys = [o["Key"] for o in list_response.get("Contents", [])]
-        if keys:
-            to_delete = {"Objects": [{"Key": k} for k in keys]}
-            delete_response = client.delete_objects(Bucket=bucket, Delete=to_delete)
-            errors = [
-                e for e in delete_response.get("Errors", []) if e["Code"] != "NoSuchKey"
-            ]
-            if errors:
-                raise NotImplementedError(
-                    (
-                        "%(n_errors)d errors removing %(n_keys)d objects. "
-                        "First error, on key %(key)s: Code %(code)s: %(message)s"
-                    )
-                    % dict(
-                        n_errors=len(errors),
-                        n_keys=len(keys),
-                        key=errors[0]["Key"],
-                        code=errors[0]["Code"],
-                        message=errors[0]["Message"],
-                    )
-                )
+        # Use client.delete_object(), not delete_objects(), because Google Cloud
+        # Storage doesn't emulate DeleteObjects.
+        #
+        # This is slow. But so is multi-delete through minio, because minio's
+        # GCS gateway deletes one-at-a-time anyway.
+        for key in keys:
+            remove(bucket, key)
 
 
 def remove_recursive(bucket: str, prefix: str, force=False) -> None:
