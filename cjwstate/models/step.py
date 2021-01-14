@@ -498,13 +498,13 @@ class Step(models.Model):
 
     def delete(self, *args, **kwargs):
         # TODO make DB _not_ depend upon minio.
-        for in_progress_upload in self.in_progress_uploads.all():
-            in_progress_upload.delete_s3_data()
         minio.remove_recursive(minio.UserFilesBucket, self.uploaded_file_prefix)
         minio.remove_recursive(
             minio.CachedRenderResultsBucket,
             "wf-%d/wfm-%d/" % (self.workflow_id, self.id),
         )
+        # We can't delete in-progress uploads from tusd's bucket because there's
+        # no directory hierarchy. The object lifecycle policy will delete them.
         super().delete(*args, **kwargs)
 
     def get_clientside_files(self) -> List[clientside.UploadedFile]:

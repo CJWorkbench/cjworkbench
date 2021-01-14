@@ -6,7 +6,7 @@ from django.conf import settings
 
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq, upload
-from cjwstate.models import InProgressUpload, Step, Workflow
+from cjwstate.models import Step, Workflow
 from cjwstate.models.uploaded_file import delete_old_files_to_enforce_storage_limits
 from server import serializers
 from .decorators import register_websockets_handler, websockets_handler

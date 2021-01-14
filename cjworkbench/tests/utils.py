@@ -84,7 +84,6 @@ _Tables = [
     "module_version",
     "stored_object",
     "uploaded_file",
-    "in_progress_upload",
     "step",
     "tab",
     "workflow",

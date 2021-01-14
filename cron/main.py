@@ -8,7 +8,6 @@ from cjworkbench.pg_render_locker import PgRenderLocker
 from cjworkbench.util import benchmark
 from .autoupdate import queue_fetches
 from .sessions import delete_expired_sessions_and_workflows
-from .uploads import delete_stale_inprogress_file_uploads
 from . import lessons
 
 
@@ -55,16 +54,6 @@ async def delete_expired_sessions_and_workflows_forever():
             "delete_expired_sessions_and_workflows()",
         )
         await asyncio.sleep(ExpiryInterval)
-
-
-async def delete_stale_inprogress_file_uploads_forever():
-    while True:
-        await benchmark(
-            logger,
-            delete_stale_inprogress_file_uploads(),
-            "delete_stale_inprogress_file_uploads()",
-        )
-        await asyncio.sleep(StaleUploadInterval)
 
 
 async def disable_stale_lesson_auto_update_forever():

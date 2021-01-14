@@ -164,19 +164,6 @@ class StepTests(DbTestCase):
         new_uf = step2.uploaded_files.first()
         self.assertEqual(new_uf.uuid, uuid2)
 
-    def test_delete_inprogress_file_upload(self):
-        workflow = Workflow.create_and_init()
-        step = workflow.tabs.first().steps.create(
-            order=0, slug="step-1", module_id_name="x"
-        )
-        ipu = step.in_progress_uploads.create()
-        key = ipu.get_upload_key()
-        minio.client.create_multipart_upload(Bucket=ipu.Bucket, Key=key)
-        step.delete()
-        # Assert the upload is gone
-        response = minio.client.list_multipart_uploads(Bucket=ipu.Bucket, Prefix=key)
-        self.assertNotIn("Uploads", response)
-
     def test_delete_remove_uploaded_data_by_prefix_in_case_model_missing(self):
         workflow = Workflow.create_and_init()
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")

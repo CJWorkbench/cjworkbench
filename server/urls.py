@@ -16,7 +16,6 @@ from .views import (
     oauth,
     settings,
     tusd_hooks,
-    uploads,
     workflows,
 )
 
@@ -79,14 +78,6 @@ urlpatterns = [
         name="workflow",
     ),
     # API
-    path(
-        "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/uploads",
-        uploads.UploadList.as_view(),
-    ),
-    path(
-        "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/uploads/<uuid:uuid>",
-        uploads.Upload.as_view(),
-    ),
     path(
         "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/files",
         files.create_tus_upload_for_workflow_and_step,

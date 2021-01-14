@@ -132,7 +132,6 @@ class AccountAdmin:
             "delta",
             "stored_object",
             "uploaded_file",
-            "in_progress_upload",
             "step",
             "tab",
             "workflow",

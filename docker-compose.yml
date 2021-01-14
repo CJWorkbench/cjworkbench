@@ -32,12 +32,8 @@ services:
     networks: [ 'dev' ]
     ports: [ '8001:9000' ]
     environment:
-      # Workbench creates a regular user, minio_access/minio_secret ... but
-      # to do that it needs a root user. The regular user is essential because
-      # STS doesn't work with the root user. (On production, there is no
-      # root user.)
-      MINIO_ACCESS_KEY: minio_root_access
-      MINIO_SECRET_KEY: minio_root_secret
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
     volumes:
       - minio_data:/data
     command: [ 'server', '/data' ]
@@ -192,8 +188,8 @@ services:
     depends_on: [ 'minio' ]
     ports: [ '8002:80' ]
     environment:
-      AWS_ACCESS_KEY_ID: minio_root_access
-      AWS_SECRET_ACCESS_KEY: minio_root_secret
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_REGION: us-east-1
     # No volumes: we don't save data between restarts. (Uploads are temporary.)
     command: [
@@ -242,12 +238,8 @@ services:
       - type: tmpfs
         target: /data
     environment:
-      # Workbench creates a regular user, minio_access/minio_secret ... but
-      # to do that it needs a root user. The regular user is essential because
-      # STS doesn't work with the root user. (On production, there is no
-      # root user.)
-      MINIO_ACCESS_KEY: minio_root_access
-      MINIO_SECRET_KEY: minio_root_secret
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
     command: [ 'server', '/data' ]
 
   testtusd:
@@ -255,8 +247,8 @@ services:
     networks: [ 'test' ]
     depends_on: [ 'testminio' ]
     environment:
-      AWS_ACCESS_KEY_ID: minio_root_access
-      AWS_SECRET_ACCESS_KEY: minio_root_secret
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_REGION: us-east-1
     command: [
       '-port=8080',  # no permission to bind port 80 on google-cloud-build won't bind port 80

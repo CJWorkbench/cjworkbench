@@ -68,7 +68,6 @@ client = session.client(
     endpoint_url=settings.MINIO_URL,  # e.g., 'https://localhost:9001/'
     config=botocore.client.Config(max_pool_connections=50),
 )
-sts_client = session.client("sts", endpoint_url=settings.MINIO_URL)
 # Create the one transfer manager we'll reuse for all transfers. Otherwise,
 # boto3 default is to create a transfer manager _per upload/download_, which
 # means 10 threads per operation. (Primer: upload/download split over multiple
@@ -174,59 +173,6 @@ def exists(bucket: str, key: str) -> bool:
         if err.response["Error"]["Code"] == "404":
             return False
         raise
-
-
-def assume_role_to_write(bucket: str, key: str, duration_seconds: int = 18000) -> str:
-    """Build temporary S3 credentials to let an external client write bucket/key.
-
-    Return a dict of secretAccessKey, sessionToken, expiration, accessKeyId.
-    """
-    response = sts_client.assume_role(
-        RoleArn="minio-notused-notused",
-        RoleSessionName="minio-notused-notused",
-        DurationSeconds=duration_seconds,
-        Policy=json.dumps(
-            {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Effect": "Allow",
-                        "Action": [
-                            "s3:PutObject",
-                            "s3:AbortMultipartUpload",
-                            "s3:ListMultipartUploadParts",
-                        ],
-                        "Resource": [f"arn:aws:s3:::{bucket}/{key}"],
-                        # Don't worry about uploads having the wrong ACL: [2019-07-23] minio
-                        # does not support object ACLs.
-                    }
-                ],
-            }
-        ),
-    )
-    credentials = response["Credentials"]
-    return {
-        "accessKeyId": credentials["AccessKeyId"],
-        "secretAccessKey": credentials["SecretAccessKey"],
-        "sessionToken": credentials["SessionToken"],
-        "expiration": credentials["Expiration"],
-    }
-
-
-def abort_multipart_uploads_by_prefix(bucket: str, prefix: str) -> None:
-    """Abort all multipart upload to the given prefix.
-
-    This costs an API request to list uploads, and then an API request per
-    multipart upload.
-
-    WARNING: since this is minio, "prefix" must be "key". minio will not list
-    multiple uploads in a directory, for instance.
-    """
-    response = client.list_multipart_uploads(Bucket=bucket, Prefix=prefix)
-    for upload in response.get("Uploads", []):
-        key = upload["Key"]
-        upload_id = upload["UploadId"]
-        client.abort_multipart_upload(Bucket=bucket, Key=key, UploadId=upload_id)
 
 
 class Stat(NamedTuple):

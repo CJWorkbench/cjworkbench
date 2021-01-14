@@ -58,7 +58,6 @@ WORKDIR /app
 
 # 0.2 Pydev: just for the development environment
 FROM workbenchdata/watchman-bin:v0.0.1-buster-slim AS watchman-bin
-FROM minio/mc:RELEASE.2020-10-03T02-54-56Z AS mc
 FROM pybase AS pydev
 
 # Need build-essential for:
@@ -85,9 +84,6 @@ RUN mkdir -p /root/.local/share/virtualenvs \
 # Add "watchman" command -- we use it in dev mode to monitor for source code changes
 COPY --from=watchman-bin /usr/bin/watchman /usr/bin/watchman
 COPY --from=watchman-bin /usr/var/run/watchman /usr/var/run/watchman
-
-# Add "mc" command, so we can create a non-root user in minio (for STS).
-COPY --from=mc /usr/bin/mc /usr/bin/mc
 
 COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
 RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh

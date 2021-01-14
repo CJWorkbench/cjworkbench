@@ -35,15 +35,15 @@ services:
       - type: tmpfs
         target: /data
     environment:
-      MINIO_ACCESS_KEY: minio_root_access
-      MINIO_SECRET_KEY: minio_root_secret
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
     command: [ 'server', '/data' ]
 
   testtusd:
     image: tusproject/tusd:v1.4.0
     environment:
-      AWS_ACCESS_KEY_ID: minio_root_access
-      AWS_SECRET_ACCESS_KEY: minio_root_secret
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_REGION: us-east-1
     command: [
       '-port=8080',
@@ -76,8 +76,8 @@ services:
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_root_access
-      MINIO_SECRET_KEY: minio_root_secret
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://testminio:9000
       MINIO_BUCKET_PREFIX: unittest
       TUS_CREATE_UPLOAD_URL: http://testtusd:8080/files
