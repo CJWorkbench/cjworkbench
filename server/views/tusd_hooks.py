@@ -69,7 +69,6 @@ def _finish_upload(data: Dict[str, Any]) -> Dict[str, Any]:
             minio.UserFilesBucket,
             final_key,
             f"{bucket}/{key}",
-            ACL="private",
             MetadataDirective="REPLACE",
             ContentDisposition=minio.encode_content_disposition(filename),
             ContentType="application/octet-stream",
