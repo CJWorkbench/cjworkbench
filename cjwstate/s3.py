@@ -25,7 +25,11 @@ def encode_content_disposition(filename: str) -> str:
     return "attachment; filename*=UTF-8''" + enc_filename
 
 
-session = boto3.session.Session(region_name="us-east-1")
+session = boto3.session.Session(
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,  # TODO nix
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,  # TODO nix
+    region_name="us-east-1",
+)
 client = session.client(
     "s3",
     endpoint_url=settings.AWS_S3_ENDPOINT,  # e.g., 'https://localhost:9001/'
