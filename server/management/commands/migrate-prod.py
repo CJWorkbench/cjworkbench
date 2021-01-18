@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
         # ICK ugly hack. TODO there must be a better place to make uploaded
         # files readable for integration tests....
-        if settings.MINIO_BUCKET_PREFIX == "integrationtest":
+        if settings.S3_BUCKET_NAME_PATTERN == "integrationtest-%s":
             s3.ensure_bucket_exists(s3.StaticFilesBucket)
             s3.client.put_bucket_policy(
                 Bucket=s3.StaticFilesBucket, Policy=STATIC_FILES_BUCKET_POLICY
