@@ -13,6 +13,31 @@ else
   PROJECT_NAME="workbench-staging"
 fi
 
+gsutil mb gs://user-files.$DOMAIN_NAME
+gsutil mb gs://static.$DOMAIN_NAME
+gsutil mb gs://stored-objects.$DOMAIN_NAME
+gsutil mb gs://external-modules.$DOMAIN_NAME
+gsutil mb gs://cached-render-results.$DOMAIN_NAME
+gsutil mb gs://upload.$DOMAIN_NAME
+gsutil ubla set on gs://user-files.$DOMAIN_NAME
+gsutil ubla set on gs://static.$DOMAIN_NAME
+gsutil ubla set on gs://stored-objects.$DOMAIN_NAME
+gsutil ubla set on gs://external-modules.$DOMAIN_NAME
+gsutil ubla set on gs://cached-render-results.$DOMAIN_NAME
+gsutil ubla set on gs://upload.$DOMAIN_NAME
+
+gcloud iam service-accounts keys create application_default_credentials.json \
+  --iam-account $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com
+kubectl create secret generic minio-gcs-credentials \
+  --from-file=./application_default_credentials.json
+rm application_default_credentials.json
+
+gcloud iam service-accounts keys create application_default_credentials.json \
+  --iam-account $CLUSTER_NAME-tusd@$PROJECT_NAME.iam.gserviceaccount.com
+kubectl create secret generic tusd-gcs-credentials \
+  --from-file=./application_default_credentials.json
+rm application_default_credentials.json
+
 # Uploads expire after 1d
 echo '{"lifecycle":{"rule":[{"action":{"type":"Delete"},"condition":{"age":1}}]}}' \
   > 1d-lifecycle.json
@@ -30,18 +55,12 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member=serviceAccount:$CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com \
   --role=roles/storage.admin
 
-# We give minio, migrate, renderer and fetcher direct access to Google Cloud
+# We give cron, migrate, renderer and fetcher direct access to Google Cloud
 # Storage using its interoperability ("S3") API. The `cjwstate.minio` module
 # accesses GCS using botocore and boto3, as though it were S3.
 #
-# frontend doesn't: user uploads need AWS IAM STS tokens. S3 handles big
-# upload through STS tokens and multipart uploads; GCS handles big upload
-# through resumable uploads. frontend -- and indeed, the end-user -- must
-# use minio to emulate S3, because GCS doesn't emulate its STS tokens.
-#
-# On production, we only use minio for user file uploads. All this madness is
-# only for user file uploads. AAAAAH.
-for sa in minio migrate-sa renderer-sa fetcher-sa; do
+# minio is cruft, and we'll remove it.
+for sa in minio cron-sa migrate-sa renderer-sa fetcher-sa; do
   kubectl create secret generic gcs-s3-$sa-credentials --from-env-file <(
     gsutil hmac create \
       -p $PROJECT_NAME \
@@ -58,14 +77,16 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
 # [2020-12-16] frontend doesn't use GCS directly: it goes through minio. But
 # we're writing these policies as documentation.
 
-# stored-objects: fetcher+frontend write; renderer reads
+# stored-objects: cron deletes; fetcher+frontend write; renderer reads
 gsutil iam ch \
+  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-fetcher-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   gs://stored-objects.$DOMAIN_NAME
-# user-files: frontend writes; fetcher+renderer read
+# user-files: cron deletes; frontend writes; fetcher+renderer read
 gsutil iam ch \
+  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   serviceAccount:$CLUSTER_NAME-fetcher-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
@@ -76,8 +97,10 @@ gsutil iam ch \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   gs://external-modules.$DOMAIN_NAME
-# cached-render-results: frontend+renderer write; frontend can read (for an edge case)
+# cached-render-results: cron deletes; frontend+renderer write; fetcher can read
+# (Fetcher reads because fetches can depend on prior results -- a bizarre feature.)
 gsutil iam ch \
+  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   serviceAccount:$CLUSTER_NAME-fetcher-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \

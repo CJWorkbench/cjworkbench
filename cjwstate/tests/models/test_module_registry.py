@@ -16,7 +16,6 @@ class ModuleRegistryTest(DbTestCase):
     def setUpClass(cls):
         super().setUpClass()
         init_module_system()
-        s3.ensure_bucket_exists(s3.StaticFilesBucket)
 
     # All the keys written to s3 in this test are different. That's so that
     # s3's output will be consistent read-after-write. If we were to delete

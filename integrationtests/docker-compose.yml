@@ -37,10 +37,10 @@ services:
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_SECRET_KEY: cjw-secret-key
       CJW_MOCK_EMAIL: 'True'
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: integrationtest
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
+      AWS_S3_ENDPOINT: http://minio:9000
+      S3_BUCKET_NAME_PATTERN: "integrationtest-%s"
 
   minio:
     image: minio/minio:RELEASE.2020-10-12T21-53-21Z
@@ -52,6 +52,39 @@ services:
       default:
         aliases:
           - minio.django-issue-32304.com
+    entrypoint: ''
+    command:
+      - sh
+      - '-c'
+      - |
+        PREFIX=integrationtest
+        for bucket in user-files static stored-objects external-modules cached-render-results upload; do
+            mkdir -p /data/$$PREFIX-$$bucket
+        done
+        rm -rf /data/.minio.sys
+        mkdir -p /data/.minio.sys/buckets/$$PREFIX-static/
+        cat > /data/.minio.sys/buckets/$$PREFIX-static/policy.json <<EOT
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "",
+                    "Effect": "Allow",
+                    "Principal": {"AWS": "*"},
+                    "Action": ["s3:GetBucketLocation", "s3:ListBucket"],
+                    "Resource": ["arn:aws:s3:::$$PREFIX-static"]
+                },
+                {
+                    "Sid": "",
+                    "Effect": "Allow",
+                    "Principal": {"AWS": "*"},
+                    "Action": ["s3:GetObject"],
+                    "Resource": ["arn:aws:s3:::$$PREFIX-static/*"]
+                }
+            ]
+        }
+        EOT
+        minio server /data
 
   # In Kubernetes, we use sidecar processes to manage chroots. But we can't
   # mimic those in pure Docker, because we can't adjust mount propagation.
@@ -142,7 +175,7 @@ services:
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: integrationtest
+      S3_BUCKET_NAME_PATTERN: "integrationtest-%s"
 
 volumes:
   local_mail: {}  # renderer/frontend write emails; integration-test reads them

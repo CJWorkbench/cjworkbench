@@ -68,34 +68,30 @@
             "value": "True"
           },
           {
-            "name": "MINIO_ACCESS_KEY",
+            "name": "AWS_ACCESS_KEY_ID",
             "valueFrom": {
               "secretKeyRef": {
-                "name": "minio-access-key",
-                "key": "access_key"
+                "name": "gcs-s3-migrate-sa-credentials",
+                "key": "AWS_ACCESS_KEY_ID"
 
               }
             }
           },
           {
-            "name": "MINIO_SECRET_KEY",
+            "name": "AWS_SECRET_ACCESS_KEY",
             "valueFrom": {
               "secretKeyRef": {
-                "name": "minio-access-key",
-                "key": "secret_key"
+                "name": "gcs-s3-migrate-sa-credentials",
+                "key": "AWS_SECRET_ACCESS_KEY"
               }
             }
           },
           {
-            "name": "MINIO_BUCKET_PREFIX",
-            "value": ""
+            "name": "AWS_S3_ENDPOINT",
+            "value": "https://storage.googleapis.com"
           },
           {
-            "name": "MINIO_URL",
-            "value": "http://minio-service"
-          },
-          {
-            "name": "MINIO_BUCKET_SUFFIX",
+            "name": "_DOMAIN_NAME_WITH_LEADING_DOT",
             "valueFrom": {
               "configMapKeyRef": {
                 "name": "workbench-config",
@@ -104,8 +100,8 @@
             }
           },
           {
-            "name": "MINIO_EXTERNAL_URL",
-            "value": "https://user-files$(MINIO_BUCKET_SUFFIX)"
+            "name": "S3_BUCKET_NAME_PATTERN",
+            "value": "%s$_DOMAIN_NAME_WITH_LEADING_DOT"
           }
         ]
       },

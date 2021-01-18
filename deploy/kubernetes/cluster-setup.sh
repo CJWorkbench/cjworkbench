@@ -218,39 +218,15 @@ kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketpl
 # Enable SSD storage class
 kubectl apply -f ssd-storageclass.yaml
 
-# 1 Prepare Google Cloud Storage, Minio and tusd
-# 1.1 GCS account, so minio/tusd can create buckets/objects
-gsutil mb gs://user-files.$DOMAIN_NAME
-gsutil mb gs://static.$DOMAIN_NAME
-gsutil mb gs://stored-objects.$DOMAIN_NAME
-gsutil mb gs://external-modules.$DOMAIN_NAME
-gsutil mb gs://cached-render-results.$DOMAIN_NAME
-gsutil mb gs://upload.$DOMAIN_NAME
-gsutil ubla set on gs://user-files.$DOMAIN_NAME
-gsutil ubla set on gs://static.$DOMAIN_NAME
-gsutil ubla set on gs://stored-objects.$DOMAIN_NAME
-gsutil ubla set on gs://external-modules.$DOMAIN_NAME
-gsutil ubla set on gs://cached-render-results.$DOMAIN_NAME
-gsutil ubla set on gs://upload.$DOMAIN_NAME
-
-gcloud iam service-accounts keys create application_default_credentials.json \
-  --iam-account $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com
-kubectl create secret generic minio-gcs-credentials \
-  --from-file=./application_default_credentials.json
-rm application_default_credentials.json
-
-gcloud iam service-accounts keys create application_default_credentials.json \
-  --iam-account $CLUSTER_NAME-tusd@$PROJECT_NAME.iam.gserviceaccount.com
-kubectl create secret generic tusd-gcs-credentials \
-  --from-file=./application_default_credentials.json
-rm application_default_credentials.json
+# 1 Prepare Google Cloud Storage
+# 1.1 GCS account, so s3/tusd can create buckets/objects
+source ./01-storage.sh
 
 # 2. Prepare Cloud SQL
 source ./02-sql.sh
 
-# 3. Start rabbitmq+minio
+# 3. Start rabbitmq
 rabbitmq/init.sh
-source ./03-storage.sh
 
 # 4. Create secrets! You'll need to be very careful here....
 : ${CJW_SECRET_KEY:?"Must set CJW_SECRET_KEY"}

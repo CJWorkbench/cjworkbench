@@ -169,35 +169,31 @@ spec:
               value: secrets/intercom-oauth-secret/intercom-oauth-secret.json
             - name: CJW_TWITTER_CLIENT_SECRETS
               value: secrets/twitter-oauth-secret/twitter-oauth-secret.json
-            - name: MINIO_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: minio-access-key
-                  key: access_key
-            - name: MINIO_SECRET_KEY
+                  name: gcs-s3-frontend-sa-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio-access-key
-                  key: secret_key
-            - name: MINIO_URL
-              value: 'http://minio-service'
-            - name: MINIO_BUCKET_PREFIX
-              value: ""
-            - name: DOMAIN_NAME_WITH_LEADING_DOT
+                  name: gcs-s3-frontend-sa-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_S3_ENDPOINT
+              value: https://storage.googleapis.com
+            - name: _DOMAIN_NAME_WITH_LEADING_DOT
               valueFrom:
                 configMapKeyRef:
                   name: workbench-config
                   key: domainNameWithLeadingDot
-            - name: MINIO_BUCKET_SUFFIX
-              value: "$(DOMAIN_NAME_WITH_LEADING_DOT)"
             - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/static$(DOMAIN_NAME_WITH_LEADING_DOT)/'
-            - name: MINIO_EXTERNAL_URL
-              value: "https://user-files$(DOMAIN_NAME_WITH_LEADING_DOT)"
+              value: 'https://storage.googleapis.com/static$(_DOMAIN_NAME_WITH_LEADING_DOT)/'
+            - name: S3_BUCKET_NAME_PATTERN
+              value: '%s$(_DOMAIN_NAME_WWITH_LEADING_DOT)'
             - name: TUS_CREATE_UPLOAD_URL
               value: "http://tusd-internal-service/files"
             - name: TUS_EXTERNAL_URL_PREFIX_OVERRIDE
-              value: "https://upload$(DOMAIN_NAME_WITH_LEADING_DOT)"
+              value: "https://upload$(_DOMAIN_NAME_WITH_LEADING_DOT)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:

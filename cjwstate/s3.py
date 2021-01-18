@@ -76,31 +76,6 @@ CachedRenderResultsBucket = settings.S3_BUCKET_NAME_PATTERN % "cached-render-res
 TusUploadBucket = settings.S3_BUCKET_NAME_PATTERN % "upload"
 
 
-def ensure_bucket_exists(bucket_name):
-    # 1. If bucket exists, return. This is good on production where we don't
-    # have permission to run `client.create_bucket()`
-    try:
-        client.head_bucket(Bucket=bucket_name)
-        return
-    except error.NoSuchBucket:
-        pass
-    except error.ClientError as err:
-        # Botocore 1.12.130 seems to raise ClientError instead of NoSuchBucket
-        if err.response["Error"]["Code"] != "404":
-            raise
-
-    # 2. Bucket doesn't exist, so attempt to create it
-    try:
-        client.create_bucket(Bucket=bucket_name)
-    except error.AccessDenied as err:
-        raise RuntimeError(
-            f'There is no bucket "{bucket_name}" on the S3 server at '
-            f'"{settings.AWS_S3_ENDPOINT}", and we do not have permission to create '
-            "it. Please create it manually and then restart Workbench.",
-            cause=err,
-        )
-
-
 def list_file_keys(bucket: str, prefix: str):
     """List keys of non-directory objects, non-recursively, in `prefix`.
 

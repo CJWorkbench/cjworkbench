@@ -131,12 +131,6 @@ def clear_s3():
         s3.TusUploadBucket,
     )
 
-    if not hasattr(clear_s3, "_initialized"):
-        # Ensure buckets exist -- only on first call
-        for bucket in buckets:
-            s3.ensure_bucket_exists(bucket)
-        clear_s3._initialized = True
-
     for bucket in buckets:
         s3.remove_recursive(bucket, "/", force=True)
 

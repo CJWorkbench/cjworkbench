@@ -1,0 +1,5 @@
+#!/bin/sh
+
+while ! curl --silent --fail $AWS_S3_ENDPOINT/minio/health/ready; do
+  sleep 0.1
+done

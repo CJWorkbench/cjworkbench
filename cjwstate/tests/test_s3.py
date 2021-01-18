@@ -17,7 +17,6 @@ def _put(b: bytes) -> None:
 class TemporarilyDownloadTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
-        s3.ensure_bucket_exists(Bucket)
         _clear()
 
     def tearDown(self):

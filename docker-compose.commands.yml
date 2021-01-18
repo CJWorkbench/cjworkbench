@@ -18,10 +18,10 @@ services:
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       TUS_CREATE_UPLOAD_URL: http://tusd/files/
-      MINIO_ACCESS_KEY: minio_access
-      MINIO_SECRET_KEY: minio_secret
-      MINIO_URL: http://minio:9000
-      MINIO_BUCKET_PREFIX: dev
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
+      AWS_S3_ENDPOINT: http://minio:9000
+      S3_BUCKET_NAME_PATTERN: "dev-%s"
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
@@ -94,8 +94,8 @@ services:
       TUS_CREATE_UPLOAD_URL: http://testtusd:8080/files
       CJW_DB_HOST: testdatabase
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
-      MINIO_URL: http://testminio:9000
-      MINIO_BUCKET_PREFIX: unittest
+      AWS_S3_ENDPOINT: http://testminio:9000
+      S3_BUCKET_NAME_PATTERN: "unittest-%s"
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testrabbitmq', 'testminio', 'testtusd' ]
     entrypoint: 'bin/unittest-entrypoint.sh'

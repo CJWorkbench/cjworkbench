@@ -3,9 +3,7 @@
 set -e
 
 setup_env() {
-  while ! curl --silent --fail $MINIO_URL/minio/health/ready; do
-    sleep 0.1
-  done
+  "$(dirname "$0")"/wait-for-minio
 }
 
 # Skip setup_env if we are only testing within `cjwkernel/`.
