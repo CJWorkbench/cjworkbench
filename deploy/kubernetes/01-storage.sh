@@ -27,12 +27,6 @@ gsutil ubla set on gs://cached-render-results.$DOMAIN_NAME
 gsutil ubla set on gs://upload.$DOMAIN_NAME
 
 gcloud iam service-accounts keys create application_default_credentials.json \
-  --iam-account $CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com
-kubectl create secret generic minio-gcs-credentials \
-  --from-file=./application_default_credentials.json
-rm application_default_credentials.json
-
-gcloud iam service-accounts keys create application_default_credentials.json \
   --iam-account $CLUSTER_NAME-tusd@$PROJECT_NAME.iam.gserviceaccount.com
 kubectl create secret generic tusd-gcs-credentials \
   --from-file=./application_default_credentials.json
@@ -44,23 +38,10 @@ echo '{"lifecycle":{"rule":[{"action":{"type":"Delete"},"condition":{"age":1}}]}
 gsutil lifecycle set 1d-lifecycle.json gs://upload.$DOMAIN_NAME
 rm 1d-lifecycle.json
 
-gcloud iam service-accounts create $CLUSTER_NAME-minio --display-name $CLUSTER_NAME-minio
-# minio needs storage.buckets.list, or it prints lots of errors.
-# (which seems like a bug.... https://github.com/minio/mc/issues/2652)
-# Minio uses this permission to poll for bucket policies.
-gcloud iam roles create Minio \
-  --project=$PROJECT_NAME \
-  --permissions=storage.buckets.list,storage.buckets.get,storage.objects.create,storage.objects.delete,storage.objects.get,storage.objects.list,storage.objects.update
-gcloud projects add-iam-policy-binding $PROJECT_NAME \
-  --member=serviceAccount:$CLUSTER_NAME-minio@$PROJECT_NAME.iam.gserviceaccount.com \
-  --role=roles/storage.admin
-
 # We give cron, migrate, renderer and fetcher direct access to Google Cloud
-# Storage using its interoperability ("S3") API. The `cjwstate.minio` module
-# accesses GCS using botocore and boto3, as though it were S3.
-#
-# minio is cruft, and we'll remove it.
-for sa in minio cron-sa migrate-sa renderer-sa fetcher-sa; do
+# Storage using its interoperability ("S3") API. The `cjwstate.s3` module
+# uses this.
+for sa in cron-sa migrate-sa renderer-sa fetcher-sa; do
   kubectl create secret generic gcs-s3-$sa-credentials --from-env-file <(
     gsutil hmac create \
       -p $PROJECT_NAME \
@@ -73,9 +54,7 @@ gcloud projects add-iam-policy-binding $PROJECT_NAME \
   --member=serviceAccount:$CLUSTER_NAME-migrate-sa@$PROJECT_NAME.iam.gserviceaccount.com \
   --role=roles/storage.admin
 
-# renderer, frontend, fetcher and tusd are more restricted.
-# [2020-12-16] frontend doesn't use GCS directly: it goes through minio. But
-# we're writing these policies as documentation.
+# cron-sa, renderer-sa, frontend-sa, fetcher-sa and tusd-sa are more restricted.
 
 # stored-objects: cron deletes; fetcher+frontend write; renderer reads
 gsutil iam ch \
@@ -112,16 +91,8 @@ gsutil iam ch \
   gs://upload.$DOMAIN_NAME
 
 
-# We'll use openssl rand to generate a password that only uses base64
-# characters. Then we'll base64-encode it for use in kubectl commands.
-kubectl create secret generic minio-access-key \
-  --from-literal=access_key=$(openssl rand -base64 24 | base64) \
-  --from-literal=secret_key=$(openssl rand -base64 24 | base64)
-
 # Set up load balancer
-kubectl apply -f "$DIR"/minio-service.yaml
 gcloud compute addresses create user-files --global
-kubectl apply -f "$DIR"/minio-$ENV-ingress.yaml
 
 # Set up DNS
 STATIC_IP=$(gcloud compute addresses describe user-files --global | grep address: | cut -b10-)
