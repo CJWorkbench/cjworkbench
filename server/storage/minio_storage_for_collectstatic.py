@@ -6,7 +6,7 @@ from queue import Queue
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
-from cjwstate.minio import ensure_bucket_exists, client, StaticFilesBucket
+from cjwstate.minio import client, StaticFilesBucket
 
 
 logger = logging.getLogger(__name__)
