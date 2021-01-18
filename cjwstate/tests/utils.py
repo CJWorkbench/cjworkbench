@@ -1,19 +1,17 @@
-import asyncio
 import hashlib
 import io
 import json
+import zipfile
 from typing import Any, Dict, Optional
 from unittest.mock import Mock
-import zipfile
-from concurrent.futures import ThreadPoolExecutor
-from django.db import connection, connections
+
 from django.contrib.auth.models import User
+
+import cjwstate.modules
 from cjworkbench.tests.utils import DbTestCase as BaseDbTestCase
-from cjworkbench.sync import WorkbenchDatabaseSyncToAsync
 from cjwstate import minio
 from cjwstate.models.module_version import ModuleVersion
 from cjwstate.models.module_registry import MODULE_REGISTRY
-import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
 
 
@@ -141,3 +139,14 @@ def clear_minio():
 
     for bucket in buckets:
         minio.remove_recursive(bucket, "/", force=True)
+
+
+def get_minio_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
+    """Like client.get_object(), but response['Body'] is bytes."""
+    response = minio.client.get_object(Bucket=bucket, Key=key, **kwargs)
+    body = response["Body"]
+    try:
+        data = body.read()
+    finally:
+        body.close()
+    return {**response, "Body": data}

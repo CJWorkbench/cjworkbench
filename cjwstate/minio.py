@@ -235,44 +235,6 @@ def remove_recursive(bucket: str, prefix: str, force=False) -> None:
     return remove_by_prefix(bucket, prefix, force)
 
 
-def get_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
-    """Like client.get_object(), but response['Body'] is bytes.
-
-    Why? Because if we're streaming it and we receive a urllib3.ProtocolError,
-    there's no retry logic. Better to use the normal botocore retry logic.
-
-    [adamhooper, 2019-04-22] I haven't found references online of anyone else
-    doing this. Possibly we're receiving more ProtocolError than most because
-    we're using minio. But I've seen plenty of similar errors with official S3,
-    so I suspect this is a pattern many people might want to replicate.
-
-    [adamhooper, 2019-04-22] A better implementation would be to create a
-    different `get_object()` that has 'Body'.streaming = False.
-    """
-    max_attempts = transfer_config.num_download_attempts
-    for i in range(max_attempts):
-        try:
-            response = client.get_object(Bucket=bucket, Key=key, **kwargs)
-            body = response["Body"]
-            try:
-                data = body.read()
-            finally:
-                body.close()
-            return {**response, "Body": data}
-        except s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS as e:
-            logger.info(
-                "Retrying exception caught (%s), "
-                "retrying request, (attempt %d / %d)",
-                e,
-                i,
-                max_attempts,
-                exc_info=True,
-            )
-            last_exception = e
-            # ... and retry
-    raise last_exception
-
-
 @contextmanager
 def temporarily_download(
     bucket: str, key: str, dir=None

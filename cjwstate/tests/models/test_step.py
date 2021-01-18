@@ -1,11 +1,13 @@
 import uuid as uuidgen
+
 from django.utils import timezone
+
 from cjwkernel.util import tempfile_context
 from cjwstate import minio
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflow
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCase, get_minio_object_with_data
 
 
 # Set up a simple pipeline on test data
@@ -57,8 +59,8 @@ class StepTests(DbTestCase):
         # The StoredObject was copied byte for byte into a different file
         self.assertNotEqual(so2d.key, so2.key)
         self.assertEqual(
-            minio.get_object_with_data(minio.StoredObjectsBucket, so2d.key)["Body"],
-            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
+            get_minio_object_with_data(minio.StoredObjectsBucket, so2d.key)["Body"],
+            get_minio_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
         )
 
     def test_step_duplicate_disable_auto_update(self):
@@ -129,7 +131,7 @@ class StepTests(DbTestCase):
         self.assertEqual(uploaded_file2.size, 7)
         self.assertEqual(uploaded_file2.created_at, uploaded_file.created_at)
         self.assertEqual(
-            minio.get_object_with_data(minio.UserFilesBucket, uploaded_file2.key)[
+            get_minio_object_with_data(minio.UserFilesBucket, uploaded_file2.key)[
                 "Body"
             ],
             b"1234567",

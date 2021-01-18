@@ -11,6 +11,7 @@ from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistry,
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
+    get_minio_object_with_data,
 )
 
 
@@ -69,7 +70,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             uploaded_file.key, f"^wf-{workflow.id}/wfm-{step.id}/[-0-9a-f]{{36}}\\.csv$"
         )
         self.assertEqual(
-            minio.get_object_with_data(minio.UserFilesBucket, uploaded_file.key)[
+            get_minio_object_with_data(minio.UserFilesBucket, uploaded_file.key)[
                 "Body"
             ],
             b"1234567",

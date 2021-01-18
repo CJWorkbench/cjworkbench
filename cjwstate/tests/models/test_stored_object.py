@@ -1,7 +1,7 @@
 from uuid import uuid1
 from cjwstate import minio
 from cjwstate.models import Workflow
-from cjwstate.tests.utils import DbTestCase
+from cjwstate.tests.utils import DbTestCase, get_minio_object_with_data
 
 
 class StoredObjectTests(DbTestCase):
@@ -24,7 +24,7 @@ class StoredObjectTests(DbTestCase):
         self.assertEqual(so2.size, so1.size)
         self.assertNotEqual(so2.key, so1.key)
         self.assertEqual(
-            minio.get_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
+            get_minio_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
             b"12345",
         )
 
