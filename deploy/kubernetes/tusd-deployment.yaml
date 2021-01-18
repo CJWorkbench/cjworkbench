@@ -34,11 +34,11 @@ spec:
             cpu: 0.3
             memory: 512Mi
         env:
-        - name: DOMAIN_NAME_WITH_LEADING_DOT
+        - name: DOMAIN_NAME
           valueFrom:
             configMapKeyRef:
               name: workbench-config
-              key: domainNameWithLeadingDot
+              key: domainName
         - name: GCS_SERVICE_ACCOUNT_FILE
           value: /tusd-gcs-credentials/application_default_credentials.json
         volumeMounts:
@@ -52,7 +52,7 @@ spec:
         args:
         - -port=8080
         - -behind-proxy
-        - "-gcs-bucket=upload$(DOMAIN_NAME_WITH_LEADING_DOT)"
+        - "-gcs-bucket=upload.$(DOMAIN_NAME)"
         - "-hooks-http=http://frontend-internal-tusd-hooks-service/tusd-hooks"
         - -hooks-enabled-events=pre-finish
       volumes:

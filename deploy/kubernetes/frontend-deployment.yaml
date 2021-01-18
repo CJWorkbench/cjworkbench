@@ -181,19 +181,19 @@ spec:
                   key: AWS_SECRET_ACCESS_KEY
             - name: AWS_S3_ENDPOINT
               value: https://storage.googleapis.com
-            - name: _DOMAIN_NAME_WITH_LEADING_DOT
+            - name: _DOMAIN_NAME
               valueFrom:
                 configMapKeyRef:
                   name: workbench-config
-                  key: domainNameWithLeadingDot
+                  key: domainName
             - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/static$(_DOMAIN_NAME_WITH_LEADING_DOT)/'
+              value: 'https://storage.googleapis.com/static.$(_DOMAIN_NAME)/'
             - name: S3_BUCKET_NAME_PATTERN
-              value: '%s$(_DOMAIN_NAME_WWITH_LEADING_DOT)'
+              value: '%s.$(_DOMAIN_NAME)'
             - name: TUS_CREATE_UPLOAD_URL
               value: "http://tusd-internal-service/files"
             - name: TUS_EXTERNAL_URL_PREFIX_OVERRIDE
-              value: "https://upload$(_DOMAIN_NAME_WITH_LEADING_DOT)"
+              value: "https://upload.$(_DOMAIN_NAME)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:

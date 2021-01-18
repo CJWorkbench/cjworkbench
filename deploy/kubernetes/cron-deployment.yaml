@@ -60,13 +60,13 @@ spec:
                   key: AWS_SECRET_ACCESS_KEY
             - name: AWS_S3_ENDPOINT
               value: https://storage.googleapis.com
-            - name: _DOMAIN_NAME_WITH_LEADING_DOT
+            - name: _DOMAIN_NAME
               valueFrom:
                 configMapKeyRef:
                   name: workbench-config
-                  key: domainNameWithLeadingDot
+                  key: domainName
             - name: S3_BUCKET_NAME_PATTERN
-              value: "%s$(_DOMAIN_NAME_WITH_LEADING_DOT)"
+              value: "%s.$(_DOMAIN_NAME)"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:

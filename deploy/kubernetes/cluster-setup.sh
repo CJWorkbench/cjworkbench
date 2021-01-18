@@ -265,7 +265,6 @@ kubectl create secret generic twitter-oauth-secret --from-file=json=twitter-oaut
 kubectl create configmap workbench-config \
   --from-literal=environment=$ENV \
   --from-literal=domainName=$DOMAIN_NAME \
-  --from-literal=domainNameWithLeadingDot=.$DOMAIN_NAME \
   --from-literal=appDomainName=$APP_FQDN \
   --from-literal=canonicalUrl="https://$APP_FQDN"
 kubectl create configmap gcloud-config \
