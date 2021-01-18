@@ -2,51 +2,18 @@ import errno
 import json
 import logging
 import pathlib
+import sys
 import urllib3
 import urllib.parse
 from contextlib import contextmanager
 from typing import Any, ContextManager, Dict, NamedTuple
 
+import boto3
+import botocore
+from boto3.s3.transfer import S3Transfer, TransferConfig
 from django.conf import settings
 
 from cjwkernel.util import tempfile_context
-
-
-# Monkey-patch s3transfer so it retries on ProtocolError. On production,
-# minio-the-GCS-gateway tends to drop connections once in a while; we want to
-# retry those.
-#
-# This monkey-patch has to come before _anything_ (including other parts of
-# s3transfer) reads it. That means this "import s3transfer.utils" has to be the
-# first time anywhere in the app we import boto3 or s3transfer.
-import s3transfer.utils
-
-s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS = (
-    *s3transfer.utils.S3_RETRYABLE_DOWNLOAD_ERRORS,
-    urllib3.exceptions.ProtocolError,
-)
-
-import boto3  # _after_ our s3transfer.utils monkey-patch!
-from boto3.s3.transfer import S3Transfer, TransferConfig  # _after_ patch!
-
-
-# Monkey-patch for https://github.com/boto/boto3/issues/1341
-# The patch is from https://github.com/boto/botocore/pull/1328 and
-# [2019-04-17, adamhooper] it's unclear why it hasn't been applied.
-#
-# TODO nix when https://github.com/boto/botocore/pull/1328 is merged
-import botocore  # just so we can monkey-patch it
-
-_original_send_request = botocore.awsrequest.AWSConnection._send_request
-
-
-def _send_request(self, method, url, body, headers, *args, **kwargs):
-    if headers.get("Content-Length") == "0":
-        headers.pop("Expect", None)
-    return _original_send_request(self, method, url, body, headers, *args, **kwargs)
-
-
-botocore.awsrequest.AWSConnection._send_request = _send_request
 
 
 logger = logging.getLogger(__name__)
@@ -68,12 +35,24 @@ client = session.client(
     endpoint_url=settings.MINIO_URL,  # e.g., 'https://localhost:9001/'
     config=botocore.client.Config(max_pool_connections=50),
 )
-# Create the one transfer manager we'll reuse for all transfers. Otherwise,
-# boto3 default is to create a transfer manager _per upload/download_, which
-# means 10 threads per operation. (Primer: upload/download split over multiple
-# threads to speed up transfer of large files.)
-transfer_config = TransferConfig()
-transfer = S3Transfer(client, transfer_config)
+
+downloader = S3Transfer(client, TransferConfig())
+"""Singleton S3 "downloader" for all downloads.
+
+All concurrent downloads reuse the same thread pool. This caps the number of
+threads S3 uses.
+"""
+
+
+uploader = S3Transfer(
+    client, TransferConfig(use_threads=False, multipart_threshold=sys.maxsize)
+)
+"""Upload configuration.
+
+To support Google Cloud Storage, we disable multipart uploads. Every upload
+uses the calling thread and uploads in a single part.
+"""
+
 # boto3 exceptions are a bit odd -- https://github.com/boto/boto3/issues/1195
 error = client.exceptions
 """Namespace for exceptions.
@@ -153,7 +132,7 @@ def list_file_keys(bucket: str, prefix: str):
 
 
 def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
-    transfer.upload_file(str(path.resolve()), bucket, key)
+    uploader.upload_file(str(path.resolve()), bucket, key)
 
 
 def put_bytes(bucket: str, key: str, body: bytes, **kwargs) -> None:
@@ -320,8 +299,8 @@ def download(bucket: str, key: str, path: pathlib.Path) -> None:
     Raise FileNotFoundError if the key is not on S3.
     """
     try:
-        transfer.download_file(bucket, key, str(path))
-    # transfer.download_file() seems to raise ClientError instead of a
+        downloader.download_file(bucket, key, str(path))
+    # downloader.download_file() seems to raise ClientError instead of a
     # wrapped error.
     # except error.NoSuchKey:
     #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
