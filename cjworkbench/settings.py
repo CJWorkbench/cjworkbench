@@ -490,17 +490,28 @@ if "MINIO_ACCESS_KEY" not in os.environ and "AWS_ACCESS_KEY_ID" not in os.enviro
     sys.exit("Must set AWS_ACCESS_KEY_ID")
 if "MINIO_SECRET_KEY" not in os.environ and "AWS_SECRET_ACCESS_KEY" not in os.environ:
     sys.exit("Must set AWS_SECRET_ACCESS_KEY")
-if "MINIO_BUCKET_PREFIX" not in os.environ AND "S3_BUCKET_NAME_PATTERN" not in os.environ:
+if (
+    "MINIO_BUCKET_PREFIX" not in os.environ
+    and "S3_BUCKET_NAME_PATTERN" not in os.environ
+):
     sys.exit("Must set S3_BUCKET_NAME_PATTERN")
 AWS_S3_ENDPOINT = os.environ.get("AWS_S3_ENDPOINT", os.environ.get("MINIO_URL"))
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", os.environ.get("MINIO_ACCESS_KEY"))
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", os.environ.get("MINIO_SECRET_KEY"))
+AWS_ACCESS_KEY_ID = os.environ.get(
+    "AWS_ACCESS_KEY_ID", os.environ.get("MINIO_ACCESS_KEY")
+)
+AWS_SECRET_ACCESS_KEY = os.environ.get(
+    "AWS_SECRET_ACCESS_KEY", os.environ.get("MINIO_SECRET_KEY")
+)
 if "S3_BUCKET_NAME_PATTERN" in os.environ:
     S3_BUCKET_NAME_PATTERN = os.environ["S3_BUCKET_NAME_PATTERN"]
-elif len(os.environ["MINIO_BUCKET_PREFIX"]):
-    S3_BUCKET_NAME_PATTERN = os.environ["MINIO_BUCKET_PREFIX"] + "-%s" + os.environ.get("MINIO_BUCKET_SUFFIX, "")
+elif len(os.environ["MINIO_BUCKET_PREFIX"]) > 0:
+    S3_BUCKET_NAME_PATTERN = (
+        os.environ["MINIO_BUCKET_PREFIX"]
+        + "-%s"
+        + os.environ.get("MINIO_BUCKET_SUFFIX", "")
+    )
 else:
-    S3_BUCKET_NAME_PATTERN = "%s" + os.environ.get("MINIO_BUCKET_SUFFIX, "")
+    S3_BUCKET_NAME_PATTERN = "%s" + os.environ.get("MINIO_BUCKET_SUFFIX", "")
 if "MINIO_STATIC_URL_PATTERN" in os.environ:
     STATIC_URL = os.environ["MINIO_STATIC_URL_PATTERN"]
 
