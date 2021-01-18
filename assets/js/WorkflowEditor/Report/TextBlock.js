@@ -16,10 +16,13 @@ function EditMarkdown ({ value, onChange, onSubmit, onCancel }) {
   }, [onCancel])
 
   return (
-    <form method='post' action='#' onSubmit={handleSubmit} onCancel={handleCancel}>
-      <textarea autoFocus name='markdown' value={value} onChange={handleChange} />
+    <form method='post' action='#' onSubmit={handleSubmit} onReset={handleCancel}>
+      <div className='autosize'>
+        <div className='invisible-size-setter'>{value}</div>
+        <textarea autoFocus name='markdown' value={value} onChange={handleChange} />
+      </div>
       <div className='buttons'>
-        <button className='action-button button-gray' type='cancel'>
+        <button className='action-button button-gray' type='reset'>
           <Trans id='js.WorkflowEditor.Report.TextBock.cancel'>Cancel</Trans>
         </button>
         <button className='action-button button-blue' type='submit'>

@@ -176,9 +176,9 @@
 
   .value {
     .autosize {
-      @extend %autosize-with-textarea;
+      @include autosize-with-textarea;
       &>* {
-        @extend %module-parameter;
+        @include module-parameter;
         height: auto; // unset %module-parameter height: our height varies
       }
     }
