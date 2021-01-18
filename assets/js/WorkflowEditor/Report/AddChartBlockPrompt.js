@@ -9,6 +9,15 @@ export default function AddChartBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onC
   const handleClick = React.useCallback(ev => {
     onSubmit({ stepSlug: ev.target.getAttribute('data-step-slug') })
   }, [onSubmit])
+  const chartSteps = React.useMemo(() => tabs.flatMap(
+    ({ name: tabName, chartSteps }) => chartSteps.map(
+      ({ slug: stepSlug, moduleName }) => ({
+        tabName,
+        stepSlug,
+        moduleName
+      })
+    )
+  ), [tabs])
 
   return (
     <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
@@ -22,19 +31,22 @@ export default function AddChartBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onC
         <IconChart />
       </DropdownToggle>
       <DropdownMenu>
-        {tabs.map(({ slug: tabSlug, name: tabName, chartSteps }) => (
-          <React.Fragment key={tabSlug}>
-            {chartSteps.map(({ slug: stepSlug, moduleName }) => (
-              <DropdownItem
-                key={stepSlug}
-                data-step-slug={stepSlug}
-                onClick={handleClick}
-              >
-                <Trans id='js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName'>{tabName} – {moduleName}</Trans>
-              </DropdownItem>
-            ))}
-          </React.Fragment>
+        {chartSteps.map(({ tabSlug, tabName, stepSlug, moduleName }) => (
+          <DropdownItem
+            key={stepSlug}
+            data-step-slug={stepSlug}
+            onClick={handleClick}
+          >
+            <Trans id='js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName'>{tabName} – {moduleName}</Trans>
+          </DropdownItem>
         ))}
+        {chartSteps.length === 0 ? (
+          <DropdownItem disabled>
+            <Trans id='js.WorkflowEditor.Report.AddChartBlockPrompt.empty'>
+              This workflow has no charts
+            </Trans>
+          </DropdownItem>
+        ) : null}
       </DropdownMenu>
     </Dropdown>
   )
