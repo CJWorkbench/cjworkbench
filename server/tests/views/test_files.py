@@ -171,7 +171,7 @@ class FilesTest(DbTestCaseWithModuleRegistry):
             },
         )
 
-    @override_settings(MINIO_MAX_FILE_SIZE=12345)
+    @override_settings(MAX_BYTES_FILES_PER_STEP=12345)
     def test_create_file_too_large(self):
         response = self.client.post(
             f"/api/v1/workflows/1/steps/step-123/files",
@@ -197,7 +197,7 @@ class FilesTest(DbTestCaseWithModuleRegistry):
             },
         )
 
-    @override_settings(MINIO_MAX_FILE_SIZE=12345)
+    @override_settings(MAX_BYTES_FILES_PER_STEP=12345)
     def test_create_file_too_large(self):
         response = self.client.post(
             f"/api/v1/workflows/1/steps/step-123/files",

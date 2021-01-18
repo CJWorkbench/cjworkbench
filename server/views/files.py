@@ -95,7 +95,9 @@ async def create_tus_upload_for_workflow_and_step(
     # declare form inline, so unit tests can override settings
     class CreateUploadForm(forms.Form):
         filename = forms.CharField(min_length=1, max_length=100)
-        size = forms.IntegerField(min_value=0, max_value=settings.MINIO_MAX_FILE_SIZE)
+        size = forms.IntegerField(
+            min_value=0, max_value=settings.MAX_BYTES_FILES_PER_STEP
+        )
 
     try:
         body_json = json.loads(request.body)  # assume UTF-8

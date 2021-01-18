@@ -25,14 +25,10 @@ def encode_content_disposition(filename: str) -> str:
     return "attachment; filename*=UTF-8''" + enc_filename
 
 
-session = boto3.session.Session(
-    aws_access_key_id=settings.MINIO_ACCESS_KEY,
-    aws_secret_access_key=settings.MINIO_SECRET_KEY,
-    region_name="us-east-1",
-)
+session = boto3.session.Session(region_name="us-east-1")
 client = session.client(
     "s3",
-    endpoint_url=settings.MINIO_URL,  # e.g., 'https://localhost:9001/'
+    endpoint_url=settings.AWS_S3_ENDPOINT,  # e.g., 'https://localhost:9001/'
     config=botocore.client.Config(max_pool_connections=50),
 )
 
@@ -68,25 +64,12 @@ Usage:
 """
 
 
-def _build_bucket_name(key: str) -> str:
-    if settings.MINIO_BUCKET_PREFIX:
-        # "production-user-files.workbenchdata.com" -- deprecated
-        # (staging: "staging-user-files.workbenchdata.com")
-        return "".join(
-            [settings.MINIO_BUCKET_PREFIX, "-", key, settings.MINIO_BUCKET_SUFFIX]
-        )
-    else:
-        # "user-files.workbenchdata.com" -- [2020-01-29] we want this everywhere
-        # (staging: "user-files.workbenchdata-staging.com")
-        return key + settings.MINIO_BUCKET_SUFFIX
-
-
-UserFilesBucket = _build_bucket_name("user-files")
-StaticFilesBucket = _build_bucket_name("static")
-StoredObjectsBucket = _build_bucket_name("stored-objects")
-ExternalModulesBucket = _build_bucket_name("external-modules")
-CachedRenderResultsBucket = _build_bucket_name("cached-render-results")
-TusUploadBucket = _build_bucket_name("upload")
+UserFilesBucket = settings.S3_BUCKET_NAME_PATTERN % "user-files"
+StaticFilesBucket = settings.S3_BUCKET_NAME_PATTERN % "static"
+StoredObjectsBucket = settings.S3_BUCKET_NAME_PATTERN % "stored-objects"
+ExternalModulesBucket = settings.S3_BUCKET_NAME_PATTERN % "external-modules"
+CachedRenderResultsBucket = settings.S3_BUCKET_NAME_PATTERN % "cached-render-results"
+TusUploadBucket = settings.S3_BUCKET_NAME_PATTERN % "upload"
 
 
 def ensure_bucket_exists(bucket_name):
@@ -108,7 +91,7 @@ def ensure_bucket_exists(bucket_name):
     except error.AccessDenied as err:
         raise RuntimeError(
             f'There is no bucket "{bucket_name}" on the S3 server at '
-            f'"{settings.MINIO_URL}", and we do not have permission to create '
+            f'"{settings.AWS_S3_ENDPOINT}", and we do not have permission to create '
             "it. Please create it manually and then restart Workbench.",
             cause=err,
         )

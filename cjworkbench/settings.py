@@ -484,25 +484,25 @@ TUS_EXTERNAL_URL_PREFIX_OVERRIDE = os.environ.get(
     "TUS_EXTERNAL_URL_PREFIX_OVERRIDE", TUS_CREATE_UPLOAD_URL
 )
 
-if "MINIO_URL" not in os.environ:
-    sys.exit("Must set MINIO_URL")
-if "MINIO_ACCESS_KEY" not in os.environ:
-    sys.exit("Must set MINIO_ACCESS_KEY")
-if "MINIO_SECRET_KEY" not in os.environ:
-    sys.exit("Must set MINIO_SECRET_KEY")
-if "MINIO_BUCKET_PREFIX" not in os.environ:
-    sys.exit("Must set MINIO_BUCKET_PREFIX")
-MINIO_URL = os.environ["MINIO_URL"]
-MINIO_EXTERNAL_URL = os.environ.get("MINIO_EXTERNAL_URL", MINIO_URL)
-MINIO_ACCESS_KEY = os.environ["MINIO_ACCESS_KEY"]
-MINIO_SECRET_KEY = os.environ["MINIO_SECRET_KEY"]
-MINIO_BUCKET_PREFIX = os.environ["MINIO_BUCKET_PREFIX"]
-MINIO_BUCKET_SUFFIX = os.environ.get("MINIO_BUCKET_SUFFIX", "")
-MINIO_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024  # 2GB
+if "MINIO_URL" not in os.environ and "AWS_S3_ENDPOINT" not in os.environ:
+    sys.exit("Must set AWS_S3_ENDPOINT")
+if "MINIO_ACCESS_KEY" not in os.environ and "AWS_ACCESS_KEY_ID" not in os.environ:
+    sys.exit("Must set AWS_ACCESS_KEY_ID")
+if "MINIO_SECRET_KEY" not in os.environ and "AWS_SECRET_ACCESS_KEY" not in os.environ:
+    sys.exit("Must set AWS_SECRET_ACCESS_KEY")
+if "MINIO_BUCKET_PREFIX" not in os.environ AND "S3_BUCKET_NAME_PATTERN" not in os.environ:
+    sys.exit("Must set S3_BUCKET_NAME_PATTERN")
+AWS_S3_ENDPOINT = os.environ.get("AWS_S3_ENDPOINT", os.environ.get("MINIO_URL"))
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", os.environ.get("MINIO_ACCESS_KEY"))
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", os.environ.get("MINIO_SECRET_KEY"))
+if "S3_BUCKET_NAME_PATTERN" in os.environ:
+    S3_BUCKET_NAME_PATTERN = os.environ["S3_BUCKET_NAME_PATTERN"]
+elif len(os.environ["MINIO_BUCKET_PREFIX"]):
+    S3_BUCKET_NAME_PATTERN = os.environ["MINIO_BUCKET_PREFIX"] + "-%s" + os.environ.get("MINIO_BUCKET_SUFFIX, "")
+else:
+    S3_BUCKET_NAME_PATTERN = "%s" + os.environ.get("MINIO_BUCKET_SUFFIX, "")
 if "MINIO_STATIC_URL_PATTERN" in os.environ:
-    STATIC_URL = os.environ["MINIO_STATIC_URL_PATTERN"].replace(
-        "{MINIO_BUCKET_PREFIX}", MINIO_BUCKET_PREFIX
-    )
+    STATIC_URL = os.environ["MINIO_STATIC_URL_PATTERN"]
 
 if STATIC_URL != "http://localhost:8000/static/":
     print(f"Serving static files from {STATIC_URL}")

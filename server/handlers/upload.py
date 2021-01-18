@@ -44,9 +44,9 @@ async def create_upload(
     size = int(size)
     if len(filename) < 0 or len(filename) > 100:
         raise HandlerError("filename must be between 0 and 100 characters long")
-    if size < 0 or size > settings.MINIO_MAX_FILE_SIZE:
+    if size < 0 or size > settings.MAX_BYTES_FILES_PER_STEP:
         raise HandlerError(
-            f"file size must be between 0 and {settings.MINIO_MAX_FILE_SIZE} bytes"
+            f"file size must be between 0 and {settings.MAX_BYTES_FILES_PER_STEP} bytes"
         )
 
     tus_upload_url = await upload.create_tus_upload(
