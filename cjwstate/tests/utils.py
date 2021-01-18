@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 
 import cjwstate.modules
 from cjworkbench.tests.utils import DbTestCase as BaseDbTestCase
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models.module_version import ModuleVersion
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
@@ -18,7 +18,7 @@ from cjwstate.modules.types import ModuleZipfile
 class DbTestCase(BaseDbTestCase):
     def setUp(self):
         super().setUp()
-        clear_minio()
+        clear_s3()
 
 
 # Derive from this to perform all tests logged in
@@ -79,10 +79,10 @@ def create_module_zipfile(
     extra_file_contents: Dict[str, bytes] = {},
 ) -> ModuleZipfile:
     """
-    Create a ModuleZipfile, stored in the database and minio.
+    Create a ModuleZipfile, stored in the database and s3.
 
     If `version` is not supplied, generate one using the sha1 of the zipfile.
-    This is usually what you want: minio reads on overwrites are _eventually_
+    This is usually what you want: s3 reads on overwrites are _eventually_
     consistent, so if you 1. write a file; 2. overwrite it; and 3. read it, the
     read might result in the file from step 1 or the file from step 2. A sha1
     version means overwrites will never modify data, solving the problem.
@@ -111,8 +111,8 @@ def create_module_zipfile(
         sha1.update(data)
         version = sha1.hexdigest()
 
-    minio.put_bytes(
-        minio.ExternalModulesBucket,
+    s3.put_bytes(
+        s3.ExternalModulesBucket,
         "%s/%s.%s.zip" % (module_id, module_id, version),
         data,
     )
@@ -122,28 +122,28 @@ def create_module_zipfile(
     return MODULE_REGISTRY.latest(module_id)
 
 
-def clear_minio():
+def clear_s3():
     buckets = (
-        minio.UserFilesBucket,
-        minio.StoredObjectsBucket,
-        minio.ExternalModulesBucket,
-        minio.CachedRenderResultsBucket,
-        minio.TusUploadBucket,
+        s3.UserFilesBucket,
+        s3.StoredObjectsBucket,
+        s3.ExternalModulesBucket,
+        s3.CachedRenderResultsBucket,
+        s3.TusUploadBucket,
     )
 
-    if not hasattr(clear_minio, "_initialized"):
+    if not hasattr(clear_s3, "_initialized"):
         # Ensure buckets exist -- only on first call
         for bucket in buckets:
-            minio.ensure_bucket_exists(bucket)
-        clear_minio._initialized = True
+            s3.ensure_bucket_exists(bucket)
+        clear_s3._initialized = True
 
     for bucket in buckets:
-        minio.remove_recursive(bucket, "/", force=True)
+        s3.remove_recursive(bucket, "/", force=True)
 
 
-def get_minio_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
+def get_s3_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
     """Like client.get_object(), but response['Body'] is bytes."""
-    response = minio.client.get_object(Bucket=bucket, Key=key, **kwargs)
+    response = s3.client.get_object(Bucket=bucket, Key=key, **kwargs)
     body = response["Body"]
     try:
         data = body.read()

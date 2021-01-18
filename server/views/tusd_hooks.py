@@ -6,7 +6,7 @@ from typing import Any, Dict
 from django.http import HttpRequest, JsonResponse
 
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import commands, minio, upload
+from cjwstate import commands, s3, upload
 from cjwstate.models.commands.set_step_params import SetStepParams
 from cjwstate.models.uploaded_file import delete_old_files_to_enforce_storage_limits
 
@@ -31,10 +31,10 @@ def _finish_upload(data: Dict[str, Any]) -> Dict[str, Any]:
     bucket = str(data["Storage"]["Bucket"])
     key = str(data["Storage"]["Key"])
 
-    if bucket != minio.TusUploadBucket:
+    if bucket != s3.TusUploadBucket:
         # security: if a hijacker manages to craft a request here, prevent its
         # creator from copying a file he/she can't see. (The creator is only
-        # known to be able to see `key` of `minio.TusUploadBucket`.)
+        # known to be able to see `key` of `s3.TusUploadBucket`.)
         raise RuntimeError("SECURITY: did tusd send this request?")
 
     suffix = PurePath(filename).suffix
@@ -65,12 +65,12 @@ def _finish_upload(data: Dict[str, Any]) -> Dict[str, Any]:
         #
         # Not a huge deal, because `final_key` is in the Step's own directory.
         # The user can delete all leaked files by deleting the Step.
-        minio.copy(
-            minio.UserFilesBucket,
+        s3.copy(
+            s3.UserFilesBucket,
             final_key,
             f"{bucket}/{key}",
             MetadataDirective="REPLACE",
-            ContentDisposition=minio.encode_content_disposition(filename),
+            ContentDisposition=s3.encode_content_disposition(filename),
             ContentType="application/octet-stream",
         )
 
@@ -78,7 +78,7 @@ def _finish_upload(data: Dict[str, Any]) -> Dict[str, Any]:
             name=filename, size=size, uuid=file_uuid, key=final_key
         )
         delete_old_files_to_enforce_storage_limits(step=step)
-        minio.remove(bucket, key)
+        s3.remove(bucket, key)
 
     return dict(
         workflow_id=workflow_id, step=step, new_values={param_id_name: file_uuid}

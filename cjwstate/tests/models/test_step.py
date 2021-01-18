@@ -3,11 +3,11 @@ import uuid as uuidgen
 from django.utils import timezone
 
 from cjwkernel.util import tempfile_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflow
-from cjwstate.tests.utils import DbTestCase, get_minio_object_with_data
+from cjwstate.tests.utils import DbTestCase, get_s3_object_with_data
 
 
 # Set up a simple pipeline on test data
@@ -59,8 +59,8 @@ class StepTests(DbTestCase):
         # The StoredObject was copied byte for byte into a different file
         self.assertNotEqual(so2d.key, so2.key)
         self.assertEqual(
-            get_minio_object_with_data(minio.StoredObjectsBucket, so2d.key)["Body"],
-            get_minio_object_with_data(minio.StoredObjectsBucket, so2.key)["Body"],
+            get_s3_object_with_data(s3.StoredObjectsBucket, so2d.key)["Body"],
+            get_s3_object_with_data(s3.StoredObjectsBucket, so2.key)["Body"],
         )
 
     def test_step_duplicate_disable_auto_update(self):
@@ -104,7 +104,7 @@ class StepTests(DbTestCase):
         step = tab.steps.create(order=0, slug="step-1", module_id_name="upload")
         uuid = str(uuidgen.uuid4())
         key = f"{step.uploaded_file_prefix}{uuid}.csv"
-        minio.put_bytes(minio.UserFilesBucket, key, b"1234567")
+        s3.put_bytes(s3.UserFilesBucket, key, b"1234567")
         # Write the uuid to the old module -- we'll check the new module points
         # to a valid file
         step.params = {"file": uuid, "has_header": True}
@@ -131,9 +131,7 @@ class StepTests(DbTestCase):
         self.assertEqual(uploaded_file2.size, 7)
         self.assertEqual(uploaded_file2.created_at, uploaded_file.created_at)
         self.assertEqual(
-            get_minio_object_with_data(minio.UserFilesBucket, uploaded_file2.key)[
-                "Body"
-            ],
+            get_s3_object_with_data(s3.UserFilesBucket, uploaded_file2.key)["Body"],
             b"1234567",
         )
 
@@ -143,13 +141,13 @@ class StepTests(DbTestCase):
         step = tab.steps.create(order=0, slug="step-1", module_id_name="upload")
         uuid1 = str(uuidgen.uuid4())
         key1 = f"{step.uploaded_file_prefix}{uuid1}.csv"
-        minio.put_bytes(minio.UserFilesBucket, key1, b"1234567")
+        s3.put_bytes(s3.UserFilesBucket, key1, b"1234567")
         uuid2 = str(uuidgen.uuid4())
         key2 = f"{step.uploaded_file_prefix}{uuid2}.csv"
-        minio.put_bytes(minio.UserFilesBucket, key2, b"7654321")
+        s3.put_bytes(s3.UserFilesBucket, key2, b"7654321")
         uuid3 = str(uuidgen.uuid4())
         key3 = f"{step.uploaded_file_prefix}{uuid3}.csv"
-        minio.put_bytes(minio.UserFilesBucket, key3, b"9999999")
+        s3.put_bytes(s3.UserFilesBucket, key3, b"9999999")
         step.uploaded_files.create(name="t1.csv", uuid=uuid1, key=key1, size=7)
         step.uploaded_files.create(name="t2.csv", uuid=uuid2, key=key2, size=7)
         step.uploaded_files.create(name="t3.csv", uuid=uuid3, key=key3, size=7)
@@ -171,9 +169,9 @@ class StepTests(DbTestCase):
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
         uuid = str(uuidgen.uuid4())
         key = step.uploaded_file_prefix + uuid
-        minio.put_bytes(minio.UserFilesBucket, key, b"A\n1")
+        s3.put_bytes(s3.UserFilesBucket, key, b"A\n1")
         # Don't create the UploadedFile. Simulates races during upload/delete
         # that could write a file on S3 but not in our database.
         # step.uploaded_files.create(name='t.csv', size=3, uuid=uuid, key=key)
         step.delete()  # do not crash
-        self.assertFalse(minio.exists(minio.UserFilesBucket, key))
+        self.assertFalse(s3.exists(s3.UserFilesBucket, key))

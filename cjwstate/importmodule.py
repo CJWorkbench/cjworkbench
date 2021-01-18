@@ -12,7 +12,7 @@ import httpx
 import pathspec
 from cjwkernel.errors import ModuleError
 from cjwkernel.util import tempdir_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import ModuleVersion
 from cjwstate import clientside
 import cjwstate.modules
@@ -121,7 +121,7 @@ def validate_zipfile(module_zipfile: ModuleZipfile) -> None:
 
 
 def import_zipfile(path: Path) -> clientside.Module:
-    """Save a zipfile to database and minio and build a `clientside.Module`.
+    """Save a zipfile to database and s3 and build a `clientside.Module`.
 
     Raise `WorkbenchModuleImportError` if `path` points to an invalid module.
 
@@ -134,7 +134,7 @@ def import_zipfile(path: Path) -> clientside.Module:
     module_spec = temp_zipfile.get_spec()
     js_module = temp_zipfile.get_optional_js_module() or ""
 
-    minio.fput_file(minio.ExternalModulesBucket, "%s/%s" % (module_id, path.name), path)
+    s3.fput_file(s3.ExternalModulesBucket, "%s/%s" % (module_id, path.name), path)
     ModuleVersion.objects.update_or_create(
         id_name=module_id,
         source_version_hash=version,
@@ -148,7 +148,7 @@ def import_zipfile(path: Path) -> clientside.Module:
 def import_module_from_github(
     owner: str, repo: str, ref: str = "main"
 ) -> clientside.Module:
-    """Download module data from GitHub and store it in database+minio.
+    """Download module data from GitHub and store it in database+s3.
 
     Return a `clientside.Module` on success.
 

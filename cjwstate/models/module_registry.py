@@ -6,7 +6,7 @@ import threading
 from typing import Any, Dict, NamedTuple
 import zipfile
 from django.db.models import F, OuterRef, Subquery
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models.module_version import ModuleVersion as DbModuleVersion
 import cjwstate.modules
 from cjwstate.modules.staticregistry import MODULE_TEMPDIR, Lookup as StaticModuleLookup
@@ -52,7 +52,7 @@ class ModuleRegistry:
 
         Raise `RuntimeError` the module exists but cannot be loaded:
 
-        * `RuntimeError from FileNotFoundError` if the module is not in minio.
+        * `RuntimeError from FileNotFoundError` if the module is not in s3.
         * `RuntimeError from KeyError` if the module zipfile is missing a .py
           file or a .yaml spec file.
         * ... and so on. `RuntimeError` is considered unrecoverable.
@@ -88,7 +88,7 @@ class ModuleRegistry:
     def _download_or_reuse_zipfile(self, db_module: DbModuleVersion) -> ModuleZipfile:
         """Ensure `self._cache` contains a `ModuleZipfile` for `db_module`, and return it.
 
-        Raise `KeyError` if the module does not exist in minio.
+        Raise `KeyError` if the module does not exist in s3.
         """
         module_id = db_module.id_name
         version = ModuleVersion(db_module.source_version_hash)
@@ -151,9 +151,7 @@ def _download_module_zipfile_modern(
 ) -> None:
     name = "%s.%s.zip" % (module_id, version)
     # raise FileNotFoundError
-    minio.download(
-        minio.ExternalModulesBucket, "%s/%s" % (module_id, name), output_path
-    )
+    s3.download(s3.ExternalModulesBucket, "%s/%s" % (module_id, name), output_path)
 
 
 def _is_basename_python_code(key: str) -> bool:
@@ -183,7 +181,7 @@ def _download_module_zipfile_deprecated(
     js_module: str,
 ) -> None:
     prefix = "%s/%s/" % (module_id, version)
-    all_keys = minio.list_file_keys(minio.ExternalModulesBucket, prefix)
+    all_keys = s3.list_file_keys(s3.ExternalModulesBucket, prefix)
     try:
         python_code_key = next(
             k for k in all_keys if _is_basename_python_code(k[len(prefix) :])
@@ -208,15 +206,15 @@ def _download_module_zipfile_deprecated(
 
         # Write .py module code
         # raise FileNotFoundError
-        with minio.temporarily_download(
-            minio.ExternalModulesBucket, python_code_key
+        with s3.temporarily_download(
+            s3.ExternalModulesBucket, python_code_key
         ) as py_path:
             zf.write(py_path, "%s.py" % module_id)
 
         # Write .html file
         if html_key:
-            with minio.temporarily_download(
-                minio.ExternalModulesBucket, html_key
+            with s3.temporarily_download(
+                s3.ExternalModulesBucket, html_key
             ) as html_path:
                 zf.write(html_path, "%s.html" % module_id)
 
@@ -229,7 +227,7 @@ def download_module_zipfile(
     deprecated_spec: Dict[str, Any],
     deprecated_js_module: str,
 ) -> ModuleZipfile:
-    """Produce a local-path ModuleZipfile by downloading from minio.
+    """Produce a local-path ModuleZipfile by downloading from s3.
 
     Raise `RuntimeError` (_from_ another kind of error -- `FileNotFoundError`,
     `KeyError`, `ValueError`, `SyntaxError`, `BadZipFile`,

@@ -7,7 +7,7 @@ from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.tests.util import assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
 from cjwkernel.tests.util import arrow_table, parquet_file
-from cjwstate import minio, rabbitmq, rendercache
+from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
@@ -417,7 +417,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
         step.stored_data_version = so.stored_at
         step.save(update_fields=["stored_data_version"])
         # Now delete the file on S3 -- but leave the DB pointing to it.
-        minio.remove(minio.StoredObjectsBucket, so.key)
+        s3.remove(s3.StoredObjectsBucket, so.key)
 
         def render(*args, fetch_result, **kwargs):
             self.assertIsNone(fetch_result)

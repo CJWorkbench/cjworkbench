@@ -6,11 +6,11 @@ from django.conf import settings
 from django.utils import timezone
 
 from cjwkernel.util import tempfile_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import Step, StoredObject
 from cjwstate.util import find_deletable_ids
 
-BUCKET = minio.StoredObjectsBucket
+BUCKET = s3.StoredObjectsBucket
 
 
 def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Path]:
@@ -32,8 +32,8 @@ def downloaded_file(stored_object: StoredObject, dir=None) -> ContextManager[Pat
         return tempfile_context(prefix="storedobjects-empty-file", dir=dir)
     else:
         # raises FileNotFoundError
-        return minio.temporarily_download(
-            minio.StoredObjectsBucket, stored_object.key, dir=dir
+        return s3.temporarily_download(
+            s3.StoredObjectsBucket, stored_object.key, dir=dir
         )
 
 
@@ -52,9 +52,9 @@ def create_stored_object(
 
     The caller should call enforce_storage_limits() after calling this.
 
-    Raise IntegrityError if a database race prevents saving this. Raise a minio
-    error if writing to minio failed. In case of partial completion, a
-    StoredObject will exist in the database but no file will be saved in minio.
+    Raise IntegrityError if a database race prevents saving this. Raise a s3
+    error if writing to s3 failed. In case of partial completion, a
+    StoredObject will exist in the database but no file will be saved in s3.
     """
     if stored_at is None:
         stored_at = timezone.now()
@@ -67,7 +67,7 @@ def create_stored_object(
         size=size,
         hash="unhashed",
     )
-    minio.fput_file(BUCKET, key, path)
+    s3.fput_file(BUCKET, key, path)
     return stored_object
 
 

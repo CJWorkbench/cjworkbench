@@ -3,7 +3,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
-from cjwstate import minio
+from cjwstate import s3
 
 from .step import Step
 
@@ -11,7 +11,7 @@ from .step import Step
 class StoredObject(models.Model):
     """EVIL way of storing fetch results.
 
-    StoredObject links to an S3 key in minio.StoredObjectsBucket. The key must
+    StoredObject links to an S3 key in s3.StoredObjectsBucket. The key must
     adhere to the format: "{workflow_id}/{step_id}/{uuidv1()}"
 
     TODO store fetch results as fetches.
@@ -42,9 +42,7 @@ class StoredObject(models.Model):
     def duplicate(self, to_step):
         basename = self.key.split("/")[-1]
         key = f"{to_step.workflow_id}/{to_step.id}/{basename}"
-        minio.copy(
-            minio.StoredObjectsBucket, key, f"{minio.StoredObjectsBucket}/{self.key}"
-        )
+        s3.copy(s3.StoredObjectsBucket, key, f"{s3.StoredObjectsBucket}/{self.key}")
 
         return to_step.stored_objects.create(
             stored_at=self.stored_at, hash=self.hash, key=key, size=self.size
@@ -61,4 +59,4 @@ def _delete_from_s3_pre_delete(sender, instance, **kwargs):
     the user will know it isn't deleted.
     """
     if instance.key:
-        minio.remove(minio.StoredObjectsBucket, instance.key)
+        s3.remove(s3.StoredObjectsBucket, instance.key)

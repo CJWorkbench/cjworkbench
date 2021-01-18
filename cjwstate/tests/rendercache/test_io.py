@@ -13,7 +13,7 @@ from cjwkernel.types import (
     TableMetadata,
 )
 from cjwkernel.tests.util import tempfile_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import Workflow, Step
 from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import DbTestCase
@@ -84,7 +84,7 @@ class RendercacheIoTests(DbTestCase):
         db_step = Step.objects.get(id=self.step.id)
         self.assertIsNone(db_step.cached_render_result)
 
-        self.assertFalse(minio.exists(BUCKET, parquet_key))
+        self.assertFalse(s3.exists(BUCKET, parquet_key))
 
     def test_metadata_comes_from_db_columns(self):
         columns = [
@@ -104,7 +104,7 @@ class RendercacheIoTests(DbTestCase):
         )
         cache_render_result(self.workflow, self.step, self.delta.id, result)
         # Delete from disk entirely, to prove we did not read.
-        minio.remove(BUCKET, crr_parquet_key(self.step.cached_render_result))
+        s3.remove(BUCKET, crr_parquet_key(self.step.cached_render_result))
 
         # Load _new_ CachedRenderResult -- from DB columns, not memory
         fresh_step = Step.objects.get(id=self.step.id)
@@ -116,7 +116,7 @@ class RendercacheIoTests(DbTestCase):
         result = RenderResult(arrow_table({"A": [1]}))
         cache_render_result(self.workflow, self.step, self.delta.id, result)
         crr = self.step.cached_render_result
-        minio.put_bytes(BUCKET, crr_parquet_key(crr), b"NOT PARQUET")
+        s3.put_bytes(BUCKET, crr_parquet_key(crr), b"NOT PARQUET")
         with tempfile_context() as arrow_path:
             with self.assertRaises(CorruptCacheError):
                 load_cached_render_result(crr, arrow_path)

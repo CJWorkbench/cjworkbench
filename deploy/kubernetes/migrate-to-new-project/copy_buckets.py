@@ -2,8 +2,8 @@
 
 # [2020-01-29] copied from https://raw.githubusercontent.com/GoogleCloudPlatform/python-docs-samples/master/storage/transfer_service/nearline_request.py
 #
-# Transfers all data *from* our five minio buckets at
-# $ENV-xxx.workbenchdata.com, *to* our five minio buckets at
+# Transfers all data *from* our s3 buckets at
+# $ENV-xxx.workbenchdata.com, *to* our s3 buckets at
 # xxx.$DOMAIN.
 #
 # Copyright 2015, Google, Inc.

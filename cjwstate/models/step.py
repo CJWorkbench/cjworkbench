@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import Q
 
 from cjwkernel.types import TableMetadata
-from cjwstate import clientside, minio
+from cjwstate import clientside, s3
 
 from .cached_render_result import CachedRenderResult
 from .fields import ColumnsField, RenderErrorsField
@@ -345,12 +345,12 @@ class Step(models.Model):
             new_parquet_key = crr_parquet_key(new_step.cached_render_result)
 
             try:
-                minio.copy(
-                    minio.CachedRenderResultsBucket,
+                s3.copy(
+                    s3.CachedRenderResultsBucket,
                     new_parquet_key,
                     "%(Bucket)s/%(Key)s" % {"Bucket": BUCKET, "Key": old_parquet_key},
                 )
-            except minio.error.NoSuchKey:
+            except s3.error.NoSuchKey:
                 # DB and filesystem are out of sync. CachedRenderResult handles
                 # such cases gracefully. So `new_result` will behave exactly
                 # like `cached_result`.
@@ -392,10 +392,10 @@ class Step(models.Model):
             )
             assert new_key != uploaded_file.key
             # TODO handle file does not exist
-            minio.copy(
-                minio.UserFilesBucket,
+            s3.copy(
+                s3.UserFilesBucket,
                 new_key,
-                f"{minio.UserFilesBucket}/{uploaded_file.key}",
+                f"{s3.UserFilesBucket}/{uploaded_file.key}",
             )
             new_step.uploaded_files.create(
                 created_at=uploaded_file.created_at,
@@ -497,10 +497,10 @@ class Step(models.Model):
         )
 
     def delete(self, *args, **kwargs):
-        # TODO make DB _not_ depend upon minio.
-        minio.remove_recursive(minio.UserFilesBucket, self.uploaded_file_prefix)
-        minio.remove_recursive(
-            minio.CachedRenderResultsBucket,
+        # TODO make DB _not_ depend upon s3.
+        s3.remove_recursive(s3.UserFilesBucket, self.uploaded_file_prefix)
+        s3.remove_recursive(
+            s3.CachedRenderResultsBucket,
             "wf-%d/wfm-%d/" % (self.workflow_id, self.id),
         )
         # We can't delete in-progress uploads from tusd's bucket because there's

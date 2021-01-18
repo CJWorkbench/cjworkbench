@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.modules.module_loader import validate_module_spec
 
 
@@ -65,4 +65,4 @@ def _delete_from_s3_post_delete(sender, instance, **kwargs):
     Delete module _code_ from S3, now that ModuleVersion is gone.
     """
     prefix = "%s/%s/" % (sender.id_name, sender.source_version_hash)
-    minio.remove_recursive(minio.ExternalModulesBucket, prefix)
+    s3.remove_recursive(s3.ExternalModulesBucket, prefix)

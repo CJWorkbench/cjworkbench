@@ -21,7 +21,7 @@ from cjwkernel.types import (
 )
 from cjwkernel.util import tempfile_context
 import cjwparquet
-from cjwstate import clientside, minio, rabbitmq, rendercache
+from cjwstate import clientside, s3, rabbitmq, rendercache
 from cjwstate.models import StoredObject, Step, Workflow
 import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
@@ -82,7 +82,7 @@ def _load_fetch_result(
 
     Create no file (and return `None`) if the user did not select a
     StoredObject, or if the selected StoredObject does not point to a file
-    on minio.
+    on s3.
 
     The caller should ensure "leave `path` alone" means "return an empty
     FetchResult". The FetchResult may still have an error.
@@ -100,14 +100,14 @@ def _load_fetch_result(
         )
 
         try:
-            minio.download(minio.StoredObjectsBucket, stored_object.key, path)
+            s3.download(s3.StoredObjectsBucket, stored_object.key, path)
             # Download succeeded, so we no longer want to delete `path`
             # right _now_ ("now" means, "in inner_stack.close()"). Instead,
             # transfer ownership of `path` to exit_stack.
             exit_stack.callback(inner_stack.pop_all().close)
         except FileNotFoundError:
             # A few StoredObjects -- very old ones with size=0 -- are
-            # *intentionally* not in minio. It turns out modules from that era
+            # *intentionally* not in s3. It turns out modules from that era
             # treated empty-file and None as identical. The _modules_ must
             # preserve that logic for backwards compatibility; so it's safe to
             # return `None` here.

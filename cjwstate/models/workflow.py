@@ -12,7 +12,7 @@ from cjworkbench.models.db_object_cooperative_lock import (
     DbObjectCooperativeLock,
     lookup_and_cooperative_lock,
 )
-from cjwstate import clientside, minio
+from cjwstate import clientside, s3
 from cjwstate.modules.param_spec import ParamDType
 
 
@@ -541,7 +541,7 @@ class Workflow(models.Model):
         # we're confident that we don't delete blocks at the wrong times.
         self.blocks.all().delete()
 
-        # Clear all minio data. We _should_ clear it in pre-delete hooks on
+        # Clear all s3 data. We _should_ clear it in pre-delete hooks on
         # StoredObject, UploadedFile, etc.; but [2019-06-03, adamhooper] the
         # database is inconsistent and Django is hard to use so new bugs may
         # crop up anyway.
@@ -550,11 +550,11 @@ class Workflow(models.Model):
         # to make `delete()` a controller method, not a funky mishmash of
         # Django-ORM absurdities. TODO nix Django ORM.
         #
-        # TL;DR we're double-deleting minio data, to be extra-safe. The user
+        # TL;DR we're double-deleting s3 data, to be extra-safe. The user
         # said "delete." We'll delete.
         if self.id:  # be extra-safe: use if-statement so we don't remove '/'
-            minio.remove_recursive(minio.StoredObjectsBucket, f"{self.id}/")
-            minio.remove_recursive(minio.UserFilesBucket, f"wf-{self.id}/")
+            s3.remove_recursive(s3.StoredObjectsBucket, f"{self.id}/")
+            s3.remove_recursive(s3.UserFilesBucket, f"wf-{self.id}/")
 
         super().delete(*args, **kwargs)
 

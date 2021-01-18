@@ -6,7 +6,7 @@ import pyarrow as pa
 from cjwkernel.types import RenderResult, Tab, TabOutput
 from cjwkernel.tests.util import arrow_table
 from cjwkernel.util import tempdir_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import Workflow, UploadedFile
 from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
@@ -71,7 +71,7 @@ class CleanValueTests(DbTestCase):
         step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
-        minio.put_bytes(minio.UserFilesBucket, key, b"1234")
+        s3.put_bytes(s3.UserFilesBucket, key, b"1234")
         UploadedFile.objects.create(
             step=step, name="x.csv.gz", size=4, uuid=id, key=key
         )
@@ -96,7 +96,7 @@ class CleanValueTests(DbTestCase):
         # no longer exists.
         self.assertListEqual(list(self.basedir.iterdir()), [])
 
-    def test_clean_file_no_minio_file(self):
+    def test_clean_file_no_s3_file(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
@@ -104,7 +104,7 @@ class CleanValueTests(DbTestCase):
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         # Oops -- let's _not_ put the file!
-        # minio.put_bytes(minio.UserFilesBucket, key, b'1234')
+        # s3.put_bytes(s3.UserFilesBucket, key, b'1234')
         UploadedFile.objects.create(
             step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
@@ -122,7 +122,7 @@ class CleanValueTests(DbTestCase):
         step2 = tab.steps.create(module_id_name="uploadfile", order=1, slug="step-2")
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
-        minio.put_bytes(minio.UserFilesBucket, key, b"1234")
+        s3.put_bytes(s3.UserFilesBucket, key, b"1234")
         UploadedFile.objects.create(
             step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )

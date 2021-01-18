@@ -5,11 +5,11 @@ import cjwparquet
 import pyarrow
 from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
 from cjwkernel.util import json_encode, tempfile_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import Step, Workflow, CachedRenderResult
 
 
-BUCKET = minio.CachedRenderResultsBucket
+BUCKET = s3.CachedRenderResultsBucket
 
 
 STEP_FIELDS = [
@@ -23,11 +23,11 @@ STEP_FIELDS = [
 
 
 class CorruptCacheError(Exception):
-    """Data in the database does not match data in minio."""
+    """Data in the database does not match data in s3."""
 
 
 def parquet_prefix(workflow_id: int, step_id: int) -> str:
-    """'Directory' name in the `minio.CachedRenderResultsBucket` bucket.
+    """'Directory' name in the `s3.CachedRenderResultsBucket` bucket.
 
     The name ends with '/'. _All_ cached data for the specified Step is
     stored under that prefix.
@@ -85,7 +85,7 @@ def cache_render_result(
     if result.table.metadata.columns:  # only write non-zero-column tables
         with tempfile_context() as parquet_path:
             cjwparquet.write(parquet_path, result.table.table)
-            minio.fput_file(
+            s3.fput_file(
                 BUCKET, parquet_key(workflow.id, step.id, delta_id), parquet_path
             )  # makes new cache consistent
 
@@ -110,7 +110,7 @@ def downloaded_parquet_file(crr: CachedRenderResult, dir=None) -> ContextManager
     with contextlib.ExitStack() as ctx:
         try:
             path = ctx.enter_context(
-                minio.temporarily_download(BUCKET, crr_parquet_key(crr), dir=dir)
+                s3.temporarily_download(BUCKET, crr_parquet_key(crr), dir=dir)
             )
         except FileNotFoundError:
             raise CorruptCacheError
@@ -236,10 +236,10 @@ def delete_parquet_files_for_step(workflow_id: int, step_id: int) -> None:
     Different deltas on the same module produce different Parquet
     filenames. This function removes all of them.
 
-    This deletes from minio but not from the database. Beware -- this can leave
+    This deletes from s3 but not from the database. Beware -- this can leave
     the database in an inconsistent state.
     """
-    minio.remove_recursive(BUCKET, parquet_prefix(workflow_id, step_id))
+    s3.remove_recursive(BUCKET, parquet_prefix(workflow_id, step_id))
 
 
 def clear_cached_render_result_for_step(step: Step) -> None:

@@ -11,7 +11,7 @@ from cjwkernel.tests.util import (
     arrow_table_context,
     assert_render_result_equals,
 )
-from cjwstate import minio, rabbitmq, rendercache
+from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
@@ -213,7 +213,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
             workflow.last_delta_id,
             RenderResult(arrow_table({"A": [1]})),
         )
-        minio.put_bytes(
+        s3.put_bytes(
             # Write corrupted data -- will lead to CorruptCacheError
             rendercache.io.BUCKET,
             rendercache.io.crr_parquet_key(step1.cached_render_result),

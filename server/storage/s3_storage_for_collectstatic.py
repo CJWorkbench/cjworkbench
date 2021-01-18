@@ -6,13 +6,13 @@ from queue import Queue
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
-from cjwstate.minio import client, StaticFilesBucket
+from cjwstate.s3 import client, StaticFilesBucket
 
 
 logger = logging.getLogger(__name__)
 
 
-class MinioStorage(Storage):
+class S3Storage(Storage):
     def __init__(self, *args, **kwargs):
         Storage.__init__(self, *args, **kwargs)
 

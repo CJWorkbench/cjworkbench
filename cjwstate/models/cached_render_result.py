@@ -14,7 +14,7 @@ class CachedRenderResult:
     but that has no pros, only cons.)
 
     Part of this result is also stored on disk. The bucket is always
-    minio.CachedRenderResultsBucket, and the key is always
+    s3.CachedRenderResultsBucket, and the key is always
     "wf-{workflow.id}/wfm-{step.id}/delta-{delta.id}.dat".
 
     The `cjwstate.rendercache` module manipulates this data.

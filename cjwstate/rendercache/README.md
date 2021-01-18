@@ -9,7 +9,7 @@ from the user's perspective, it's as though we ran `render()` anew with each
 user request.
 
 Really, we cache the output. Metadata is cached in the database (in `Step`
-fields); and tabular data is cached in Parquet files in minio.
+fields); and tabular data is cached in Parquet files in s3.
 
-This module depends on `cjwstate.models`, `cjwstate.minio` and
+This module depends on `cjwstate.models`, `cjwstate.s3` and
 `cjwkernel.parquet`.

@@ -42,16 +42,16 @@ def find_deletable_ids(
 def delete_excess_object(
     bucket: str, query_set: QuerySet, key: str, db_id: int
 ) -> None:
-    """Delete `key` from minio; then delete `db_id` from query_set.
+    """Delete `key` from s3; then delete `db_id` from query_set.
 
     This signature is designed to be to be used with `map()`.
     """
-    # Delete from minio
+    # Delete from s3
     if key:  # key="" in some StoredObjects with size=0
-        from cjwstate import minio
+        from cjwstate import s3
 
-        minio.remove(bucket, key)
-    # Delete from DB, after minio key is removed
+        s3.remove(bucket, key)
+    # Delete from DB, after s3 key is removed
     query_set.filter(id=db_id).delete()
 
 
@@ -90,12 +90,12 @@ def delete_excess_stored_objects(*, executor: ThreadPoolExecutor, step: "Step") 
         size_limit=MAX_BYTES_FETCHES_PER_STEP,
     )
     if to_delete:
-        from cjwstate import minio
+        from cjwstate import s3
 
         print("Step %d: delete %d StoredObjects" % (step.id, len(to_delete)))
         delete_excess_objects(
             executor=executor,
-            bucket=minio.StoredObjectsBucket,
+            bucket=s3.StoredObjectsBucket,
             query_set=step.stored_objects,
             db_ids=to_delete,
         )
@@ -119,12 +119,12 @@ def delete_excess_user_files(*, executor: ThreadPoolExecutor, step: "Step") -> N
         size_limit=MAX_BYTES_FILES_PER_STEP,
     )
     if to_delete:
-        from cjwstate import minio
+        from cjwstate import s3
 
         print("Step %d: delete %d UploadedFiles" % (step.id, len(to_delete)))
         delete_excess_objects(
             executor=executor,
-            bucket=minio.UserFilesBucket,
+            bucket=s3.UserFilesBucket,
             query_set=step.uploaded_files,
             db_ids=to_delete,
         )

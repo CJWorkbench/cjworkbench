@@ -5,13 +5,13 @@ from unittest.mock import patch
 
 from django.test import override_settings
 
-from cjwstate import clientside, minio, rabbitmq
+from cjwstate import clientside, s3, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistry,
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
-    get_minio_object_with_data,
+    get_s3_object_with_data,
 )
 
 
@@ -42,7 +42,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        minio.put_bytes(minio.TusUploadBucket, "data", b"1234567")
+        s3.put_bytes(s3.TusUploadBucket, "data", b"1234567")
         with self.assertLogs(level=logging.INFO):
             # Logs SetStepParams's migrate_params()
             response = self.client.post(
@@ -56,7 +56,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
                             "apiToken": "abc123",
                         },
                         "Size": 7,
-                        "Storage": {"Bucket": minio.TusUploadBucket, "Key": "data"},
+                        "Storage": {"Bucket": s3.TusUploadBucket, "Key": "data"},
                     }
                 },
                 HTTP_HOOK_NAME="pre-finish",
@@ -70,9 +70,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             uploaded_file.key, f"^wf-{workflow.id}/wfm-{step.id}/[-0-9a-f]{{36}}\\.csv$"
         )
         self.assertEqual(
-            get_minio_object_with_data(minio.UserFilesBucket, uploaded_file.key)[
-                "Body"
-            ],
+            get_s3_object_with_data(s3.UserFilesBucket, uploaded_file.key)["Body"],
             b"1234567",
         )
         self.assertEqual(uploaded_file.name, "foo.csv")
@@ -111,7 +109,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        minio.put_bytes(minio.UserFilesBucket, "foo/1.txt", b"1")
+        s3.put_bytes(s3.UserFilesBucket, "foo/1.txt", b"1")
         step.uploaded_files.create(
             created_at=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
             name="file1.txt",
@@ -119,7 +117,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             uuid="df46244d-268a-0001-9b47-360502dd9b32",
             key="foo/1.txt",
         )
-        minio.put_bytes(minio.UserFilesBucket, "foo/2.txt", b"22")
+        s3.put_bytes(s3.UserFilesBucket, "foo/2.txt", b"22")
         step.uploaded_files.create(
             created_at=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc),
             name="file2.txt",
@@ -127,7 +125,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             uuid="df46244d-268a-0002-9b47-360502dd9b32",
             key="foo/2.txt",
         )
-        minio.put_bytes(minio.UserFilesBucket, "foo/3.txt", b"333")
+        s3.put_bytes(s3.UserFilesBucket, "foo/3.txt", b"333")
         step.uploaded_files.create(
             created_at=datetime.datetime(2020, 1, 3, tzinfo=datetime.timezone.utc),
             name="file3.txt",
@@ -137,7 +135,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
 
         # Upload the new file, "file4.txt"
-        minio.put_bytes(minio.TusUploadBucket, "new-key", b"4444")
+        s3.put_bytes(s3.TusUploadBucket, "new-key", b"4444")
         with self.assertLogs(level=logging.INFO):
             # Logs SetStepParams's migrate_params()
             response = self.client.post(
@@ -151,7 +149,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
                             "apiToken": "abc123",
                         },
                         "Size": 7,
-                        "Storage": {"Bucket": minio.TusUploadBucket, "Key": "new-key"},
+                        "Storage": {"Bucket": s3.TusUploadBucket, "Key": "new-key"},
                     }
                 },
                 HTTP_HOOK_NAME="pre-finish",
@@ -164,8 +162,8 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             list(step.uploaded_files.order_by("id").values_list("name", flat=True)),
             ["file3.txt", "file4.txt"],
         )
-        self.assertFalse(minio.exists(minio.UserFilesBucket, "foo/1.txt"))
-        self.assertFalse(minio.exists(minio.UserFilesBucket, "foo/2.txt"))
+        self.assertFalse(s3.exists(s3.UserFilesBucket, "foo/1.txt"))
+        self.assertFalse(s3.exists(s3.UserFilesBucket, "foo/2.txt"))
 
         # Test delta nixes old files from clients' browsers
         send_update.assert_called()
@@ -203,7 +201,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        minio.put_bytes(minio.TusUploadBucket, "data", b"1234567")
+        s3.put_bytes(s3.TusUploadBucket, "data", b"1234567")
         response = self.client.post(
             f"/tusd-hooks",
             {
@@ -215,7 +213,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
                         "apiToken": "an-out-of-date-token",
                     },
                     "Size": 7,
-                    "Storage": {"Bucket": minio.TusUploadBucket, "Key": "data"},
+                    "Storage": {"Bucket": s3.TusUploadBucket, "Key": "data"},
                 }
             },
             HTTP_HOOK_NAME="pre-finish",

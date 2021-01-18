@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch
 import uuid
 from django.contrib.auth.models import User
-from cjwstate import commands, minio
+from cjwstate import commands, s3
 from cjwstate.models.workflow import Workflow, DependencyGraph
 from cjwstate.models.commands import InitWorkflow, AddStep, SetWorkflowTitle
 from cjwstate.tests.utils import (
@@ -171,17 +171,17 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         # "Leak" a StoredObject by writing its file to S3 but neglecting to
         # write an accompanying StoredObject record.
         stored_object_key = f"{workflow.id}/{step.id}/1234.dat"
-        minio.put_bytes(minio.StoredObjectsBucket, stored_object_key, b"1234")
+        s3.put_bytes(s3.StoredObjectsBucket, stored_object_key, b"1234")
 
         # Add UploadedFile, missing a DB entry. (Even if we fix all bugs that
         # leak an S3 object after deleting a DB entry [and 2019-06-03 there are
         # still more] we'll still need to handle missing DB entries from legacy
         # code.)
         uploaded_file_key = f"{step.uploaded_file_prefix}{uuid.uuid4()}.csv"
-        minio.put_bytes(minio.UserFilesBucket, uploaded_file_key, b"A\nb")
+        s3.put_bytes(s3.UserFilesBucket, uploaded_file_key, b"A\nb")
         workflow.delete()
-        self.assertFalse(minio.exists(minio.StoredObjectsBucket, stored_object_key))
-        self.assertFalse(minio.exists(minio.UserFilesBucket, uploaded_file_key))
+        self.assertFalse(s3.exists(s3.StoredObjectsBucket, stored_object_key))
+        self.assertFalse(s3.exists(s3.UserFilesBucket, uploaded_file_key))
 
 
 class SimpleDependencyGraphTests(unittest.TestCase):

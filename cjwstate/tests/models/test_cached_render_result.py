@@ -2,7 +2,7 @@ from dataclasses import replace
 import pyarrow
 from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import Workflow
 from cjwstate.models.commands import InitWorkflow
 from cjwstate.rendercache.io import (
@@ -36,7 +36,7 @@ class CachedRenderResultTests(DbTestCase):
 
         parquet_key = crr_parquet_key(self.step.cached_render_result)
         self.step.delete()
-        self.assertFalse(minio.exists(BUCKET, parquet_key))
+        self.assertFalse(s3.exists(BUCKET, parquet_key))
         # Note: we _don't_ test soft-delete. Soft-deleted modules aren't
         # extremely common, so it's not like we'll be preserving terabytes of
         # unused cached render results.

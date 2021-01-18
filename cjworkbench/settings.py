@@ -296,7 +296,7 @@ STATICFILES_DIRS = (
     ("images", os.path.join(BASE_DIR, "assets", "images")),
 )
 # Make `collectstatic` command upload to the right place
-STATICFILES_STORAGE = "server.storage.minio_storage_for_collectstatic.MinioStorage"
+STATICFILES_STORAGE = "server.storage.s3_storage_for_collectstatic.S3Storage"
 
 # In dev mode, we'll serve local files. But in prod we can overwrite STATIC_URL
 # to serve from S3
@@ -517,7 +517,7 @@ deploying code that depends on it.
 Why not use an environment-specific url, like STATIC_URL? Because our network
 sandbox forbids fetcher modules from accessing private-use IP addresses. We
 don't use internal resolvers (e.g., Docker DNS, Docker-managed /etc/hosts) and
-we firewall internal IP addresses (e.g., minio, localhost). Dev,
+we firewall internal IP addresses (e.g., s3, localhost). Dev,
 integration-test and production all have different network setups, and we'd
 need three different codepaths to make environment-specific URLs work.
 """

@@ -103,7 +103,7 @@ class AddStep(ChangesStepOutputs, BaseCommand):
 
         Raise KeyError if `module_id_name` is invalid.
 
-        Raise RuntimeError (unrecoverable) if minio holds invalid module data.
+        Raise RuntimeError (unrecoverable) if s3 holds invalid module data.
 
         Raise ValueError if `param_values` do not match the module's spec.
         """

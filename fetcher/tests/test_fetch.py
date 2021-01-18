@@ -28,7 +28,7 @@ from cjwkernel.tests.util import (
     assert_arrow_table_equals,
     parquet_file,
 )
-from cjwstate import minio, rabbitmq, rendercache, storedobjects
+from cjwstate import s3, rabbitmq, rendercache, storedobjects
 from cjwstate.models import CachedRenderResult, ModuleVersion, Step, Workflow
 import cjwstate.modules
 from cjwstate.modules.param_dtype import ParamDType
@@ -452,9 +452,7 @@ class FetchTests(DbTestCaseWithModuleRegistry):
             )
         step.refresh_from_db()
         so = step.stored_objects.get(stored_at=step.stored_data_version)
-        with minio.temporarily_download(
-            minio.StoredObjectsBucket, so.key
-        ) as parquet_path:
+        with s3.temporarily_download(s3.StoredObjectsBucket, so.key) as parquet_path:
             table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
             assert_arrow_table_equals(table, {"A": [1]})
 

@@ -3,7 +3,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils import timezone
 
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.util import find_deletable_ids
 
 from .step import Step
@@ -59,4 +59,4 @@ def delete_old_files_to_enforce_storage_limits(*, step: Step) -> int:
 @receiver(models.signals.pre_delete, sender=UploadedFile)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     # Delete S3 data when UploadedFile is deleted
-    minio.remove(minio.UserFilesBucket, instance.key)
+    s3.remove(s3.UserFilesBucket, instance.key)

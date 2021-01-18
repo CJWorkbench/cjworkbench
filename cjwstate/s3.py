@@ -59,11 +59,11 @@ error = client.exceptions
 
 Usage:
 
-    from cjwstate import minio
+    from cjwstate import s3
 
     try:
-        minio.client.head_bucket(Bucket='foo')
-    except minio.error.NoSuchBucket as err:
+        s3.client.head_bucket(Bucket='foo')
+    except s3.error.NoSuchBucket as err:
         print(repr(err))
 """
 
@@ -117,7 +117,7 @@ def ensure_bucket_exists(bucket_name):
 def list_file_keys(bucket: str, prefix: str):
     """List keys of non-directory objects, non-recursively, in `prefix`.
 
-    >>> minio.list_file_keys('bucket', 'filter/a132b3f/')
+    >>> s3.list_file_keys('bucket', 'filter/a132b3f/')
     ['filter/a132b3f/spec.json', 'filter/a132b3f/filter.py']
     """
     # Use list_objects, not list_objects_v2, because Google Cloud Storage's
@@ -214,7 +214,7 @@ def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
         # Use client.delete_object(), not delete_objects(), because Google Cloud
         # Storage doesn't emulate DeleteObjects.
         #
-        # This is slow. But so is multi-delete through minio, because minio's
+        # This is slow. But so is multi-delete through s3, because s3's
         # GCS gateway deletes one-at-a-time anyway.
         for key in keys:
             remove(bucket, key)
@@ -245,12 +245,12 @@ def temporarily_download(
 
     Usage:
 
-        with minio.temporarily_download('bucket', 'key') as path:
+        with s3.temporarily_download('bucket', 'key') as path:
             print(str(path))  # a path on the filesystem
             path.read_bytes()  # returns file contents
         # when you exit the block, the pathlib.Path is deleted
     """
-    with tempfile_context(prefix="minio-download-", dir=dir) as path:
+    with tempfile_context(prefix="s3-download-", dir=dir) as path:
         download(bucket, key, path)  # raise FileNotFoundError (deleting path)
         yield path
 

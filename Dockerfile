@@ -222,7 +222,7 @@ RUN black --check /app
 
 # 3.1. migrate: runs ./manage.py migrate
 FROM base AS migrate
-# assets/ is static files. migrate will upload them to minio.
+# assets/ is static files. migrate will upload them to s3.
 COPY assets/ /app/assets/
 COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
 CMD [ "bin/migrate-prod" ]

@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Union, Tuple
 import iso8601
 from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
 from cjwkernel.util import tempfile_context
-from cjwstate import minio
+from cjwstate import s3
 from cjwstate.models import UploadedFile
 from cjwstate.modules.param_dtype import ParamDType
 from .types import TabCycleError, TabOutputUnreachableError, PromptingError
@@ -342,7 +342,7 @@ def _(
     * Has the same suffix as the originally-uploaded file
     * Will have its file deleted when it goes out of scope
 
-    If the file is in the database but does not exist on minio, return `None`.
+    If the file is in the database but does not exist on s3, return `None`.
     """
     if value is None:
         return None
@@ -365,7 +365,7 @@ def _(
     )
     try:
         # Overwrite the file
-        minio.download(minio.UserFilesBucket, uploaded_file.key, path)
+        s3.download(s3.UserFilesBucket, uploaded_file.key, path)
         return path
     except FileNotFoundError:
         # tempfile will be deleted by context.exit_stack
