@@ -1,3 +1,6 @@
+"""High-level storage backed by AWS S3, Google GCS, or Minio.
+"""
+
 import errno
 import json
 import logging
@@ -6,7 +9,7 @@ import sys
 import urllib3
 import urllib.parse
 from contextlib import contextmanager
-from typing import Any, ContextManager, Dict, NamedTuple
+from typing import ContextManager, NamedTuple
 
 import boto3
 import botocore
@@ -25,18 +28,18 @@ def encode_content_disposition(filename: str) -> str:
     return "attachment; filename*=UTF-8''" + enc_filename
 
 
-session = boto3.session.Session(
+_session = boto3.session.Session(
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,  # TODO nix
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,  # TODO nix
     region_name="us-east-1",
 )
-client = session.client(
+client = _session.client(
     "s3",
     endpoint_url=settings.AWS_S3_ENDPOINT,  # e.g., 'https://localhost:9001/'
     config=botocore.client.Config(max_pool_connections=50),
 )
 
-downloader = S3Transfer(client, TransferConfig())
+_downloader = S3Transfer(client, TransferConfig())
 """Singleton S3 "downloader" for all downloads.
 
 All concurrent downloads reuse the same thread pool. This caps the number of
@@ -44,7 +47,7 @@ threads S3 uses.
 """
 
 
-uploader = S3Transfer(
+_uploader = S3Transfer(
     client, TransferConfig(use_threads=False, multipart_threshold=sys.maxsize)
 )
 """Upload configuration.
@@ -94,7 +97,7 @@ def list_file_keys(bucket: str, prefix: str):
 
 
 def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
-    uploader.upload_file(str(path.resolve()), bucket, key)
+    _uploader.upload_file(str(path.resolve()), bucket, key)
 
 
 def put_bytes(bucket: str, key: str, body: bytes, **kwargs) -> None:
@@ -138,7 +141,7 @@ def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
     client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
 
 
-def remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
+def _remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
     """Remove all objects in `bucket` whose keys begin with `prefix`.
 
     This is _not atomic_. An aborted delete may leave some objects deleted
@@ -194,7 +197,7 @@ def remove_recursive(bucket: str, prefix: str, force=False) -> None:
     if not prefix.endswith("/"):
         raise ValueError("`prefix` must end with `/`")
 
-    return remove_by_prefix(bucket, prefix, force)
+    return _remove_by_prefix(bucket, prefix, force)
 
 
 @contextmanager
@@ -223,8 +226,8 @@ def download(bucket: str, key: str, path: pathlib.Path) -> None:
     Raise FileNotFoundError if the key is not on S3.
     """
     try:
-        downloader.download_file(bucket, key, str(path))
-    # downloader.download_file() seems to raise ClientError instead of a
+        _downloader.download_file(bucket, key, str(path))
+    # _downloader.download_file() seems to raise ClientError instead of a
     # wrapped error.
     # except error.NoSuchKey:
     #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
