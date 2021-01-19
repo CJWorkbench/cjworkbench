@@ -99,11 +99,3 @@ STATIC_IP=$(gcloud compute addresses describe user-files --global | grep address
 gcloud dns record-sets transaction start --zone=workbench-zone
 gcloud dns record-sets transaction add --zone=workbench-zone --name user-files.$DOMAIN_NAME. --ttl 7200 --type A $STATIC_IP
 gcloud dns record-sets transaction execute --zone=workbench-zone
-
-gsutil iam ch allUsers:objectViewer gs://static.$DOMAIN_NAME
-echo '[{"origin":"*","method":"GET","maxAgeSeconds":3000}]' > static-cors.json \
-  && gsutil cors set static-cors.json gs://static.$DOMAIN_NAME \
-  && rm -f static-cors.json
-gcloud dns record-sets transaction start --zone=$ZONE_NAME
-gcloud dns record-sets transaction add --zone $ZONE_NAME --name static.$DOMAIN_NAME. --ttl 7200 --type CNAME c.storage.googleapis.com.
-gcloud dns record-sets transaction execute --zone $ZONE_NAME

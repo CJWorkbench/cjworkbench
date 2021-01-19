@@ -187,7 +187,7 @@ spec:
                   name: workbench-config
                   key: domainName
             - name: MINIO_STATIC_URL_PATTERN
-              value: 'https://storage.googleapis.com/static.$(_DOMAIN_NAME)/'
+              value: 'https://static.$(_DOMAIN_NAME)/'
             - name: S3_BUCKET_NAME_PATTERN
               value: '%s.$(_DOMAIN_NAME)'
             - name: TUS_CREATE_UPLOAD_URL

@@ -7,7 +7,7 @@
 set -e
 set -x
 
-ENV="production"  # or "production", or....
+ENV="production"  # "staging" or "production"
 CLUSTER_NAME="workbench"
 if [ "$ENV" = "staging" ]; then
   DOMAIN_NAME="workbenchdata-staging.com"
@@ -293,3 +293,6 @@ gcloud dns record-sets transaction execute --zone=$ZONE_NAME
 
 # 8. Set up ingress to terminate SSL and direct traffic to tusd
 source 08-tusd.sh
+
+# 9. Set up CDN for static files
+source 09-static-files.sh
