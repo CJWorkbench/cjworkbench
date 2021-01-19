@@ -761,10 +761,7 @@ class ProcessResultError:
             except KeyError:
                 raise ValueError("Missing 'message' in %s" % value)
 
-            try:
-                quick_fixes = [QuickFix.coerce(qf) for qf in value["quickFixes"]]
-            except KeyError:
-                raise ValueError("Missing 'quickFixes' in %s" % value)
+            quick_fixes = [QuickFix.coerce(qf) for qf in value.get("quickFixes", [])]
 
             return cls(message, quick_fixes)
         else:

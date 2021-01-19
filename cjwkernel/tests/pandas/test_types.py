@@ -338,9 +338,15 @@ class ProcessResultErrorTests(unittest.TestCase):
             ProcessResultError(I18nMessage("my_id", {"hello": "there"}, "cjwmodule")),
         )
 
-    def test_from_dict(self):
+    def test_from_dict_without_message(self):
         with self.assertRaises(ValueError):
             ProcessResultError.coerce({"id": "my_id", "arguments": {"hello": "there"}})
+
+    def test_from_dict_without_quick_fixes(self):
+        self.assertEqual(
+            ProcessResultError.coerce({"message": ("my id", {})}),
+            ProcessResultError(I18nMessage("my id"), []),
+        )
 
     def test_from_string_with_quick_fix(self):
         self.assertEqual(
