@@ -2,7 +2,7 @@ import time
 
 from integrationtests.lessons import LessonTest
 
-DataUrl = "https://storage.googleapis.com/production-static.workbenchdata.com/lessons/en/load-public-data/affordable_housing_1.csv"
+DataUrl = "https://static.workbenchdata.com/lessons/en/load-public-data/affordable_housing_1.csv"
 
 
 class TestLesson(LessonTest):

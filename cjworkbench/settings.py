@@ -518,7 +518,7 @@ if "MINIO_STATIC_URL_PATTERN" in os.environ:
 if STATIC_URL != "http://localhost:8000/static/":
     print(f"Serving static files from {STATIC_URL}")
 
-LESSON_FILES_URL = "https://storage.googleapis.com/production-static.workbenchdata.com"
+LESSON_FILES_URL = "https://static.workbenchdata.com"
 """URL where we publish data for users to fetch in lessons.
 
 [2019-11-12] Currently, this is in the production static-files URL. TODO move
