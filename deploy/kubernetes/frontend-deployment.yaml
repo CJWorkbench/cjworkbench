@@ -1,41 +1,3 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frontend-http-redirect-config
-data:
-  haproxy.cfg: |
-      # We use haproxy to redirect HTTP to HTTPS. (Django is inefficient at this.)
-      global
-          nbproc 1
-          nbthread 1
-          log stdout format raw local0 info
-
-      defaults
-          log global
-          timeout connect 30s
-          timeout client 60s
-          timeout server 60s
-          timeout tunnel 1h
-          timeout client-fin 30s
-          mode http
-          option httplog
-
-      frontend httporhttps
-          bind *:8080
-
-          acl is_health_check path /healthz
-          acl is_forwarded_https req.hdr(x-forwarded-proto) https
-          http-request redirect scheme https if !is_health_check !is_forwarded_https
-
-          # See server/urls.py: tusd sends requests here, and we trust the
-          # data coming in to be coming from tusd.
-          http-request deny if { path_beg /tusd-hooks }
-
-          default_backend workbench
-
-      backend workbench
-          server workbench localhost:8081
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -78,32 +40,21 @@ spec:
       containers:
         - name: frontend
           image: "gcr.io/workbenchdata-ci/frontend:latest"
-          # override port: pick 8081. (We'll use haproxy for 8080.)
-          # [2020-11-20, adamhooper] last week, GKE landed SSL redirects:
-          # https://github.com/GoogleCloudPlatform/gke-networking-recipes/tree/master/ingress/secure-ingress
-          # It's only available in v1.18 for now. Let's upgrade when it's
-          # sensible, nix haproxy, and move haproxy's memory+cpu into this
-          # container.
-          command: [ "bin/frontend-prod", "8081" ]
           resources:
             requests:
               # We have no SMT, and we want 1 pod per node. Pods have ~1.5 CPUs
-              cpu: 1300m
+              cpu: 1400m
               memory: 2Gi
             limits:
-              cpu: 1300m
+              cpu: 1400m
               memory: 2Gi
           ports:
             - name: http
-              containerPort: 8081
-          # readinessProbe *could* go here:
-          #   httpGet:
-          #     path: /healthz
-          #     port: 8081
-          # ... but it's better to put it on haproxy. The request ends up here
-          # anyway, and it tests more of the pod. (Readiness probes run on
-          # containers, but they _affect_ the entire pod. Not to be confused
-          # with _liveness_ probes, which restart containers.)
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
           env:
             - name: CJW_PRODUCTION
               value: 'True'
@@ -213,26 +164,6 @@ spec:
               readOnly: true
             - mountPath: /var/lib/cjwkernel/chroot
               name: chroot
-        - name: http-redirect
-          image: "haproxy:2.1.2"
-          command: [ "haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg", "-m", "90", "-db" ]
-          resources:
-            requests:
-              cpu: 0.1
-              memory: 100Mi
-            limits:
-              memory: 100Mi
-          ports:
-            - name: http
-              containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-          volumeMounts:
-            - mountPath: /usr/local/etc/haproxy/haproxy.cfg
-              name: frontend-http-redirect-config
-              subPath: haproxy.cfg
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.18.0
           env:
@@ -289,6 +220,3 @@ spec:
                 path: twitter-oauth-secret.json
         - name: chroot
           emptyDir: {}
-        - name: frontend-http-redirect-config
-          configMap:
-            name: frontend-http-redirect-config
