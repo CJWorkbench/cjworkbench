@@ -6,9 +6,7 @@ import ShareCard from './ShareCard'
 export default function Dashboard ({ workflow, blocks, reportableTabs, addBlock, deleteBlock, reorderBlocks, setBlockMarkdown }) {
   return (
     <article className='report'>
-      {blocks.length > 0 ? (
-        <ShareCard workflowId={workflow.id} isPublic={workflow.public} />
-      ) : null}
+      <ShareCard workflowId={workflow.id} isPublic={workflow.public} />
       <Report
         workflow={workflow}
         blocks={blocks}
