@@ -1,17 +1,13 @@
 ---
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
 metadata:
-  name: frontend-ingress
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: app-ip
-    networking.gke.io/managed-certificates: app-cert
+  name: frontend-frontend-config
 spec:
-  backend:
-    serviceName: frontend-service
-    servicePort: 80
+  redirectToHttps:
+    enabled: true
 ---
-apiVersion: cloud.google.com/v1beta1
+apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
   name: websockets-backend-config
@@ -19,4 +15,31 @@ spec:
   timeoutSec: 3600
   connectionDraining:
     drainingTimeoutSec: 30
-
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: app-ip
+    networking.gke.io/managed-certificates: app-cert
+    networking.gke.io/v1beta1.FrontendConfig: frontend-frontend-config
+spec:
+  backend:
+    serviceName: frontend-service
+    servicePort: 80
+  rules:
+  - http:
+      # Deny access to /tusd-hooks
+      # See server/urls.py: tusd sends requests here, and frontend trusts
+      # that requests to /tusd-hooks are from the internal tusd service.
+      # TODO make tusd-hooks a different service
+      paths:
+      - path: /tusd-hooks
+        backend:
+          serviceName: http-404-service
+          servicePort: 80
+      - path: /tusd-hooks/*  # Don't trust Django: will it serve /tusd-hooks/?
+        backend:
+          serviceName: http-404-service
+          servicePort: 80
