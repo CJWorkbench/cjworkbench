@@ -1,8 +1,12 @@
 import asyncio
+import logging
 
 from django.core.management.base import BaseCommand
 
 from cron.main import main as main_loop
+
+
+logger = logging.getLogger(__name__)
 
 
 def exit_on_exception(loop, context):
