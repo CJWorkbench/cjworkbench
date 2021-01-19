@@ -116,7 +116,6 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Report")  # switch to report
         b.assert_element("h1", text="Example Workflow", wait=True)
-        b.assert_no_element(".share-card")  # no share card in empty report
 
         b.click_button("Share")
         with b.scope(".share-modal", wait=True):  # wait for dialog
