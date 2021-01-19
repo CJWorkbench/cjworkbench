@@ -510,13 +510,18 @@ msgstr ""
 msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
 msgstr ""
 
+#. default-message: This workflow has no charts
+#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:45
+msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.empty"
+msgstr ""
+
 #. default-message: Add chart
-#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:17
+#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:26
 msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.hoverText"
 msgstr ""
 
 #. default-message: {tabName} – {moduleName}
-#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:33
+#: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:40
 msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.tabAndChartName"
 msgstr ""
 
@@ -526,14 +531,8 @@ msgid "js.WorkflowEditor.Report.AddTableBlockPrompt.hoverText"
 msgstr ""
 
 #. default-message: Add Text Block
-#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:20
+#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:13
 msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.hoverText"
-msgstr ""
-
-#. When an editor adds a text block to a report, this placeholder text appears
-#. default-message: Enter MarkDown text here
-#: assets/js/WorkflowEditor/Report/AddTextBlockPrompt.js:9
-msgid "js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder"
 msgstr ""
 
 #. default-message: Delete
@@ -556,6 +555,22 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText"
 msgstr ""
 
+#. default-message: Cancel
+#: assets/js/WorkflowEditor/Report/MarkdownEditor.js:47
+msgid "js.WorkflowEditor.Report.MarkdownEditor.cancel"
+msgstr ""
+
+#. When an editor adds a text block to a report, this placeholder text appears
+#. default-message: Enter MarkDown text here
+#: assets/js/WorkflowEditor/Report/MarkdownEditor.js:35
+msgid "js.WorkflowEditor.Report.MarkdownEditor.placeholder"
+msgstr ""
+
+#. default-message: Save
+#: assets/js/WorkflowEditor/Report/MarkdownEditor.js:50
+msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
+msgstr ""
+
 #. default-message: Download data as CSV
 #: assets/js/WorkflowEditor/Report/TableBlock.js:25
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
@@ -564,16 +579,6 @@ msgstr ""
 #. default-message: No table data
 #: assets/js/WorkflowEditor/Report/TableBlock.js:29
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
-msgstr ""
-
-#. default-message: Save
-#: assets/js/WorkflowEditor/Report/TextBlock.js:26
-msgid "js.WorkflowEditor.Report.TextBlock.submit"
-msgstr ""
-
-#. default-message: Cancel
-#: assets/js/WorkflowEditor/Report/TextBlock.js:23
-msgid "js.WorkflowEditor.Report.TextBock.cancel"
 msgstr ""
 
 #. default-message: null
@@ -2278,7 +2283,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:866
+#: cjwkernel/pandas/types.py:863
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
