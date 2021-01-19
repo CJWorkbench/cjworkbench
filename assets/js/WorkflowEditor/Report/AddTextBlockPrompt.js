@@ -3,20 +3,13 @@ import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import IconText from '../../../icons/text.svg'
 
-export default function AddTextBlockPrompt ({ onSubmit }) {
-  const handleClick = React.useCallback(() => {
-    onSubmit({
-      markdown: t({
-        id: 'js.WorkflowEditor.Report.AddTextBlockPrompt.placeholder',
-        comment: 'When an editor adds a text block to a report, this placeholder text appears',
-        message: 'Enter MarkDown text here'
-      })
-    })
-  }, [onSubmit])
+export default function AddTextBlockPrompt ({ active, onClick }) {
   return (
     <button
+      type='button'
       name='add-text-block'
-      onClick={handleClick}
+      className={active ? 'active' : null}
+      onClick={onClick}
       title={t({
         id: 'js.WorkflowEditor.Report.AddTextBlockPrompt.hoverText',
         message: 'Add Text Block'
@@ -27,5 +20,6 @@ export default function AddTextBlockPrompt ({ onSubmit }) {
   )
 }
 AddTextBlockPrompt.propTypes = {
-  onSubmit: PropTypes.func.isRequired // func({ markdown }) => undefined
+  active: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired // func() => undefined
 }

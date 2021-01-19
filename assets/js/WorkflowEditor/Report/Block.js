@@ -13,7 +13,16 @@ const Components = {
 /**
  * Choose among ChartBlock, TableBlock and TextBlock, depending on `block.type`
  * */
-export default function Block ({ workflowId, block, isReadOnly, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
+export default function Block (props) {
+  const {
+    workflowId,
+    block,
+    isReadOnly,
+    onClickDelete,
+    onClickMoveUp = null,
+    onClickMoveDown = null,
+    setBlockMarkdown
+  } = props
   const Component = Components[block.type]
   return (
     <Component

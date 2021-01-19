@@ -2,38 +2,17 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Markdown from 'react-markdown'
 import BlockFrame from './BlockFrame'
-import { Trans } from '@lingui/macro'
+import MarkdownEditor from './MarkdownEditor'
 
-function EditMarkdown ({ value, onChange, onSubmit, onCancel }) {
-  const handleChange = React.useCallback(ev => onChange(ev.target.value), [onChange])
-  const handleSubmit = React.useCallback(ev => {
-    ev.preventDefault()
-    onSubmit()
-  }, [onSubmit])
-  const handleCancel = React.useCallback(ev => {
-    ev.preventDefault()
-    onCancel()
-  }, [onCancel])
-
-  return (
-    <form method='post' action='#' onSubmit={handleSubmit} onReset={handleCancel}>
-      <div className='autosize'>
-        <div className='invisible-size-setter'>{value}</div>
-        <textarea autoFocus name='markdown' value={value} onChange={handleChange} />
-      </div>
-      <div className='buttons'>
-        <button className='action-button button-gray' type='reset'>
-          <Trans id='js.WorkflowEditor.Report.TextBock.cancel'>Cancel</Trans>
-        </button>
-        <button className='action-button button-blue' type='submit'>
-          <Trans id='js.WorkflowEditor.Report.TextBlock.submit'>Save</Trans>
-        </button>
-      </div>
-    </form>
-  )
-}
-
-export default function TextBlock ({ block, isReadOnly, onClickDelete, onClickMoveUp, onClickMoveDown, setBlockMarkdown }) {
+export default function TextBlock (props) {
+  const {
+    block,
+    isReadOnly,
+    onClickDelete,
+    onClickMoveUp = null,
+    onClickMoveDown = null,
+    setBlockMarkdown
+  } = props
   const { slug, markdown } = block
   const [editedMarkdown, setEditedMarkdown] = React.useState(null) // non-null means, "editing"
   const handleClickEdit = React.useMemo(() => {
@@ -67,7 +46,7 @@ export default function TextBlock ({ block, isReadOnly, onClickDelete, onClickMo
           <Markdown source={markdown} />
         </div>
       ) : (
-        <EditMarkdown
+        <MarkdownEditor
           value={editedMarkdown}
           onChange={handleChange}
           onCancel={handleCancel}

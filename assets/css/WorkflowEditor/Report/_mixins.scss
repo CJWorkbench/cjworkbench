@@ -1,0 +1,30 @@
+@mixin report-markdown-editor() {
+  // Reset awful "1em is 10px"
+  font-size: rem(1);
+
+  .autosize {
+    margin-top: 1em;
+    @include autosize-with-textarea;
+  }
+
+  .invisible-size-setter, textarea {
+    font-family: monospace;
+    color: $brand-text--dark;
+    padding: 1em;
+    display: block;
+    width: 100%;
+    height: auto; // varies
+    border-radius: 3px;
+    border: 1px solid $brand-text--dark;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      margin: .5em 0 0 .5em;
+    }
+  }
+}
+
