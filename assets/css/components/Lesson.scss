@@ -163,8 +163,6 @@ article.lesson {
       margin: 0rem 0 2rem -2rem;
     }
 
-
-
     code {
       @include code-1;
       background-color: $dark-accent--medium;
@@ -174,14 +172,8 @@ article.lesson {
     }
 
     kbd {
-      font-weight: normal;
+      @include code-1;
       color: $brand-text--learn;
-      background-color: transparent;
-      margin: 0;
-    }
-
-    .icon-insert {
-
     }
 
     h3.instructions { // Instructions title
@@ -271,6 +263,7 @@ article.lesson {
         line-height: 2.5rem;
       }
     }
+
     // Suggestions to continue learning
     .next {
       margin-top: 3rem;

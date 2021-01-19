@@ -43,7 +43,7 @@ tabs:
 <section>
   <h2>Διαίρεση στηλών</h2>
   <p>Απαιτείται να αποθηκεύσουμε την πολιτεία χωριστά σε μια νέα στήλη, έτσι ώστε να μπορέσουμε να εφαρμόσουμε Ομαδοποίηση σε αυτήν την επιλογή και να πάρουμε ανάλυση των δωρεών ανά πολιτεία.</p>
-  <p>Η πρώτη μας δουλειά είναι να κάνουμε εξαγωγή των δύο γραμμάτων των συντομογραφιών των πολιτειών στη στήλη <kbd>Contributor (Δωρητής)</kbd> . Για παράδειγμα, θέλουμε να κάνουμε εξαγωγή το <kbd>NC</kbd> από το:</p>
+  <p>Η πρώτη μας δουλειά είναι να κάνουμε εξαγωγή των δύο γραμμάτων των συντομογραφιών των πολιτειών στη στήλη <kbd>Contributor (Δωρητής)</kbd>. Για παράδειγμα, θέλουμε να κάνουμε εξαγωγή το <kbd>NC</kbd> από το:</p>
   <div class="copy-txt">FELL, STEPHEN MPO BOX 56POLLOCKSVILLE, NC 28573</div>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
@@ -75,7 +75,7 @@ tabs:
     <li
       data-test="return workflow.tabs[0].stepModuleIds[3] === 'clean-text' &&
                         workflow.tabs[0].steps[3].params.colnames.join('|') === 'Contributor 2'"
-      >Προσθέστε την επιλογή <kbd>Τακτοποίηση κειμένου</kbd>, και εφαρμόστε την στη στήλη <kbd>Contributor 2</kbd> .</li>
+      >Προσθέστε την επιλογή <kbd>Τακτοποίηση κειμένου</kbd>, και εφαρμόστε την στη στήλη <kbd>Contributor 2</kbd>.</li>
     <li
       data-test="
         const params = workflow.tabs[0].steps[3].params
@@ -131,7 +131,7 @@ tabs:
           && sort_columns[0].colname.toLowerCase() === 'total amount'
           && !sort_columns[0].is_ascending
         )
-      ">Επιλέξτε <kbd>Φθίνουσα ταξινόμηση</kbd> από το μενού της στήλης <kbd>Total amount</kbd> . <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span></li>
+      ">Επιλέξτε <kbd>Φθίνουσα ταξινόμηση</kbd> από το μενού της στήλης <kbd>Total amount</kbd>. <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span></li>
     <li
       data-test="return workflow.tabs[0].stepModuleIds[7] === 'droprowsbyposition' &&
                         workflow.tabs[0].steps[7].params.rows === '1'"

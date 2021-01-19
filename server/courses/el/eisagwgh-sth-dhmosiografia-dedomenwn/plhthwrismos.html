@@ -40,16 +40,16 @@ tabs:
     <li
       data-test="return workflow.tabs[0].stepModuleIds[1] === 'rowstoheader' &&
                         workflow.tabs[0].steps[1].params.rows === '1'"
-      >Στην καρτέλα <Kbd>Μισθοί</kbd> , διαλέξτε, με κλικ στον αριθμό σειράς, τη σειρά 1 με τις πραγματικές τιμές κεφαλίδας. Στη συνέχεια διαλέξτε <kbd>Μετακίνηση σειρών στην κεφαλίδα του πίνακα</kbd> στο μενού ενεργειών της κεφαλίδας του πίνακα, όπου λέει &quot;Επιλέχτηκε 1 στήλη&quot;.<p class='instruction-detail'>Επειδή περιείχε δεδομένα τόσο με τη μορφή κειμένου όσο και αριθμητικά, η στήλη <kbd>Average salary (Μέσος μισθός)</kbd> έχει φορτωθεί σαν κείμενο. Θα πρέπει να τη μετατρέψουμε σε αριθμούς για να τους χρησιμοποιήσουμε σε υπολογισμούς.</p>
+      >Στην καρτέλα <kbd>Μισθοί</kbd>, διαλέξτε, με κλικ στον αριθμό σειράς, τη σειρά 1 με τις πραγματικές τιμές κεφαλίδας. Στη συνέχεια διαλέξτε <kbd>Μετακίνηση σειρών στην κεφαλίδα του πίνακα</kbd> στο μενού ενεργειών της κεφαλίδας του πίνακα, όπου λέει &quot;Επιλέχτηκε 1 στήλη&quot;.<p class='instruction-detail'>Επειδή περιείχε δεδομένα τόσο με τη μορφή κειμένου όσο και αριθμητικά, η στήλη <kbd>Average salary (Μέσος μισθός)</kbd> έχει φορτωθεί σαν κείμενο. Θα πρέπει να τη μετατρέψουμε σε αριθμούς για να τους χρησιμοποιήσουμε σε υπολογισμούς.</p>
     </li>
     <li
       data-test="return workflow.tabs[0].stepModuleIds[2] === 'converttexttonumber'"
-      >Διαλέξτε την επιλογή <kbd>Μετατροπή σε αριθμούς</kbd> στο μενού της στήλης <kbd>Average Salary</kbd> . <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span><p class='instruction-detail'>Τα δεδομένα ΔΤΚ στην άλλη καρτέλα έχουν παρόμοια προβλήματα.</p>
+      >Διαλέξτε την επιλογή <kbd>Μετατροπή σε αριθμούς</kbd> στο μενού της στήλης <kbd>Average Salary</kbd>. <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span><p class='instruction-detail'>Τα δεδομένα ΔΤΚ στην άλλη καρτέλα έχουν παρόμοια προβλήματα.</p>
     </li>
     <li
       data-test="return workflow.tabs[1].stepModuleIds[1] === 'rowstoheader' &&
                         workflow.tabs[1].steps[1].params.rows === '11'"
-      >Στην καρτέλα <Kbd>Δεδομένα ΔΤΚ</kbd> , διαλέξτε τη σειρά 11, η οποία περιέχει τις ονομασίες των στηλών, και μετακινήστε κι εκείνη τη σειρά στην κεφαλίδα.</li>
+      >Στην καρτέλα <kbd>Δεδομένα ΔΤΚ</kbd>, διαλέξτε τη σειρά 11, η οποία περιέχει τις ονομασίες των στηλών, και μετακινήστε κι εκείνη τη σειρά στην κεφαλίδα.</li>
     <li
       data-test="
         if (workflow.tabs[1].stepModuleIds[2] !== 'selectcolumns') return false
@@ -58,7 +58,7 @@ tabs:
       >Ενώ βρίσκεστε ακόμα σε αυτή την καρτέλα, προσθέστε το <kbd>Επιλογή στηλών</kbd> και κρατήστε μόνο τις στήλες <kbd>Year (Έτος)</kbd> και <kbd>Annual (Ετήσιος)</kbd></li>
     <li
       data-test="return workflow.tabs[1].stepModuleIds[3] === 'converttexttonumber'"
-      >Διαλέξτε την επιλογή <kbd>Μετατροπή σε αριθμούς</kbd> από το μενού της στήλης <kbd>Annual</kbd> . <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span></li>
+      >Διαλέξτε την επιλογή <kbd>Μετατροπή σε αριθμούς</kbd> από το μενού της στήλης <kbd>Annual</kbd>. <span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span></li>
   </ol>
 </section>
 <section class="fullscreen">
@@ -83,7 +83,7 @@ tabs:
   <ol class="steps">
     <li
       data-test="return workflow.tabs[0].stepModuleIds[3] === 'jointab'"
-      >Επιστρέψτε στην καρτέλα <kbd>Μισθοί</kbd> και προσθέστε ένα βήμα <kbd>Ένωση καρτελών</kbd> .</li>
+      >Επιστρέψτε στην καρτέλα <kbd>Μισθοί</kbd> και προσθέστε ένα βήμα <kbd>Ένωση καρτελών</kbd>.</li>
     <li
       data-test="
         const params = workflow.tabs[0].steps[3].params

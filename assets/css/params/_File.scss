@@ -281,19 +281,11 @@
   }
 
   kbd {
+    @include code-1;
     flex: 0 1 auto;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    @include code-1;
-    padding: 0;
-    background: transparent;
     color: $brand-text--learn;
-  }
-
-  pre {
-    background: black;
-    color: white;
-    padding: 1rem;
   }
 }

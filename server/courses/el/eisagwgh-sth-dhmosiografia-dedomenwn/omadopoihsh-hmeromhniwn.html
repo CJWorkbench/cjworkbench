@@ -69,7 +69,7 @@ tabs:
           groups.group_dates
           && ['M', 'D'].includes(groups.date_granularities['Complaint date'])
         )
-      ">Στο βήμα <kbd>Ομαδοποίηση</kbd> , τσεκάρετε την επιλογή <kbd>Ομαδοποίηση ημερομηνιών</kbd> και επιλέξτε <kbd>ανά μήνα</kbd> ως προς τη λεπτομέρεια</li>
+      ">Στο βήμα <kbd>Ομαδοποίηση</kbd>, τσεκάρετε την επιλογή <kbd>Ομαδοποίηση ημερομηνιών</kbd> και επιλέξτε <kbd>ανά μήνα</kbd> ως προς τη λεπτομέρεια</li>
     <li
       data-test="
         const agg = workflow.tabs[0].steps[4].params.aggregations
@@ -96,7 +96,7 @@ tabs:
           && params.y_columns[0]
           && params.y_columns[0].column.toLowerCase() === 'count of incidents'
         )
-      ">Δημιουργήστε ένα γραμμικό γράφημα. Επιλέξτε <kbd>Complaint date</kbd> για τον άξονα Χ και σχεδιάστε <kbd>Count of incidents (Αριθμός συμβάντων)</kbd> στον άξονα Y.<p class="instruction-detail">Τα γραφήματα με δύο σημεία δεδομένων δεν είναι πολύ ενημερωτικά. Για να οπτικοποιήσουμε τα ίδια δεδομένα αλλά για κάθε μέρα, μπορούμε να αλλάξουμε το επίπεδο λεπτομέρειας της ομάδας.</p>
+      ">Δημιουργήστε ένα γραμμικό γράφημα. Επιλέξτε <kbd>Complaint date</kbd> για τον άξονα Χ και σχεδιάστε <kbd>Count of incidents</kbd> (Αριθμός συμβάντων) στον άξονα Y.<p class="instruction-detail">Τα γραφήματα με δύο σημεία δεδομένων δεν είναι πολύ ενημερωτικά. Για να οπτικοποιήσουμε τα ίδια δεδομένα αλλά για κάθε μέρα, μπορούμε να αλλάξουμε το επίπεδο λεπτομέρειας της ομάδας.</p>
     </li>
     <li
       data-test="
@@ -114,12 +114,10 @@ tabs:
 </section>
 <footer>
   <h2>Εδώ τελειώνει το μάθημα!</h2>
-  <div class="completed"><!-- <p> After being grouped by more than one column the table contains a lot of repeated values in both <kbd>Complaint date</kbd> and <kbd>Borough</kbd>.
+  <div class="completed">
+    <p class="summary">
+      Στο επόμενο μάθημα θα μάθουμε πώς να αναδιαμορφώνουμε πίνακες μεταξύ κατακόρυφης και οριζόντιας μορφής έτσι ώστε να έχουμε πρόσβαση σε οποιαδήποτε μεταβλητή χρειαζόμαστε.
     </p>
-    <p>
-      We also can't visualize data from a specific borough. That would require all the values for that borough to be
-      in their own column.
-    </p> --><p class="summary">Στο επόμενο μάθημα θα μάθουμε πώς να αναδιαμορφώνουμε πίνακες μεταξύ κατακόρυφης και οριζόντιας μορφής έτσι ώστε να έχουμε πρόσβαση σε οποιαδήποτε μεταβλητή χρειαζόμαστε.</p>
   </div>
   <div class="next">
     <h2>Επόμενο</h2>

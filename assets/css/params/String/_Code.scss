@@ -4,14 +4,10 @@
     color: $dark-gray;
 
     kbd {
-      background: inherit;
-      color: inherit;
-      border: 0;
-      padding: 0;
-      margin: 0;
       background-color: $dark-accent--soft;
       color:$brand-text--dark;
     }
+
     a {
       color: $brand-workspace;
     }
