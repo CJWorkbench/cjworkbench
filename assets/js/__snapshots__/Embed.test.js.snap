@@ -1,178 +1,232 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Embed Available workflow Renders the embed widget with the correct information 1`] = `
-<div
-  className="embed-wrapper"
+<Embed
+  step={
+    Object {
+      "id": 1,
+    }
+  }
+  workflow={
+    Object {
+      "id": 1,
+      "last_update": "2021-01-20T15:03:12.12213Z",
+      "name": "Workflow Title",
+      "owner_name": "Workflow Owner Name",
+    }
+  }
 >
-  <iframe
-    frameBorder={0}
-    src="/api/wfmodules/1/output"
-  />
-  <div
-    className="embed-footer"
+  <IframeContainer
+    step={
+      Object {
+        "id": 1,
+      }
+    }
   >
     <div
-      className="metadata-stack"
+      className="iframe-container"
     >
-      <div
-        className="embed-footer-logo"
-      >
+      <iframe
+        src="/api/wfmodules/1/output"
+      />
+    </div>
+  </IframeContainer>
+  <Footer
+    step={
+      Object {
+        "id": 1,
+      }
+    }
+    workflow={
+      Object {
+        "id": 1,
+        "last_update": "2021-01-20T15:03:12.12213Z",
+        "name": "Workflow Title",
+        "owner_name": "Workflow Owner Name",
+      }
+    }
+  >
+    <footer>
+      <Logo>
         <a
-          href="http://workbenchdata.com"
+          className="logo"
+          href="https://workbenchdata.com"
           rel="noopener noreferrer"
           target="_blank"
         >
           <img
+            alt="Workbench"
             src="undefinedimages/logo.png"
             width="35"
           />
         </a>
-      </div>
+      </Logo>
       <div
-        className="embed-footer-meta"
+        className="metadata"
       >
-        <div
-          className="title"
-        >
+        <h1>
           <a
-            href="/workflows/1"
+            href="/workflows/1/"
             rel="noopener noreferrer"
             target="_blank"
           >
             Workflow Title
           </a>
-        </div>
-        <div
-          className="metadata"
-        >
-          <ul>
-            <li>
-              <a
-                href="/workflows/1"
-                rel="noopener noreferrer"
-                target="_blank"
+        </h1>
+        <ul>
+          <li>
+            <Trans
+              components={Object {}}
+              id="js.Embed.metadata.author"
+              message="by {0}"
+              values={
+                Object {
+                  "0": "Workflow Owner Name",
+                }
+              }
+            >
+              by Workflow Owner Name
+            </Trans>
+          </li>
+          <li>
+            <Trans
+              comment="\`<0>{timeAgo}</0>\` will show a time difference (i.e. something like '4h ago')"
+              components={
+                Object {
+                  "0": <time
+                    time="2021-01-20T15:03:12.12213Z"
+                  />,
+                }
+              }
+              id="js.Embed.metadata.updated"
+              message="Updated <0>{timeAgo}</0>"
+              values={
+                Object {
+                  "timeAgo": "5h ago",
+                }
+              }
+            >
+              Updated 
+              <time
+                key="$lingui$_0"
+                time="2021-01-20T15:03:12.12213Z"
               >
-                <Trans
-                  components={Object {}}
-                  id="js.Embed.metadata.author"
-                  message="by {0}"
-                  values={
-                    Object {
-                      "0": "Workflow Owner Name",
-                    }
-                  }
-                />
-              </a>
-            </li>
-            <li>
-              <a
-                href="/workflows/1"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Updated just now
-              </a>
-            </li>
-          </ul>
-        </div>
+                5h ago
+              </time>
+            </Trans>
+          </li>
+        </ul>
       </div>
-    </div>
-    <button
-      className="embed-footer-button"
-      onClick={[Function]}
-      type="button"
-    >
-      <i
-        className="icon icon-code"
-      />
-    </button>
-  </div>
-  <div
-    className="embed-overlay"
-    onClick={[Function]}
-  >
-    <div
-      className="embed-share-links"
-      onClick={[Function]}
-    >
-      <h1>
-        <Trans
-          comment="This should be all-caps for styling reasons"
-          components={Object {}}
-          id="js.Embed.embedThisChart"
-          message="EMBED THIS CHART"
-          values={Object {}}
-        />
-      </h1>
-      <h2>
-        <Trans
-          components={Object {}}
-          id="js.Embed.embedCode"
-          message="Paste this code into any webpage HTML"
-          values={Object {}}
-        />
-      </h2>
-      <div
-        className="code-snippet"
+      <EmbedButton
+        step={
+          Object {
+            "id": 1,
+          }
+        }
       >
-        <code
-          className="embed--share-code"
+        <button
+          name="embed"
+          onClick={[Function]}
+          type="button"
         >
-          &lt;iframe src="http://localhost/embed/1" width="560" height="315" frameborder="0"&gt;&lt;/iframe&gt;
-        </code>
-      </div>
-    </div>
-  </div>
-</div>
+          <SvgrMock>
+            /app/assets/icons/embed.svg
+          </SvgrMock>
+        </button>
+        <div
+          className="embed-overlay"
+          onClick={[Function]}
+        >
+          <div
+            className="embed-share-links"
+            onClick={[Function]}
+          >
+            <h2>
+              <Trans
+                comment="This should be all-caps for styling reasons"
+                components={Object {}}
+                id="js.Embed.embedThisChart"
+                message="EMBED THIS CHART"
+                values={Object {}}
+              >
+                EMBED THIS CHART
+              </Trans>
+            </h2>
+            <h3>
+              <Trans
+                components={Object {}}
+                id="js.Embed.embedCode"
+                message="Paste this code into any webpage HTML"
+                values={Object {}}
+              >
+                Paste this code into any webpage HTML
+              </Trans>
+            </h3>
+            <div
+              className="code-snippet"
+            >
+              <code
+                className="embed--share-code"
+              >
+                &lt;iframe src="http://localhost/embed/1 width="560" height="315" frameborder="0"&gt;&lt;/iframe&gt;
+              </code>
+            </div>
+          </div>
+        </div>
+      </EmbedButton>
+    </footer>
+  </Footer>
+</Embed>
 `;
 
 exports[`Embed Unavailable workflow Renders the embed widget with the correct information 1`] = `
-<div
-  className="embed-wrapper"
+<Embed
+  step={null}
+  workflow={null}
 >
-  <div
-    className="embed-not-available"
-  >
-    <h1>
+  <NotAvailable>
+    <p
+      className="not-available"
+    >
       <Trans
         components={Object {}}
         id="js.Embed.workflowNotAvailable.title"
         message="This workflow is not available"
         values={Object {}}
-      />
-    </h1>
-  </div>
-  <div
-    className="embed-footer"
-  >
-    <div
-      className="embed-footer-logo"
-    >
-      <img
-        src="undefinedimages/logo.png"
-        width="21"
-      />
-    </div>
-    <div
-      className="embed-footer-meta"
-    >
-      <h1>
-        <Trans
-          comment="This should be all-caps for styling reasons"
-          components={Object {}}
-          id="js.Embed.workflowNotAvailable.footer.logo"
-          message="WORKBENCH"
-          values={Object {}}
-        />
-      </h1>
-    </div>
-    <div
-      className="embed-footer-button"
-    >
-      <i
-        className="icon icon-share"
-      />
-    </div>
-  </div>
-</div>
+      >
+        This workflow is not available
+      </Trans>
+    </p>
+    <footer>
+      <Logo>
+        <a
+          className="logo"
+          href="https://workbenchdata.com"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <img
+            alt="Workbench"
+            src="undefinedimages/logo.png"
+            width="35"
+          />
+        </a>
+      </Logo>
+      <div
+        className="embed-footer-meta"
+      >
+        <h1>
+          <Trans
+            components={Object {}}
+            id="js.Embed.workflowNotAvailable.footer.logo"
+            message="Workbench"
+            values={Object {}}
+          >
+            Workbench
+          </Trans>
+        </h1>
+      </div>
+    </footer>
+  </NotAvailable>
+</Embed>
 `;

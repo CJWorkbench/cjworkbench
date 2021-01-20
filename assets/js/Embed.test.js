@@ -1,14 +1,14 @@
 /* globals beforeEach, describe, expect, it */
 import React from 'react'
 import Embed from './Embed'
-import { shallowWithI18n } from './i18n/test-utils'
+import { mountWithI18n } from './i18n/test-utils'
 
 describe('Embed', () => {
   let wrapper
 
   describe('Available workflow', () => {
     beforeEach(() => {
-      wrapper = shallowWithI18n(
+      wrapper = mountWithI18n(
         <Embed
           step={{
             id: 1
@@ -16,6 +16,7 @@ describe('Embed', () => {
           workflow={{
             name: 'Workflow Title',
             owner_name: 'Workflow Owner Name',
+            last_update: '2021-01-20T15:03:12.12213Z',
             id: 1
           }}
         />
@@ -24,18 +25,18 @@ describe('Embed', () => {
 
     it('Renders the embed widget with the correct information', () => {
       expect(wrapper).toMatchSnapshot()
-      expect(wrapper.find('.embed-footer-meta .title').text()).toBe('Workflow Title')
+      expect(wrapper.find('h1').text()).toBe('Workflow Title')
     })
 
     it('Displays the sharing overlay', () => {
-      wrapper.find('.embed-footer-button').simulate('click')
+      wrapper.find('button[name="embed"]').simulate('click')
       expect(wrapper.find('.embed-overlay').hasClass('open')).toBe(true)
     })
   })
 
   describe('Unavailable workflow', () => {
     beforeEach(() => {
-      wrapper = shallowWithI18n(
+      wrapper = mountWithI18n(
         <Embed
           step={null}
           workflow={null}
@@ -45,7 +46,7 @@ describe('Embed', () => {
 
     it('Renders the embed widget with the correct information', () => {
       expect(wrapper).toMatchSnapshot()
-      expect(wrapper.find('.embed-not-available').length).toBe(1)
+      expect(wrapper.find('.not-available').length).toBe(1)
     })
   })
 })

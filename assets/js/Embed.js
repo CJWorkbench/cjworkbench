@@ -37,8 +37,8 @@ function EmbedButton (props) {
       </button>
       <div className={'embed-overlay' + (isOpen ? ' open' : '')} onClick={handleClickClose}>
         <div className='embed-share-links' onClick={(e) => { e.stopPropagation() }}>
-          <h1><Trans id='js.Embed.embedThisChart' comment='This should be all-caps for styling reasons'>EMBED THIS CHART</Trans></h1>
-          <h2><Trans id='js.Embed.embedCode'>Paste this code into any webpage HTML</Trans></h2>
+          <h2><Trans id='js.Embed.embedThisChart' comment='This should be all-caps for styling reasons'>EMBED THIS CHART</Trans></h2>
+          <h3><Trans id='js.Embed.embedCode'>Paste this code into any webpage HTML</Trans></h3>
           <div className='code-snippet'>
             <code className='embed--share-code'>
               {iframeCode}
