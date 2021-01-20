@@ -14,30 +14,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: assets/js/Embed.js:93
+#: assets/js/Embed.js:41
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/Embed.js:92
+#: assets/js/Embed.js:40
 msgid "js.Embed.embedThisChart"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/Embed.js:69
+#: assets/js/Embed.js:67
 msgid "js.Embed.metadata.author"
 msgstr "από τον/την {0}"
 
-#. {timeAgo} will contain a time difference (i.e. something like '4h ago')
-#: assets/js/Embed.js:74
+#. `<0>{timeAgo}</0>` will show a time difference (i.e. something like '4h
+#. ago')
+#: assets/js/Embed.js:69
+#, fuzzy
 msgid "js.Embed.metadata.updated"
 msgstr "Ενημερώθηκε {timeAgo}"
 
-#. This should be all-caps for styling reasons
-#: assets/js/Embed.js:29
+#: assets/js/Embed.js:90
+#, fuzzy
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr "WORKBENCH"
 
-#: assets/js/Embed.js:21
+#: assets/js/Embed.js:86
 msgid "js.Embed.workflowNotAvailable.title"
 msgstr "Αυτή η ροή εργασιών δεν είναι διαθέσιμη"
 
@@ -128,44 +130,44 @@ msgstr "Έγινε εισαγωγή της μονάδας {module} στην κα
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
 
-#: assets/js/OutputIframe.js:146
+#: assets/js/OutputIframe.js:147
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:139
+#: assets/js/OutputIframe.js:140
 msgid "js.OutputIframe.embed.header.title"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/OutputIframe.js:156
+#: assets/js/OutputIframe.js:157
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:122
+#: assets/js/OutputIframe.js:123
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Ακύρωση"
 
-#: assets/js/OutputIframe.js:125
+#: assets/js/OutputIframe.js:126
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Ορισμός ως δημόσιας"
 
-#: assets/js/OutputIframe.js:180
+#: assets/js/OutputIframe.js:179
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Απόκτηση ενσωματώσιμης διεύθυνσης URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:105
+#: assets/js/OutputIframe.js:106
 msgid "js.OutputIframe.private.header.title"
 msgstr "ΚΟΙΝΟΠΟΙΗΣΗ ΑΥΤΗΣ ΤΗΣ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/OutputIframe.js:115
+#: assets/js/OutputIframe.js:116
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Θα ρυθμίσετε αυτή τη ροή εργασιών ως Δημόσια για να την κοινοποιήσετε; "
 "Όποιος διαθέτει αυτή τη διεύθυνση URL θα μπορεί να έχει πρόσβαση και να "
 "την αντιγράψει."
 
-#: assets/js/OutputIframe.js:112
+#: assets/js/OutputIframe.js:113
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 

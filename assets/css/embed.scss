@@ -1,124 +1,107 @@
-$we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll be hard)
-
 @import 'variables';
 @import 'fonts';
-@import './Icons.scss';
-
-// Bootstrap
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/variables';
-@import '~bootstrap/scss/mixins';
-@import '~bootstrap/scss/root';
-@import '~bootstrap/scss/reboot';
-
-@import './reset.scss'; // TODO nix this
 
 html, body {
-  width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   position: relative;
   background: white;
+  @include font-sans-regular;
+  color: $brand-text--dark;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.iframe-container {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+p.not-available {
+  flex: 1 1 auto;
+  text-align: center;
+  margin: 0;
+  padding-top: 40vh;
 }
 
 iframe {
-  height: calc(100% - 5.5rem);
-  width: 100%;
+  border: 0;
   position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: calc(100% - 2rem);
+  height: calc(100% - 2rem);
 }
 
-.embed-footer {
-  height: 6rem;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  display:flex;
-  justify-content: space-between;
+footer {
+  flex: 0 0 auto;
+  display: flex;
   align-items: center;
-  background-color: white;
   border-top: 1px solid $dark-accent--medium;
 
-  .metadata-stack {
-    display: flex;
-    margin-left: 1rem;
+  .logo {
+    display: block;
+    margin: 1rem;
+    line-height: 0;
+  }
 
-    .embed-footer-meta {
-      height: 3rem;
-      margin-left: 2rem;
-      color: $brand-text--dark;
+  .metadata {
+    flex: 1 1 auto; // take up all space, to right-align embed button
+    line-height: 1;
+
+    h1 {
+      font: inherit;
+      font-size: 1rem;
+      margin: 0;
 
       a {
+        color: inherit;
         text-decoration: none;
-        color: #686768;
         &:hover {
-          text-decoration: none;
           color: $link-hover-success;
         }
       }
-
-      .title {
-        @include font-sans-regular;
-        font-size: 1.3rem;
-        line-height: 1.4rem;
-      }
-
-      .metadata {
-        @include font-sans-regular;
-        margin: .3rem 0 0;
-        font-size: 1.4rem;
-        line-height: 2rem;
-
-        ul {
-          display: inline;
-          margin: 0;
-          padding: 0;
-          list-style: none;
-        }
-
-        li {
-          display: inline;
-          margin: 0;
-          padding: 0;
-
-          &:not(:first-child)::before {
-            // add " - " in between items
-            @include font-sans-light;
-            content: '-';
-            padding: 0 .5rem;
-            display: inline-block;
-            color: $text-muted;
-          }
-        }
-      }
     }
 
-    .embed-footer-logo {
-      align-items: center;
-      margin-left: 1rem;
+    ul {
+      font: inherit;
+      margin: .5rem 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: .8rem;
+      color: $brand-text--medium;
+    }
+
+    li {
+      display: inline;
+      margin: 0;
+      padding: 0;
+
+      &:not(:first-child)::before {
+        // add " - " in between items
+        content: '-';
+        padding: 0 .5rem;
+      }
     }
   }
 
-  .embed-footer-button {
-    margin-right: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width:3.5rem;
-    height:3.5rem;
-    border: 1px solid $light-gray;
+  button[name="embed"] {
+    margin: 1rem;
+    font-size: 1rem;
+    cursor: pointer;
     border-radius: 50%;
+    border: 1px solid $light-gray;
     background: white;
+    line-height: 0;
+    padding: .5rem;
 
-    .icon {
-      font-size: 1.6rem;
-      cursor: pointer;
+    &:hover {
+      color: $link-hover-success;
     }
-  }
-
-  .embed-footer-button .icon :hover {
-    font-size: 2rem;
-    color:$brand-workspace;
   }
 }
 
@@ -156,14 +139,17 @@ iframe {
 .embed-overlay {
   justify-content: center;
   align-items: center;
-  position:absolute;
-  top:0;
-  right:0;
-  bottom:0;
-  left:0;
-  background:rgba(0,0,0,.8);
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, .8);
   display: none;
   &.open {
-    display:flex;
+    display: flex;
   }
+}
+
+.not-available {
 }

@@ -1,33 +1,33 @@
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/Embed.js:93
+#: assets/js/Embed.js:41
 msgid "js.Embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/Embed.js:92
+#: assets/js/Embed.js:40
 msgid "js.Embed.embedThisChart"
 msgstr ""
 
 #. default-message: by {0}
-#: assets/js/Embed.js:69
+#: assets/js/Embed.js:67
 msgid "js.Embed.metadata.author"
 msgstr ""
 
-#. {timeAgo} will contain a time difference (i.e. something like '4h ago')
-#. default-message: Updated {timeAgo}
-#: assets/js/Embed.js:74
+#. `<0>{timeAgo}</0>` will show a time difference (i.e. something like '4h
+#. ago')
+#. default-message: Updated <0>{timeAgo}</0>
+#: assets/js/Embed.js:69
 msgid "js.Embed.metadata.updated"
 msgstr ""
 
-#. This should be all-caps for styling reasons
-#. default-message: WORKBENCH
-#: assets/js/Embed.js:29
+#. default-message: Workbench
+#: assets/js/Embed.js:90
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr ""
 
 #. default-message: This workflow is not available
-#: assets/js/Embed.js:21
+#: assets/js/Embed.js:86
 msgid "js.Embed.workflowNotAvailable.title"
 msgstr ""
 
@@ -131,49 +131,49 @@ msgid "js.ImportModuleFromGithub.status.processing"
 msgstr ""
 
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/OutputIframe.js:146
+#: assets/js/OutputIframe.js:147
 msgid "js.OutputIframe.embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/OutputIframe.js:139
+#: assets/js/OutputIframe.js:140
 msgid "js.OutputIframe.embed.header.title"
 msgstr ""
 
 #. default-message: OK
-#: assets/js/OutputIframe.js:156
+#: assets/js/OutputIframe.js:157
 msgid "js.OutputIframe.footer.OKButton"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/OutputIframe.js:122
+#: assets/js/OutputIframe.js:123
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr ""
 
 #. default-message: Set public
-#: assets/js/OutputIframe.js:125
+#: assets/js/OutputIframe.js:126
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr ""
 
 #. default-message: Get an embeddable URL
-#: assets/js/OutputIframe.js:180
+#: assets/js/OutputIframe.js:179
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: SHARE THIS WORKFLOW
-#: assets/js/OutputIframe.js:105
+#: assets/js/OutputIframe.js:106
 msgid "js.OutputIframe.private.header.title"
 msgstr ""
 
 #. default-message: Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
-#: assets/js/OutputIframe.js:115
+#: assets/js/OutputIframe.js:116
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 
 #. default-message: This workflow is currently private
-#: assets/js/OutputIframe.js:112
+#: assets/js/OutputIframe.js:113
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
