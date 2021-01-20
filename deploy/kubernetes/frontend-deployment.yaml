@@ -144,7 +144,7 @@ spec:
             - name: TUS_CREATE_UPLOAD_URL
               value: "http://tusd-internal-service/files"
             - name: TUS_EXTERNAL_URL_PREFIX_OVERRIDE
-              value: "https://upload.$(_DOMAIN_NAME)"
+              value: "https://upload.$(_DOMAIN_NAME)/files"
             - name: _RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
