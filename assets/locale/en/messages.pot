@@ -41,51 +41,27 @@ msgstr ""
 msgid "js.ErrorBoundary.somethingIsWrong"
 msgstr ""
 
-#. This should be all-caps for styling reasons
-#. default-message: CSV LINK COPIED TO CLIPBOARD
-#: assets/js/ExportModal.js:62
-msgid "js.ExportModal.csvCopyLink.copiedToClipboard"
-msgstr ""
-
-#. This should be all-caps for styling reasons
-#. default-message: COPY LIVE LINK
-#: assets/js/ExportModal.js:71
-msgid "js.ExportModal.csvCopyLink.copyLiveLink"
-msgstr ""
-
 #. Acts as closing button
 #. default-message: Done
-#: assets/js/ExportModal.js:153
+#: assets/js/ExportModal.js:60
 msgid "js.ExportModal.footer.doneButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT DATA
-#: assets/js/ExportModal.js:111
+#: assets/js/ExportModal.js:38
 msgid "js.ExportModal.header.title"
 msgstr ""
 
-#. This should be all-caps for styling reasons
-#. default-message: JSON FEED LINK COPIED TO CLIPBOARD
-#: assets/js/ExportModal.js:84
-msgid "js.ExportModal.jsonCopyLink.copiedToClipboard"
-msgstr ""
-
-#. This should be all-caps for styling reasons
-#. default-message: COPY LIVE LINK
-#: assets/js/ExportModal.js:93
-msgid "js.ExportModal.jsonCopyLink.copyLiveLink"
-msgstr ""
-
-#. This should be all-caps for styling reasons
+#. "CSV" (all-caps) is a kind of file
 #. default-message: CSV
-#: assets/js/ExportModal.js:118
+#: assets/js/ExportModal.js:45
 msgid "js.ExportModal.type.CSV"
 msgstr ""
 
-#. This should be all-caps for styling reasons
-#. default-message: JSON FEED
-#: assets/js/ExportModal.js:135
+#. "JSON" (all-caps) is a kind of file
+#. default-message: JSON
+#: assets/js/ExportModal.js:51
 msgid "js.ExportModal.type.JSON"
 msgstr ""
 
@@ -178,24 +154,24 @@ msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
 #. default-message: Only collaborators can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:22
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr ""
 
 #. default-message: Anyone can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:20
+#: assets/js/WorkflowEditor/Report/ShareCard.js:21
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr ""
 
 #. As in 'Edit privacy settings'
 #. default-message: Edit privacy
-#: assets/js/WorkflowEditor/Report/ShareCard.js:26
+#: assets/js/WorkflowEditor/Report/ShareCard.js:27
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
 #. As in 'URL of report'
-#. default-message: Report URL
-#: assets/js/WorkflowEditor/Report/ShareCard.js:30
+#. default-message: Report Sharing URL
+#: assets/js/WorkflowEditor/Report/ShareCard.js:32
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
 
@@ -210,17 +186,17 @@ msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr ""
 
 #. default-message: Collaborators
-#: assets/js/ShareModal/Modal.js:47
+#: assets/js/ShareModal/Modal.js:46
 msgid "js.ShareModal.Modal.collaborators"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/ShareModal/Modal.js:68
+#: assets/js/ShareModal/Modal.js:66
 msgid "js.ShareModal.Modal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#. default-message: SHARING SETTINGS
+#. default-message: SHARE WORKFLOW
 #: assets/js/ShareModal/Modal.js:35
 msgid "js.ShareModal.Modal.header.title"
 msgstr ""
@@ -270,34 +246,29 @@ msgstr ""
 msgid "js.ShareModal.ShareButton.button.hoverText"
 msgstr ""
 
-#. default-message: Copy to clipboard
-#: assets/js/ShareModal/Url.js:78
-msgid "js.ShareModal.Url.copyToClipboardButton"
-msgstr ""
-
 #. default-message: Private link (only accessible to collaborators)
-#: assets/js/ShareModal/Url.js:70
+#: assets/js/ShareModal/Url.js:53
 msgid "js.ShareModal.Url.heading.private"
 msgstr ""
 
 #. default-message: Public link (accessible to anyone)
-#: assets/js/ShareModal/Url.js:69
+#: assets/js/ShareModal/Url.js:52
 msgid "js.ShareModal.Url.heading.public"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/ShareModal/Url.js:58
+#: assets/js/ShareModal/Url.js:42
 msgid "js.ShareModal.Url.socialLinks.facebook"
 msgstr ""
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
 #. default-message: Check out this chart I made using {workbenchMention}:
-#: assets/js/ShareModal/Url.js:40
+#: assets/js/ShareModal/Url.js:24
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/ShareModal/Url.js:53
+#: assets/js/ShareModal/Url.js:37
 msgid "js.ShareModal.Url.socialLinks.twitter"
 msgstr ""
 
@@ -842,6 +813,21 @@ msgstr ""
 #. default-message: TRAINING
 #: assets/js/Workflows/index.js:199
 msgid "js.Workflows.training.title"
+msgstr ""
+
+#. default-message: Copy
+#: assets/js/components/ShareUrl.js:45
+msgid "js.components.ShareUrl.copy"
+msgstr ""
+
+#. default-message: Download
+#: assets/js/components/ShareUrl.js:49
+msgid "js.components.ShareUrl.download"
+msgstr ""
+
+#. default-message: Go
+#: assets/js/components/ShareUrl.js:54
+msgid "js.components.ShareUrl.go"
 msgstr ""
 
 #. default-message: Choose the language of Workbench’s interface. Data is not affected.

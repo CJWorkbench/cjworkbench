@@ -2,18 +2,17 @@
 
 exports[`ExportModal should match snapshot 1`] = `
 <ExportModal
-  className="menu-test-class"
   open={true}
   stepId={415}
   toggle={[MockFunction]}
 >
   <Modal
-    className="menu-test-class"
+    className="export"
     isOpen={true}
     toggle={[MockFunction]}
   >
     <OpenModal
-      className="menu-test-class"
+      className="export"
       toggle={[MockFunction]}
     >
       <Portal
@@ -25,7 +24,7 @@ exports[`ExportModal should match snapshot 1`] = `
               class="modal-backdrop"
             />
             <div
-              class="modal menu-test-class"
+              class="modal export"
               role="dialog"
               tabindex="-1"
             >
@@ -59,72 +58,66 @@ exports[`ExportModal should match snapshot 1`] = `
                   <div
                     class="modal-body"
                   >
-                    <div
-                      class="d-flex justify-content-between flex-row"
-                    >
-                      <div
-                        class="dl-file"
-                      >
+                    <dl>
+                      <dt>
                         CSV
-                      </div>
-                      <div
-                        class="clipboard test-csv-copy"
-                      >
-                        COPY LIVE LINK
-                      </div>
-                    </div>
-                    <div
-                      class="d-flex justify-content-between flex-row mb-3"
-                    >
-                      <input
-                        class="url-link test-csv-field"
-                        readonly=""
-                        type="url"
-                        value="http://localhost/public/moduledata/live/415.csv"
-                      />
-                      <div
-                        class="download-icon-box"
-                      >
-                        <a
-                          class="icon-download t-d-gray button-icon test-csv-download"
-                          download=""
-                          href="http://localhost/public/moduledata/live/415.csv"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="d-flex justify-content-between flex-row"
-                    >
-                      <div
-                        class="dl-file"
-                      >
-                        JSON FEED
-                      </div>
-                      <div
-                        class="clipboard test-json-copy"
-                      >
-                        COPY LIVE LINK
-                      </div>
-                    </div>
-                    <div
-                      class="d-flex justify-content-between flex-row"
-                    >
-                      <input
-                        class="url-link test-json-field"
-                        readonly=""
-                        type="url"
-                        value="http://localhost/public/moduledata/live/415.json"
-                      />
-                      <div
-                        class="download-icon-box"
-                      >
-                        <a
-                          class="icon-download t-d-gray button-icon test-json-download"
-                          download=""
-                          href="http://localhost/public/moduledata/live/415.json"
-                        />
-                      </div>
-                    </div>
+                      </dt>
+                      <dd>
+                        <div
+                          class="share-url"
+                        >
+                          <div
+                            class="url-container"
+                          >
+                            <input
+                              name="url"
+                              readonly=""
+                              value="http://localhost/public/moduledata/live/415.csv"
+                            />
+                          </div>
+                          <button
+                            name="copy"
+                          >
+                            Copy
+                          </button>
+                          <a
+                            download=""
+                            href="http://localhost/public/moduledata/live/415.csv"
+                          >
+                            Download
+                          </a>
+                        </div>
+                      </dd>
+                      <dt>
+                        JSON
+                      </dt>
+                      <dd>
+                        <div
+                          class="share-url"
+                        >
+                          <div
+                            class="url-container"
+                          >
+                            <input
+                              name="url"
+                              readonly=""
+                              value="http://localhost/public/moduledata/live/415.json"
+                            />
+                          </div>
+                          <button
+                            name="copy"
+                          >
+                            Copy
+                          </button>
+                          <a
+                            download=""
+                            href="http://localhost/public/moduledata/live/415.json"
+                          >
+                            Download
+                          </a>
+                        </div>
+                      </dd>
+                    </dl>
                   </div>
                   <div
                     class="modal-footer"
@@ -146,7 +139,7 @@ exports[`ExportModal should match snapshot 1`] = `
           className="modal-backdrop"
         />
         <div
-          className="modal menu-test-class"
+          className="modal export"
           onKeyDown={[Function]}
           onMouseDown={[Function]}
           role="dialog"
@@ -194,14 +187,10 @@ exports[`ExportModal should match snapshot 1`] = `
                 <div
                   className="modal-body"
                 >
-                  <div
-                    className="d-flex justify-content-between flex-row"
-                  >
-                    <div
-                      className="dl-file"
-                    >
+                  <dl>
+                    <dt>
                       <Trans
-                        comment="This should be all-caps for styling reasons"
+                        comment="\\"CSV\\" (all-caps) is a kind of file"
                         components={Object {}}
                         id="js.ExportModal.type.CSV"
                         message="CSV"
@@ -209,105 +198,113 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         CSV
                       </Trans>
-                    </div>
-                    <CopyToClipboard
-                      className="clipboard test-csv-copy"
-                      onCopy={[Function]}
-                      text="http://localhost/public/moduledata/live/415.csv"
-                    >
-                      <div
-                        className="clipboard test-csv-copy"
-                        onClick={[Function]}
-                      >
-                        <Trans
-                          comment="This should be all-caps for styling reasons"
-                          components={Object {}}
-                          id="js.ExportModal.csvCopyLink.copyLiveLink"
-                          message="COPY LIVE LINK"
-                          values={Object {}}
-                        >
-                          COPY LIVE LINK
-                        </Trans>
-                      </div>
-                    </CopyToClipboard>
-                  </div>
-                  <div
-                    className="d-flex justify-content-between flex-row mb-3"
-                  >
-                    <input
-                      className="url-link test-csv-field"
-                      readOnly={true}
-                      type="url"
-                      value="http://localhost/public/moduledata/live/415.csv"
-                    />
-                    <div
-                      className="download-icon-box"
-                    >
-                      <a
-                        className="icon-download t-d-gray button-icon test-csv-download"
+                    </dt>
+                    <dd>
+                      <ShareUrl
                         download={true}
-                        href="http://localhost/public/moduledata/live/415.csv"
-                        onClick={[Function]}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className="d-flex justify-content-between flex-row"
-                  >
-                    <div
-                      className="dl-file"
-                    >
+                        url="http://localhost/public/moduledata/live/415.csv"
+                      >
+                        <div
+                          className="share-url"
+                        >
+                          <div
+                            className="url-container"
+                          >
+                            <input
+                              name="url"
+                              readOnly={true}
+                              value="http://localhost/public/moduledata/live/415.csv"
+                            />
+                          </div>
+                          <button
+                            name="copy"
+                            onClick={[Function]}
+                          >
+                            <Trans
+                              components={Object {}}
+                              id="js.components.ShareUrl.copy"
+                              message="Copy"
+                              values={Object {}}
+                            >
+                              Copy
+                            </Trans>
+                          </button>
+                          <a
+                            download={true}
+                            href="http://localhost/public/moduledata/live/415.csv"
+                            onClick={[Function]}
+                          >
+                            <Trans
+                              components={Object {}}
+                              id="js.components.ShareUrl.download"
+                              message="Download"
+                              values={Object {}}
+                            >
+                              Download
+                            </Trans>
+                          </a>
+                        </div>
+                      </ShareUrl>
+                    </dd>
+                    <dt>
                       <Trans
-                        comment="This should be all-caps for styling reasons"
+                        comment="\\"JSON\\" (all-caps) is a kind of file"
                         components={Object {}}
                         id="js.ExportModal.type.JSON"
-                        message="JSON FEED"
+                        message="JSON"
                         values={Object {}}
                       >
-                        JSON FEED
+                        JSON
                       </Trans>
-                    </div>
-                    <CopyToClipboard
-                      className="clipboard test-json-copy"
-                      onCopy={[Function]}
-                      text="http://localhost/public/moduledata/live/415.json"
-                    >
-                      <div
-                        className="clipboard test-json-copy"
-                        onClick={[Function]}
-                      >
-                        <Trans
-                          comment="This should be all-caps for styling reasons"
-                          components={Object {}}
-                          id="js.ExportModal.jsonCopyLink.copyLiveLink"
-                          message="COPY LIVE LINK"
-                          values={Object {}}
-                        >
-                          COPY LIVE LINK
-                        </Trans>
-                      </div>
-                    </CopyToClipboard>
-                  </div>
-                  <div
-                    className="d-flex justify-content-between flex-row"
-                  >
-                    <input
-                      className="url-link test-json-field"
-                      readOnly={true}
-                      type="url"
-                      value="http://localhost/public/moduledata/live/415.json"
-                    />
-                    <div
-                      className="download-icon-box"
-                    >
-                      <a
-                        className="icon-download t-d-gray button-icon test-json-download"
+                    </dt>
+                    <dd>
+                      <ShareUrl
                         download={true}
-                        href="http://localhost/public/moduledata/live/415.json"
-                        onClick={[Function]}
-                      />
-                    </div>
-                  </div>
+                        url="http://localhost/public/moduledata/live/415.json"
+                      >
+                        <div
+                          className="share-url"
+                        >
+                          <div
+                            className="url-container"
+                          >
+                            <input
+                              name="url"
+                              readOnly={true}
+                              value="http://localhost/public/moduledata/live/415.json"
+                            />
+                          </div>
+                          <button
+                            name="copy"
+                            onClick={[Function]}
+                          >
+                            <Trans
+                              components={Object {}}
+                              id="js.components.ShareUrl.copy"
+                              message="Copy"
+                              values={Object {}}
+                            >
+                              Copy
+                            </Trans>
+                          </button>
+                          <a
+                            download={true}
+                            href="http://localhost/public/moduledata/live/415.json"
+                            onClick={[Function]}
+                          >
+                            <Trans
+                              components={Object {}}
+                              id="js.components.ShareUrl.download"
+                              message="Download"
+                              values={Object {}}
+                            >
+                              Download
+                            </Trans>
+                          </a>
+                        </div>
+                      </ShareUrl>
+                    </dd>
+                  </dl>
                 </div>
               </ModalBody>
               <ModalFooter>

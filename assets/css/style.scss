@@ -53,6 +53,7 @@ $we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll b
 @import 'components/UnhandledErrorReport';
 @import 'components/data_version.scss';
 @import 'components/IconButton';
+@import 'components/ShareUrl';
 
 @import 'ImportModuleFromGitHub';
 
@@ -61,5 +62,6 @@ $we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll b
 @import 'Report/index'; // WorkflowEditor assumes Report/index is loaded
 @import 'BigTable/index';
 @import 'settings/index';
+@import 'ExportModal';
 
 @import 'i18n/LocaleSwitcher';

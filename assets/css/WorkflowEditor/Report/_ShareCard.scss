@@ -3,57 +3,46 @@ article.report {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    max-width: 112rem;
-    margin: 0 auto;
-    border-radius: .5rem;
+    max-width: $report-editor-max-width;
+    margin: 2rem auto 0;
     @include content-1;
     font-size: 1.4rem;
     line-height: 1.8rem;
 
-    p, h4 {
-      margin: .3rem 0 0;
+    &>div {
+      flex: 1 1 auto;
+      max-width: calc(50% - 1rem); // 2rem gutter when not wrapped
     }
 
     h4 {
-      @include font-sans-bold;
+      @include title-3;
+      font-size: 1.5rem;
+      margin: 0;
     }
 
-    &>* {
-      margin-top: 2rem;
+    .workflow-public, .share-url {
+      margin-top: .5rem;
     }
 
-    .prompt {
+    p {
+      margin: 0;
+    }
+
+    .workflow-public {
       display: flex;
       align-items: center;
-
-      .status {
-        margin-right: 1.6rem;
-      }
 
       button {
         @include action-button;
         @include button-orange--fill;
         @include font-sans-bold;
         font-size: 1.6rem;
+        margin-left: 1.6rem;
       }
     }
 
-    .url {
-      display: flex;
-      align-items: center;
-
-      .title {
-        margin-right: 1.6rem;
-      }
-
-      .copy {
-        @include font-sans-regular;
-        border: 2px solid $item-border;
-        border-radius: .3rem;
-        background: white;
-        padding: .7rem 1rem;
-        word-break: break-all;
-      }
+    .share-url {
+      border-color: $table-border;
     }
   }
 }

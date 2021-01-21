@@ -67,22 +67,6 @@
       overflow: auto; // scroll vertically if needed
       max-height: 70vh;
 
-      /* from Export Data modal, in StepContextMenu  */
-      .url-link {
-        color: $brand-text--dark;
-        @include content-1;
-        width: 100%;
-        padding: 1.3rem 1.5rem;
-        margin-bottom: 1rem;
-        height: 3.5rem;
-        border-radius: 3px 0 0 3px;
-        border: 0px ;
-        background-color: $Vlight-gray;
-        &:focus {
-          box-shadow: none;
-        }
-      }
-
       .info {
         @include info-2;
         color: $brand-text--dark;

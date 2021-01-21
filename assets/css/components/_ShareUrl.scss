@@ -1,0 +1,83 @@
+.share-url {
+  $share-url-border-width: 2px;
+
+  display: flex;
+  color: $brand-text--dark;
+  font-size: 1.4rem;
+  line-height: 2rem;
+  border-radius: 3px;
+  border: $share-url-border-width solid $Vlight-gray;
+  background: $Vlight-gray;
+
+  // These styles are modeled after Bootstrap "input-group", because <ShareUrl>
+  // appears alongside input groups in ShareModal.
+
+  &:focus-within {
+    border-color: $brand-orange;
+  }
+
+  .url-container {
+    flex: 1 1 auto;
+    position: relative;
+
+    &::after {
+      // Transparent-white overlay, shown when user clicks "Copy"
+      display: block;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      pointer-events: none;
+      background-color: white;
+      opacity: 0;
+      transition: opacity linear 0.3s; // the "fade-_out_" transition
+    }
+
+    &.used::after {
+      transition: opacity linear 0s; // the "fade-_in_" transition
+      opacity: .8;
+    }
+  }
+
+  input[name="url"] {
+    display: block;
+    width: 100%;
+    font: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 0;
+    background-color: inherit;
+    padding: .5rem 0 .5rem 1rem;
+  }
+
+  button, a {
+    display: block;
+    flex: 0 0 auto;
+    border: 0;
+    background: white;
+    color: $medium-gray;
+    font: inherit;
+    line-height: inherit;
+    margin-left: $share-url-border-width;
+    padding: .5rem 1rem;
+    text-decoration: none;
+
+    &:last-child {
+      border-radius: 0 3px 3px 0;
+    }
+
+    &:focus:active {
+      @include box-shadow($btn-active-box-shadow, 0 0 0 $btn-focus-width rgba($secondary, .5));
+      color: $medium-gray;
+      background: white;
+    }
+
+    &:hover {
+      color: $brand-text--dark;
+      background: $SuperLightGray;
+    }
+  }
+}

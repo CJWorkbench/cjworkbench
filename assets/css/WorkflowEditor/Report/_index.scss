@@ -1,3 +1,5 @@
+$report-editor-max-width: 112rem;
+
 article.report {
   flex: 1 1 auto;
   overflow-y: auto; // allow scrolling (report-container is variable height)
@@ -5,7 +7,7 @@ article.report {
   background-color: $WF-background;
 
   .report-container {
-    max-width: 112rem;
+    max-width: $report-editor-max-width;
     margin: 2rem auto 0;
     border: 2px solid $item-border;
     border-radius: .5rem;

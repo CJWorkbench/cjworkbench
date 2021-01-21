@@ -1,0 +1,20 @@
+.modal.export {
+  dl, dt, dd {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  dt {
+    @include title-3;
+  }
+
+  dd {
+    margin-top: 1rem;
+    @include content-1;
+  }
+
+  dd + dt {
+    margin-top: 3rem;
+  }
+}

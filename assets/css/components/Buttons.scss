@@ -98,13 +98,6 @@ button:focus { outline:0 !important; }
   }
 }
 
-.wf-card {
-  .context-button:hover{
-    background-color: $dark-accent--soft;
-  }
-}
-
-
 //* - Action button - */
 
 @mixin action-button {

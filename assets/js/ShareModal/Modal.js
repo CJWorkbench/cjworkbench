@@ -33,7 +33,7 @@ export default class _Modal extends React.PureComponent {
       <Modal className='share-modal' isOpen toggle={onClickClose}>
         <ModalHeader>
           <Trans id='js.ShareModal.Modal.header.title' comment='This should be all-caps for styling reasons'>
-                SHARING SETTINGS
+            SHARE WORKFLOW
           </Trans>
         </ModalHeader>
         <ModalBody>
@@ -43,7 +43,6 @@ export default class _Modal extends React.PureComponent {
             isPublic={isPublic}
             setIsPublic={setIsPublic}
           />
-
           <h6><Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans></h6>
           <Acl
             isReadOnly={isReadOnly}
@@ -52,7 +51,6 @@ export default class _Modal extends React.PureComponent {
             updateAclEntry={updateAclEntry}
             deleteAclEntry={deleteAclEntry}
           />
-
           <Url
             url={url}
             isPublic={isPublic}

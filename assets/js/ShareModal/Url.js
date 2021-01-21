@@ -1,29 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
+import ShareUrl from '../components/ShareUrl'
 
 export default class Url extends React.PureComponent {
   static propTypes = {
     isPublic: PropTypes.bool.isRequired,
     url: PropTypes.string.isRequired,
     logShare: PropTypes.func.isRequired // func('Facebook'|'Twitter'|'URL copied') => undefined
-  }
-
-  state = {
-    // "flash message for 1s" logic: when nTimesCopied>0, that becomes the
-    // `key` of a <div className='copied-flash'>`. That means every click, we
-    // delete old divs and create a new one. We use CSS to animate the new
-    // element -- first to be visible, and then to be hidden.
-    nTimesCopied: 0
-  }
-
-  handleClickCopy = () => {
-    const { logShare, url } = this.props
-
-    logShare('URL copied')
-
-    this.setState(state => ({ nTimesCopied: state.nTimesCopied + 1 }))
-    navigator.clipboard.writeText(url)
   }
 
   handleClickTwitter = () => {
@@ -63,7 +47,6 @@ export default class Url extends React.PureComponent {
 
   render () {
     const { isPublic, url } = this.props
-    const { nTimesCopied } = this.state
 
     const heading = isPublic
       ? <Trans id='js.ShareModal.Url.heading.public'>Public link (accessible to anyone)</Trans>
@@ -71,15 +54,7 @@ export default class Url extends React.PureComponent {
     return (
       <>
         <h6 key='heading'>{heading}</h6>
-        <div key='url' className='copy-url'>
-          <div className='url'>{url}</div>
-
-          <button name='copy' onClick={this.handleClickCopy}>
-            <Trans id='js.ShareModal.Url.copyToClipboardButton'>Copy to clipboard</Trans>
-          </button>
-
-          {nTimesCopied > 0 ? <div className='copied-flash' key={nTimesCopied} /> : null}
-        </div>
+        <ShareUrl url={url} />
         {isPublic ? this.renderSocialLinks() : null}
       </>
     )

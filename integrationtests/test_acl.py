@@ -32,7 +32,6 @@ class TestExampleWorkflow(WorkbenchBase):
         with b.scope(".share-modal", wait=True):  # wait for dialog
             b.fill_in("email", "b@example.org")
             b.click_button("Grant access")
-            url = b.text(".url")
 
             # This fires and forgets an AJAX request. Wait for it to finish.
             time.sleep(2)
@@ -47,14 +46,13 @@ class TestExampleWorkflow(WorkbenchBase):
         with b.scope(".share-modal"):
             b.click_button("Close")
 
-        return url
-
     def test_share_read_only(self):
         b = self.browser
 
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        url = self._share_workflow_with("b@example.org", False)
+        self._share_workflow_with("b@example.org", False)
+        url = b.get_url()
 
         self.browser.clear_cookies()
 
@@ -79,7 +77,8 @@ class TestExampleWorkflow(WorkbenchBase):
 
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        url = self._share_workflow_with("b@example.org", True)
+        self._share_workflow_with("b@example.org", True)
+        url = b.get_url()
 
         self.browser.clear_cookies()
 

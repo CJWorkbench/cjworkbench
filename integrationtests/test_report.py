@@ -34,7 +34,7 @@ class TestReport(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Report")  # switch to report
         b.assert_element(".add-block-prompt")
-        url = b.text(".share-card .url .copy", wait=True)
+        url = b.value(".share-url input", wait=True)
         b.visit(url)
 
         b.assert_element("h1", text="Example Workflow", wait=True)
@@ -63,7 +63,7 @@ class TestReport(LoggedInIntegrationTest):
             time.sleep(2)
             b.click_button("Close")
         b.assert_element(".share-card .accessible-to", text="Only collaborators")
-        url = b.text(".share-card .url .copy", wait=True)
+        url = b.value(".share-url input", wait=True)
 
         # user1 can view the report
         accounts.logout(b)
@@ -77,7 +77,7 @@ class TestReport(LoggedInIntegrationTest):
         b.visit(url)
         b.assert_no_element("h1", text="Example Workflow", wait=True)
 
-    def test_report_share_public_iframe(self):
+    def test_report_share_public(self):
         user1 = self.account_admin.create_user("a@example.org")
 
         self._create_workflow(title="Example Workflow")
@@ -94,17 +94,17 @@ class TestReport(LoggedInIntegrationTest):
             time.sleep(2)
             b.click_button("Close")
         b.assert_element(".share-card .accessible-to", text="Anyone can view")
-        iframe_url = b.text(".share-card .url .copy", wait=True)
+        url = b.value(".share-url input", wait=True)
 
         # user1 can view the report
         accounts.logout(b)
         accounts.login(b, user1.email, user1.password)
-        b.visit(iframe_url)
+        b.visit(url)
         b.assert_element("h1", text="Example Workflow", wait=True)
 
         # anonymous user can view the report
         accounts.logout(b)
-        b.visit(iframe_url)
+        b.visit(url)
         b.assert_element("h1", text="Example Workflow", wait=True)
 
     def test_report_empty_read_only(self):
@@ -133,8 +133,8 @@ class TestReport(LoggedInIntegrationTest):
         b.assert_no_element(".add-block-prompt")
 
         # anonymous user can view the report iframe
-        iframe_url = url + "report"
-        b.visit(iframe_url)
+        report_url = url + "report"
+        b.visit(report_url)
         b.assert_element("h1", text="Example Workflow", wait=True)
 
     def test_report_read_only(self):
@@ -155,7 +155,7 @@ class TestReport(LoggedInIntegrationTest):
             b.click_button("Close")
         b.assert_element(".share-card .accessible-to", text="Anyone can view")
         url = b.get_url()
-        iframe_url = b.text(".share-card .url .copy", wait=True)
+        report_url = url + "report"
 
         # anonymous user can view the report UI
         accounts.logout(b)
@@ -165,5 +165,5 @@ class TestReport(LoggedInIntegrationTest):
         b.assert_no_element(".add-block-prompt")
 
         # anonymous user can view the report iframe
-        b.visit(iframe_url)
+        b.visit(report_url)
         b.assert_element("h1", text="Example Workflow", wait=True)

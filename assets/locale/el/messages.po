@@ -49,43 +49,24 @@ msgstr "Ανανεώστε τη σελίδα."
 msgid "js.ErrorBoundary.somethingIsWrong"
 msgstr "Υπάρχει κάποιο πρόβλημα."
 
-#. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:62
-msgid "js.ExportModal.csvCopyLink.copiedToClipboard"
-msgstr "Ο ΣΥΝΔΕΣΜΟΣ ΤΟΥ CSV ΑΝΤΙΓΡΑΦΗΚΕ ΣΤΟ ΠΡΟΧΕΙΡΟ"
-
-#. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:71
-msgid "js.ExportModal.csvCopyLink.copyLiveLink"
-msgstr "ΑΝΤΙΓΡΑΦΗ ΔΥΝΑΜΙΚΟΥ ΣΥΝΔΕΣΜΟΥ"
-
 #. Acts as closing button
-#: assets/js/ExportModal.js:153
+#: assets/js/ExportModal.js:60
 msgid "js.ExportModal.footer.doneButton"
 msgstr "Ολοκληρώθηκε"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:111
+#: assets/js/ExportModal.js:38
 msgid "js.ExportModal.header.title"
 msgstr "ΕΞΑΓΩΓΗ ΔΕΔΟΜΕΝΩΝ"
 
-#. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:84
-msgid "js.ExportModal.jsonCopyLink.copiedToClipboard"
-msgstr "Ο ΣΥΝΔΕΣΜΟΣ ΤΗΣ ΡΟΗΣ JSON ΑΝΤΙΓΡΑΦΗΚΕ ΣΤΟ ΠΡΟΧΕΙΡΟ"
-
-#. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:93
-msgid "js.ExportModal.jsonCopyLink.copyLiveLink"
-msgstr "ΑΝΤΙΓΡΑΦΗ ΔΥΝΑΜΙΚΟΥ ΣΥΝΔΕΣΜΟΥ"
-
-#. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:118
+#. "CSV" (all-caps) is a kind of file
+#: assets/js/ExportModal.js:45
 msgid "js.ExportModal.type.CSV"
 msgstr "CSV"
 
-#. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:135
+#. "JSON" (all-caps) is a kind of file
+#: assets/js/ExportModal.js:51
+#, fuzzy
 msgid "js.ExportModal.type.JSON"
 msgstr "ΡΟΗ JSON"
 
@@ -169,21 +150,22 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:22
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:20
+#: assets/js/WorkflowEditor/Report/ShareCard.js:21
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:26
+#: assets/js/WorkflowEditor/Report/ShareCard.js:27
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Επεξεργασία απορρήτου"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:30
+#: assets/js/WorkflowEditor/Report/ShareCard.js:32
+#, fuzzy
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Διεύθυνση URL αναφοράς"
 
@@ -195,16 +177,17 @@ msgstr "Αυτή η ροή εργασιών είναι ιδιωτική"
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "Αυτή η ροή εργασιών είναι δημόσια"
 
-#: assets/js/ShareModal/Modal.js:47
+#: assets/js/ShareModal/Modal.js:46
 msgid "js.ShareModal.Modal.collaborators"
 msgstr "Συνεργάτες"
 
-#: assets/js/ShareModal/Modal.js:68
+#: assets/js/ShareModal/Modal.js:66
 msgid "js.ShareModal.Modal.footer.closeButton"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ShareModal/Modal.js:35
+#, fuzzy
 msgid "js.ShareModal.Modal.header.title"
 msgstr "ΡΥΘΜΙΣΕΙΣ ΚΟΙΝΟΠΟΙΗΣΗΣ"
 
@@ -250,30 +233,26 @@ msgstr "Μπορεί να δει"
 msgid "js.ShareModal.ShareButton.button.hoverText"
 msgstr "Αλλαγή κοινής χρήσης ροής εργασιών"
 
-#: assets/js/ShareModal/Url.js:78
-msgid "js.ShareModal.Url.copyToClipboardButton"
-msgstr "Αντιγραφή στο πρόχειρο"
-
-#: assets/js/ShareModal/Url.js:70
+#: assets/js/ShareModal/Url.js:53
 msgid "js.ShareModal.Url.heading.private"
 msgstr "Ιδιωτικός σύνδεσμος (μόνο για συνεργάτες)"
 
-#: assets/js/ShareModal/Url.js:69
+#: assets/js/ShareModal/Url.js:52
 msgid "js.ShareModal.Url.heading.public"
 msgstr "Δημόσιος σύνδεσμος (προσβάσιμος σε όλους)"
 
-#: assets/js/ShareModal/Url.js:58
+#: assets/js/ShareModal/Url.js:42
 msgid "js.ShareModal.Url.socialLinks.facebook"
 msgstr "Κοινοποίηση"
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
-#: assets/js/ShareModal/Url.js:40
+#: assets/js/ShareModal/Url.js:24
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr ""
 "Δείτε αυτό το γράφημα που δημιούργησα χρησιμοποιώντας το "
 "{workbenchMention}:"
 
-#: assets/js/ShareModal/Url.js:53
+#: assets/js/ShareModal/Url.js:37
 msgid "js.ShareModal.Url.socialLinks.twitter"
 msgstr "Κοινοποίηση"
 
@@ -731,6 +710,18 @@ msgstr "ΝΕΟ"
 #: assets/js/Workflows/index.js:199
 msgid "js.Workflows.training.title"
 msgstr "ΕΚΠΑΙΔΕΥΣΗ"
+
+#: assets/js/components/ShareUrl.js:45
+msgid "js.components.ShareUrl.copy"
+msgstr ""
+
+#: assets/js/components/ShareUrl.js:49
+msgid "js.components.ShareUrl.download"
+msgstr ""
+
+#: assets/js/components/ShareUrl.js:54
+msgid "js.components.ShareUrl.go"
+msgstr ""
 
 #: assets/js/i18n/LocaleSwitcher.js:36
 msgid "js.i18n.LocaleSwitcher.body.description"
