@@ -156,7 +156,7 @@ services:
       '-c',
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py renderer'
+      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" "staticmodules/**/*.*" --exec bin/renderer-prod'
     ]
 
   fetcher:
@@ -185,12 +185,10 @@ services:
       'sh', '-c',
       # Use watchman, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec python ./manage.py fetcher'
+      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" "staticmodules/**/*.*" --exec bin/fetcher-prod'
     ]
 
-  cron:
-    # It'd be nice to use YAML anchors to copy these parameters ... but
-    # PyCharm's YAML parser seems to die when we use YAML anchors.
+  cron: &cron
     build:
       context: .
       target: pydev
@@ -210,7 +208,31 @@ services:
       'pipenv', 'run', 'bin/watchman-monitor',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
-      '--exec', 'python', './manage.py', 'cron'
+      '--exec', 'bin/cron-prod'
+    ]
+
+  cron-expired-session-deleter:
+    <<: *cron
+    depends_on: [ 'database', 'minio' ]
+    command: [
+      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # syntax error.
+      'pipenv', 'run', 'bin/watchman-monitor',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
+      '--exec', 'bin/cron-expired-session-deleter'
+    ]
+
+  cron-lesson-autoupdate-disabler:
+    <<: *cron
+    depends_on: [ 'database' ]
+    command: [
+      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # syntax error.
+      'pipenv', 'run', 'bin/watchman-monitor',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
+      '--exec', 'bin/cron-lesson-autoupdate-disabler'
     ]
 
   tusd:

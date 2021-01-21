@@ -121,10 +121,25 @@ services:
     volumes:
       - local_mail:/app/local_mail
 
+  # Include `cron` services: if they crash, integration tests fail
   cron:
     #image:
     #build:
     depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    environment: *common_env
+
+  cron-expired-session-deleter:
+    #image:
+    #build:
+    command: [ 'bin/cron-expired-session-deleter' ]
+    depends_on: [ 'db', 'minio' ]
+    environment: *common_env
+
+  cron-lesson-autoupdate-disabler:
+    #image:
+    #build:
+    command: [ 'bin/cron-lesson-autoupdate-disabler' ]
+    depends_on: [ 'db' ]
     environment: *common_env
 
   frontend:
@@ -162,7 +177,7 @@ services:
   integration-test:
     #image:
     #build:
-    depends_on: [ 'db', 'fetcher', 'renderer', 'cron', 'frontend' ]
+    depends_on: [ 'db', 'fetcher', 'renderer', 'cron', 'cron-lesson-autoupdate-disabler', 'cron-expired-session-deleter', 'frontend' ]
     command: [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     networks:

@@ -22,6 +22,16 @@ services:
       context: ..
       target: cron
 
+  cron-expired-session-deleter:
+    build:
+      context: ..
+      target: cron
+
+  cron-lesson-autoupdate-disabler:
+    build:
+      context: ..
+      target: cron
+
   frontend:
     # Allow debugging at http://localhost:8080
     # Port 8080 is what we use on prod, so let's expose the same one on localhost

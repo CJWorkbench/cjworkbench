@@ -6,7 +6,7 @@ from queue import Queue
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
-from cjwstate.s3 import client, StaticFilesBucket
+from cjwstate.s3 import layer, StaticFilesBucket
 
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class S3Storage(Storage):
             data = gzip.compress(data)
             kwargs["ContentEncoding"] = "gzip"
 
-        client.put_object(
+        layer.client.put_object(
             Body=data,
             Bucket=StaticFilesBucket,
             Key=name,

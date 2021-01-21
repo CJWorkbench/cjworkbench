@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DIR="$(dirname "$0")"/..
+
+set -e
+
+"$DIR"/bin/wait-for-database
+
+export PYTHONPATH="$DIR"
+export DJANGO_SETTINGS_MODULE="cjworkbench.settings"
+
+export CJW_MOCK_EMAIL="not-for-cron"
+export CJW_RABBITMQ_HOST="not-for-cron"
+export CJW_SECRET_KEY="not-for-cron"
+export AWS_ACCESS_KEY_ID="not-for-cron-lessons"
+export AWS_S3_ENDPOINT="not-for-cron-lessons"
+export AWS_SECRET_ACCESS_KEY="not-for-cron-lessons"
+export S3_BUCKET_NAME_PATTERN="not-for-cron-lessons:%s"
+
+exec python -m cron.lessonautoupdatedisabler

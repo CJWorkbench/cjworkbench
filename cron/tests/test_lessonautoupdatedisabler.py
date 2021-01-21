@@ -1,16 +1,18 @@
 import datetime
 import logging
+
 from django.utils import timezone
+
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
-from cron import lessons
+from cron import lessonautoupdatedisabler
 
 
 StaleTimedelta = datetime.timedelta(days=7.1)
 FreshTimedelta = datetime.timedelta(days=1.1)
 
 
-class DisableStaleAutoUpdateTests(DbTestCase):
+class LessonAutoupdateDisablerTest(DbTestCase):
     def test_disable_auto_update_on_stale_lesson(self):
         workflow = Workflow.create_and_init(
             last_viewed_at=(timezone.now() - StaleTimedelta),
@@ -24,8 +26,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             auto_update_data=True,
             next_update=timezone.now(),
         )
-        with self.assertLogs(lessons.__name__, logging.INFO):
-            self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessonautoupdatedisabler.__name__, logging.INFO):
+            lessonautoupdatedisabler.disable_stale_auto_update()
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, False)
         self.assertIsNone(step.next_update)
@@ -43,8 +45,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             auto_update_data=False,
             next_update=None,
         )
-        with self.assertLogs(lessons.__name__, logging.INFO):
-            self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessonautoupdatedisabler.__name__, logging.INFO):
+            lessonautoupdatedisabler.disable_stale_auto_update()
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, False)
         self.assertIsNone(step.next_update)
@@ -63,8 +65,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             next_update=timezone.now(),
             is_deleted=True,
         )
-        with self.assertLogs(lessons.__name__, logging.INFO):
-            self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessonautoupdatedisabler.__name__, logging.INFO):
+            lessonautoupdatedisabler.disable_stale_auto_update()
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
         self.assertIsNotNone(step.next_update)
@@ -82,8 +84,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             auto_update_data=True,
             next_update=timezone.now(),
         )
-        with self.assertLogs(lessons.__name__, logging.INFO):
-            self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessonautoupdatedisabler.__name__, logging.INFO):
+            lessonautoupdatedisabler.disable_stale_auto_update()
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
         self.assertIsNotNone(step.next_update)
@@ -102,8 +104,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             next_update=timezone.now(),
             is_deleted=True,
         )
-        with self.assertLogs(lessons.__name__, logging.INFO):
-            self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessonautoupdatedisabler.__name__, logging.INFO):
+            lessonautoupdatedisabler.disable_stale_auto_update()
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
         self.assertIsNotNone(step.next_update)
@@ -121,8 +123,8 @@ class DisableStaleAutoUpdateTests(DbTestCase):
             next_update=timezone.now(),
             is_deleted=True,
         )
-        with self.assertLogs(lessons.__name__, logging.INFO):
-            self.run_with_async_db(lessons.disable_stale_auto_update())
+        with self.assertLogs(lessonautoupdatedisabler.__name__, logging.INFO):
+            lessonautoupdatedisabler.disable_stale_auto_update()
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
         self.assertIsNotNone(step.next_update)

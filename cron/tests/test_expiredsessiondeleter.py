@@ -1,21 +1,17 @@
-from datetime import timedelta
 import logging
 import unittest
+from datetime import timedelta
+
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
+
 from cjwstate.models import Workflow
-from cjworkbench.tests.utils import clear_db
-from cron import sessions
+from cjworkbench.tests.utils import DbTestCase
+from cron import expiredsessiondeleter
 
 
-class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
-    def setUp(self):
-        clear_db()
-
-    def tearDown(self):
-        clear_db()
-
+class ExpiredSessionDeleterTest(DbTestCase):
     def _create_user(self, username: str) -> User:
         return User.objects.create(
             username=username, email=f"{username}@example.org", password='4Greac"dry'
@@ -38,7 +34,7 @@ class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
         owner = self._create_user("Alice")
         self._create_workflow("Workflow", owner=owner)
 
-        sessions.delete_expired_sessions_and_workflows_sync()
+        expiredsessiondeleter.delete_expired_sessions_and_workflows()
 
         self.assertEqual(Workflow.objects.count(), 1)
 
@@ -46,7 +42,7 @@ class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
         self._create_session("a-key")
         self._create_workflow("Workflow", session_key="a-key")
 
-        sessions.delete_expired_sessions_and_workflows_sync()
+        expiredsessiondeleter.delete_expired_sessions_and_workflows()
 
         self.assertEqual(Workflow.objects.count(), 1)
 
@@ -54,7 +50,7 @@ class TestDeleteExpiredAnonymousWorkflows(unittest.TestCase):
         self._create_session("a-key", timezone.now() - timedelta(0, 1))
         self._create_workflow("Workflow", session_key="a-key")
 
-        with self.assertLogs(sessions.__name__, logging.INFO):
-            sessions.delete_expired_sessions_and_workflows_sync()
+        with self.assertLogs(expiredsessiondeleter.__name__, logging.INFO):
+            expiredsessiondeleter.delete_expired_sessions_and_workflows()
 
         self.assertEqual(Workflow.objects.count(), 0)

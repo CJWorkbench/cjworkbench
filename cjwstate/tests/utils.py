@@ -137,7 +137,7 @@ def clear_s3():
 
 def get_s3_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:
     """Like client.get_object(), but response['Body'] is bytes."""
-    response = s3.client.get_object(Bucket=bucket, Key=key, **kwargs)
+    response = s3.layer.client.get_object(Bucket=bucket, Key=key, **kwargs)
     body = response["Body"]
     try:
         data = body.read()

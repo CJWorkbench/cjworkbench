@@ -28,47 +28,71 @@ def encode_content_disposition(filename: str) -> str:
     return "attachment; filename*=UTF-8''" + enc_filename
 
 
-_session = boto3.session.Session(
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,  # TODO nix
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,  # TODO nix
-    region_name="us-east-1",
-)
-client = _session.client(
-    "s3",
-    endpoint_url=settings.AWS_S3_ENDPOINT,  # e.g., 'https://localhost:9001/'
-    config=botocore.client.Config(max_pool_connections=50),
-)
+class Layer:
+    def __init__(self):
+        self._client = None
+        self._uploader = None
+        self._downloader = None
 
-_downloader = S3Transfer(client, TransferConfig())
-"""Singleton S3 "downloader" for all downloads.
+    @property
+    def client(self):
+        """Singleton S3 client for API operations."""
+        if self._client is None:
+            session = boto3.session.Session(
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,  # TODO nix
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,  # TODO nix
+                region_name="us-east-1",
+            )
+            self._client = session.client(
+                "s3",
+                endpoint_url=settings.AWS_S3_ENDPOINT,  # e.g., 'https://localhost:9001/'
+                config=botocore.client.Config(max_pool_connections=50),
+            )
+        return self._client
 
-All concurrent downloads reuse the same thread pool. This caps the number of
-threads S3 uses.
-"""
+    @property
+    def downloader(self):
+        """Singleton S3 "downloader" for all downloads.
+
+        All concurrent downloads reuse the same thread pool. This caps the number of
+        threads S3 uses.
+        """
+        if self._downloader is None:
+            self._downloader = S3Transfer(self.client, TransferConfig())
+        return self._downloader
+
+    @property
+    def uploader(self):
+        """Upload configuration.
+
+        To support Google Cloud Storage, we disable multipart uploads. Every upload
+        uses the calling thread and uploads in a single part.
+        """
+        if self._uploader is None:
+            self._uploader = S3Transfer(
+                self.client,
+                TransferConfig(use_threads=False, multipart_threshold=sys.maxsize),
+            )
+        return self._uploader
+
+    @property
+    def error(self):
+        """Namespace for exceptions.
+
+        Usage:
+
+            from cjwstate import s3
+
+            try:
+                s3.layer.client.head_bucket(Bucket='foo')
+            except s3.layer.error.NoSuchBucket as err:
+                print(repr(err))
+        """
+        # boto3 exceptions are a bit odd -- https://github.com/boto/boto3/issues/1195
+        return self.client.exceptions
 
 
-_uploader = S3Transfer(
-    client, TransferConfig(use_threads=False, multipart_threshold=sys.maxsize)
-)
-"""Upload configuration.
-
-To support Google Cloud Storage, we disable multipart uploads. Every upload
-uses the calling thread and uploads in a single part.
-"""
-
-# boto3 exceptions are a bit odd -- https://github.com/boto/boto3/issues/1195
-error = client.exceptions
-"""Namespace for exceptions.
-
-Usage:
-
-    from cjwstate import s3
-
-    try:
-        s3.client.head_bucket(Bucket='foo')
-    except s3.error.NoSuchBucket as err:
-        print(repr(err))
-"""
+layer = Layer()
 
 
 UserFilesBucket = settings.S3_BUCKET_NAME_PATTERN % "user-files"
@@ -87,7 +111,7 @@ def list_file_keys(bucket: str, prefix: str):
     """
     # Use list_objects, not list_objects_v2, because Google Cloud Storage's
     # AWS emulation doesn't support v2.
-    response = client.list_objects(
+    response = layer.client.list_objects(
         Bucket=bucket, Prefix=prefix, Delimiter="/"  # avoid recursive
     )
     if response.get("IsTruncated"):
@@ -97,22 +121,22 @@ def list_file_keys(bucket: str, prefix: str):
 
 
 def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
-    _uploader.upload_file(str(path.resolve()), bucket, key)
+    layer.uploader.upload_file(str(path.resolve()), bucket, key)
 
 
 def put_bytes(bucket: str, key: str, body: bytes, **kwargs) -> None:
-    client.put_object(
+    layer.client.put_object(
         Bucket=bucket, Key=key, Body=body, ContentLength=len(body), **kwargs
     )
 
 
 def exists(bucket: str, key: str) -> bool:
     try:
-        client.head_object(Bucket=bucket, Key=key)
+        layer.client.head_object(Bucket=bucket, Key=key)
         return True
-    except error.NoSuchKey:
+    except layer.error.NoSuchKey:
         return False
-    except error.ClientError as err:
+    except layer.error.ClientError as err:
         # Botocore 1.12.130 seems to raise ClientError instead of NoSuchKey
         if err.response["Error"]["Code"] == "404":
             return False
@@ -125,20 +149,20 @@ class Stat(NamedTuple):
 
 def stat(bucket: str, key: str) -> Stat:
     """Return an object's metadata or raise an error."""
-    response = client.head_object(Bucket=bucket, Key=key)
+    response = layer.client.head_object(Bucket=bucket, Key=key)
     return Stat(response["ContentLength"])
 
 
 def remove(bucket: str, key: str) -> None:
     """Delete the file. No-op if it is already deleted."""
     try:
-        client.delete_object(Bucket=bucket, Key=key)
-    except error.NoSuchKey:
+        layer.client.delete_object(Bucket=bucket, Key=key)
+    except layer.error.NoSuchKey:
         pass
 
 
 def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
-    client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
+    layer.client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
 
 
 def _remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
@@ -173,10 +197,10 @@ def _remove_by_prefix(bucket: str, prefix: str, force=False) -> None:
     done = False
     while not done:
         # no Delimiter="/" means it's a recursive request
-        list_response = client.list_objects(Bucket=bucket, Prefix=prefix)
+        list_response = layer.client.list_objects(Bucket=bucket, Prefix=prefix)
         done = not list_response.get("IsTruncated", False)
         keys = [o["Key"] for o in list_response.get("Contents", [])]
-        # Use client.delete_object(), not delete_objects(), because Google Cloud
+        # Use layer.client.delete_object(), not delete_objects(), because Google Cloud
         # Storage doesn't emulate DeleteObjects.
         #
         # This is slow. But so is multi-delete through s3, because s3's
@@ -226,12 +250,12 @@ def download(bucket: str, key: str, path: pathlib.Path) -> None:
     Raise FileNotFoundError if the key is not on S3.
     """
     try:
-        _downloader.download_file(bucket, key, str(path))
+        layer.downloader.download_file(bucket, key, str(path))
     # _downloader.download_file() seems to raise ClientError instead of a
     # wrapped error.
-    # except error.NoSuchKey:
+    # except layer.error.NoSuchKey:
     #     raise FileNotFoundError(errno.ENOENT, f'No file at {bucket}/{key}')
-    except error.ClientError as err:
+    except layer.error.ClientError as err:
         if err.response.get("Error", {}).get("Code") == "404":
             raise FileNotFoundError(errno.ENOENT, f"No file at {bucket}/{key}")
         else:
