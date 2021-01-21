@@ -1,6 +1,7 @@
 import logging
 import time
 
+import django
 import django.db
 from django.conf import settings
 
@@ -49,8 +50,6 @@ def delete_expired_sessions_and_workflows() -> None:
 
 
 if __name__ == "__main__":
-    import django
-
     django.setup()
 
     if settings.SESSION_ENGINE != "django.contrib.sessions.backends.db":

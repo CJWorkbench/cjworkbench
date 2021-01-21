@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cron-expired-session-deleter-deployment
+spec:
+  selector:
+    matchLabels:
+      app: cron-expired-session-deleter-app
+  strategy:
+    type: Recreate
+  replicas: 1
+  revisionHistoryLimit: 20
+  template:
+    metadata:
+      labels:
+        app: cron-expired-session-deleter-app
+    spec:
+      serviceAccountName: cron-sa
+      containers:
+        - name: cron
+          image: "gcr.io/workbenchdata-ci/cron:latest"
+          command: [ "bin/cron-expired-session-deleter" ]
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 200Mi
+            limits:
+              cpu: 0.1
+              memory: 200Mi
+          env:
+            - name: CJW_PRODUCTION
+              value: 'True'
+            - name: PYTHONUNBUFFERED
+              value: '1'
+            - name: CJW_DB_HOST
+              value: localhost  # cloud-sql-proxy
+            - name: CJW_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cjworkbench-credentials
+                  key: password
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gcs-s3-cron-sa-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gcs-s3-cron-sa-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_S3_ENDPOINT
+              value: https://storage.googleapis.com
+            - name: _DOMAIN_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: workbench-config
+                  key: domainName
+            - name: S3_BUCKET_NAME_PATTERN
+              value: "%s.$(_DOMAIN_NAME)"
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.18.0
+          env:
+            - name: PROJECT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: gcloud-config
+                  key: PROJECT_NAME
+          command:
+            - "/cloud_sql_proxy"
+            - "-ip_address_types=PRIVATE"
+            - "-log_debug_stdout=true"
+            - "-instances=$(PROJECT_NAME):us-central1:postgres=tcp:5432"
+            - "-term_timeout=10s"
+          securityContext:
+            runAsNonRoot: true
