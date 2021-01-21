@@ -1,43 +1,50 @@
 // iframe for charts
 .outputpane-iframe {
   flex: 0 0 auto;
-  width:100%;
+  width: 100%;
   height: 100%; // OutputIframe.js will override this ...
-  position:relative;
+  position: relative;
+  background: white;
+  $iframe-padding: 1.6rem;
 
   iframe {
-    border:none;
+    border: 0;
     position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+    top: $iframe-padding;
+    left: $iframe-padding;
+    // [adamhooper, 2021-01-20, Chrome 87 on Linux] right: and bottom: don't affect
+    // width+height here. Use width: and height: instead.
+    width: calc(100% - 2 * #{$iframe-padding});
+    height: calc(100% - 2 * #{$iframe-padding});
   }
 
-  .outputpane-iframe-control-overlay {
+  button[name="embed"] {
+    // Appear alongside the vega-embed@6 context button
     position: absolute;
-    margin-top: 1.6rem;
-    right:7.5rem;
-    width: 4rem;
-    height: 4rem;
-    background-color: transparent;
-    i {color:$brand-text--dark;}
-  }
+    top: $iframe-padding;
+    right: calc(#{$iframe-padding} + 48px);
 
-  .outputpane-iframe-control-overlay .btn {
-    position: absolute;
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid $Vlight-gray;
+    // BEGIN copy/paste from Vega's own stylesheet
+    background: white;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    color: #1b1e23;
+    border: 1px solid #aaa;
+    border-radius: 999px;
+    opacity: 0.2;
+    transition: opacity 0.4s ease-in;
+    outline: none;
+    cursor: pointer;
+    line-height: 0px;
+    // END copy/paste
+
+    // vega-embed@6 icon is 14*14, with 6px padding. Our SVG is optimized for
+    // 16x16, so we set 5px padding.
+    padding: 5px;
     font-size: 1.6rem;
-  }
 
-  .outputpane-iframe-control-overlay .btn:hover{
-    border:2px solid $light-gray;
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
