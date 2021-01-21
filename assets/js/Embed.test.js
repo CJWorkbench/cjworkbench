@@ -16,7 +16,8 @@ describe('Embed', () => {
           workflow={{
             name: 'Workflow Title',
             owner_name: 'Workflow Owner Name',
-            last_update: '2021-01-20T15:03:12.12213Z',
+            // last updated 5h ago
+            last_update: new Date(new Date() - 5 * 3600000).toISOString(),
             id: 1
           }}
         />
@@ -24,8 +25,9 @@ describe('Embed', () => {
     })
 
     it('Renders the embed widget with the correct information', () => {
-      expect(wrapper).toMatchSnapshot()
       expect(wrapper.find('h1').text()).toBe('Workflow Title')
+      expect(wrapper.find('footer li').at(0).text()).toEqual('by Workflow Owner Name')
+      expect(wrapper.find('footer li').at(1).text()).toEqual('Updated 5h ago')
     })
 
     it('Displays the sharing overlay', () => {
