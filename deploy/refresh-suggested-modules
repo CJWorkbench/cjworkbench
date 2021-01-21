@@ -13,10 +13,10 @@ fi
 KUBECTL="kubectl.1.15 --cluster $CLUSTER"
 MODULES="$(cat "$(dirname "$0")"/../cjwstate/modules/suggested-modules.txt)"
 
-echo -n "Finding renderer to run on..." >&2
-POD="$($KUBECTL get pods -lapp=renderer-app -o name | head -n1)"
+echo -n "Finding frontend to run on..." >&2
+POD="$($KUBECTL get pods -lapp=frontend-app -o name | head -n1)"
 echo " $POD" >&2
 
 echo -n "Importing..." >&2
-$KUBECTL exec -it $POD -c renderer -- python ./manage.py import-modules $MODULES >&2
+$KUBECTL exec -it $POD -c frontend -- python ./manage.py import-modules $MODULES >&2
 echo " done" >&2
