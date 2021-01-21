@@ -65,7 +65,7 @@ gsutil iam ch \
   gs://stored-objects.$DOMAIN_NAME
 # user-files: cron deletes; frontend writes; fetcher+renderer read
 gsutil iam ch \
-  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
+  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-fetcher-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
@@ -79,7 +79,7 @@ gsutil iam ch \
 # cached-render-results: cron deletes; frontend+renderer write; fetcher can read
 # (Fetcher reads because fetches can depend on prior results -- a bizarre feature.)
 gsutil iam ch \
-  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
+  serviceAccount:$CLUSTER_NAME-cron-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-fetcher-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectViewer \
   serviceAccount:$CLUSTER_NAME-frontend-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
   serviceAccount:$CLUSTER_NAME-renderer-sa@$PROJECT_NAME.iam.gserviceaccount.com:objectAdmin \
