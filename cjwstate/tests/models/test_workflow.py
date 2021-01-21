@@ -146,8 +146,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertFalse(wf.request_authorized_write(MockRequest.anonymous("session2")))
         self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
 
-    @patch.object(commands, "queue_render", async_noop)
-    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_deltas_without_init_delta(self):
         workflow = Workflow.objects.create(name="A")
         tab = workflow.tabs.create(position=0)
