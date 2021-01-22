@@ -334,67 +334,36 @@ def fetch_or_wrap_error(
         )
 
 
-@contextlib.contextmanager
-def crash_on_database_error() -> ContextManager[None]:
-    """Yield, and if the inner block crashes, sys._exit(1).
-
-    DatabaseError and InterfaceError from Django can mean:
-
-    1. There's a bug in fetch() or its deps. Such bugs can permanently break
-    the event loop's executor thread's database connection.
-    [2018-11-06 saw this on production.] The best way to clear up the leaked,
-    broken connection is to die. (Our parent process should restart us, and
-    RabbitMQ will give the job to someone else.)
-
-    2. The database connection died (e.g., Postgres went away.) This should
-    be rare -- e.g., when upgrading the database -- and it's okay to email us
-    and die in this case. (Our parent process should restart us, and RabbitMQ
-    will give the job to someone else.)
-
-    3. There's some design flaw we haven't thought of, and we shouldn't ever
-    render this workflow. If this is the case, we're doomed.
-
-    If you're seeing this error that means there's a bug somewhere _else_. If
-    you're staring at a case-3 situation, please remember that cases 1 and 2
-    are important, too.
-    """
-    try:
-        yield
-    except (DatabaseError, InterfaceError):
-        logger.exception("Fatal database error; exiting")
-        os._exit(1)
-
-
 async def fetch(
     *, workflow_id: int, step_id: int, now: Optional[timezone.datetime] = None
 ) -> None:
     # 1. Load database objects
     #    - missing Step? Return prematurely
-    #    - database error? _exit(1)
+    #    - database error? Raise
     #    - module_zipfile missing/invalid? user-visible error
     #    - migrate_params() fails? user-visible error
     # 2. Calculate result
     #    2a. Build fetch kwargs
     #    2b. Call fetch (no errors possible -- LoadedModule catches them)
     # 3. Save result (and send delta)
-    #    - database errors? _exit(1)
-    #    - other error (bug in `save`)? Log exception and ignore
+    #    - database errors? Raise
+    #    - rabbitmq errors? Raise
+    #    - other error (bug in `save`)? Raise
     # 4. Update Step last-fetch time
-    #    - database errors? _exit(1)
-    with crash_on_database_error():
-        logger.info("begin fetch(workflow_id=%d, step_id=%d)", workflow_id, step_id)
+    #    - database errors? Raise
+    logger.info("begin fetch(workflow_id=%d, step_id=%d)", workflow_id, step_id)
 
-        try:
-            (
-                step,
-                module_zipfile,
-                migrated_params,
-                stored_object,
-                input_crr,
-            ) = await load_database_objects(workflow_id, step_id)
-        except (Workflow.DoesNotExist, Step.DoesNotExist):
-            logger.info("Skipping fetch of deleted Step %d-%d", workflow_id, step_id)
-            return
+    try:
+        (
+            step,
+            module_zipfile,
+            migrated_params,
+            stored_object,
+            input_crr,
+        ) = await load_database_objects(workflow_id, step_id)
+    except (Workflow.DoesNotExist, Step.DoesNotExist):
+        logger.info("Skipping fetch of deleted Step %d-%d", workflow_id, step_id)
+        return
 
     # Prepare secrets -- mangle user values so modules have all they need.
     #
@@ -437,30 +406,15 @@ async def fetch(
             output_path,
         )
 
-        try:
-            with crash_on_database_error():
-                if last_fetch_result is not None and versions.are_fetch_results_equal(
-                    last_fetch_result, result
-                ):
-                    await save.mark_result_unchanged(workflow_id, step, now)
-                else:
-                    await save.create_result(workflow_id, step, result, now)
-        except asyncio.CancelledError:
-            raise
-        except Exception:
-            # Log exceptions but keep going.
-            # TODO [adamhooper, 2019-09-12] really? I think we don't want this.
-            # Make `fetch.save() robust, then nix this handler
-            logger.exception(f"Error fetching {step}")
+        if last_fetch_result is not None and versions.are_fetch_results_equal(
+            last_fetch_result, result
+        ):
+            await save.mark_result_unchanged(workflow_id, step, now)
+        else:
+            await save.create_result(workflow_id, step, result, now)
 
-    with crash_on_database_error():
-        await update_next_update_time(workflow_id, step, now)
+    await update_next_update_time(workflow_id, step, now)
 
 
 async def handle_fetch(message):
-    try:
-        await fetch(**message)
-    except asyncio.CancelledError:
-        raise
-    except Exception:
-        logger.exception("Error during fetch")
+    await fetch(**message)
