@@ -266,7 +266,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
           checked={group.isExpanded}
           onChange={this.handleChangeIsExpanded}
         />
-        <i className={group.isExpanded ? 'icon-caret-down' : 'icon-caret-right'} />
+        <i className='expand-caret' />
       </label>
     ) : null
 
@@ -293,10 +293,13 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
                   name={`remove[${group.name}]`}
                   data-value={value}
                   onClick={this.handleClickRemove}
-                  className='icon-close'
-                />
+                >
+                  ✕
+                </button>
               )}
-              <span className='count'>{valueCounts[value]}</span>
+              <span className='count'>
+                {valueCounts[value]}
+              </span>
             </span>
           </li>
         ))}

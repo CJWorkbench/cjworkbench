@@ -122,59 +122,6 @@ button:focus { outline:0 !important; }
       cursor: default;
     }
   }
-
-  &.busy {
-    color: red;
-  }
-
-  .spinner {
-    $background-color: white; // default -- we'll override it
-    $spinner-color: $brand-orange;
-    position: absolute!important;
-
-    // overlap into the border's margin. There's tons of room because we use
-    // rounded buttons and the spinner is also round
-    // https://projects.lukehaas.me/css-loaders/
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background: #ffffff;
-    background: -moz-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-    background: -webkit-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-    background: -o-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-    background: linear-gradient(to right, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-    position: relative;
-    -webkit-animation: spinner-in-button 1.4s infinite linear;
-    animation: spinner-in-button 1.4s infinite linear;
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    transform: translateZ(0);
-
-    &::before {
-      width: 50%;
-      height: 50%;
-      background: $spinner-color;
-      border-radius: 100% 0 0 0;
-      position: absolute;
-      top: 0;
-      left: 0;
-      content: '';
-    }
-
-    &::after {
-      background: $brand-orange--light;
-      width: 75%;
-      height: 75%;
-      border-radius: 50%;
-      content: '';
-      margin: auto;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-    }
-  }
 }
 %action-button {
   @include action-button;

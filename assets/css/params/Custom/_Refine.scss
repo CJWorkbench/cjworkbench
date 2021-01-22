@@ -72,16 +72,30 @@
         input { display: none; }
         cursor: pointer;
         margin: 0;
-        padding: 0 .5rem 0 0;
+        padding: 0;
         line-height: 0; // give <label> the height of its <i class="icon">
 
-        i.icon-caret-right {
-          margin-left: .3rem;
-          font-size: 1.1rem;
+        i.expand-caret {
+          display: block;
+          padding: .4rem;
+
+          &::before {
+            content: '';
+            display: block;
+            border: 1px solid transparent;
+            border-top-color: currentcolor;
+            border-right-color: currentcolor;
+            width: .8rem;
+            height: .8rem;
+          }
         }
-        i.icon-caret-down {
-          margin-top: .1rem;
-          font-size: .7rem;
+
+        input:not(:checked) + i.expand-caret {
+          transform: translate(-.4rem, 0) rotate(45deg);
+        }
+
+        input:checked + i.expand-caret {
+          transform: translate(-.2rem, -.2rem) rotate(135deg);
         }
       }
 
@@ -165,12 +179,16 @@
 
         .count-and-remove {
           margin-left: .8rem;
+          position: relative;
 
           // Display the count normally. If the user hovers, display a remove
           // button instead -- but only if the button exists. (One can't remove
           // the value "A" from the group "A".)
           button {
             display: none;
+            position: absolute;
+            right: 0;
+            top: .1rem;
             font-size: 1.2rem;
             line-height: 1.4;
             color: $brand-text--dark;
@@ -181,9 +199,14 @@
         }
       }
       li:hover {
-        button { display: block; }
-        // only if there's a "reset" button, hide span.count
-        button + span { display: none; }
+        button {
+          display: block;
+          & + span {
+            // only if there's a "reset" button, hide span.count.
+            // Use `visibility`, not `display`, so layout won't be affected.
+            visibility: hidden;
+          }
+        }
       }
     }
   }
