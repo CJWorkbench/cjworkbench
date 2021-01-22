@@ -40,6 +40,7 @@ def exit_on_exception(loop, context):
         context,
         exc_info=context.get("exception"),
     )
+    logging.shutdown()
     os._exit(1)
 
 
