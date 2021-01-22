@@ -350,7 +350,7 @@ class Step(models.Model):
                     new_parquet_key,
                     "%(Bucket)s/%(Key)s" % {"Bucket": BUCKET, "Key": old_parquet_key},
                 )
-            except s3.error.NoSuchKey:
+            except s3.layer.error.NoSuchKey:
                 # DB and filesystem are out of sync. CachedRenderResult handles
                 # such cases gracefully. So `new_result` will behave exactly
                 # like `cached_result`.
