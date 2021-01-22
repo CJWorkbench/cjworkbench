@@ -29,6 +29,10 @@
     margin: 1em 0 0;
   }
 
+  pre, code {
+    font-family: "Roboto Mono", monospace;
+  }
+
   code {
     word-wrap: break-word;
   }

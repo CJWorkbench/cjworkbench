@@ -60,7 +60,7 @@
 
 @mixin code-1 { // used in code snipets
 	@include content-1; // TODO nix
-  font-family: "PT Mono", monospace;
+  font-family: "Roboto Mono", monospace;
 	line-height: badrem(2.4);
 }
 

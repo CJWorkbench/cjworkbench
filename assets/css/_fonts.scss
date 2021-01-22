@@ -19,6 +19,13 @@
   src: url('../fonts/Roboto-Bold.woff2') format('woff2');
 }
 
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: normal;
+  src: url('../fonts/Roboto-Mono.woff2') format('woff2');
+}
+
 @mixin font-sans-light {
   font-family: $font-family-sans-serif;
   font-weight: 300;
