@@ -12,12 +12,12 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 import pyarrow
+from cjwpandasmodule.validate import validate_dataframe
 from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
 
 from .. import settings
 from .. import types as atypes
 from . import moduletypes as mtypes
-from .validate import validate_dataframe
 
 
 class ColumnType(ABC):
