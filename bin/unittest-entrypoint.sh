@@ -46,4 +46,4 @@ fi
 # bit you ... sorry!)
 cjwkernel/setup-sandboxes.sh all 2>/dev/null
 
-exec pipenv run python ./manage.py test "$@"
+exec pipenv run python ./manage.py test --noinput "$@"
