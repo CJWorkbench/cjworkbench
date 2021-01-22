@@ -5,9 +5,12 @@ describe('DoneHelpers', () => {
   describe('WorkflowWithHelpers', () => {
     it('should give steps', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: ['tab-21', 'tab-22'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-21', 'tab-22']
       }, {
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-21'
+        },
         tabs: {
           'tab-21': { step_ids: [1, 2] },
           'tab-22': { step_ids: [] }
@@ -22,37 +25,18 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.steps.map(step => step.moduleName)).toEqual(['Foo', 'Bar'])
-      expect(workflow.selectedTab.steps.map(step => step.moduleSlug)).toEqual(['foo', 'bar'])
-    })
-
-    it('should give stepNames', () => {
-      const workflow = new WorkflowWithHelpers({
-        tab_slugs: ['tab-21', 'tab-22'],
-        selected_tab_position: 0
-      }, {
-        tabs: {
-          'tab-21': { step_ids: [1, 2] },
-          'tab-22': { step_ids: [] }
-        },
-        steps: {
-          1: { module: 'foo' },
-          2: { module: 'bar' }
-        },
-        modules: {
-          foo: { name: 'Foo' },
-          bar: { name: 'Bar' }
-        }
-      })
-
-      expect(workflow.selectedTab.stepNames).toEqual(['Foo', 'Bar'])
+      expect(workflow.tabs[0].steps.map(step => step.moduleName)).toEqual(['Foo', 'Bar'])
+      expect(workflow.tabs[0].steps.map(step => step.moduleSlug)).toEqual(['foo', 'bar'])
     })
 
     it('should give stepModuleIds', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: ['tab-21', 'tab-22'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-21', 'tab-22']
       }, {
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-21'
+        },
         tabs: {
           'tab-21': { step_ids: [1, 2] },
           'tab-22': { step_ids: [] }
@@ -67,14 +51,17 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(workflow.selectedTab.stepModuleIds).toEqual(['foo', 'bar'])
+      expect(workflow.tabs[0].stepModuleIds).toEqual(['foo', 'bar'])
     })
 
     it('should give stepName=null when there is no module', () => {
       const workflow = new WorkflowWithHelpers({
-        tab_slugs: ['tab-21', 'tab-22'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-21', 'tab-22']
       }, {
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-21'
+        },
         tabs: {
           'tab-21': { step_ids: [1, 2, '3_nonce'] },
           'tab-22': { step_ids: [] }
@@ -86,8 +73,7 @@ describe('DoneHelpers', () => {
         modules: {}
       })
 
-      expect(workflow.selectedTab.stepNames).toEqual([null, null, null])
-      expect(workflow.selectedTab.stepModuleIds).toEqual(['blah', null, null])
+      expect(workflow.tabs[0].stepModuleIds).toEqual(['blah', null, null])
     })
   })
 
@@ -207,8 +193,11 @@ describe('DoneHelpers', () => {
       // when we test the same thing in a StateWithHelpers({ workflow: ... }).
       const state = new StateWithHelpers({
         workflow: {
-          tab_slugs: ['tab-21', 'tab-22'],
-          selected_tab_position: 1
+          tab_slugs: ['tab-21', 'tab-22']
+        },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-22'
         },
         tabs: {
           'tab-21': { step_ids: [] },
@@ -224,15 +213,17 @@ describe('DoneHelpers', () => {
         }
       })
 
-      expect(state.selectedTab.stepNames).toEqual(['Foo', 'Bar'])
-      expect(state.selectedTab.stepModuleIds).toEqual(['foo', 'bar'])
+      expect(state.workflow.tabs[1].stepModuleIds).toEqual(['foo', 'bar'])
     })
 
     it('should have a .selectedStep', () => {
       const state = new StateWithHelpers({
         workflow: {
-          tab_slugs: ['tab-11', 'tab-12'],
-          selected_tab_position: 1
+          tab_slugs: ['tab-11', 'tab-12']
+        },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-12'
         },
         tabs: {
           'tab-11': { step_ids: [] },
@@ -250,6 +241,28 @@ describe('DoneHelpers', () => {
 
       expect(state.selectedStep.moduleName).toEqual('Bar')
       expect(state.selectedStep.moduleSlug).toEqual('bar')
+    })
+
+    it('should have .selectedStep=null when viewing a Report', () => {
+      const state = new StateWithHelpers({
+        workflow: {
+          tab_slugs: ['tab-11']
+        },
+        selectedPane: {
+          pane: 'report'
+        },
+        tabs: {
+          'tab-11': { step_ids: [1], selected_step_position: 0 }
+        },
+        steps: {
+          1: { module: 'foo' }
+        },
+        modules: {
+          foo: { name: 'Foo' }
+        }
+      })
+
+      expect(state.selectedStep.moduleName).toBe(null)
     })
   })
 })

@@ -144,8 +144,8 @@ function stepStatus (step) {
 }
 
 function mapStateToProps (state) {
-  const { workflow, steps, tabs, modules } = state
-  const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
+  const { workflow, steps, tabs, modules, selectedPane } = state
+  const tabSlug = selectedPane.tabSlug
   const tab = tabs[tabSlug]
   const stepArray = tab.step_ids.map(id => steps[String(id)])
 

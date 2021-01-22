@@ -82,8 +82,7 @@ describe('TableView', () => {
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
-        tab_slugs: ['tab-1'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
@@ -116,8 +115,7 @@ describe('TableView', () => {
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore({
       workflow: {
-        tab_slugs: ['tab-1'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': { step_ids: [2, 3], selected_step_position: 0 }

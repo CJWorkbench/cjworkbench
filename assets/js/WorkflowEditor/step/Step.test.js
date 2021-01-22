@@ -327,13 +327,16 @@ describe('Step, not read-only mode', () => {
       action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
     }
     const store = mockStore({
+      selectedPane: {
+        pane: 'tab',
+        tabSlug: 'tab-11'
+      },
       workflow: {
         id: 99,
         tab_slugs: ['tab-11', 'tab-12'],
         read_only: false,
         is_owner: true,
-        is_anonymous: false,
-        selected_tab_position: 0
+        is_anonymous: false
       },
       tabs: {
         'tab-11': { slug: 'tab-11', name: 'Tab 1', step_ids: [10, 20] },
@@ -402,13 +405,16 @@ describe('Step, not read-only mode', () => {
       lessonSelector.mockReset()
 
       store = createStore((_, action) => ({
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-11'
+        },
         workflow: {
           id: 99,
           read_only: false,
           is_anonymous: false,
           is_owner: false,
-          tab_slugs: ['tab-11'],
-          selected_tab_position: 0
+          tab_slugs: ['tab-11']
         },
         tabs: {
           'tab-11': { slug: 'tab-11', name: 'Tab 1', step_ids: [1, 2, 999] }

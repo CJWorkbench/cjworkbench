@@ -245,8 +245,7 @@ describe('ModuleSearch Popup', () => {
           ]
         },
         workflow: {
-          tab_slugs: ['tab-1'],
-          selected_tab_position: 0
+          tab_slugs: ['tab-1']
         },
         tabs: {
           'tab-1': { step_ids: [] }

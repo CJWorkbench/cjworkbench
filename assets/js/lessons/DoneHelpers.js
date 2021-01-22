@@ -17,12 +17,19 @@ export class StateWithHelpers {
     return new WorkflowWithHelpers(this.state.workflow, this.state)
   }
 
-  get selectedTab () {
-    return this.workflow.selectedTab
-  }
-
   get selectedStep () {
-    return this.selectedTab.selectedStep
+    const { tabs, steps, selectedPane } = this.state
+    const tabSlug = selectedPane.tabSlug
+    const tab = tabs[tabSlug]
+
+    let step = null
+    if (tab) {
+      const position = tab.selected_step_position
+      if (position !== null && position !== undefined) {
+        step = steps[String(tab.step_ids[position])] || null
+      }
+    }
+    return new WorkflowModuleWithHelpers(step, this.state)
   }
 }
 
@@ -40,18 +47,6 @@ export class WorkflowWithHelpers {
       return new TabWithHelpers(tabs[tabSlug], this.state)
     })
   }
-
-  get selectedTab () {
-    const { workflow } = this
-    const { tabs } = this.state
-    const tab = tabs[workflow.tab_slugs[workflow.selected_tab_position]]
-    if (!tab) throw new Error('No selected tab -- this is always an error')
-    return new TabWithHelpers(tab, this.state)
-  }
-
-  get selectedStep () {
-    return this.selectedTab.selectedStep
-  }
 }
 
 export class TabWithHelpers {
@@ -67,21 +62,8 @@ export class TabWithHelpers {
     })
   }
 
-  get stepNames () {
-    return this.steps.map(step => step.moduleName)
-  }
-
   get stepModuleIds () {
     return this.steps.map(step => step.moduleSlug)
-  }
-
-  get selectedStep () {
-    const { steps } = this.state
-    const position = this.tab.selected_step_position
-    if (position === null || position === undefined) return null
-
-    const step = steps[String(this.tab.step_ids[position])] || null
-    return new WorkflowModuleWithHelpers(step, this.state)
   }
 }
 

@@ -561,6 +561,7 @@ const getReadyAndPendingTabs = createSelector([getReadyTabs, getPendingTabs], (r
   }
 })
 const getSteps = ({ steps }) => steps
+const getSelectedPane = ({ selectedPane }) => selectedPane
 const getTabs = createSelector([getWorkflow, getReadyAndPendingTabs, getSteps], (workflow, tabs, steps) => {
   return workflow.tab_slugs.map(slug => {
     const tab = tabs[slug]
@@ -582,8 +583,8 @@ const getTabs = createSelector([getWorkflow, getReadyAndPendingTabs, getSteps], 
     }
   })
 })
-const getCurrentTab = createSelector([getWorkflow, getReadyAndPendingTabs], (workflow, tabs) => {
-  const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
+const getCurrentTab = createSelector([getSelectedPane, getReadyAndPendingTabs], (selectedPane, tabs) => {
+  const tabSlug = selectedPane.tabSlug
   return tabs[tabSlug]
 })
 const getModules = ({ modules }) => modules

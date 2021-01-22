@@ -5,17 +5,16 @@ import { connect } from 'react-redux'
 import lessonSelector from '../../lessons/lessonSelector'
 
 const mapStateToProps = (state) => {
-  const { modules } = state
+  const { modules, selectedPane, steps, tabs } = state
   const { testHighlight } = lessonSelector(state)
-  const tabPosition = state.workflow.selected_tab_position
-  const tabSlug = state.workflow.tab_slugs[tabPosition]
-  const tab = state.tabs[tabSlug]
-  const steps = tab.step_ids.map(id => state.steps[String(id)])
+  const tabSlug = selectedPane.tabSlug
+  const tab = tabs[tabSlug]
+  const tabSteps = tab.step_ids.map(id => steps[String(id)])
   return {
     workflow: state.workflow,
     selected_step_position: tab.selected_step_position,
     tabSlug,
-    steps,
+    steps: tabSteps,
     modules,
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', id_name: null, index: index })

@@ -1,3 +1,4 @@
+/* global requestAnimationFrame */
 import React from 'react'
 import PropTypes from 'prop-types'
 import TableSwitcher from './TableSwitcher'
@@ -60,6 +61,8 @@ function tableProps ({ stepId, deltaId, columns, nRows, status }) {
  * This file calls the phase between stages 1 and 2 `state.oneTickFromLoaded`.
  */
 export default class DelayedTableSwitcher extends React.PureComponent {
+  isUnmounted = false
+
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
@@ -80,7 +83,9 @@ export default class DelayedTableSwitcher extends React.PureComponent {
 
   _afterOneTickFromLoaded = () => {
     const { oneTickFromLoaded } = this.state
-    if (oneTickFromLoaded) {
+    // TODO nix react-data-grid, so we don't have to do this deferred-render
+    // hack and we can nix the this.isUnmounted check.
+    if (oneTickFromLoaded && !this.isUnmounted) {
       this.setState({
         loaded: oneTickFromLoaded,
         oneTickFromLoaded: null
@@ -90,12 +95,16 @@ export default class DelayedTableSwitcher extends React.PureComponent {
 
   componentDidUpdate (_, prevState) {
     if (this.state.oneTickFromLoaded && !prevState.oneTickFromLoaded) {
-      setTimeout(this._afterOneTickFromLoaded, 0)
+      requestAnimationFrame(this._afterOneTickFromLoaded)
     }
   }
 
   componentDidMount () {
     this._afterOneTickFromLoaded()
+  }
+
+  componentWillUnmount () {
+    this.isUnmounted = true
   }
 
   static getDerivedStateFromProps (props, state) {
@@ -120,7 +129,10 @@ export default class DelayedTableSwitcher extends React.PureComponent {
         if (
           stepId === this.props.stepId &&
           deltaId === this.props.deltaId &&
-          !areSameTable(this.props, this.state.loaded)
+          !areSameTable(this.props, this.state.loaded) &&
+          // TODO nix react-data-grid, so we don't have to do this deferred-render
+          // hack and we can nix the this.isUnmounted check.
+          !this.isUnmounted
         ) {
           // We have data for our currently-loading table. Mark it "loaded".
           this.setState({ loaded: tableProps(this.props) })

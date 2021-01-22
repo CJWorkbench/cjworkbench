@@ -48,9 +48,12 @@ describe('lessonSelector', () => {
   it('should start with 0 indexes', () => {
     const state = {
       lessonData: lessonFixture,
+      selectedPane: {
+        pane: 'tab',
+        tabSlug: 'tab-1'
+      },
       workflow: {
-        tab_slugs: ['tab-1'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': { steps: [] }
@@ -77,9 +80,12 @@ describe('lessonSelector', () => {
           }
         ]
       },
+      selectedPane: {
+        pane: 'tab',
+        tabSlug: 'tab-1'
+      },
       workflow: {
-        tab_slugs: ['tab-1'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': { step_ids: [] }
@@ -110,9 +116,12 @@ describe('lessonSelector', () => {
           ...lessonFixture.sections.slice(1)
         ]
       },
+      selectedPane: {
+        pane: 'tab',
+        tabSlug: 'tab-1'
+      },
       workflow: {
-        tab_slugs: ['tab-1'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1']
       },
       tabs: {
         'tab-1': { step_ids: [] }
@@ -168,16 +177,19 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return workflow.selectedTab.stepModuleIds[0] === "foo"' },
-              { testJs: 'return workflow.selectedTab.stepModuleIds[1] === "foo"' }
+              { testJs: 'return workflow.tabs[0].stepModuleIds[0] === "foo"' },
+              { testJs: 'return workflow.tabs[0].stepModuleIds[1] === "foo"' }
             ]
           },
           ...lessonFixture.sections.slice(1)
         ]
       },
+      selectedPane: {
+        pane: 'tab',
+        tabSlug: 'tab-1'
+      },
       workflow: {
-        tab_slugs: ['tab-1', 'tab-2'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1', 'tab-2']
       },
       tabs: {
         'tab-1': { step_ids: [3, 4] },
@@ -202,16 +214,19 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return state.selectedTab.stepModuleIds[0] === "foo"' },
-              { testJs: 'return state.selectedTab.stepModuleIds[1] === "foo"' }
+              { testJs: 'return state.selectedStep.moduleSlug === "bar" /* yep */' },
+              { testJs: 'return state.selectedStep.moduleSlug === "baz" /* nope */' }
             ]
           },
           ...lessonFixture.sections.slice(1)
         ]
       },
+      selectedPane: {
+        pane: 'tab',
+        tabSlug: 'tab-1'
+      },
       workflow: {
-        tab_slugs: ['tab-1', 'tab-2'],
-        selected_tab_position: 0
+        tab_slugs: ['tab-1', 'tab-2']
       },
       tabs: {
         'tab-1': { step_ids: [3, 4], selected_step_position: 1 },
@@ -245,14 +260,17 @@ describe('lessonSelector', () => {
           sections: [
             {
               steps: [
-                { testJs: 'return state.selectedStep.moduleSlug === "foo"' }
+                { testJs: 'return nonexistentVar' }
               ]
             }
           ]
         },
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-1'
+        },
         workflow: {
-          tab_slugs: ['tab-1'],
-          selected_tab_position: 0
+          tab_slugs: ['tab-1']
         },
         tabs: {
           'tab-1': { step_ids: [], selected_step_position: null }

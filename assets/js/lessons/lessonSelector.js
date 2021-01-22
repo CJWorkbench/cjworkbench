@@ -57,7 +57,7 @@ const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs
 const getSteps = ({ steps }) => steps
 const getModules = ({ modules }) => modules
-const getSelectedStep = (state) => state.selected_step
+const getSelectedPane = ({ selectedPane }) => selectedPane
 const getLessonData = ({ lessonData }) => lessonData || null
 
 /**
@@ -91,8 +91,8 @@ const getLessonData = ({ lessonData }) => lessonData || null
  * suggested.
  */
 const getLesson = createSelector(
-  [getWorkflow, getTabs, getSteps, getModules, getSelectedStep, getLessonData],
-  (workflow, tabs, steps, modules, selectedStep, lessonData) => {
+  [getWorkflow, getTabs, getSteps, getModules, getSelectedPane, getLessonData],
+  (workflow, tabs, steps, modules, selectedPane, lessonData) => {
     if (lessonData === null) {
       return {
         activeSectionIndex: null,
@@ -106,8 +106,9 @@ const getLesson = createSelector(
       tabs,
       steps,
       modules,
-      selected_step: selectedStep
+      selectedPane
     })
+
     const { activeSectionIndex, activeStepIndex, activeStep } = calculateActiveStep(stateWithHelpers, lessonData.sections)
     const lessonHighlight = activeStep ? activeStep.highlight : []
     const testHighlight = (test) => matchLessonHighlight(lessonHighlight, test)
