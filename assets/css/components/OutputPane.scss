@@ -3,10 +3,14 @@
   flex: 0 0 auto;
   position: relative;
   background: white;
-  box-sizing: content-box;
   $iframe-padding: 1.6rem;
-  padding: $iframe-padding; // contribute to height
-  height: calc(100% - 2 * #{$iframe-padding}); // OutputIframe.js may override this ...
+  height: 100%;
+
+  &.has-height-from-iframe:not(.height-0) {
+    box-sizing: content-box;
+    padding: $iframe-padding; // contribute to height
+    // `height:` will be overridden in `style`
+  }
 
   iframe {
     border: 0;
