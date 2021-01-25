@@ -7,6 +7,7 @@
   height: 100%;
 
   &.has-height-from-iframe:not(.height-0) {
+    max-height: 50%;
     box-sizing: content-box;
     padding: $iframe-padding; // contribute to height
     // `height:` will be overridden in `style`

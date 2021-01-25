@@ -37,12 +37,10 @@ describe('OutputPane', () => {
 
   it('renders an iframe when htmlOutput', () => {
     const w = wrapper({ step: { id: 1, deltaId: 2, htmlOutput: true, status: 'ok' } })
-    expect(w.find(OutputIframe).prop('visible')).toBe(true)
+    expect(w.find(OutputIframe)).toHaveLength(1)
 
-    // When !htmlOutput, we just set visible=false but continue to display it.
-    // That's because react-data-grid would have the wrong size otherwise.
     const w2 = wrapper({ step: { id: 1, deltaId: 2, htmlOutput: false, status: 'ok' } })
-    expect(w2.find(OutputIframe).prop('visible')).toBe(false)
+    expect(w2.find(OutputIframe)).toHaveLength(0)
   })
 
   it('renders different table than iframe when desired', () => {

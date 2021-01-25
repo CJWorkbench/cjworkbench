@@ -10,7 +10,6 @@ import EmbedIcon from '../icons/embed.svg'
 
 export class OutputIframe extends React.PureComponent {
   static propTypes = {
-    visible: PropTypes.bool.isRequired, // false means, "zero height"
     deltaId: PropTypes.number, // null if added to empty workflow
     stepId: PropTypes.number, // null if no step
     isPublic: PropTypes.bool.isRequired,
@@ -29,7 +28,7 @@ export class OutputIframe extends React.PureComponent {
       })
     }
 
-    if (prevState.heightFromIframe !== this.state.heightFromIframe || prevProps.visible !== this.props.visible) {
+    if (prevState.heightFromIframe !== this.state.heightFromIframe) {
       const resizeEvent = document.createEvent('Event')
       resizeEvent.initEvent('resize', true, true)
       window.dispatchEvent(resizeEvent)
@@ -162,7 +161,7 @@ export class OutputIframe extends React.PureComponent {
   }
 
   render () {
-    const { stepId, deltaId, visible } = this.props
+    const { stepId, deltaId } = this.props
     const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${stepId}/output#revision=${deltaId}`
 
@@ -180,20 +179,16 @@ export class OutputIframe extends React.PureComponent {
 
     return (
       <div className={classNames.join(' ')} style={style}>
-        {visible ? (
-          <>
-            <iframe src={src} />
-            <button
-              name='embed'
-              title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
-              onClick={this.handleClickOpenEmbedModal}
-            >
-              <EmbedIcon />
-            </button>
-            {this.renderPublicModal()}
-            {this.renderEmbedModal()}
-          </>
-        ) : null}
+        <iframe src={src} />
+        <button
+          name='embed'
+          title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
+          onClick={this.handleClickOpenEmbedModal}
+        >
+          <EmbedIcon />
+        </button>
+        {this.renderPublicModal()}
+        {this.renderEmbedModal()}
       </div>
     )
   }

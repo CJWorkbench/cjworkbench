@@ -71,7 +71,6 @@ export class OutputPane extends React.Component {
 
     const stepId = step ? step.id : null
     const deltaId = step ? step.deltaId : null
-    const htmlOutput = step ? step.htmlOutput : false
 
     // This iframe holds the module HTML output, e.g. a visualization.
     // We leave the component around even when there is no HTML because of
@@ -81,7 +80,6 @@ export class OutputPane extends React.Component {
     return (
       <OutputIframe
         key='iframe'
-        visible={htmlOutput}
         workflowId={workflowId}
         isPublic={isPublic}
         stepId={stepId}
@@ -97,7 +95,7 @@ export class OutputPane extends React.Component {
 
     return (
       <div className={className}>
-        {this.renderOutputIFrame()}
+        {step && step.htmlOutput ? this.renderOutputIFrame() : null}
         {stepBeforeError ? (
           <p key='error' className='showing-input-because-error'>
             <Trans id='js.WorkflowEditor.OutputPane.showingInput.becauseError'>This was the data that led to an error. Please correct the error in the left pane.</Trans>
