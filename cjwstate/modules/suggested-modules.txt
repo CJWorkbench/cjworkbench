@@ -26,6 +26,7 @@ loadurl
 mergecolumns
 nulldropper
 pastecsv
+pythoncode
 refine
 regexextractor
 renamecolumns
