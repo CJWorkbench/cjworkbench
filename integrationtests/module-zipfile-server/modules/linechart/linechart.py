@@ -1,14 +1,19 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
+import datetime
 import json
+import math
 from string import Formatter
-from typing import Any, Dict, List
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
+
+import numpy as np
 import pandas as pd
 from cjwmodule import i18n
+from dateutil.relativedelta import relativedelta
 from pandas.api.types import is_numeric_dtype
 
-
 MaxNAxisLabels = 300
+MaxSpecialCaseNTicks = 8
 
 
 def _migrate_params_vneg1_to_v0(params):
@@ -64,8 +69,7 @@ def python_format_to_d3_tick_format(python_format: str) -> str:
 
 
 class GentleValueError(ValueError):
-    """
-    A ValueError that should not display in red to the user.
+    """A ValueError that should not display in red to the user.
 
     The first argument must be an `i18n.I18nMessage`.
 
@@ -79,8 +83,20 @@ class GentleValueError(ValueError):
         return self.args[0]
 
 
-@dataclass
-class XSeries:
+def _nice_date_ticks(
+    max_date: datetime.date,
+    n_periods_in_domain: int,
+    period: Union[datetime.timedelta, relativedelta],
+) -> List[datetime.date]:
+    n_domain_values = n_periods_in_domain + 1
+    n_periods_between_ticks = math.ceil(n_domain_values / (MaxSpecialCaseNTicks - 1))
+    n_ticks = math.ceil(n_periods_in_domain / n_periods_between_ticks) + 1
+    tick_timedelta = n_periods_between_ticks * period
+    tick0 = max_date - (n_ticks - 1) * tick_timedelta
+    return [(tick0 + tick_timedelta * i) for i in range(n_ticks)]
+
+
+class XSeries(NamedTuple):
     series: pd.Series
     column: Any
     """RenderColumn (has a '.name', '.type' and '.format')."""
@@ -107,27 +123,82 @@ class XSeries:
 
     @property
     def json_compatible_values(self) -> pd.Series:
-        """
-        Array of str or int or float values for the X axis of the chart.
+        """Array of str or int or float values for the X axis of the chart.
 
         In particular: datetime64 values will be converted to str.
         """
         if self.column.type == "timestamp":
-            try:
-                utc_series = self.series.dt.tz_convert(None).to_series()
-            except TypeError:
-                utc_series = self.series
-
-            str_series = utc_series.dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-            str_series = str_series.mask(self.series.isna())  # 'NaT' => np.nan
-
-            return str_series.values
+            return self.series.map(pd.Timestamp.isoformat) + "Z"
         else:
             return self.series
 
+    @property
+    def timestamp_tick_values_and_format(
+        self,
+    ) -> Optional[Tuple[List[datetime.date], str]]:
+        """Array of ISO8601 strings of timestamps that should be ticks.
 
-@dataclass
-class YSeries:
+        None if this is not a timestamp series.
+
+        None if we do not special-case this arrangement of timestamps.
+
+        Special cases:
+
+            * All values are midnight UTC on the same weekday: this is
+              a "week" series. Impute missing timestamps and return the regular
+              monotonic series -- a series of dates of interest. If there are
+              >MaxSpecialCaseNTicks, pick the lowest interval that produces
+              fewer ticks. Make sure the _last_ date is always a tick, and
+              impute a start tick that may come before all dates in the series.
+        """
+        if self.column.type != "timestamp":
+            return None
+
+        if not self.series.dt.normalize().equals(self.series):
+            # Dates with times. Fallback to vega-lite (D3) defaults
+            return None
+
+        # Okay, we have whole dates.
+
+        if self.series.dt.is_year_start.all():
+            # All dates are the first of the year. Treat this as "years".
+            series_min = self.series.min()
+            series_max = self.series.max()
+            period = relativedelta(years=1)  # Python doesn't do year math
+            n_periods_in_domain = (
+                series_max.to_period("Y") - series_min.to_period("Y")
+            ).n
+            return (
+                _nice_date_ticks(series_max.date(), n_periods_in_domain, period),
+                "%Y",  # "2020"
+            )
+
+        if self.series.dt.is_month_start.all():
+            # All dates are the first of the month. Treat this as "months".
+            series_min = self.series.min()
+            series_max = self.series.max()
+            period = relativedelta(months=1)  # Python doesn't do month math
+            n_periods_in_domain = (
+                series_max.to_period("M") - series_min.to_period("M")
+            ).n
+            return (
+                _nice_date_ticks(series_max.date(), n_periods_in_domain, period),
+                "%b %Y",  # "Jan 2020"
+            )
+
+        if self.series.dt.dayofweek.nunique() == 1:
+            # All dates fall on the same weekday. Treat this as "weeks".
+            min_date = self.series.min().date()
+            max_date = self.series.max().date()
+            period = datetime.timedelta(weeks=1)
+            n_periods_in_domain = (max_date - min_date) / period
+            return (
+                _nice_date_ticks(max_date, n_periods_in_domain, period),
+                "%b %-d, %Y",  # "Jan 3, 2020"
+            )
+
+
+class YSeries(NamedTuple):
     series: pd.Series
     color: str
     tick_format: str
@@ -142,8 +213,7 @@ class YSeries:
         return python_format_to_d3_tick_format(self.tick_format)
 
 
-@dataclass
-class Chart:
+class Chart(NamedTuple):
     """Fully-sane parameters. Columns are series."""
 
     title: str
@@ -151,129 +221,278 @@ class Chart:
     x_axis_tick_format: str
     y_axis_label: str
     x_series: XSeries
-    y_columns: List[YSeries]
+    y_serieses: List[YSeries]  # "serieses": the new plural of "series"
     y_axis_tick_format: str
 
-    def to_vega_data_values(self) -> List[Dict[str, Any]]:
-        """
-        Build a dict for Vega's .data.values Array.
+    def to_vega_inline_data(self) -> Dict[str, Any]:
+        """Build a dict for Vega's .datasets Array.
 
-        Return value is a list of dict records. Each has
-        {'x': 'X Name', 'line': 'Line Name', 'y': 1.0}
+        Return value is in CSV format, with columns "x,y0,y1,...".
+
+        (We use column names 'x' and f'y{colname}' to prevent conflicts (e.g.,
+        colname='x'). Vega conflicts behave differently from Workbench
+        column-name conflicts, and they add no value.)
         """
-        # We use column names 'x' and f'y{colname}' to prevent conflicts (e.g.,
-        # colname='x'). After melt(), we'll drop the 'y' prefix.
-        data = {"x": self.x_series.json_compatible_values}
-        for y_column in self.y_columns:
-            data["y" + y_column.name] = y_column.series
-        dataframe = pd.DataFrame(data)
-        vertical = dataframe.melt("x", var_name="line", value_name="y")
-        vertical.dropna(inplace=True)
-        vertical["line"] = vertical["line"].str[1:]  # drop 'y' prefix
-        return vertical.to_dict(orient="records")
+        datasets = {"x": self.x_series.json_compatible_values}  # all str/number
+        for i, y_series in enumerate(self.y_serieses):
+            datasets[f"y{i}"] = y_series.series  # all number
+        return [
+            {k: None if pd.isnull(v) else v for k, v in record.items()}
+            for record in pd.DataFrame(datasets).to_dict(orient="records")
+        ]
+
+    def to_vega_x_encoding(self) -> Dict[str, Any]:
+        ret = {
+            "field": "x",
+            "type": self.x_series.vega_data_type,
+            "axis": {"title": self.x_axis_label},
+        }
+
+        if self.x_series.vega_data_type == "quantitative":
+            if self.x_axis_tick_format is not None:
+                ret["axis"]["format"] = self.x_axis_tick_format
+
+            if self.x_axis_tick_format and self.x_axis_tick_format[-1] == "d":
+                ret["axis"]["tickMinStep"] = 1
+        elif self.x_series.vega_data_type == "ordinal":
+            ret["axis"]["labelAngle"] = 0
+            ret["axis"]["labelOverlap"] = False
+            ret["sort"] = None
+        elif self.x_series.vega_data_type == "temporal":
+            special_case = self.x_series.timestamp_tick_values_and_format
+            if special_case:
+                ticks, tick_format = special_case
+                ret["axis"]["values"] = [tick.isoformat() for tick in ticks]
+                ret["axis"]["labelExpr"] = f'utcFormat(datum.value, "{tick_format}")'
+                ret["axis"]["labelOverlap"] = "parity"  # no auto-rotating
+                ret["axis"]["labelSeparation"] = 5
+                ret["scale"] = {
+                    "domainMin": {
+                        "expr": "utc(%d, %d, %d)"
+                        % (ticks[0].year, ticks[0].month - 1, ticks[0].day)
+                    }
+                }
+
+        return ret
+
+    def to_vega_color_legend(self):
+        if len(self.y_serieses) == 1:
+            return None  # explicitly set "no legend"
+
+        return {
+            "title": None,
+            "labelExpr": (
+                # lookup label based on datum.value -- e.g., "y0"
+                json.dumps({f"y{i}": y.name for i, y in enumerate(self.y_serieses)})
+                + "[datum.value]"
+            ),
+        }
+
+    def to_vega_color_scale(self):
+        return {
+            "domain": [f"y{i}" for i in range(len(self.y_serieses))],
+            "range": [y.color for y in self.y_serieses],
+        }
 
     def to_vega(self) -> Dict[str, Any]:
-        """
-        Build a Vega bar chart or grouped bar chart.
-        """
+        """Build a Vega line chart."""
+
+        LABEL_COLOR = "#383838"
+        TITLE_COLOR = "#686768"
+        HOVER_COLOR = TITLE_COLOR
+        GRID_COLOR = "#ededed"
         ret = {
-            "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+            "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
             "title": self.title,
             "config": {
+                "font": "Roboto, Helvetica, sans-serif",
                 "title": {
                     "offset": 15,
                     "color": "#383838",
-                    "font": "Nunito Sans, Helvetica, sans-serif",
                     "fontSize": 20,
                     "fontWeight": "normal",
                 },
                 "axis": {
                     "tickSize": 3,
+                    "tickColor": GRID_COLOR,  # fade into grid
                     "titlePadding": 20,
                     "titleFontSize": 15,
-                    "titleFontWeight": 100,
-                    "titleColor": "#686768",
-                    "titleFont": "Nunito Sans, Helvetica, sans-serif",
-                    "labelFont": "Nunito Sans, Helvetica, sans-serif",
-                    "labelFontWeight": 400,
-                    "labelColor": "#383838",
+                    "titleFontWeight": "normal",
+                    "titleColor": TITLE_COLOR,
+                    "labelColor": LABEL_COLOR,
                     "labelFontSize": 12,
                     "labelPadding": 10,
-                    "gridOpacity": 0.5,
+                    "gridColor": GRID_COLOR,
+                    "domain": False,  # no bold lines along left + bottom
+                },
+                "axisY": {
+                    "title": self.y_axis_label,
+                    "format": self.y_axis_tick_format,
+                },
+                "axisX": {
+                    "title": self.x_axis_label or self.x_series.column.name,
                 },
             },
-            "data": {"values": self.to_vega_data_values()},
-            "mark": {"type": "line", "point": {"shape": "circle"}},
+            "data": {
+                "values": self.to_vega_inline_data(),
+            },
             "encoding": {
-                "x": {
-                    "field": "x",
-                    "type": self.x_series.vega_data_type,
-                    "axis": {"title": self.x_axis_label},
-                },
-                "y": {
-                    "field": "y",
-                    "type": "quantitative",
-                    "axis": {
-                        "title": self.y_axis_label,
-                        "format": self.y_axis_tick_format,
+                "x": self.to_vega_x_encoding(),  # for all layers
+                "tooltip": [
+                    {
+                        "field": "x",
+                        "type": self.x_series.vega_data_type,
                     },
-                },
-                "color": {
-                    "field": "line",
-                    "type": "nominal",
-                    "scale": {
-                        "domain": [y.name for y in self.y_columns],
-                        "range": [y.color for y in self.y_columns],
-                    },
-                },
+                    *[
+                        {
+                            "field": f"y{i}",
+                            "type": "quantitative",
+                            "title": y_series.name,
+                        }
+                        for i, y_series in enumerate(self.y_serieses)
+                    ],
+                ],
             },
+            "layer": [
+                # Each column gets two layers:
+                #
+                # 1. a "line" layer, with the line, point and legend details
+                # 2. a "point" layer, only shown when hovering
+                #
+                # There's also a "hover" layer (a vertical "rule") in between.
+                #
+                # For three columns, the layers are (from bottom to top):
+                #
+                # * y0-line (with a point)
+                # * y1-line (with a point)
+                # * y2-line (with a point)
+                # * rule (on hover)
+                # * y0-point (on hover)
+                # * y1-point (on hover)
+                # * y2-point (on hover)
+                #
+                # All the "hover" stuff appears on _top_ of all the not-hover
+                # stuff. That breaks spatial rules a bit (y1-point can appear
+                # atop y0-line, on hover), for the sake of readability (the
+                # user _wants_ to see y1-point on hover).
+                *[
+                    {
+                        "mark": {
+                            # yN-line
+                            "type": "line",
+                            "point": {
+                                # There's always a visible dot (this one). The
+                                # yN-point layer draws _another_ dot on top.
+                                # (Rationale: we can't control this point's
+                                # color separately from its line's color.)
+                                "shape": "circle",
+                                "size": 36,
+                            },
+                        },
+                        "encoding": {
+                            "y": {
+                                "field": f"y{i}",
+                                "type": "quantitative",
+                                "title": y_series.name,
+                            },
+                            "color": {
+                                # This would normally be a constant, but one
+                                # vega-lite side-effect is to populate the
+                                # legend.
+                                "datum": f"y{i}",
+                                **(
+                                    {
+                                        "scale": self.to_vega_color_scale(),
+                                        "legend": self.to_vega_color_legend(),
+                                    }
+                                    if i == 0
+                                    else {}
+                                ),
+                            },
+                        },
+                    }
+                    for i, y_series in enumerate(self.y_serieses)
+                ],
+                {
+                    # https://vega.github.io/vega-lite/examples/interactive_multi_line_tooltip.html
+                    #
+                    # The "rule" layer (vertical line) is before all the "line"
+                    # layers so the lines are drawn on top of the rule.
+                    "mark": {
+                        # rule
+                        "type": "rule",
+                        "strokeWidth": 2,
+                        "color": HOVER_COLOR,
+                    },
+                    "selection": {
+                        "hover": {
+                            "type": "single",
+                            "on": "mouseover",
+                            "empty": "none",
+                            # https://vega.github.io/vega-lite/docs/nearest.html
+                            "nearest": True,
+                            "clear": "mouseout",
+                        },
+                    },
+                    "encoding": {
+                        # Only the selected ("hover") rule has opacity
+                        "opacity": {
+                            "condition": {
+                                "selection": "hover",
+                                "value": 1,
+                            },
+                            "value": 0,
+                        },
+                    },
+                },
+                *[
+                    {
+                        "mark": {
+                            # yN-point
+                            "type": "point",
+                            "size": 49,
+                            "fill": y_series.color,
+                            "strokeWidth": 2,
+                            "stroke": HOVER_COLOR,
+                        },
+                        "encoding": {
+                            "y": {
+                                # repeated
+                                "field": f"y{i}",
+                                "type": "quantitative",
+                            },
+                            "opacity": {
+                                # Only the selected ("hover") yN-point has opacity
+                                "condition": {"selection": "hover", "value": 1},
+                                "value": 0,
+                            },
+                        },
+                    }
+                    for i, y_series in enumerate(self.y_serieses)
+                ],
+            ],
         }
 
-        if self.x_axis_tick_format is not None:
-            ret["encoding"]["x"]["axis"]["format"] = self.x_axis_tick_format
-
-        if self.x_axis_tick_format and self.x_axis_tick_format[-1] == "d":
-            ret["encoding"]["x"]["axis"]["tickMinStep"] = 1
-
-        if self.x_series.vega_data_type == "ordinal":
-            ret["encoding"]["x"]["axis"].update(
-                {"labelAngle": 0, "labelOverlap": False}
-            )
-            ret["encoding"]["x"]["sort"] = None
-
         if self.y_axis_tick_format[-1] == "d":
-            ret["encoding"]["y"]["axis"]["tickMinStep"] = 1
+            ret["config"]["axisY"]["tickMinStep"] = 1
 
-        if len(self.y_columns) == 1:
-            ret["encoding"]["color"]["legend"] = None
-        else:
-            ret["encoding"]["color"]["legend"] = {"title": None}
+        if len(self.y_serieses) > 1:
             ret["config"]["legend"] = {
-                "symbolType": "circle",
-                "titlePadding": 20,
-                "padding": 15,
-                "offset": 0,
-                "labelFontSize": 12,
                 "rowPadding": 10,
-                "labelFont": "Nunito Sans, Helvetica, sans-serif",
-                "labelColor": "#383838",
-                "labelFontWeight": "normal",
+                "labelFontSize": 12,
+                "labelColor": LABEL_COLOR,
             }
 
         return ret
 
 
-@dataclass
-class YColumn:
+class YColumn(NamedTuple):
     column: str
     color: str
 
 
-@dataclass
-class Form:
-    """
-    Parameter dict specified by the user: valid types, unchecked values.
-    """
+class Form(NamedTuple):
+    """Parameter dict specified by the user: valid types, unchecked values."""
 
     title: str
     x_axis_label: str
@@ -285,12 +504,10 @@ class Form:
     def from_params(cls, *, y_columns: List[Dict[str, str]], **kwargs):
         return cls(**kwargs, y_columns=[YColumn(**d) for d in y_columns])
 
-    def _make_x_series(
+    def _make_x_series_and_mask(
         self, table: pd.DataFrame, input_columns: Dict[str, Any]
-    ) -> XSeries:
-        """
-        Create an XSeries ready for charting, or raise ValueError.
-        """
+    ) -> Tuple[XSeries, np.array]:
+        """Create an XSeries ready for charting, or raise GentleValueError."""
         if not self.x_column:
             raise GentleValueError(
                 i18n.trans("noXAxisError.message", "Please choose an X-axis column")
@@ -333,11 +550,10 @@ class Form:
                 )
             )
 
-        return XSeries(series, column)
+        return XSeries(safe_x_values, column), ~nulls
 
     def make_chart(self, table: pd.DataFrame, input_columns: Dict[str, Any]) -> Chart:
-        """
-        Create a Chart ready for charting, or raise ValueError.
+        """Create a Chart ready for charting, or raise GentleValueError.
 
         Features:
         * Error if X column is missing
@@ -353,13 +569,14 @@ class Form:
         * Error if a Y column has fewer than 1 non-missing value
         * Default title, X and Y axis labels
         """
-        x_series = self._make_x_series(table, input_columns)
+        x_series, mask = self._make_x_series_and_mask(table, input_columns)
+
         if not self.y_columns:
             raise GentleValueError(
                 i18n.trans("noYAxisError.message", "Please choose a Y-axis column")
             )
 
-        y_columns = []
+        y_serieses = []
         for ycolumn in self.y_columns:
             if ycolumn.column == self.x_column:
                 raise GentleValueError(
@@ -382,11 +599,13 @@ class Form:
                     )
                 )
 
+            series = series[mask]  # line up with x_series
+            series.reset_index(drop=True, inplace=True)
+
             # Find how many Y values can actually be plotted on the X axis. If
             # there aren't going to be any Y values on the chart, raise an
             # error.
-            matches = pd.DataFrame({"X": x_series.series, "Y": series}).dropna()
-            if not matches["X"].count():
+            if not series.count():
                 raise GentleValueError(
                     i18n.trans(
                         "emptyAxisError.message",
@@ -395,13 +614,13 @@ class Form:
                     )
                 )
 
-            y_columns.append(
+            y_serieses.append(
                 YSeries(series, ycolumn.color, input_columns[ycolumn.column].format)
             )
 
         title = self.title or "Line Chart"
         x_axis_label = self.x_axis_label or x_series.name
-        y_axis_label = self.y_axis_label or y_columns[0].name
+        y_axis_label = self.y_axis_label or y_serieses[0].name
 
         return Chart(
             title=title,
@@ -409,8 +628,8 @@ class Form:
             x_axis_tick_format=x_series.d3_tick_format,
             y_axis_label=y_axis_label,
             x_series=x_series,
-            y_columns=y_columns,
-            y_axis_tick_format=y_columns[0].d3_tick_format,
+            y_serieses=y_serieses,
+            y_axis_tick_format=y_serieses[0].d3_tick_format,
         )
 
 

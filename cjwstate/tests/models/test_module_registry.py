@@ -23,12 +23,12 @@ class ModuleRegistryTest(DbTestCase):
     # consistent -- which means one test could read a file another test wrote.
 
     def test_latest_internal(self):
-        zf = MODULE_REGISTRY.latest("pythoncode")
-        self.assertEqual(zf.get_spec().id_name, "pythoncode")
+        zf = MODULE_REGISTRY.latest("googlesheets")
+        self.assertEqual(zf.get_spec().id_name, "googlesheets")
 
     def test_all_latest_internal(self):
-        zf = MODULE_REGISTRY.all_latest()["pythoncode"]
-        self.assertEqual(zf.get_spec().id_name, "pythoncode")
+        zf = MODULE_REGISTRY.all_latest()["googlesheets"]
+        self.assertEqual(zf.get_spec().id_name, "googlesheets")
 
     def test_db_s3_latest_order_by_last_update_time(self):
         # old version

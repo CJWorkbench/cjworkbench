@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-03-10 10:17+0000\n"
+"POT-Creation-Date: 2020-10-08 18:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -36,11 +36,15 @@ msgstr "Έχει σειρά κεφαλίδας"
 msgid "_spec.parameters.version_select.name"
 msgstr "Ενημέρωση"
 
-#: loadurl.py:109
+#: loadurl.py:132
 msgid "prompt.disableHeaderHandling"
-msgstr "Κάντε λήψη αυτού του αρχείου εκ νέου για να απενεργοποιήσετε τον χειρισμό της γραμμής κεφαλίδας"
+msgstr ""
+"Κάντε λήψη αυτού του αρχείου εκ νέου για να απενεργοποιήσετε τον χειρισμό"
+" της γραμμής κεφαλίδας"
 
-#: loadurl.py:125
+#: loadurl.py:153
 msgid "error.unhandledContentType"
-msgstr "Ο διακομιστής απάντησε με μη υποστηριζόμενο τύπο περιεχομένου {content_type}. Χρησιμοποιήστε διαφορετική διεύθυνση URL."
+msgstr ""
+"Ο διακομιστής απάντησε με μη υποστηριζόμενο τύπο περιεχομένου "
+"{content_type}. Χρησιμοποιήστε διαφορετική διεύθυνση URL."
 

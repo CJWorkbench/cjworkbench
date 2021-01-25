@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-02 15:44+0000\n"
+"POT-Creation-Date: 2020-12-15 17:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.0\n"
 
 msgid "_spec.name"
 msgstr "Γραμμικό γράφημα"
@@ -48,11 +48,11 @@ msgstr "Ετικέτα"
 msgid "_spec.parameters.y_columns.name"
 msgstr "Στήλη"
 
-#: linechart.py:296
+#: linechart.py:513
 msgid "noXAxisError.message"
 msgstr "Επιλέξτε μια στήλη για τον άξονα X"
 
-#: linechart.py:313
+#: linechart.py:530
 msgid "tooManyTextValuesError.message"
 msgstr ""
 "Η στήλη \"{x_column}\" έχει {n_safe_x_values} τιμές κειμένου. Δεν μπορούν"
@@ -60,34 +60,34 @@ msgstr ""
 "10 ή λιγότερες σειρές ή μετατρέψτε τη στήλη \"{x_column}\" σε αριθμό ή "
 "ημερομηνία."
 
-#: linechart.py:320
+#: linechart.py:537
 msgid "noValuesError.message"
 msgstr "Η στήλη \"{column_name}\" δεν έχει τιμές. Επιλέξτε μια στήλη με δεδομένα."
 
-#: linechart.py:329
+#: linechart.py:546
 msgid "onlyOneValueError.message"
 msgstr ""
 "Η στήλη \"{column_name}\" έχει μόνο 1 τιμή. Επιλέξτε μια στήλη με 2 ή "
 "περισσότερες τιμές."
 
-#: linechart.py:359
+#: linechart.py:576
 msgid "noYAxisError.message"
 msgstr "Επιλέξτε μια στήλη για τον άξονα Y"
 
-#: linechart.py:366
+#: linechart.py:583
 msgid "sameAxesError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y {column_name} επειδή "
 "είναι η στήλη του άξονα X"
 
-#: linechart.py:377
+#: linechart.py:594
 msgid "axisNotNumericError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης \"{column_name}\" του άξονα Y "
 "επειδή δεν είναι αριθμητική. Μετατρέψτε την σε αριθμούς πριν τη "
 "σχεδιάσετε."
 
-#: linechart.py:391
+#: linechart.py:610
 msgid "emptyAxisError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y \"{column_name}\" "

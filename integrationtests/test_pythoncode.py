@@ -8,6 +8,8 @@ class TestPythonCode(LoggedInIntegrationTest):
         b = self.browser
         b.click_button("Create Workflow")
 
+        self.import_module("pythoncode")
+
         # Empty step list
         b.wait_for_element(".step-list", wait=True)
         self.add_data_step("Python")

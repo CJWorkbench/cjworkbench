@@ -165,7 +165,7 @@ def visible_modules(request) -> Dict[str, ModuleZipfile]:
     """Load all ModuleZipfiles the user may use."""
     ret = dict(MODULE_REGISTRY.all_latest())  # shallow copy
 
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and "pythoncode" in ret:
         del ret["pythoncode"]
 
     return ret

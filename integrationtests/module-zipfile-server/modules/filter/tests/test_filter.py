@@ -187,6 +187,14 @@ def _test_render(
             ):
                 assert output_column.type == expected_column.type
                 assert output_column.to_pylist() == expected_column.to_pylist()
+                if pa.types.is_dictionary(output_column.type):
+                    for output_chunk, expected_chunk in zip(
+                        output_column.iterchunks(), expected_column.iterchunks()
+                    ):
+                        assert (
+                            output_chunk.dictionary.to_pylist()
+                            == expected_chunk.dictionary.to_pylist()
+                        )
 
 
 def test_no_condition():

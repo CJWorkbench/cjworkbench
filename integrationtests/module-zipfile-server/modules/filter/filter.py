@@ -6,6 +6,18 @@ from cjwmodule import i18n
 from cjwmodule.arrow.condition import ConditionError, condition_to_mask
 
 
+def _filter_column(column: pa.ChunkedArray, mask: pa.ChunkedArray) -> pa.ChunkedArray:
+    result = pa.compute.filter(column, mask)
+
+    if pa.types.is_dictionary(result.type):
+        # Re-encode dictionary, so no extra values are there
+        #
+        # TODO optimize!
+        result = pa.compute.cast(result, pa.utf8()).dictionary_encode()
+
+    return result
+
+
 def _filter_table(arrow_table: pa.Table, params: Dict[str, Any]) -> pa.Table:
     if not params["condition"]:
         return arrow_table
@@ -16,9 +28,10 @@ def _filter_table(arrow_table: pa.Table, params: Dict[str, Any]) -> pa.Table:
         condition = {"operation": "not", "condition": params["condition"]}
 
     mask = condition_to_mask(arrow_table, condition)  # or raise ConditionError
+
     return pa.table(
         {
-            name: pa.compute.filter(column, mask)
+            name: _filter_column(column, mask)
             for name, column in zip(arrow_table.column_names, arrow_table.itercolumns())
         }
     )

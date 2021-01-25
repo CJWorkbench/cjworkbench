@@ -342,7 +342,12 @@ class RenderTests(unittest.TestCase):
             table, errors = call_render(P(has_header=False), FetchResult(fetched_path))
             assert_arrow_table_equals(table, {"A": [1, 2], "B": [3, 4]})
             self.assertEqual(
-                errors, [i18n_message("prompt.disableHeaderHandling",)],
+                errors,
+                [
+                    i18n_message(
+                        "prompt.disableHeaderHandling",
+                    )
+                ],
             )
 
     def test_render_has_header_true(self):
@@ -425,7 +430,10 @@ class RenderTests(unittest.TestCase):
                 [
                     # Wrong MIME type -- so we detect from filename
                     ("content-type", "application/octet-stream"),
-                    ("content-disposition", 'attachment; filename="file.tsv"',),
+                    (
+                        "content-disposition",
+                        'attachment; filename="file.tsv"',
+                    ),
                 ],
                 # bytes will prove we used "file.tsv", not "file.csv".
                 io.BytesIO(b"A,B\tC,D\na,b\tc,d"),
@@ -463,6 +471,19 @@ class RenderTests(unittest.TestCase):
             )
             table, errors = call_render(P(has_header=True), FetchResult(http_path))
             assert_arrow_table_equals(table, {"A": ["a"], "B": ["b"]})
+            self.assertEqual(errors, [])
+
+    def test_render_csv_use_content_type_charset(self):
+        with tempfile_context(prefix="fetch-") as http_path:
+            httpfile.write(
+                http_path,
+                {"url": "http://example.com/file.unknownext"},
+                "200 OK",
+                [("content-type", "text/csv; charset=iso-8859-1")],
+                io.BytesIO(b"A,B\n\xc3\xa1a,b"),  # looks like UTF-8; force latin1
+            )
+            table, errors = call_render(P(has_header=True), FetchResult(http_path))
+            assert_arrow_table_equals(table, {"A": ["Ã¡a"], "B": ["b"]})
             self.assertEqual(errors, [])
 
     def test_render_json(self):

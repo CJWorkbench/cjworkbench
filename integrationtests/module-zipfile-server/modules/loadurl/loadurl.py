@@ -110,7 +110,7 @@ _CHARSET_REGEX = re.compile(r";\s*charset=([-!#$%&'+^_`{}~a-zA-Z0-9]+)", re.IGNO
 
 
 def guess_charset_or_none(content_type: str) -> str:
-    m = _CHARSET_REGEX.match(content_type)
+    m = _CHARSET_REGEX.search(content_type)
     if m:
         return m.group(1)
     else:

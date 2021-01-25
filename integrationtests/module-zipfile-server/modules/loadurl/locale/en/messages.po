@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-03-10 10:17+0000\n"
+"POT-Creation-Date: 2020-10-08 18:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -36,11 +36,11 @@ msgstr "Has header row"
 msgid "_spec.parameters.version_select.name"
 msgstr "Update"
 
-#: loadurl.py:109
+#: loadurl.py:132
 msgid "prompt.disableHeaderHandling"
 msgstr "Please re-download this file to disable header-row handling"
 
-#: loadurl.py:125
+#: loadurl.py:153
 msgid "error.unhandledContentType"
 msgstr ""
 "Server responded with unhandled Content-Type {content_type}. Please use a"

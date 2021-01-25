@@ -2,44 +2,38 @@
 <html lang="en-US">
   <head>
     <title>Python Console Output</title>
-    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono" rel="stylesheet">
     <style>
-* {
-  box-sizing: border-box;
-}
-
 html, body {
   padding: 0;
   margin: 0;
-  background: #373939;
-  color: White;
+  background: transparent;
+  color: #373939;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden auto;
 }
 
 pre {
-  padding: 1rem;
+  padding: 0;
   margin: 0;
-  width: 100%;
   white-space: pre-wrap;
   font-size: 1rem;
-  font-family: 'Inconsolata', monospace;
-  font-weight: 400;
+  font-family: "Roboto Mono", monospace;
 }
 
 pre:empty {
-  padding: 0;
+  display: none;
 }
 
-/* title  */
 pre:not(:empty)::before {
-  font-size: 1rem;
-  font-family: Roboto, Helvetica, sans-serif;
-  font-weight: bold;
-  content: 'Console';
-  letter-spacing: .06rem;
-  padding-bottom: 1rem;
+  content: 'CONSOLE OUTPUT';
+  text-decoration: underline;
   display: block;
-  text-transform: uppercase;
-  opacity: .5;
+  font-weight: bold;
+  padding-bottom: .5rem;
 }
     </style>
   </head>
@@ -47,13 +41,24 @@ pre:not(:empty)::before {
     <pre></pre>
     <script>
 const pre = document.querySelector('pre')
+let inNotify = false
 
 function notifySize () {
+  if (inNotify) return // don't recurse!
+
+  inNotify = true
+
+  document.body.style.overflow = 'hidden scroll' // so scrollbar affects height calculation
+  const height = pre.clientHeight || 0
+  document.body.style.overflow = 'hidden auto'
+
+  inNotify = false
+
   window.parent.postMessage({
     from: 'outputIframe',
     type: 'resize',
     stepId: parseInt(/(\d+)\/output/.exec(String(window.location))[1], 10),
-    height: pre.clientHeight,
+    height
   }, window.location.origin)
 }
 

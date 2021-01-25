@@ -298,9 +298,6 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
             Workflow.objects.filter(owner=None).count(), 1
         )  # should have duplicated the  wf with this API call
 
-        # Ensure the anonymous users can't access the Python module
-        self.assertNotContains(response, '"pythoncode"')
-
     @patch.object(Workflow, "duplicate_anonymous")
     def test_workflow_prevent_race_creating_two_demos_per_user(
         self, duplicate_anonymous
