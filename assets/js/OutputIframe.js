@@ -170,7 +170,10 @@ export class OutputIframe extends React.PureComponent {
       return null
     }
 
-    const style = heightFromIframe === null ? null : { height: Math.ceil(heightFromIframe) }
+    const style = heightFromIframe === null ? null : {
+      height: Math.ceil(heightFromIframe),
+      maxHeight: '50%'
+    }
 
     return (
       <div className='outputpane-iframe' style={style}>
