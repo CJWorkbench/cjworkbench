@@ -166,25 +166,24 @@ export class OutputIframe extends React.PureComponent {
     const { heightFromIframe } = this.state
     const src = `/api/wfmodules/${stepId}/output#revision=${deltaId}`
 
-    const defaultHeight = visible ? '100%' : '0'
-    const height = heightFromIframe === null ? defaultHeight : `${Math.ceil(heightFromIframe)}px`
+    if (!visible || heightFromIframe === 0) {
+      return null
+    }
+
+    const style = heightFromIframe === null ? null : { height: Math.ceil(heightFromIframe) }
 
     return (
-      <div className='outputpane-iframe' style={{ height }}>
-        {!visible ? null : (
-          <>
-            <iframe src={src} />
-            <button
-              name='embed'
-              title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
-              onClick={this.handleClickOpenEmbedModal}
-            >
-              <EmbedIcon />
-            </button>
-            {this.renderPublicModal()}
-            {this.renderEmbedModal()}
-          </>
-        )}
+      <div className='outputpane-iframe' style={style}>
+        <iframe src={src} />
+        <button
+          name='embed'
+          title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
+          onClick={this.handleClickOpenEmbedModal}
+        >
+          <EmbedIcon />
+        </button>
+        {this.renderPublicModal()}
+        {this.renderEmbedModal()}
       </div>
     )
   }

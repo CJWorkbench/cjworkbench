@@ -1,11 +1,12 @@
 // iframe for charts
 .outputpane-iframe {
   flex: 0 0 auto;
-  width: 100%;
-  height: 100%; // OutputIframe.js will override this ...
   position: relative;
   background: white;
+  box-sizing: content-box;
   $iframe-padding: 1.6rem;
+  padding: $iframe-padding; // contribute to height
+  height: calc(100% - 2 * #{$iframe-padding}); // OutputIframe.js may override this ...
 
   iframe {
     border: 0;
