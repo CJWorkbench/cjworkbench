@@ -947,14 +947,14 @@ class ProcessResult:
         elif isinstance(value, ProcessResult):
             # TODO ban `ProcessResult` retvals from `fetch()`, then omit this
             # case. ProcessResult should be internal.
-            validate_dataframe(value.dataframe)
+            validate_dataframe(value.dataframe, settings=settings)
             return value
         elif isinstance(value, str):
             return cls(errors=[ProcessResultError(I18nMessage.coerce(value))])
         elif isinstance(value, list):
             return cls(errors=ProcessResultError.coerce_list(value))
         elif isinstance(value, pd.DataFrame):
-            validate_dataframe(value)
+            validate_dataframe(value, settings=settings)
             columns = _infer_columns(value, {}, try_fallback_columns)
             return cls(dataframe=value, columns=columns)
         elif isinstance(value, dict):
@@ -985,7 +985,7 @@ class ProcessResult:
 
             errors = ProcessResultError.coerce_list(error)
 
-            validate_dataframe(dataframe)
+            validate_dataframe(dataframe, settings=settings)
             columns = _infer_columns(dataframe, {}, try_fallback_columns)
             return cls(dataframe=dataframe, errors=errors, columns=columns)
         else:
@@ -1013,7 +1013,7 @@ class ProcessResult:
 
             errors = ProcessResultError.coerce_list(error)
 
-            validate_dataframe(dataframe)
+            validate_dataframe(dataframe, settings=settings)
             columns = _infer_columns(dataframe, {}, try_fallback_columns)
             return cls(dataframe=dataframe, errors=errors, json=json, columns=columns)
         else:
@@ -1049,7 +1049,7 @@ class ProcessResult:
                 raise ValueError("You cannot return quick fixes without an error")
 
             dataframe = value.pop("dataframe", pd.DataFrame())
-            validate_dataframe(dataframe)
+            validate_dataframe(dataframe, settings=settings)
 
             column_formats = value.pop("column_formats", {})
             value["columns"] = _infer_columns(
