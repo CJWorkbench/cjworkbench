@@ -35,6 +35,7 @@ replace
 reshape
 rowstoheader
 scatterplot
+scrapetable
 selectcolumns
 selectsql
 sentimentanalysis
