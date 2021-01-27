@@ -324,13 +324,18 @@ msgstr ""
 msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
+#. default-message: Billing
+#: assets/js/WfHamburgerMenu.js:80
+msgid "js.WfHamburgerMenu.menu.billing"
+msgstr ""
+
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:76
+#: assets/js/WfHamburgerMenu.js:73
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:71
+#: assets/js/WfHamburgerMenu.js:92
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
@@ -340,13 +345,18 @@ msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:81
+#: assets/js/WfHamburgerMenu.js:101
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
+msgstr ""
+
+#. default-message: Upgrade
+#: assets/js/WfHamburgerMenu.js:83
+msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
 #. default-message: menu
@@ -678,19 +688,19 @@ msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: SETTINGS
-#: assets/js/Workflows/Navbar.js:51
+#: assets/js/Workflows/Navbar.js:53
 msgid "js.Workflows.NavBar.links.settings"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: TRAINING
-#: assets/js/Workflows/Navbar.js:47
+#: assets/js/Workflows/Navbar.js:49
 msgid "js.Workflows.NavBar.links.training"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: WORKFLOWS
-#: assets/js/Workflows/Navbar.js:44
+#: assets/js/Workflows/Navbar.js:46
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 

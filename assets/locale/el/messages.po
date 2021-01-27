@@ -311,11 +311,15 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:76
+#: assets/js/WfHamburgerMenu.js:80
+msgid "js.WfHamburgerMenu.menu.billing"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:73
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:71
+#: assets/js/WfHamburgerMenu.js:92
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
@@ -323,13 +327,17 @@ msgstr "Εισαγωγή Μονάδας (Module)"
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Γλώσσα"
 
-#: assets/js/WfHamburgerMenu.js:81
+#: assets/js/WfHamburgerMenu.js:101
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
+
+#: assets/js/WfHamburgerMenu.js:83
+msgid "js.WfHamburgerMenu.menu.plan"
+msgstr ""
 
 #: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
@@ -601,17 +609,17 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Σύνδεση"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:51
+#: assets/js/Workflows/Navbar.js:53
 msgid "js.Workflows.NavBar.links.settings"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:47
+#: assets/js/Workflows/Navbar.js:49
 msgid "js.Workflows.NavBar.links.training"
 msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:44
+#: assets/js/Workflows/Navbar.js:46
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "ΡΟΕΣ ΕΡΓΑΣΙΩΝ"
 

@@ -31,7 +31,8 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
             WORKFLOWS
           </a>
           <a
-            class="active"
+            class="inactive"
+            href="/lessons/en"
           >
             TRAINING
           </a>
@@ -607,7 +608,8 @@ exports[`Workflow list page renders Recipes correctly 1`] = `
             WORKFLOWS
           </a>
           <a
-            class="active"
+            class="inactive"
+            href="/lessons/en"
           >
             TRAINING
           </a>
@@ -1183,7 +1185,8 @@ exports[`Workflow list page renders Shared correctly 1`] = `
             WORKFLOWS
           </a>
           <a
-            class="active"
+            class="inactive"
+            href="/lessons/en"
           >
             TRAINING
           </a>

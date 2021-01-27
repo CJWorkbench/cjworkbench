@@ -286,11 +286,15 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:76
+#: assets/js/WfHamburgerMenu.js:80
+msgid "js.WfHamburgerMenu.menu.billing"
+msgstr "Billing"
+
+#: assets/js/WfHamburgerMenu.js:73
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:71
+#: assets/js/WfHamburgerMenu.js:92
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
@@ -298,13 +302,17 @@ msgstr "Import Module"
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:81
+#: assets/js/WfHamburgerMenu.js:101
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
+
+#: assets/js/WfHamburgerMenu.js:83
+msgid "js.WfHamburgerMenu.menu.plan"
+msgstr "Upgrade"
 
 #: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
@@ -573,17 +581,17 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:51
+#: assets/js/Workflows/Navbar.js:53
 msgid "js.Workflows.NavBar.links.settings"
 msgstr "SETTINGS"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:47
+#: assets/js/Workflows/Navbar.js:49
 msgid "js.Workflows.NavBar.links.training"
 msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:44
+#: assets/js/Workflows/Navbar.js:46
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "WORKFLOWS"
 
