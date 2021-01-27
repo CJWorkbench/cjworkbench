@@ -1275,29 +1275,28 @@ msgstr "Version"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} of {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
 msgstr "Edit workflow"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:54
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
 msgstr "#/day"
 
 #. The {1} argument is a tab name
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:84
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr "Step {0} on {1} makes {2} updates per day."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:46
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
 "Here are the steps that count against your limit. Adjust their update "
 "times or set them to manual, then click \"Retry\" above."
 
-#. The tag is a mailto url
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
-msgstr "Need a higher limit? Send us a short <0>email</0>."
+msgstr "Need a higher limit? <0>Upgrade</0>"
 
 #. The two tags add emphasis
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:33
@@ -1306,11 +1305,11 @@ msgstr ""
 "You're requesting <0>{0}</0> updates per day across all your workflows. "
 "Your daily limit is <1>{1}</1>."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
 msgstr "You asked for this step to make {0} updates per day."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
 msgstr "This workflow"
 
@@ -1319,7 +1318,7 @@ msgstr "This workflow"
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
 msgstr "AUTO-UPDATE QUOTA EXCEEDED"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:55
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr "Workflow"
 
@@ -1725,29 +1724,17 @@ msgstr "Unpaid"
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr "Subscribe"
 
-#: assets/js/settings/Billing/Subscription.js:28
-msgid "js.settings.Billing.Subscription.createdAt"
-msgstr "Subscribed"
-
-#: assets/js/settings/Billing/Subscription.js:30
-msgid "js.settings.Billing.Subscription.status"
-msgstr "Last Renewed"
-
-#: assets/js/settings/Billing/Subscription.js:26
-msgid "js.settings.Billing.Subscription.stripeStatus"
-msgstr "Status"
-
-#: assets/js/settings/Billing/index.js:35
+#: assets/js/settings/Billing/index.js:36
 msgid "js.settings.Billing.manage.description"
 msgstr ""
 "You may use Stripe to view invoices, update credit card details or cancel"
 " subscriptions."
 
-#: assets/js/settings/Billing/index.js:33
+#: assets/js/settings/Billing/index.js:34
 msgid "js.settings.Billing.manage.title"
 msgstr "Manage payments"
 
-#: assets/js/settings/Billing/index.js:26
+#: assets/js/settings/Billing/index.js:27
 msgid "js.settings.Billing.subscriptions.empty"
 msgstr "You are not subscribed. Please <0>upgrade</0>."
 
@@ -1788,9 +1775,19 @@ msgid "js.settings.SettingsPages.plan.title"
 msgstr "Plan"
 
 #. e.g., "$8/month"
-#: assets/js/settings/Billing/Subscription.js:21
+#: assets/js/settings/Billing/Subscription.js:22
 msgid "js.settings.billing.Subscription.amount"
 msgstr "<0/>/month"
+
+#. e.g., "Subscribed January 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:29
+msgid "js.settings.billing.Subscription.createdAt"
+msgstr "Subscribed <0>{0}</0>"
+
+#. e.g., "Renewed February 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:35
+msgid "js.settings.billing.Subscription.renewedAt"
+msgstr "Renewed <0>{0}</0>"
 
 #: assets/js/settings/settingsPages.js:13
 msgid "js.settings.settingsPages.billing.title"

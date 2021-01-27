@@ -1,10 +1,13 @@
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
 from django.utils import timezone
-from server.handlers.autofetch import list_autofetches_json, isoformat
+
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
+from cjworkbench.models.plan import Plan
+from cjworkbench.models.subscription import Subscription
 from cjworkbench.models.userprofile import UserProfile
+from server.handlers.autofetch import list_autofetches_json, isoformat
 
 
 IsoDate1 = "2019-06-18T19:35:57.123Z"
@@ -16,6 +19,7 @@ class AutoupdateTest(DbTestCase):
 
     def test_list_autofetches_empty(self):
         user = User.objects.create(username="a", email="a@example.org")
+        UserProfile.objects.create(user=user, max_fetches_per_day=500)
         Workflow.create_and_init(owner=user)
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
@@ -31,6 +35,30 @@ class AutoupdateTest(DbTestCase):
             result, {"maxFetchesPerDay": 6000, "nFetchesPerDay": 0, "autofetches": []}
         )
 
+    def test_list_autofetches_gets_plan_max_fetches_per_day(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        plan = Plan.objects.create(
+            stripe_price_id="price_123",
+            stripe_product_id="prod_123",
+            stripe_active=True,
+            max_fetches_per_day=2000,
+            stripe_amount=100,
+            stripe_currency="usd",
+        )
+        Subscription.objects.create(
+            user=user,
+            plan=plan,
+            stripe_subscription_id="sub_123",
+            stripe_status="active",
+            created_at=timezone.now(),
+            renewed_at=timezone.now(),
+        )
+        UserProfile.objects.create(user=user, max_fetches_per_day=100)
+
+        Workflow.create_and_init(owner=user)
+        result = list_autofetches_json({"user": user, "session": None})
+        self.assertEqual(result["maxFetchesPerDay"], 2000)
+
     def test_list_autofetches_with_deleted_user_profile(self):
         # There's no good reason for UserProfile to be separate from User. But
         # it is. So here we are -- sometimes it doesn't exist.
@@ -40,11 +68,12 @@ class AutoupdateTest(DbTestCase):
         user.refresh_from_db()
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
-            result, {"maxFetchesPerDay": 500, "nFetchesPerDay": 0, "autofetches": []}
+            result, {"maxFetchesPerDay": 100, "nFetchesPerDay": 0, "autofetches": []}
         )
 
     def test_list_autofetches_two_workflows(self):
         user = User.objects.create(username="a", email="a@example.org")
+        UserProfile.objects.create(user=user, max_fetches_per_day=500)
         workflow = Workflow.create_and_init(
             owner=user, name="W1", last_viewed_at=IsoDate1
         )
@@ -180,7 +209,7 @@ class AutoupdateTest(DbTestCase):
         session = Session(session_key="foo")
         Workflow.create_and_init(anonymous_owner_session_key="foo")
         result = list_autofetches_json({"user": user, "session": session})
-        self.assertEqual(result["maxFetchesPerDay"], 500)
+        self.assertEqual(result["maxFetchesPerDay"], 100)
 
     def test_list_autofetches_ignore_other_session(self):
         user = AnonymousUser()

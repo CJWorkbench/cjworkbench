@@ -1319,28 +1319,28 @@ msgstr "Έκδοση"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} από {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
 msgstr "Επεξεργασία ροής εργασιών"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:54
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
 msgstr "#/ημέρα"
 
 #. The {1} argument is a tab name
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:84
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr "Το βήμα {0} στο {1} κάνει {2} ενημερώσεις κάθε ημέρα."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:46
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
 "Αυτά εδώ είναι τα βήματα που καταλογίζονται στο όριο σας. Ρυθμίστε τους "
 "χρόνους ενημέρωσής τους ή ρυθμίστε τους σε μη αυτόματους και, στη "
 "συνέχεια, κάντε κλικ στην \"Επανάληψη\" παραπάνω."
 
-#. The tag is a mailto url
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#, fuzzy
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
 msgstr "Χρειάζεστε υψηλότερο όριο; Στείλτε μας ένα σύντομο <0>email</0>."
 
@@ -1351,11 +1351,11 @@ msgstr ""
 "Ζητάτε <0>{0}</0> ενημερώσεις κάθε ημέρα σε όλες τις ροές εργασιών σας. "
 "Το ημερήσιο όριο είναι <1>{1}</1>."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
 msgstr "Ζητήσατε να γίνονται {0} ενημερώσεις την ημέρα για αυτό το βήμα."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
 msgstr "Αυτή η ροή εργασιών"
 
@@ -1364,7 +1364,7 @@ msgstr "Αυτή η ροή εργασιών"
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
 msgstr "ΞΕΠΕΡΑΣΤΗΚΕ ΤΟ ΟΡΙΟ ΤΩΝ ΑΥΤΟΜΑΤΩΝ ΕΝΗΜΕΡΩΣΕΩΝ"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:55
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr "Ροή εργασιών"
 
@@ -1770,27 +1770,15 @@ msgstr ""
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscription.js:28
-msgid "js.settings.Billing.Subscription.createdAt"
-msgstr ""
-
-#: assets/js/settings/Billing/Subscription.js:30
-msgid "js.settings.Billing.Subscription.status"
-msgstr ""
-
-#: assets/js/settings/Billing/Subscription.js:26
-msgid "js.settings.Billing.Subscription.stripeStatus"
-msgstr ""
-
-#: assets/js/settings/Billing/index.js:35
+#: assets/js/settings/Billing/index.js:36
 msgid "js.settings.Billing.manage.description"
 msgstr ""
 
-#: assets/js/settings/Billing/index.js:33
+#: assets/js/settings/Billing/index.js:34
 msgid "js.settings.Billing.manage.title"
 msgstr ""
 
-#: assets/js/settings/Billing/index.js:26
+#: assets/js/settings/Billing/index.js:27
 msgid "js.settings.Billing.subscriptions.empty"
 msgstr ""
 
@@ -1831,8 +1819,18 @@ msgid "js.settings.SettingsPages.plan.title"
 msgstr ""
 
 #. e.g., "$8/month"
-#: assets/js/settings/Billing/Subscription.js:21
+#: assets/js/settings/Billing/Subscription.js:22
 msgid "js.settings.billing.Subscription.amount"
+msgstr ""
+
+#. e.g., "Subscribed January 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:29
+msgid "js.settings.billing.Subscription.createdAt"
+msgstr ""
+
+#. e.g., "Renewed February 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:35
+msgid "js.settings.billing.Subscription.renewedAt"
 msgstr ""
 
 #: assets/js/settings/settingsPages.js:13

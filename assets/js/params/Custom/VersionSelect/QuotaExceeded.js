@@ -37,6 +37,11 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, m
           <strong className='max-fetches-per-day'>{numberFormatter.format(maxFetchesPerDay)}</strong>.
         </Trans>
       </p>
+      <p className='request-lift'>
+        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestLift'>
+          Need a higher limit? <a href='/settings/plan'>Upgrade</a>
+        </Trans>
+      </p>
       <p>
         <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.quotasteps'>
           Here are the steps that count against your limit.
@@ -86,12 +91,6 @@ const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, m
           ))}
         </tbody>
       </table>
-      <p className='request-lift'>
-        <Trans id='js.params.Custom.VersionSelect.QuotaExceeded.requestLift' comment='The tag is a mailto url'>
-            Need a higher limit?
-            Send us a short <a href='mailto:pierre@tablesdata.com' target='_blank' rel='noopener noreferrer'>email</a>.
-        </Trans>
-      </p>
     </div>
   )
 })
