@@ -107,49 +107,49 @@ msgid "js.ImportModuleFromGithub.status.processing"
 msgstr ""
 
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/OutputIframe.js:147
+#: assets/js/OutputIframe.js:146
 msgid "js.OutputIframe.embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/OutputIframe.js:140
+#: assets/js/OutputIframe.js:139
 msgid "js.OutputIframe.embed.header.title"
 msgstr ""
 
 #. default-message: OK
-#: assets/js/OutputIframe.js:157
+#: assets/js/OutputIframe.js:156
 msgid "js.OutputIframe.footer.OKButton"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/OutputIframe.js:123
+#: assets/js/OutputIframe.js:122
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr ""
 
 #. default-message: Set public
-#: assets/js/OutputIframe.js:126
+#: assets/js/OutputIframe.js:125
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr ""
 
 #. default-message: Get an embeddable URL
-#: assets/js/OutputIframe.js:179
+#: assets/js/OutputIframe.js:185
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: SHARE THIS WORKFLOW
-#: assets/js/OutputIframe.js:106
+#: assets/js/OutputIframe.js:105
 msgid "js.OutputIframe.private.header.title"
 msgstr ""
 
 #. default-message: Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
-#: assets/js/OutputIframe.js:116
+#: assets/js/OutputIframe.js:115
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 
 #. default-message: This workflow is currently private
-#: assets/js/OutputIframe.js:113
+#: assets/js/OutputIframe.js:112
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
@@ -324,13 +324,18 @@ msgstr ""
 msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
+#. default-message: Billing
+#: assets/js/WfHamburgerMenu.js:80
+msgid "js.WfHamburgerMenu.menu.billing"
+msgstr ""
+
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:76
+#: assets/js/WfHamburgerMenu.js:73
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:71
+#: assets/js/WfHamburgerMenu.js:92
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
@@ -340,13 +345,18 @@ msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:81
+#: assets/js/WfHamburgerMenu.js:101
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
+msgstr ""
+
+#. default-message: Upgrade
+#: assets/js/WfHamburgerMenu.js:83
+msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
 #. default-message: menu
@@ -466,7 +476,7 @@ msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr ""
 
 #. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:103
+#: assets/js/WorkflowEditor/OutputPane.js:101
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
@@ -678,19 +688,19 @@ msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: SETTINGS
-#: assets/js/Workflows/Navbar.js:51
+#: assets/js/Workflows/Navbar.js:53
 msgid "js.Workflows.NavBar.links.settings"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: TRAINING
-#: assets/js/Workflows/Navbar.js:47
+#: assets/js/Workflows/Navbar.js:49
 msgid "js.Workflows.NavBar.links.training"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
 #. default-message: WORKFLOWS
-#: assets/js/Workflows/Navbar.js:44
+#: assets/js/Workflows/Navbar.js:46
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr ""
 
@@ -1527,29 +1537,28 @@ msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr ""
 
 #. default-message: Edit workflow
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
 msgstr ""
 
 #. default-message: #/day
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:54
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
 msgstr ""
 
 #. The {1} argument is a tab name
 #. default-message: Step {0} on {1} makes {2} updates per day.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:84
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr ""
 
 #. default-message: Here are the steps that count against your limit. Adjust their update times or set them to manual, then click "Retry" above.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:46
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
 
-#. The tag is a mailto url
-#. default-message: Need a higher limit? Send us a short <0>email</0>.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+#. default-message: Need a higher limit? <0>Upgrade</0>
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
 msgstr ""
 
@@ -1560,12 +1569,12 @@ msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
 msgstr ""
 
 #. default-message: You asked for this step to make {0} updates per day.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
 msgstr ""
 
 #. default-message: This workflow
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
 msgstr ""
 
@@ -1576,7 +1585,7 @@ msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
 msgstr ""
 
 #. default-message: Workflow
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:55
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr ""
 
@@ -1892,17 +1901,17 @@ msgid "js.params.NumberFormat.percentage"
 msgstr ""
 
 #. default-message: Loading values…
-#: assets/js/params/Custom/Refine/index.js:454
+#: assets/js/params/Custom/Refine/index.js:457
 msgid "js.params.Refine.GroupList.loadingValues"
 msgstr ""
 
 #. default-message: This column does not have any values
-#: assets/js/params/Custom/Refine/index.js:456
+#: assets/js/params/Custom/Refine/index.js:459
 msgid "js.params.Refine.GroupList.noValuesInColumn"
 msgstr ""
 
 #. default-message: No values match your search
-#: assets/js/params/Custom/Refine/index.js:458
+#: assets/js/params/Custom/Refine/index.js:461
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
 msgstr ""
 
@@ -1922,7 +1931,7 @@ msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
 msgstr ""
 
 #. default-message: Select these rows
-#: assets/js/params/Custom/Refine/index.js:313
+#: assets/js/params/Custom/Refine/index.js:316
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr ""
 
@@ -1932,7 +1941,7 @@ msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
 msgstr ""
 
 #. default-message: Merge facets
-#: assets/js/params/Custom/Refine/index.js:809
+#: assets/js/params/Custom/Refine/index.js:812
 msgid "js.params.Refine.mergeFacets.button"
 msgstr ""
 
@@ -2025,7 +2034,7 @@ msgstr ""
 msgid "js.params.custom.Aggregations.Aggregation.outname"
 msgstr ""
 
-#. default-message: Manage Subscriptions
+#. default-message: Manage payments with Stripe
 #: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"
 msgstr ""
@@ -2066,28 +2075,91 @@ msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
 #. default-message: Subscribe
-#: assets/js/settings/Billing/Subscribe.js:16
+#: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""
 
-#. default-message: Subscribed
-#: assets/js/settings/Billing/Subscription.js:20
-msgid "js.settings.Billing.Subscription.createdAt"
+#. default-message: You may use Stripe to view invoices, update credit card details or cancel subscriptions.
+#: assets/js/settings/Billing/index.js:36
+msgid "js.settings.Billing.manage.description"
 msgstr ""
 
-#. default-message: Last Renewed
+#. default-message: Manage payments
+#: assets/js/settings/Billing/index.js:34
+msgid "js.settings.Billing.manage.title"
+msgstr ""
+
+#. default-message: You are not subscribed. Please <0>upgrade</0>.
+#: assets/js/settings/Billing/index.js:27
+msgid "js.settings.Billing.subscriptions.empty"
+msgstr ""
+
+#. default-message: Current Subscription
+#: assets/js/settings/Billing/index.js:11
+msgid "js.settings.Billing.subscriptions.title"
+msgstr ""
+
+#. default-message: Billing
+#: assets/js/settings/BillingPage.js:24
+msgid "js.settings.BillingPage.title"
+msgstr ""
+
+#. default-message: <0><1/></0>/month
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.amount"
+msgstr ""
+
+#. default-message: Current plan
+#: assets/js/settings/Plan/PlanTable.js:24
+msgid "js.settings.Plan.PlanTable.current"
+msgstr ""
+
+#. default-message: {0} updates
+#: assets/js/settings/Plan/PlanTable.js:71
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
+msgstr ""
+
+#. default-message: Per day
+#: assets/js/settings/Plan/PlanTable.js:66
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
+msgstr ""
+
+#. default-message: Automatic updates
+#: assets/js/settings/Plan/PlanTable.js:65
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
+msgstr ""
+
+#. default-message: Plan
+#: assets/js/settings/PlanPage.js:29
+msgid "js.settings.PlanPage.title"
+msgstr ""
+
+#. default-message: Plan
+#: assets/js/settings/settingsPages.js:20
+msgid "js.settings.SettingsPages.plan.title"
+msgstr ""
+
+#. e.g., "$8/month"
+#. default-message: <0/>/month
 #: assets/js/settings/Billing/Subscription.js:22
-msgid "js.settings.Billing.Subscription.status"
+msgid "js.settings.billing.Subscription.amount"
 msgstr ""
 
-#. default-message: Status
-#: assets/js/settings/Billing/Subscription.js:18
-msgid "js.settings.Billing.Subscription.stripeStatus"
+#. e.g., "Subscribed January 27, 2021"
+#. default-message: Subscribed <0>{0}</0>
+#: assets/js/settings/Billing/Subscription.js:29
+msgid "js.settings.billing.Subscription.createdAt"
 msgstr ""
 
-#. default-message: Subscriptions
-#: assets/js/settings/Billing/index.js:12
-msgid "js.settings.Billing.h1"
+#. e.g., "Renewed February 27, 2021"
+#. default-message: Renewed <0>{0}</0>
+#: assets/js/settings/Billing/Subscription.js:35
+msgid "js.settings.billing.Subscription.renewedAt"
+msgstr ""
+
+#. default-message: Billing
+#: assets/js/settings/settingsPages.js:13
+msgid "js.settings.settingsPages.billing.title"
 msgstr ""
 
 #. default-message: Clean Text

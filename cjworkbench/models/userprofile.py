@@ -10,20 +10,10 @@ from .db_object_cooperative_lock import (
     lookup_and_cooperative_lock,
 )
 from .subscription import Subscription
+from .userlimits import UserLimits
 
 
 User = get_user_model()
-
-
-class UserLimits(NamedTuple):
-    """Limits that apply to the user, based on plan.
-
-    These are calculated from UserProfile and from the user's active
-    subscription. (When both values are present, the higher one wins.)
-    """
-
-    max_fetches_per_day: int
-    """Quota for cronjobs."""
 
 
 class UserProfile(models.Model):
@@ -39,7 +29,7 @@ class UserProfile(models.Model):
     """
 
     max_fetches_per_day = models.IntegerField(
-        default=500,
+        default=UserLimits().max_fetches_per_day,
         help_text=(
             "Applies to the sum of all this user's Workflows. "
             "One fetch every 5min = 288 fetches per day."
@@ -65,15 +55,18 @@ class UserProfile(models.Model):
     may have a Stripe Customer ID even if that user has never paid for anything.
     """
 
-    # @property
-    # def effective_limits(self):
-    #     limits = dict(max_fetches_per_day=self.max_fetches_per_day)
-    #     if self.active_plan:
-    #         plan_limits = self.active_plan.limits
-    #         for field in plan_limits._fields:
-    #             if plan_limits[field] > limits[field]:
-    #                 limits[field] = plan_limits[field]
-    #     return UserLimits(**limits)
+    @property
+    def effective_limits(self):
+        max_fetches_per_day = max(
+            [
+                self.max_fetches_per_day,
+                *[
+                    subscription.plan.max_fetches_per_day
+                    for subscription in self.user.subscriptions.select_related("plan")
+                ],
+            ]
+        )
+        return UserLimits(max_fetches_per_day=max_fetches_per_day)
 
     def __str__(self):
         return user_display(self.user) + " (" + self.user.email + ")"

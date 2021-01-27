@@ -8,10 +8,12 @@ function getActiveSection () {
   const path = window.location.pathname
   if (path.startsWith('/workflows')) {
     return 'workflows'
-  } else if (path.startsWith('/settings')) {
-    return 'settings'
-  } else {
+  } else if (path.startsWith('/courses') || path.startsWith('/lessons')) {
     return 'lessons'
+  // } else if (path.startsWith('/settings')) {
+  //   return 'settings'
+  } else {
+    return null
   }
 }
 

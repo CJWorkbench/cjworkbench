@@ -102,43 +102,43 @@ msgstr "Imported module {module}"
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Processing…"
 
-#: assets/js/OutputIframe.js:147
+#: assets/js/OutputIframe.js:146
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:140
+#: assets/js/OutputIframe.js:139
 msgid "js.OutputIframe.embed.header.title"
 msgstr "EMBED THIS CHART"
 
-#: assets/js/OutputIframe.js:157
+#: assets/js/OutputIframe.js:156
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:123
+#: assets/js/OutputIframe.js:122
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Cancel"
 
-#: assets/js/OutputIframe.js:126
+#: assets/js/OutputIframe.js:125
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Set public"
 
-#: assets/js/OutputIframe.js:179
+#: assets/js/OutputIframe.js:185
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Get an embeddable URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:106
+#: assets/js/OutputIframe.js:105
 msgid "js.OutputIframe.private.header.title"
 msgstr "SHARE THIS WORKFLOW"
 
-#: assets/js/OutputIframe.js:116
+#: assets/js/OutputIframe.js:115
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Set this workflow to Public in order to share it? Anyone with the URL "
 "will be able to access and duplicate it."
 
-#: assets/js/OutputIframe.js:113
+#: assets/js/OutputIframe.js:112
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "This workflow is currently private"
 
@@ -286,11 +286,15 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:76
+#: assets/js/WfHamburgerMenu.js:80
+msgid "js.WfHamburgerMenu.menu.billing"
+msgstr "Billing"
+
+#: assets/js/WfHamburgerMenu.js:73
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:71
+#: assets/js/WfHamburgerMenu.js:92
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
@@ -298,13 +302,17 @@ msgstr "Import Module"
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:81
+#: assets/js/WfHamburgerMenu.js:101
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
+
+#: assets/js/WfHamburgerMenu.js:83
+msgid "js.WfHamburgerMenu.menu.plan"
+msgstr "Upgrade"
 
 #: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
@@ -400,7 +408,7 @@ msgstr "Close Search"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:103
+#: assets/js/WorkflowEditor/OutputPane.js:101
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
@@ -573,17 +581,17 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:51
+#: assets/js/Workflows/Navbar.js:53
 msgid "js.Workflows.NavBar.links.settings"
 msgstr "SETTINGS"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:47
+#: assets/js/Workflows/Navbar.js:49
 msgid "js.Workflows.NavBar.links.training"
 msgstr "TRAINING"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:44
+#: assets/js/Workflows/Navbar.js:46
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "WORKFLOWS"
 
@@ -1275,29 +1283,28 @@ msgstr "Version"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} of {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
 msgstr "Edit workflow"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:54
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
 msgstr "#/day"
 
 #. The {1} argument is a tab name
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:84
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr "Step {0} on {1} makes {2} updates per day."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:46
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
 "Here are the steps that count against your limit. Adjust their update "
 "times or set them to manual, then click \"Retry\" above."
 
-#. The tag is a mailto url
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
-msgstr "Need a higher limit? Send us a short <0>email</0>."
+msgstr "Need a higher limit? <0>Upgrade</0>"
 
 #. The two tags add emphasis
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:33
@@ -1306,11 +1313,11 @@ msgstr ""
 "You're requesting <0>{0}</0> updates per day across all your workflows. "
 "Your daily limit is <1>{1}</1>."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
 msgstr "You asked for this step to make {0} updates per day."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
 msgstr "This workflow"
 
@@ -1319,7 +1326,7 @@ msgstr "This workflow"
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
 msgstr "AUTO-UPDATE QUOTA EXCEEDED"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:55
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr "Workflow"
 
@@ -1581,15 +1588,15 @@ msgstr "Integer, no commas: {0}"
 msgid "js.params.NumberFormat.percentage"
 msgstr "Percentage: {0}"
 
-#: assets/js/params/Custom/Refine/index.js:454
+#: assets/js/params/Custom/Refine/index.js:457
 msgid "js.params.Refine.GroupList.loadingValues"
 msgstr "Loading values…"
 
-#: assets/js/params/Custom/Refine/index.js:456
+#: assets/js/params/Custom/Refine/index.js:459
 msgid "js.params.Refine.GroupList.noValuesInColumn"
 msgstr "This column does not have any values"
 
-#: assets/js/params/Custom/Refine/index.js:458
+#: assets/js/params/Custom/Refine/index.js:461
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
 msgstr "No values match your search"
 
@@ -1605,7 +1612,7 @@ msgstr "Hide original values"
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
 msgstr "Show original values"
 
-#: assets/js/params/Custom/Refine/index.js:313
+#: assets/js/params/Custom/Refine/index.js:316
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr "Select these rows"
 
@@ -1613,7 +1620,7 @@ msgstr "Select these rows"
 msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
 msgstr "Find clusters..."
 
-#: assets/js/params/Custom/Refine/index.js:809
+#: assets/js/params/Custom/Refine/index.js:812
 msgid "js.params.Refine.mergeFacets.button"
 msgstr "Merge facets"
 
@@ -1691,7 +1698,7 @@ msgstr "Name"
 
 #: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"
-msgstr "Manage Subscriptions"
+msgstr "Manage payments with Stripe"
 
 #: assets/js/settings/Billing/StripeSubscriptionStatus.js:11
 msgid "js.settings.Billing.StripeSubscriptionStatus.active"
@@ -1721,25 +1728,78 @@ msgstr "Trialing"
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr "Unpaid"
 
-#: assets/js/settings/Billing/Subscribe.js:16
+#: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr "Subscribe"
 
-#: assets/js/settings/Billing/Subscription.js:20
-msgid "js.settings.Billing.Subscription.createdAt"
-msgstr "Subscribed"
+#: assets/js/settings/Billing/index.js:36
+msgid "js.settings.Billing.manage.description"
+msgstr ""
+"You may use Stripe to view invoices, update credit card details or cancel"
+" subscriptions."
 
+#: assets/js/settings/Billing/index.js:34
+msgid "js.settings.Billing.manage.title"
+msgstr "Manage payments"
+
+#: assets/js/settings/Billing/index.js:27
+msgid "js.settings.Billing.subscriptions.empty"
+msgstr "You are not subscribed. Please <0>upgrade</0>."
+
+#: assets/js/settings/Billing/index.js:11
+msgid "js.settings.Billing.subscriptions.title"
+msgstr "Current Subscription"
+
+#: assets/js/settings/BillingPage.js:24
+msgid "js.settings.BillingPage.title"
+msgstr "Billing"
+
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.amount"
+msgstr "<0><1/></0>/month"
+
+#: assets/js/settings/Plan/PlanTable.js:24
+msgid "js.settings.Plan.PlanTable.current"
+msgstr "Current plan"
+
+#: assets/js/settings/Plan/PlanTable.js:71
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
+msgstr "{0} updates"
+
+#: assets/js/settings/Plan/PlanTable.js:66
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
+msgstr "Per day"
+
+#: assets/js/settings/Plan/PlanTable.js:65
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
+msgstr "Automatic updates"
+
+#: assets/js/settings/PlanPage.js:29
+msgid "js.settings.PlanPage.title"
+msgstr "Plan"
+
+#: assets/js/settings/settingsPages.js:20
+msgid "js.settings.SettingsPages.plan.title"
+msgstr "Plan"
+
+#. e.g., "$8/month"
 #: assets/js/settings/Billing/Subscription.js:22
-msgid "js.settings.Billing.Subscription.status"
-msgstr "Last Renewed"
+msgid "js.settings.billing.Subscription.amount"
+msgstr "<0/>/month"
 
-#: assets/js/settings/Billing/Subscription.js:18
-msgid "js.settings.Billing.Subscription.stripeStatus"
-msgstr "Status"
+#. e.g., "Subscribed January 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:29
+msgid "js.settings.billing.Subscription.createdAt"
+msgstr "Subscribed <0>{0}</0>"
 
-#: assets/js/settings/Billing/index.js:12
-msgid "js.settings.Billing.h1"
-msgstr "Subscriptions"
+#. e.g., "Renewed February 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:35
+msgid "js.settings.billing.Subscription.renewedAt"
+msgstr "Renewed <0>{0}</0>"
+
+#: assets/js/settings/settingsPages.js:13
+msgid "js.settings.settingsPages.billing.title"
+msgstr "Billing"
 
 #: assets/js/table/ColumnContextMenu.js:52
 msgid "js.table.ColumnContextMenu.cleanText"

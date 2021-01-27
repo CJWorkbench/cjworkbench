@@ -30,6 +30,15 @@ def create_user(
 
 
 def create_plan(**kwargs):
+    kwargs = {
+        "stripe_price_id": "price_1",
+        "stripe_product_id": "product_1",
+        "stripe_product_name": "Premium Plan",
+        "stripe_active": True,
+        "stripe_amount": 100,
+        "stripe_currency": "usd",
+        **kwargs,
+    }
     return Plan.objects.create(**kwargs)
 
 
@@ -41,7 +50,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             {
                 "created": 1602166853,
                 "current_period_start": 1602166853,
-                "items": {"data": [{"price": {"product": "prod_123"}}]},
+                "items": {"data": [{"price": {"id": "price_123"}}]},
                 "status": "active",
             },
             "api-key",
@@ -49,7 +58,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_create_subscription(self, retrieve_subscription):
-        plan = create_plan(stripe_product_id="prod_123")
+        plan = create_plan(stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_123")
         handle_checkout_session_completed(
             stripe.api_resources.checkout.Session.construct_from(
@@ -94,8 +103,8 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
                 "current_period_start": 1602166853,
                 "items": {
                     "data": [
-                        {"price": {"product": "prod_123"}},
-                        {"price": {"product": "prod_124"}},
+                        {"price": {"id": "price_123"}},
+                        {"price": {"id": "price_124"}},
                     ]
                 },
                 "status": "active",
@@ -105,7 +114,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_value_error_when_two_items(self, retrieve_subscription):
-        plan = create_plan(stripe_product_id="prod_123")
+        create_plan(stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_123")
         with self.assertRaises(ValueError):
             handle_checkout_session_completed(
@@ -126,7 +135,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             {
                 "created": 1602166853,
                 "current_period_start": 1602166853,
-                "items": {"data": [{"price": {"product": "prod_123"}}]},
+                "items": {"data": [{"price": {"id": "price_123"}}]},
                 "status": "active",
             },
             "api-key",
@@ -134,7 +143,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_plan_does_not_exist(self, retrieve_subscription):
-        plan = create_plan(stripe_product_id="prod_321")  # wrong ID
+        create_plan(stripe_price_id="price_321")  # wrong ID
         user = create_user(stripe_customer_id="cus_123")
         with self.assertRaises(Plan.DoesNotExist):
             handle_checkout_session_completed(
@@ -155,7 +164,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
             {
                 "created": 1602166853,
                 "current_period_start": 1602166853,
-                "items": {"data": [{"price": {"product": "prod_123"}}]},
+                "items": {"data": [{"price": {"id": "price_123"}}]},
                 "status": "active",
             },
             "api-key",
@@ -163,7 +172,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_user_profile_does_not_exist(self, retrieve_subscription):
-        plan = create_plan(stripe_product_id="prod_123")
+        create_plan(stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_321")  # wrong user
         with self.assertRaises(UserProfile.DoesNotExist):
             handle_checkout_session_completed(
@@ -180,7 +189,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
 
 class TestHandleCustomerSubscriptionDeleted(DbTestCase):
     def test_delete_existing_subscription(self):
-        plan = create_plan(stripe_product_id="prod_123")
+        plan = create_plan(stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_123")
         subscription = user.subscriptions.create(
             plan=plan,
@@ -258,7 +267,7 @@ class TestCreateCheckoutSession(DbTestCase):
     @override_settings(STRIPE_API_KEY="key_123")
     def test_reuse_existing_stripe_customer_id(self, create_session):
         user = create_user(stripe_customer_id="cus_123", locale_id="fr")
-        plan = Plan.objects.create(stripe_price_id="price_123")
+        plan = create_plan(stripe_price_id="price_123")
         checkout_session = create_checkout_session(user.id, plan, "https://example.com")
         self.assertTrue(create_session.called)
         _, kwargs = create_session.call_args
@@ -296,7 +305,7 @@ class TestCreateCheckoutSession(DbTestCase):
             stripe_customer_id=None,
             locale_id="fr",
         )
-        plan = Plan.objects.create(stripe_price_id="price_123")
+        plan = create_plan(stripe_price_id="price_123")
         checkout_session = create_checkout_session(user.id, plan, "https://example.com")
 
         # stripe.Customer.create was called as expected
@@ -330,7 +339,7 @@ class TestCreateCheckoutSession(DbTestCase):
         self, create_customer, create_session
     ):
         user = create_user(stripe_customer_id=None)
-        plan = Plan.objects.create(stripe_price_id="price_123")
+        plan = create_plan(stripe_price_id="price_123")
         with self.assertRaises(RuntimeError):
             create_checkout_session(user.id, plan, "https://example.com")
 

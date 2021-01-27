@@ -227,7 +227,6 @@
 
     table {
       margin-top: 1rem;
-      margin-bottom: 1rem;
       border-collapse: collapse;
     }
 
@@ -260,6 +259,13 @@
 
     .request-lift {
       font-weight: bold;
+
+      a {
+        font-weight: normal;
+        @include action-button;
+        @include button-pink-fill;
+        margin-left: 1rem;
+      }
     }
   }
 

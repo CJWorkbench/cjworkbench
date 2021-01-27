@@ -12,33 +12,22 @@ class Command(BaseCommand):
         prices = stripe.Price.list(
             expand=["data.product"], api_key=settings.STRIPE_API_KEY
         )
-        product_id_to_prices = {}
-        skipped_product_ids = set()
         for price in prices.data:
             product = price.product
-            if product.id not in product_id_to_prices:
-                product_id_to_prices[product.id] = []
-            product_id_to_prices[product.id].append(price)
-
-        for product_prices in product_id_to_prices.values():
-            price = product_prices[0]
-            product = price.product
             self.stderr.write(
-                f"Syncing Stripe project {product.id} ({product.name})..."
+                f"Syncing Stripe Price {price.id} ({product.id} - {product.name})..."
             )
-            plan, created = Plan.upsert_from_stripe_product_and_price(product, price)
+            plan, created = Plan.upsert_from_stripe_product_and_price(
+                price, price.product
+            )
             if created:
-                self.stderr.write(
-                    f"Created Plan {product.id} ({product.name} - {price.id})"
-                )
+                self.stderr.write(f"Created Plan {price.id}")
             else:
-                self.stderr.write(
-                    f"Updated Plan {product.id} ({product.name} - {price.id})"
-                )
+                self.stderr.write(f"Updated Plan {price.id}")
 
         for plan in Plan.objects.exclude(
-            stripe_product_id__in=list(product_id_to_prices.keys())
+            stripe_price_id__in=list(price.id for price in prices.data)
         ):
             raise RuntimeError(
-                f"Oh, no! Someone deleted a Product on Stripe, {plan.stripe_product_id}. Please ask a developer to resolve this issue immediately."
+                f"Oh, no! Someone deleted a Price on Stripe, {plan.stripe_price_id}. Please ask a developer to resolve this issue immediately."
             )

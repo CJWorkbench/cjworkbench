@@ -111,44 +111,44 @@ msgstr "Έγινε εισαγωγή της μονάδας {module} στην κα
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
 
-#: assets/js/OutputIframe.js:147
+#: assets/js/OutputIframe.js:146
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:140
+#: assets/js/OutputIframe.js:139
 msgid "js.OutputIframe.embed.header.title"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/OutputIframe.js:157
+#: assets/js/OutputIframe.js:156
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:123
+#: assets/js/OutputIframe.js:122
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Ακύρωση"
 
-#: assets/js/OutputIframe.js:126
+#: assets/js/OutputIframe.js:125
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Ορισμός ως δημόσιας"
 
-#: assets/js/OutputIframe.js:179
+#: assets/js/OutputIframe.js:185
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Απόκτηση ενσωματώσιμης διεύθυνσης URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:106
+#: assets/js/OutputIframe.js:105
 msgid "js.OutputIframe.private.header.title"
 msgstr "ΚΟΙΝΟΠΟΙΗΣΗ ΑΥΤΗΣ ΤΗΣ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/OutputIframe.js:116
+#: assets/js/OutputIframe.js:115
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Θα ρυθμίσετε αυτή τη ροή εργασιών ως Δημόσια για να την κοινοποιήσετε; "
 "Όποιος διαθέτει αυτή τη διεύθυνση URL θα μπορεί να έχει πρόσβαση και να "
 "την αντιγράψει."
 
-#: assets/js/OutputIframe.js:113
+#: assets/js/OutputIframe.js:112
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
@@ -311,11 +311,15 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:76
+#: assets/js/WfHamburgerMenu.js:80
+msgid "js.WfHamburgerMenu.menu.billing"
+msgstr ""
+
+#: assets/js/WfHamburgerMenu.js:73
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:71
+#: assets/js/WfHamburgerMenu.js:92
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
@@ -323,13 +327,17 @@ msgstr "Εισαγωγή Μονάδας (Module)"
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Γλώσσα"
 
-#: assets/js/WfHamburgerMenu.js:81
+#: assets/js/WfHamburgerMenu.js:101
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
 #: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
+
+#: assets/js/WfHamburgerMenu.js:83
+msgid "js.WfHamburgerMenu.menu.plan"
+msgstr ""
 
 #: assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
@@ -427,7 +435,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:103
+#: assets/js/WorkflowEditor/OutputPane.js:101
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -601,17 +609,17 @@ msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Σύνδεση"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:51
+#: assets/js/Workflows/Navbar.js:53
 msgid "js.Workflows.NavBar.links.settings"
 msgstr ""
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:47
+#: assets/js/Workflows/Navbar.js:49
 msgid "js.Workflows.NavBar.links.training"
 msgstr "ΕΚΠΑΙΔΕΥΣΗ"
 
 #. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:44
+#: assets/js/Workflows/Navbar.js:46
 msgid "js.Workflows.NavBar.links.workflows"
 msgstr "ΡΟΕΣ ΕΡΓΑΣΙΩΝ"
 
@@ -1319,28 +1327,28 @@ msgstr "Έκδοση"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} από {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
 msgstr "Επεξεργασία ροής εργασιών"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:49
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:54
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
 msgstr "#/ημέρα"
 
 #. The {1} argument is a tab name
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:79
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:84
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
 msgstr "Το βήμα {0} στο {1} κάνει {2} ενημερώσεις κάθε ημέρα."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:46
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
 msgstr ""
 "Αυτά εδώ είναι τα βήματα που καταλογίζονται στο όριο σας. Ρυθμίστε τους "
 "χρόνους ενημέρωσής τους ή ρυθμίστε τους σε μη αυτόματους και, στη "
 "συνέχεια, κάντε κλικ στην \"Επανάληψη\" παραπάνω."
 
-#. The tag is a mailto url
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:90
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:41
+#, fuzzy
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
 msgstr "Χρειάζεστε υψηλότερο όριο; Στείλτε μας ένα σύντομο <0>email</0>."
 
@@ -1351,11 +1359,11 @@ msgstr ""
 "Ζητάτε <0>{0}</0> ενημερώσεις κάθε ημέρα σε όλες τις ροές εργασιών σας. "
 "Το ημερήσιο όριο είναι <1>{1}</1>."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:77
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
 msgstr "Ζητήσατε να γίνονται {0} ενημερώσεις την ημέρα για αυτό το βήμα."
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:63
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
 msgstr "Αυτή η ροή εργασιών"
 
@@ -1364,7 +1372,7 @@ msgstr "Αυτή η ροή εργασιών"
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
 msgstr "ΞΕΠΕΡΑΣΤΗΚΕ ΤΟ ΟΡΙΟ ΤΩΝ ΑΥΤΟΜΑΤΩΝ ΕΝΗΜΕΡΩΣΕΩΝ"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:50
+#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:55
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
 msgstr "Ροή εργασιών"
 
@@ -1625,15 +1633,15 @@ msgstr "Ακέραιος, χωρίς διαχωριστικά χιλιάδων: 
 msgid "js.params.NumberFormat.percentage"
 msgstr "Ποσοστό: {0}"
 
-#: assets/js/params/Custom/Refine/index.js:454
+#: assets/js/params/Custom/Refine/index.js:457
 msgid "js.params.Refine.GroupList.loadingValues"
 msgstr "Φόρτωση τιμών…"
 
-#: assets/js/params/Custom/Refine/index.js:456
+#: assets/js/params/Custom/Refine/index.js:459
 msgid "js.params.Refine.GroupList.noValuesInColumn"
 msgstr "Αυτή η στήλη δεν έχει τιμές"
 
-#: assets/js/params/Custom/Refine/index.js:458
+#: assets/js/params/Custom/Refine/index.js:461
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
 msgstr "Δεν υπάρχουν τιμές που να αντιστοιχούν στην αναζήτησή σας"
 
@@ -1649,7 +1657,7 @@ msgstr "Απόκρυψη αρχικών τιμών"
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
 msgstr "Εμφάνιση αρχικών τιμών"
 
-#: assets/js/params/Custom/Refine/index.js:313
+#: assets/js/params/Custom/Refine/index.js:316
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr "Επιλέξτε αυτές τις σειρές"
 
@@ -1657,7 +1665,7 @@ msgstr "Επιλέξτε αυτές τις σειρές"
 msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
 msgstr "Εύρεση συμπλεγμάτων..."
 
-#: assets/js/params/Custom/Refine/index.js:809
+#: assets/js/params/Custom/Refine/index.js:812
 msgid "js.params.Refine.mergeFacets.button"
 msgstr "Συγχώνευση πτυχών"
 
@@ -1766,24 +1774,75 @@ msgstr ""
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscribe.js:16
+#: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscription.js:20
-msgid "js.settings.Billing.Subscription.createdAt"
+#: assets/js/settings/Billing/index.js:36
+msgid "js.settings.Billing.manage.description"
 msgstr ""
 
+#: assets/js/settings/Billing/index.js:34
+msgid "js.settings.Billing.manage.title"
+msgstr ""
+
+#: assets/js/settings/Billing/index.js:27
+msgid "js.settings.Billing.subscriptions.empty"
+msgstr ""
+
+#: assets/js/settings/Billing/index.js:11
+msgid "js.settings.Billing.subscriptions.title"
+msgstr ""
+
+#: assets/js/settings/BillingPage.js:24
+msgid "js.settings.BillingPage.title"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.amount"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:24
+msgid "js.settings.Plan.PlanTable.current"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:71
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:66
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:65
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
+msgstr ""
+
+#: assets/js/settings/PlanPage.js:29
+msgid "js.settings.PlanPage.title"
+msgstr ""
+
+#: assets/js/settings/settingsPages.js:20
+msgid "js.settings.SettingsPages.plan.title"
+msgstr ""
+
+#. e.g., "$8/month"
 #: assets/js/settings/Billing/Subscription.js:22
-msgid "js.settings.Billing.Subscription.status"
+msgid "js.settings.billing.Subscription.amount"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscription.js:18
-msgid "js.settings.Billing.Subscription.stripeStatus"
+#. e.g., "Subscribed January 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:29
+msgid "js.settings.billing.Subscription.createdAt"
 msgstr ""
 
-#: assets/js/settings/Billing/index.js:12
-msgid "js.settings.Billing.h1"
+#. e.g., "Renewed February 27, 2021"
+#: assets/js/settings/Billing/Subscription.js:35
+msgid "js.settings.billing.Subscription.renewedAt"
+msgstr ""
+
+#: assets/js/settings/settingsPages.js:13
+msgid "js.settings.settingsPages.billing.title"
 msgstr ""
 
 #: assets/js/table/ColumnContextMenu.js:52

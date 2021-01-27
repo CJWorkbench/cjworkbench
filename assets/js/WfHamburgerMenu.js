@@ -63,23 +63,44 @@ export default function WfHamburgerMenu (props) {
           </DropdownItem>
           <DropdownDivider />
           {loggedIn && workflowId ? (
-            <>
-              <DropdownItem href='/workflows/'>
-                <Trans id='js.WfHamburgerMenu.menu.myWorkflows'>My Workflows</Trans>
-              </DropdownItem>
-              <DropdownItem onClick={handleClickOpenImportModal}>
-                <Trans id='js.WfHamburgerMenu.menu.importModule'>Import Module</Trans>
-              </DropdownItem>
-            </>
+            // "Workflows"
+            <DropdownItem href='/workflows/'>
+              <Trans id='js.WfHamburgerMenu.menu.myWorkflows'>My Workflows</Trans>
+            </DropdownItem>
           ) : (
+            // "Home"
             <DropdownItem href='//workbenchdata.com'>
               <Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans>
             </DropdownItem>
           )}
           {loggedIn ? (
-            <DropdownItem onClick={handleClickLogOut}>
-              <Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans>
-            </DropdownItem>
+            // "Billing", "Plan"
+            <>
+              <DropdownItem href='/settings/billing'>
+                <Trans id='js.WfHamburgerMenu.menu.billing'>Billing</Trans>
+              </DropdownItem>
+              <DropdownItem href='/settings/plan'>
+                <Trans id='js.WfHamburgerMenu.menu.plan'>Upgrade</Trans>
+              </DropdownItem>
+            </>
+          ) : null}
+          {loggedIn && user.is_staff ? (
+            // "Import Module"
+            <>
+              <DropdownDivider />
+              <DropdownItem onClick={handleClickOpenImportModal}>
+                <Trans id='js.WfHamburgerMenu.menu.importModule'>Import Module</Trans>
+              </DropdownItem>
+            </>
+          ) : null}
+          {loggedIn ? (
+            // "Log Out" button
+            <>
+              <DropdownDivider />
+              <DropdownItem onClick={handleClickLogOut}>
+                <Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans>
+              </DropdownItem>
+            </>
           ) : null}
         </DropdownMenu>
       </UncontrolledDropdown>

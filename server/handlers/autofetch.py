@@ -1,4 +1,5 @@
 from cjworkbench.models.userprofile import UserProfile
+from cjworkbench.models.userlimits import UserLimits
 from cjwstate.models import Workflow, Step
 
 
@@ -35,20 +36,16 @@ def list_autofetches_json(scope):
         )
     )
 
-    default_max_fetches_per_day = UserProfile._meta.get_field(
-        "max_fetches_per_day"
-    ).default
-    if not scope["user"].is_anonymous:
-        try:
-            max_fetches_per_day = scope["user"].user_profile.max_fetches_per_day
-        except UserProfile.DoesNotExist:
-            max_fetches_per_day = default_max_fetches_per_day
-    else:
-        max_fetches_per_day = default_max_fetches_per_day
+    try:
+        user_limits = scope["user"].user_profile.effective_limits
+    except AttributeError:
+        # scope["user"].user_profile is None ... e.g. anonymous user
+        user_limits = UserLimits()
+
     n_fetches_per_day = sum([86400.0 / row["update_interval"] for row in autofetches])
 
     return {
-        "maxFetchesPerDay": max_fetches_per_day,
+        "maxFetchesPerDay": user_limits.max_fetches_per_day,
         "nFetchesPerDay": n_fetches_per_day,
         "autofetches": [
             {

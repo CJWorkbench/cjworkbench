@@ -11,6 +11,7 @@ module.exports = {
     'report-styles': './assets/css/report.scss',
     'embed-styles': './assets/css/embed.scss',
     billing: './assets/js/pages/billing.page',
+    plan: './assets/js/pages/plan.page',
     lessons: './assets/js/pages/lessons.page',
     login: './assets/js/pages/login',
     workflows: './assets/js/pages/workflows.page',

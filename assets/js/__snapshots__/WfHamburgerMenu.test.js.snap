@@ -72,13 +72,25 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                       >
                         My Workflows
                       </a>
-                      <button
+                      <a
                         class="dropdown-item"
+                        href="/settings/billing"
                         role="menuitem"
                         tabindex="0"
                       >
-                        Import Module
-                      </button>
+                        Billing
+                      </a>
+                      <a
+                        class="dropdown-item"
+                        href="/settings/plan"
+                        role="menuitem"
+                        tabindex="0"
+                      >
+                        Upgrade
+                      </a>
+                      <div
+                        class="dropdown-divider"
+                      />
                       <button
                         class="dropdown-item"
                         role="menuitem"
@@ -152,24 +164,48 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                     </a>
                   </DropdownItem>
                   <DropdownItem
-                    onClick={[Function]}
+                    href="/settings/billing"
                   >
-                    <button
+                    <a
                       className="dropdown-item"
-                      onClick={[Function]}
+                      href="/settings/billing"
                       role="menuitem"
                       tabIndex={0}
                     >
                       <Trans
                         components={Object {}}
-                        id="js.WfHamburgerMenu.menu.importModule"
-                        message="Import Module"
+                        id="js.WfHamburgerMenu.menu.billing"
+                        message="Billing"
                         values={Object {}}
                       >
-                        Import Module
+                        Billing
                       </Trans>
-                    </button>
+                    </a>
                   </DropdownItem>
+                  <DropdownItem
+                    href="/settings/plan"
+                  >
+                    <a
+                      className="dropdown-item"
+                      href="/settings/plan"
+                      role="menuitem"
+                      tabIndex={0}
+                    >
+                      <Trans
+                        components={Object {}}
+                        id="js.WfHamburgerMenu.menu.plan"
+                        message="Upgrade"
+                        values={Object {}}
+                      >
+                        Upgrade
+                      </Trans>
+                    </a>
+                  </DropdownItem>
+                  <DropdownDivider>
+                    <div
+                      className="dropdown-divider"
+                    />
+                  </DropdownDivider>
                   <DropdownItem
                     onClick={[Function]}
                   >
