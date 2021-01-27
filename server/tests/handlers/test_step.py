@@ -483,17 +483,17 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             workflow=workflow,
             stepId=step.id,
             isAutofetch=True,
-            fetchInterval=1200,
+            fetchInterval=3600,
         )
-        self.assertResponse(response, data={"isAutofetch": True, "fetchInterval": 1200})
+        self.assertResponse(response, data={"isAutofetch": True, "fetchInterval": 3600})
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
-        self.assertEqual(step.update_interval, 1200)
+        self.assertEqual(step.update_interval, 3600)
         self.assertLess(
-            step.next_update, timezone.now() + datetime.timedelta(seconds=1202)
+            step.next_update, timezone.now() + datetime.timedelta(seconds=3602)
         )
         self.assertGreater(
-            step.next_update, timezone.now() + datetime.timedelta(seconds=1198)
+            step.next_update, timezone.now() + datetime.timedelta(seconds=3598)
         )
 
     def test_try_set_autofetch_disable_autofetch(self):

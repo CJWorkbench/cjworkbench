@@ -29,7 +29,7 @@ class UserProfile(models.Model):
     """
 
     max_fetches_per_day = models.IntegerField(
-        default=UserLimits.max_fetches_per_day,
+        default=UserLimits().max_fetches_per_day,
         help_text=(
             "Applies to the sum of all this user's Workflows. "
             "One fetch every 5min = 288 fetches per day."
