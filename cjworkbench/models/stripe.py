@@ -105,9 +105,7 @@ def handle_checkout_session_completed(
     if len(items) != 1:
         raise ValueError("len(items) != 1")
     item = items[0]
-    plan = Plan.objects.get(
-        stripe_product_id=item.price.product
-    )  # raise Plan.DoesNotExist
+    plan = Plan.objects.get(stripe_price_id=item.price.id)  # raise Plan.DoesNotExist
 
     with UserProfile.lookup_and_cooperative_lock(
         stripe_customer_id=stripe_customer_id

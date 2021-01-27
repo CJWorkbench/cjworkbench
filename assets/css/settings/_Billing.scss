@@ -1,0 +1,46 @@
+section.billing {
+  ul.subscriptions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  h2 {
+    @include title-2;
+    margin-bottom: rem(1);
+
+    &:not(:first-child) {
+      margin-top: rem(4);
+    }
+  }
+
+  .subscription {
+    margin-top: rem(1);
+
+    h3, h4 {
+      font: inherit;
+      font-weight: bold;
+    }
+
+    h3 {
+      color: $brand-learn;
+    }
+
+    .metadata {
+      color: $brand-text--medium;
+      span:not(:first-child) {
+        &::before {
+          content: '-';
+          padding: 0 rem(.5);
+        }
+      }
+    }
+  }
+
+  button.manage-billing {
+    @include action-button;
+    @include button-pink-fill;
+    margin-top: rem(.5);
+    display: inline-block;
+  }
+}

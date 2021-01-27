@@ -14,8 +14,9 @@ def jsonize_plan(plan: Plan) -> Dict[str, Any]:
     return {
         "stripePriceId": plan.stripe_price_id,
         "name": plan.stripe_product_name,
-        "amount": plan.stripe_amount,
-        "currency": plan.stripe_currency,
+        "amount": plan.stripe_amount,  # in cents
+        "currency": plan.stripe_currency,  # e.g., "usd"
+        "maxFetchesPerDay": plan.max_fetches_per_day,
     }
 
 
@@ -30,18 +31,37 @@ def jsonize_subscription(subscription: Subscription) -> Dict[str, Any]:
 
 
 def jsonize_user(user: User) -> Dict[str, Any]:
+    active_plans = [
+        jsonize_plan(subscription.plan) for subscription in user.subscriptions.all()
+    ]
+
     return {
         "username": user.username,
+        "subscribedPlans": active_plans,
         "stripeCustomerId": user.user_profile.stripe_customer_id,
-        "subscriptions": [
-            jsonize_subscription(sub)
-            for sub in user.subscriptions.select_related("plan").all()
-        ],
     }
+
+
+def jsonize_plans() -> Dict[str, Dict[str, Any]]:
+    FreePlan = Plan(
+        stripe_price_id=None,  # special case
+        stripe_product_name="Free Plan",
+        max_fetches_per_day=500,
+        stripe_amount=0,
+        stripe_currency="usd",
+    )
+
+    return [
+        jsonize_plan(FreePlan),
+        *(jsonize_plan(plan) for plan in Plan.objects.filter(stripe_active=True)),
+    ]
 
 
 @login_required
 def get(request: HttpRequest):
     """Display the billing React app."""
-    init_state = {"user": jsonize_user(request.user)}
-    return TemplateResponse(request, "settings/billing.html", {"initState": init_state})
+    init_state = {
+        "user": jsonize_user(request.user),
+        "plans": jsonize_plans(),
+    }
+    return TemplateResponse(request, "settings/plan.html", {"initState": init_state})

@@ -2,19 +2,19 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import ManageBilling from './ManageBilling'
-import Subscribe from './Subscribe'
 import Subscription from './Subscription'
 
 export default function Billing (props) {
-  const { onClickCheckout, onClickManage, user: { stripeCustomerId, subscriptions } } = props
+  const { onClickManage, user: { stripeCustomerId, subscriptions } } = props
   return (
     <section className='billing'>
-      <h1><Trans id='js.settings.Billing.h1'>Subscriptions</Trans></h1>
+      <h2><Trans id='js.settings.Billing.subscriptions.title'>Current Subscription</Trans></h2>
       {subscriptions.length ? (
         <ul className='subscriptions'>
           {subscriptions.map(subscription => (
             <li key={subscription.stripeSubscriptionId}>
               <Subscription
+                plan={subscription.plan}
                 createdAt={subscription.createdAt}
                 renewedAt={subscription.renewedAt}
                 stripeStatus={subscription.stripeStatus}
@@ -22,20 +22,28 @@ export default function Billing (props) {
             </li>
           ))}
         </ul>
-      ) : null}
-      <div className='manage-billing'>
-        {subscriptions.length === 0 ? (
-          <Subscribe stripeCustomerId={stripeCustomerId} onClick={onClickCheckout} />
-        ) : null}
-        {stripeCustomerId ? (
+      ) : (
+        <p>
+          <Trans id='js.settings.Billing.subscriptions.empty'>
+            You are not subscribed. Please <a href='/settings/plan'>upgrade</a>.
+          </Trans>
+        </p>
+      )}
+      {stripeCustomerId ? (
+        <>
+          <h2><Trans id='js.settings.Billing.manage.title'>Manage payments</Trans></h2>
+          <p>
+            <Trans id='js.settings.Billing.manage.description'>
+              You may use Stripe to view invoices, update credit card details or cancel subscriptions.
+            </Trans>
+          </p>
           <ManageBilling onClick={onClickManage} />
-        ) : null}
-      </div>
+        </>
+      ) : null}
     </section>
   )
 }
 Billing.propTypes = {
-  onClickCheckout: PropTypes.func.isRequired,
   onClickManage: PropTypes.func.isRequired,
   user: PropTypes.shape({
     stripeCustomerId: PropTypes.string, // or null

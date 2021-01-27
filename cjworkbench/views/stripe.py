@@ -85,7 +85,7 @@ def create_checkout_session(request: HttpRequest) -> HttpResponse:
     ):
         raise Http404("Stripe is disabled: there is no API key")
 
-    plans = list(Plan.objects.all())
+    plans = list(Plan.objects.filter(stripe_active=True))
     if len(plans) == 0:
         raise Http404("Stripe is disabled: there are no plans")
     elif len(plans) > 1:

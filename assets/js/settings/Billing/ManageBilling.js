@@ -12,8 +12,8 @@ export default function ManageBilling (props) {
   }, [onClick])
 
   return (
-    <button className='action-button button-gray' onClick={handleClick} disabled={loading}>
-      <Trans id='js.settings.Billing.ManageBilling.buttonText'>Manage Subscriptions</Trans>
+    <button className='manage-billing' onClick={handleClick} disabled={loading}>
+      <Trans id='js.settings.Billing.ManageBilling.buttonText'>Manage payments with Stripe</Trans>
     </button>
   )
 }

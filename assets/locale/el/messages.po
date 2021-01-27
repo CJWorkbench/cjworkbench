@@ -111,44 +111,44 @@ msgstr "Έγινε εισαγωγή της μονάδας {module} στην κα
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
 
-#: assets/js/OutputIframe.js:147
+#: assets/js/OutputIframe.js:146
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:140
+#: assets/js/OutputIframe.js:139
 msgid "js.OutputIframe.embed.header.title"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/OutputIframe.js:157
+#: assets/js/OutputIframe.js:156
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:123
+#: assets/js/OutputIframe.js:122
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Ακύρωση"
 
-#: assets/js/OutputIframe.js:126
+#: assets/js/OutputIframe.js:125
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Ορισμός ως δημόσιας"
 
-#: assets/js/OutputIframe.js:179
+#: assets/js/OutputIframe.js:185
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Απόκτηση ενσωματώσιμης διεύθυνσης URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:106
+#: assets/js/OutputIframe.js:105
 msgid "js.OutputIframe.private.header.title"
 msgstr "ΚΟΙΝΟΠΟΙΗΣΗ ΑΥΤΗΣ ΤΗΣ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/OutputIframe.js:116
+#: assets/js/OutputIframe.js:115
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Θα ρυθμίσετε αυτή τη ροή εργασιών ως Δημόσια για να την κοινοποιήσετε; "
 "Όποιος διαθέτει αυτή τη διεύθυνση URL θα μπορεί να έχει πρόσβαση και να "
 "την αντιγράψει."
 
-#: assets/js/OutputIframe.js:113
+#: assets/js/OutputIframe.js:112
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
@@ -427,7 +427,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:103
+#: assets/js/WorkflowEditor/OutputPane.js:101
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -1625,15 +1625,15 @@ msgstr "Ακέραιος, χωρίς διαχωριστικά χιλιάδων: 
 msgid "js.params.NumberFormat.percentage"
 msgstr "Ποσοστό: {0}"
 
-#: assets/js/params/Custom/Refine/index.js:454
+#: assets/js/params/Custom/Refine/index.js:457
 msgid "js.params.Refine.GroupList.loadingValues"
 msgstr "Φόρτωση τιμών…"
 
-#: assets/js/params/Custom/Refine/index.js:456
+#: assets/js/params/Custom/Refine/index.js:459
 msgid "js.params.Refine.GroupList.noValuesInColumn"
 msgstr "Αυτή η στήλη δεν έχει τιμές"
 
-#: assets/js/params/Custom/Refine/index.js:458
+#: assets/js/params/Custom/Refine/index.js:461
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
 msgstr "Δεν υπάρχουν τιμές που να αντιστοιχούν στην αναζήτησή σας"
 
@@ -1649,7 +1649,7 @@ msgstr "Απόκρυψη αρχικών τιμών"
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
 msgstr "Εμφάνιση αρχικών τιμών"
 
-#: assets/js/params/Custom/Refine/index.js:313
+#: assets/js/params/Custom/Refine/index.js:316
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr "Επιλέξτε αυτές τις σειρές"
 
@@ -1657,7 +1657,7 @@ msgstr "Επιλέξτε αυτές τις σειρές"
 msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
 msgstr "Εύρεση συμπλεγμάτων..."
 
-#: assets/js/params/Custom/Refine/index.js:809
+#: assets/js/params/Custom/Refine/index.js:812
 msgid "js.params.Refine.mergeFacets.button"
 msgstr "Συγχώνευση πτυχών"
 
@@ -1766,24 +1766,77 @@ msgstr ""
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscribe.js:16
+#: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscription.js:20
+#: assets/js/settings/Billing/Subscription.js:28
 msgid "js.settings.Billing.Subscription.createdAt"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscription.js:22
+#: assets/js/settings/Billing/Subscription.js:30
 msgid "js.settings.Billing.Subscription.status"
 msgstr ""
 
-#: assets/js/settings/Billing/Subscription.js:18
+#: assets/js/settings/Billing/Subscription.js:26
 msgid "js.settings.Billing.Subscription.stripeStatus"
 msgstr ""
 
-#: assets/js/settings/Billing/index.js:12
-msgid "js.settings.Billing.h1"
+#: assets/js/settings/Billing/index.js:35
+msgid "js.settings.Billing.manage.description"
+msgstr ""
+
+#: assets/js/settings/Billing/index.js:33
+msgid "js.settings.Billing.manage.title"
+msgstr ""
+
+#: assets/js/settings/Billing/index.js:26
+msgid "js.settings.Billing.subscriptions.empty"
+msgstr ""
+
+#: assets/js/settings/Billing/index.js:11
+msgid "js.settings.Billing.subscriptions.title"
+msgstr ""
+
+#: assets/js/settings/BillingPage.js:24
+msgid "js.settings.BillingPage.title"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.amount"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:24
+msgid "js.settings.Plan.PlanTable.current"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:71
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:66
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:65
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
+msgstr ""
+
+#: assets/js/settings/PlanPage.js:29
+msgid "js.settings.PlanPage.title"
+msgstr ""
+
+#: assets/js/settings/settingsPages.js:20
+msgid "js.settings.SettingsPages.plan.title"
+msgstr ""
+
+#. e.g., "$8/month"
+#: assets/js/settings/Billing/Subscription.js:21
+msgid "js.settings.billing.Subscription.amount"
+msgstr ""
+
+#: assets/js/settings/settingsPages.js:13
+msgid "js.settings.settingsPages.billing.title"
 msgstr ""
 
 #: assets/js/table/ColumnContextMenu.js:52

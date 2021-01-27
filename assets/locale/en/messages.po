@@ -102,43 +102,43 @@ msgstr "Imported module {module}"
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Processing…"
 
-#: assets/js/OutputIframe.js:147
+#: assets/js/OutputIframe.js:146
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:140
+#: assets/js/OutputIframe.js:139
 msgid "js.OutputIframe.embed.header.title"
 msgstr "EMBED THIS CHART"
 
-#: assets/js/OutputIframe.js:157
+#: assets/js/OutputIframe.js:156
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:123
+#: assets/js/OutputIframe.js:122
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Cancel"
 
-#: assets/js/OutputIframe.js:126
+#: assets/js/OutputIframe.js:125
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Set public"
 
-#: assets/js/OutputIframe.js:179
+#: assets/js/OutputIframe.js:185
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Get an embeddable URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:106
+#: assets/js/OutputIframe.js:105
 msgid "js.OutputIframe.private.header.title"
 msgstr "SHARE THIS WORKFLOW"
 
-#: assets/js/OutputIframe.js:116
+#: assets/js/OutputIframe.js:115
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Set this workflow to Public in order to share it? Anyone with the URL "
 "will be able to access and duplicate it."
 
-#: assets/js/OutputIframe.js:113
+#: assets/js/OutputIframe.js:112
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "This workflow is currently private"
 
@@ -400,7 +400,7 @@ msgstr "Close Search"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:103
+#: assets/js/WorkflowEditor/OutputPane.js:101
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
@@ -1581,15 +1581,15 @@ msgstr "Integer, no commas: {0}"
 msgid "js.params.NumberFormat.percentage"
 msgstr "Percentage: {0}"
 
-#: assets/js/params/Custom/Refine/index.js:454
+#: assets/js/params/Custom/Refine/index.js:457
 msgid "js.params.Refine.GroupList.loadingValues"
 msgstr "Loading values…"
 
-#: assets/js/params/Custom/Refine/index.js:456
+#: assets/js/params/Custom/Refine/index.js:459
 msgid "js.params.Refine.GroupList.noValuesInColumn"
 msgstr "This column does not have any values"
 
-#: assets/js/params/Custom/Refine/index.js:458
+#: assets/js/params/Custom/Refine/index.js:461
 msgid "js.params.Refine.GroupList.noValuesMatchSearch"
 msgstr "No values match your search"
 
@@ -1605,7 +1605,7 @@ msgstr "Hide original values"
 msgid "js.params.Refine.RefineGroup.expandStatus.notExpanded"
 msgstr "Show original values"
 
-#: assets/js/params/Custom/Refine/index.js:313
+#: assets/js/params/Custom/Refine/index.js:316
 msgid "js.params.Refine.RefineGroup.selectTheseRows"
 msgstr "Select these rows"
 
@@ -1613,7 +1613,7 @@ msgstr "Select these rows"
 msgid "js.params.Refine.RefineModalPrompt.findClusters.button"
 msgstr "Find clusters..."
 
-#: assets/js/params/Custom/Refine/index.js:809
+#: assets/js/params/Custom/Refine/index.js:812
 msgid "js.params.Refine.mergeFacets.button"
 msgstr "Merge facets"
 
@@ -1691,7 +1691,7 @@ msgstr "Name"
 
 #: assets/js/settings/Billing/ManageBilling.js:16
 msgid "js.settings.Billing.ManageBilling.buttonText"
-msgstr "Manage Subscriptions"
+msgstr "Manage payments with Stripe"
 
 #: assets/js/settings/Billing/StripeSubscriptionStatus.js:11
 msgid "js.settings.Billing.StripeSubscriptionStatus.active"
@@ -1721,25 +1721,80 @@ msgstr "Trialing"
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr "Unpaid"
 
-#: assets/js/settings/Billing/Subscribe.js:16
+#: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr "Subscribe"
 
-#: assets/js/settings/Billing/Subscription.js:20
+#: assets/js/settings/Billing/Subscription.js:28
 msgid "js.settings.Billing.Subscription.createdAt"
 msgstr "Subscribed"
 
-#: assets/js/settings/Billing/Subscription.js:22
+#: assets/js/settings/Billing/Subscription.js:30
 msgid "js.settings.Billing.Subscription.status"
 msgstr "Last Renewed"
 
-#: assets/js/settings/Billing/Subscription.js:18
+#: assets/js/settings/Billing/Subscription.js:26
 msgid "js.settings.Billing.Subscription.stripeStatus"
 msgstr "Status"
 
-#: assets/js/settings/Billing/index.js:12
-msgid "js.settings.Billing.h1"
-msgstr "Subscriptions"
+#: assets/js/settings/Billing/index.js:35
+msgid "js.settings.Billing.manage.description"
+msgstr ""
+"You may use Stripe to view invoices, update credit card details or cancel"
+" subscriptions."
+
+#: assets/js/settings/Billing/index.js:33
+msgid "js.settings.Billing.manage.title"
+msgstr "Manage payments"
+
+#: assets/js/settings/Billing/index.js:26
+msgid "js.settings.Billing.subscriptions.empty"
+msgstr "You are not subscribed. Please <0>upgrade</0>."
+
+#: assets/js/settings/Billing/index.js:11
+msgid "js.settings.Billing.subscriptions.title"
+msgstr "Current Subscription"
+
+#: assets/js/settings/BillingPage.js:24
+msgid "js.settings.BillingPage.title"
+msgstr "Billing"
+
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.amount"
+msgstr "<0><1/></0>/month"
+
+#: assets/js/settings/Plan/PlanTable.js:24
+msgid "js.settings.Plan.PlanTable.current"
+msgstr "Current plan"
+
+#: assets/js/settings/Plan/PlanTable.js:71
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
+msgstr "{0} updates"
+
+#: assets/js/settings/Plan/PlanTable.js:66
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
+msgstr "Per day"
+
+#: assets/js/settings/Plan/PlanTable.js:65
+msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
+msgstr "Automatic updates"
+
+#: assets/js/settings/PlanPage.js:29
+msgid "js.settings.PlanPage.title"
+msgstr "Plan"
+
+#: assets/js/settings/settingsPages.js:20
+msgid "js.settings.SettingsPages.plan.title"
+msgstr "Plan"
+
+#. e.g., "$8/month"
+#: assets/js/settings/Billing/Subscription.js:21
+msgid "js.settings.billing.Subscription.amount"
+msgstr "<0/>/month"
+
+#: assets/js/settings/settingsPages.js:13
+msgid "js.settings.settingsPages.billing.title"
+msgstr "Billing"
 
 #: assets/js/table/ColumnContextMenu.js:52
 msgid "js.table.ColumnContextMenu.cleanText"

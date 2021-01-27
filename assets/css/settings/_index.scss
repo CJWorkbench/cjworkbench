@@ -1,37 +1,52 @@
-section.billing {
-  max-width: rem(40);
-  margin: rem(3) auto;
-  background: white;
-  padding: rem(2);
+main.settings-page {
+  display: flex;
+  $max-width: 100rem;
+  $header-height: rem(6);
+  max-width: $max-width;
+  margin: rem(3) auto 0;
   font-size: rem(1); // see $we-changed-what-rem-means-and-now-we-regret-it
+  @include content-1;
+
+  nav {
+    flex: 0 0 auto;
+    width: 20rem;
+    margin: $header-height 2rem 0;
+
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+
+      li {
+        margin-bottom: rem(1);
+      }
+    }
+
+    a, span {
+      font-weight: bold;
+    }
+
+    a {
+      color: $text-muted;
+    }
+
+    span {
+      color: $brand-learn;
+    }
+  }
+
+  nav + div {
+    flex: 1 1 auto;
+  }
 
   h1 {
     @include title-1;
-  }
-
-  ul.subscriptions {
+    color: $brand-workspace;
+    height: $header-height;
     margin: 0;
     padding: 0;
-    list-style: none;
-
-    dl {
-      margin-top: rem(2);
-    }
-
-    dt, dd {
-      display: block;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
-
-  .manage-billing {
-    margin-top: rem(2);
-
-    button {
-      display: inline-block;
-      margin-right: rem(1);
-    }
   }
 }
+
+@import 'Billing.scss';
+@import 'Plan.scss';

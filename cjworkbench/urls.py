@@ -6,6 +6,7 @@ from django.views.generic.base import RedirectView
 from cjworkbench.i18n.views import set_locale
 from cjworkbench import views
 import cjworkbench.views.settings.billing
+import cjworkbench.views.settings.plan
 import cjworkbench.views.stripe
 
 urlpatterns = [
@@ -19,6 +20,7 @@ urlpatterns = [
     url(r"^locale", set_locale, name="set_locale"),
     # Billing
     path("settings/billing", views.settings.billing.get, name="settings_billing"),
+    path("settings/plan", views.settings.plan.get),
     # Stripe
     path("stripe/webhook", views.stripe.webhook),
     path("stripe/create-checkout-session", views.stripe.create_checkout_session),

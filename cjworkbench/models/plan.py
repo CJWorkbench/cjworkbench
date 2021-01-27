@@ -15,17 +15,36 @@ class Plan(models.Model):
         verbose_name = "Plan (edit/delete in Stripe dashboard)"
         verbose_name_plural = "Plans (create/edit/delete in Stripe dashboard)"
 
-    stripe_product_id = models.SlugField(unique=True)
+    stripe_price_id = models.SlugField(unique=True)
     """Identifier on Stripe."""
+
+    stripe_product_id = models.SlugField()
+    """Identifier on Stripe. Currently unused.
+
+    There may be many prices per product. Workbench stores them all. Mark some
+    "archived" (not "active") to hide them from users.
+    """
 
     stripe_product_name = models.TextField()
     """Text from Stripe. Not i18n-ready."""
 
-    stripe_price_id = models.SlugField(unique=True)
-    """Identifier on Stripe.
+    stripe_amount = models.PositiveIntegerField()
+    """Number of cents Stripe will charge.
 
-    There may be many prices per product. For now, Workbench only stores and
-    prompts for the first.
+    See https://stripe.com/docs/api/plans/create#create_plan-amount
+    """
+
+    stripe_currency = models.CharField(max_length=3)
+    """Currency Stripe will charge in.
+
+    3-letter ISO country code, lowercased. For example: 'usd'.
+    """
+
+    stripe_active = models.BooleanField()
+    """Stripe "active" (not-"archived") flag.
+
+    When a Stripe Price is not active, we remember its Subscriptions. We don't
+    display the Price anywhere aside from existing Subscriptions.
     """
 
     max_fetches_per_day = models.IntegerField(
@@ -39,17 +58,22 @@ class Plan(models.Model):
 
     @classmethod
     def upsert_from_stripe_product_and_price(
-        cls, product: stripe.Product, price: stripe.Price
+        cls,
+        price: stripe.Price,
+        product: stripe.Product,
     ) -> Plan:
         """Upsert Plan from Stripe data; return (plan, is_created)."""
         return cls.objects.update_or_create(
-            stripe_product_id=product.id,
+            stripe_price_id=price.id,
             defaults={  # Django nit: "defaults" here means, "overwrite"
                 **product.metadata,
                 **dict(
                     # Override product.metadata, if need be
-                    stripe_price_id=price.id,
+                    stripe_product_id=product.id,
                     stripe_product_name=product.name,
+                    stripe_amount=price.unit_amount,
+                    stripe_currency=price.currency,
+                    stripe_active=price.active,
                 ),
             },
         )

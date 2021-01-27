@@ -29,6 +29,19 @@ def create_user(
     return user
 
 
+def create_plan(**kwargs):
+    kwargs = {
+        "stripe_price_id": "price_1",
+        "stripe_product_id": "product_1",
+        "stripe_product_name": "Premium Plan",
+        "stripe_active": True,
+        "stripe_amount": 100,
+        "stripe_currency": "usd",
+        **kwargs,
+    }
+    return Plan.objects.create(**kwargs)
+
+
 class WebhookTest(DbTestCase):
     @override_settings(STRIPE_WEBHOOK_SIGNING_SECRET="sec_123")
     def test_400_invalid_signature(self):
@@ -159,7 +172,7 @@ class CreateCheckoutSessionTest(DbTestCase):
     def test_404_no_stripe_api_key(self):
         del settings.STRIPE_API_KEY  # restored because override_settings() is above
         self.client.force_login(create_user())
-        Plan.objects.create(stripe_price_id="price_123")
+        create_plan(stripe_price_id="price_123")
         response = self.client.post("/stripe/create-checkout-session")
         self.assertEqual(response.status_code, 404)
 
@@ -174,7 +187,7 @@ class CreateCheckoutSessionTest(DbTestCase):
     def test_happy_path(self, create_checkout_session):
         user = create_user()
         self.client.force_login(user)
-        plan = Plan.objects.create(stripe_price_id="price_123")
+        plan = create_plan(stripe_price_id="price_123")
         response = self.client.post("/stripe/create-checkout-session")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)

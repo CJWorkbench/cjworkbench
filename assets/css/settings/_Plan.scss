@@ -1,0 +1,81 @@
+table.plans {
+  table-layout: fixed; // give all columns the same width
+  border-collapse: collapse;
+  width: 100%;
+  height: 1px; // so <div> in <td> can have height:100%: https://stackoverflow.com/a/22220780
+  $well-padding: rem(1.5);
+  $well-gutter: rem(1);
+
+  @mixin plan-table-well() {
+    // A <div> inside a <td> that has height:100%....
+    // Appears as a "well": nestled in a border, with padding and a
+    // left margin. Meant to be stacked vertically.
+    //
+    // For top/bottom, callers should set border-top-width: 1px,
+    // border-top-left-radius: 3px, border-top-right-radius: 3px.
+    height: 100%;
+    border: 1px solid $table-border;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    padding: $well-padding;
+    margin-left: $well-gutter;
+    background: white;
+  }
+
+  th, td {
+    height: 100%; // so divs inside can have height:100%;
+    padding: 0;
+  }
+
+  thead {
+    th {
+      &>div {
+        @include plan-table-well();
+        flex-direction: column;
+        align-items: flex-start;
+        border-top-width: 1px;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+
+        .amount {
+          @include title-2;
+          color: $brand-learn;
+        }
+
+        div.current {
+          margin-top: rem(1);
+        }
+
+        button {
+          @include action-button;
+          @include button-pink-fill;
+          margin-top: rem(1);
+        }
+      }
+    }
+  }
+
+  tbody {
+    th, td {
+      border-bottom: 1px solid $table-border;
+      vertical-align: top;
+    }
+
+    th {
+      padding: rem(1) rem(1) rem(1) 0;
+    }
+
+    td>div {
+      @include plan-table-well();
+    }
+
+    tr:last-child td>div {
+      // border-bottom-width: 0px means the rounded border isn't perfect.
+      // But it's close enough. (The <td> has its own border-bottom, and the
+      // effect we're going for is for one border to be "on top of" the other.)
+      border-bottom-width: 0;
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+}
