@@ -1730,7 +1730,7 @@ msgstr "Unpaid"
 
 #: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
-msgstr "Subscribe"
+msgstr "Upgrade"
 
 #: assets/js/settings/Billing/index.js:36
 msgid "js.settings.Billing.manage.description"

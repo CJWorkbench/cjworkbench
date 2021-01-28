@@ -2074,7 +2074,7 @@ msgstr ""
 msgid "js.settings.Billing.StripeSubscriptionStatus.unpaid"
 msgstr ""
 
-#. default-message: Subscribe
+#. default-message: Upgrade
 #: assets/js/settings/Plan/Subscribe.js:16
 msgid "js.settings.Billing.Subscribe.buttonText"
 msgstr ""

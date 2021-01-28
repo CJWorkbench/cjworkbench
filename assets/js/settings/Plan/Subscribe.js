@@ -13,7 +13,7 @@ export default function Subscribe (props) {
 
   return (
     <button onClick={handleClick} disabled={loading}>
-      <Trans id='js.settings.Billing.Subscribe.buttonText'>Subscribe</Trans>
+      <Trans id='js.settings.Billing.Subscribe.buttonText'>Upgrade</Trans>
     </button>
   )
 }
