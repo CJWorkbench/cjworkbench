@@ -42,7 +42,7 @@ their ``.json`` spec files.
 >>> import cjwstate.modules
 >>> from cjwstate.modules import staticregistry
 >>> cjwstate.modules.init_module_system()
->>> staticregistry.Lookup['googlesheets']  # dynamic lookup by id
+>>> staticregistry.Lookup['urlscraper']  # dynamic lookup by id
 """
 import logging
 from pathlib import Path
