@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from django.template.response import TemplateResponse
 
 from cjworkbench.models import Plan, Subscription
+from cjworkbench.models.userlimits import UserLimits
 
 User = get_user_model()
 
@@ -46,7 +47,7 @@ def jsonize_plans() -> Dict[str, Dict[str, Any]]:
     FreePlan = Plan(
         stripe_price_id=None,  # special case
         stripe_product_name="Free Plan",
-        max_fetches_per_day=500,
+        max_fetches_per_day=UserLimits().max_fetches_per_day,
         stripe_amount=0,
         stripe_currency="usd",
     )
