@@ -537,7 +537,13 @@ def validate_thrift() -> ttypes.ValidateModuleResult:
     assert len(fetch_spec.args) == 1, "fetch must take one positional argument"
     assert not (
         set(fetch_spec.kwonlyargs)
-        - {"secrets", "get_input_dataframe", "get_stored_dataframe", "output_path"}
+        - {
+            "secrets",
+            "get_input_dataframe",
+            "get_stored_dataframe",
+            "output_path",
+            "settings",
+        }
     ), "a fetch() keyword argument is misspelled"
 
     return ttypes.ValidateModuleResult()
