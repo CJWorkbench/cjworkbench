@@ -29,6 +29,7 @@ pastecsv
 pythoncode
 refine
 regexextractor
+removeduplicates
 renamecolumns
 reordercolumns
 replace
