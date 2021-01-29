@@ -201,7 +201,6 @@ COPY pyproject.toml pyproject.toml
 COPY cjwkernel/ /app/cjwkernel/
 COPY cjwstate/ /app/cjwstate/
 COPY cjworkbench/ /app/cjworkbench/
-COPY staticmodules/ /app/staticmodules/
 # TODO make server/ frontend-specific
 COPY server/ /app/server/
 # cron/, fetcher/ and renderer/ are referenced in settings.py, so they must be

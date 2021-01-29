@@ -6,7 +6,6 @@
   "loads_data": true,
   "description" : "Enter data manually, or copy and paste data from a spreadsheet or CSV.",
   "help_url":"modules/add-data/paste-data",
-  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

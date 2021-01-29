@@ -9,7 +9,6 @@ from django.db.models import F, OuterRef, Subquery
 from cjwstate import s3
 from cjwstate.models.module_version import ModuleVersion as DbModuleVersion
 import cjwstate.modules
-from cjwstate.modules.staticregistry import MODULE_TEMPDIR, Lookup as StaticModuleLookup
 from cjwstate.modules.types import ModuleId, ModuleVersion, ModuleZipfile
 
 
@@ -31,8 +30,6 @@ class ModuleRegistry:
 
     Rules:
 
-    * `internal` modules only ever have one version: they cannot be deleted or
-      updated. (TODO nix internal modules.)
     * `develop` modules are _not_ immutable. We consider them updated if the
       database's `last_update_time` field has a new value.
     * Otherwise, modules at a given version are immutable. We test the database
@@ -63,7 +60,7 @@ class ModuleRegistry:
             .first()
         )
         if db_module is None:
-            return StaticModuleLookup[module_id]  # raise KeyError
+            raise KeyError("No such module '%s'" % module_id)
         else:
             return self._download_or_reuse_zipfile(db_module)
 
@@ -81,9 +78,7 @@ class ModuleRegistry:
             DbModuleVersion.objects.annotate(_latest=latest).filter(id=F("_latest"))
         )
 
-        ret = dict(StaticModuleLookup)  # fallback modules (TODO nix all static modules)
-        ret.update({m.id_name: self._download_or_reuse_zipfile(m) for m in db_modules})
-        return ret
+        return {m.id_name: self._download_or_reuse_zipfile(m) for m in db_modules}
 
     def _download_or_reuse_zipfile(self, db_module: DbModuleVersion) -> ModuleZipfile:
         """Ensure `self._cache` contains a `ModuleZipfile` for `db_module`, and return it.
@@ -146,14 +141,6 @@ class ModuleRegistry:
             path.unlink()
 
 
-def _download_module_zipfile_modern(
-    output_path: Path, module_id: ModuleId, version: ModuleVersion
-) -> None:
-    name = "%s.%s.zip" % (module_id, version)
-    # raise FileNotFoundError
-    s3.download(s3.ExternalModulesBucket, "%s/%s" % (module_id, name), output_path)
-
-
 def _is_basename_python_code(key: str) -> bool:
     """True iff the given filename is a module's Python code file.
 
@@ -171,52 +158,6 @@ def _is_basename_python_code(key: str) -> bool:
     if key.startswith("test_"):
         return False
     return key.endswith(".py")
-
-
-def _download_module_zipfile_deprecated(
-    output_path: Path,  # tempdir/module.abcd12.zip
-    module_id: ModuleId,
-    version: ModuleVersion,
-    spec: Dict[str, Any],
-    js_module: str,
-) -> None:
-    prefix = "%s/%s/" % (module_id, version)
-    all_keys = s3.list_file_keys(s3.ExternalModulesBucket, prefix)
-    try:
-        python_code_key = next(
-            k for k in all_keys if _is_basename_python_code(k[len(prefix) :])
-        )
-    except StopIteration:
-        raise FileNotFoundError
-    try:
-        html_key = next(k for k in all_keys if k.endswith(".html"))
-    except StopIteration:
-        html_key = None  # there is no HTML file
-
-    # Write to a temporary file and then move. That makes it safe to read a
-    # zipfile from one thread while downloading it from another. (".develop"
-    # zipfiles are mutable.)
-    with zipfile.ZipFile(output_path, mode="w") as zf:
-        # Write .yaml spec
-        zf.writestr("%s.yaml" % module_id, json.dumps(spec).encode("utf-8"))
-
-        # Write .js js_module
-        if js_module:
-            zf.writestr("%s.js" % module_id, js_module.encode("utf-8"))
-
-        # Write .py module code
-        # raise FileNotFoundError
-        with s3.temporarily_download(
-            s3.ExternalModulesBucket, python_code_key
-        ) as py_path:
-            zf.write(py_path, "%s.py" % module_id)
-
-        # Write .html file
-        if html_key:
-            with s3.temporarily_download(
-                s3.ExternalModulesBucket, html_key
-            ) as html_path:
-                zf.write(html_path, "%s.html" % module_id)
 
 
 def download_module_zipfile(
@@ -244,20 +185,18 @@ def download_module_zipfile(
     """
     logger.info("download_module_zipfile(%s.%s.zip)", module_id, version)
 
+    tempdir.mkdir(parents=True, exist_ok=True)
+
     zippath = tempdir / ("%s.%s.zip" % (module_id, version))
     try:
-        _download_module_zipfile_modern(zippath, module_id, version)
+        # raise FileNotFoundError
+        s3.download(
+            s3.ExternalModulesBucket,
+            "%s/%s.%s.zip" % (module_id, module_id, version),
+            zippath,
+        )
     except FileNotFoundError as original_error:
-        try:
-            _download_module_zipfile_deprecated(
-                zippath,
-                module_id,
-                version,
-                spec=deprecated_spec,
-                js_module=deprecated_js_module,
-            )
-        except FileNotFoundError:
-            raise RuntimeError from original_error
+        raise RuntimeError from original_error
 
     ret = ModuleZipfile(zippath)  # raise ZipfileError
     try:
@@ -270,4 +209,5 @@ def download_module_zipfile(
     return ret
 
 
+MODULE_TEMPDIR = Path("/var/tmp/cjwkernel-modules")
 MODULE_REGISTRY = ModuleRegistry(MODULE_TEMPDIR)

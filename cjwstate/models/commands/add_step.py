@@ -132,7 +132,7 @@ class AddStep(ChangesStepOutputs, BaseCommand):
             is_deleted=True,
             params=params,
             cached_migrated_params=params,
-            cached_migrated_params_module_version=module_zipfile.get_param_schema_version(),
+            cached_migrated_params_module_version=module_zipfile.version,
             secrets={},
         )
 

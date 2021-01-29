@@ -44,10 +44,7 @@ def get_migrated_params(
     stale = (
         module_zipfile.version == "develop"
         # works if cached version (and thus cached _result_) is None
-        or (
-            module_zipfile.get_param_schema_version()
-            != step.cached_migrated_params_module_version
-        )
+        or module_zipfile.version != step.cached_migrated_params_module_version
     )
 
     if not stale:
@@ -56,9 +53,7 @@ def get_migrated_params(
         # raise ModuleError
         params = invoke_migrate_params(module_zipfile, step.params)
         step.cached_migrated_params = params
-        step.cached_migrated_params_module_version = (
-            module_zipfile.get_param_schema_version()
-        )
+        step.cached_migrated_params_module_version = module_zipfile.version
         try:
             step.save(
                 update_fields=[

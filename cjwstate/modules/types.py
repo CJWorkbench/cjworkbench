@@ -29,8 +29,7 @@ class ModuleSpec:
     """
     Dict-like object representing a valid module spec.
 
-    See `module_spec_schema.yaml` for the spec definition, or look to
-    `staticmodules/` for example JSON and YAML files.
+    See `module_spec_schema.yaml` for the spec definition.
 
     You may pass this to `ModuleVersion.create_or_replace_from_spec()`.
     """
@@ -51,7 +50,6 @@ class ModuleSpec:
     row_action_menu_entry_title: str = ""
     help_url: str = ""
     param_schema: Optional[Dict[str, Any]] = None
-    parameters_version: Optional[int] = None
 
     def get_uses_data(self):
         if self.uses_data is None:
@@ -100,7 +98,7 @@ class ModuleZipfile:
     """Path to zipfile on the filesystem."""
 
     _VALID_PATH_PATTERN: ClassVar[Pattern] = re.compile(
-        "^(?P<id>[A-Za-z][-a-zA-Z0-9]*)\.(?P<version>(?:dir-)?[a-f0-9]+|internal|develop)\.zip$"
+        "^(?P<id>[A-Za-z][-a-zA-Z0-9]*)\.(?P<version>(?:dir-)?[a-f0-9]+|develop)\.zip$"
     )
 
     def __post_init__(self):
@@ -253,21 +251,6 @@ class ModuleZipfile:
             return self._read_text(self.module_id + ".js")
         except KeyError:
             return None
-
-    def get_param_schema_version(self) -> str:
-        """Version of param_schema. Changes whenever spec.get_param_schema() changes.
-
-        This is used in caching: if params were cached under
-        param_schema_version=v1 and now the module has param_schema_version=v2,
-        then we must call the module's migrate_params() on the params.
-        """
-        if self.version == "internal":
-            # We version internal modules' param specs explicitly.
-            return "v%d" % self.get_spec().parameters_version
-        else:
-            # "develop" is handled specially in cjwstate/params.py. For GitHub
-            # sha1, a new version forces migrate_params().
-            return self.version
 
     def read_messages_po_for_locale(self, locale_id: str) -> bytes:
         """Return the contents of the po file for the given locale.

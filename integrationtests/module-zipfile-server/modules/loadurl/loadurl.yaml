@@ -6,7 +6,6 @@
   "description" : "Load a dataset, JSON feed or API via its public URL, and update when new data is available.",
   "loads_data": true,
   "help_url":"modules/add-data/add-from-url",
-  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

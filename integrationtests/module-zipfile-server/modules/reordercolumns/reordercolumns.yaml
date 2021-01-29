@@ -5,7 +5,6 @@
   "icon": "transform",
   "description": "Change the order of columns in the table.",
   "help_url":"modules/clean/reorder-columns",
-  "parameters_version": 2,
   "parameters": [
     {
       "name": "",

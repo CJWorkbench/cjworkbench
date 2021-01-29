@@ -5,7 +5,6 @@
   "icon" : "group",
   "description": "Group rows by dates and times within columns (also called pivot table). Calculate sum, averages, Min, Max and more between columns for each group.",
   "help_url":"modules/analyze/count-by-date",
-  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

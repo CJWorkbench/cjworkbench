@@ -10,7 +10,6 @@
     "list_string": { "type": "string" },
     "renames": { "type": "map", "value_dtype": { "type": "string" } }
   },
-  "parameters_version": 1,
   "parameters": [
     {
       "name": "Paste list of new names",

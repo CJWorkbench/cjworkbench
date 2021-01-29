@@ -1,3 +1,8 @@
+2021-01-25.01
+-------------
+
+* long-to-wide: repair invalid column names
+
 2020-09-22.01
 -------------
 

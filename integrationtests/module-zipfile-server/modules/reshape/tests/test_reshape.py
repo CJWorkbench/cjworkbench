@@ -1,16 +1,28 @@
-from collections import namedtuple
 import unittest
+from typing import NamedTuple
+
 import numpy as np
 import pandas as pd
+from cjwmodule.testing.i18n import cjwmodule_i18n_message, i18n_message
 from pandas.testing import assert_frame_equal
-from reshape import render, migrate_params
-from cjwmodule.testing.i18n import i18n_message
+
+from reshape import migrate_params, render
 
 
-Column = namedtuple("Column", ("name", "type"))
+class Column(NamedTuple):
+    name: str
+    type: str
 
 
-DefaultKwargs = {"input_columns": "most code does not look at this"}
+class DefaultSettings(NamedTuple):
+    MAX_COLUMNS_PER_TABLE: int = 1000
+    MAX_BYTES_PER_COLUMN_NAME: int = 100
+
+
+DefaultKwargs = {
+    "input_columns": "most code does not look at this",
+    "settings": DefaultSettings(),
+}
 
 
 def P(
@@ -345,6 +357,22 @@ class TestReshape(unittest.TestCase):
         )
         self.assertEqual(result, i18n_message("long_to_wide.error.noValueColumn"))
 
+    def test_long_to_wide_invalid_colname(self):
+        in_table = pd.DataFrame({"row": [1], "col": ["a\x00b"], "val": [2]})
+        result = render(
+            in_table, P("longtowide", ["row"], ltw_varcolname="col"), **DefaultKwargs
+        )
+        assert_frame_equal(result[0], pd.DataFrame({"row": [1], "ab": [2]}))
+        self.assertEqual(
+            result[1],
+            [
+                cjwmodule_i18n_message(
+                    "util.colnames.warnings.ascii_cleaned",
+                    {"n_columns": 1, "first_colname": "ab"},
+                )
+            ],
+        )
+
     def test_transpose(self):
         # (Most tests are in the `transpose` module....)
         in_table = pd.DataFrame(
@@ -365,6 +393,7 @@ class TestReshape(unittest.TestCase):
                 "Robert": Column("Robert", "text"),
                 "Teddy": Column("Teddy", "text"),
             },
+            settings=DefaultSettings(),
         )
         # Keeping the old header for the first column can be confusing.
         # First column header doesnt usually classify rest of headers.

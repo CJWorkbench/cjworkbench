@@ -4,7 +4,6 @@ category: Clean
 icon: number
 help_url: steps/clean/convert-to-numbers
 description: Convert text columns to number columns.
-parameters_version: 2
 parameters:
 - id_name: colnames
   type: multicolumn

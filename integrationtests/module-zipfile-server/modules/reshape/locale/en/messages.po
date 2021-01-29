@@ -1,14 +1,14 @@
 # English translations for PROJECT.
-# Copyright (C) 2020 ORGANIZATION
+# Copyright (C) 2021 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-09-22 15:46+0000\n"
+"POT-Creation-Date: 2021-01-25 20:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.0\n"
 
 msgid "_spec.name"
 msgstr "Reshape"
@@ -52,89 +52,89 @@ msgstr "Value"
 msgid "_spec.parameters.ltw_varcolname.name"
 msgstr "Variable column"
 
-#: reshape.py:21
+#: reshape.py:34
 msgid "wide_to_long.badColumns.varcolname.conflict"
 msgstr ""
 "You entered a variable-column name that is already in the table. Please "
 "change it."
 
-#: reshape.py:28
+#: reshape.py:41
 msgid "wide_to_long.badColumns.valcolname.conflict"
 msgstr ""
 "You entered a value-column name that is already in the table. Please "
 "change it."
 
-#: reshape.py:67
+#: reshape.py:80
 msgid "wide_to_long.badColumns.mixedTypes.message"
 msgstr ""
 "{n_columns, plural, other{# columns (see \"{first_colname}\") were} one "
 "{Column \"{first_colname}\" was}} auto-converted to Text because the "
 "value column cannot have multiple types."
 
-#: reshape.py:74
+#: reshape.py:87
 msgid "wide_to_long.badColumns.mixedTypes.quick_fix.text"
 msgstr "Convert {n_columns, plural, one {# column} other {# columns}} to text"
 
-#: reshape.py:106
+#: reshape.py:122
 msgid "long_to_wide.badColumn.notText.message"
 msgstr ""
 "Column \"{column_name}\" was auto-converted to Text because column names "
 "must be text."
 
-#: reshape.py:114
+#: reshape.py:130
 msgid "long_to_wide.badColumn.notText.quick_fix.text"
 msgstr "Convert \"{column_name}\" to text"
 
-#: reshape.py:136
+#: reshape.py:152
 msgid "long_to_wide.badRows.emptyColumnHeaders.warning"
 msgstr ""
 "{n_rows, plural,   one {# row with empty \"{column_name}\" was removed.}"
 "  other {# rows with empty \"{column_name}\" were removed.}}"
 
-#: reshape.py:150
+#: reshape.py:165
 msgid "long_to_wide.error.repeatedVariables"
 msgstr ""
 "Some variables are repeated. Please add Row columns to uniquely identify "
 "each record."
 
-#: reshape.py:156
+#: reshape.py:171
 msgid "long_to_wide.error.noValueColumn"
 msgstr ""
 "There is no Value column. All but one table column must be a Row or "
 "Column variable."
 
-#: reshape.py:162
+#: reshape.py:177
 msgid "long_to_wide.error.tooManyValueColumns"
 msgstr ""
 "There are too many Value columns. All but one table column must be a Row "
 "or Column variable. Please drop extra columns before reshaping."
 
-#: reshape.py:209
+#: reshape.py:235
 msgid "error.sameColumnAndRowVariables"
 msgstr "Cannot reshape: column and row variables must be different"
 
-#: reshape.py:330
+#: reshape.py:339
 msgid "transpose.warnings.tooManyRows"
 msgstr ""
 "We truncated the input to {max_columns} rows so the transposed table "
 "would have a reasonable number of columns."
 
-#: reshape.py:349
+#: reshape.py:358
 msgid "transpose.warnings.headersConvertedToText.message"
 msgstr "Headers in column \"{column_name}\" were auto-converted to text."
 
-#: reshape.py:356
+#: reshape.py:365
 msgid "transpose.warnings.headersConvertedToText.quickFix.text"
 msgstr "Convert {column_name} to text"
 
-#: reshape.py:394
+#: reshape.py:405
 msgid "transpose.warnings.differentColumnTypes.message"
 msgstr ""
 "{n_columns, plural, other {# columns (see \"{first_colname}\") were} one "
 "{Column \"{first_colname}\" was}} auto-converted to Text because all "
 "columns must have the same type."
 
-#: reshape.py:401
+#: reshape.py:412
 msgid "transpose.warnings.differentColumnTypes.quickFix.text"
 msgstr "Convert {n_columns, plural, other {# columns} one {# column}} to text"
 

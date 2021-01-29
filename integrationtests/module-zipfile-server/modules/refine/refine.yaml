@@ -11,7 +11,6 @@ param_schema: # we have a custom param, "refine"
     type: dict
     properties:
       renames: { type: map, value_dtype: { type: string } }
-parameters_version: 3
 parameters:
 - id_name: column
   type: column

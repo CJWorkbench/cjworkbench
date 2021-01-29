@@ -6,7 +6,6 @@
   "help_url": "modules/add-data/startfromtab",
   "description": "Copy another tab’s output table.",
   "loads_data": true,
-  "parameters_version": 1,
   "parameters": [
     {
       "name": "",

@@ -127,11 +127,7 @@ class Step(models.Model):
     cached_migrated_params_module_version = models.CharField(
         max_length=200, blank=True, null=True
     )
-    """ModuleZipfile .version that generated cached_migrated_params.
-
-    For internal modules (which don't have .version), this is
-    `module_zipfile.get_param_schema_version()`.
-    """
+    """ModuleZipfile .version that generated cached_migrated_params."""
 
     cached_render_result_delta_id = models.IntegerField(null=True, blank=True)
     cached_render_result_status = models.CharField(

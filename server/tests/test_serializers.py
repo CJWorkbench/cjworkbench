@@ -334,7 +334,6 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
                 has_zen_mode=True,
                 row_action_menu_entry_title="Solve your problem",
                 help_url="testme",
-                parameters_version=3,
             ),
             "",
         )
@@ -408,7 +407,6 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
                 has_zen_mode=True,
                 row_action_menu_entry_title="Solve your problem",
                 help_url="testme",
-                parameters_version=3,
             ),
             "",
         )

@@ -22,14 +22,6 @@ class ModuleRegistryTest(DbTestCase):
     # and then overwrite a key, s3's output would be _eventually_
     # consistent -- which means one test could read a file another test wrote.
 
-    def test_latest_internal(self):
-        zf = MODULE_REGISTRY.latest("urlscraper")
-        self.assertEqual(zf.get_spec().id_name, "urlscraper")
-
-    def test_all_latest_internal(self):
-        zf = MODULE_REGISTRY.all_latest()["urlscraper"]
-        self.assertEqual(zf.get_spec().id_name, "urlscraper")
-
     def test_db_s3_latest_order_by_last_update_time(self):
         # old version
         ModuleVersion.create_or_replace_from_spec(
@@ -64,61 +56,6 @@ class ModuleRegistryTest(DbTestCase):
 
         zf = MODULE_REGISTRY.latest("regtest1")
         self.assertEqual(zf.get_spec(), ModuleSpec(**v2.spec))
-
-    def test_db_s3_latest_load_deprecated_simple(self):
-        mv = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "regtest2",
-                "name": "regtest2 v1",
-                "category": "Clean",
-                "parameters": [{"id_name": "url", "type": "string"}],
-            },
-            source_version_hash="b1c2d2",
-        )
-        s3.put_bytes(
-            s3.ExternalModulesBucket,
-            "regtest2/b1c2d2/regtest2.py",
-            "def render(table, params):\n    return table",
-        )
-        s3.put_bytes(
-            s3.ExternalModulesBucket,
-            "regtest2/b1c2d2/regtest2.yaml",
-            json.dumps(mv.spec).encode("utf-8"),
-        )
-
-        zf = MODULE_REGISTRY.latest("regtest2")
-        self.assertEqual(zf.get_spec(), ModuleSpec(**mv.spec))
-        self.assertIsNone(zf.get_optional_html())
-
-    def test_db_s3_latest_load_deprecated_html(self):
-        mv = ModuleVersion.create_or_replace_from_spec(
-            {
-                "id_name": "regtest3",
-                "name": "regtest3 v2",
-                "category": "Clean",
-                "parameters": [{"id_name": "url", "type": "string"}],
-            },
-            source_version_hash="b1c2d2",
-        )
-        s3.put_bytes(
-            s3.ExternalModulesBucket,
-            "regtest3/b1c2d2/regtest3.py",
-            "def render(table, params):\n    return table",
-        )
-        s3.put_bytes(
-            s3.ExternalModulesBucket,
-            "regtest3/b1c2d2/regtest3.yaml",
-            json.dumps(mv.spec).encode("utf-8"),
-        )
-        html = "<!DOCTYPE html><html><head><title>Hi</title></head><body>Hello, world!</body></html>"
-        s3.put_bytes(
-            s3.ExternalModulesBucket,
-            "regtest3/b1c2d2/regtest3.html",
-            html.encode("utf-8"),
-        )
-
-        zf = MODULE_REGISTRY.latest("regtest3")
-        self.assertEqual(zf.get_optional_html(), html)
 
     def test_db_s3_use_cache_for_same_version(self):
         mv = ModuleVersion.create_or_replace_from_spec(

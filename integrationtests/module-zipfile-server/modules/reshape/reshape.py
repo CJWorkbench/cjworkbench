@@ -1,10 +1,23 @@
-from typing import Iterator, List, Set
+from typing import List, NamedTuple, Protocol
+
 import numpy as np
 import pandas as pd
-from pandas.api.types import is_numeric_dtype, is_datetime64_dtype
 from cjwmodule import i18n
-from dataclasses import dataclass
 from cjwmodule.util.colnames import gen_unique_clean_colnames_and_warn
+from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
+
+
+class Settings(Protocol):
+    MAX_COLUMNS_PER_TABLE: int
+    MAX_BYTES_PER_COLUMN_NAME: int
+
+
+class GenColnamesResult(NamedTuple):  # from transpose.py copy/paste
+    names: List[str]
+    """All column names for the output table (even the first column)."""
+
+    warnings: List[str]
+    """All the things we should tell the user about how we tweaked names."""
 
 
 def wide_to_long(
@@ -94,7 +107,10 @@ def wide_to_long(
 
 
 def long_to_wide(
-    table: pd.DataFrame, key_colnames: List[str], variable_colname: str
+    table: pd.DataFrame,
+    key_colnames: List[str],
+    variable_colname: str,
+    settings: Settings,
 ) -> pd.DataFrame:
     warnings = []
 
@@ -143,7 +159,6 @@ def long_to_wide(
             )
         )
         table = table[~empty]
-        table.reset_index(drop=True, inplace=True)
 
     table.set_index(key_colnames + [variable_colname], inplace=True, drop=True)
     if np.any(table.index.duplicated()):
@@ -166,14 +181,25 @@ def long_to_wide(
             "Please drop extra columns before reshaping.",
         )
 
+    value_series = table[table.columns[0]]
+
     table = table.unstack()
-    table.columns = [col[-1] for col in table.columns.values]
+    table.columns, colname_warnings = gen_unique_clean_colnames_and_warn(
+        [col[-1] for col in table.columns.values], settings=settings
+    )
+    warnings.extend(colname_warnings)
     table.reset_index(inplace=True)
     for colname in list(table.columns):
         series = table[colname]
         if hasattr(series, "cat"):
             # Remove unused categories
             series.cat.remove_unused_categories(inplace=True)
+        elif hasattr(value_series, "cat"):
+            # Pandas 0.25, at least, nixes Categorical outright. Restore it:
+            # if it makes sense for the input `value_series` to be Categorical,
+            # then surely it makes sense for the _outputs_ because they are
+            # subsets of the input.
+            table[colname] = series.astype("category")
 
     if warnings:
         return (table, warnings)
@@ -181,7 +207,7 @@ def long_to_wide(
         return table
 
 
-def render(table, params, *, input_columns):
+def render(table, params, *, input_columns, settings: Settings):
     operation = params["operation"]
 
     if operation == "widetolong":
@@ -215,6 +241,7 @@ def render(table, params, *, input_columns):
             table,
             key_colnames=params["key_colnames"],
             variable_colname=params["ltw_varcolname"],
+            settings=settings,
         )
 
     elif operation == "transpose":
@@ -223,6 +250,7 @@ def render(table, params, *, input_columns):
             # Backwards-compat because we published it like this way back when
             {"firstcolname": "New Column"},
             input_columns=input_columns,
+            settings=settings,
         )
 
 
@@ -279,27 +307,9 @@ def migrate_params(params):
 # 5. Copy translations of transpose messages (adapting their ids as in the previous step)
 #    to `locale/{locale}/messages.po for all locales except `"en"`
 
-# hard-code settings for now. TODO have Workbench pass render(..., settings=...)
-@dataclass
-class Settings:
-    MAX_COLUMNS_PER_TABLE: int
-    MAX_BYTES_PER_COLUMN_NAME: int
-
-
-settings = Settings(99, 120)
-
-
-@dataclass
-class GenColnamesResult:
-    names: List[str]
-    """All column names for the output table (even the first column)."""
-
-    warnings: List[str]
-    """All the things we should tell the user about how we tweaked names."""
-
 
 def _gen_colnames_and_warn(
-    first_colname: str, first_column: pd.Series
+    first_colname: str, first_column: pd.Series, settings: Settings
 ) -> GenColnamesResult:
     """
     Generate transposed-table column names.
@@ -320,9 +330,8 @@ def _gen_colnames_and_warn(
     return GenColnamesResult(names, warnings)
 
 
-def transpose(table, params, *, input_columns):
+def transpose(table, params, *, input_columns, settings: Settings):
     warnings = []
-    colnames_auto_converted_to_text = []
 
     if len(table) > settings.MAX_COLUMNS_PER_TABLE:
         table = table.truncate(after=settings.MAX_COLUMNS_PER_TABLE - 1)
@@ -376,7 +385,9 @@ def transpose(table, params, *, input_columns):
     first_column = first_column.astype(str)
     first_column[na] = ""  # Empty values are all equivalent
 
-    gen_headers_result = _gen_colnames_and_warn(params["firstcolname"], first_column)
+    gen_headers_result = _gen_colnames_and_warn(
+        params["firstcolname"], first_column, settings
+    )
     warnings.extend(gen_headers_result.warnings)
 
     input_types = set(c.type for c in input_columns.values() if c.name != column)

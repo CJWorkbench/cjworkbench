@@ -1,6 +1,5 @@
 import cjwkernel.chroot
 import cjwkernel.kernel
-import cjwstate.modules.staticregistry
 
 kernel = None
 
@@ -19,4 +18,3 @@ def init_module_system():
     # that relies on the module system needs to ensure it's initialized.
     if kernel is None:
         kernel = cjwkernel.kernel.Kernel()
-        cjwstate.modules.staticregistry._setup(kernel)
