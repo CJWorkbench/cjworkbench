@@ -47,5 +47,6 @@ timestampmath
 transpose
 twitter
 upload
+urlscraper
 valuefilter
 wordcloud
