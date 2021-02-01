@@ -16,6 +16,7 @@ fillna
 filter
 formatnumbers
 formula
+googlesheets
 groupby
 histogram
 intercom
