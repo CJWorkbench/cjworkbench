@@ -53,10 +53,7 @@ class BaseCommand:
         This must be called in a `workflow.cooperative_lock()`.
         """
         return clientside.Update(
-            workflow=clientside.WorkflowUpdate(
-                # self.workflow.last_delta may not be `self`
-                updated_at=delta.workflow.last_delta.datetime
-            )
+            workflow=clientside.WorkflowUpdate(updated_at=delta.workflow.updated_at)
         )
 
     def affected_step_delta_ids(self, step: "Step") -> List[Tuple[int, int]]:

@@ -35,11 +35,12 @@ class DuplicateTabTest(DbTestCase):
         self.assertFalse(cmd.tab.is_deleted)
         self.assertEqual(cmd.tab.slug, "tab-2")
         self.assertEqual(cmd.tab.name, "Tab 2")
+        workflow.refresh_from_db()
         send_update.assert_called_with(
             workflow.id,
             clientside.Update(
                 workflow=clientside.WorkflowUpdate(
-                    updated_at=cmd.datetime, tab_slugs=["tab-1", "tab-2"]
+                    updated_at=workflow.updated_at, tab_slugs=["tab-1", "tab-2"]
                 ),
                 tabs={
                     "tab-2": clientside.TabUpdate(
@@ -56,11 +57,12 @@ class DuplicateTabTest(DbTestCase):
         self.run_with_async_db(commands.undo(cmd))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
+        workflow.refresh_from_db()
         send_update.assert_called_with(
             workflow.id,
             clientside.Update(
                 workflow=clientside.WorkflowUpdate(
-                    updated_at=cmd.prev_delta.datetime, tab_slugs=["tab-1"]
+                    updated_at=workflow.updated_at, tab_slugs=["tab-1"]
                 ),
                 clear_tab_slugs=frozenset(["tab-2"]),
             ),
@@ -70,11 +72,12 @@ class DuplicateTabTest(DbTestCase):
         self.run_with_async_db(commands.redo(cmd))
         cmd.tab.refresh_from_db()
         self.assertFalse(cmd.tab.is_deleted)
+        workflow.refresh_from_db()
         send_update.assert_called_with(
             workflow.id,
             clientside.Update(
                 workflow=clientside.WorkflowUpdate(
-                    updated_at=cmd.datetime, tab_slugs=["tab-1", "tab-2"]
+                    updated_at=workflow.updated_at, tab_slugs=["tab-1", "tab-2"]
                 ),
                 tabs={
                     "tab-2": clientside.TabUpdate(

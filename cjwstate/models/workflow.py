@@ -134,6 +134,8 @@ class Workflow(models.Model):
     This was added 2019-06-18, so that's the minimum last_viewed_at value.
     """
 
+    updated_at = models.DateTimeField(default=timezone.now)
+
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, related_name="owned_workflows"
     )
@@ -183,7 +185,7 @@ class Workflow(models.Model):
         blank=True,
         null=True,  # if null, no Commands applied yet
         default=None,
-        on_delete=models.SET_DEFAULT,
+        on_delete=models.SET_NULL,
     )
 
     has_custom_report = models.BooleanField(default=False)
@@ -582,7 +584,7 @@ class Workflow(models.Model):
             has_custom_report=self.has_custom_report,
             block_slugs=block_slugs,
             public=self.public,
-            updated_at=self.last_delta.datetime,
+            updated_at=self.updated_at,
             acl=[
                 clientside.AclEntry(email=e.email, can_edit=e.can_edit)
                 for e in self.acl.all()

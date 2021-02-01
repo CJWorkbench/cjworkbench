@@ -1,3 +1,4 @@
+from django.utils import timezone
 from typing import Any, Dict, Optional, Tuple
 
 from cjworkbench.sync import database_sync_to_async
@@ -125,7 +126,8 @@ def _first_forward_and_save_returning_clientside_update(
 
         # Point workflow to us
         workflow.last_delta = delta
-        workflow.save(update_fields=["last_delta_id"])
+        workflow.updated_at = timezone.now()
+        workflow.save(update_fields=["last_delta_id", "updated_at"])
 
         return (
             delta,
@@ -142,7 +144,8 @@ def _call_forward_and_load_clientside_update(
         command = NAME_TO_COMMAND[delta.command_name]
         command.forward(delta)
         delta.workflow.last_delta = delta
-        delta.workflow.save(update_fields=["last_delta_id"])
+        delta.workflow.updated_at = timezone.now()
+        delta.workflow.save(update_fields=["last_delta_id", "updated_at"])
 
         return (
             command.load_clientside_update(delta),
@@ -162,7 +165,8 @@ def _call_backward_and_load_clientside_update(
         # Only update prev_delta_id: other columns may have been edited in
         # backward().
         delta.workflow.last_delta = delta.prev_delta
-        delta.workflow.save(update_fields=["last_delta_id"])
+        delta.workflow.updated_at = timezone.now()
+        delta.workflow.save(update_fields=["last_delta_id", "updated_at"])
 
         return (
             command.load_clientside_update(delta),

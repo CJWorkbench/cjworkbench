@@ -1,10 +1,13 @@
 import asyncio
+import datetime
 from unittest.mock import patch
-from cjwstate.models import Delta, Tab, Workflow, Step
+
+from django.utils import timezone
 
 # We'll use SetWorkflowTitle and ChangeStepNotes as "canonical"
 # deltas -- one requiring Step, one not.
 from cjwstate import clientside, commands
+from cjwstate.models import Delta, Tab, Workflow, Step
 from cjwstate.models.commands import SetWorkflowTitle, SetStepNote, AddTab
 from cjwstate.tests.utils import DbTestCase
 
@@ -228,3 +231,83 @@ class CommandsTest(DbTestCase):
         websockets_notify.assert_called()
         update = websockets_notify.call_args[0][1]
         self.assertEqual(update.mutation_id, "mutation-1")
+
+    @patch.object(commands, "websockets_notify")
+    def test_do_modify_updated_at(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        date0 = timezone.now() - datetime.timedelta(days=1)
+        workflow = Workflow.create_and_init(updated_at=date0)
+        self.run_with_async_db(
+            commands.do(
+                SetWorkflowTitle,
+                mutation_id="mutation-1",
+                workflow_id=workflow.id,
+                new_value="1",
+            )
+        )
+        workflow.refresh_from_db()
+        self.assertGreater(workflow.updated_at, date0)
+
+        websockets_notify.assert_called()
+        update = websockets_notify.call_args[0][1]
+        self.assertEqual(update.workflow.updated_at, workflow.updated_at)
+
+    @patch.object(commands, "websockets_notify")
+    def test_undo_modify_updated_at(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        workflow = Workflow.create_and_init()
+        delta = self.run_with_async_db(
+            commands.do(
+                SetWorkflowTitle,
+                mutation_id="mutation-1",
+                workflow_id=workflow.id,
+                new_value="1",
+            )
+        )
+
+        date0 = timezone.now() - datetime.timedelta(days=1)
+        workflow.updated_at = date0  # reset
+        workflow.save(update_fields=["updated_at"])
+
+        self.run_with_async_db(commands.undo(delta))
+        workflow.refresh_from_db()
+        self.assertGreater(workflow.updated_at, date0)
+
+        websockets_notify.assert_called()
+        update = websockets_notify.call_args[0][1]
+        self.assertEqual(update.workflow.updated_at, workflow.updated_at)
+
+    @patch.object(commands, "websockets_notify")
+    def test_redo_modify_updated_at(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        workflow = Workflow.create_and_init()
+        delta = self.run_with_async_db(
+            commands.do(
+                SetWorkflowTitle,
+                mutation_id="mutation-1",
+                workflow_id=workflow.id,
+                new_value="1",
+            )
+        )
+        self.run_with_async_db(commands.undo(delta))
+
+        date0 = timezone.now() - datetime.timedelta(days=1)
+        workflow.updated_at = date0  # reset
+        workflow.save(update_fields=["updated_at"])
+
+        self.run_with_async_db(commands.redo(delta))
+        workflow.refresh_from_db()
+        self.assertGreater(workflow.updated_at, date0)
+
+        websockets_notify.assert_called()
+        update = websockets_notify.call_args[0][1]
+        self.assertEqual(update.workflow.updated_at, workflow.updated_at)
