@@ -1,14 +1,15 @@
 import contextlib
-from dataclasses import dataclass, field
-from functools import partial
+import datetime
 import logging
-from pathlib import Path
 import shutil
 import textwrap
 import unittest
+from dataclasses import dataclass, field
+from functools import partial
 from unittest.mock import patch
+
 from dateutil import parser
-from django.utils import timezone
+
 import pyarrow.parquet
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
@@ -445,7 +446,7 @@ class FetchTests(DbTestCaseWithModuleRegistry):
             order=0, slug="step-1", module_id_name="mod"
         )
         cjwstate.modules.init_module_system()
-        now = timezone.now()
+        now = datetime.datetime.now()
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 fetch.fetch(workflow_id=workflow.id, step_id=step.id, now=now)
@@ -491,16 +492,16 @@ class UpdateNextUpdateTimeTests(DbTestCase):
             slug="step-1",
             auto_update_data=True,
             update_interval=3600,
-            next_update=parser.parse("2000-01-01T01:00Z"),
+            next_update=parser.parse("2000-01-01T01:00"),
         )
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, step, parser.parse("2001-01-01T01:00:01Z")
+                workflow.id, step, parser.parse("2001-01-01T01:00:01")
             )
         )
         step.refresh_from_db()
-        self.assertEqual(step.last_update_check, parser.parse("2001-01-01T01:00:01Z"))
-        self.assertEqual(step.next_update, parser.parse("2001-01-01T02:00Z"))
+        self.assertEqual(step.last_update_check, parser.parse("2001-01-01T01:00:01"))
+        self.assertEqual(step.next_update, parser.parse("2001-01-01T02:00"))
 
     def test_update_skip_missed_updates(self):
         workflow = Workflow.create_and_init()
@@ -509,15 +510,15 @@ class UpdateNextUpdateTimeTests(DbTestCase):
             slug="step-1",
             auto_update_data=True,
             update_interval=3600,
-            next_update=parser.parse("2000-01-01T01:00Z"),
+            next_update=parser.parse("2000-01-01T01:00"),
         )
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, step, parser.parse("2001-01-01T03:59Z")
+                workflow.id, step, parser.parse("2001-01-01T03:59")
             )
         )
         step.refresh_from_db()
-        self.assertEqual(step.next_update, parser.parse("2001-01-01T04:00Z"))
+        self.assertEqual(step.next_update, parser.parse("2001-01-01T04:00"))
 
     def test_update_race_auto_update_disabled(self):
         workflow = Workflow.create_and_init()
@@ -530,7 +531,7 @@ class UpdateNextUpdateTimeTests(DbTestCase):
         )
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, step, parser.parse("2001-01-01T02:59Z")
+                workflow.id, step, parser.parse("2001-01-01T02:59")
             )
         )
         step.refresh_from_db()
@@ -543,13 +544,13 @@ class UpdateNextUpdateTimeTests(DbTestCase):
             slug="step-1",
             auto_update_data=True,
             update_interval=3600,
-            next_update=parser.parse("2000-01-01T01:00Z"),
+            next_update=parser.parse("2000-01-01T01:00"),
         )
         Step.objects.filter(id=step.id).delete()
         # does not crash
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, step, parser.parse("2001-01-01T02:59Z")
+                workflow.id, step, parser.parse("2001-01-01T02:59")
             )
         )
 
@@ -560,12 +561,12 @@ class UpdateNextUpdateTimeTests(DbTestCase):
             slug="step-1",
             auto_update_data=True,
             update_interval=3600,
-            next_update=parser.parse("2000-01-01T01:00Z"),
+            next_update=parser.parse("2000-01-01T01:00"),
         )
         workflow.delete()
         # does not crash
         self.run_with_async_db(
             fetch.update_next_update_time(
-                workflow.id, step, parser.parse("2001-01-01T02:59Z")
+                workflow.id, step, parser.parse("2001-01-01T02:59")
             )
         )

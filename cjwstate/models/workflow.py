@@ -1,13 +1,13 @@
 from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
+import datetime
 from typing import Callable, Dict, List, Optional, Set, Tuple, FrozenSet
 from django.db import connection, models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
-from django.utils import timezone
 from cjworkbench.models.db_object_cooperative_lock import (
     DbObjectCooperativeLock,
     lookup_and_cooperative_lock,
@@ -128,13 +128,14 @@ class Workflow(models.Model):
 
     name = models.CharField("name", max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
-    last_viewed_at = models.DateTimeField(default=timezone.now)
+    last_viewed_at = models.DateTimeField(default=datetime.datetime.now)
     """Most recent timestamp when _any user_ viewed the workflow.
 
     This was added 2019-06-18, so that's the minimum last_viewed_at value.
     """
 
-    updated_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=datetime.datetime.now)
+    """Most recent call to cjwstate.commands.do(), undo() or redo()."""
 
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, related_name="owned_workflows"

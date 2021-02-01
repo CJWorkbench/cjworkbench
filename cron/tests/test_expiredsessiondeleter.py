@@ -1,10 +1,8 @@
+import datetime
 import logging
-import unittest
-from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
-from django.utils import timezone
 
 from cjwstate.models import Workflow
 from cjworkbench.tests.utils import DbTestCase
@@ -27,7 +25,7 @@ class ExpiredSessionDeleterTest(DbTestCase):
     def _create_session(self, key: str, expire_date=None) -> Session:
         if expire_date is None:
             # Expire one second in the future by default
-            expire_date = timezone.now() + timedelta(0, 1)
+            expire_date = datetime.datetime.now() + datetime.timedelta(seconds=1)
         return Session.objects.create(session_key=key, expire_date=expire_date)
 
     def test_preserve_owner(self):
@@ -47,7 +45,9 @@ class ExpiredSessionDeleterTest(DbTestCase):
         self.assertEqual(Workflow.objects.count(), 1)
 
     def test_delete_expired_anonymous_user(self):
-        self._create_session("a-key", timezone.now() - timedelta(0, 1))
+        self._create_session(
+            "a-key", datetime.datetime.now() - datetime.timedelta(seconds=1)
+        )
         self._create_workflow("Workflow", session_key="a-key")
 
         with self.assertLogs(expiredsessiondeleter.__name__, logging.INFO):

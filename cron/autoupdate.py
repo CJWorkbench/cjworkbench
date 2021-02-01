@@ -1,6 +1,7 @@
+import datetime
 import logging
 from typing import List, Tuple
-from django.utils import timezone
+
 from cjworkbench.pg_render_locker import PgRenderLocker, WorkflowAlreadyLocked
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 @database_sync_to_async
 def load_pending_steps() -> List[Tuple[int, Step]]:
     """Return list of (workflow_id, step_id) with pending fetches."""
-    now = timezone.now()
+    now = datetime.datetime.now()
     # Step.workflow_id is a database operation
     return list(
         Step.objects.filter(

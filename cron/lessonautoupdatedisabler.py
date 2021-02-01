@@ -1,10 +1,10 @@
+import datetime
 import logging
 import time
 from datetime import timedelta
 
 import django
 import django.db
-from django.utils import timezone
 
 from cjworkbench.util import benchmark_sync
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def disable_stale_auto_update() -> None:
     from cjwstate.models import Step  # after django.setup()
 
-    now = timezone.now()
+    now = datetime.datetime.now()
     expire_date = now - timedelta(seconds=LessonFreshDuration)
     n_disabled = Step.objects.filter(
         next_update__isnull=False,

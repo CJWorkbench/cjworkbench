@@ -1,7 +1,8 @@
+import datetime
+
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.utils import timezone
 
 from cjwstate import s3
 
@@ -28,7 +29,7 @@ class StoredObject(models.Model):
 
     # identification for file backing store
     key = models.CharField(max_length=255, null=False, blank=True, default="")
-    stored_at = models.DateTimeField(default=timezone.now)
+    stored_at = models.DateTimeField(default=datetime.datetime.now)
 
     # used only for stored tables
     hash = models.CharField(max_length=32)

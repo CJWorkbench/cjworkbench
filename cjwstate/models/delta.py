@@ -1,11 +1,16 @@
+import datetime
 from typing import List, Tuple
 
-import django.utils
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from cjwstate import clientside
 from .commands import NAME_TO_COMMAND
+
+# TODO rename database field so we can use the "datetime" module
+#
+# For now, we'll just pull out the one function and use that
+now = datetime.datetime.now
 
 
 class Delta(models.Model):
@@ -47,7 +52,13 @@ class Delta(models.Model):
         on_delete=models.CASCADE,
     )
 
-    datetime = models.DateTimeField("datetime", default=django.utils.timezone.now)
+    datetime = models.DateTimeField("datetime", default=now)
+
+    last_applied_at = models.DateTimeField(default=now)
+    """Last time this Delta was used -- either for Undo or for Redo.
+
+    We delete Deltas that haven't been used in months.
+    """
 
     command_name = models.CharField(
         choices=[(key, key) for key in NAME_TO_COMMAND.keys()],

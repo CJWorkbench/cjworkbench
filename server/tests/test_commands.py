@@ -2,8 +2,6 @@ import asyncio
 import datetime
 from unittest.mock import patch
 
-from django.utils import timezone
-
 # We'll use SetWorkflowTitle and ChangeStepNotes as "canonical"
 # deltas -- one requiring Step, one not.
 from cjwstate import clientside, commands
@@ -238,7 +236,7 @@ class CommandsTest(DbTestCase):
         future_none.set_result(None)
         websockets_notify.return_value = future_none
 
-        date0 = timezone.now() - datetime.timedelta(days=1)
+        date0 = datetime.datetime.now() - datetime.timedelta(days=1)
         workflow = Workflow.create_and_init(updated_at=date0)
         self.run_with_async_db(
             commands.do(
@@ -271,7 +269,7 @@ class CommandsTest(DbTestCase):
             )
         )
 
-        date0 = timezone.now() - datetime.timedelta(days=1)
+        date0 = datetime.datetime.now() - datetime.timedelta(days=1)
         workflow.updated_at = date0  # reset
         workflow.save(update_fields=["updated_at"])
 
@@ -300,7 +298,7 @@ class CommandsTest(DbTestCase):
         )
         self.run_with_async_db(commands.undo(delta))
 
-        date0 = timezone.now() - datetime.timedelta(days=1)
+        date0 = datetime.datetime.now() - datetime.timedelta(days=1)
         workflow.updated_at = date0  # reset
         workflow.save(update_fields=["updated_at"])
 

@@ -5,7 +5,6 @@ from unittest.mock import patch, Mock
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
-from django.utils import timezone
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import SetStepParams, SetStepNote, DeleteStep
@@ -241,7 +240,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_set_stored_data_version(self):
-        version = "2018-12-12T21:30:00.000Z"
+        version = "2018-12-12T21:30:00.000"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
@@ -261,7 +260,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_set_stored_data_version_command_set_read(self):
-        version = "2018-12-12T21:30:00.000Z"
+        version = "2018-12-12T21:30:00.000"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
@@ -281,8 +280,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_set_stored_data_version_microsecond_date(self):
-        version_precise = "2018-12-12T21:30:00.000123Z"
-        version_js = "2018-12-12T21:30:00.000Z"
+        version_precise = "2018-12-12T21:30:00.000123"
+        version_js = "2018-12-12T21:30:00.000"
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
@@ -318,7 +317,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
 
     def test_set_stored_data_version_viewer_access_denied(self):
-        version = "2018-12-12T21:30:00.000Z"
+        version = "2018-12-12T21:30:00.000"
         workflow = Workflow.create_and_init(public=True)
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
         step.stored_objects.create(stored_at=isoparse(version), size=0)
@@ -490,10 +489,10 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.auto_update_data, True)
         self.assertEqual(step.update_interval, 3600)
         self.assertLess(
-            step.next_update, timezone.now() + datetime.timedelta(seconds=3602)
+            step.next_update, datetime.datetime.now() + datetime.timedelta(seconds=3602)
         )
         self.assertGreater(
-            step.next_update, timezone.now() + datetime.timedelta(seconds=3598)
+            step.next_update, datetime.datetime.now() + datetime.timedelta(seconds=3598)
         )
 
     def test_try_set_autofetch_disable_autofetch(self):
@@ -504,7 +503,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             slug="step-1",
             auto_update_data=True,
             update_interval=1200,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
         )
 
         response = self.run_handler(
@@ -553,7 +552,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             slug="step-1",
             auto_update_data=True,
             update_interval=300,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
         )
         response = self.run_handler(
             try_set_autofetch,

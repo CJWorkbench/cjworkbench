@@ -1,6 +1,7 @@
+import datetime
+
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
-from django.utils import timezone
 
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
@@ -10,8 +11,8 @@ from cjworkbench.models.userprofile import UserProfile
 from server.handlers.autofetch import list_autofetches_json, isoformat
 
 
-IsoDate1 = "2019-06-18T19:35:57.123Z"
-IsoDate2 = "2019-06-18T19:36:42.234Z"
+IsoDate1 = "2019-06-18T19:35:57.123456Z"
+IsoDate2 = "2019-06-18T19:36:42.234567Z"
 
 
 class AutoupdateTest(DbTestCase):
@@ -50,8 +51,8 @@ class AutoupdateTest(DbTestCase):
             plan=plan,
             stripe_subscription_id="sub_123",
             stripe_status="active",
-            created_at=timezone.now(),
-            renewed_at=timezone.now(),
+            created_at=datetime.datetime.now(),
+            renewed_at=datetime.datetime.now(),
         )
         UserProfile.objects.create(user=user, max_fetches_per_day=100)
 
@@ -75,25 +76,25 @@ class AutoupdateTest(DbTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         UserProfile.objects.create(user=user, max_fetches_per_day=500)
         workflow = Workflow.create_and_init(
-            owner=user, name="W1", last_viewed_at=IsoDate1
+            owner=user, name="W1", last_viewed_at=IsoDate1.replace("Z", "")
         )
         step1 = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
         workflow2 = Workflow.create_and_init(
-            owner=user, name="W2", last_viewed_at=IsoDate2
+            owner=user, name="W2", last_viewed_at=IsoDate2.replace("Z", "")
         )
         step2 = workflow2.tabs.first().steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=1200,
         )
 
@@ -149,7 +150,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
             is_deleted=True,
         )
@@ -165,7 +166,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
         result = list_autofetches_json({"user": user, "session": None})
@@ -182,7 +183,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
 
@@ -198,7 +199,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
         result = list_autofetches_json({"user": user, "session": session})
@@ -221,7 +222,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
         result = list_autofetches_json({"user": user, "session": session})
@@ -236,7 +237,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=1200,
         )
         workflow2 = Workflow.create_and_init(anonymous_owner_session_key="foo")
@@ -245,7 +246,7 @@ class AutoupdateTest(DbTestCase):
             slug="step-1",
             module_id_name="loadurl",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
         result = list_autofetches_json({"user": user, "session": session})

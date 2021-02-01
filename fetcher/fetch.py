@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-from datetime import timedelta
+import datetime
 import logging
 import os
 from pathlib import Path
@@ -8,7 +8,6 @@ import time
 from typing import Any, ContextManager, Dict, List, NamedTuple, Optional, Union
 from django.conf import settings
 from django.db import DatabaseError, InterfaceError
-from django.utils import timezone
 from cjwkernel.chroot import EDITABLE_CHROOT, ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
@@ -148,7 +147,9 @@ def load_database_objects(workflow_id: int, step_id: int) -> DatabaseObjects:
 def update_next_update_time(workflow_id, step, now):
     """Schedule next update, skipping missed updates if any."""
 
-    tick = timedelta(seconds=max(step.update_interval, settings.MIN_AUTOFETCH_INTERVAL))
+    tick = datetime.timedelta(
+        seconds=max(step.update_interval, settings.MIN_AUTOFETCH_INTERVAL)
+    )
 
     try:
         with Workflow.lookup_and_cooperative_lock(id=workflow_id):
@@ -335,7 +336,7 @@ def fetch_or_wrap_error(
 
 
 async def fetch(
-    *, workflow_id: int, step_id: int, now: Optional[timezone.datetime] = None
+    *, workflow_id: int, step_id: int, now: Optional[datetime.datetime] = None
 ) -> None:
     # 1. Load database objects
     #    - missing Step? Return prematurely
@@ -379,7 +380,7 @@ async def fetch(
         )
 
     if now is None:
-        now = timezone.now()
+        now = datetime.datetime.now()
 
     with contextlib.ExitStack() as ctx:
         chroot_context = ctx.enter_context(EDITABLE_CHROOT.acquire_context())

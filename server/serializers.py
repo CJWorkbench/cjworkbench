@@ -95,7 +95,7 @@ def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
         # StoredObject IDs are actually their timestamps with
         # microsecond precision, encoded as ISO-8601 with 'Z' as the time zone
         # specifier. Anything else and IDs won't match up!
-        return dt_or_none.isoformat().replace("+00:00", "Z")
+        return dt_or_none.isoformat() + "Z"
 
 
 def jsonize_user(user: User) -> Dict[str, Any]:

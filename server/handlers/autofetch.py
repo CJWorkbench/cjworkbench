@@ -4,7 +4,7 @@ from cjwstate.models import Workflow, Step
 
 
 def isoformat(dt) -> str:
-    return dt.isoformat()[: -len("000+00:00")] + "Z"
+    return dt.isoformat() + "Z"
 
 
 def list_autofetches_json(scope):

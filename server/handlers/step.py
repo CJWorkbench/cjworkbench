@@ -3,10 +3,11 @@ import datetime
 import functools
 import secrets
 from typing import Any, Dict, List, Optional
+
 from dateutil.parser import isoparse
 from django.conf import settings
 from django.db import transaction
-from django.utils import timezone
+
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
 from cjwstate.models import Workflow, Step
@@ -269,7 +270,7 @@ def _do_try_set_autofetch(
             step.auto_update_data = auto_update_data
             step.update_interval = update_interval
             if auto_update_data:
-                step.next_update = timezone.now() + datetime.timedelta(
+                step.next_update = datetime.datetime.now() + datetime.timedelta(
                     seconds=update_interval
                 )
             else:
@@ -485,7 +486,7 @@ def _step_set_secret_and_build_delta(
         ):
             raise HandlerError(f"BadRequest: param is not a secret string parameter")
 
-        created_at = timezone.now()
+        created_at = datetime.datetime.now()
         created_at_str = (
             created_at.strftime("%Y-%m-%dT%H:%M:%S")
             + "."

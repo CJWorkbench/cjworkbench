@@ -1,8 +1,11 @@
 import asyncio
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
 from unittest.mock import patch
+
+from freezegun import freeze_time
 from dateutil import parser
+
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
@@ -36,7 +39,6 @@ class UpdatesTests(DbTestCase):
     @patch.object(
         rabbitmq, "send_update_to_workflow_clients", lambda _1, _2: future_none
     )
-    @patch("django.utils.timezone.now", lambda: parser.parse("Aug 28 1999 2:35PM UTC"))
     def test_queue_fetches(self, mock_queue_fetch):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
@@ -49,8 +51,8 @@ class UpdatesTests(DbTestCase):
             order=1,
             slug="step-2",
             auto_update_data=True,
-            last_update_check=parser.parse("Aug 28 1999 2:24PM UTC"),
-            next_update=parser.parse("Aug 28 1999 2:34PM UTC"),
+            last_update_check=parser.parse("1999-08-28T14:24"),
+            next_update=parser.parse("1999-08-28T14:34"),
             update_interval=600,
         )
 
@@ -59,16 +61,17 @@ class UpdatesTests(DbTestCase):
             order=2,
             slug="step-3",
             auto_update_data=True,
-            last_update_check=parser.parse("Aug 28 1999 2:20PM UTC"),
-            next_update=parser.parse("Aug 28 1999 2:40PM UTC"),
+            last_update_check=parser.parse("1999-08-28T14:20"),
+            next_update=parser.parse("1999-08-28T14:40"),
             update_interval=1200,
         )
 
         mock_queue_fetch.return_value = future_none
 
-        # eat log messages
-        with self.assertLogs(autoupdate.__name__, logging.INFO):
-            self.run_with_async_db(autoupdate.queue_fetches(SuccessfulRenderLock()))
+        with freeze_time("1999-08-28T14:35"):
+            # eat log messages
+            with self.assertLogs(autoupdate.__name__, logging.INFO):
+                self.run_with_async_db(autoupdate.queue_fetches(SuccessfulRenderLock()))
 
         self.assertEqual(mock_queue_fetch.call_count, 1)
         mock_queue_fetch.assert_called_with(workflow.id, step2.id)
@@ -77,6 +80,7 @@ class UpdatesTests(DbTestCase):
         self.assertTrue(step2.is_busy)
 
         # Second call shouldn't fetch again, because it's busy
-        self.run_with_async_db(autoupdate.queue_fetches(SuccessfulRenderLock()))
+        with freeze_time("1999-08-28T14:36"):
+            self.run_with_async_db(autoupdate.queue_fetches(SuccessfulRenderLock()))
 
         self.assertEqual(mock_queue_fetch.call_count, 1)

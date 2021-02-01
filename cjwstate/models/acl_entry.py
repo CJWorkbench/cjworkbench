@@ -1,5 +1,6 @@
+import datetime
+
 from django.db import models
-from django.utils import timezone
 
 
 class AclEntry(models.Model):
@@ -23,7 +24,6 @@ class AclEntry(models.Model):
     signed up to Workbench.
     """
 
-    # use default, not auto_now_add, so we can set custom values in tests
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=datetime.datetime.now, editable=False)
 
     can_edit = models.BooleanField(default=False)

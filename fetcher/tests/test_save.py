@@ -1,6 +1,5 @@
+import datetime
 from unittest.mock import patch
-
-from django.utils import timezone
 
 from cjwkernel.tests.util import parquet_file
 from cjwkernel.types import FetchResult, I18nMessage, RenderError
@@ -28,7 +27,7 @@ class SaveTests(DbTestCase):
             is_busy=True,
             fetch_errors=[RenderError(I18nMessage("foo", {}, "module"))],
         )
-        now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
+        now = datetime.datetime(2019, 10, 22, 12, 22)
 
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
@@ -66,7 +65,7 @@ class SaveTests(DbTestCase):
             is_busy=True,
             fetch_errors=[RenderError(I18nMessage("foo", {}, "module"))],
         )
-        now = timezone.datetime(2019, 10, 22, 12, 22, tzinfo=timezone.utc)
+        now = datetime.datetime(2019, 10, 22, 12, 22)
 
         self.run_with_async_db(save.mark_result_unchanged(workflow.id, step, now))
         self.assertEqual(step.stored_objects.count(), 0)
@@ -101,7 +100,10 @@ class SaveTests(DbTestCase):
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow.id, step, FetchResult(parquet_path), timezone.now()
+                    workflow.id,
+                    step,
+                    FetchResult(parquet_path),
+                    datetime.datetime.now(),
                 )
             )
         limit.assert_called_with(step=step)
@@ -116,7 +118,10 @@ class SaveTests(DbTestCase):
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow_id, step, FetchResult(parquet_path), timezone.now()
+                    workflow_id,
+                    step,
+                    FetchResult(parquet_path),
+                    datetime.datetime.now(),
                 )
             )
 
@@ -132,7 +137,10 @@ class SaveTests(DbTestCase):
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow_id, step, FetchResult(parquet_path), timezone.now()
+                    workflow_id,
+                    step,
+                    FetchResult(parquet_path),
+                    datetime.datetime.now(),
                 )
             )
         self.assertEqual(step.stored_objects.count(), 0)
@@ -146,6 +154,9 @@ class SaveTests(DbTestCase):
         with parquet_file({"A": [1], "B": ["x"]}) as parquet_path:
             self.run_with_async_db(
                 save.create_result(
-                    workflow.id, step, FetchResult(parquet_path), timezone.now()
+                    workflow.id,
+                    step,
+                    FetchResult(parquet_path),
+                    datetime.datetime.now(),
                 )
             )

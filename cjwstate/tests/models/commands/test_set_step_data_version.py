@@ -1,6 +1,7 @@
 import asyncio
+import datetime
 from unittest.mock import patch
-from django.utils import timezone
+
 from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import SetStepDataVersion
@@ -25,7 +26,7 @@ class SetStepParamsTests(DbTestCase):
             order=0, slug="step-1", last_relevant_delta_id=self.workflow.last_delta_id
         )
 
-    def _store_fetched_table(self) -> timezone.datetime:
+    def _store_fetched_table(self) -> datetime.datetime:
         return self.step.stored_objects.create(key="fake", size=10).stored_at
 
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)

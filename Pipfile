@@ -57,6 +57,7 @@ cjwpandasmodule = "~=0.0.2"
 black = "==20.8b1"
 watchdog = "*"
 http-process-proxy = "==0.0.10"
+freezegun = "*"
 
 [requires]
 python_version = "3.8"

@@ -111,7 +111,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         s3.put_bytes(s3.UserFilesBucket, "foo/1.txt", b"1")
         step.uploaded_files.create(
-            created_at=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc),
+            created_at=datetime.datetime(2020, 1, 1),
             name="file1.txt",
             size=1,
             uuid="df46244d-268a-0001-9b47-360502dd9b32",
@@ -119,7 +119,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         s3.put_bytes(s3.UserFilesBucket, "foo/2.txt", b"22")
         step.uploaded_files.create(
-            created_at=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc),
+            created_at=datetime.datetime(2020, 1, 2),
             name="file2.txt",
             size=2,
             uuid="df46244d-268a-0002-9b47-360502dd9b32",
@@ -127,7 +127,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         s3.put_bytes(s3.UserFilesBucket, "foo/3.txt", b"333")
         step.uploaded_files.create(
-            created_at=datetime.datetime(2020, 1, 3, tzinfo=datetime.timezone.utc),
+            created_at=datetime.datetime(2020, 1, 3),
             name="file3.txt",
             size=3,
             uuid="df46244d-268a-0003-9b47-360502dd9b32",
@@ -181,9 +181,7 @@ class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
                     name="file3.txt",
                     uuid="df46244d-268a-0003-9b47-360502dd9b32",
                     size=3,
-                    created_at=datetime.datetime(
-                        2020, 1, 3, tzinfo=datetime.timezone.utc
-                    ),
+                    created_at=datetime.datetime(2020, 1, 3),
                 ),
             ],
         )

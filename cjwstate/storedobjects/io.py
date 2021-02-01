@@ -1,9 +1,9 @@
+import datetime
 import uuid
 from pathlib import Path
 from typing import ContextManager, Optional
 
 from django.conf import settings
-from django.utils import timezone
 
 from cjwkernel.util import tempfile_context
 from cjwstate import s3
@@ -46,7 +46,7 @@ def create_stored_object(
     workflow_id: int,
     step_id: int,
     path: Path,
-    stored_at: Optional[timezone.datetime] = None,
+    stored_at: Optional[datetime.datetime] = None,
 ) -> StoredObject:
     """Write and return a new StoredObject.
 
@@ -57,7 +57,7 @@ def create_stored_object(
     StoredObject will exist in the database but no file will be saved in s3.
     """
     if stored_at is None:
-        stored_at = timezone.now()
+        stored_at = datetime.datetime.now()
     key = _build_key(workflow_id, step_id)
     size = path.stat().st_size
     stored_object = StoredObject.objects.create(

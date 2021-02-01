@@ -1,8 +1,8 @@
 import contextlib
+import datetime
 import logging
 import textwrap
 from unittest.mock import patch
-from django.utils import timezone
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.tests.util import assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
@@ -461,7 +461,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
             last_relevant_delta_id=workflow.last_delta_id,
             # step.stored_data_version is buggy: it can point at a nonexistent
             # StoredObject. Let's do that.
-            stored_data_version=timezone.now(),
+            stored_data_version=datetime.datetime.now(),
         )
 
         module_zipfile = create_module_zipfile(
@@ -538,7 +538,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
             slug="step-1",
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
-            stored_data_version=timezone.now(),
+            stored_data_version=datetime.datetime.now(),
         )
         step.stored_objects.create(
             stored_at=step.stored_data_version, key="", size=0, hash="whatever"

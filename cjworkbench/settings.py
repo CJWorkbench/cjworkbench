@@ -273,9 +273,7 @@ LANGUAGE_CODE = default_locale
 USE_I18N = True
 USE_L10N = True
 
-# TODO nix USE_TZ. It's the opposite of what we want.
 TIME_ZONE = "UTC"
-USE_TZ = True
 
 LANGUAGES = [(locale, locale) for locale in supported_locales]
 
@@ -351,7 +349,7 @@ LOGGING = {
             "level": "ERROR"
         },
         # DEBUG only gets messages when settings.DEBUG==True
-        "django.db.backends": {"level": "INFO"},
+        "django.db.backends": {"level": "DEBUG"},
         "websockets.protocol": {"level": "INFO"},
         "websockets.server": {"level": "INFO"},
         "cjwstate.models.module_registry": {

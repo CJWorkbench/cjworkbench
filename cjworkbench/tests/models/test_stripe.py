@@ -87,11 +87,11 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
         self.assertEqual(subscription.stripe_status, "active")
         self.assertEqual(
             subscription.created_at,
-            datetime.datetime(2020, 10, 8, 14, 20, 53, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2020, 10, 8, 14, 20, 53),
         )
         self.assertEqual(
             subscription.renewed_at,
-            datetime.datetime(2020, 10, 8, 14, 20, 53, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2020, 10, 8, 14, 20, 53),
         )
 
     @patch.object(
@@ -238,7 +238,7 @@ class TestHandleCustomerSubscriptionUpdated(DbTestCase):
         self.assertEqual(subscription.stripe_status, "unpaid")
         self.assertEqual(
             subscription.renewed_at,
-            datetime.datetime(2020, 10, 8, 14, 20, 53, tzinfo=datetime.timezone.utc),
+            datetime.datetime(2020, 10, 8, 14, 20, 53),
         )
 
     def test_update_missing_subscription(self):

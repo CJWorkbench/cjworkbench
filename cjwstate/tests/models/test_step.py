@@ -1,6 +1,5 @@
+import datetime
 import uuid as uuidgen
-
-from django.utils import timezone
 
 from cjwkernel.util import tempfile_context
 from cjwstate import s3
@@ -71,7 +70,7 @@ class StepTests(DbTestCase):
             order=0,
             slug="step-1",
             auto_update_data=True,
-            next_update=timezone.now(),
+            next_update=datetime.datetime.now(),
             update_interval=600,
         )
 

@@ -1,5 +1,7 @@
+import datetime
+
 from django.contrib.auth.models import User
-from django.utils import timezone
+
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
 
@@ -69,7 +71,7 @@ class AclTest(DbTestCase):
         user = User.objects.create()
         workflow = Workflow.objects.create(owner=user)
 
-        dt = timezone.datetime(2018, 10, 3, 19, 28, 1, tzinfo=timezone.utc)
+        dt = datetime.datetime(2018, 10, 3, 19, 28, 1)
 
         workflow.acl.create(email="a@example.org", can_edit=False, created_at=dt)
         response = self._put_entry(workflow, user, "a@example.org", '{"canEdit": true}')

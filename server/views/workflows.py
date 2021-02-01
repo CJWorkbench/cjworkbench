@@ -14,7 +14,6 @@ from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -48,7 +47,7 @@ def make_init_state(
     """
     try:
         with workflow.cooperative_lock():  # raise DoesNotExist on race
-            workflow.last_viewed_at = timezone.now()
+            workflow.last_viewed_at = datetime.datetime.now()
             workflow.save(update_fields=["last_viewed_at"])
 
             state = clientside.Init(

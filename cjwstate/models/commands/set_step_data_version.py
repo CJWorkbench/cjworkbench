@@ -34,17 +34,9 @@ class SetStepDataVersion(ChangesStepOutputs, BaseCommand):
         if old_version is None:
             old_version_str = None
         else:
-            old_version_str = (
-                old_version.astimezone(datetime.timezone.utc)
-                .isoformat()
-                .replace("+00:00", "Z")
-            )
+            old_version_str = old_version.isoformat()
 
-        new_version_str = (
-            new_version.astimezone(datetime.timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
-        )
+        new_version_str = new_version.isoformat()
 
         return {
             **kwargs,

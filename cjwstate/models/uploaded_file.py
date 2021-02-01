@@ -1,7 +1,8 @@
+import datetime
+
 from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
-from django.utils import timezone
 
 from cjwstate import s3
 from cjwstate.util import find_deletable_ids
@@ -19,7 +20,7 @@ class UploadedFile(models.Model):
         Step, related_name="uploaded_files", on_delete=models.CASCADE
     )
 
-    created_at = models.DateTimeField(default=timezone.now, null=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now, null=True)
     """Time the file was uploaded.
 
     null=True is DEPRECATED. Also, `key` ought to be a folder structure, right?

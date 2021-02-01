@@ -1,6 +1,5 @@
 import contextlib
-
-from django.utils import timezone
+import datetime
 
 from cjwkernel.types import FetchResult
 from cjworkbench.sync import database_sync_to_async
@@ -41,7 +40,7 @@ async def _notify_websockets(workflow_id: int, step: Step) -> None:
 
 @database_sync_to_async
 def _do_create_result(
-    workflow_id: int, step: Step, result: FetchResult, now: timezone.datetime
+    workflow_id: int, step: Step, result: FetchResult, now: datetime.datetime
 ) -> None:
     """Do database manipulations for create_result().
 
@@ -66,7 +65,7 @@ def _do_create_result(
 
 
 async def create_result(
-    workflow_id: int, step: Step, result: FetchResult, now: timezone.datetime
+    workflow_id: int, step: Step, result: FetchResult, now: datetime.datetime
 ) -> None:
     """Store fetched table as storedobject.
 
@@ -111,7 +110,7 @@ async def create_result(
 
 @database_sync_to_async
 def _do_mark_result_unchanged(
-    workflow_id: int, step: Step, now: timezone.datetime
+    workflow_id: int, step: Step, now: datetime.datetime
 ) -> None:
     """Do database manipulations for mark_result_unchanged().
 
@@ -126,7 +125,7 @@ def _do_mark_result_unchanged(
 
 
 async def mark_result_unchanged(
-    workflow_id: int, step: Step, now: timezone.datetime
+    workflow_id: int, step: Step, now: datetime.datetime
 ) -> None:
     """Leave storedobjects and `step.fetch_errors` unchanged.
 
