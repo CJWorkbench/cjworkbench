@@ -16,6 +16,7 @@ fillna
 filter
 formatnumbers
 formula
+genids
 googlesheets
 groupby
 histogram
