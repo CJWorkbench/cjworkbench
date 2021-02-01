@@ -121,7 +121,7 @@ class ValidatedForm:
         # specified) is NA
         input_data = {"date": self.date_series}
         if self.value_series is None:
-            input_data["value"] = 1
+            input_data["value"] = np.full(len(self.date_series), 1, np.int64)
         else:
             input_data["value"] = self.value_series
         input_dataframe = pd.DataFrame(input_data)
@@ -155,9 +155,9 @@ class ValidatedForm:
                             "Including missing dates would create {n_rows} rows, "
                             "but the maximum allowed is {max_rows_per_table}",
                             {
-                                'n_rows': n_rows,
-                                'max_rows_per_table': self.settings.MAX_ROWS_PER_TABLE,
-                            }
+                                "n_rows": n_rows,
+                                "max_rows_per_table": self.settings.MAX_ROWS_PER_TABLE,
+                            },
                         )
                     )
                 new_index = pd.period_range(
