@@ -54,7 +54,7 @@ class ReorderStepsTest(DbTestCase):
         )
 
         # undo
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertStepVersions([v1, v1, v1])
         step2.refresh_from_db()
         step3.refresh_from_db()
@@ -64,7 +64,7 @@ class ReorderStepsTest(DbTestCase):
         )
 
         # redo
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(self.workflow.id))
         self.assertStepVersions([v1, v2, v2])
         step2.refresh_from_db()
         step3.refresh_from_db()
@@ -105,13 +105,13 @@ class ReorderStepsTest(DbTestCase):
         }
         cmd.save(update_fields=["values_for_backward", "values_for_forward"])
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertEqual(
             list(all_modules.values_list("id", flat=True)),
             [step1.id, step2.id, step3.id],
         )
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(self.workflow.id))
         self.assertEqual(
             list(all_modules.values_list("id", flat=True)),
             [step3.id, step2.id, step1.id],

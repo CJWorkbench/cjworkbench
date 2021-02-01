@@ -5,19 +5,18 @@ from cjworkbench.sync import database_sync_to_async
 from cjwstate import commands
 from cjwstate.models import Tab, Workflow, Step
 from cjwstate.models.commands import SetWorkflowTitle, ReorderTabs
-from server.versions import WorkflowRedo, WorkflowUndo
 
 
 @register_websockets_handler
 @websockets_handler("write")
 async def undo(workflow: Workflow, **kwargs):
-    await WorkflowUndo(workflow.id)
+    await commands.undo(workflow.id)
 
 
 @register_websockets_handler
 @websockets_handler("write")
 async def redo(workflow: Workflow, **kwargs):
-    await WorkflowRedo(workflow.id)
+    await commands.redo(workflow.id)
 
 
 @register_websockets_handler

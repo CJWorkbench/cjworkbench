@@ -55,15 +55,18 @@ class SetStepParamsTests(DbTestCase):
         self.workflow.refresh_from_db()
         v2 = cmd.id
         # workflow revision should have been incremented
+        self.step.refresh_from_db()
         self.assertEqual(self.step.last_relevant_delta_id, v2)
 
         # undo
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
+        self.step.refresh_from_db()
         self.assertEqual(self.step.last_relevant_delta_id, v1)
         self.assertEqual(self.step.stored_data_version, date2)
 
         # redo
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(self.workflow.id))
+        self.step.refresh_from_db()
         self.assertEqual(self.step.last_relevant_delta_id, v2)
         self.assertEqual(self.step.stored_data_version, date1)
 
@@ -116,11 +119,11 @@ class SetStepParamsTests(DbTestCase):
 
         self.step.stored_objects.get(stored_at=date1).delete()
 
-        self.run_with_async_db(commands.undo(delta))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.step.refresh_from_db()
         self.assertEqual(self.step.stored_data_version, date1)
 
-        self.run_with_async_db(commands.redo(delta))
+        self.run_with_async_db(commands.redo(self.workflow.id))
         self.step.refresh_from_db()
         self.assertEqual(self.step.stored_data_version, date2)
 

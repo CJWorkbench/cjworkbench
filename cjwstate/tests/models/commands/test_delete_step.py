@@ -23,21 +23,21 @@ class DeleteStepTest(DbTestCase):
             params={"url": ""},
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteStep, workflow_id=workflow.id, step=step)
         )
         step.refresh_from_db()  # it is only _soft_-deleted.
         self.assertEqual(step.is_deleted, True)
         self.assertEqual(list(tab1.live_steps.values_list("slug", "order")), [])
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         step.refresh_from_db()
         self.assertEqual(step.is_deleted, False)
         self.assertEqual(
             list(tab1.live_steps.values_list("slug", "order")), [("step-1", 0)]
         )
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         step.refresh_from_db()  # it is only _soft_-deleted.
         self.assertEqual(step.is_deleted, True)
         self.assertEqual(list(tab1.live_steps.values_list("slug", "order")), [])
@@ -75,7 +75,7 @@ class DeleteStepTest(DbTestCase):
             position=2, slug="block-step-1-2", block_type="Chart", step=step1
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteStep, workflow_id=workflow.id, step=step1)
         )
 
@@ -95,7 +95,7 @@ class DeleteStepTest(DbTestCase):
         self.assertEqual(update.clear_step_ids, frozenset([step1.id]))
         self.assertEqual(update.blocks, {})
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         # The old blocks are deleted. We expect new blocks with new IDs.
         with self.assertRaises(Block.DoesNotExist):
             block1.refresh_from_db()
@@ -126,7 +126,7 @@ class DeleteStepTest(DbTestCase):
             },
         )
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         block2.refresh_from_db()
         self.assertEqual(block2.position, 0)
 
@@ -139,7 +139,7 @@ class DeleteStepTest(DbTestCase):
 #
 #         workflow = Workflow.create_and_init(selected_tab_position=0)  # tab-1
 #         tab2 = workflow.tabs.create(position=1, slug="tab-2")
-#         cmd = self.run_with_async_db(
+#         self.run_with_async_db(
 #             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
 #         )
 #         delta1 = send_update.call_args[0][1]
@@ -147,7 +147,7 @@ class DeleteStepTest(DbTestCase):
 #         self.assertFalse(delta1.tabs)
 #         self.assertEqual(delta1.clear_tab_slugs, frozenset(["tab-2"]))
 #
-#         self.run_with_async_db(commands.undo(cmd))
+#         self.run_with_async_db(commands.undo(workflow.id))
 #         delta2 = send_update.call_args[0][1]
 #         self.assertEqual(delta2.workflow.tab_slugs, ["tab-1", "tab-2"])
 #         self.assertEqual(list(delta2.tabs.keys()), ["tab-2"])

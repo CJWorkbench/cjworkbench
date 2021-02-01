@@ -58,6 +58,10 @@ class Delta(models.Model):
     """Last time this Delta's result was seen -- either after Undo or for Redo.
 
     We delete Deltas that haven't been seen in months.
+
+    Business logic dictates: the most-recent Delta.last_applied_at on a Workflow
+    is the last Delta that was subject to do(), redo() or undo(). Deltas _after_
+    that one may be older; deltas _before_ that one may be older.
     """
 
     command_name = models.CharField(

@@ -22,7 +22,7 @@ class SetStepNoteTests(DbTestCase):
         )
 
         # do
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 SetStepNote,
                 workflow_id=workflow.id,
@@ -35,13 +35,11 @@ class SetStepNoteTests(DbTestCase):
         self.assertEqual(step.notes, "text2")
 
         # undo
-        self.run_with_async_db(commands.undo(cmd))
-        self.assertEqual(step.notes, "text1")
+        self.run_with_async_db(commands.undo(workflow.id))
         step.refresh_from_db()
         self.assertEqual(step.notes, "text1")
 
         # redo
-        self.run_with_async_db(commands.redo(cmd))
-        self.assertEqual(step.notes, "text2")
+        self.run_with_async_db(commands.redo(workflow.id))
         step.refresh_from_db()
         self.assertEqual(step.notes, "text2")

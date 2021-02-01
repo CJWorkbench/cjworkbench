@@ -33,7 +33,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             position=2, slug="block-3", block_type="Text", text_markdown="3"
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteBlock, workflow_id=workflow.id, slug="block-1")
         )
         self.assertEqual(
@@ -53,7 +53,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(delta1.blocks, {})
         self.assertEqual(delta1.clear_block_slugs, frozenset(["block-1"]))
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(
             list(workflow.blocks.values_list("slug", "position")),
             [("block-1", 0), ("block-2", 1), ("block-3", 2)],
@@ -80,10 +80,10 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             position=1, slug="block-2", block_type="Chart", step_id=step.id
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteBlock, workflow_id=workflow.id, slug="block-2")
         )
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
 
         self.assertEqual(
             list(
@@ -107,10 +107,10 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             position=1, slug="block-2", block_type="Table", tab_id=tab.id
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteBlock, workflow_id=workflow.id, slug="block-2")
         )
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
 
         self.assertEqual(
             list(
@@ -133,7 +133,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         step2 = tab.steps.create(order=1, slug="step-2", module_id_name="chart")
         step3 = tab.steps.create(order=2, slug="step-3", module_id_name="chart")
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteBlock, workflow_id=workflow.id, slug="block-auto-step-3")
         )
         self.assertEqual(
@@ -156,7 +156,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             {"block-auto-step-2": clientside.ChartBlock("step-2")},
         )
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(list(workflow.blocks.values_list("slug", "position")), [])
         workflow.refresh_from_db()
         self.assertEqual(workflow.has_custom_report, False)

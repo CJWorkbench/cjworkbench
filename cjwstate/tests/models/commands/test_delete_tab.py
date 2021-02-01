@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from cjwstate import clientside, commands
 from cjwstate.models import Block, Workflow
-from cjwstate.models.commands import DeleteTab
+from cjwstate.models.commands import DeleteTab, InitWorkflow
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -18,7 +18,7 @@ class DeleteTabTest(DbTestCase):
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
         workflow.tabs.create(position=2, slug="tab-3")
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
         )
         tab2.refresh_from_db()  # it is only _soft_-deleted.
@@ -28,7 +28,7 @@ class DeleteTabTest(DbTestCase):
             [("tab-1", 0), ("tab-3", 1)],
         )
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         tab2.refresh_from_db()
         self.assertEqual(tab2.is_deleted, False)
         self.assertEqual(
@@ -36,7 +36,7 @@ class DeleteTabTest(DbTestCase):
             [("tab-1", 0), ("tab-2", 1), ("tab-3", 2)],
         )
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         tab2.refresh_from_db()
         self.assertEqual(tab2.is_deleted, True)
         self.assertEqual(
@@ -50,13 +50,13 @@ class DeleteTabTest(DbTestCase):
         tab1 = workflow.tabs.first()
         workflow.tabs.create(position=1)
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab1)
         )
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 0)
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         workflow.refresh_from_db()
         # On un-delete, we select the un-deleted tab
         self.assertEqual(workflow.selected_tab_position, 0)
@@ -67,13 +67,13 @@ class DeleteTabTest(DbTestCase):
         workflow.tabs.create(position=1, slug="tab-2")
         tab3 = workflow.tabs.create(position=2, slug="tab-3")
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab3)
         )
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 1)
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         workflow.refresh_from_db()
         # On un-delete, we select the un-deleted tab
         self.assertEqual(workflow.selected_tab_position, 2)
@@ -83,7 +83,7 @@ class DeleteTabTest(DbTestCase):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         tab2 = workflow.tabs.create(position=1)
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
         )
         workflow.refresh_from_db()
@@ -91,7 +91,7 @@ class DeleteTabTest(DbTestCase):
         tab2.refresh_from_db()
         self.assertEqual(tab2.is_deleted, True)
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 1)
         tab2.refresh_from_db()
@@ -114,10 +114,12 @@ class DeleteTabTest(DbTestCase):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         tab1 = workflow.tabs.first()
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab1)
         )
-        self.assertIsNone(cmd)
+        self.assertEqual(
+            workflow.deltas.exclude(command_name=InitWorkflow.__name__).count(), 0
+        )
 
         tab1.refresh_from_db()
         self.assertEqual(tab1.is_deleted, False)
@@ -130,7 +132,7 @@ class DeleteTabTest(DbTestCase):
 
         workflow = Workflow.create_and_init(selected_tab_position=0)  # tab-1
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
         )
         delta1 = send_update.call_args[0][1]
@@ -138,7 +140,7 @@ class DeleteTabTest(DbTestCase):
         self.assertFalse(delta1.tabs)
         self.assertEqual(delta1.clear_tab_slugs, frozenset(["tab-2"]))
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         delta2 = send_update.call_args[0][1]
         self.assertEqual(delta2.workflow.tab_slugs, ["tab-1", "tab-2"])
         self.assertEqual(list(delta2.tabs.keys()), ["tab-2"])
@@ -165,7 +167,7 @@ class DeleteTabTest(DbTestCase):
             position=2, slug="block-3", block_type="Text", text_markdown="3"
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
         )
         delta1 = send_update.call_args[0][1]
@@ -177,7 +179,7 @@ class DeleteTabTest(DbTestCase):
         block3.refresh_from_db()
         self.assertEqual(block3.position, 1)
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         delta2 = send_update.call_args[0][1]
         self.assertEqual(delta2.workflow.block_slugs, ["block-1", "block-2", "block-3"])
         self.assertEqual(delta2.blocks, {"block-2": clientside.TableBlock("tab-2")})
@@ -210,7 +212,7 @@ class DeleteTabTest(DbTestCase):
             position=2, slug="block-3", block_type="Text", text_markdown="3"
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab2)
         )
         delta1 = send_update.call_args[0][1]
@@ -222,7 +224,7 @@ class DeleteTabTest(DbTestCase):
         block3.refresh_from_db()
         self.assertEqual(block3.position, 1)
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         delta2 = send_update.call_args[0][1]
         self.assertEqual(delta2.workflow.block_slugs, ["block-1", "block-2", "block-3"])
         self.assertEqual(delta2.blocks, {"block-2": clientside.ChartBlock("step-x")})

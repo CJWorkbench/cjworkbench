@@ -21,17 +21,17 @@ class SetTabNameTest(DbTestCaseWithModuleRegistryAndMockKernel):
         tab.name = "foo"
         tab.save(update_fields=["name"])
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetTabName, workflow_id=workflow.id, tab=tab, new_name="bar")
         )
         tab.refresh_from_db()
         self.assertEqual(tab.name, "bar")
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         tab.refresh_from_db()
         self.assertEqual(tab.name, "foo")
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         tab.refresh_from_db()
         self.assertEqual(tab.name, "bar")
 
@@ -100,14 +100,14 @@ class SetTabNameTest(DbTestCaseWithModuleRegistryAndMockKernel):
         tab.save(update_fields=["name"])
 
         send_delta.side_effect = async_noop
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetTabName, workflow_id=workflow.id, tab=tab, new_name="bar")
         )
         send_delta.assert_called()
         delta1 = send_delta.call_args[0][1]
         self.assertEqual(delta1.tabs[tab.slug], clientside.TabUpdate(name="bar"))
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         delta2 = send_delta.call_args[0][1]
         self.assertEqual(delta2.tabs[tab.slug], clientside.TabUpdate(name="foo"))
 

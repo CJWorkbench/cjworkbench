@@ -23,7 +23,7 @@ class SetBlockMarkdownTest(DbTestCase):
             position=0, slug="block-1", block_type="Text", text_markdown="foo"
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 SetBlockMarkdown,
                 workflow_id=workflow.id,
@@ -37,7 +37,7 @@ class SetBlockMarkdownTest(DbTestCase):
         delta1 = send_update.call_args[0][1]
         self.assertEqual(delta1.blocks, {"block-1": clientside.TextBlock("bar")})
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(
             list(workflow.blocks.values_list("text_markdown", flat=True)), ["foo"]
         )

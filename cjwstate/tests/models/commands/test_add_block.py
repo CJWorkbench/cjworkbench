@@ -23,7 +23,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         workflow = Workflow.create_and_init(has_custom_report=True)
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 AddBlock,
                 workflow_id=workflow.id,
@@ -42,7 +42,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(delta1.workflow.block_slugs, ["block-1"])
         self.assertEqual(delta1.blocks, {"block-1": clientside.TextBlock("hi!")})
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(list(workflow.blocks.values_list("slug", "position")), [])
         delta2 = send_update.call_args[0][1]
         self.assertIsNone(delta2.workflow.has_custom_report)
@@ -67,7 +67,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             position=2, slug="block-3", block_type="Text", text_markdown="1"
         )
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 AddBlock,
                 workflow_id=workflow.id,
@@ -91,7 +91,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertEqual(delta1.blocks, {"block-new": clientside.TextBlock("hi!")})
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(
             list(workflow.blocks.values_list("slug", "position")),
             [("block-1", 0), ("block-2", 1), ("block-3", 2)],
@@ -116,7 +116,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         step2 = tab.steps.create(order=1, slug="step-2", module_id_name="chart")
         step3 = tab.steps.create(order=2, slug="step-3", module_id_name="chart")
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 AddBlock,
                 workflow_id=workflow.id,
@@ -155,7 +155,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             },
         )
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.has_custom_report, False)
         self.assertEqual(list(workflow.blocks.values_list("slug", "position")), [])

@@ -31,8 +31,8 @@ class CommandsTest(DbTestCase):
         delta3 = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="3")
         )
-        self.run_with_async_db(commands.undo(delta3))
-        self.run_with_async_db(commands.undo(delta2))
+        self.run_with_async_db(commands.undo(workflow.id))
+        self.run_with_async_db(commands.undo(workflow.id))
         # Create a new delta ... making delta2 and delta3 obsolete
         self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="4")
@@ -56,7 +56,7 @@ class CommandsTest(DbTestCase):
         delta1 = self.run_with_async_db(
             commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="name-2")
         )
-        self.run_with_async_db(commands.undo(delta1))
+        self.run_with_async_db(commands.undo(workflow.id))
 
         # Now create a new Tab in a new Delta. This will delete delta1, and it
         # _should_ delete `tab-2`.
@@ -84,7 +84,7 @@ class CommandsTest(DbTestCase):
             commands.do(SetWorkflowTitle, workflow_id=workflow2.id, new_value="1")
         )
 
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -101,7 +101,7 @@ class CommandsTest(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -120,7 +120,7 @@ class CommandsTest(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -141,7 +141,7 @@ class CommandsTest(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -169,7 +169,7 @@ class CommandsTest(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -189,7 +189,7 @@ class CommandsTest(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -207,7 +207,7 @@ class CommandsTest(DbTestCase):
         delta = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
-        self.run_with_async_db(commands.undo(delta))  # fix workflow.last_delta_id
+        self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
         delta.delete_with_successors()
         workflow.delete_orphan_soft_deleted_models()
 
@@ -279,10 +279,8 @@ class CommandsTest(DbTestCase):
                 )
             )
         with freeze_time(date1):
-            self.run_with_async_db(commands.undo(delta2))
+            self.run_with_async_db(commands.undo(workflow.id))
 
-        self.assertEqual(delta1.last_applied_at, date0)  # unchanged: can be deleted
-        self.assertEqual(delta2.last_applied_at, date1)  # changed: don't delete soon
         delta2.refresh_from_db()
         delta1.refresh_from_db()  # more important is the value from the DB
         self.assertEqual(delta1.last_applied_at, date0)  # unchanged: can be deleted
@@ -307,12 +305,11 @@ class CommandsTest(DbTestCase):
                     new_value="1",
                 )
             )
-            self.run_with_async_db(commands.undo(delta))
+            self.run_with_async_db(commands.undo(workflow.id))
 
         with freeze_time(date1):
-            self.run_with_async_db(commands.redo(delta))
+            self.run_with_async_db(commands.redo(workflow.id))
 
-        self.assertEqual(delta.last_applied_at, date1)
         delta.refresh_from_db()
         self.assertEqual(delta.last_applied_at, date1)
 
@@ -359,7 +356,7 @@ class CommandsTest(DbTestCase):
         workflow.updated_at = date0  # reset
         workflow.save(update_fields=["updated_at"])
 
-        self.run_with_async_db(commands.undo(delta))
+        self.run_with_async_db(commands.undo(workflow.id))
         workflow.refresh_from_db()
         self.assertGreater(workflow.updated_at, date0)
 
@@ -382,13 +379,13 @@ class CommandsTest(DbTestCase):
                 new_value="1",
             )
         )
-        self.run_with_async_db(commands.undo(delta))
+        self.run_with_async_db(commands.undo(workflow.id))
 
         date0 = datetime.datetime.now() - datetime.timedelta(days=1)
         workflow.updated_at = date0  # reset
         workflow.save(update_fields=["updated_at"])
 
-        self.run_with_async_db(commands.redo(delta))
+        self.run_with_async_db(commands.redo(workflow.id))
         workflow.refresh_from_db()
         self.assertGreater(workflow.updated_at, date0)
 

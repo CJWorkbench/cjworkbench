@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Delta, Step, Workflow
-from cjwstate.models.commands import NAME_TO_COMMAND, SetStepDataVersion
+from cjwstate.models.commands import NAME_TO_COMMAND, InitWorkflow, SetStepDataVersion
 
 
 async def websockets_notify(workflow_id: int, update: clientside.Update) -> None:
@@ -83,7 +83,7 @@ async def _maybe_queue_render(
 @database_sync_to_async
 def _first_forward_and_save_returning_clientside_update(
     cls, workflow_id: int, **kwargs
-) -> Tuple[Optional[Delta], Optional[clientside.Update], bool]:
+) -> Tuple[Optional[Delta], Optional[clientside.Update], Optional[int]]:
     """
     Create and execute `cls` command; return `(Delta, WebSocket data, render?)`.
 
@@ -91,98 +91,124 @@ def _first_forward_and_save_returning_clientside_update(
 
     All this, in a cooperative lock.
 
-    Return `(None, None, False)` if `cls.amend_create_kwargs()` returns `None`.
+    Return `(None, None, None)` if `cls.amend_create_kwargs()` returns `None`.
     This is how `cls.amend_create_kwargs()` suggests the Delta should not be
     created at all.
     """
     now = datetime.datetime.now()
     command = NAME_TO_COMMAND[cls.__name__]
     # raises Workflow.DoesNotExist
-    with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-        workflow = workflow_lock.workflow
-        create_kwargs = command.amend_create_kwargs(workflow=workflow, **kwargs)
-        if not create_kwargs:
-            return (None, None, False)
+    try:
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+            workflow = workflow_lock.workflow
+            create_kwargs = command.amend_create_kwargs(workflow=workflow, **kwargs)
+            if not create_kwargs:
+                return None, None, None
 
-        # Lookup unapplied deltas to delete. That's the head of the linked
-        # list that comes _after_ `workflow.last_delta`.
-        orphan_delta: Optional[Delta] = Delta.objects.filter(
-            prev_delta_id=workflow.last_delta_id
-        ).first()
-        if orphan_delta:
-            orphan_delta.delete_with_successors()
+            # Lookup unapplied deltas to delete. That's the head of the linked
+            # list that comes _after_ `workflow.last_delta`.
+            orphan_delta: Optional[Delta] = Delta.objects.filter(
+                prev_delta_id=workflow.last_delta_id
+            ).first()
+            if orphan_delta:
+                orphan_delta.delete_with_successors()
 
-        delta = Delta.objects.create(
-            command_name=cls.__name__,
-            prev_delta_id=workflow.last_delta_id,
-            last_applied_at=now,
-            **create_kwargs,
-        )
-        command.forward(delta)
+            delta = Delta.objects.create(
+                command_name=cls.__name__,
+                prev_delta_id=workflow.last_delta_id,
+                last_applied_at=now,
+                **create_kwargs,
+            )
+            command.forward(delta)
 
-        if orphan_delta:
-            # We just deleted deltas; now we can garbage-collect Tabs and
-            # Steps that are soft-deleted and have no deltas referring
-            # to them.
-            workflow.delete_orphan_soft_deleted_models()
+            if orphan_delta:
+                # We just deleted deltas; now we can garbage-collect Tabs and
+                # Steps that are soft-deleted and have no deltas referring
+                # to them.
+                workflow.delete_orphan_soft_deleted_models()
 
-        # Point workflow to us
-        workflow.last_delta = delta
-        workflow.updated_at = datetime.datetime.now()
-        workflow.save(update_fields=["last_delta_id", "updated_at"])
+            # Point workflow to us
+            workflow.last_delta = delta
+            workflow.updated_at = datetime.datetime.now()
+            workflow.save(update_fields=["last_delta_id", "updated_at"])
 
-        return (
-            delta,
-            command.load_clientside_update(delta),
-            command.get_modifies_render_output(delta),
-        )
+            return (
+                delta,
+                command.load_clientside_update(delta),
+                delta.id if command.get_modifies_render_output(delta) else None,
+            )
+    except Workflow.DoesNotExist:
+        return None, None, None
 
 
 @database_sync_to_async
 def _call_forward_and_load_clientside_update(
-    delta: Delta,
-) -> Tuple[clientside.Update, bool]:
+    workflow_id: int,
+) -> Tuple[Optional[Delta], Optional[clientside.Update], Optional[int]]:
     now = datetime.datetime.now()
 
-    with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
-        command = NAME_TO_COMMAND[delta.command_name]
-        command.forward(delta)
-        delta.last_applied_at = now
-        delta.save(update_fields=["last_applied_at"])
-        delta.workflow.last_delta = delta
-        delta.workflow.updated_at = now
-        delta.workflow.save(update_fields=["last_delta_id", "updated_at"])
+    try:
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+            workflow = workflow_lock.workflow
+            # raises DoesNotExist
+            delta = workflow.deltas.get(prev_delta_id=workflow.last_delta_id)
 
-        return (
-            command.load_clientside_update(delta),
-            command.get_modifies_render_output(delta),
-        )
+            command = NAME_TO_COMMAND[delta.command_name]
+            command.forward(delta)
+
+            delta.last_applied_at = now
+            delta.save(update_fields=["last_applied_at"])
+
+            workflow.last_delta = delta
+            workflow.updated_at = now
+            workflow.save(update_fields=["last_delta_id", "updated_at"])
+
+            return (
+                delta,
+                command.load_clientside_update(delta),
+                delta.id if command.get_modifies_render_output(delta) else None,
+            )
+    except (Workflow.DoesNotExist, Delta.DoesNotExist):
+        return None, None, None
 
 
 @database_sync_to_async
 def _call_backward_and_load_clientside_update(
-    delta: Delta,
-) -> Tuple[clientside.Update, bool]:
+    workflow_id: int,
+) -> Tuple[Optional[Delta], Optional[clientside.Update], Optional[int]]:
     now = datetime.datetime.now()
 
-    with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
-        command = NAME_TO_COMMAND[delta.command_name]
-        command.backward(delta)
+    try:
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+            workflow = workflow_lock.workflow
+            delta = workflow.deltas.exclude(command_name=InitWorkflow.__name__).get(
+                id=workflow.last_delta_id
+            )  # or DoesNotExist
 
-        # Point workflow to previous delta
-        # Only update prev_delta_id: other columns may have been edited in
-        # backward().
-        delta.workflow.last_delta = delta.prev_delta
-        delta.workflow.updated_at = now
-        delta.workflow.save(update_fields=["last_delta_id", "updated_at"])
+            command = NAME_TO_COMMAND[delta.command_name]
+            command.backward(delta)
 
-        delta.last_applied_at = now
-        delta.save(update_fields=["last_applied_at"])
+            # Point workflow to previous delta
+            # Only update prev_delta_id: other columns may have been edited in
+            # backward().
+            workflow.last_delta = delta.prev_delta
+            workflow.updated_at = now
+            workflow.save(update_fields=["last_delta_id", "updated_at"])
 
-        return (
-            command.load_clientside_update(delta),
-            command.get_modifies_render_output(delta),
-        )
+            delta.last_applied_at = now
+            delta.save(update_fields=["last_applied_at"])
+
+            return (
+                delta,
+                command.load_clientside_update(delta),
+                (
+                    workflow.last_delta_id
+                    if command.get_modifies_render_output(delta)
+                    else None
+                ),
+            )
+    except (Workflow.DoesNotExist, Delta.DoesNotExist):
+        return None, None, None
 
 
 async def do(
@@ -215,41 +241,51 @@ async def do(
     (
         delta,
         update,
-        want_render,
+        render_delta_id,
     ) = await _first_forward_and_save_returning_clientside_update(
         cls, workflow_id, **kwargs
     )
 
     # In order: notify websockets that things are busy, _then_ give
     # renderer the chance to notify websockets rendering is finished.
-    if update:
+    if update is not None:
         if mutation_id:
             update = update.replace_mutation_id(mutation_id)
         await websockets_notify(workflow_id, update)
 
-    if want_render:
-        await _maybe_queue_render(workflow_id, delta.id, delta)
+    if render_delta_id is not None:
+        await _maybe_queue_render(workflow_id, render_delta_id, delta)
 
     return delta
 
 
-async def redo(delta: Delta) -> None:
-    """Call delta.forward(); notify websockets and renderer."""
+async def redo(workflow_id: int) -> None:
+    """Call delta.forward(); notify websockets and renderer.
+
+    No-op if there is no Delta to redo.
+    """
     # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
-    update, want_render = await _call_forward_and_load_clientside_update(delta)
-    await websockets_notify(delta.workflow_id, update)
-    if want_render:
+    delta, update, render_delta_id = await _call_forward_and_load_clientside_update(
+        workflow_id
+    )
+    if update is not None:
+        await websockets_notify(workflow_id, update)
+    if render_delta_id is not None:
         # Assume delta.workflow is cached and will not cause a database request
-        await _maybe_queue_render(delta.workflow_id, delta.id, delta)
+        await _maybe_queue_render(workflow_id, render_delta_id, delta)
 
 
-async def undo(delta: Delta) -> None:
-    """Call delta.backward(); notify websockets and renderer."""
+async def undo(workflow_id: int) -> None:
+    """Call delta.backward(); notify websockets and renderer.
+
+    No-op if there is no Delta to undo.
+    """
     # updates delta.workflow.last_delta_id (so querying it won't cause a DB lookup)
-    update, want_render = await _call_backward_and_load_clientside_update(delta)
-    await websockets_notify(delta.workflow_id, update)
-    if want_render:
+    delta, update, render_delta_id = await _call_backward_and_load_clientside_update(
+        workflow_id
+    )
+    if update is not None:
+        await websockets_notify(workflow_id, update)
+    if render_delta_id is not None:
         # Assume delta.workflow is cached and will not cause a database request
-        await _maybe_queue_render(
-            delta.workflow_id, delta.workflow.last_delta_id, delta
-        )
+        await _maybe_queue_render(workflow_id, render_delta_id, delta)

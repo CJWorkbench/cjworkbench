@@ -54,7 +54,7 @@ class DuplicateTabTest(DbTestCase):
         )
 
         # Backward: should delete tab
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
         workflow.refresh_from_db()
@@ -69,7 +69,7 @@ class DuplicateTabTest(DbTestCase):
         )
 
         # Forward: should bring us back
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         cmd.tab.refresh_from_db()
         self.assertFalse(cmd.tab.is_deleted)
         workflow.refresh_from_db()
@@ -167,7 +167,7 @@ class DuplicateTabTest(DbTestCase):
         queue_render.reset_mock()  # so we can assert next time
 
         # undo
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         cmd.tab.refresh_from_db()
         self.assertTrue(cmd.tab.is_deleted)
         delta = send_update.mock_calls[1][1][1]
@@ -178,7 +178,7 @@ class DuplicateTabTest(DbTestCase):
         queue_render.assert_not_called()
 
         # redo
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         # Need to call render() again -- these modules are still out-of-date
         queue_render.assert_called_with(workflow.id, cmd.id)
 

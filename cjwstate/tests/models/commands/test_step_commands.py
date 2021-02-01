@@ -85,18 +85,18 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         # Check the delta chain (short, but should be sweet)
         self.workflow.refresh_from_db()
-        self.assertEqual(self.workflow.last_delta, cmd)
+        self.assertEqual(self.workflow.last_delta_id, cmd.id)
         self.assertEqual(cmd.prev_delta_id, self.delta.id)
         with self.assertRaises(Delta.DoesNotExist):
             cmd.next_delta
 
         # undo! undo! ahhhhh everything is on fire! undo!
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(all_modules.first(), existing_module)
 
         # wait no, we wanted that module
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(self.workflow.id))
         self.assertEqual(all_modules.count(), 2)
         added_module = all_modules.get(order=0)
         self.assertNotEqual(added_module, existing_module)
@@ -105,7 +105,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         # Undo and test deleting the un-applied command. Should delete dangling
         # Step too
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertEqual(all_modules.count(), 1)
         self.assertEqual(all_modules.first(), existing_module)
         cmd.delete_with_successors()
@@ -272,11 +272,11 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(cmd1.prev_delta_id, self.delta.id)
 
         # We should be able to go all the way back
-        self.run_with_async_db(commands.undo(cmd3))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertStepVersions([v2, v2, v3])
-        self.run_with_async_db(commands.undo(cmd2))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertStepVersions([v2, v2])
-        self.run_with_async_db(commands.undo(cmd1))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertStepVersions([v1])
         self.assertEqual(
             list(all_modules.values_list("id", flat=True)), [existing_module.id]
@@ -321,7 +321,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
             cmd.next_delta
 
         # undo
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertEqual(all_modules.count(), 1)
         self.assertStepVersions([v1])
         self.assertEqual(all_modules.first(), existing_module)
@@ -338,17 +338,17 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.tab.selected_step_position = 0
         self.tab.save(update_fields=["selected_step_position"])
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(DeleteStep, workflow_id=self.workflow.id, step=step)
         )
 
         self.tab.refresh_from_db()
         self.assertIsNone(self.tab.selected_step_position)
 
-        self.run_with_async_db(commands.undo(cmd))  # don't crash
+        self.run_with_async_db(commands.undo(self.workflow.id))  # don't crash
 
     def test_undo_add_only_selected(self):
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 AddStep,
                 workflow_id=self.workflow.id,
@@ -363,7 +363,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.tab.selected_step_position = 0
         self.tab.save(update_fields=["selected_step_position"])
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
 
         self.tab.refresh_from_db()
         self.assertIsNone(self.tab.selected_step_position)
@@ -383,7 +383,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         all_modules = self.tab.live_steps
         self.assertEqual(all_modules.count(), 1)
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 AddStep,
                 workflow_id=self.workflow.id,
@@ -398,7 +398,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.tab.selected_step_position = 1
         self.tab.save(update_fields=["selected_step_position"])
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(self.workflow.id))
 
         self.tab.refresh_from_db()
         self.assertEqual(self.tab.selected_step_position, 0)

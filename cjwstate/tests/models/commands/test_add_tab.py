@@ -14,7 +14,7 @@ class AddTabTest(DbTestCase):
     @patch.object(commands, "websockets_notify", async_noop)
     def test_append_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         new_tab = workflow.live_tabs.get(position=1)
@@ -25,7 +25,7 @@ class AddTabTest(DbTestCase):
             [("tab-1", 0), ("tab-2", 1)],
         )
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(
             list(workflow.live_tabs.values_list("slug", "position")), [("tab-1", 0)]
         )
@@ -46,7 +46,7 @@ class AddTabTest(DbTestCase):
         send_update.return_value = future_none
 
         workflow = Workflow.create_and_init(selected_tab_position=0)
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(AddTab, workflow_id=workflow.id, slug="tab-2", name="A")
         )
         delta1 = send_update.call_args[0][1]
@@ -54,7 +54,7 @@ class AddTabTest(DbTestCase):
         self.assertEqual(list(delta1.tabs.keys()), ["tab-2"])
         self.assertEqual(delta1.clear_tab_slugs, frozenset())
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         delta2 = send_update.call_args[0][1]
         self.assertEqual(delta2.workflow.tab_slugs, ["tab-1"])
         self.assertFalse(delta2.tabs)

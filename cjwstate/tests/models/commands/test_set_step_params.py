@@ -54,7 +54,7 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         # Create and apply delta. It should change params.
         self.kernel.migrate_params.side_effect = lambda m, p: p
         with self.assertLogs(level=logging.INFO):
-            cmd = self.run_with_async_db(
+            self.run_with_async_db(
                 commands.do(
                     SetStepParams,
                     workflow_id=workflow.id,
@@ -75,7 +75,7 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             # building clientside.Update will migrate_params(), so we need
             # to capture logs.
-            self.run_with_async_db(commands.undo(cmd))
+            self.run_with_async_db(commands.undo(workflow.id))
         step.refresh_from_db()
         self.assertEqual(step.params, params1)
 
@@ -83,7 +83,7 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             # building clientside.Update will migrate_params(), so we need
             # to capture logs.
-            self.run_with_async_db(commands.redo(cmd))
+            self.run_with_async_db(commands.redo(workflow.id))
         step.refresh_from_db()
         self.assertEqual(step.params, params2)
 
@@ -193,7 +193,7 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         # presented `params` to the user.) So the changes should apply atop
         # _migrated_ params.
         with self.assertLogs(level=logging.INFO):
-            cmd = self.run_with_async_db(
+            self.run_with_async_db(
                 commands.do(
                     SetStepParams,
                     workflow_id=workflow.id,
@@ -201,6 +201,7 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
                     new_values={"x": 2},
                 )
             )
+        step.refresh_from_db()
         self.assertEqual(
             step.params,
             {
@@ -212,7 +213,8 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         with self.assertLogs(level=logging.INFO):
             # building clientside.Update will migrate_params(), so we need
             # to capture logs.
-            self.run_with_async_db(commands.undo(cmd))
+            self.run_with_async_db(commands.undo(workflow.id))
+        step.refresh_from_db()
         self.assertEqual(
             step.params, {"version": "v1", "x": 1}  # exactly what we had before
         )

@@ -40,13 +40,13 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             [("tab-3", 0), ("tab-1", 1), ("tab-2", 2)],
         )
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         self.assertEqual(
             list(workflow.live_tabs.values_list("slug", "position")),
             [("tab-1", 0), ("tab-2", 1), ("tab-3", 2)],
         )
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         self.assertEqual(
             list(workflow.live_tabs.values_list("slug", "position")),
             [("tab-3", 0), ("tab-1", 1), ("tab-2", 2)],
@@ -60,7 +60,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow.tabs.create(position=1, slug="tab-2")
         workflow.tabs.create(position=2, slug="tab-3")
 
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 ReorderTabs,
                 workflow_id=workflow.id,
@@ -70,11 +70,11 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 0)
 
-        self.run_with_async_db(commands.undo(cmd))
+        self.run_with_async_db(commands.undo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 2)
 
-        self.run_with_async_db(commands.redo(cmd))
+        self.run_with_async_db(commands.redo(workflow.id))
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 0)
 
