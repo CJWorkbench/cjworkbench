@@ -55,9 +55,9 @@ class Delta(models.Model):
     datetime = models.DateTimeField("datetime", default=now)
 
     last_applied_at = models.DateTimeField(default=now)
-    """Last time this Delta was used -- either for Undo or for Redo.
+    """Last time this Delta's result was seen -- either after Undo or for Redo.
 
-    We delete Deltas that haven't been used in months.
+    We delete Deltas that haven't been seen in months.
     """
 
     command_name = models.CharField(

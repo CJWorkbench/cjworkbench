@@ -95,6 +95,7 @@ def _first_forward_and_save_returning_clientside_update(
     This is how `cls.amend_create_kwargs()` suggests the Delta should not be
     created at all.
     """
+    now = datetime.datetime.now()
     command = NAME_TO_COMMAND[cls.__name__]
     # raises Workflow.DoesNotExist
     with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
@@ -114,6 +115,7 @@ def _first_forward_and_save_returning_clientside_update(
         delta = Delta.objects.create(
             command_name=cls.__name__,
             prev_delta_id=workflow.last_delta_id,
+            last_applied_at=now,
             **create_kwargs,
         )
         command.forward(delta)
@@ -140,11 +142,15 @@ def _first_forward_and_save_returning_clientside_update(
 def _call_forward_and_load_clientside_update(
     delta: Delta,
 ) -> Tuple[clientside.Update, bool]:
+    now = datetime.datetime.now()
+
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         command = NAME_TO_COMMAND[delta.command_name]
         command.forward(delta)
+        delta.last_applied_at = now
+        delta.save(update_fields=["last_applied_at"])
         delta.workflow.last_delta = delta
-        delta.workflow.updated_at = datetime.datetime.now()
+        delta.workflow.updated_at = now
         delta.workflow.save(update_fields=["last_delta_id", "updated_at"])
 
         return (
@@ -157,6 +163,8 @@ def _call_forward_and_load_clientside_update(
 def _call_backward_and_load_clientside_update(
     delta: Delta,
 ) -> Tuple[clientside.Update, bool]:
+    now = datetime.datetime.now()
+
     with Workflow.lookup_and_cooperative_lock(id=delta.workflow_id):
         command = NAME_TO_COMMAND[delta.command_name]
         command.backward(delta)
@@ -165,8 +173,11 @@ def _call_backward_and_load_clientside_update(
         # Only update prev_delta_id: other columns may have been edited in
         # backward().
         delta.workflow.last_delta = delta.prev_delta
-        delta.workflow.updated_at = datetime.datetime.now()
+        delta.workflow.updated_at = now
         delta.workflow.save(update_fields=["last_delta_id", "updated_at"])
+
+        delta.last_applied_at = now
+        delta.save(update_fields=["last_applied_at"])
 
         return (
             command.load_clientside_update(delta),

@@ -2,6 +2,8 @@ import asyncio
 import datetime
 from unittest.mock import patch
 
+from freezegun import freeze_time
+
 # We'll use SetWorkflowTitle and ChangeStepNotes as "canonical"
 # deltas -- one requiring Step, one not.
 from cjwstate import clientside, commands
@@ -229,6 +231,90 @@ class CommandsTest(DbTestCase):
         websockets_notify.assert_called()
         update = websockets_notify.call_args[0][1]
         self.assertEqual(update.mutation_id, "mutation-1")
+
+    @patch.object(commands, "websockets_notify")
+    def test_do_set_last_applied_at(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        date0 = datetime.datetime.now()
+        workflow = Workflow.create_and_init()
+        with freeze_time(date0):
+            delta = self.run_with_async_db(
+                commands.do(
+                    SetWorkflowTitle,
+                    mutation_id="mutation-1",
+                    workflow_id=workflow.id,
+                    new_value="1",
+                )
+            )
+        self.assertEqual(delta.last_applied_at, date0)
+
+    @patch.object(commands, "websockets_notify")
+    def test_undo_modify_last_applied_at(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        date0 = datetime.datetime(2000, 1, 1)
+        date1 = datetime.datetime.now()
+
+        with freeze_time(date0):
+            workflow = Workflow.create_and_init()
+            delta1 = self.run_with_async_db(
+                commands.do(
+                    SetWorkflowTitle,
+                    mutation_id="mutation-1",
+                    workflow_id=workflow.id,
+                    new_value="1",
+                )
+            )
+            delta2 = self.run_with_async_db(
+                commands.do(
+                    SetWorkflowTitle,
+                    mutation_id="mutation-1",
+                    workflow_id=workflow.id,
+                    new_value="1",
+                )
+            )
+        with freeze_time(date1):
+            self.run_with_async_db(commands.undo(delta2))
+
+        self.assertEqual(delta1.last_applied_at, date0)  # unchanged: can be deleted
+        self.assertEqual(delta2.last_applied_at, date1)  # changed: don't delete soon
+        delta2.refresh_from_db()
+        delta1.refresh_from_db()  # more important is the value from the DB
+        self.assertEqual(delta1.last_applied_at, date0)  # unchanged: can be deleted
+        self.assertEqual(delta2.last_applied_at, date1)  # changed: don't delete soon
+
+    @patch.object(commands, "websockets_notify")
+    def test_redo_modify_last_applied_at(self, websockets_notify):
+        future_none = asyncio.Future()
+        future_none.set_result(None)
+        websockets_notify.return_value = future_none
+
+        date0 = datetime.datetime(2000, 1, 1)
+        date1 = datetime.datetime.now()
+
+        with freeze_time(date0):
+            workflow = Workflow.create_and_init()
+            delta = self.run_with_async_db(
+                commands.do(
+                    SetWorkflowTitle,
+                    mutation_id="mutation-1",
+                    workflow_id=workflow.id,
+                    new_value="1",
+                )
+            )
+            self.run_with_async_db(commands.undo(delta))
+
+        with freeze_time(date1):
+            self.run_with_async_db(commands.redo(delta))
+
+        self.assertEqual(delta.last_applied_at, date1)
+        delta.refresh_from_db()
+        self.assertEqual(delta.last_applied_at, date1)
 
     @patch.object(commands, "websockets_notify")
     def test_do_modify_updated_at(self, websockets_notify):
