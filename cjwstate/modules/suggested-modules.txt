@@ -11,6 +11,7 @@ converttotext
 countbydate
 dropna
 droprowsbyposition
+duplicatecolumns
 editcells
 fillna
 filter
