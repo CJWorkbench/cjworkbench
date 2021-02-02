@@ -18,6 +18,9 @@ services:
   cron:
     image: 'gcr.io/${PROJECT_ID}/cron:${COMMIT_SHA}'
 
+  cron-delta-deleter:
+    image: 'gcr.io/${PROJECT_ID}/cron:${COMMIT_SHA}'
+
   cron-expired-session-deleter:
     image: 'gcr.io/${PROJECT_ID}/cron:${COMMIT_SHA}'
 

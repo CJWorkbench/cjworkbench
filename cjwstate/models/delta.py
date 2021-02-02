@@ -43,7 +43,7 @@ class Delta(models.Model):
 
     datetime = models.DateTimeField("datetime", default=now)
 
-    last_applied_at = models.DateTimeField(default=now)
+    last_applied_at = models.DateTimeField(default=now, db_index=True)
     """Last time this Delta's result was seen -- either after Undo or for Redo.
 
     We delete Deltas that haven't been seen in months.

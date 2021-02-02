@@ -235,6 +235,18 @@ services:
       '--exec', 'bin/cron-lesson-autoupdate-disabler'
     ]
 
+  cron-delta-deleter:
+    <<: *cron
+    depends_on: [ 'database' ]
+    command: [
+      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # syntax error.
+      'pipenv', 'run', 'bin/watchman-monitor',
+      '--exclude', '**/*.pyc', '**/tests/**/*',
+      '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
+      '--exec', 'bin/cron-delta-deleter'
+    ]
+
   tusd:
     image: tusproject/tusd:v1.4.0
     networks: [ 'dev' ]

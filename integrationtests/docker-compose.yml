@@ -135,6 +135,13 @@ services:
     depends_on: [ 'db', 'minio' ]
     environment: *common_env
 
+  cron-delta-deleter:
+    #image:
+    #build:
+    command: [ 'bin/cron-delta-deleter' ]
+    depends_on: [ 'db', 'minio' ]
+    environment: *common_env
+
   cron-lesson-autoupdate-disabler:
     #image:
     #build:
@@ -177,7 +184,16 @@ services:
   integration-test:
     #image:
     #build:
-    depends_on: [ 'db', 'fetcher', 'renderer', 'cron', 'cron-lesson-autoupdate-disabler', 'cron-expired-session-deleter', 'frontend' ]
+    depends_on:
+      # start cronjobs so we can test that they don't crash
+      - cron
+      - cron-delta-deleter
+      - cron-expired-session-deleter
+      - cron-lesson-autoupdate-disabler
+      - db
+      - fetcher
+      - frontend
+      - renderer
     command: [ "sh", "-c", "until curl --output /dev/null http://frontend:8080 --silent --head --fail; do sleep 1; done; xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests -f" ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     networks:

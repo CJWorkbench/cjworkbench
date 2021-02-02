@@ -22,6 +22,11 @@ services:
       context: ..
       target: cron
 
+  cron-delta-deleter:
+    build:
+      context: ..
+      target: cron
+
   cron-expired-session-deleter:
     build:
       context: ..

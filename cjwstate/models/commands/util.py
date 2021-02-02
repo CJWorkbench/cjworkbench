@@ -71,7 +71,7 @@ class ChangesStepOutputs:
 
         This is calculated during Delta creation, before it's applied. Be
         careful in AddStep command -- there is no `Delta` in the database, so
-        `step.last_relevant_delta_id` is NULL before creation.
+        `step.last_relevant_delta_id` is 0 before creation.
 
         To list Steps that depend on `step`, we go through two phases:
 

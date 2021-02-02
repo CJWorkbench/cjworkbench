@@ -5,7 +5,6 @@ import uuid
 from django.contrib.auth.models import User
 from cjwstate import commands, s3
 from cjwstate.models.workflow import Workflow, DependencyGraph
-from cjwstate.models.commands import AddStep, SetWorkflowTitle
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
