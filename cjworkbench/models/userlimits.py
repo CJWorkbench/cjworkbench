@@ -12,3 +12,10 @@ class UserLimits(NamedTuple):
 
     Checked whenever the user tries to schedule new fetches.
     """
+
+    max_delta_age_in_days: int = 3
+    """Cutoff after which we delete owned Workflows' Deltas.
+
+    Checked in a cronjob. Workflows are joined with their owners' UserProfiles
+    to determine max_delta_age_in_days.
+    """

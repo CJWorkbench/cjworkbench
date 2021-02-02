@@ -55,6 +55,15 @@ class Plan(models.Model):
     )
     """Quota for cronjobs."""
 
+    max_delta_age_in_days = models.IntegerField(
+        default=31,  # one month (applied while migrating 2021-02-02)
+        help_text=(
+            "Number of days a change ('Delta') lives in the undo history. "
+            "Workbench deletes actions that haven't been undone in a long time."
+        ),
+    )
+    """Quota for undo history."""
+
     @classmethod
     def upsert_from_stripe_product_and_price(
         cls,
