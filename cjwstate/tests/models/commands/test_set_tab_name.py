@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from cjwstate import clientside, commands
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import SetTabName
 from cjwstate.tests.utils import (
@@ -14,7 +14,7 @@ async def async_noop(*args, **kwargs):
 
 class SetTabNameTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_set_name(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -36,7 +36,7 @@ class SetTabNameTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(tab.name, "bar")
 
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_change_last_relevant_delta_ids_of_dependent_steps(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
@@ -69,7 +69,7 @@ class SetTabNameTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_change_last_relevant_delta_ids_of_self_steps(self):
         workflow = Workflow.create_and_init()
         delta_id = workflow.last_delta_id
@@ -92,7 +92,7 @@ class SetTabNameTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
     @patch.object(commands, "websockets_notify")
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_clientside_update(self, send_delta):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()

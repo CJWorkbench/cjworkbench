@@ -1,5 +1,6 @@
 from unittest.mock import patch
-from cjwstate import commands
+
+from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import ReorderTabs
 from cjwstate.tests.utils import (
@@ -12,17 +13,9 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-class MockLoadedModule:
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def migrate_params(self, params):
-        return params  # no-op
-
-
 class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_reorder_slugs(self):
         workflow = Workflow.create_and_init()  # tab slug: tab-1
         workflow.tabs.create(position=1, slug="tab-2")
@@ -53,7 +46,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
 
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_adjust_selected_tab_position(self):
         # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
@@ -79,7 +72,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(workflow.selected_tab_position, 0)
 
     @patch.object(commands, "websockets_notify", async_noop)
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_change_dependent_steps(self):
         # tab slug: tab-1
         workflow = Workflow.create_and_init(selected_tab_position=2)
@@ -111,7 +104,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
     @patch.object(commands, "websockets_notify")
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     def test_clientside_update(self, send_delta):
         send_delta.side_effect = async_noop
 

@@ -1,8 +1,11 @@
 from contextlib import asynccontextmanager
 from unittest.mock import Mock, patch
+
 from cjworkbench.pg_render_locker import WorkflowAlreadyLocked
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
+
 from renderer import execute
 from renderer.render import handle_render, render_workflow_and_maybe_requeue
 
@@ -61,7 +64,7 @@ class RenderTest(DbTestCase):
 
         self.run_with_async_db(inner())
 
-    @patch("cjwstate.rabbitmq.queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch("renderer.execute.execute_workflow")
     def test_render_happy_path(self, execute, queue_render):
         execute.side_effect = async_noop

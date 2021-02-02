@@ -1,7 +1,7 @@
-import asyncio
 from unittest.mock import patch
-from cjwstate import commands
-from cjwstate.models import Delta, Workflow, Step
+
+from cjwstate import commands, rabbitmq
+from cjwstate.models import Workflow
 from cjwstate.models.commands import AddStep, DeleteStep
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
@@ -13,11 +13,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-future_none = asyncio.Future()
-future_none.set_result(None)
-
-
-@patch.object(commands, "queue_render", async_noop)
+@patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
 class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def assertStepVersions(self, expected_versions):

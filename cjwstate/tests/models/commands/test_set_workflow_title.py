@@ -1,5 +1,6 @@
 from unittest.mock import patch
-from cjwstate import commands
+
+from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import SetWorkflowTitle
 from cjwstate.tests.utils import DbTestCase
@@ -9,7 +10,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch.object(commands, "queue_render", async_noop)
+@patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
 class SetWorkflowTitleTests(DbTestCase):
     def test_change_title(self):

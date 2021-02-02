@@ -1,7 +1,8 @@
 from unittest.mock import patch
+
 from cjwkernel.types import RenderResult
 from cjwkernel.tests.util import arrow_table
-from cjwstate import clientside, commands
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.rendercache.io import cache_render_result
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DuplicateTab
@@ -13,7 +14,7 @@ async def async_noop(*args, **kwargs):
 
 
 class DuplicateTabTest(DbTestCase):
-    @patch.object(commands, "queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.object(commands, "websockets_notify")
     def test_duplicate_empty_tab(self, send_update, queue_render):
         send_update.side_effect = async_noop
@@ -94,7 +95,7 @@ class DuplicateTabTest(DbTestCase):
         # outputs.
         queue_render.assert_not_called()
 
-    @patch.object(commands, "queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.object(commands, "websockets_notify")
     def test_duplicate_nonempty_unrendered_tab(self, send_update, queue_render):
         send_update.side_effect = async_noop
@@ -182,7 +183,7 @@ class DuplicateTabTest(DbTestCase):
         # Need to call render() again -- these modules are still out-of-date
         queue_render.assert_called_with(workflow.id, cmd.id)
 
-    @patch.object(commands, "queue_render")
+    @patch.object(rabbitmq, "queue_render")
     @patch.object(commands, "websockets_notify")
     def test_duplicate_nonempty_rendered_tab(self, send_update, queue_render):
         send_update.side_effect = async_noop
@@ -235,7 +236,7 @@ class DuplicateTabTest(DbTestCase):
                 )
             )
 
-    @patch.object(commands, "queue_render", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
     @patch.object(commands, "websockets_notify", async_noop)
     def test_position_after_tab(self):
         workflow = Workflow.create_and_init()

@@ -94,7 +94,7 @@ async def _maybe_queue_render(
     else:
         # Normal case: the Delta says we need a render. Assume there's a user
         # waiting for this render -- otherwise, how did the Delta get here?
-        await queue_render(workflow_id, relevant_delta_id)
+        await rabbitmq.queue_render(workflow_id, relevant_delta_id)
 
 
 @database_sync_to_async

@@ -1,7 +1,7 @@
 import logging
 from unittest.mock import patch
 
-from cjwstate import commands
+from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import SetStepParams
 from cjwstate.tests.utils import (
@@ -14,7 +14,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch.object(commands, "queue_render", async_noop)
+@patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
 class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
     def test_change_parameters(self):

@@ -10,7 +10,7 @@ import pyarrow as pa
 
 from cjwkernel.types import Column, ColumnType, RenderResult
 from cjwkernel.tests.util import arrow_table
-from cjwstate import commands
+from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.rendercache.io import (
     cache_render_result,
@@ -30,7 +30,7 @@ async def async_noop(*args, **kwargs):
 empty_data_json = {"start_row": 0, "end_row": 0, "rows": []}
 
 
-@patch.object(commands, "queue_render", async_noop)
+@patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
 class StepTests(LoggedInTestCase):
     # Test workflow with modules that implement a simple pipeline on test data
