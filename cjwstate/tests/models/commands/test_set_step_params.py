@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import SetStepParams, InitWorkflow
+from cjwstate.models.commands import SetStepParams
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -110,14 +110,12 @@ class SetStepParamsTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
     def test_change_parameters_on_soft_deleted_tab(self):
         workflow = Workflow.objects.create()
-        delta = InitWorkflow.create(workflow)
         tab = workflow.tabs.create(position=0, is_deleted=True)
 
         step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="loadurl",
-            last_relevant_delta_id=delta.id,
             params={"url": ""},
         )
 

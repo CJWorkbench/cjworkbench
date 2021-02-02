@@ -97,8 +97,8 @@ class Index(View):
         def list_workflows_as_json(**kwargs) -> List[Dict[str, Any]]:
             workflows = (
                 Workflow.objects.filter(**kwargs)
-                .prefetch_related("acl", "owner", "last_delta")
-                .order_by("-last_delta__datetime")
+                .prefetch_related("acl", "owner")
+                .order_by("-updated_at")
                 .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=""))
             )
             return [

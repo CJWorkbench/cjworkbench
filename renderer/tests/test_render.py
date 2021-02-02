@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from unittest.mock import Mock, patch
 from cjworkbench.pg_render_locker import WorkflowAlreadyLocked
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import DbTestCase
 from renderer import execute
 from renderer.render import handle_render, render_workflow_and_maybe_requeue
@@ -66,29 +65,27 @@ class RenderTest(DbTestCase):
     @patch("renderer.execute.execute_workflow")
     def test_render_happy_path(self, execute, queue_render):
         execute.side_effect = async_noop
-        workflow = Workflow.objects.create()
-        delta = InitWorkflow.create(workflow)
+        workflow = Workflow.objects.create(last_delta_id=123)
 
         with self.assertLogs():
             self.run_with_async_db(
                 render_workflow_and_maybe_requeue(
-                    SuccessfulRenderLocker(), workflow.id, delta.id
+                    SuccessfulRenderLocker(), workflow.id, 123
                 )
             )
 
-        execute.assert_called_with(workflow, delta.id)
+        execute.assert_called_with(workflow, 123)
         queue_render.assert_not_called()
 
     @patch("cjwstate.rabbitmq.queue_render")
     @patch("renderer.execute.execute_workflow")
     def test_render_other_renderer_rendering_so_skip(self, execute, queue_render):
-        workflow = Workflow.objects.create()
-        delta = InitWorkflow.create(workflow)
+        workflow = Workflow.objects.create(last_delta_id=123)
 
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
                 await render_workflow_and_maybe_requeue(
-                    FailedRenderLocker(), workflow.id, delta.id
+                    FailedRenderLocker(), workflow.id, 123
                 )
                 self.assertEqual(
                     cm.output,
@@ -111,13 +108,14 @@ class RenderTest(DbTestCase):
         # Test what happens when our `renderer.execute` module is buggy and
         # raises something it shouldn't raise.
         execute.side_effect = FileNotFoundError
-        workflow = Workflow.objects.create()
-        delta = InitWorkflow.create(workflow)
+        workflow = Workflow.objects.create(last_delta_id=123)
 
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
                 await render_workflow_and_maybe_requeue(
-                    SuccessfulRenderLocker(), workflow.id, delta.id
+                    SuccessfulRenderLocker(),
+                    workflow.id,
+                    123,
                 )
                 self.assertRegex(
                     cm.output[0],
@@ -163,13 +161,12 @@ class RenderTest(DbTestCase):
     def test_render_unneeded_execution_so_requeue(self, mock_execute, queue_render):
         mock_execute.side_effect = async_err(execute.UnneededExecution)
         queue_render.side_effect = async_noop
-        workflow = Workflow.objects.create()
-        delta = InitWorkflow.create(workflow)
+        workflow = Workflow.objects.create(last_delta_id=123)
 
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
                 await render_workflow_and_maybe_requeue(
-                    SuccessfulRenderLocker(), workflow.id, delta.id
+                    SuccessfulRenderLocker(), workflow.id, 123
                 )
                 self.assertRegex(
                     cm.output[0],
@@ -185,4 +182,4 @@ class RenderTest(DbTestCase):
                 )
 
         self.run_with_async_db(inner())
-        queue_render.assert_called_with(workflow.id, delta.id)
+        queue_render.assert_called_with(workflow.id, 123)

@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from cjwstate import clientside, commands
 from cjwstate.models import Block, Workflow
-from cjwstate.models.commands import DeleteTab, InitWorkflow
+from cjwstate.models.commands import DeleteTab
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -117,9 +117,7 @@ class DeleteTabTest(DbTestCase):
         self.run_with_async_db(
             commands.do(DeleteTab, workflow_id=workflow.id, tab=tab1)
         )
-        self.assertEqual(
-            workflow.deltas.exclude(command_name=InitWorkflow.__name__).count(), 0
-        )
+        self.assertEqual(workflow.deltas.count(), 0)
 
         tab1.refresh_from_db()
         self.assertEqual(tab1.is_deleted, False)

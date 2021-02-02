@@ -2,7 +2,7 @@ import asyncio
 from unittest.mock import patch
 from cjwstate import commands
 from cjwstate.models import Delta, Workflow, Step
-from cjwstate.models.commands import AddStep, DeleteStep, InitWorkflow
+from cjwstate.models.commands import AddStep, DeleteStep
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -42,21 +42,17 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
             "AddStep and tests should cache migrated params correctly"
         )
 
-        self.delta = InitWorkflow.create(self.workflow)
-
     # Add another module, then undo, redo
     def test_add_module(self):
+        all_modules = self.tab.live_steps
+
+        v1 = 1
         existing_module = self.tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=self.delta.id,
+            last_relevant_delta_id=v1,
             params={"url": ""},
         )
-
-        all_modules = self.tab.live_steps
-
-        self.workflow.refresh_from_db()
-        v1 = self.workflow.last_delta_id
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
@@ -79,17 +75,6 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         bumped_module = all_modules.get(order=1)
         self.assertEqual(bumped_module, existing_module)
 
-        # workflow revision should have been incremented
-        self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.last_delta_id, v1)
-
-        # Check the delta chain (short, but should be sweet)
-        self.workflow.refresh_from_db()
-        self.assertEqual(self.workflow.last_delta_id, cmd.id)
-        self.assertEqual(cmd.prev_delta_id, self.delta.id)
-        with self.assertRaises(Delta.DoesNotExist):
-            cmd.next_delta
-
         # undo! undo! ahhhhh everything is on fire! undo!
         self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertEqual(all_modules.count(), 1)
@@ -102,15 +87,6 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertNotEqual(added_module, existing_module)
         bumped_module = all_modules.get(order=1)
         self.assertEqual(bumped_module, existing_module)
-
-        # Undo and test deleting the un-applied command. Should delete dangling
-        # Step too
-        self.run_with_async_db(commands.undo(self.workflow.id))
-        self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(all_modules.first(), existing_module)
-        cmd.delete_with_successors()
-        with self.assertRaises(Step.DoesNotExist):
-            all_modules.get(pk=added_module.id)  # should be gone
 
     def test_add_module_default_params(self):
         workflow = Workflow.create_and_init()
@@ -193,15 +169,13 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
     # Try inserting at various positions to make sure the renumbering works
     # right Then undo multiple times
     def test_add_many_modules(self):
+        v1 = 1
         existing_module = self.tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=self.delta.id,
+            last_relevant_delta_id=1,
             params={"url": ""},
         )
-
-        self.workflow.refresh_from_db()
-        v1 = self.workflow.last_delta_id
 
         # beginning state: one Step
         all_modules = self.tab.live_steps
@@ -259,18 +233,6 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(cmd3.step.order, 2)
         self.assertStepVersions([v2, v2, v4, v4])
 
-        # Check the delta chain, should be 1 <-> 2 <-> 3
-        self.workflow.refresh_from_db()
-        cmd1.refresh_from_db()
-        cmd2.refresh_from_db()
-        cmd3.refresh_from_db()
-        self.assertEqual(self.workflow.last_delta, cmd3)
-        with self.assertRaises(Delta.DoesNotExist):
-            cmd3.next_delta
-        self.assertEqual(cmd3.prev_delta, cmd2)
-        self.assertEqual(cmd2.prev_delta, cmd1)
-        self.assertEqual(cmd1.prev_delta_id, self.delta.id)
-
         # We should be able to go all the way back
         self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertStepVersions([v2, v2, v3])
@@ -284,17 +246,17 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
     # Delete module, then undo, redo
     def test_delete_module(self):
+        v1 = 1
         existing_module = self.tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=self.delta.id,
+            last_relevant_delta_id=v1,
             params={"url": ""},
         )
 
         all_modules = self.tab.live_steps
 
         self.workflow.refresh_from_db()
-        v1 = self.workflow.last_delta_id
         self.assertStepVersions([v1])
 
         # Delete it. Yeah, you better run.
@@ -313,28 +275,14 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
         v2 = cmd.id
         self.assertGreater(v2, v1)
 
-        # Check the delta chain (short, but should be sweet)
-        self.workflow.refresh_from_db()
-        self.assertEqual(self.workflow.last_delta, cmd)
-        self.assertEqual(cmd.prev_delta_id, self.delta.id)
-        with self.assertRaises(Delta.DoesNotExist):
-            cmd.next_delta
-
         # undo
         self.run_with_async_db(commands.undo(self.workflow.id))
         self.assertEqual(all_modules.count(), 1)
         self.assertStepVersions([v1])
         self.assertEqual(all_modules.first(), existing_module)
 
-    # ensure that deleting the selected module sets the selected module to
-    # null, and is undoable
     def test_delete_selected(self):
-        step = self.tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=self.delta.id,
-            params={"url": ""},
-        )
+        step = self.tab.steps.create(order=0, slug="step-1", params={"url": ""})
         self.tab.selected_step_position = 0
         self.tab.save(update_fields=["selected_step_position"])
 
@@ -372,12 +320,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
     # dangling selected_step (basically the AddModule equivalent of
     # test_delete_selected)
     def test_add_undo_selected(self):
-        self.tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=self.delta.id,
-            params={"url": ""},
-        )
+        self.tab.steps.create(order=0, slug="step-1", params={"url": ""})
 
         # beginning state: one Step
         all_modules = self.tab.live_steps
@@ -412,7 +355,6 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
             order=0,
             slug="step-1",
             module_id_name="tabby",
-            last_relevant_delta_id=self.workflow.last_delta_id,
             params={"tab": "tab-2"},
             cached_migrated_params={"tab": "tab-2"},
             cached_migrated_params_module_version=module_zipfile.version,

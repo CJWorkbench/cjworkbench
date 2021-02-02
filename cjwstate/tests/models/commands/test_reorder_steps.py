@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from cjwstate import commands
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow, ReorderSteps
+from cjwstate.models.commands import ReorderSteps
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -16,7 +16,6 @@ class ReorderStepsTest(DbTestCase):
         super().setUp()
 
         self.workflow = Workflow.objects.create()
-        self.delta = InitWorkflow.create(self.workflow)
         self.tab = self.workflow.tabs.create(position=0, slug="tab-1")
 
     def assertStepVersions(self, expected_versions):
@@ -30,8 +29,8 @@ class ReorderStepsTest(DbTestCase):
 
     def test_reorder_modules(self):
         all_modules = self.tab.live_steps
-        v1 = self.delta.id
 
+        v1 = 1
         step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
         step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
         step3 = self.tab.steps.create(last_relevant_delta_id=v1, order=2, slug="step-3")
@@ -75,10 +74,9 @@ class ReorderStepsTest(DbTestCase):
 
     def test_old_style_params(self):
         all_modules = self.tab.live_steps
-        v1 = self.delta.id
-        step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
-        step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
-        step3 = self.tab.steps.create(last_relevant_delta_id=v1, order=2, slug="step-3")
+        step1 = self.tab.steps.create(order=0, slug="step-1")
+        step2 = self.tab.steps.create(order=1, slug="step-2")
+        step3 = self.tab.steps.create(order=2, slug="step-3")
 
         # Let's build a new-style Delta, then overwrite it to be old-style
         cmd = self.run_with_async_db(
@@ -123,12 +121,10 @@ class ReorderStepsTest(DbTestCase):
         # (A user should not be able to affect Steps outside of his/her
         # workflow. There's nothing in the architecture that could lead us there,
         # but let's be absolutely sure by testing.)
-        v1 = self.delta.id
-        step1 = self.tab.steps.create(last_relevant_delta_id=v1, order=0, slug="step-1")
-        step2 = self.tab.steps.create(last_relevant_delta_id=v1, order=1, slug="step-2")
-
+        step1 = self.tab.steps.create(order=0, slug="step-1")
+        step2 = self.tab.steps.create(order=1, slug="step-2")
         tab2 = self.workflow.tabs.create(position=1, slug="tab-2")
-        step3 = tab2.steps.create(last_relevant_delta_id=v1, order=2, slug="step-3")
+        step3 = tab2.steps.create(order=2, slug="step-3")
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
@@ -141,9 +137,7 @@ class ReorderStepsTest(DbTestCase):
             )
 
     def test_missing_step_valueerror(self):
-        step1 = self.tab.steps.create(
-            last_relevant_delta_id=self.delta.id, order=0, slug="step-1"
-        )
+        step1 = self.tab.steps.create(order=0, slug="step-1")
         with self.assertRaises(ValueError):
             self.run_with_async_db(
                 commands.do(
@@ -155,12 +149,8 @@ class ReorderStepsTest(DbTestCase):
             )
 
     def test_not_enough_steps_valueerror(self):
-        step1 = self.tab.steps.create(
-            order=0, slug="step-1", last_relevant_delta_id=self.delta.id
-        )
-        self.tab.steps.create(
-            order=1, slug="step-2", last_relevant_delta_id=self.delta.id
-        )
+        step1 = self.tab.steps.create(order=0, slug="step-1")
+        self.tab.steps.create(order=1, slug="step-2")
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
@@ -173,12 +163,8 @@ class ReorderStepsTest(DbTestCase):
             )
 
     def test_repeated_steps_valueerror(self):
-        step1 = self.tab.steps.create(
-            order=0, slug="step-1", last_relevant_delta_id=self.delta.id
-        )
-        self.tab.steps.create(
-            order=1, slug="step-2", last_relevant_delta_id=self.delta.id
-        )
+        step1 = self.tab.steps.create(order=0, slug="step-1")
+        self.tab.steps.create(order=1, slug="step-2")
 
         with self.assertRaises(ValueError):
             self.run_with_async_db(
@@ -191,12 +177,8 @@ class ReorderStepsTest(DbTestCase):
             )
 
     def test_no_change_does_nothing(self):
-        step1 = self.tab.steps.create(
-            order=0, slug="step-1", last_relevant_delta_id=self.delta.id
-        )
-        step2 = self.tab.steps.create(
-            order=1, slug="step-2", last_relevant_delta_id=self.delta.id
-        )
+        step1 = self.tab.steps.create(order=0, slug="step-1")
+        step2 = self.tab.steps.create(order=1, slug="step-2")
 
         cmd = self.run_with_async_db(
             commands.do(

@@ -25,17 +25,6 @@ class Delta(models.Model):
                 check=models.Q(command_name__in=list(NAME_TO_COMMAND.keys())),
                 name="delta_command_name_valid",
             ),
-            # The first Delta in any Workflow must be InitWorkflow
-            models.CheckConstraint(
-                check=(
-                    models.Q(command_name="InitWorkflow", prev_delta_id__isnull=True)
-                    | (
-                        ~models.Q(command_name="InitWorkflow")
-                        & models.Q(prev_delta_id__isnull=False)
-                    )
-                ),
-                name="delta_first_command_per_workflow_is_init",
-            ),
         ]
 
     # These fields must be set by any child classes, when instantiating
@@ -118,18 +107,3 @@ class Delta(models.Model):
 
     Data format is Command-dependent.
     """
-
-    def delete_with_successors(self):
-        """Delete all Deltas in self.workflow, starting with this one.
-
-        Do it in SQL, not code: there can be thousands, and Django's models are
-        resource-intensive. (Also, recursion is out of the question, in these
-        quantities.)
-
-        Assumes a Delta with a higher ID is a successor.
-
-        Consider calling `workflow.delete_orphan_soft_deleted_models()` after
-        calling this method: it may leave behind Tab and Step objects that
-        nothing refers to, if they previously had `.is_deleted == True`.
-        """
-        Delta.objects.filter(workflow_id=self.workflow_id, id__gte=self.id).delete()

@@ -9,7 +9,6 @@ from cjwkernel.types import RenderResult
 from cjwstate import rabbitmq
 from cjwstate.rendercache import cache_render_result
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -41,7 +40,6 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         )
 
         self.workflow1 = Workflow.create_and_init(name="Workflow 1", owner=self.user)
-        self.delta = self.workflow1.last_delta
         self.tab1 = self.workflow1.tabs.first()
         self.module_zipfile1 = create_module_zipfile("module1")
 
@@ -173,32 +171,33 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         step = self.tab1.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=self.delta.id,
-            cached_render_result_delta_id=self.delta.id,  # stale
+            last_relevant_delta_id=1,
+            cached_render_result_delta_id=1,
         )
         # Cache a result
         cache_render_result(
-            self.workflow1, step, self.delta.id, RenderResult(arrow_table({"A": ["a"]}))
+            self.workflow1,
+            step,
+            1,
+            RenderResult(arrow_table({"A": ["a"]})),
         )
-        # Make the cached result stale. (The view will actually send the
-        # stale-result metadata to the client. That's why we cached it.)
-        delta2 = InitWorkflow.create(self.workflow1)
-        step.last_relevant_delta_id = delta2.id
+        step.last_relevant_delta_id = 2
         step.save(update_fields=["last_relevant_delta_id"])
         self.client.force_login(self.user)
         self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.queue_render.assert_called_with(self.workflow1.id, delta2.id)
+        self.queue_render.assert_called_with(
+            self.workflow1.id, self.workflow1.last_delta_id
+        )
 
     def test_workflow_view_triggers_render_if_no_cache(self):
         self.tab1.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=self.delta.id,
-            cached_render_result_delta_id=None,
+            order=0, slug="step-1", cached_render_result_delta_id=None
         )
         self.client.force_login(self.user)
         self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.queue_render.assert_called_with(self.workflow1.id, self.delta.id)
+        self.queue_render.assert_called_with(
+            self.workflow1.id, self.workflow1.last_delta_id
+        )
 
     def test_workflow_view_missing_404(self):
         # 404 with bad id

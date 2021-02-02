@@ -5,7 +5,6 @@ from cjwkernel.util import tempfile_context
 from cjwstate import s3
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow
 from cjwstate.tests.utils import DbTestCase, get_s3_object_with_data
 
 
@@ -75,7 +74,6 @@ class StepTests(DbTestCase):
         )
 
         workflow2 = Workflow.create_and_init()
-        InitWorkflow.create(workflow2)
         tab2 = workflow2.tabs.create(position=0)
         step2 = step.duplicate_into_new_workflow(tab2)
 

@@ -16,7 +16,6 @@ from cjwkernel.tests.util import (
 )
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow
 from cjwstate.rendercache import cache_render_result, open_cached_render_result
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.types import UnneededExecution
@@ -64,7 +63,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_execute_new_revision(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta1 = workflow.last_delta
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"B": [2]})',
@@ -72,15 +70,11 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=delta1.id,
+            last_relevant_delta_id=1,
             module_id_name="mod",
         )
-
-        result1 = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(workflow, step, delta1.id, result1)
-
-        delta2 = InitWorkflow.create(workflow)
-        step.last_relevant_delta_id = delta2.id
+        cache_render_result(workflow, step, 1, RenderResult(arrow_table({"A": [1]})))
+        step.last_relevant_delta_id = 2
         step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
@@ -95,14 +89,8 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta1 = workflow.last_delta
         create_module_zipfile("mod")
-        tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=delta1.id - 1,
-            module_id_name="mod",
-        )
+        tab.steps.create(order=0, slug="step-1", module_id_name="mod")
 
         with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
             self._execute(workflow)
@@ -112,18 +100,8 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         create_module_zipfile("mod")
-        tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=workflow.last_delta_id,
-            module_id_name="mod",
-        )
-        tab.steps.create(
-            order=1,
-            slug="step-2",
-            last_relevant_delta_id=workflow.last_delta_id,
-            module_id_name="mod",
-        )
+        tab.steps.create(order=0, slug="step-1", module_id_name="mod")
+        tab.steps.create(order=1, slug="step-2", module_id_name="mod")
 
         def render_and_delete(*args, **kwargs):
             # Render successfully. Then delete `workflow`, which should force
@@ -150,24 +128,9 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         create_module_zipfile(
             "mod", python_code='def render(table, params): return "error, not warning"'
         )
-        step1 = tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=delta_id,
-            module_id_name="mod",
-        )
-        step2 = tab.steps.create(
-            order=1,
-            slug="step-2",
-            last_relevant_delta_id=delta_id,
-            module_id_name="mod",
-        )
-        step3 = tab.steps.create(
-            order=2,
-            slug="step-3",
-            last_relevant_delta_id=delta_id,
-            module_id_name="mod",
-        )
+        step1 = tab.steps.create(order=0, slug="step-1", module_id_name="mod")
+        step2 = tab.steps.create(order=1, slug="step-2", module_id_name="mod")
+        step3 = tab.steps.create(order=2, slug="step-3", module_id_name="mod")
 
         error_result = RenderResult(
             errors=[RenderError(I18nMessage.TODO_i18n("error, not warning"))]
@@ -205,7 +168,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_execute_migrate_params_invalid_params_are_coerced(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta1 = workflow.last_delta
         create_module_zipfile(
             "mod",
             spec_kwargs={"parameters": [{"id_name": "x", "type": "string"}]},
@@ -217,12 +179,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
                 """
             ),
         )
-        step = tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=delta1.id,
-            module_id_name="mod",
-        )
+        step = tab.steps.create(order=0, slug="step-1", module_id_name="mod")
 
         self._execute(workflow)
 
@@ -236,7 +193,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_execute_migrate_params_module_error_gives_default_params(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta1 = workflow.last_delta
         create_module_zipfile(
             "mod",
             spec_kwargs={
@@ -251,11 +207,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             ),
         )
         step = tab.steps.create(
-            order=0,
-            slug="step-1",
-            last_relevant_delta_id=delta1.id,
-            module_id_name="mod",
-            params={"x": "good"},
+            order=0, slug="step-1", module_id_name="mod", params={"x": "good"}
         )
 
         self._execute(workflow)
@@ -271,25 +223,20 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         workflow = Workflow.objects.create()
         create_module_zipfile("mod")
         tab = workflow.tabs.create(position=0)
-        delta = InitWorkflow.create(workflow)
         step1 = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",
-            last_relevant_delta_id=delta.id,
+            last_relevant_delta_id=2,
         )
-        cache_render_result(
-            workflow, step1, delta.id, RenderResult(arrow_table({"A": [1]}))
-        )
+        cache_render_result(workflow, step1, 2, RenderResult(arrow_table({"A": [1]})))
         step2 = tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="mod",
-            last_relevant_delta_id=delta.id,
+            last_relevant_delta_id=1,
         )
-        cache_render_result(
-            workflow, step2, delta.id, RenderResult(arrow_table({"B": [2]}))
-        )
+        cache_render_result(workflow, step2, 1, RenderResult(arrow_table({"B": [2]})))
 
         with patch.object(Kernel, "render", return_value=None):
             self._execute(workflow)
@@ -313,18 +260,16 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step1 = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=delta_id,
+            last_relevant_delta_id=1,
             module_id_name="mod",
         )
-        cache_render_result(
-            workflow, step1, delta_id, RenderResult(arrow_table({"A": [1]}))
-        )
+        cache_render_result(workflow, step1, 1, RenderResult(arrow_table({"A": [1]})))
 
         # step2: has no cached result (must be rendered)
         step2 = tab.steps.create(
             order=1,
             slug="step-2",
-            last_relevant_delta_id=delta_id,
+            last_relevant_delta_id=1,
             module_id_name="mod",
         )
 
@@ -339,7 +284,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_email_delta(self, email):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflow.create(workflow)
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
@@ -347,17 +291,13 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=delta1.id,
+            last_relevant_delta_id=1,
             module_id_name="mod",
             notifications=True,
         )
-        cache_render_result(
-            workflow, step, delta1.id, RenderResult(arrow_table({"A": [1]}))
-        )
+        cache_render_result(workflow, step, 1, RenderResult(arrow_table({"A": [1]})))
 
-        # Make a new delta, so we need to re-render.
-        delta2 = InitWorkflow.create(workflow)
-        step.last_relevant_delta_id = delta2.id
+        step.last_relevant_delta_id = 2
         step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
@@ -369,7 +309,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_email_no_delta_when_not_changed(self, email):
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflow.create(workflow)
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
@@ -377,17 +316,14 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=delta1.id,
+            last_relevant_delta_id=1,
             module_id_name="mod",
             notifications=True,
         )
-        cache_render_result(
-            workflow, step, delta1.id, RenderResult(arrow_table({"A": [1]}))
-        )
+        cache_render_result(workflow, step, 1, RenderResult(arrow_table({"A": [1]})))
 
         # Make a new delta, so we need to re-render. Give it the same output.
-        delta2 = InitWorkflow.create(workflow)
-        step.last_relevant_delta_id = delta2.id
+        step.last_relevant_delta_id = 2
         step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
@@ -405,7 +341,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         workflow = Workflow.objects.create()
         tab = workflow.tabs.create(position=0)
-        delta1 = InitWorkflow.create(workflow)
         create_module_zipfile(
             "mod",
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
@@ -413,15 +348,9 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=delta1.id,
             module_id_name="mod",
             notifications=True,
         )
-
-        # Make a new delta, so we need to re-render. Give it the same output.
-        delta2 = InitWorkflow.create(workflow)
-        step.last_relevant_delta_id = delta2.id
-        step.save(update_fields=["last_relevant_delta_id"])
 
         self._execute(workflow)
 

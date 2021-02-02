@@ -6,19 +6,19 @@ from freezegun import freeze_time
 
 # We'll use SetWorkflowTitle and ChangeStepNotes as "canonical"
 # deltas -- one requiring Step, one not.
-from cjwstate import clientside, commands
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models import Delta, Tab, Workflow, Step
 from cjwstate.models.commands import SetWorkflowTitle, SetStepNote, AddTab
 from cjwstate.tests.utils import DbTestCase
 
 
-future_none = asyncio.Future()
-future_none.set_result(None)
+async def async_noop(*args):
+    pass
 
 
-@patch.object(commands, "queue_render", lambda *x: future_none)
+@patch.object(rabbitmq, "queue_render", async_noop)
 class CommandsTest(DbTestCase):
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_orphans(self):
         workflow = Workflow.create_and_init()
 
@@ -43,7 +43,7 @@ class CommandsTest(DbTestCase):
         with self.assertRaises(Delta.DoesNotExist):
             delta3.refresh_from_db()
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_orphans_does_not_delete_new_tab(self):
         # Don't delete a new AddTab's new orphan Tab during creation.
         #
@@ -69,13 +69,13 @@ class CommandsTest(DbTestCase):
         with self.assertRaises(Delta.DoesNotExist):
             delta1.refresh_from_db()
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_ignores_other_workflows(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()  # ignore me!
 
         # Create a delta we want to delete
-        delta = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
 
@@ -85,12 +85,12 @@ class CommandsTest(DbTestCase):
         )
 
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        workflow.deltas.all().delete()
         workflow.delete_orphan_soft_deleted_models()
 
         delta2.refresh_from_db()  # do not crash
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_deletes_soft_deleted_step(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
@@ -98,17 +98,17 @@ class CommandsTest(DbTestCase):
             order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
-        delta = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        workflow.deltas.all().delete()
         workflow.delete_orphan_soft_deleted_models()
 
         with self.assertRaises(Step.DoesNotExist):
             step.refresh_from_db()
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_deletes_soft_deleted_tab(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.create(position=1, is_deleted=True)
@@ -117,11 +117,11 @@ class CommandsTest(DbTestCase):
             order=0, slug="step-1", module_id_name="foo", is_deleted=True
         )
 
-        delta = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        workflow.deltas.all().delete()
         workflow.delete_orphan_soft_deleted_models()
 
         with self.assertRaises(Step.DoesNotExist):
@@ -129,7 +129,7 @@ class CommandsTest(DbTestCase):
         with self.assertRaises(Tab.DoesNotExist):
             tab.refresh_from_db()
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_protects_non_deleted_step(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
@@ -138,16 +138,16 @@ class CommandsTest(DbTestCase):
         )
 
         # delete a delta
-        delta = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        workflow.deltas.all().delete()
         workflow.delete_orphan_soft_deleted_models()
 
         step.refresh_from_db()  # no DoesNotExist: it's not deleted
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_protects_soft_deleted_step_with_reference(self):
         workflow = Workflow.create_and_init()
         # Here's a soft-deleted module
@@ -166,16 +166,16 @@ class CommandsTest(DbTestCase):
         )
 
         # now delete a delta
-        delta = self.run_with_async_db(
+        delta2 = self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        delta2.delete()
         workflow.delete_orphan_soft_deleted_models()
 
         step.refresh_from_db()  # no DoesNotExist -- a delta depends on it
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_scopes_step_delete_by_workflow(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()
@@ -186,16 +186,16 @@ class CommandsTest(DbTestCase):
         )
 
         # now delete a delta on workflow1
-        delta = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        workflow.deltas.all().delete()
         workflow.delete_orphan_soft_deleted_models()
 
         step.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
 
-    @patch.object(commands, "websockets_notify", lambda *x: future_none)
+    @patch.object(commands, "websockets_notify", async_noop)
     def test_delete_scopes_tab_delete_by_workflow(self):
         workflow = Workflow.create_and_init()
         workflow2 = Workflow.create_and_init()
@@ -204,20 +204,18 @@ class CommandsTest(DbTestCase):
         tab = workflow2.tabs.create(position=1)
 
         # now delete a delta on workflow1
-        delta = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))  # fix workflow.last_delta_id
-        delta.delete_with_successors()
+        workflow.deltas.all().delete()
         workflow.delete_orphan_soft_deleted_models()
 
         tab.refresh_from_db()  # no DoesNotExist: leave workflow2 alone
 
     @patch.object(commands, "websockets_notify")
     def test_pass_through_mutation_id(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         workflow = Workflow.create_and_init()
         self.run_with_async_db(
@@ -234,28 +232,19 @@ class CommandsTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     def test_do_set_last_applied_at(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         date0 = datetime.datetime.now()
         workflow = Workflow.create_and_init()
         with freeze_time(date0):
             delta = self.run_with_async_db(
-                commands.do(
-                    SetWorkflowTitle,
-                    mutation_id="mutation-1",
-                    workflow_id=workflow.id,
-                    new_value="1",
-                )
+                commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
             )
         self.assertEqual(delta.last_applied_at, date0)
 
     @patch.object(commands, "websockets_notify")
     def test_undo_modify_last_applied_at(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         date0 = datetime.datetime(2000, 1, 1)
         date1 = datetime.datetime.now()
@@ -263,20 +252,10 @@ class CommandsTest(DbTestCase):
         with freeze_time(date0):
             workflow = Workflow.create_and_init()
             delta1 = self.run_with_async_db(
-                commands.do(
-                    SetWorkflowTitle,
-                    mutation_id="mutation-1",
-                    workflow_id=workflow.id,
-                    new_value="1",
-                )
+                commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
             )
             delta2 = self.run_with_async_db(
-                commands.do(
-                    SetWorkflowTitle,
-                    mutation_id="mutation-1",
-                    workflow_id=workflow.id,
-                    new_value="1",
-                )
+                commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
             )
         with freeze_time(date1):
             self.run_with_async_db(commands.undo(workflow.id))
@@ -288,9 +267,7 @@ class CommandsTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     def test_redo_modify_last_applied_at(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         date0 = datetime.datetime(2000, 1, 1)
         date1 = datetime.datetime.now()
@@ -298,12 +275,7 @@ class CommandsTest(DbTestCase):
         with freeze_time(date0):
             workflow = Workflow.create_and_init()
             delta = self.run_with_async_db(
-                commands.do(
-                    SetWorkflowTitle,
-                    mutation_id="mutation-1",
-                    workflow_id=workflow.id,
-                    new_value="1",
-                )
+                commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
             )
             self.run_with_async_db(commands.undo(workflow.id))
 
@@ -315,19 +287,12 @@ class CommandsTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     def test_do_modify_updated_at(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         date0 = datetime.datetime.now() - datetime.timedelta(days=1)
         workflow = Workflow.create_and_init(updated_at=date0)
         self.run_with_async_db(
-            commands.do(
-                SetWorkflowTitle,
-                mutation_id="mutation-1",
-                workflow_id=workflow.id,
-                new_value="1",
-            )
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         workflow.refresh_from_db()
         self.assertGreater(workflow.updated_at, date0)
@@ -338,18 +303,11 @@ class CommandsTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     def test_undo_modify_updated_at(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         workflow = Workflow.create_and_init()
-        delta = self.run_with_async_db(
-            commands.do(
-                SetWorkflowTitle,
-                mutation_id="mutation-1",
-                workflow_id=workflow.id,
-                new_value="1",
-            )
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
 
         date0 = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -366,18 +324,11 @@ class CommandsTest(DbTestCase):
 
     @patch.object(commands, "websockets_notify")
     def test_redo_modify_updated_at(self, websockets_notify):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-        websockets_notify.return_value = future_none
+        websockets_notify.side_effect = async_noop
 
         workflow = Workflow.create_and_init()
-        delta = self.run_with_async_db(
-            commands.do(
-                SetWorkflowTitle,
-                mutation_id="mutation-1",
-                workflow_id=workflow.id,
-                new_value="1",
-            )
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
         )
         self.run_with_async_db(commands.undo(workflow.id))
 
@@ -392,3 +343,188 @@ class CommandsTest(DbTestCase):
         websockets_notify.assert_called()
         update = websockets_notify.call_args[0][1]
         self.assertEqual(update.workflow.updated_at, workflow.updated_at)
+
+    @patch.object(commands, "websockets_notify")
+    def test_undo_with_no_history(self, websockets_notify):
+        workflow = Workflow.create_and_init()
+        self.run_with_async_db(commands.undo(workflow.id))
+        websockets_notify.assert_not_called()
+
+    @patch.object(commands, "websockets_notify")
+    def test_undo_first_delta(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(name="hello")
+
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+
+        websockets_notify.reset_mock()
+        self.run_with_async_db(commands.undo(workflow.id))
+        # If websockets_notify was called, it isn't a no-op
+        websockets_notify.assert_called()
+
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "hello")
+        self.assertEqual(workflow.last_delta_id, 0)
+
+    @patch.object(commands, "websockets_notify")
+    def test_undo_past_first_delta(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(name="hello")
+
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        self.run_with_async_db(commands.undo(workflow.id))
+
+        websockets_notify.reset_mock()
+        self.run_with_async_db(commands.undo(workflow.id))
+        websockets_notify.assert_not_called()
+
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "hello")
+        self.assertEqual(workflow.last_delta_id, 0)
+
+    @patch.object(commands, "websockets_notify")
+    def test_undo_nonfirst_delta(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(name="hello")
+
+        delta1 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        delta2 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
+        )
+
+        websockets_notify.reset_mock()
+        self.run_with_async_db(commands.undo(workflow.id))
+        websockets_notify.assert_called()
+
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "1")
+        self.assertEqual(
+            list(workflow.deltas.values_list("id", flat=True)), [delta1.id, delta2.id]
+        )
+
+    @patch.object(commands, "websockets_notify")
+    def test_do_delete_entire_delta_chain(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(name="hello")
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
+        )
+        self.run_with_async_db(commands.undo(workflow.id))
+        self.run_with_async_db(commands.undo(workflow.id))
+
+        websockets_notify.reset_mock()
+        delta3 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="3")
+        )
+        websockets_notify.assert_called()
+
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "3")
+        self.assertEqual(workflow.last_delta_id, delta3.id)
+        self.assertEqual(
+            list(workflow.deltas.values_list("id", flat=True)), [delta3.id]
+        )
+
+    @patch.object(commands, "websockets_notify")
+    def test_do_delete_partial_delta_chain(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(name="hello")
+        delta1 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
+        )
+        self.run_with_async_db(commands.undo(workflow.id))
+
+        websockets_notify.reset_mock()
+        delta3 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="3")
+        )
+        websockets_notify.assert_called()
+
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "3")
+        self.assertEqual(workflow.last_delta_id, delta3.id)
+        self.assertEqual(
+            list(workflow.deltas.values_list("id", flat=True)), [delta1.id, delta3.id]
+        )
+
+    @patch.object(commands, "websockets_notify")
+    def test_redo_with_no_history(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+        workflow = Workflow.create_and_init(name="hello")
+        self.run_with_async_db(commands.redo(workflow.id))
+        websockets_notify.assert_not_called()
+
+    @patch.object(commands, "websockets_notify")
+    def test_redo_after_final_delta(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+        workflow = Workflow.create_and_init(name="hello")
+        self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        websockets_notify.reset_mock()
+        self.run_with_async_db(commands.redo(workflow.id))
+        websockets_notify.assert_not_called()
+
+    @patch.object(commands, "websockets_notify")
+    def test_redo_first_history_item(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+        workflow = Workflow.create_and_init(name="hello")
+        delta1 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        delta2 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
+        )
+        self.run_with_async_db(commands.undo(workflow.id))
+        self.run_with_async_db(commands.undo(workflow.id))
+
+        websockets_notify.reset_mock()
+        self.run_with_async_db(commands.redo(workflow.id))
+
+        websockets_notify.assert_called()
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "1")
+        self.assertEqual(workflow.last_delta_id, delta1.id)
+        self.assertEqual(
+            list(workflow.deltas.values_list("id", flat=True)), [delta1.id, delta2.id]
+        )
+
+    @patch.object(commands, "websockets_notify")
+    def test_redo_nonfirst_history_item(self, websockets_notify):
+        websockets_notify.side_effect = async_noop
+        workflow = Workflow.create_and_init(name="hello")
+        delta1 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="1")
+        )
+        delta2 = self.run_with_async_db(
+            commands.do(SetWorkflowTitle, workflow_id=workflow.id, new_value="2")
+        )
+        self.run_with_async_db(commands.undo(workflow.id))
+
+        websockets_notify.reset_mock()
+        self.run_with_async_db(commands.redo(workflow.id))
+
+        websockets_notify.assert_called()
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, "2")
+        self.assertEqual(workflow.last_delta_id, delta2.id)
+        self.assertEqual(
+            list(workflow.deltas.values_list("id", flat=True)), [delta1.id, delta2.id]
+        )

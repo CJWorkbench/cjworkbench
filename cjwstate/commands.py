@@ -1,5 +1,30 @@
+"""do(), undo() and redo(): commands that change a Workflow.
+
+A Workflow's history looks like this:
+
+    v1  --d1-->  v2  --d2-->  v3  --d3-->  v4  ...
+
+A Delta comes "between" two versions. These Deltas -- d1, d2, d3 -- are the
+Workflow's "delta chain".
+
+To find a Workflow's (conceptual) version, look at `workflow.last_delta_id`. If
+it's `d1.id`, the Workflow is at version v2. If it's `d3.id`, the Workflow is at
+version v4.
+
+To complicate matters a bit, we're allowed to _delete_ Deltas. (This helps us
+expunge old records, so we can nix obsolete code.) We may delete the last Delta
+in a chain if it comes after the Workflow version. We may delete the first
+Delta in a chain if it comes before the Workflow version.
+
+A special case: imagine we're at v2 and we delete d1. Then
+`workflow.last_delta_id` points to `d1.id`, but the Delta with ID `d1.id` no
+longer exists! Don't panic: this is fine. Indeed, the default
+`workflow.last_delta_id` is 0.
+"""
 import datetime
 from typing import Any, Dict, Optional, Tuple
+
+from django.db.models import Q
 
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
@@ -13,14 +38,6 @@ async def websockets_notify(workflow_id: int, update: clientside.Update) -> None
     This is an alias; its main purpose is for white-box unit testing.
     """
     await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
-
-
-async def queue_render(workflow_id: int, delta_id: int) -> None:
-    """Tell renderer to render workflow; return immediately.
-
-    This is an alias; its main purpose is for white-box unit testing.
-    """
-    await rabbitmq.queue_render(workflow_id, delta_id)
 
 
 @database_sync_to_async
@@ -69,7 +86,7 @@ async def _maybe_queue_render(
         #     * Websockets consumers queue a render when we ask them.
         #     * The Django page-load view queues a render when needed.
         if await _workflow_has_notifications(workflow_id):
-            await queue_render(workflow_id, relevant_delta_id)
+            await rabbitmq.queue_render(workflow_id, relevant_delta_id)
         else:
             await rabbitmq.queue_render_if_consumers_are_listening(
                 workflow_id, relevant_delta_id
@@ -97,40 +114,46 @@ def _first_forward_and_save_returning_clientside_update(
     """
     now = datetime.datetime.now()
     command = NAME_TO_COMMAND[cls.__name__]
-    # raises Workflow.DoesNotExist
     try:
+        # raise Workflow.DoesNotExist
         with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
             workflow = workflow_lock.workflow
             create_kwargs = command.amend_create_kwargs(workflow=workflow, **kwargs)
             if not create_kwargs:
                 return None, None, None
 
-            # Lookup unapplied deltas to delete. That's the head of the linked
-            # list that comes _after_ `workflow.last_delta`.
-            orphan_delta: Optional[Delta] = Delta.objects.filter(
-                prev_delta_id=workflow.last_delta_id
-            ).first()
-            if orphan_delta:
-                orphan_delta.delete_with_successors()
+            # Lookup unapplied deltas to delete. That's the linked list that comes
+            # _after_ `workflow.last_delta_id`.
+            n_deltas_deleted, _ = workflow.deltas.filter(
+                id__gt=workflow.last_delta_id
+            ).delete()
 
+            # prev_delta is none when we're at the start of the undo stack
+            prev_delta = workflow.deltas.filter(id=workflow.last_delta_id).first()
+
+            # Delta.objects.create() and command.forward() may raise unexpected errors
+            # Defer delete_orphan_soft_deleted_models(), to reduce the risk of this
+            # race: 1. Delete DB objects; 2. Delete S3 files; 3. ROLLBACK. (We aren't
+            # avoiding the race _entirely_ here, but we're at least avoiding causing
+            # the race through errors in Delta or Command.)
             delta = Delta.objects.create(
                 command_name=cls.__name__,
-                prev_delta_id=workflow.last_delta_id,
+                prev_delta=prev_delta,
                 last_applied_at=now,
                 **create_kwargs,
             )
             command.forward(delta)
 
-            if orphan_delta:
+            # Point workflow to us
+            workflow.last_delta_id = delta.id
+            workflow.updated_at = datetime.datetime.now()
+            workflow.save(update_fields=["last_delta_id", "updated_at"])
+
+            if n_deltas_deleted:
                 # We just deleted deltas; now we can garbage-collect Tabs and
                 # Steps that are soft-deleted and have no deltas referring
                 # to them.
                 workflow.delete_orphan_soft_deleted_models()
-
-            # Point workflow to us
-            workflow.last_delta = delta
-            workflow.updated_at = datetime.datetime.now()
-            workflow.save(update_fields=["last_delta_id", "updated_at"])
 
             return (
                 delta,
@@ -150,25 +173,28 @@ def _call_forward_and_load_clientside_update(
     try:
         with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
             workflow = workflow_lock.workflow
-            # raises DoesNotExist
-            delta = workflow.deltas.get(prev_delta_id=workflow.last_delta_id)
+
+            delta = workflow.deltas.filter(id__gt=workflow.last_delta_id).first()
+            if delta is None:
+                # Nothing to redo: we're at the end of the delta chain
+                return None, None, None
 
             command = NAME_TO_COMMAND[delta.command_name]
             command.forward(delta)
 
-            delta.last_applied_at = now
-            delta.save(update_fields=["last_applied_at"])
-
-            workflow.last_delta = delta
+            workflow.last_delta_id = delta.id
             workflow.updated_at = now
             workflow.save(update_fields=["last_delta_id", "updated_at"])
+
+            delta.last_applied_at = now
+            delta.save(update_fields=["last_applied_at"])
 
             return (
                 delta,
                 command.load_clientside_update(delta),
                 delta.id if command.get_modifies_render_output(delta) else None,
             )
-    except (Workflow.DoesNotExist, Delta.DoesNotExist):
+    except Workflow.DoesNotExist:
         return None, None, None
 
 
@@ -181,9 +207,10 @@ def _call_backward_and_load_clientside_update(
     try:
         with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
             workflow = workflow_lock.workflow
+            # raise Delta.DoesNotExist if we're at the beginning of the undo chain
             delta = workflow.deltas.exclude(command_name=InitWorkflow.__name__).get(
                 id=workflow.last_delta_id
-            )  # or DoesNotExist
+            )
 
             command = NAME_TO_COMMAND[delta.command_name]
             command.backward(delta)
@@ -191,7 +218,7 @@ def _call_backward_and_load_clientside_update(
             # Point workflow to previous delta
             # Only update prev_delta_id: other columns may have been edited in
             # backward().
-            workflow.last_delta = delta.prev_delta
+            workflow.last_delta_id = delta.prev_delta_id or 0
             workflow.updated_at = now
             workflow.save(update_fields=["last_delta_id", "updated_at"])
 

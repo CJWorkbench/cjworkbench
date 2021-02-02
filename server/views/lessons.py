@@ -10,7 +10,6 @@ from django.template.response import TemplateResponse
 import server.utils
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from server.models.course import Course, CourseLookup, AllCoursesByLocale
 from server.models.lesson import (
@@ -100,7 +99,6 @@ def _ensure_workflow(request, lesson: Lesson):
                 "name": "Lesson: "
                 + lesson.title,  # https://www.pivotaltracker.com/story/show/168752481
                 "public": False,
-                "last_delta": None,
             },
             owner=owner,
             anonymous_owner_session_key=session_key,
@@ -113,8 +111,6 @@ def _ensure_workflow(request, lesson: Lesson):
 
 
 def _init_workflow_for_lesson(workflow, lesson):
-    InitWorkflow.create(workflow)
-
     # Create each step of each tab
     tab_dicts = lesson.initial_workflow.tabs
     for position, tab_dict in enumerate(tab_dicts):
@@ -127,10 +123,10 @@ def _init_workflow_for_lesson(workflow, lesson):
         )
 
         for order, step in enumerate(tab_dict["steps"]):
-            _add_step_to_tab(step, order, tab, workflow.last_delta_id, lesson)
+            _add_step_to_tab(step, order, tab, lesson)
 
 
-def _add_step_to_tab(step_dict, order, tab, delta_id, lesson):
+def _add_step_to_tab(step_dict, order, tab, lesson):
     """
     Deserialize a Step from lesson initial_workflow.
 
@@ -175,7 +171,6 @@ def _add_step_to_tab(step_dict, order, tab, delta_id, lesson):
         slug=slug,
         module_id_name=id_name,
         is_busy=module_spec.loads_data,  # assume we'll send a fetch
-        last_relevant_delta_id=delta_id,
         params=params,
         is_collapsed=step_dict.get("collapsed", False),
         notes=step_dict.get("note", None),

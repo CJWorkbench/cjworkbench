@@ -10,9 +10,6 @@ class WorkflowAdmin(admin.ModelAdmin):
     # deletes files from S3.
     actions = None
 
-    # don't load load every delta ever on the workflow object page
-    raw_id_fields = ("last_delta",)
-
     search_fields = ("name", "owner__username", "owner__email")
     list_filter = ("owner",)
 

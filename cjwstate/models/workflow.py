@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import datetime
 from typing import Callable, Dict, List, Optional, Set, Tuple, FrozenSet
 from django.db import connection, models, transaction
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
@@ -14,62 +14,6 @@ from cjworkbench.models.db_object_cooperative_lock import (
 )
 from cjwstate import clientside, s3
 from cjwstate.modules.param_spec import ParamDType
-
-
-def _find_orphan_soft_deleted_tabs(workflow_id: int) -> models.QuerySet:
-    from cjwstate.models import Delta, Tab
-
-    # all Delta subclasses that have a tab_id
-    relations = [
-        f
-        for f in Tab._meta.get_fields()
-        if f.is_relation and issubclass(f.related_model, Delta)
-    ]
-
-    tab_table_alias = Tab._meta.db_table  # Django auto-name
-
-    conditions = [
-        f"""
-        NOT EXISTS (
-            SELECT TRUE
-            FROM {r.related_model._meta.db_table}
-            WHERE {r.get_joining_columns()[0][1]} = {tab_table_alias}.id
-        )
-        """
-        for r in relations
-    ]
-
-    return Tab.objects.filter(workflow_id=workflow_id, is_deleted=True).extra(
-        where=conditions
-    )
-
-
-def _find_orphan_soft_deleted_steps(workflow_id: int) -> models.QuerySet:
-    from cjwstate.models import Delta, Step
-
-    # all Delta subclasses that have a step_id
-    relations = [
-        f
-        for f in Step._meta.get_fields()
-        if f.is_relation and issubclass(f.related_model, Delta)
-    ]
-
-    step_table_alias = Step._meta.db_table  # Django auto-name
-
-    conditions = [
-        f"""
-        NOT EXISTS (
-            SELECT TRUE
-            FROM {r.related_model._meta.db_table}
-            WHERE {r.get_joining_columns()[0][1]} = {step_table_alias}.id
-        )
-        """
-        for r in relations
-    ]
-
-    return Step.objects.filter(tab__workflow_id=workflow_id, is_deleted=True).extra(
-        where=conditions
-    )
 
 
 class Workflow(models.Model):
@@ -157,10 +101,7 @@ class Workflow(models.Model):
     """
 
     original_workflow_id = models.IntegerField(null=True, blank=True)
-    """If this is a duplicate, the Workflow it is based on.
-
-    TODO add last_delta_id? Currently, we only use this field for `url_id`.
-    """
+    """If this is a duplicate, the Workflow it is based on."""
 
     public = models.BooleanField(default=False)
 
@@ -180,14 +121,25 @@ class Workflow(models.Model):
     # there is always a tab
     selected_tab_position = models.IntegerField(default=0)
 
-    last_delta = models.ForeignKey(
-        "server.Delta",  # string, not model -- avoids circular import
-        related_name="+",  # + means no backward link
-        blank=True,
-        null=True,  # if null, no Commands applied yet
-        default=None,
-        on_delete=models.SET_NULL,
-    )
+    last_delta_id = models.IntegerField(default=0)
+    """ID of the last Delta that was applied.
+
+    This has a dual purpose:
+
+    * `cjwstate.commands` sees it as "pointer into linked list". (But it
+      isn't a foreign key! There may be no Delta here.)
+    * `renderer` and its caching system uses delta IDs as cache keys. Every
+      render request includes a `last_delta_id`. You must send a new render
+      request every time `last_delta_id` changes; conversely, try to avoid
+      changing `last_delta_id` when you _don't_ want a render request, because
+      it may be expensive. ([2021-02-02, adamhooper] it isn't very expensive
+      *today*, but we may change algorithms in the future....)
+
+    0 is allowed. It's the default for a new (or duplicated) workflow.
+
+    NULL is _not_ allowed. This isn't a foreign key; NULL would be akin to 0
+    plus null-related quirks in calling code and in SQL.
+    """
 
     has_custom_report = models.BooleanField(default=False)
 
@@ -381,11 +333,8 @@ class Workflow(models.Model):
     @staticmethod
     def create_and_init(**kwargs):
         """Create and return a _valid_ Workflow: one with a Tab and a Delta."""
-        from cjwstate.models.commands import InitWorkflow
-
         with transaction.atomic():
             workflow = Workflow.objects.create(**kwargs)
-            InitWorkflow.create(workflow)
             workflow.tabs.create(position=0, slug="tab-1", name="Tab 1")
             return workflow
 
@@ -401,14 +350,8 @@ class Workflow(models.Model):
                 selected_tab_position=self.selected_tab_position,
                 has_custom_report=self.has_custom_report,
                 public=False,
-                last_delta=None,
+                last_delta_id=0,  # SECURITY don't clone info we don't need
             )
-
-            # Set wf.last_delta and wf.last_delta_id, so we can render.
-            # Import here to avoid circular deps
-            from cjwstate.models.commands import InitWorkflow
-
-            InitWorkflow.create(wf)
 
             tabs = list(self.live_tabs)
             for tab in tabs:
@@ -496,48 +439,35 @@ class Workflow(models.Model):
                 return False
         return True
 
-    def clear_deltas(self):
-        """Become a single-Delta Workflow."""
-        from cjwstate.models.commands import InitWorkflow
-        from cjwstate.models import Delta
-
-        try:
-            first_delta = self.deltas.get(prev_delta_id=None)
-            self.last_delta_id = first_delta.id
-            self.save(update_fields=["last_delta_id"])
-        except Delta.DoesNotExist:
-            # Integrity error: missing Delta. Repair.
-            first_delta = InitWorkflow.create(self)
-
-        try:
-            # Select the _second_ delta.
-            second_delta = first_delta.next_delta
-        except Delta.DoesNotExist:
-            # We're already a 1-delta Workflow
-            return
-
-        second_delta.delete_with_successors()
-        self.delete_orphan_soft_deleted_models()
-
     def delete_orphan_soft_deleted_tabs(self):
-        _find_orphan_soft_deleted_tabs(self.id).delete()
+        return (
+            self.tabs.filter(is_deleted=True)
+            .exclude(Exists(self.deltas.filter(tab_id=OuterRef("id"))))
+            .delete()
+        )
 
     def delete_orphan_soft_deleted_steps(self):
-        _find_orphan_soft_deleted_steps(self.id).delete()
+        from cjwstate.models import Step
+
+        return (
+            Step.objects.filter(tab__workflow_id=self.id, is_deleted=True)
+            .exclude(Exists(self.deltas.filter(step_id=OuterRef("id"))))
+            .delete()
+        )
 
     def delete_orphan_soft_deleted_models(self):
         """Delete soft-deleted Tabs and Steps that have no Delta.
 
         (The tests for this are in test_Delta.py, for legacy reasons.)
         """
-        self.delete_orphan_soft_deleted_tabs()
+        self.delete_orphan_soft_deleted_tabs()  # (deletes their steps, of course)
         self.delete_orphan_soft_deleted_steps()
 
     def delete(self, *args, **kwargs):
         # Clear delta history. Deltas can reference Steps: if we don't
         # clear the deltas, Django may decide to CASCADE to Step first and
         # we'll raise a ProtectedError.
-        self.clear_deltas()
+        self.deltas.all().delete()
 
         # Next, clear Report blocks. Their Step/Tab ON_DELETE is models.PROTECT,
         # because [2020-11-30, adamhooper] we want to test for months before

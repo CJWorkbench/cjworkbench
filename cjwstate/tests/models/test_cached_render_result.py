@@ -4,7 +4,6 @@ from cjwkernel.tests.util import arrow_table, assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult
 from cjwstate import s3
 from cjwstate.models import Workflow
-from cjwstate.models.commands import InitWorkflow
 from cjwstate.rendercache.io import (
     BUCKET,
     cache_render_result,
@@ -19,10 +18,9 @@ class CachedRenderResultTests(DbTestCase):
     def setUp(self):
         super().setUp()
         self.workflow = Workflow.objects.create()
-        self.delta = InitWorkflow.create(self.workflow)
         self.tab = self.workflow.tabs.create(position=0)
         self.step = self.tab.steps.create(
-            order=0, slug="step-1", last_relevant_delta_id=self.delta.id
+            order=0, slug="step-1", last_relevant_delta_id=1
         )
 
     def test_none(self):
@@ -32,7 +30,7 @@ class CachedRenderResultTests(DbTestCase):
         result = RenderResult(
             arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
         )
-        cache_render_result(self.workflow, self.step, self.delta.id, result)
+        cache_render_result(self.workflow, self.step, 1, result)
 
         parquet_key = crr_parquet_key(self.step.cached_render_result)
         self.step.delete()
@@ -50,7 +48,7 @@ class CachedRenderResultTests(DbTestCase):
         result = RenderResult(
             arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
         )
-        cache_render_result(self.workflow, self.step, self.delta.id, result)
+        cache_render_result(self.workflow, self.step, 1, result)
         clear_cached_render_result_for_step(self.step)
         clear_cached_render_result_for_step(self.step)  # don't crash
 
@@ -60,11 +58,10 @@ class CachedRenderResultTests(DbTestCase):
         result = RenderResult(
             arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
         )
-        cache_render_result(self.workflow, self.step, self.delta.id, result)
+        cache_render_result(self.workflow, self.step, 1, result)
 
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)
-        InitWorkflow.create(workflow2)
         dup = self.step.duplicate_into_new_workflow(tab2)
 
         dup_cached_result = dup.cached_render_result
@@ -73,8 +70,8 @@ class CachedRenderResultTests(DbTestCase):
             replace(
                 self.step.cached_render_result,
                 workflow_id=workflow2.id,
-                delta_id=workflow2.last_delta_id,
                 step_id=dup.id,
+                delta_id=0,
             ),
         )
         with open_cached_render_result(dup_cached_result) as result2:
@@ -86,14 +83,13 @@ class CachedRenderResultTests(DbTestCase):
         result = RenderResult(
             arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
         )
-        cache_render_result(self.workflow, self.step, self.delta.id, result)
+        cache_render_result(self.workflow, self.step, 1, result)
         # Now simulate a new delta that hasn't been rendered
-        self.step.last_relevant_delta_id += 1
+        self.step.last_relevant_delta_id = 2
         self.step.save(update_fields=["last_relevant_delta_id"])
 
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)
-        InitWorkflow.create(workflow2)
         dup = self.step.duplicate_into_new_workflow(tab2)
 
         dup_cached_result = dup.cached_render_result

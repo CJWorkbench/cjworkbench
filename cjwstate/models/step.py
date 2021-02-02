@@ -265,14 +265,9 @@ class Step(models.Model):
         assert to_tab.workflow_id != self.workflow_id
         slug = self.slug
 
-        # to_workflow has exactly one delta, and that's the version of all
-        # its modules. This is so we can cache render results. (Cached
-        # render results require a delta ID.)
-        last_relevant_delta_id = to_workflow.last_delta_id
-
-        return self._duplicate_with_slug_and_delta_id(
-            to_tab, slug, last_relevant_delta_id
-        )
+        # SECURITY: set last_relevant_delta_id=0: any number is allowed
+        # here, and 0 conveys no additional information.
+        return self._duplicate_with_slug_and_delta_id(to_tab, slug, 0)
 
     def duplicate_into_same_workflow(self, to_tab):
         # Make sure we're calling this correctly

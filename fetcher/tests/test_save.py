@@ -53,7 +53,9 @@ class SaveTests(DbTestCase):
         )
 
         workflow.refresh_from_db()
-        self.assertEqual(workflow.last_delta.command_name, SetStepDataVersion.__name__)
+        self.assertEqual(
+            workflow.deltas.last().command_name, SetStepDataVersion.__name__
+        )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_mark_result_unchanged(self, send_update):

@@ -22,8 +22,7 @@ class InitWorkflow(BaseCommand):
         from ..delta import Delta
 
         delta = Delta.objects.create(workflow=workflow, command_name=cls.__name__)
-
-        workflow.last_delta = delta
+        workflow.last_delta_id = delta.id
         workflow.save(update_fields=["last_delta_id"])
 
         return delta
