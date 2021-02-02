@@ -349,7 +349,7 @@ LOGGING = {
             "level": "ERROR"
         },
         # DEBUG only gets messages when settings.DEBUG==True
-        "django.db.backends": {"level": "DEBUG"},
+        "django.db.backends": {"level": "INFO"},
         "websockets.protocol": {"level": "INFO"},
         "websockets.server": {"level": "INFO"},
         "cjwstate.models.module_registry": {
