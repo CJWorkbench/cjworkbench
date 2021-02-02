@@ -2004,14 +2004,14 @@ msgstr "Όνομα"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
-#: fetcher/fetch.py:177
+#: fetcher/fetch.py:178
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
 "προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
 "Κωδικός σφάλματος: {message}"
 
-#: fetcher/fetch.py:271
+#: fetcher/fetch.py:272
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) διαγράφηκε"
 

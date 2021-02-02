@@ -1958,13 +1958,13 @@ msgstr "First name"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
 
-#: fetcher/fetch.py:177
+#: fetcher/fetch.py:178
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "
 "fix it. If this persists, contact us. Error code: {message}"
 
-#: fetcher/fetch.py:271
+#: fetcher/fetch.py:272
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Cannot fetch: module was deleted"
 
