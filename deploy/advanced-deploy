@@ -34,17 +34,17 @@ sandboxer="$repo/migrate:$SHA"
 $KUBECTL set image deployment/fetcher-deployment fetcher=$repo/fetcher:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
 $KUBECTL set image deployment/renderer-deployment renderer=$repo/renderer:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
 $KUBECTL set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-sandboxes=$sandboxer teardown-sandboxes=$sandboxer >/dev/null
+$KUBECTL set image deployment/cron-delta-deleter-deployment cron=$repo/cron:$SHA >/dev/null
 $KUBECTL set image deployment/cron-deployment cron=$repo/cron:$SHA >/dev/null
+$KUBECTL set image deployment/cron-expired-session-deleter-deployment cron=$repo/cron:$SHA >/dev/null
+$KUBECTL set image deployment/cron-lesson-autoupdate-disabler-deployment cron=$repo/cron:$SHA >/dev/null
 echo ' done' >&2
 
-echo -n 'Waiting for rollout to finish...' >&2
-$KUBECTL rollout status deployment/fetcher-deployment >/dev/null
-echo -n '.' >&2
-$KUBECTL rollout status deployment/renderer-deployment >/dev/null
-echo -n '.' >&2
-$KUBECTL rollout status deployment/frontend-deployment >/dev/null
-echo -n '.' >&2
-$KUBECTL rollout status deployment/cron-deployment >/dev/null
+echo -n 'Waiting for rollout to finish' >&2
+for service in cron cron-delta-deleter cron-expired-session-deleter cron-lesson-autoupdate-disabler fetcher renderer frontend; do
+  $KUBECTL rollout status deployment/$service-deployment >/dev/null
+  echo -n '.' >&2
+done
 echo ' done' >&2
 
 echo >&2
