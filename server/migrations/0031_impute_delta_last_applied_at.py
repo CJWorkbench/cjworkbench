@@ -54,12 +54,21 @@ class Migration(migrations.Migration):
                 )
                 """,
                 """
-                -- Increase last_applied_at on every un-applied delta.
+                -- Set last_applied_at on every applied delta.
                 UPDATE delta
-                SET last_applied_at = GREATEST(delta.last_applied_at, workflow.updated_at)
+                SET last_applied_at = "datetime"
+                FROM workflow
+                WHERE delta.workflow_id = workflow.id
+                  AND delta.id <= workflow.last_delta_id
+                """,
+                """
+                -- Set last_applied_at on every un-applied delta.
+                UPDATE delta
+                SET last_applied_at = workflow.updated_at
                 FROM workflow
                 WHERE delta.workflow_id = workflow.id
                   AND delta.id >= workflow.last_delta_id
+                  AND workflow.updated_at > delta.last_applied_at
                 """,
             ],
             elidable=True,
