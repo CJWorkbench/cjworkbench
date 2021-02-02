@@ -57,11 +57,17 @@ def delete_workflow_stale_deltas(
                 # Set the first delta's prev_delta_id to NULL. (The foreign-key
                 # constraint is DEFERRABLE INITIALLY DEFERRED.)
                 cursor.execute(
+                    # Hack around Work around Postgres picking the wrong index.
+                    # [2021-02-02] on production the inner SELECT chose the
+                    # delta.id index (id IS NOT NULL) instead of the
+                    # delta.workflow_id index (workflow_id = X). Maybe VACUUM
+                    # would fix this? Meh. "+ 0" disqualifies the delta.id
+                    # index, forcing a better choice.
                     """
                     UPDATE delta
                     SET prev_delta_id = NULL
                     WHERE id = (
-                        SELECT MIN(id) FROM delta WHERE workflow_id = %(workflow_id)s
+                        SELECT MIN(id + 0) FROM delta WHERE workflow_id = %(workflow_id)s
                     )
                     """,
                     dict(workflow_id=workflow_id),
