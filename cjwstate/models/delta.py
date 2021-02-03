@@ -18,6 +18,14 @@ class Delta(models.Model):
         app_label = "server"
         db_table = "delta"
         ordering = ["id"]  # we read workflow.deltas.last() in tests
+        indexes = [
+            # deltadeleter.py scans all workflows, because each workflow has a
+            # different max_last_applied_at (based on owner's subscribed plan)
+            models.Index(
+                fields=("workflow_id", "last_applied_at"),
+                name="index_delta_for_stale_scan",
+            )
+        ]
         constraints = [
             # Django's CharField.choices doesn't add a DB constraint. So let's
             # add one ourselves.
@@ -43,7 +51,7 @@ class Delta(models.Model):
 
     datetime = models.DateTimeField("datetime", default=now)
 
-    last_applied_at = models.DateTimeField(default=now, db_index=True)
+    last_applied_at = models.DateTimeField(default=now)
     """Last time this Delta's result was seen -- either after Undo or for Redo.
 
     We delete Deltas that haven't been seen in months.

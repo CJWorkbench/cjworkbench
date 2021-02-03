@@ -2105,27 +2105,42 @@ msgid "js.settings.BillingPage.title"
 msgstr ""
 
 #. default-message: <0><1/></0>/month
-#: assets/js/settings/Plan/PlanTable.js:17
+#: assets/js/settings/Plan/PlanTable.js:34
 msgid "js.settings.Plan.PlanTable.amount"
 msgstr ""
 
 #. default-message: Current plan
-#: assets/js/settings/Plan/PlanTable.js:24
+#: assets/js/settings/Plan/PlanTable.js:41
 msgid "js.settings.Plan.PlanTable.current"
 msgstr ""
 
+#. default-message: {nDays, plural, one {# day} other {# days}}
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nDays"
+msgstr ""
+
+#. default-message: {nMonths, plural, one {# month} other {# months}}
+#: assets/js/settings/Plan/PlanTable.js:11
+msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
+msgstr ""
+
+#. default-message: Undo history
+#: assets/js/settings/Plan/PlanTable.js:95
+msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
+msgstr ""
+
 #. default-message: {0} updates
-#: assets/js/settings/Plan/PlanTable.js:71
+#: assets/js/settings/Plan/PlanTable.js:88
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr ""
 
 #. default-message: Per day
-#: assets/js/settings/Plan/PlanTable.js:66
+#: assets/js/settings/Plan/PlanTable.js:83
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr ""
 
 #. default-message: Automatic updates
-#: assets/js/settings/Plan/PlanTable.js:65
+#: assets/js/settings/Plan/PlanTable.js:82
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr ""
 

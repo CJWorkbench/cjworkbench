@@ -3,7 +3,7 @@ from typing import NamedTuple
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import SimpleTestCase, override_settings
+from django.test import override_settings
 import stripe
 
 from cjworkbench.models.plan import Plan

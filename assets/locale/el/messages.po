@@ -1798,23 +1798,35 @@ msgstr ""
 msgid "js.settings.BillingPage.title"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:17
+#: assets/js/settings/Plan/PlanTable.js:34
 msgid "js.settings.Plan.PlanTable.amount"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:24
+#: assets/js/settings/Plan/PlanTable.js:41
 msgid "js.settings.Plan.PlanTable.current"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:71
+#: assets/js/settings/Plan/PlanTable.js:17
+msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nDays"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:11
+msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:95
+msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:88
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:66
+#: assets/js/settings/Plan/PlanTable.js:83
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:65
+#: assets/js/settings/Plan/PlanTable.js:82
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr ""
 

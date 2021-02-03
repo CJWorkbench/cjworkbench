@@ -1,10 +1,16 @@
 import datetime
 from typing import Optional
 
+from django.contrib.auth import get_user_model
 from freezegun import freeze_time
 
+from cjworkbench.models.plan import Plan
+from cjworkbench.models.subscription import Subscription
+from cjworkbench.models.userlimits import UserLimits
+from cjworkbench.models.userprofile import UserProfile
 from cjwstate import commands
-from cjwstate.models import Delta, Workflow
+from cjwstate.models.delta import Delta
+from cjwstate.models.workflow import Workflow
 
 # Use SetWorkflowTitle and AddStep as "canonical" deltas -- one
 # requiring Step, one not.
@@ -15,7 +21,12 @@ from cjwstate.tests.utils import (
 )
 from cjworkbench.tests.utils import DbTestCase
 
-from cron.deltadeleter import delete_workflow_stale_deltas
+from cron.deltadeleter import (
+    delete_workflow_stale_deltas,
+    find_workflows_with_stale_deltas,
+)
+
+User = get_user_model()
 
 # sync functions to build undo history in the database without RabbitMQ
 #
@@ -29,6 +40,37 @@ def do(cls, workflow_id: int, **kwargs) -> Optional[Delta]:
 
 redo = commands._call_forward_and_load_clientside_update.func
 undo = commands._call_backward_and_load_clientside_update.func
+
+
+def create_user(
+    email="user@example.org", first_name="Name", last_name="Lastname", **kwargs
+):
+    user = User.objects.create(email=email, first_name=first_name, last_name=last_name)
+    UserProfile.objects.create(user=user, **kwargs)
+    return user
+
+
+def create_plan(**kwargs):
+    kwargs = {
+        "stripe_price_id": "price_1",
+        "stripe_product_id": "product_1",
+        "stripe_product_name": "Premium Plan",
+        "stripe_active": True,
+        "stripe_amount": 100,
+        "stripe_currency": "usd",
+        **kwargs,
+    }
+    return Plan.objects.create(**kwargs)
+
+
+def create_subscription(user: User, plan: Plan, **kwargs):
+    return Subscription.objects.create(
+        user=user,
+        plan=plan,
+        created_at=datetime.datetime.now(),
+        renewed_at=datetime.datetime.now(),
+        **kwargs,
+    )
 
 
 def be_paranoid_and_assert_commands_apply(workflow: Workflow) -> None:
@@ -232,3 +274,56 @@ class DeleteWorkflowStaleDeltasTest(DbTestCaseWithModuleRegistryAndMockKernel):
         delete_workflow_stale_deltas(workflow.id, datetime.datetime(2020, 1, 1))
 
         self.assertEqual(workflow.tabs.first().steps.count(), 0)  # hard-deleted
+
+
+class FindWorkflowsWithStaleDeltasTest(DbTestCase):
+    def test_find_workflow_using_default_max_age(self):
+        default_max_age = datetime.timedelta(days=UserLimits().max_delta_age_in_days)
+        workflow = Workflow.create_and_init()
+        with freeze_time("1970-01-01"):
+            do(SetWorkflowTitle, workflow.id, new_value="1")
+        with freeze_time("2021-02-04"):
+            do(SetWorkflowTitle, workflow.id, new_value="2")
+
+        now = datetime.datetime(2021, 2, 5)
+        result = find_workflows_with_stale_deltas(now)
+
+        self.assertEqual(result, [(workflow.id, now - default_max_age)])
+
+    def test_find_workflow_using_plan_max_age(self):
+        plan_max_age = datetime.timedelta(days=30)
+        owner = create_user()
+        plan = create_plan(max_delta_age_in_days=30)
+        create_subscription(owner, plan)
+        workflow = Workflow.create_and_init(owner=owner)
+        with freeze_time("2020-01-01"):
+            do(SetWorkflowTitle, workflow.id, new_value="1")
+
+        now = datetime.datetime(2020, 2, 2)
+        result = find_workflows_with_stale_deltas(now)
+
+        self.assertEqual(result, [(workflow.id, now - plan_max_age)])
+
+    def test_find_workflow_pick_max_plan(self):
+        plan_max_age = datetime.timedelta(days=30)
+        owner = create_user()
+        plan1 = create_plan(stripe_price_id="price_plan1", max_delta_age_in_days=1)
+        plan2 = create_plan(stripe_price_id="price_plan2", max_delta_age_in_days=30)
+        create_subscription(owner, plan1, stripe_subscription_id="sub_1")
+        create_subscription(owner, plan2, stripe_subscription_id="sub_2")
+
+        with freeze_time("2020-01-01"):
+            workflow1 = Workflow.create_and_init(owner=owner)
+            do(SetWorkflowTitle, workflow1.id, new_value="1")
+        with freeze_time("2020-01-15"):
+            workflow2 = Workflow.create_and_init(owner=owner)
+            do(SetWorkflowTitle, workflow2.id, new_value="1")
+
+        now = datetime.datetime(2020, 2, 2)
+        result = find_workflows_with_stale_deltas(now)
+
+        self.assertEqual(result, [(workflow1.id, now - plan_max_age)])
+
+    def test_find_empty_list(self):
+        now = datetime.datetime(2021, 2, 3)
+        self.assertEqual(find_workflows_with_stale_deltas(now), [])
