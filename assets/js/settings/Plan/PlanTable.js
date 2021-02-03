@@ -1,9 +1,26 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 import { i18n } from '@lingui/core'
 import Subscribe from './Subscribe'
 import StripeAmount from '../StripeAmount'
+
+function formatMaxDeltaAge (nDays) {
+  const nMonths = Math.floor(nDays / 30)
+  if (nMonths > 0) {
+    return t({
+      id: 'js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths',
+      message: '{nMonths, plural, one {# month} other {# months}}',
+      values: { nMonths }
+    })
+  } else {
+    return t({
+      id: 'js.settings.Plan.PlanTable.maxDeltaAgeInDays.nDays',
+      message: '{nDays, plural, one {# day} other {# days}}',
+      values: { nDays }
+    })
+  }
+}
 
 function PlanTh (props) {
   const { plan, active, onClickSubscribe } = props
@@ -70,6 +87,16 @@ export default function PlanTable (props) {
               <div>
                 <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>{i18n.number(plan.maxFetchesPerDay)} updates</Trans>
               </div>
+            </td>
+          ))}
+        </tr>
+        <tr>
+          <th>
+            <h3><Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>Undo history</Trans></h3>
+          </th>
+          {plans.map(plan => (
+            <td key={plan.stripePriceId}>
+              <div>{formatMaxDeltaAge(plan.maxDeltaAgeInDays)}</div>
             </td>
           ))}
         </tr>

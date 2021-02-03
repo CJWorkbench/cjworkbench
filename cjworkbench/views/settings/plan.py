@@ -18,6 +18,7 @@ def jsonize_plan(plan: Plan) -> Dict[str, Any]:
         "amount": plan.stripe_amount,  # in cents
         "currency": plan.stripe_currency,  # e.g., "usd"
         "maxFetchesPerDay": plan.max_fetches_per_day,
+        "maxDeltaAgeInDays": plan.max_delta_age_in_days,
     }
 
 
@@ -47,9 +48,9 @@ def jsonize_plans() -> Dict[str, Dict[str, Any]]:
     FreePlan = Plan(
         stripe_price_id=None,  # special case
         stripe_product_name="Free Plan",
-        max_fetches_per_day=UserLimits().max_fetches_per_day,
         stripe_amount=0,
         stripe_currency="usd",
+        **UserLimits()._asdict(),
     )
 
     return [

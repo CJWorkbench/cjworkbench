@@ -5,6 +5,7 @@ table.plans {
   height: 1px; // so <div> in <td> can have height:100%: https://stackoverflow.com/a/22220780
   $well-padding: rem(1.5);
   $well-gutter: rem(1);
+  $data-line-height: rem(1.5);
 
   @mixin plan-table-well() {
     // A <div> inside a <td> that has height:100%....
@@ -56,17 +57,22 @@ table.plans {
   }
 
   tbody {
+    h3, p {
+      margin: 0;
+      line-height: $data-line-height;
+    }
+
     th, td {
       border-bottom: 1px solid $table-border;
-      vertical-align: top;
     }
 
     th {
-      padding: rem(1) rem(1) rem(1) 0;
+      padding: $well-padding $well-padding $well-padding 0; // line up with <td>
     }
 
     td>div {
       @include plan-table-well();
+      line-height: $data-line-height;
     }
 
     tr:last-child td>div {
