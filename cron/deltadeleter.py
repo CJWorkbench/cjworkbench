@@ -1,6 +1,7 @@
 import datetime
 import logging
 import time
+from typing import List, Tuple
 
 import django
 import django.db
@@ -11,7 +12,7 @@ from cjworkbench.util import benchmark_sync
 
 logger = logging.getLogger(__name__)
 
-MaxNWorkflowsPerCycle = 1000  # SQL LIMIT to avoid too-big query results
+MaxNWorkflowsPerCycle = 5000  # SQL LIMIT to avoid too-big query results
 Interval = 300  # seconds
 MaxAge = datetime.timedelta(days=30)
 
@@ -77,32 +78,76 @@ def delete_workflow_stale_deltas(
         pass  # Race: I guess there aren't any deltas after all.
 
 
+def find_workflows_with_stale_deltas(
+    now: datetime.datetime,
+) -> List[Tuple[int, datetime.datetime]]:
+    """Query for (workflow_id, min_last_applied_at) pairs."""
+    # import _after_ django.setup() initializes apps
+    from cjworkbench.models.userlimits import UserLimits
+
+    with django.db.connections["default"].cursor() as cursor:
+        cursor.execute(
+            """
+            WITH
+            user_limits AS (
+                SELECT
+                    subscription.user_id,
+                    MAX(plan.max_delta_age_in_days) AS max_delta_age_in_days
+                FROM subscription
+                INNER JOIN plan ON subscription.plan_id = plan.id
+                GROUP BY subscription.user_id
+            ),
+            workflow_ids AS (
+                -- Reify as a CTE so when we join with the `workflow` table we
+                -- only join one row per ID (instead of one row per delta)
+                SELECT workflow_id, MIN(last_applied_at) AS min_last_applied_at
+                FROM delta
+                GROUP BY workflow_id
+            )
+            SELECT
+                workflow_ids.workflow_id,
+                %(now)s - MAKE_INTERVAL(days => GREATEST(
+                    user_limits.max_delta_age_in_days, %(default_max_delta_age_in_days)s
+                )) AS min_last_applied_at
+            FROM workflow_ids
+            INNER JOIN workflow ON workflow.id = workflow_ids.workflow_id
+            LEFT JOIN user_limits ON user_limits.user_id = workflow.owner_id
+            WHERE workflow_ids.min_last_applied_at < %(now)s - MAKE_INTERVAL(days => GREATEST(
+                user_limits.max_delta_age_in_days, %(default_max_delta_age_in_days)s
+            ))
+            LIMIT %(limit)s
+            """,
+            dict(
+                now=now,
+                default_max_delta_age_in_days=UserLimits().max_delta_age_in_days,
+                limit=MaxNWorkflowsPerCycle,
+            ),
+        )
+        return [
+            (workflow_id, min_last_applied_at.replace(tzinfo=None))
+            for workflow_id, min_last_applied_at in cursor.fetchmany(
+                MaxNWorkflowsPerCycle
+            )
+        ]
+
+
 def delete_stale_deltas(now: datetime.datetime) -> None:
     """Delete old Deltas.
 
     Rationale: we want a way to deprecate and then delete bad Commands; and we
     want to speed up database queries by nixing unused data.
     """
-    # import _after_ django.setup() initializes apps
-    from cjwstate.models.delta import Delta
-    from cjwstate.models.workflow import Workflow
+    with benchmark_sync(logger, "Finding workflows with old deltas"):
+        todo = find_workflows_with_stale_deltas(now)
 
-    min_last_applied_at = now - MaxAge
-
-    workflow_ids = Workflow.objects.filter(
-        Exists(
-            Delta.objects.filter(
-                last_applied_at__lt=min_last_applied_at.replace(
-                    tzinfo=datetime.timezone.utc
-                ),
-                workflow_id=OuterRef("id"),
-            )
-        )
-    )[:MaxNWorkflowsPerCycle].values_list("id", flat=True)
-
-    for workflow_id in workflow_ids:
-        with benchmark_sync(logger, "Deleting old deltas on Workflow %d", workflow_id):
-            delete_workflow_stale_deltas(workflow_id, min_last_applied_at)
+    with benchmark_sync(logger, "Deleting old deltas"):
+        for workflow_id, min_last_applied_at in todo:
+            with benchmark_sync(
+                logger, "Deleting old deltas on Workflow %d", workflow_id
+            ):
+                delete_workflow_stale_deltas(
+                    workflow_id, min_last_applied_at.replace(tzinfo=None)
+                )
 
 
 if __name__ == "__main__":
@@ -110,6 +155,5 @@ if __name__ == "__main__":
 
     while True:
         django.db.close_old_connections()
-        with benchmark_sync(logger, "Deleting old deltas"):
-            delete_stale_deltas(datetime.datetime.now())
+        delete_stale_deltas(datetime.datetime.now())
         time.sleep(Interval)
