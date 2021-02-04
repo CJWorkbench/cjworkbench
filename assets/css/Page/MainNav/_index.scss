@@ -1,0 +1,52 @@
+nav.main-nav {
+  display: flex;
+  flex-direction: column;
+
+  @include media-when-we-pin-main-nav-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $main-nav-sidebar-width;
+    height: 100vh;
+  }
+
+  background: $main-nav-bg;
+  color: white;
+
+  header + ul {
+    // the first <ul> stretches to the bottom of the page
+    flex: 1 1 auto;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    a {
+      display: block;
+      color: inherit;
+      padding: rem(.75) $main-nav-padding;
+
+      svg {
+        // icon
+        margin-right: rem(.5);
+      }
+    }
+
+    li:not(.parent).open a {
+      background: $main-nav-open-bg;
+      font-weight: bold;
+    }
+
+    li li a {
+      padding-left: 2 * $main-nav-padding;
+    }
+  }
+
+  form.hidden {
+    display: none;
+  }
+}
+
+@import './MainNavHeader'

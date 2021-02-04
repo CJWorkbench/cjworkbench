@@ -103,6 +103,7 @@ def jsonize_user(user: User) -> Dict[str, Any]:
         "display_name": user_display(user),
         "email": user.email,
         "is_staff": user.is_staff,
+        "stripeCustomerId": user.user_profile.stripe_customer_id,
     }
 
 

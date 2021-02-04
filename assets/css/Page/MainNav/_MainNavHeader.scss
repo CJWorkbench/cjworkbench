@@ -1,0 +1,14 @@
+.main-nav>header {
+  $logo-aspect-ratio: 739 / 105;
+  padding: $main-nav-padding;
+
+  a {
+    display: block;
+  }
+
+  img {
+    display: block;
+    // Hard-code height, not width, so page doesn't flicker during load
+    height: ($main-nav-sidebar-width - 2 * $main-nav-padding) / $logo-aspect-ratio;
+  }
+}

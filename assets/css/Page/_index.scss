@@ -1,0 +1,37 @@
+@mixin media-when-we-pin-main-nav-sidebar {
+  @include media-breakpoint-up(md) {
+    @content;
+  }
+}
+$main-nav-sidebar-width: rem(15);
+$main-nav-open-bg: $heading-bg;
+$main-nav-bg: $document-blue;
+$main-nav-padding: rem(1.5);
+
+.page {
+  font: rem(.9) $font-family-sans-serif;
+
+  main {
+    header {
+      h1 {
+        color: $main-nav-open-bg;
+      }
+    }
+  }
+
+  @include media-when-we-pin-main-nav-sidebar {
+    margin-left: $main-nav-sidebar-width + rem(2);
+
+    main {
+      max-width: rem(55);
+      margin: 0 auto;
+
+      header {
+        margin: 0;
+        padding: rem(4) 0;
+      }
+    }
+  }
+}
+
+@import './MainNav/index'
