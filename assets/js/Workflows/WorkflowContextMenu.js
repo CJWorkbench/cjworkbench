@@ -1,47 +1,77 @@
-// Drop-down menu on Workflows List page, for each listed WF
-// triggered by click on three-dot icon next to listed workflow
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
+import ShareModal from './ShareModal'
 
-export default class WorkflowContextMenu extends React.Component {
-  static propTypes = {
-    workflowId: PropTypes.number.isRequired,
-    deleteWorkflow: PropTypes.func, // func(id) ... or null if cannot delete
-    duplicateWorkflow: PropTypes.func.isRequired
-  }
+export default function WorkflowContextMenu (props) {
+  const {
+    workflow,
+    onClickDeleteWorkflow,
+    onClickDuplicateWorkflow,
+    apiForShareModal,
+    onWorkflowChanging,
+    onWorkflowChanged
+  } = props
+  const [isShareModalOpen, setShareModalOpen] = React.useState(false)
 
-  handleClickDelete = () => {
-    const { workflowId, deleteWorkflow } = this.props
-    if (deleteWorkflow) deleteWorkflow(workflowId)
-  }
+  const handleClickDelete = React.useCallback(() => {
+    onClickDeleteWorkflow(workflow.id)
+  }, [workflow, onClickDeleteWorkflow])
+  const handleClickDuplicate = React.useCallback(() => {
+    onClickDuplicateWorkflow(workflow.id)
+  }, [workflow, onClickDuplicateWorkflow])
+  const handleClickShare = React.useCallback(() => {
+    setShareModalOpen(true)
+  }, [setShareModalOpen])
+  const handleCloseShareModal = React.useCallback(() => {
+    setShareModalOpen(false)
+  }, [setShareModalOpen])
 
-  handleClickDuplicate = () => {
-    const { workflowId, duplicateWorkflow } = this.props
-    duplicateWorkflow(workflowId)
-  }
-
-  render () {
-    return (
+  return (
+    <>
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
           <i className='icon-more' />
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem onClick={this.handleClickDuplicate} className='duplicate-workflow'>
+          <DropdownItem onClick={handleClickShare}>
+            <i className='icon-share' />
+            <span><Trans id='js.Workflows.WorkflowContextMenu.share'>Share</Trans></span>
+          </DropdownItem>
+          <DropdownItem onClick={handleClickDuplicate}>
             <i className='icon-duplicate' />
             <span><Trans id='js.Workflows.WorkflowContextMenu.duplicate'>Duplicate</Trans></span>
           </DropdownItem>
-          {this.props.deleteWorkflow ? (
-            <DropdownItem onClick={this.handleClickDelete} className='delete-workflow'>
-              <i className='icon-bin' />
-              <span><Trans id='js.Workflows.WorkflowContextMenu.delete'>Delete</Trans></span>
-            </DropdownItem>
-          ) : null}
+          <DropdownItem onClick={handleClickDelete}>
+            <i className='icon-bin' />
+            <span><Trans id='js.Workflows.WorkflowContextMenu.delete'>Delete</Trans></span>
+          </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
-    )
-  }
+      {isShareModalOpen ? (
+        <ShareModal
+          workflow={workflow}
+          api={apiForShareModal}
+          onWorkflowChanging={onWorkflowChanging}
+          onWorkflowChanged={onWorkflowChanged}
+          onClose={handleCloseShareModal}
+        />
+      ) : null}
+    </>
+  )
+}
+WorkflowContextMenu.propTypes = {
+  workflow: PropTypes.shape({
+    id: PropTypes.number.isRequired
+  }).isRequired,
+  onClickDeleteWorkflow: PropTypes.func.isRequired, // func(id) => undefined
+  onClickDuplicateWorkflow: PropTypes.func.isRequired, // func(id) => undefined
+  apiForShareModal: PropTypes.shape({
+    updateAclEntry: PropTypes.func.isRequired, // func(id, email, canEdit) => Promise[null]
+    deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
+    setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
+  }).isRequired,
+  onWorkflowChanging: PropTypes.func.isRequired, // func(id, {k: v, ...}) => undefined
+  onWorkflowChanged: PropTypes.func.isRequired // func(id) => undefined
 }

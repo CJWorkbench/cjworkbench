@@ -7,9 +7,12 @@ $main-nav-sidebar-width: rem(15);
 $main-nav-open-bg: $heading-bg;
 $main-nav-bg: $document-blue;
 $main-nav-padding: rem(1.5);
+$main-padding: rem(1);
+$main-padding-desktop: rem(2);
 
 .page {
   font: rem(.9) $font-family-sans-serif;
+  padding: 0 $main-padding;
 
   main {
     header {
@@ -21,7 +24,7 @@ $main-nav-padding: rem(1.5);
 
   @include media-when-we-pin-main-nav-sidebar {
     margin-left: $main-nav-sidebar-width;
-    padding: 0 rem(2);
+    padding: 0 $main-padding-desktop;
 
     main {
       max-width: rem(55);

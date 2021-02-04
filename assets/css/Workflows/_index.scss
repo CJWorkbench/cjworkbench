@@ -1,0 +1,134 @@
+@include media-when-we-pin-main-nav-sidebar {
+  .page main.workflows {
+    max-width: 100%; // <table> always takes full width
+  }
+}
+
+main.workflows {
+  form.create-workflow {
+    margin: 5rem 0 0;
+    text-align: center;
+
+    button {
+      @include action-button;
+      @include button-blue--fill;
+      display: inline-block; // respect <form>'s text-align: center;
+      height: 4rem;
+      font-size: 1.5rem;
+
+      &:hover {
+        background-color: $brand-workspace--Vlight;
+      }
+      &:active {
+        background-color: darken($brand-background,20%);
+        color:$brand-workspace;
+      }
+    }
+  }
+
+  .workflow-list {
+    background: white;
+    margin: 0 -$main-padding;
+    padding: rem(2) $main-padding;
+
+    @include media-when-we-pin-main-nav-sidebar {
+      margin: 0 -$main-padding-desktop;
+      padding: rem(2) $main-padding-desktop;
+    }
+  }
+
+  table {
+    width: 100%;
+
+    td {
+      border-bottom: 1px solid $item-border;
+    }
+
+    tr.changing {
+      // signal to the user that we're busy
+      color: $text-muted;
+      pointer-events: none;
+    }
+
+    thead th {
+      padding: rem(3) rem(.5) rem(1);
+      border-bottom: 2px solid $brand-learn;
+      white-space: nowrap; // "sort" icon shouldn't wrap
+
+      a {
+        color: inherit;
+        display: block;
+      }
+
+      svg {
+        margin-left: rem(.5);
+      }
+    }
+
+    td, th {
+      padding: rem(1) rem(.5);
+      &:first-child {
+        padding-left: 0;
+      }
+      &:last-child {
+        padding-right: 0;
+      }
+
+      &.owner, &.updated, &.privacy {
+        // These columns are "optional". We only show them:
+        // * when they make sense (e.g., "owner" doesn't make sense on "owned" workflows)
+        // * when they fit (e.g., on mobile they may not fit)
+        // Override this using &.owned, &.shared-with-me and &.example selectors below
+        display: none;
+      }
+
+      &.actions {
+        // .actions is present when workflows are editable
+        width: 1px;
+      }
+    }
+
+    td.title {
+      padding: 0;
+
+      a {
+        color: inherit;
+        display: block;
+        padding: rem(1) rem(.5) rem(1) 0;
+      }
+    }
+  }
+
+  .workflow-list.owned {
+    table {
+      td, th {
+        &.updated {
+          display: table-cell;
+        }
+
+        @include media-when-we-pin-main-nav-sidebar {
+          &.privacy {
+            display: table-cell;
+          }
+        }
+      }
+    }
+  }
+
+  .workflow-list.shared-with-me, .workflow-list.example {
+    table {
+      td, th {
+        &.owner {
+          display: table-cell;
+        }
+
+        @include media-when-we-pin-main-nav-sidebar {
+          &.updated, &.privacy {
+            display: table-cell;
+          }
+        }
+      }
+    }
+  }
+}
+

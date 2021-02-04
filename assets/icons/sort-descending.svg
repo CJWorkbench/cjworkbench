@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="svg14"
+   sodipodi:docname="sort-descending.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1623"
+     inkscape:window-height="1059"
+     id="namedview10"
+     showgrid="false"
+     inkscape:zoom="22.96875"
+     inkscape:cx="16"
+     inkscape:cy="16"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg14" />
+  <metadata
+     id="metadata20">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>sort-up</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs18" />
+  <title
+     id="title2">sort-up</title>
+  <path
+     fill="#686768"
+     d="m 4,24 h 6 V 20 H 4 Z"
+     id="path4"
+     style="stroke-width:1.08253" />
+  <path
+     fill="#686768"
+     d="M 4,16 H 14 V 12 H 4 Z"
+     id="path6"
+     style="stroke-width:1.11653" />
+  <path
+     fill="#686768"
+     d="M 4,8 H 19 V 4 H 4 Z"
+     id="path8"
+     style="stroke-width:1.14109" />
+  <path
+     fill="#686768"
+     d="m 26,4 v 14 h 3 l -4,6 -4,-6 h 3 V 4 Z"
+     id="path12"
+     style="stroke-width:0.662995" />
+</svg>

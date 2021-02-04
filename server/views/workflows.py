@@ -79,6 +79,32 @@ def make_init_state(
     return jsonize_clientside_init(state, ctx)
 
 
+def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
+    ctx = JsonizeContext(request.user, request.session, request.locale_id, {})
+
+    workflows = (
+        Workflow.objects.filter(**kwargs)
+        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=""))
+        .prefetch_related("acl", "owner")
+        .order_by("-updated_at")
+    )
+    json_workflows = [
+        jsonize_clientside_workflow(
+            w.to_clientside(include_tab_slugs=False, include_block_slugs=False),
+            ctx,
+            is_init=True,
+        )
+        for w in workflows
+    ]
+
+    init_state = {
+        "loggedInUser": jsonize_user(request.user),
+        "workflows": json_workflows,
+    }
+
+    return TemplateResponse(request, "workflows.html", {"initState": init_state})
+
+
 class Index(View):
     @method_decorator(login_required)
     def post(self, request: HttpRequest):
@@ -90,36 +116,17 @@ class Index(View):
 
     @method_decorator(login_required)
     def get(self, request: HttpRequest):
-        """Render workflow-list page."""
+        return _render_workflows(request, owner=request.user)
 
-        ctx = JsonizeContext(request.user, request.session, request.locale_id, {})
 
-        def list_workflows_as_json(**kwargs) -> List[Dict[str, Any]]:
-            workflows = (
-                Workflow.objects.filter(**kwargs)
-                .prefetch_related("acl", "owner")
-                .order_by("-updated_at")
-                .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=""))
-            )
-            return [
-                jsonize_clientside_workflow(
-                    w.to_clientside(include_tab_slugs=False, include_block_slugs=False),
-                    ctx,
-                    is_init=True,
-                )
-                for w in workflows
-            ]
+@login_required
+def shared_with_me(request: HttpRequest):
+    return _render_workflows(request, acl__email=request.user.email)
 
-        init_state = {
-            "loggedInUser": jsonize_user(request.user),
-            "workflows": {
-                "owned": list_workflows_as_json(owner=request.user),
-                "shared": list_workflows_as_json(acl__email=request.user.email),
-                "templates": list_workflows_as_json(in_all_users_workflow_lists=True),
-            },
-        }
 
-        return TemplateResponse(request, "workflows.html", {"initState": init_state})
+@login_required
+def examples(request: HttpRequest):
+    return _render_workflows(request, in_all_users_workflow_lists=True)
 
 
 def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Workflow:

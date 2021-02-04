@@ -13,6 +13,7 @@ ReactDOM.render((
       api={api}
       workflows={workflows}
       user={loggedInUser}
+      currentPath={window.location.pathname}
     />
   </InternationalizedPage>
 ), document.getElementById('root'))
