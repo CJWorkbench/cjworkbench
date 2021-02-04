@@ -1,6 +1,5 @@
 import React from 'react'
 import { Trans } from '@lingui/macro'
-import LanguageIcon from '../../../icons/language.svg'
 import LocaleSwitcher from '../../i18n/LocaleSwitcher'
 
 export default function SetLocaleLink () {
@@ -18,7 +17,6 @@ export default function SetLocaleLink () {
   return (
     <li className={isDialogOpen ? 'open' : null}>
       <a href='#' onClick={handleClick}>
-        <LanguageIcon />
         <Trans id='js.Page.MainNav.SetLocaleLink.title'>Language</Trans>
       </a>
       {isDialogOpen ? (
