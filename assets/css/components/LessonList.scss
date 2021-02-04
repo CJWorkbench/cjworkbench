@@ -1,87 +1,17 @@
-.lessons-page {
-  background-color: $page-background;
-  height: 100vh;
-
-  .container {
-    max-width: 100rem;
-  }
-
-  nav.navbar {
-    background-color: $navbar-background;
-    margin-bottom: 5rem;
-
-
-    a {
-      decoration: none;
-      &::after {
-        background-color: $brand-learn;
-      }
-      &.inactive::after {
-        background-color: $workspace-action;
-      }
-    }
-    .dropdown-item {
-      color: $brand-text--dark;
-    }
-  }
-
-  div.courses-nav {
-    margin-bottom: 1rem;
-    padding-left: 2rem;
-
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      @include make-row();
-    }
-
-    li {
-      @include title-2;
-      @include make-col-ready();
-      width: auto;
-
-      a {
-        border-bottom: 4px solid transparent;
-        padding-bottom: .5rem;
-      }
-
-      &:not(.active) { // we're linking to this course
-        a {
-          color: $light-gray;
-          &:hover {
-            text-decoration: none;
-            color: $brand-text--dark;
-            border-color: $brand-learn--medium;
-            opacity: .8;
-          }
-        }
-      }
-
-      &.active { // we're viewing this course
-        a {
-          color: $brand-text--dark;
-          text-decoration: none;
-          border-color: $brand-learn;
-        }
-      }
-    }
-  }
+.page main.lessons-page {
+  max-width: 94rem;
+  padding-bottom: 8rem;
+  font-family: $font-family-sans-serif;
+  color: $brand-text--dark;
+  font-size: 1.6rem;
+  line-height: 2.2rem;
 
   div.course {
-    margin-bottom: 8rem;
-    background-color: $page-background;
-    padding: 0 2rem 2rem 2rem;
-    border-radius: .5rem;
-
     .introduction {
-      background-color: white;
-      margin-top: 2rem;
+      background: white;
       &:empty { display: none; }
-      @include content-3;
       padding: 1rem 3rem; // p,h3 vertical margin is 2rem
       border-radius: 10px;
-      margin-bottom: 2rem;
 
       p {
         margin: 2rem 0;
@@ -93,70 +23,62 @@
     }
 
     ul.lessons {
+      display: flex;
+      flex-wrap: wrap;
       list-style: none;
       padding: 0;
-      display: grid;
-      margin-top: 2rem;
-      grid-column-gap: 2rem;
-      grid-row-gap: 2rem;
-      grid-template-columns: repeat(auto-fit, minmax(28rem, auto));
-      justify-content: center;
+      margin: 0 0 0 -2rem;
 
       // each lesson card
       li.lesson {
-        @include make-col-ready;
+        margin: 2rem 0 0 2rem;
+        display: inline-block;
         width: 30rem;
-        padding: 0;// we're wrapping: next row should have spacing above it
-
-        // &:first-child, &:nth-child(2) { // no margin at top of first line;
-        //   margin-top: 0;
-        // }
+        padding: 0;
 
         a {
           display: flex;
           flex-direction: column; // so <img> sticks to bottom
-          padding: 2rem;
           height: 22rem;
-          width: 100%;
           box-shadow: $button-area;
           background: white;
-          color: $brand-text--dark;
-          border-radius: 5px;
+          color: inherit;
           text-decoration: none;
           border: 1px solid $item-border;
-          box-shadow: $button-area;
-          position: relative;
+          border-radius: 5px;
+          border-bottom-width: 0; // our lesson bottoms are <img>; hide the bottom border for nicer box-shadow
+          overflow: hidden;
+          transition: .05s transform ease-in-out;
 
           &:hover {
             box-shadow: $button-area--hover;
-            top: -3px;
+            transform: translateY(-3px);
           }
 
           h2 {
-            color: $brand-text--dark;
-            font-size: 1.6rem;
+            font: inherit;
             font-weight: bold;
-            margin-bottom: 1rem;
-            line-height: 2.2rem;
+            margin: 0;
+            padding: 2rem 2rem 0;
+          }
+
+          .description {
+            flex: 1 1 auto;
+            flex-direction: column;
+            display: flex;
           }
 
           .description p {
-            @include font-sans-regular;
             flex: 1 1 auto;
-            color: $brand-text--dark;
-            font-size: 1.6rem;
-            margin-top: .5rem;
-            line-height: 2.2rem;
+            margin: 0;
+            padding: 1.5rem 2rem;
           }
 
           img {
             display: block;
-            height: auto;
-            position: absolute;
             width: 100%;
-            border-radius: 0 0 5px 5px;
-            left: 0;
-            bottom: -1px;
+            height: auto;
+            flex: 0 0 auto;
           }
         }
       }

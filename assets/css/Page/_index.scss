@@ -20,7 +20,8 @@ $main-nav-padding: rem(1.5);
   }
 
   @include media-when-we-pin-main-nav-sidebar {
-    margin-left: $main-nav-sidebar-width + rem(2);
+    margin-left: $main-nav-sidebar-width;
+    padding: 0 rem(2);
 
     main {
       max-width: rem(55);
@@ -28,7 +29,7 @@ $main-nav-padding: rem(1.5);
 
       header {
         margin: 0;
-        padding: rem(4) 0;
+        padding: rem(5) 0;
       }
     }
   }
