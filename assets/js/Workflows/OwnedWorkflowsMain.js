@@ -118,15 +118,20 @@ export default function OwnedWorkflowsMain (props) {
         <h1><Trans id='js.Workflows.WorkflowLists.nav.myWorkflows'>My workflows</Trans></h1>
       </header>
       {editedWorkflows.length ? (
-        <WorkflowList
-          className='owned'
-          workflows={editedWorkflows}
-          onClickDeleteWorkflow={handleClickDeleteWorkflow}
-          onClickDuplicateWorkflow={handleClickDuplicateWorkflow}
-          apiForShareModal={api}
-          onWorkflowChanging={handleWorkflowChanging}
-          onWorkflowChanged={handleWorkflowChanged}
-        />
+        <>
+          <CreateWorkflowButton>
+            <Trans id='js.Workflows.createWorkflowButton'>Create Workflow</Trans>
+          </CreateWorkflowButton>
+          <WorkflowList
+            className='owned'
+            workflows={editedWorkflows}
+            onClickDeleteWorkflow={handleClickDeleteWorkflow}
+            onClickDuplicateWorkflow={handleClickDuplicateWorkflow}
+            apiForShareModal={api}
+            onWorkflowChanging={handleWorkflowChanging}
+            onWorkflowChanged={handleWorkflowChanged}
+          />
+        </>
       ) : (
         <CreateWorkflowButton>
           <Trans id='js.Workflows.WorkflowLists.createYourFirtsWorkflow.button'>Create your first workflow</Trans>

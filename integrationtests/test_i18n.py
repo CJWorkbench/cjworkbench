@@ -88,7 +88,7 @@ class TestI18n(WorkbenchBase):
         b.assert_element("a", text="ΜΑΘΗΜΑΤΑ", wait=True)
         # Change locale to en again
         switch_locale_react(b, "English")
-        b.assert_element("a", text="TUTORIALS", wait=True)
+        b.assert_element("a", text="Tutorials", wait=True)
 
     def test_signup_el(self):
         b = self.browser

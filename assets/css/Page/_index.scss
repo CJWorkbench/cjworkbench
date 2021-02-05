@@ -17,6 +17,8 @@ $main-padding-desktop: rem(2);
   main {
     header {
       h1 {
+        margin: 0;
+        font-weight: bold;
         color: $main-nav-open-bg;
       }
     }

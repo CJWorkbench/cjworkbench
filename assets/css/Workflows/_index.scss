@@ -5,35 +5,31 @@
 }
 
 main.workflows {
+  padding-bottom: rem(2); // the <table> has a white background. Add padding below to suggest end-of-page
+
+  header {
+    padding-bottom: rem(2); // smaller than on most pages
+  }
+
   form.create-workflow {
-    margin: 5rem 0 0;
-    text-align: center;
+    margin: 0;
 
     button {
       @include action-button;
       @include button-blue--fill;
-      display: inline-block; // respect <form>'s text-align: center;
       height: 4rem;
       font-size: 1.5rem;
-
-      &:hover {
-        background-color: $brand-workspace--Vlight;
-      }
-      &:active {
-        background-color: darken($brand-background,20%);
-        color:$brand-workspace;
-      }
     }
   }
 
   .workflow-list {
     background: white;
-    margin: 0 -$main-padding;
-    padding: rem(2) $main-padding;
+    margin: rem(2) (-$main-padding);
+    padding: 0 $main-padding rem(2);
 
     @include media-when-we-pin-main-nav-sidebar {
-      margin: 0 -$main-padding-desktop;
-      padding: rem(2) $main-padding-desktop;
+      margin: rem(2) (-$main-padding-desktop);
+      padding: 0 $main-padding-desktop rem(2);
     }
   }
 
