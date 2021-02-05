@@ -12,10 +12,29 @@ $main-padding-desktop: rem(2);
 
 .page {
   font: rem(.9) $font-family-sans-serif;
-  padding: 0 $main-padding;
 
   main {
+    // bottom padding helps suggest to the user the page has ended (we have no <footer>)
+    padding: 0 $main-padding rem(2);
+
+    @include media-when-we-pin-main-nav-sidebar {
+      padding-left: $main-padding-desktop;
+      padding-right: $main-padding-desktop;
+      max-width: rem(55);
+      margin: 0 auto;
+    }
+
     header {
+      // big top padding:
+      // on desktop, show up below the logo (which is to the left)
+      // on mobile, show up below the logo (which is above, position:fixed)
+      margin: 0;
+      padding: rem(6) 0 rem(2);
+
+      @include media-when-we-pin-main-nav-sidebar {
+        padding-top: rem(5);
+      }
+
       h1 {
         margin: 0;
         font-weight: bold;
@@ -26,17 +45,6 @@ $main-padding-desktop: rem(2);
 
   @include media-when-we-pin-main-nav-sidebar {
     margin-left: $main-nav-sidebar-width;
-    padding: 0 $main-padding-desktop;
-
-    main {
-      max-width: rem(55);
-      margin: 0 auto;
-
-      header {
-        margin: 0;
-        padding: rem(5) 0 rem(2);
-      }
-    }
   }
 }
 

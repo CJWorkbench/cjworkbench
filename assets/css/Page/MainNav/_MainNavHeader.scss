@@ -1,4 +1,8 @@
 .main-nav>header {
+  display: flex;
+  justify-content: space-between; // menu button on far right
+  align-items: center; // center toggle button and logo
+
   $logo-aspect-ratio: 739 / 105;
   padding: $main-nav-padding;
 
@@ -10,5 +14,19 @@
     display: block;
     // Hard-code height, not width, so page doesn't flicker during load
     height: ($main-nav-sidebar-width - 2 * $main-nav-padding) / $logo-aspect-ratio;
+  }
+
+  button.toggle-open {
+    @include icon-button(
+      $color: white,
+      $focus-color: $main-nav-open-bg,
+      $focus-bg: white,
+      $active-color: $main-nav-bg,
+    );
+
+    @include media-when-we-pin-main-nav-sidebar {
+      // We don't need a toggle button when main-nav is always open
+      display: none;
+    }
   }
 }

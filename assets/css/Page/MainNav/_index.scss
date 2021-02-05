@@ -1,21 +1,17 @@
 nav.main-nav {
-  display: flex;
-  flex-direction: column;
-
-  @include media-when-we-pin-main-nav-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: $main-nav-sidebar-width;
-    height: 100vh;
-  }
-
   background: $main-nav-bg;
   color: white;
+  position: fixed;
+  width: 100%;
+  z-index: $zindex-fixed;
 
-  header + ul {
-    // the first <ul> stretches to the bottom of the page
-    flex: 1 1 auto;
+  &:not(.open)>ul {
+    // On mobile, we hide everything but the logo unless the user opens the menu
+    display: none;
+
+    @include media-when-we-pin-main-nav-sidebar {
+      display: block;
+    }
   }
 
   ul {
@@ -41,15 +37,41 @@ nav.main-nav {
     li li a {
       padding-left: 2 * $main-nav-padding;
     }
+
+    border-bottom: 1px solid $item-border;
+    @include media-when-we-pin-main-nav-sidebar {
+      border-bottom: 0; // there's a big gap between them anyway
+    }
   }
 
   ul:last-child {
+    border-bottom: 0;
     padding-bottom: rem(.75);
   }
 
   form.hidden {
     display: none;
   }
+
+  @include media-when-we-pin-main-nav-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $main-nav-sidebar-width;
+    height: 100vh;
+
+    ul {
+      display: block;
+    }
+
+    header + ul {
+      // the first <ul> stretches to the bottom of the page
+      flex: 1 1 auto;
+    }
+  }
+
 }
 
 @import './MainNavHeader'

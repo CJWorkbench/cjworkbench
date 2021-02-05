@@ -1,16 +1,26 @@
-button.icon-button {
+@mixin icon-button(
+  $color,
+  $bg: transparent,
+  $disabled-color: $color,
+  $disabled-bg: $bg,
+  $focus-color: $color,
+  $focus-bg: $bg,
+  $active-color: $focus-color,
+  $active-bg: $focus-bg
+) {
   padding: rem(.5);
   border: 0;
   border-radius: 50%;
   font-size: rem(1);
   line-height: 1;
 
-  color: $brand-text--dark;
-  background-color: transparent;
+  color: $color;
+  background: $bg;
   opacity: .6;
 
   &:disabled {
-    color: $light-gray;
+    color: $disabled-color;
+    background: $disabled-bg;
   }
 
   &:hover, &:focus, &:active {
@@ -18,11 +28,22 @@ button.icon-button {
   }
 
   &:hover, &:focus {
-    background: $SuperLightGray;
+    color: $focus-color;
+    background: $focus-bg;
   }
 
   &:active {
-    background-color: $page-background;
-    color: $brand-text--darker;
+    color: $active-color;
+    background: $active-bg;
   }
+}
+
+button.icon-button {
+  @include icon-button(
+    $color: $brand-text--dark,
+    $disabled-color: $light-gray,
+    $focus-bg: $SuperLightGray,
+    $active-color: $page-background,
+    $active-bg: $brand-text--darker
+  );
 }
