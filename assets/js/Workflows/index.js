@@ -18,7 +18,7 @@ export default function Workflows (props) {
       {currentPath === '/workflows/shared-with-me' ? (
         <WorkflowsSharedWithMeMain workflows={workflows} user={user} api={api} />
       ) : null}
-      {currentPath === '/workflows/example' ? (
+      {currentPath === '/workflows/examples' ? (
         <ExampleWorkflowsMain workflows={workflows} user={user} api={api} />
       ) : null}
     </Page>

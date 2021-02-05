@@ -5,7 +5,7 @@ import WorkflowList, { WorkflowListPropType } from './WorkflowList'
 export default function WorkflowsSharedWithMeMain (props) {
   const { workflows } = props
   return (
-    <main>
+    <main className='workflows'>
       <header>
         <h1><Trans id='js.Workflows.WorkflowLists.nav.sharedWithMe'>Workflows shared with me</Trans></h1>
       </header>

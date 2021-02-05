@@ -11,7 +11,7 @@ export default function ExampleWorkflowsMain (props) {
       </header>
       {workflows.length === 0 ? (
         <div className='placeholder'>
-          <Trans id='js.Workflows.WorkflowLists.publishNewRecipes'>Publish new recipes via the Django admin</Trans>
+          <Trans id='js.Workflows.WorkflowLists.publishNewRecipes'>Publish workflows as examples using Django admin</Trans>
         </div>
       ) : (
         <WorkflowList className='example' workflows={workflows} />

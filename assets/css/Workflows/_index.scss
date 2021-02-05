@@ -7,10 +7,6 @@
 main.workflows {
   padding-bottom: rem(2); // the <table> has a white background. Add padding below to suggest end-of-page
 
-  header {
-    padding-bottom: rem(2); // smaller than on most pages
-  }
-
   form.create-workflow {
     margin: 0;
 
@@ -25,11 +21,13 @@ main.workflows {
   .workflow-list {
     background: white;
     margin: rem(2) (-$main-padding);
-    padding: 0 $main-padding rem(2);
+    padding: rem(2) $main-padding;
 
     @include media-when-we-pin-main-nav-sidebar {
-      margin: rem(2) (-$main-padding-desktop);
-      padding: 0 $main-padding-desktop rem(2);
+      margin-left: -$main-padding-desktop;
+      margin-right: -$main-padding-desktop;
+      padding-left: $main-padding-desktop;
+      padding-right: $main-padding-desktop;
     }
   }
 
@@ -38,18 +36,13 @@ main.workflows {
     border-collapse: separate; // so th { position:sticky } keeps border
     border-spacing: 0;
 
-    td {
-      border-bottom: 1px solid $item-border;
-    }
-
     tr.changing {
       // signal to the user that we're busy
       color: $text-muted;
       pointer-events: none;
     }
 
-    thead th {
-      padding: rem(3) rem(.5) rem(1);
+    th {
       border-bottom: 2px solid $brand-learn;
       white-space: nowrap; // "sort" icon shouldn't wrap
       position: sticky;
@@ -67,13 +60,22 @@ main.workflows {
       }
     }
 
+    td {
+      border-bottom: 1px solid $item-border;
+    }
+
     td, th {
-      padding: rem(1) rem(.5);
+      // Anything but the .title may be the last column. Set its right padding to 0.
+      padding: rem(1) 0 rem(1) rem(1);
       &:first-child {
         padding-left: 0;
       }
-      &:last-child {
-        padding-right: 0;
+
+      &.actions {
+        // don't affect height ... and take minimal width
+        width: 1px;
+        padding-top: 0;
+        padding-bottom: 0;
       }
 
       &.owner, &.updated, &.privacy {
@@ -91,13 +93,12 @@ main.workflows {
       a {
         color: inherit;
         display: block;
-        padding: rem(1.25) rem(.5) rem(1) 0;
+        padding: rem(1.25) 0 rem(1) 0;
       }
     }
 
     td.actions {
       // .actions is present when workflows are editable
-      width: 1px;
       padding: 0;
     }
   }
@@ -118,7 +119,7 @@ main.workflows {
     }
   }
 
-  .workflow-list.shared-with-me, .workflow-list.example {
+  .workflow-list.shared-with-me {
     table {
       td, th {
         &.owner {
@@ -127,6 +128,22 @@ main.workflows {
 
         @include media-when-we-pin-main-nav-sidebar {
           &.updated, &.privacy {
+            display: table-cell;
+          }
+        }
+      }
+    }
+  }
+
+  .workflow-list.example {
+    table {
+      td, th {
+        &.owner {
+          display: table-cell;
+        }
+
+        @include media-when-we-pin-main-nav-sidebar {
+          &.updated {
             display: table-cell;
           }
         }

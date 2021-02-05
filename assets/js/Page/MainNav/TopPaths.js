@@ -23,7 +23,7 @@ export default function TopPaths (props) {
       <LinkLi
         href='/workflows/examples'
         isOpen={currentPath === '/workflows/examples'}
-        title={t({ id: 'js.Page.MainNav.examples.title', message: 'Templates' })}
+        title={t({ id: 'js.Page.MainNav.examples.title', message: 'Example workflows' })}
       />
       <LinkLi
         href='/lessons'
