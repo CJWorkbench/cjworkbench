@@ -35,6 +35,8 @@ main.workflows {
 
   table {
     width: 100%;
+    border-collapse: separate; // so th { position:sticky } keeps border
+    border-spacing: 0;
 
     td {
       border-bottom: 1px solid $item-border;
@@ -50,6 +52,10 @@ main.workflows {
       padding: rem(3) rem(.5) rem(1);
       border-bottom: 2px solid $brand-learn;
       white-space: nowrap; // "sort" icon shouldn't wrap
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 1; // cover button.context-menu when scrolling and sticky
 
       a {
         color: inherit;
@@ -77,11 +83,6 @@ main.workflows {
         // Override this using &.owned, &.shared-with-me and &.example selectors below
         display: none;
       }
-
-      &.actions {
-        // .actions is present when workflows are editable
-        width: 1px;
-      }
     }
 
     td.title {
@@ -90,8 +91,14 @@ main.workflows {
       a {
         color: inherit;
         display: block;
-        padding: rem(1) rem(.5) rem(1) 0;
+        padding: rem(1.25) rem(.5) rem(1) 0;
       }
+    }
+
+    td.actions {
+      // .actions is present when workflows are editable
+      width: 1px;
+      padding: 0;
     }
   }
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
 import ShareModal from './ShareModal'
+import ContextMenuIcon from '../../icons/context-menu.svg'
 
 export default function WorkflowContextMenu (props) {
   const {
@@ -31,8 +32,8 @@ export default function WorkflowContextMenu (props) {
   return (
     <>
       <UncontrolledDropdown>
-        <DropdownToggle className='context-button'>
-          <i className='icon-more' />
+        <DropdownToggle className='icon-button'>
+          <ContextMenuIcon />
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem onClick={handleClickShare}>
