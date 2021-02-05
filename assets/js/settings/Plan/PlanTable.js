@@ -62,46 +62,48 @@ export default function PlanTable (props) {
   const { plans, activePlanIds, onClickSubscribe } = props
 
   return (
-    <table className='plans'>
-      <thead>
-        <tr>
-          <th />
-          {plans.map(plan => (
-            <PlanTh
-              key={plan.stripePriceId}
-              plan={plan}
-              active={activePlanIds.includes(plan.stripePriceId) || (plan.stripePriceId === null && activePlanIds.length === 0)}
-              onClickSubscribe={activePlanIds.length > 0 || plan.stripePriceId === null ? null : onClickSubscribe}
-            />
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>
-            <h3><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.title'>Automatic updates</Trans></h3>
-            <p><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.description'>Per day</Trans></p>
-          </th>
-          {plans.map(plan => (
-            <td key={plan.stripePriceId}>
-              <div>
-                <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>{i18n.number(plan.maxFetchesPerDay)} updates</Trans>
-              </div>
-            </td>
-          ))}
-        </tr>
-        <tr>
-          <th>
-            <h3><Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>Undo history</Trans></h3>
-          </th>
-          {plans.map(plan => (
-            <td key={plan.stripePriceId}>
-              <div>{formatMaxDeltaAge(plan.maxDeltaAgeInDays)}</div>
-            </td>
-          ))}
-        </tr>
-      </tbody>
-    </table>
+    <div className='plan-table'>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            {plans.map(plan => (
+              <PlanTh
+                key={plan.stripePriceId}
+                plan={plan}
+                active={activePlanIds.includes(plan.stripePriceId) || (plan.stripePriceId === null && activePlanIds.length === 0)}
+                onClickSubscribe={activePlanIds.length > 0 || plan.stripePriceId === null ? null : onClickSubscribe}
+              />
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>
+              <h3><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.title'>Automatic updates</Trans></h3>
+              <p><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.description'>Per day</Trans></p>
+            </th>
+            {plans.map(plan => (
+              <td key={plan.stripePriceId}>
+                <div>
+                  <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>{i18n.number(plan.maxFetchesPerDay)} updates</Trans>
+                </div>
+              </td>
+            ))}
+          </tr>
+          <tr>
+            <th>
+              <h3><Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>Undo history</Trans></h3>
+            </th>
+            {plans.map(plan => (
+              <td key={plan.stripePriceId}>
+                <div>{formatMaxDeltaAge(plan.maxDeltaAgeInDays)}</div>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+    </div>
   )
 }
 PlanTable.propTypes = {
