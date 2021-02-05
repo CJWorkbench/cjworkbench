@@ -29,6 +29,10 @@ nav.main-nav {
       padding: rem(.75) $main-nav-padding;
     }
 
+    li.parent.open>a {
+      font-weight: bold;
+    }
+
     li:not(.parent).open a {
       background: $main-nav-open-bg;
       font-weight: bold;
