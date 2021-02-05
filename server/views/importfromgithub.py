@@ -25,10 +25,11 @@ def import_from_github(request):
     try:
         clientside_module, module_zipfile = import_module_from_url(url)
         ctx = JsonizeContext(
-            request.user,
-            request.session,
-            request.locale_id,
-            {module_zipfile.module_id: module_zipfile},
+            user=request.user,
+            user_profile=None,
+            session=request.session,
+            locale_id=request.locale_id,
+            module_zipfiles={module_zipfile.module_id: module_zipfile},
         )
         data = jsonize_clientside_module(clientside_module, ctx)
         return JsonResponse(data, status=201)

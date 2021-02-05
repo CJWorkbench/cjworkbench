@@ -27,6 +27,7 @@ from babel.messages.pofile import write_po
 
 def mock_jsonize_context(
     user=None,
+    user_profile=None,
     session=None,
     locale_id=None,
     module_id=None,
@@ -48,6 +49,7 @@ def mock_jsonize_context(
     if module_id:
         return JsonizeModuleContext(
             user=user,
+            user_profile=user_profile,
             session=session,
             locale_id=locale_id,
             module_id=module_id,
@@ -56,6 +58,7 @@ def mock_jsonize_context(
     else:
         return JsonizeContext(
             user=user,
+            user_profile=user_profile,
             session=session,
             locale_id=locale_id,
             module_zipfiles=module_zipfiles,

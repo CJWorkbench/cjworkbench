@@ -179,10 +179,11 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         logger.debug("Send update to Workflow %d", self.workflow_id)
         module_zipfiles = await _load_latest_modules()
         ctx = JsonizeContext(
-            self.scope["user"],
-            self.scope["session"],
-            self.scope["locale_id"],
-            module_zipfiles,
+            user=self.scope["user"],
+            user_profile=None,  # [2021-02-05] no updates read it
+            session=self.scope["session"],
+            locale_id=self.scope["locale_id"],
+            module_zipfiles=module_zipfiles,
         )
         json_dict = jsonize_clientside_update(update, ctx)
         await self.send_json_ignoring_connection_closed(

@@ -17,6 +17,7 @@ from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 
+from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow, Step, Tab
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -34,6 +35,20 @@ import server.utils
 from server.settingsutils import workbench_user_display
 from .auth import loads_workflow_for_read, loads_workflow_for_write
 from cjworkbench.i18n import default_locale
+
+
+def _get_request_jsonize_context(
+    request: HttpRequest, module_zipfiles: Dict[str, ModuleZipfile]
+) -> JsonizeContext:
+    # Anonymous has no user_profile
+    user_profile = UserProfile.objects.filter(user_id=request.user.id).first()
+    return JsonizeContext(
+        user=request.user,
+        user_profile=user_profile,
+        session=request.session,
+        locale_id=request.locale_id,
+        module_zipfiles=module_zipfiles,
+    )
 
 
 def make_init_state(
@@ -75,12 +90,12 @@ def make_init_state(
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = JsonizeContext(request.user, request.session, request.locale_id, modules)
+    ctx = _get_request_jsonize_context(request, modules)
     return jsonize_clientside_init(state, ctx)
 
 
 def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
-    ctx = JsonizeContext(request.user, request.session, request.locale_id, {})
+    ctx = _get_request_jsonize_context(request, {})
 
     workflows = (
         Workflow.objects.filter(**kwargs)
@@ -98,7 +113,7 @@ def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
     ]
 
     init_state = {
-        "loggedInUser": jsonize_user(request.user),
+        "loggedInUser": jsonize_user(request.user, ctx.user_profile),
         "workflows": json_workflows,
     }
 
@@ -110,7 +125,7 @@ class Index(View):
     def post(self, request: HttpRequest):
         """Create a new workflow."""
         workflow = Workflow.create_and_init(
-            name="Untitled Workflow", owner=request.user, selected_tab_position=0
+            name="Untitled Workflow", owner=request.user
         )
         return redirect("/workflows/%d/" % workflow.id)
 
@@ -299,12 +314,7 @@ class Duplicate(View):
     @method_decorator(loads_workflow_for_read)
     def post(self, request: HttpRequest, workflow: Workflow):
         workflow2 = workflow.duplicate(request.user)
-        ctx = JsonizeContext(
-            request.user,
-            request.session,
-            request.locale_id,
-            dict(MODULE_REGISTRY.all_latest()),
-        )
+        ctx = _get_request_jsonize_context(request, MODULE_REGISTRY.all_latest())
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
         )

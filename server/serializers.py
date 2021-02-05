@@ -1,10 +1,9 @@
 import datetime
 import logging
 import re
-from collections import namedtuple
 from dataclasses import asdict
 from functools import singledispatch
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
 
 from allauth.account.utils import user_display
 from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
@@ -69,23 +68,17 @@ def _camelize_value(v: Any) -> Any:
         return v
 
 
-JsonizeContext = namedtuple(
-    "JsonizeContext", ["user", "session", "locale_id", "module_zipfiles"]
-)
-JsonizeModuleContext = namedtuple(
-    "JsonizeModuleContext",
-    ["user", "session", "locale_id", "module_id", "module_zipfiles"],
-)
+class JsonizeContext(NamedTuple):
+    user: User
+    user_profile: Optional["UserProfile"]
+    session: Optional["Session"]
+    locale_id: str
+    module_zipfiles: Dict[str, "ModuleZipFile"]
 
 
-def _add_module_to_ctx(ctx: JsonizeContext, module_id: str) -> JsonizeModuleContext:
-    return JsonizeModuleContext(
-        user=ctx.user,
-        session=ctx.session,
-        locale_id=ctx.locale_id,
-        module_id=module_id,
-        module_zipfiles=ctx.module_zipfiles,
-    )
+class JsonizeModuleContext(NamedTuple):
+    locale_id: str
+    module_zipfile: Optional["ModuleZipFile"]
 
 
 def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
@@ -98,12 +91,14 @@ def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
         return dt_or_none.isoformat() + "Z"
 
 
-def jsonize_user(user: User) -> Dict[str, Any]:
+def jsonize_user(user: User, user_profile: Optional[User]) -> Dict[str, Any]:
     return {
         "display_name": user_display(user),
         "email": user.email,
         "is_staff": user.is_staff,
-        "stripeCustomerId": user.user_profile.stripe_customer_id,
+        "stripeCustomerId": (
+            None if user_profile is None else user_profile.stripe_customer_id
+        ),
     }
 
 
@@ -450,7 +445,9 @@ def jsonize_clientside_module(
     module: clientside.Module, ctx: JsonizeContext
 ) -> Dict[str, Any]:
     spec = module.spec
-    ctx = _add_module_to_ctx(ctx, spec.id_name)
+    module_ctx = JsonizeModuleContext(
+        ctx.locale_id, ctx.module_zipfiles.get(spec.id_name)
+    )
 
     help_url = spec.help_url
     if help_url and not (
@@ -462,14 +459,14 @@ def jsonize_clientside_module(
 
     return {
         "id_name": spec.id_name,
-        "name": _localize_module_spec_message("name", ctx, spec.name),
+        "name": _localize_module_spec_message("name", module_ctx, spec.name),
         "category": spec.category,
         "description": _localize_module_spec_message(
-            "description", ctx, spec.description
+            "description", module_ctx, spec.description
         ),
         "deprecated": {
             "message": _localize_module_spec_message(
-                "deprecated.message", ctx, spec.deprecated["message"]
+                "deprecated.message", module_ctx, spec.deprecated["message"]
             ),
             "end_date": spec.deprecated["end_date"],
         }
@@ -482,11 +479,11 @@ def jsonize_clientside_module(
         "has_zen_mode": spec.has_zen_mode,
         "has_html_output": spec.html_output,
         "row_action_menu_entry_title": _localize_module_spec_message(
-            "row_action_menu_entry_title", ctx, spec.row_action_menu_entry_title
+            "row_action_menu_entry_title", module_ctx, spec.row_action_menu_entry_title
         ),
         "js_module": module.js_module,
         "param_fields": [
-            _jsonize_param_spec(field, ctx, prefix=f"parameters.{field.id_name}")
+            _jsonize_param_spec(field, module_ctx, prefix=f"parameters.{field.id_name}")
             for field in spec.param_fields
         ],
     }
@@ -524,14 +521,12 @@ def _localize_module_spec_message(
 
     message_id = f"_spec.{message_path}"
 
-    if ctx.module_id not in ctx.module_zipfiles:
+    if ctx.module_zipfile is None:
         logger.exception(f"Module {ctx.module_id} not in jsonize context")
         return spec_value
 
     try:
-        localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
-            ctx.module_zipfiles[ctx.module_id]
-        )
+        localizer = MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(ctx.module_zipfile)
     except NotInternationalizedError:
         return spec_value
 
@@ -543,14 +538,14 @@ def _localize_module_spec_message(
         logger.exception(
             "I18nMessage badly formatted in default locale. id: %s, module: %s",
             message_id,
-            ctx.module_id,
+            str(ctx.module_zipfile.path),
         )
         return spec_value
     except KeyError:
         logger.exception(
             "I18nMessage not found in module catalogs. id: %s, module: %s",
             message_id,
-            ctx.module_id,
+            str(ctx.module_zipfile.path),
         )
         return spec_value
 
@@ -561,13 +556,11 @@ def _i18n_message_source_to_localizer(
     """Return a localizer for the source of the given `I18nMessage`.
 
     Raise `NotInternationalizedError` if the source is a non-internationalized module.
-    Raise `KeyError` if the source is a module that has no associated `ModuleZipFile`.
     """
     if message.source == "module":
-        module_zipfile = ctx.module_zipfiles[ctx.module_id]  # Raises `KeyError`
-        return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(
-            module_zipfile
-        )  # Raises `NotInternationalizedError`
+        if ctx.module_zipfile is None:
+            raise NotInternationalizedError
+        return MESSAGE_LOCALIZER_REGISTRY.for_module_zipfile(ctx.module_zipfile)
     elif message.source == "cjwmodule":
         return MESSAGE_LOCALIZER_REGISTRY.cjwmodule_localizer
     elif message.source == "cjwparse":
@@ -594,13 +587,6 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
     except NotInternationalizedError:
         logger.exception(
             "I18nMessage source %s does not support localization", message.source
-        )
-        return repr(message)
-    except KeyError as err:
-        logger.exception(
-            "JsonizeContext not set properly for I18nMessage source %s. Error: %s",
-            message.source,
-            err,
         )
         return repr(message)
 
@@ -712,7 +698,9 @@ def jsonize_clientside_step(
                 }
             )
         else:
-            module_ctx = _add_module_to_ctx(ctx, step.module_slug)
+            module_ctx = JsonizeModuleContext(
+                ctx.locale_id, ctx.module_zipfiles.get(step.module_slug)
+            )
             d.update(
                 {
                     "cached_render_result_delta_id": crr.delta_id,
@@ -753,7 +741,9 @@ def jsonize_clientside_init(
     some i18n code invoked here.)
     """
     return {
-        "loggedInUser": None if ctx.user.is_anonymous else jsonize_user(ctx.user),
+        "loggedInUser": None
+        if ctx.user.is_anonymous
+        else jsonize_user(ctx.user, ctx.user_profile),
         "modules": {
             k: jsonize_clientside_module(v, ctx) for k, v in state.modules.items()
         },

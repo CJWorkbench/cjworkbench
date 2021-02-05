@@ -56,35 +56,30 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
     # --- Workflow list ---
     def test_index_get(self):
         # set dates to test reverse chron ordering
-        self.workflow1.creation_date = "2010-10-20 1:23Z"
+        self.workflow1.updated_at = "2010-10-20 1:23Z"
         self.workflow1.save()
         self.workflow2 = Workflow.create_and_init(
-            name="Workflow 2", owner=self.user, creation_date="2015-09-18 2:34Z"
+            name="Workflow 2", owner=self.user, updated_at="2015-09-18 2:34Z"
         )
 
         self.client.force_login(self.user)
-        response = self.client.get("/workflows/")
+        response = self.client.get("/workflows")
         self.assertEqual(response.status_code, status.OK)
 
         workflows = response.context_data["initState"]["workflows"]
         # should not pick up other user's workflows, even public ones
-        self.assertEqual(
-            len(workflows["owned"])
-            + len(workflows["shared"])
-            + len(workflows["templates"]),
-            2,
-        )
+        self.assertEqual(len(workflows), 2)
 
-        self.assertEqual(workflows["owned"][0]["name"], "Workflow 2")
-        self.assertEqual(workflows["owned"][0]["id"], self.workflow2.id)
-        self.assertEqual(workflows["owned"][0]["public"], self.workflow1.public)
-        self.assertEqual(workflows["owned"][0]["read_only"], False)  # user is owner
-        self.assertEqual(workflows["owned"][0]["is_owner"], True)  # user is owner
-        self.assertIsNotNone(workflows["owned"][0]["last_update"])
-        self.assertEqual(workflows["owned"][0]["owner_name"], "user@example.com")
+        self.assertEqual(workflows[0]["name"], "Workflow 2")
+        self.assertEqual(workflows[0]["id"], self.workflow2.id)
+        self.assertEqual(workflows[0]["public"], self.workflow1.public)
+        self.assertEqual(workflows[0]["read_only"], False)  # user is owner
+        self.assertEqual(workflows[0]["is_owner"], True)  # user is owner
+        self.assertIsNotNone(workflows[0]["last_update"])
+        self.assertEqual(workflows[0]["owner_name"], "user@example.com")
 
-        self.assertEqual(workflows["owned"][1]["name"], "Workflow 1")
-        self.assertEqual(workflows["owned"][1]["id"], self.workflow1.id)
+        self.assertEqual(workflows[1]["name"], "Workflow 1")
+        self.assertEqual(workflows[1]["id"], self.workflow1.id)
 
     def test_index_include_example_in_all_users_workflow_lists(self):
         self.other_workflow_public = Workflow.create_and_init(
@@ -97,7 +92,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.workflow2 = Workflow.create_and_init(owner=self.user)
 
         self.client.force_login(self.user)
-        response = self.client.get("/workflows/")
+        response = self.client.get("/workflows")
         self.assertEqual(response.status_code, status.OK)
 
         workflows = response.context_data["initState"]["workflows"]
@@ -115,7 +110,7 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.workflow2 = Workflow.create_and_init(owner=self.user)
 
         self.client.force_login(self.user)
-        response = self.client.get("/workflows/")
+        response = self.client.get("/workflows")
         self.assertEqual(response.status_code, status.OK)
 
         workflows = response.context_data["initState"]["workflows"]
@@ -128,14 +123,14 @@ class WorkflowViewTests(DbTestCaseWithModuleRegistryAndMockKernel):
         self.workflow2 = Workflow.create_and_init(owner=self.user)
 
         self.client.force_login(self.user)
-        response = self.client.get("/workflows/")
+        response = self.client.get("/workflows")
         workflows = response.context_data["initState"]["workflows"]
         self.assertEqual(response.status_code, status.OK)
         self.assertEqual(len(workflows["owned"]), 1)
 
     def test_index_post(self):
         self.client.force_login(self.user)
-        response = self.client.post("/workflows/")
+        response = self.client.post("/workflows")
         workflow = Workflow.objects.get(name="Untitled Workflow")  # or crash
         self.assertRedirects(response, "/workflows/%d/" % workflow.id)
 
