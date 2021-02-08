@@ -47,6 +47,11 @@ nav.main-nav {
       display: block;
       color: inherit;
       padding: rem(.75) $main-nav-padding;
+      text-decoration: none;
+
+      &[href]:hover {
+        background: $main-nav-open-bg;
+      }
     }
 
     li.parent.open>a {
