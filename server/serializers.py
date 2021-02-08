@@ -78,6 +78,7 @@ class JsonizeContext(NamedTuple):
 
 class JsonizeModuleContext(NamedTuple):
     locale_id: str
+    module_id: str
     module_zipfile: Optional["ModuleZipFile"]
 
 
@@ -446,7 +447,7 @@ def jsonize_clientside_module(
 ) -> Dict[str, Any]:
     spec = module.spec
     module_ctx = JsonizeModuleContext(
-        ctx.locale_id, ctx.module_zipfiles.get(spec.id_name)
+        ctx.locale_id, spec.id_name, ctx.module_zipfiles.get(spec.id_name)
     )
 
     help_url = spec.help_url
@@ -699,7 +700,9 @@ def jsonize_clientside_step(
             )
         else:
             module_ctx = JsonizeModuleContext(
-                ctx.locale_id, ctx.module_zipfiles.get(step.module_slug)
+                ctx.locale_id,
+                step.module_slug,
+                ctx.module_zipfiles.get(step.module_slug),
             )
             d.update(
                 {

@@ -25,44 +25,39 @@ from io import BytesIO
 from babel.messages.pofile import write_po
 
 
+def create_module_zipfile_with_catalogs(
+    module_id_name: str, catalogs: Dict[str, Catalog]
+):
+    extra_file_contents = {}
+    for catalog_locale_id, catalog in catalogs.items():
+        po = BytesIO()
+        write_po(po, catalog)
+        extra_file_contents[f"locale/{catalog_locale_id}/messages.po"] = po.getvalue()
+    return create_module_zipfile(
+        module_id_name, extra_file_contents=extra_file_contents
+    )
+
+
 def mock_jsonize_context(
     user=None,
     user_profile=None,
     session=None,
     locale_id=None,
-    module_id=None,
     module_catalogs_data: List[Tuple[str, Dict[str, Catalog]]] = [],
 ):
     module_zipfiles = {}
     if module_catalogs_data:
         for module_id_name, catalogs in module_catalogs_data:
-            extra_file_contents = {}
-            for catalog_locale_id, catalog in catalogs.items():
-                po = BytesIO()
-                write_po(po, catalog)
-                extra_file_contents[
-                    f"locale/{catalog_locale_id}/messages.po"
-                ] = po.getvalue()
-            module_zipfiles[module_id_name] = create_module_zipfile(
-                module_id_name, extra_file_contents=extra_file_contents
+            module_zipfiles[module_id_name] = create_module_zipfile_with_catalogs(
+                module_id_name, catalogs
             )
-    if module_id:
-        return JsonizeModuleContext(
-            user=user,
-            user_profile=user_profile,
-            session=session,
-            locale_id=locale_id,
-            module_id=module_id,
-            module_zipfiles=module_zipfiles,
-        )
-    else:
-        return JsonizeContext(
-            user=user,
-            user_profile=user_profile,
-            session=session,
-            locale_id=locale_id,
-            module_zipfiles=module_zipfiles,
-        )
+    return JsonizeContext(
+        user=user,
+        user_profile=user_profile,
+        session=session,
+        locale_id=locale_id,
+        module_zipfiles=module_zipfiles,
+    )
 
 
 DEFAULT_SERIALIZED_MODULE = {
@@ -1452,7 +1447,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             self.assertEqual(
                 jsonize_i18n_message(
-                    I18nMessage("id"), mock_jsonize_context(locale_id="el")
+                    I18nMessage("id"), JsonizeModuleContext("el", "testme", None)
                 ),
                 "Hey",
             )
@@ -1470,7 +1465,8 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             self.assertEqual(
                 jsonize_i18n_message(
-                    I18nMessage("id"), mock_jsonize_context(locale_id="el")
+                    I18nMessage("id"),
+                    JsonizeModuleContext("el", "testme", None),
                 ),
                 "Hello",
             )
@@ -1481,7 +1477,8 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
-                    I18nMessage("messageid"), mock_jsonize_context(locale_id="el")
+                    I18nMessage("messageid"),
+                    JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")
 
@@ -1492,7 +1489,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
-                    I18nMessage("messageid"), mock_jsonize_context(locale_id="el")
+                    I18nMessage("messageid"), JsonizeModuleContext("el", "testme", None)
                 )
                 self.assertRegex(result, "messageid")
 
@@ -1501,16 +1498,13 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         catalog.add("messageid", string="Translated")
         default_catalog = Catalog()
         default_catalog.add("messageid", string="Default")
+        module_zipfile = create_module_zipfile_with_catalogs(
+            "testme", {"el": catalog, "en": default_catalog}
+        )
         self.assertEqual(
             jsonize_i18n_message(
                 I18nMessage("messageid", source="module"),
-                mock_jsonize_context(
-                    locale_id="el",
-                    module_id="testme",
-                    module_catalogs_data=[
-                        ("testme", {"el": catalog, "en": default_catalog})
-                    ],
-                ),
+                JsonizeModuleContext("el", "testme", module_zipfile),
             ),
             "Translated",
         )
@@ -1519,16 +1513,13 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("messageid", string="Default")
+        module_zipfile = create_module_zipfile_with_catalogs(
+            "testme", {"el": catalog, "en": default_catalog}
+        )
         self.assertEqual(
             jsonize_i18n_message(
                 I18nMessage("messageid", source="module"),
-                mock_jsonize_context(
-                    locale_id="el",
-                    module_id="testme",
-                    module_catalogs_data=[
-                        ("testme", {"el": catalog, "en": default_catalog})
-                    ],
-                ),
+                JsonizeModuleContext("el", "testme", module_zipfile),
             ),
             "Default",
         )
@@ -1536,16 +1527,13 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
     def test_source_module_message_exists_in_no_locales(self):
         catalog = Catalog()
         default_catalog = Catalog()
+        module_zipfile = create_module_zipfile_with_catalogs(
+            "testme", {"el": catalog, "en": default_catalog}
+        )
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
                 I18nMessage("messageid", source="module"),
-                mock_jsonize_context(
-                    locale_id="el",
-                    module_id="testme",
-                    module_catalogs_data=[
-                        ("testme", {"el": catalog, "en": default_catalog})
-                    ],
-                ),
+                JsonizeModuleContext("el", "testme", module_zipfile),
             )
             self.assertRegex(result, "messageid")
 
@@ -1553,28 +1541,22 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         catalog = Catalog()
         default_catalog = Catalog()
         default_catalog.add("id", string="Hello {a b}")
+        module_zipfile = create_module_zipfile_with_catalogs(
+            "testme", {"el": catalog, "en": default_catalog}
+        )
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
                 I18nMessage("messageid", source="module"),
-                mock_jsonize_context(
-                    locale_id="el",
-                    module_id="testme",
-                    module_catalogs_data=[
-                        ("testme", {"el": catalog, "en": default_catalog})
-                    ],
-                ),
+                JsonizeModuleContext("el", "testme", module_zipfile),
             )
             self.assertRegex(result, "messageid")
 
     def test_source_module_module_not_internationalized(self):
+        module_zipfile = create_module_zipfile_with_catalogs("testme", {})
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
                 I18nMessage("messageid", source="module"),
-                mock_jsonize_context(
-                    module_id="testme",
-                    locale_id="el",
-                    module_catalogs_data=[("testme", {})],
-                ),
+                JsonizeModuleContext("el", "testme", module_zipfile),
             )
             self.assertRegex(result, "messageid")
 
@@ -1582,11 +1564,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
                 I18nMessage("messageid", source="module"),
-                mock_jsonize_context(
-                    module_id="testme",
-                    locale_id="el",
-                    module_catalogs_data=[("testother", {})],
-                ),
+                JsonizeModuleContext("el", "testme", None),
             )
             self.assertRegex(result, "messageid")
 
@@ -1599,7 +1577,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
             self.assertEqual(
                 jsonize_i18n_message(
                     I18nMessage("messageid", source="cjwmodule"),
-                    mock_jsonize_context(locale_id="el"),
+                    JsonizeModuleContext("el", "testme", None),
                 ),
                 "Translated",
             )
@@ -1612,7 +1590,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
             self.assertEqual(
                 jsonize_i18n_message(
                     I18nMessage("messageid", source="cjwmodule"),
-                    mock_jsonize_context(locale_id="el"),
+                    JsonizeModuleContext("el", "testme", None),
                 ),
                 "Default",
             )
@@ -1624,7 +1602,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
                     I18nMessage("messageid", source="cjwmodule"),
-                    mock_jsonize_context(locale_id="el"),
+                    JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")
 
@@ -1636,7 +1614,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
                     I18nMessage("messageid", source="cjwmodule"),
-                    mock_jsonize_context(locale_id="el"),
+                    JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")
 
