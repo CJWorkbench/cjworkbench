@@ -12,4 +12,4 @@ class TestLogin(WorkbenchBase):
         # TODO make this test suite non-redundant. We already test this in
         # LoggedInIntegrationTest.
         accounts.login(self.browser, self.user.email, self.user.password)
-        self.browser.assert_element("button", text="Create Workflow")
+        self.browser.assert_element("button", text="Create your first workflow")

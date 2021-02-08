@@ -52,7 +52,7 @@ class TestPasswordReset(WorkbenchBase):
         b.click_link("Back to login")
 
         self._try_log_in_to_current_page("user@example.org", "9owyidIaj|")
-        b.assert_element("button", "Create Workflow")
+        b.assert_element("button", "Create your first workflow")
 
     def test_password_reset_wrong_email(self):
         self._begin_password_reset("nonexistent-user@example.org")

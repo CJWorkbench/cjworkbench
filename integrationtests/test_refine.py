@@ -6,7 +6,7 @@ class TestRefine(LoggedInIntegrationTest):
         super().setUp()
 
         b = self.browser
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
 
         # Empty step list
         b.wait_for_element(".step-list")

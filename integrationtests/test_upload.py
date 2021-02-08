@@ -5,7 +5,7 @@ from integrationtests.utils import LoggedInIntegrationTest
 class TestUpload(LoggedInIntegrationTest):
     def test_upload_xlsx(self):
         b = self.browser
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
 
         # Empty step list
         b.wait_for_element(".step-list")
@@ -24,7 +24,7 @@ class TestUpload(LoggedInIntegrationTest):
 
     def test_upload_bigger_file(self):
         b = self.browser
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
 
         # Empty step list
         b.wait_for_element(".step-list")

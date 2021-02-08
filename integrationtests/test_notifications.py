@@ -8,7 +8,7 @@ class TestNotifications(LoggedInIntegrationTest):
         super().setUp()
 
         b = self.browser
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
 
         # wait for page load
         b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)

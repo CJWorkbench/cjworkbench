@@ -6,7 +6,7 @@ class TestPythonCode(LoggedInIntegrationTest):
         super().setUp()
 
         b = self.browser
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
 
         self.import_module("pythoncode")
 
