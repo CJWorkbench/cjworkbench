@@ -153,6 +153,71 @@ msgstr ""
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
+#. default-message: Workbench
+#: assets/js/Page/MainNav/MainNavHeader.js:14
+msgid "js.Page.MainNav.Header.brandName"
+msgstr ""
+
+#. default-message: Language
+#: assets/js/Page/MainNav/SetLocaleLinkLi.js:20
+msgid "js.Page.MainNav.SetLocaleLink.title"
+msgstr ""
+
+#. default-message: Billing
+#: assets/js/Page/MainNav/UserPaths.js:32
+msgid "js.Page.MainNav.billing.title"
+msgstr ""
+
+#. default-message: Example workflows
+#: assets/js/Page/MainNav/TopPaths.js:26
+msgid "js.Page.MainNav.examples.title"
+msgstr ""
+
+#. default-message: Intro to Data Journalism
+#: assets/js/Page/MainNav/TopPaths.js:42
+msgid "js.Page.MainNav.intro-to-data-journalism.title"
+msgstr ""
+
+#. default-message: Tutorials
+#: assets/js/Page/MainNav/TopPaths.js:37
+msgid "js.Page.MainNav.lessons.title"
+msgstr ""
+
+#. default-message: Log Out
+#: assets/js/Page/MainNav/LogoutLinkLi.js:20
+msgid "js.Page.MainNav.logout"
+msgstr ""
+
+#. default-message: Plan & Billing
+#: assets/js/Page/MainNav/UserPaths.js:26
+msgid "js.Page.MainNav.plan-and-billing.title"
+msgstr ""
+
+#. default-message: Plan
+#: assets/js/Page/MainNav/UserPaths.js:37
+msgid "js.Page.MainNav.plan.title"
+msgstr ""
+
+#. default-message: Sign in
+#: assets/js/Page/MainNav/UserPaths.js:14
+msgid "js.Page.MainNav.signIn.title"
+msgstr ""
+
+#. default-message: Training
+#: assets/js/Page/MainNav/TopPaths.js:31
+msgid "js.Page.MainNav.training.title"
+msgstr ""
+
+#. default-message: Shared with me
+#: assets/js/Page/MainNav/TopPaths.js:21
+msgid "js.Page.MainNav.workflows-shared-with-me.title"
+msgstr ""
+
+#. default-message: My workflows
+#: assets/js/Page/MainNav/TopPaths.js:16
+msgid "js.Page.MainNav.workflows.title"
+msgstr ""
+
 #. default-message: Only collaborators can view this report
 #: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
@@ -360,7 +425,7 @@ msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/WfHamburgerMenu.js:54
+#: assets/js/Page/MainNav/MainNavHeader.js:20 assets/js/WfHamburgerMenu.js:54
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -732,43 +797,67 @@ msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/Workflows/WorkflowContextMenu.js:40
+#: assets/js/Workflows/WorkflowContextMenu.js:49
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/Workflows/WorkflowContextMenu.js:35
+#: assets/js/Workflows/WorkflowContextMenu.js:45
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr ""
 
+#. default-message: Share
+#: assets/js/Workflows/WorkflowContextMenu.js:41
+msgid "js.Workflows.WorkflowContextMenu.share"
+msgstr ""
+
+#. default-message: Owner
+#: assets/js/Workflows/WorkflowList.js:83
+msgid "js.Workflows.WorkflowList.owner"
+msgstr ""
+
+#. default-message: Privacy
+#: assets/js/Workflows/WorkflowList.js:96
+msgid "js.Workflows.WorkflowList.privacy"
+msgstr ""
+
+#. default-message: Title
+#: assets/js/Workflows/WorkflowList.js:79
+msgid "js.Workflows.WorkflowList.title"
+msgstr ""
+
+#. default-message: Updated
+#: assets/js/Workflows/WorkflowList.js:92
+msgid "js.Workflows.WorkflowList.updated"
+msgstr ""
+
 #. default-message: Create your first workflow
-#: assets/js/Workflows/WorkflowLists.js:50
+#: assets/js/Workflows/OwnedWorkflowsMain.js:137
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr ""
 
 #. default-message: My workflows
-#: assets/js/Workflows/WorkflowLists.js:110
+#: assets/js/Workflows/OwnedWorkflowsMain.js:118
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr ""
 
-#. default-message: Recipes
-#: assets/js/Workflows/WorkflowLists.js:112
+#. default-message: Example workflows
+#: assets/js/Workflows/ExampleWorkflowsMain.js:10
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr ""
 
-#. As in 'Workflows shared with me'
-#. default-message: Shared with me
-#: assets/js/Workflows/WorkflowLists.js:111
+#. default-message: Workflows shared with me
+#: assets/js/Workflows/WorkflowsSharedWithMeMain.js:10
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr ""
 
-#. default-message: Publish new recipes via the Django admin
-#: assets/js/Workflows/WorkflowLists.js:75
+#. default-message: Publish workflows as examples using Django admin
+#: assets/js/Workflows/ExampleWorkflowsMain.js:14
 msgid "js.Workflows.WorkflowLists.publishNewRecipes"
 msgstr ""
 
 #. default-message: Workflows shared with you as collaborator will appear here
-#: assets/js/Workflows/WorkflowLists.js:63
+#: assets/js/Workflows/WorkflowsSharedWithMeMain.js:14
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
@@ -789,40 +878,23 @@ msgid "js.Workflows.WorkflowMetadata.update"
 msgstr ""
 
 #. default-message: private
-#: assets/js/Workflows/WorkflowMetadata.js:55
+#: assets/js/Workflows/Workflow.js:32 assets/js/Workflows/WorkflowMetadata.js:55
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
 #. default-message: public
-#: assets/js/Workflows/WorkflowMetadata.js:53
+#: assets/js/Workflows/Workflow.js:30 assets/js/Workflows/WorkflowMetadata.js:53
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Create Workflow
-#: assets/js/Workflows/index.js:205
+#: assets/js/Workflows/OwnedWorkflowsMain.js:123
 msgid "js.Workflows.createWorkflowButton"
 msgstr ""
 
 #. default-message: Permanently delete this workflow?
-#: assets/js/Workflows/index.js:92
+#: assets/js/Workflows/OwnedWorkflowsMain.js:99
 msgid "js.Workflows.delete.permanentyDeleteWarning"
-msgstr ""
-
-#. default-message: Learn how to work with data without coding
-#: assets/js/Workflows/index.js:202
-msgid "js.Workflows.learnHowToWorkWithData"
-msgstr ""
-
-#. This should be all-caps for styling reasons
-#. default-message: NEW
-#: assets/js/Workflows/index.js:195
-msgid "js.Workflows.new"
-msgstr ""
-
-#. This should be all-caps for styling reasons
-#. default-message: TRAINING
-#: assets/js/Workflows/index.js:199
-msgid "js.Workflows.training.title"
 msgstr ""
 
 #. default-message: Copy
@@ -2100,7 +2172,7 @@ msgid "js.settings.Billing.subscriptions.title"
 msgstr ""
 
 #. default-message: Billing
-#: assets/js/settings/BillingPage.js:24
+#: assets/js/settings/BillingPage.js:20
 msgid "js.settings.BillingPage.title"
 msgstr ""
 
@@ -2110,7 +2182,7 @@ msgid "js.settings.Plan.PlanTable.amount"
 msgstr ""
 
 #. default-message: Current plan
-#: assets/js/settings/Plan/PlanTable.js:41
+#: assets/js/settings/Plan/PlanTable.js:46
 msgid "js.settings.Plan.PlanTable.current"
 msgstr ""
 
@@ -2125,27 +2197,37 @@ msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr ""
 
 #. default-message: Undo history
-#: assets/js/settings/Plan/PlanTable.js:95
+#: assets/js/settings/Plan/PlanTable.js:117
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr ""
 
 #. default-message: {0} updates
-#: assets/js/settings/Plan/PlanTable.js:88
+#: assets/js/settings/Plan/PlanTable.js:110
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr ""
 
 #. default-message: Per day
-#: assets/js/settings/Plan/PlanTable.js:83
+#: assets/js/settings/Plan/PlanTable.js:105
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr ""
 
 #. default-message: Automatic updates
-#: assets/js/settings/Plan/PlanTable.js:82
+#: assets/js/settings/Plan/PlanTable.js:104
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr ""
 
+#. default-message: Sign in to use
+#: assets/js/settings/Plan/PlanTable.js:41
+msgid "js.settings.Plan.PlanTable.signInForFreePlan"
+msgstr ""
+
+#. default-message: Sign in to upgrade
+#: assets/js/settings/Plan/PlanTable.js:54
+msgid "js.settings.Plan.PlanTable.signInToSubscribe"
+msgstr ""
+
 #. default-message: Plan
-#: assets/js/settings/PlanPage.js:29
+#: assets/js/settings/PlanPage.js:25
 msgid "js.settings.PlanPage.title"
 msgstr ""
 
@@ -2531,8 +2613,7 @@ msgstr ""
 msgid "py.templates.course.workbenchTraining.title"
 msgstr ""
 
-#. This must be all-caps for styling reasons
-#. default-message: TUTORIALS
+#. default-message: Tutorials
 #: templates/course.html:15
 msgid "py.templates.course.tutorials.link"
 msgstr ""
