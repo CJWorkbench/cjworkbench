@@ -91,7 +91,7 @@ export default function PlanTable (props) {
                 user={user}
                 active={
                   activePlanIds.includes(plan.stripePriceId) ||
-                  (activePlanIds.length === 0 && plan.amount === 0 && user)
+                  Boolean(activePlanIds.length === 0 && plan.amount === 0 && user)
                 }
                 onClickSubscribe={onClickSubscribe}
               />
