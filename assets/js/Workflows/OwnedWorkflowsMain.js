@@ -1,7 +1,6 @@
-/* globals confirm */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Trans, t } from '@lingui/macro'
+import { Trans } from '@lingui/macro'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
 import CreateWorkflowButton from './CreateWorkflowButton'
 
@@ -94,24 +93,6 @@ export default function OwnedWorkflowsMain (props) {
     handleWorkflowDuplicated
   } = useWorkflowEdits(workflows)
 
-  const handleClickDeleteWorkflow = React.useCallback(id => {
-    if (!confirm(
-      t({ id: 'js.Workflows.delete.permanentyDeleteWarning', message: 'Permanently delete this workflow?' })
-    )) {
-      return
-    }
-
-    handleWorkflowChanging(id, { isDeleted: true })
-    api.deleteWorkflow(id).then(() => handleWorkflowChanged(id))
-  }, [api, handleWorkflowChanging, handleWorkflowChanged])
-
-  const handleClickDuplicateWorkflow = React.useCallback(id => {
-    handleWorkflowDuplicating(id, {})
-    api.duplicateWorkflow(id).then(json => {
-      handleWorkflowDuplicated(id, json)
-    })
-  }, [api, handleWorkflowDuplicating, handleWorkflowDuplicated])
-
   return (
     <main className='workflows'>
       <header>
@@ -125,9 +106,9 @@ export default function OwnedWorkflowsMain (props) {
           <WorkflowList
             className='owned'
             workflows={editedWorkflows}
-            onClickDeleteWorkflow={handleClickDeleteWorkflow}
-            onClickDuplicateWorkflow={handleClickDuplicateWorkflow}
-            apiForShareModal={api}
+            api={api}
+            onWorkflowDuplicating={handleWorkflowDuplicating}
+            onWorkflowDuplicated={handleWorkflowDuplicated}
             onWorkflowChanging={handleWorkflowChanging}
             onWorkflowChanged={handleWorkflowChanged}
           />

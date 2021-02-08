@@ -45,14 +45,14 @@ export default function WorkflowList (props) {
   const {
     className,
     workflows,
-    onClickDeleteWorkflow = null,
-    onClickDuplicateWorkflow = null,
-    apiForShareModal = null,
+    api = null,
     onWorkflowChanging = null,
-    onWorkflowChanged = null
+    onWorkflowChanged = null,
+    onWorkflowDuplicating = null,
+    onWorkflowDuplicated = null
   } = props
   const [sort, setSort] = React.useState({ key: 'last_update', ascending: false })
-  const showActions = onClickDeleteWorkflow && onClickDuplicateWorkflow && apiForShareModal && true
+  const showActions = Boolean(api)
   const sortedWorkflows = React.useMemo(() => {
     const TextComparator = new Intl.Collator() // locale alphabetical
     const { key, ascending } = sort
@@ -105,11 +105,11 @@ export default function WorkflowList (props) {
             <Workflow
               key={workflow.id}
               workflow={workflow}
-              onClickDeleteWorkflow={onClickDeleteWorkflow}
-              onClickDuplicateWorkflow={onClickDuplicateWorkflow}
-              apiForShareModal={apiForShareModal}
+              api={api}
               onWorkflowChanging={onWorkflowChanging}
               onWorkflowChanged={onWorkflowChanged}
+              onWorkflowDuplicating={onWorkflowDuplicating}
+              onWorkflowDuplicated={onWorkflowDuplicated}
             />
           ))}
         </tbody>
@@ -122,11 +122,15 @@ WorkflowList.propTypes = {
   className: PropTypes.string.isRequired,
   onClickDeleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   onClickDuplicateWorkflow: PropTypes.func, // func(id) => undefined, or null if user must _open_ to duplicate
-  apiForShareModal: PropTypes.shape({
+  api: PropTypes.shape({
+    deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
+    duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, canEdit) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
     setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
-  }), // or null if user is not allowed to change sharing settings
-  onWorkflowChanging: PropTypes.func, // func(id, { k: v, ...}) => undefined, or null if caller doesn't care
-  onWorkflowChanged: PropTypes.func // func(id) => undefined, or null if caller doesn't care
+  }), // null if editing is not allowed
+  onWorkflowChanging: PropTypes.func, // func(id, {k: v, ...}) => undefined, or null if no api
+  onWorkflowChanged: PropTypes.func, // func(id) => undefined, or null if no api
+  onWorkflowDuplicating: PropTypes.func, // func(id, {k: v, ...}) => undefined, or null if no api
+  onWorkflowDuplicated: PropTypes.func // func(id) => undefined, or null if no api
 }

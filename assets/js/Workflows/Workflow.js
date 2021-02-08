@@ -10,13 +10,15 @@ export default function Workflow (props) {
     workflow,
     onClickDeleteWorkflow = null,
     onClickDuplicateWorkflow = null,
-    apiForShareModal = null,
+    api = null,
     onWorkflowChanging = null,
     onWorkflowChanged = null,
+    onWorkflowDuplicating = null,
+    onWorkflowDuplicated = null,
     now = new Date().toISOString()
   } = props
   const timeAgo = timeDifference(workflow.last_update, now, i18n)
-  const showActions = onClickDeleteWorkflow && onClickDuplicateWorkflow && apiForShareModal && true
+  const showActions = Boolean(api)
 
   return (
     <tr className={workflow.nPendingChanges ? 'changing' : null}>
@@ -36,11 +38,11 @@ export default function Workflow (props) {
         <td className='actions'>
           <WorkflowContextMenu
             workflow={workflow}
-            onClickDuplicateWorkflow={onClickDuplicateWorkflow}
-            onClickDeleteWorkflow={onClickDeleteWorkflow}
-            apiForShareModal={apiForShareModal}
+            api={api}
             onWorkflowChanging={onWorkflowChanging}
             onWorkflowChanged={onWorkflowChanged}
+            onWorkflowDuplicating={onWorkflowDuplicating}
+            onWorkflowDuplicated={onWorkflowDuplicated}
           />
         </td>
       ) : null}
@@ -56,7 +58,9 @@ Workflow.propTypes = {
   now: PropTypes.string, // or null for current ISO8601 date (prop is useful for testing snapshots)
   onClickDeleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   onClickDuplicateWorkflow: PropTypes.func, // func(id) => undefined, or null if user must _open_ to duplicate
-  apiForShareModal: PropTypes.shape({
+  api: PropTypes.shape({
+    deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
+    duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, canEdit) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
     setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]

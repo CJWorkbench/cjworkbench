@@ -38,7 +38,7 @@ function PlanTh (props) {
         ) : null}
         {!user && !plan.amount ? (
           <a href='/account/login/?next=%2Fsettings%2Fplan'>
-            <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>Sign in to use</Trans>
+            <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>Choose {plan.name}</Trans>
           </a>
         ) : null}
         {active ? (
@@ -51,7 +51,7 @@ function PlanTh (props) {
             <Subscribe onClick={onClickSubscribe} />
           ) : (
             <a href='/account/login/?next=%2Fsettings%2Fplan'>
-              <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>Sign in to upgrade</Trans>
+              <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>Choose {plan.name}</Trans>
             </a>
           )
         ) : null}
