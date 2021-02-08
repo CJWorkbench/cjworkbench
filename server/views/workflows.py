@@ -113,7 +113,11 @@ def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
     ]
 
     init_state = {
-        "loggedInUser": jsonize_user(request.user, ctx.user_profile),
+        "loggedInUser": (
+            None
+            if request.user.is_anonymous
+            else jsonize_user(request.user, ctx.user_profile)
+        ),
         "workflows": json_workflows,
     }
 
@@ -139,7 +143,7 @@ def shared_with_me(request: HttpRequest):
     return _render_workflows(request, acl__email=request.user.email)
 
 
-@login_required
+# Not login_required: even guests can view recipes
 def examples(request: HttpRequest):
     return _render_workflows(request, in_all_users_workflow_lists=True)
 
