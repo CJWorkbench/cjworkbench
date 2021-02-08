@@ -1,3 +1,5 @@
+import logging
+
 import httpx
 from django.contrib.auth.models import User
 
@@ -26,21 +28,23 @@ class UploadTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step = workflow.tabs.first().steps.create(
             order=0, slug="step-1", module_id_name="x"
         )
-        response = self.run_handler(
-            create_upload,
-            user=user,
-            workflow=workflow,
-            stepSlug="step-1",
-            filename="test.csv",
-            size=1234,
-        )
+        with self.assertLogs("httpx._client", level=logging.DEBUG):
+            response = self.run_handler(
+                create_upload,
+                user=user,
+                workflow=workflow,
+                stepSlug="step-1",
+                filename="test.csv",
+                size=1234,
+            )
         self.assertEqual(response.error, "")
         # Test that response has tusUploadUrl
         tus_upload_url = response.data["tusUploadUrl"]
         self.assertRegex(tus_upload_url, "http://testtusd:8080/files/[0-9a-z]+")
 
         # Upload was created on tusd
-        response = httpx.head(tus_upload_url, headers={"Tus-Resumable": "1.0.0"})
+        with self.assertLogs("httpx._client", level=logging.DEBUG):
+            response = httpx.head(tus_upload_url, headers={"Tus-Resumable": "1.0.0"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Tus-Resumable"], "1.0.0")
         self.assertEqual(response.headers["Upload-Length"], "1234")
