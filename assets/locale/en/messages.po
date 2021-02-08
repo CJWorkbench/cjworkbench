@@ -1847,11 +1847,11 @@ msgstr "Automatic updates"
 
 #: assets/js/settings/Plan/PlanTable.js:41
 msgid "js.settings.Plan.PlanTable.signInForFreePlan"
-msgstr "Sign in to use"
+msgstr "Choose {0}"
 
 #: assets/js/settings/Plan/PlanTable.js:54
 msgid "js.settings.Plan.PlanTable.signInToSubscribe"
-msgstr "Sign in to upgrade"
+msgstr "Choose {0}"
 
 #: assets/js/settings/PlanPage.js:25
 msgid "js.settings.PlanPage.title"
