@@ -10,8 +10,17 @@ class WorkflowAdmin(admin.ModelAdmin):
     # deletes files from S3.
     actions = None
 
-    search_fields = ("name", "owner__username", "owner__email")
-    list_filter = ("owner",)
+    search_fields = (
+        "name",
+        "owner__username",
+        "owner__email",
+    )
+    list_filter = (
+        "owner",
+        "public",
+        "example",
+        "in_all_users_workflow_lists",
+    )
 
     def get_deleted_objects(self, objs, request):
         """Allow deleting Workflows by hiding Delta from confirmation page.
