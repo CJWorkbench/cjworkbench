@@ -92,7 +92,7 @@ def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
         return dt_or_none.isoformat() + "Z"
 
 
-def jsonize_user(user: User, user_profile: Optional[User]) -> Dict[str, Any]:
+def jsonize_user(user: User, user_profile: Optional["UserProfile"]) -> Dict[str, Any]:
     return {
         "display_name": user_display(user),
         "email": user.email,

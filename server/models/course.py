@@ -20,6 +20,10 @@ class Course:
     Ordering means `lessons.values()` returns values in order.
     """
 
+    @property
+    def href(self) -> str:
+        return "/".join(("/courses", self.locale_id, self.slug))
+
     @classmethod
     def load_from_path(cls, path: Path) -> Course:
         """

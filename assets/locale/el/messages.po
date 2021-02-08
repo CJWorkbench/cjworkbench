@@ -154,11 +154,11 @@ msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμ�
 
 #: assets/js/Page/MainNav/MainNavHeader.js:14
 msgid "js.Page.MainNav.Header.brandName"
-msgstr ""
+msgstr "Workbench"
 
 #: assets/js/Page/MainNav/SetLocaleLinkLi.js:20
 msgid "js.Page.MainNav.SetLocaleLink.title"
-msgstr ""
+msgstr "Γλώσσα"
 
 #: assets/js/Page/MainNav/UserPaths.js:32
 msgid "js.Page.MainNav.billing.title"
@@ -166,19 +166,15 @@ msgstr ""
 
 #: assets/js/Page/MainNav/TopPaths.js:26
 msgid "js.Page.MainNav.examples.title"
-msgstr ""
-
-#: assets/js/Page/MainNav/TopPaths.js:42
-msgid "js.Page.MainNav.intro-to-data-journalism.title"
-msgstr ""
+msgstr "Συνταγές"
 
 #: assets/js/Page/MainNav/TopPaths.js:37
 msgid "js.Page.MainNav.lessons.title"
-msgstr ""
+msgstr "Εκπαίδευση"
 
 #: assets/js/Page/MainNav/LogoutLinkLi.js:20
 msgid "js.Page.MainNav.logout"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: assets/js/Page/MainNav/UserPaths.js:26
 msgid "js.Page.MainNav.plan-and-billing.title"
@@ -190,11 +186,11 @@ msgstr ""
 
 #: assets/js/Page/MainNav/UserPaths.js:14
 msgid "js.Page.MainNav.signIn.title"
-msgstr ""
+msgstr "Συνδεθείτε"
 
 #: assets/js/Page/MainNav/TopPaths.js:31
 msgid "js.Page.MainNav.training.title"
-msgstr ""
+msgstr "Εκπαίδευση"
 
 #: assets/js/Page/MainNav/TopPaths.js:21
 msgid "js.Page.MainNav.workflows-shared-with-me.title"
@@ -202,7 +198,7 @@ msgstr ""
 
 #: assets/js/Page/MainNav/TopPaths.js:16
 msgid "js.Page.MainNav.workflows.title"
-msgstr ""
+msgstr "Οι ροές εργασιών μου"
 
 #: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
@@ -660,21 +656,6 @@ msgstr "Κοινοποίηση"
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Σύνδεση"
 
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:53
-msgid "js.Workflows.NavBar.links.settings"
-msgstr ""
-
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:49
-msgid "js.Workflows.NavBar.links.training"
-msgstr "ΕΚΠΑΙΔΕΥΣΗ"
-
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:46
-msgid "js.Workflows.NavBar.links.workflows"
-msgstr "ΡΟΕΣ ΕΡΓΑΣΙΩΝ"
-
 #: assets/js/Workflows/SortMenu.js:35
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
 msgstr "Αλφαβητική"
@@ -697,15 +678,19 @@ msgstr "Αντίστροφη αλφαβητική"
 msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr "Ταξινόμηση"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:49
+#: assets/js/Workflows/WorkflowContextMenu.js:63
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr "Διαγραφή"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:45
+#: assets/js/Workflows/WorkflowContextMenu.js:59
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr "Δημιουργία αντιγράφου"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:41
+#: assets/js/Workflows/WorkflowContextMenu.js:48
+msgid "js.Workflows.WorkflowContextMenu.hoverText"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowContextMenu.js:55
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
@@ -725,11 +710,11 @@ msgstr ""
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:137
+#: assets/js/Workflows/OwnedWorkflowsMain.js:118
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr "Δημιουργήστε την πρώτη σας ροή εργασιών"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:118
+#: assets/js/Workflows/OwnedWorkflowsMain.js:99
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
@@ -752,34 +737,19 @@ msgstr "Δημοσίευση νέων συνταγών μέσω του διαχ�
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr "Οι ροές εργασιών στις οποίες έχετε συνεργαστεί θα εμφανίζονται εδώ"
 
-#: assets/js/Workflows/WorkflowMetadata.js:49
-msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
-msgstr "Αλλαγή απορρήτου"
-
-#: assets/js/Workflows/WorkflowMetadata.js:37
-msgid "js.Workflows.WorkflowMetadata.owner"
-msgstr "από {owner}"
-
-#. The parameter will contain a time difference (i.e. something like '5h ago')
-#: assets/js/Workflows/WorkflowMetadata.js:65
-msgid "js.Workflows.WorkflowMetadata.update"
-msgstr "Ενημερώθηκε {timeAgo}"
-
-#: assets/js/Workflows/Workflow.js:32
-#: assets/js/Workflows/WorkflowMetadata.js:55
+#: assets/js/Workflows/Workflow.js:35
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr "ιδιωτική"
 
-#: assets/js/Workflows/Workflow.js:30
-#: assets/js/Workflows/WorkflowMetadata.js:53
+#: assets/js/Workflows/Workflow.js:33
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr "δημόσια"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:123
+#: assets/js/Workflows/OwnedWorkflowsMain.js:104
 msgid "js.Workflows.createWorkflowButton"
 msgstr "Δημιουργία ροής εργασιών"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:99
+#: assets/js/Workflows/WorkflowContextMenu.js:22
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Να διαγραφεί μόνιμα αυτή η ροή εργασιών;"
 

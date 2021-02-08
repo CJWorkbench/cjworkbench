@@ -251,7 +251,15 @@ def _render_course(request, course, lesson_url_prefix):
         request,
         "course.html",
         {
-            "initState": json.dumps({"loggedInUser": logged_in_user}),
+            "initState": json.dumps(
+                {
+                    "loggedInUser": logged_in_user,
+                    "courses": [
+                        dict(href=course.href, title=course.title)
+                        for course in AllCoursesByLocale.get(request.locale_id, [])
+                    ],
+                }
+            ),
             "course": course,
             "courses": courses,
             "lessons": list(course.lessons.values()),

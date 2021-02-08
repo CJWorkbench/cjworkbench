@@ -58,8 +58,27 @@ main.workflows {
       }
     }
 
-    td {
-      border-bottom: 1px solid $item-border;
+    tbody {
+      td {
+        border-bottom: 1px solid $item-border;
+        padding: 0;
+
+        a {
+          display: block;
+          height: 100%;
+          color: inherit;
+          text-decoration: none;
+          padding: rem(1.25) rem(1) rem(1) rem(1);
+        }
+      }
+
+      td.title a {
+        padding-left: 0;
+      }
+
+      tr:hover td a {
+        background: $hover-background;
+      }
     }
 
     td, th {
@@ -70,10 +89,10 @@ main.workflows {
       }
 
       &.actions {
+        // .actions is present when workflows are editable
         // don't affect height ... and take minimal width
         width: 1px;
-        padding-top: 0;
-        padding-bottom: 0;
+        padding: 0 0 0 rem(1);
       }
 
       &.owner, &.updated, &.privacy {
@@ -86,17 +105,6 @@ main.workflows {
     }
 
     td.title {
-      padding: 0;
-
-      a {
-        color: inherit;
-        display: block;
-        padding: rem(1.25) 0 rem(1) 0;
-      }
-    }
-
-    td.actions {
-      // .actions is present when workflows are editable
       padding: 0;
     }
   }

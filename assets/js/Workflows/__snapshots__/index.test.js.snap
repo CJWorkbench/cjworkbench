@@ -177,19 +177,31 @@ exports[`Workflow list page renders Examples correctly 1`] = `
               <td
                 class="owner"
               >
-                Workbench
+                <a
+                  href="/workflows/10"
+                >
+                  Workbench
+                </a>
               </td>
               <td
                 class="updated"
               >
-                <time>
-                  10y ago
-                </time>
+                <a
+                  href="/workflows/10"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
               </td>
               <td
                 class="privacy"
               >
-                private
+                <a
+                  href="/workflows/10"
+                >
+                  private
+                </a>
               </td>
             </tr>
           </tbody>
@@ -394,19 +406,31 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
               <td
                 class="owner"
               >
-                Fred Frederson
+                <a
+                  href="/workflows/3"
+                >
+                  Fred Frederson
+                </a>
               </td>
               <td
                 class="updated"
               >
-                <time>
-                  10y ago
-                </time>
+                <a
+                  href="/workflows/3"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
               </td>
               <td
                 class="privacy"
               >
-                private
+                <a
+                  href="/workflows/3"
+                >
+                  private
+                </a>
               </td>
               <td
                 class="actions"
@@ -437,19 +461,31 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
               <td
                 class="owner"
               >
-                Fred Frederson
+                <a
+                  href="/workflows/1"
+                >
+                  Fred Frederson
+                </a>
               </td>
               <td
                 class="updated"
               >
-                <time>
-                  10y ago
-                </time>
+                <a
+                  href="/workflows/1"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
               </td>
               <td
                 class="privacy"
               >
-                public
+                <a
+                  href="/workflows/1"
+                >
+                  public
+                </a>
               </td>
               <td
                 class="actions"
@@ -480,19 +516,31 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
               <td
                 class="owner"
               >
-                Fred Frederson
+                <a
+                  href="/workflows/2"
+                >
+                  Fred Frederson
+                </a>
               </td>
               <td
                 class="updated"
               >
-                <time>
-                  10y ago
-                </time>
+                <a
+                  href="/workflows/2"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
               </td>
               <td
                 class="privacy"
               >
-                private
+                <a
+                  href="/workflows/2"
+                >
+                  private
+                </a>
               </td>
               <td
                 class="actions"
@@ -695,19 +743,31 @@ exports[`Workflow list page renders Shared correctly 1`] = `
               <td
                 class="owner"
               >
-                Sally Sallerson
+                <a
+                  href="/workflows/8"
+                >
+                  Sally Sallerson
+                </a>
               </td>
               <td
                 class="updated"
               >
-                <time>
-                  10y ago
-                </time>
+                <a
+                  href="/workflows/8"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
               </td>
               <td
                 class="privacy"
               >
-                public
+                <a
+                  href="/workflows/8"
+                >
+                  public
+                </a>
               </td>
             </tr>
             <tr>
@@ -723,19 +783,31 @@ exports[`Workflow list page renders Shared correctly 1`] = `
               <td
                 class="owner"
               >
-                John Johnson
+                <a
+                  href="/workflows/7"
+                >
+                  John Johnson
+                </a>
               </td>
               <td
                 class="updated"
               >
-                <time>
-                  10y ago
-                </time>
+                <a
+                  href="/workflows/7"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
               </td>
               <td
                 class="privacy"
               >
-                private
+                <a
+                  href="/workflows/7"
+                >
+                  private
+                </a>
               </td>
             </tr>
           </tbody>

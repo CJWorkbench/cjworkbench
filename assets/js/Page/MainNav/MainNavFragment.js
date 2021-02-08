@@ -5,7 +5,7 @@ import TopPaths from './TopPaths'
 import UserPaths from './UserPaths'
 
 export default function MainNavFragment (props) {
-  const { currentPath, user } = props
+  const { courses, currentPath, user } = props
   const [open, toggleOpen] = React.useReducer(open => !open, false)
 
   return (
@@ -15,7 +15,7 @@ export default function MainNavFragment (props) {
         onToggleOpen={toggleOpen}
       />
       <div className={`details${open ? ' open' : ''}`}>
-        <TopPaths currentPath={currentPath} />
+        <TopPaths courses={courses} currentPath={currentPath} />
         <UserPaths user={user} currentPath={currentPath} />
       </div>
     </>
@@ -23,5 +23,6 @@ export default function MainNavFragment (props) {
 }
 MainNavFragment.propTypes = {
   currentPath: PropTypes.string.isRequired,
+  courses: PropTypes.array, // or null, for now
   user: PropTypes.object // or null
 }

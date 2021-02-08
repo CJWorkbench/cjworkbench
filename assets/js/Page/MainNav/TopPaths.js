@@ -4,7 +4,7 @@ import { t } from '@lingui/macro'
 import LinkLi from './LinkLi'
 
 export default function TopPaths (props) {
-  const { currentPath } = props
+  const { courses = [], currentPath } = props
 
   const isLessonsOpen = /^\/(?:lessons|courses)/.test(currentPath)
 
@@ -36,16 +36,25 @@ export default function TopPaths (props) {
             isOpen={/^\/lessons/.test(currentPath)}
             title={t({ id: 'js.Page.MainNav.lessons.title', message: 'Tutorials' })}
           />
-          <LinkLi
-            href='/courses/en/intro-to-data-journalism'
-            isOpen={/^\/courses/.test(currentPath)}
-            title={t({ id: 'js.Page.MainNav.intro-to-data-journalism.title', message: 'Intro to Data Journalism' })}
-          />
+          {courses.map(({ href, title }) => (
+            <LinkLi
+              key={href}
+              href={href}
+              isOpen={currentPath.startsWith(href)}
+              title={title}
+            />
+          ))}
         </ul>
       </LinkLi>
     </ul>
   )
 }
 TopPaths.propTypes = {
+  courses: PropTypes.arrayOf(
+    PropTypes.shape({
+      href: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired
+    }).isRequired
+  ), // or null, for now
   currentPath: PropTypes.string.isRequired
 }

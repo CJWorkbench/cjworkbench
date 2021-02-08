@@ -21,16 +21,20 @@ export default function Workflow (props) {
   return (
     <tr className={workflow.nPendingChanges ? 'changing' : null}>
       <td className='title'><a href={`/workflows/${workflow.id}`}>{workflow.name}</a></td>
-      <td className='owner'>{workflow.owner_name}</td>
+      <td className='owner'><a href={`/workflows/${workflow.id}`}>{workflow.owner_name}</a></td>
       <td className='updated'>
-        <time dateTime={workflow.last_updated}>{timeAgo}</time>
+        <a href={`/workflows/${workflow.id}`}>
+          <time dateTime={workflow.last_updated}>{timeAgo}</time>
+        </a>
       </td>
       <td className='privacy'>
-        {workflow.public ? (
-          <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
-        ) : (
-          <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>
-        )}
+        <a href={`/workflows/${workflow.id}`}>
+          {workflow.public ? (
+            <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
+          ) : (
+            <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>
+          )}
+        </a>
       </td>
       {showActions ? (
         <td className='actions'>

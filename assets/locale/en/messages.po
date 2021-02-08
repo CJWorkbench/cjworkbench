@@ -158,10 +158,6 @@ msgstr "Billing"
 msgid "js.Page.MainNav.examples.title"
 msgstr "Example workflows"
 
-#: assets/js/Page/MainNav/TopPaths.js:42
-msgid "js.Page.MainNav.intro-to-data-journalism.title"
-msgstr "Intro to Data Journalism"
-
 #: assets/js/Page/MainNav/TopPaths.js:37
 msgid "js.Page.MainNav.lessons.title"
 msgstr "Tutorials"
@@ -632,21 +628,6 @@ msgstr "Share"
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:53
-msgid "js.Workflows.NavBar.links.settings"
-msgstr "SETTINGS"
-
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:49
-msgid "js.Workflows.NavBar.links.training"
-msgstr "TRAINING"
-
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#: assets/js/Workflows/Navbar.js:46
-msgid "js.Workflows.NavBar.links.workflows"
-msgstr "WORKFLOWS"
-
 #: assets/js/Workflows/SortMenu.js:35
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
 msgstr "Alphabetical"
@@ -669,15 +650,19 @@ msgstr "Reverse alphabetical"
 msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr "Sort"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:49
+#: assets/js/Workflows/WorkflowContextMenu.js:63
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr "Delete"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:45
+#: assets/js/Workflows/WorkflowContextMenu.js:59
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr "Duplicate"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:41
+#: assets/js/Workflows/WorkflowContextMenu.js:48
+msgid "js.Workflows.WorkflowContextMenu.hoverText"
+msgstr "menu"
+
+#: assets/js/Workflows/WorkflowContextMenu.js:55
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr "Share"
 
@@ -697,11 +682,11 @@ msgstr "Title"
 msgid "js.Workflows.WorkflowList.updated"
 msgstr "Updated"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:137
+#: assets/js/Workflows/OwnedWorkflowsMain.js:118
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr "Create your first workflow"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:118
+#: assets/js/Workflows/OwnedWorkflowsMain.js:99
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr "My workflows"
 
@@ -721,34 +706,19 @@ msgstr "Publish workflows as examples using Django admin"
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr "Workflows shared with you as collaborator will appear here"
 
-#: assets/js/Workflows/WorkflowMetadata.js:49
-msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
-msgstr "Change privacy"
-
-#: assets/js/Workflows/WorkflowMetadata.js:37
-msgid "js.Workflows.WorkflowMetadata.owner"
-msgstr "by {owner}"
-
-#. The parameter will contain a time difference (i.e. something like '5h ago')
-#: assets/js/Workflows/WorkflowMetadata.js:65
-msgid "js.Workflows.WorkflowMetadata.update"
-msgstr "Updated {timeAgo}"
-
-#: assets/js/Workflows/Workflow.js:32
-#: assets/js/Workflows/WorkflowMetadata.js:55
+#: assets/js/Workflows/Workflow.js:35
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr "private"
 
-#: assets/js/Workflows/Workflow.js:30
-#: assets/js/Workflows/WorkflowMetadata.js:53
+#: assets/js/Workflows/Workflow.js:33
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr "public"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:123
+#: assets/js/Workflows/OwnedWorkflowsMain.js:104
 msgid "js.Workflows.createWorkflowButton"
 msgstr "Create Workflow"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:99
+#: assets/js/Workflows/WorkflowContextMenu.js:22
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Permanently delete this workflow?"
 

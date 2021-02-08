@@ -173,11 +173,6 @@ msgstr ""
 msgid "js.Page.MainNav.examples.title"
 msgstr ""
 
-#. default-message: Intro to Data Journalism
-#: assets/js/Page/MainNav/TopPaths.js:42
-msgid "js.Page.MainNav.intro-to-data-journalism.title"
-msgstr ""
-
 #. default-message: Tutorials
 #: assets/js/Page/MainNav/TopPaths.js:37
 msgid "js.Page.MainNav.lessons.title"
@@ -751,24 +746,6 @@ msgstr ""
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#. default-message: SETTINGS
-#: assets/js/Workflows/Navbar.js:53
-msgid "js.Workflows.NavBar.links.settings"
-msgstr ""
-
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#. default-message: TRAINING
-#: assets/js/Workflows/Navbar.js:49
-msgid "js.Workflows.NavBar.links.training"
-msgstr ""
-
-#. This is used in navigation bar. It should be all-caps for styling reasons.
-#. default-message: WORKFLOWS
-#: assets/js/Workflows/Navbar.js:46
-msgid "js.Workflows.NavBar.links.workflows"
-msgstr ""
-
 #. default-message: Alphabetical
 #: assets/js/Workflows/SortMenu.js:35
 msgid "js.Workflows.SortMenu.alphabetical.dropdownItem"
@@ -797,17 +774,22 @@ msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/Workflows/WorkflowContextMenu.js:49
+#: assets/js/Workflows/WorkflowContextMenu.js:63
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/Workflows/WorkflowContextMenu.js:45
+#: assets/js/Workflows/WorkflowContextMenu.js:59
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr ""
 
+#. default-message: menu
+#: assets/js/Workflows/WorkflowContextMenu.js:48
+msgid "js.Workflows.WorkflowContextMenu.hoverText"
+msgstr ""
+
 #. default-message: Share
-#: assets/js/Workflows/WorkflowContextMenu.js:41
+#: assets/js/Workflows/WorkflowContextMenu.js:55
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
@@ -832,12 +814,12 @@ msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
 #. default-message: Create your first workflow
-#: assets/js/Workflows/OwnedWorkflowsMain.js:137
+#: assets/js/Workflows/OwnedWorkflowsMain.js:118
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr ""
 
 #. default-message: My workflows
-#: assets/js/Workflows/OwnedWorkflowsMain.js:118
+#: assets/js/Workflows/OwnedWorkflowsMain.js:99
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr ""
 
@@ -861,39 +843,23 @@ msgstr ""
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
-#. default-message: Change privacy
-#: assets/js/Workflows/WorkflowMetadata.js:49
-msgid "js.Workflows.WorkflowMetadata.changePrivacy.button"
-msgstr ""
-
-#. default-message: by {owner}
-#: assets/js/Workflows/WorkflowMetadata.js:37
-msgid "js.Workflows.WorkflowMetadata.owner"
-msgstr ""
-
-#. The parameter will contain a time difference (i.e. something like '5h ago')
-#. default-message: Updated {timeAgo}
-#: assets/js/Workflows/WorkflowMetadata.js:65
-msgid "js.Workflows.WorkflowMetadata.update"
-msgstr ""
-
 #. default-message: private
-#: assets/js/Workflows/Workflow.js:32 assets/js/Workflows/WorkflowMetadata.js:55
+#: assets/js/Workflows/Workflow.js:35
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
 #. default-message: public
-#: assets/js/Workflows/Workflow.js:30 assets/js/Workflows/WorkflowMetadata.js:53
+#: assets/js/Workflows/Workflow.js:33
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Create Workflow
-#: assets/js/Workflows/OwnedWorkflowsMain.js:123
+#: assets/js/Workflows/OwnedWorkflowsMain.js:104
 msgid "js.Workflows.createWorkflowButton"
 msgstr ""
 
 #. default-message: Permanently delete this workflow?
-#: assets/js/Workflows/OwnedWorkflowsMain.js:99
+#: assets/js/Workflows/WorkflowContextMenu.js:22
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr ""
 

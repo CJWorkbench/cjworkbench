@@ -1,5 +1,7 @@
+from django.contrib.auth.models import AnonymousUser
 from django.template.response import TemplateResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
+
 from cjwstate.models import Step
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from server.serializers import (
@@ -31,7 +33,7 @@ def embed(request, step_id):
 
     if step:
         ctx = JsonizeContext(
-            user=None,
+            user=AnonymousUser(),
             user_profile=None,
             session=None,
             locale_id=request.locale_id,
