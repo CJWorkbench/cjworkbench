@@ -23,7 +23,7 @@ function formatMaxDeltaAge (nDays) {
 }
 
 function PlanTh (props) {
-  const { plan, active, onClickSubscribe } = props
+  const { plan, active, onClickSubscribe, user } = props
 
   return (
     <th className={active ? 'active' : ''}>
@@ -36,30 +36,47 @@ function PlanTh (props) {
             </Trans>
           </div>
         ) : null}
+        {!user && !plan.amount ? (
+          <a href='/account/login/?next=%2Fsettings%2Fplan'>
+            <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>Sign in to use</Trans>
+          </a>
+        ) : null}
         {active ? (
           <div className='current'>
             <Trans id='js.settings.Plan.PlanTable.current'>Current plan</Trans>
           </div>
         ) : null}
-        {onClickSubscribe ? (
-          <Subscribe onClick={onClickSubscribe} />
+        {plan.amount && !active ? (
+          user ? (
+            <Subscribe onClick={onClickSubscribe} />
+          ) : (
+            <a href='/account/login/?next=%2Fsettings%2Fplan'>
+              <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>Sign in to upgrade</Trans>
+            </a>
+          )
         ) : null}
       </div>
     </th>
   )
 }
 PlanTh.propTypes = {
-  onClickSubscribe: PropTypes.func, // func() => undefined ... or null if can't subscribe
+  onClickSubscribe: PropTypes.func.isRequired, // func() => undefined
   plan: PropTypes.shape({
     name: PropTypes.string.isRequired,
     amount: PropTypes.number.isRequired,
     currency: PropTypes.string.isRequired
   }).isRequired,
+  user: PropTypes.object, // or null if not signed in
   active: PropTypes.bool.isRequired
 }
 
 export default function PlanTable (props) {
-  const { plans, activePlanIds, onClickSubscribe } = props
+  const { plans, onClickSubscribe, user } = props
+
+  const activePlanIds = React.useMemo(
+    () => user ? user.subscribedPlans.map(p => p.stripePriceId) : [],
+    [user]
+  )
 
   return (
     <div className='plan-table'>
@@ -71,8 +88,12 @@ export default function PlanTable (props) {
               <PlanTh
                 key={plan.stripePriceId}
                 plan={plan}
-                active={activePlanIds.includes(plan.stripePriceId) || (plan.stripePriceId === null && activePlanIds.length === 0)}
-                onClickSubscribe={activePlanIds.length > 0 || plan.stripePriceId === null ? null : onClickSubscribe}
+                user={user}
+                active={
+                  activePlanIds.includes(plan.stripePriceId) ||
+                  (activePlanIds.length === 0 && plan.amount === 0 && user)
+                }
+                onClickSubscribe={onClickSubscribe}
               />
             ))}
           </tr>
@@ -112,5 +133,11 @@ PlanTable.propTypes = {
     PropTypes.shape({
     }).isRequired
   ).isRequired,
-  activePlanIds: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+  user: PropTypes.shape({
+    subscribedPlans: PropTypes.arrayOf(
+      PropTypes.shape({
+        stripePriceId: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired
+  }) // or null for anonymous
 }

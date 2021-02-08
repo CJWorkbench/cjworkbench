@@ -5,13 +5,37 @@ nav.main-nav {
   width: 100%;
   z-index: $zindex-fixed;
 
-  &:not(.open)>ul {
-    // On mobile, we hide everything but the logo unless the user opens the menu
+  div.details {
     display: none;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding-bottom: rem(.75);
+
+    &.open {
+      display: flex;
+    }
 
     @include media-when-we-pin-main-nav-sidebar {
-      display: block;
+      display: flex;
+
+      ul:first-child {
+        // the first <ul> stretches to the bottom of the page
+        flex: 1 1 auto;
+      }
     }
+  }
+
+  div.user-paths {
+    margin: rem(1) 0 0;
+    padding-top: rem(.75);
+    border-top: 1px solid $item-border;
+  }
+
+  h3.display-name {
+    margin: 0;
+    padding: rem(1) $main-nav-padding rem(.75);
+    font: inherit;
+    font-weight: bold;
   }
 
   ul {
@@ -37,16 +61,6 @@ nav.main-nav {
     li li a {
       padding-left: 2 * $main-nav-padding;
     }
-
-    border-bottom: 1px solid $item-border;
-    @include media-when-we-pin-main-nav-sidebar {
-      border-bottom: 0; // there's a big gap between them anyway
-    }
-  }
-
-  ul:last-child {
-    border-bottom: 0;
-    padding-bottom: rem(.75);
   }
 
   form.hidden {
@@ -61,15 +75,6 @@ nav.main-nav {
     left: 0;
     width: $main-nav-sidebar-width;
     height: 100vh;
-
-    ul {
-      display: block;
-    }
-
-    header + ul {
-      // the first <ul> stretches to the bottom of the page
-      flex: 1 1 auto;
-    }
   }
 
 }

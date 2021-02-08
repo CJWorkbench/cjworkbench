@@ -27,7 +27,7 @@ export default function PlanPage (props) {
         <PlanTable
           plans={plans}
           onClickSubscribe={handleClickSubscribe}
-          activePlanIds={user.subscribedPlans.map(p => p.stripePriceId)}
+          user={user}
         />
       </main>
     </Page>
@@ -37,6 +37,6 @@ PlanPage.propTypes = {
   api: PropTypes.shape({
     createStripeCheckoutSession: PropTypes.func.isRequired
   }).isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object, // or null if anonymous
   plans: PropTypes.array.isRequired
 }

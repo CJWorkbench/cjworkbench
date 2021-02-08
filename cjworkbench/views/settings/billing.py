@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from allauth.account.utils import user_display
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
@@ -32,6 +33,7 @@ def jsonize_subscription(subscription: Subscription) -> Dict[str, Any]:
 def jsonize_user(user: User) -> Dict[str, Any]:
     return {
         "username": user.username,
+        "display_name": user_display(user),
         "stripeCustomerId": user.user_profile.stripe_customer_id,
         "subscriptions": [
             jsonize_subscription(sub)
