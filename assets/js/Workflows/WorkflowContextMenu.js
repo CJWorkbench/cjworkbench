@@ -43,7 +43,10 @@ export default function WorkflowContextMenu (props) {
   return (
     <>
       <UncontrolledDropdown>
-        <DropdownToggle className='icon-button'>
+        <DropdownToggle
+          className='icon-button'
+          title={t({ id: 'js.Workflows.WorkflowContextMenu.hoverText', message: 'menu' })}
+        >
           <ContextMenuIcon />
         </DropdownToggle>
         <DropdownMenu>

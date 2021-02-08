@@ -16,7 +16,5 @@ export default function MainNav (props) {
 }
 MainNav.propTypes = {
   currentPath: PropTypes.string.isRequired,
-  user: PropTypes.shape({
-    stripeCustomerId: PropTypes.string.isRequired
-  }) // or null
+  user: PropTypes.object // or null
 }

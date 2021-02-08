@@ -8,8 +8,6 @@ import WorkflowContextMenu from './WorkflowContextMenu'
 export default function Workflow (props) {
   const {
     workflow,
-    onClickDeleteWorkflow = null,
-    onClickDuplicateWorkflow = null,
     api = null,
     onWorkflowChanging = null,
     onWorkflowChanged = null,
