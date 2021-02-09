@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 import stripe
 
-from cjworkbench.models.plan import Plan
+from cjworkbench.models.price import Price
 from cjworkbench.models.subscription import Subscription
 from cjworkbench.models.userprofile import UserProfile
 
@@ -16,7 +16,7 @@ def _unix_timestamp_to_datetime(timestamp: int) -> datetime.datetime:
 
 
 def create_checkout_session(
-    user_id: int, plan: Plan, billing_url: str
+    user_id: int, price: Price, billing_url: str
 ) -> stripe.checkout.Session:
     """Create a Stripe CheckoutSession, suitable for a JsonResponse.
 
@@ -45,7 +45,7 @@ def create_checkout_session(
     return stripe.checkout.Session.create(
         customer=user_profile.stripe_customer_id,
         payment_method_types=["card"],
-        line_items=[{"price": plan.stripe_price_id, "quantity": 1}],
+        line_items=[{"price": price.stripe_price_id, "quantity": 1}],
         locale=user_profile.locale_id,
         success_url=billing_url,
         cancel_url=billing_url,
@@ -92,7 +92,7 @@ def handle_checkout_session_completed(
     Raise error (intended to cause 500 Server Error) on any problem. Tested:
 
     [✓] ValueError if Stripe data does not match expectations.
-    [✓] Plan.DoesNotExist if subscribed to a non-plan.
+    [✓] Price.DoesNotExist if subscribed to a non-price.
     [✓] UserProfile.DoesNotExist if customer cannot be found in our database.
     """
     stripe_subscription_id = checkout_session.subscription
@@ -105,7 +105,7 @@ def handle_checkout_session_completed(
     if len(items) != 1:
         raise ValueError("len(items) != 1")
     item = items[0]
-    plan = Plan.objects.get(stripe_price_id=item.price.id)  # raise Plan.DoesNotExist
+    price = Price.objects.get(stripe_price_id=item.price.id)  # raise Price.DoesNotExist
 
     with UserProfile.lookup_and_cooperative_lock(
         stripe_customer_id=stripe_customer_id
@@ -114,7 +114,7 @@ def handle_checkout_session_completed(
         user.subscriptions.update_or_create(
             stripe_subscription_id=stripe_subscription_id,
             defaults=dict(
-                plan=plan,
+                price=price,
                 stripe_status=stripe_subscription.status,
                 created_at=_unix_timestamp_to_datetime(stripe_subscription.created),
                 renewed_at=_unix_timestamp_to_datetime(

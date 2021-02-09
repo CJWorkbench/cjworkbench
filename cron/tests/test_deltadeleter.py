@@ -4,7 +4,8 @@ from typing import Optional
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
 
-from cjworkbench.models.plan import Plan
+from cjworkbench.models.price import Price
+from cjworkbench.models.product import Product
 from cjworkbench.models.subscription import Subscription
 from cjworkbench.models.userlimits import UserLimits
 from cjworkbench.models.userprofile import UserProfile
@@ -50,23 +51,31 @@ def create_user(
     return user
 
 
-def create_plan(**kwargs):
+def create_product(
+    *, stripe_product_id="prod_1", stripe_product_name="name", max_delta_age_in_days=3
+):
+    return Product.objects.create(
+        stripe_product_id=stripe_product_id,
+        stripe_product_name=stripe_product_name,
+        max_delta_age_in_days=max_delta_age_in_days,
+    )
+
+
+def create_price(*, product, **kwargs):
     kwargs = {
         "stripe_price_id": "price_1",
-        "stripe_product_id": "product_1",
-        "stripe_product_name": "Premium Plan",
         "stripe_active": True,
         "stripe_amount": 100,
         "stripe_currency": "usd",
         **kwargs,
     }
-    return Plan.objects.create(**kwargs)
+    return product.prices.create(**kwargs)
 
 
-def create_subscription(user: User, plan: Plan, **kwargs):
+def create_subscription(user: User, price: Price, **kwargs):
     return Subscription.objects.create(
         user=user,
-        plan=plan,
+        price=price,
         created_at=datetime.datetime.now(),
         renewed_at=datetime.datetime.now(),
         **kwargs,
@@ -293,8 +302,8 @@ class FindWorkflowsWithStaleDeltasTest(DbTestCase):
     def test_find_workflow_using_plan_max_age(self):
         plan_max_age = datetime.timedelta(days=30)
         owner = create_user()
-        plan = create_plan(max_delta_age_in_days=30)
-        create_subscription(owner, plan)
+        price = create_price(product=create_product(max_delta_age_in_days=30))
+        create_subscription(owner, price)
         workflow = Workflow.create_and_init(owner=owner)
         with freeze_time("2020-01-01"):
             do(SetWorkflowTitle, workflow.id, new_value="1")
@@ -307,10 +316,16 @@ class FindWorkflowsWithStaleDeltasTest(DbTestCase):
     def test_find_workflow_pick_max_plan(self):
         plan_max_age = datetime.timedelta(days=30)
         owner = create_user()
-        plan1 = create_plan(stripe_price_id="price_plan1", max_delta_age_in_days=1)
-        plan2 = create_plan(stripe_price_id="price_plan2", max_delta_age_in_days=30)
-        create_subscription(owner, plan1, stripe_subscription_id="sub_1")
-        create_subscription(owner, plan2, stripe_subscription_id="sub_2")
+        price1 = create_price(
+            product=create_product(max_delta_age_in_days=1),
+            stripe_price_id="price_plan1",
+        )
+        price2 = create_price(
+            product=create_product(max_delta_age_in_days=30),
+            stripe_price_id="price_plan2",
+        )
+        create_subscription(owner, price1, stripe_subscription_id="sub_1")
+        create_subscription(owner, price2, stripe_subscription_id="sub_2")
 
         with freeze_time("2020-01-01"):
             workflow1 = Workflow.create_and_init(owner=owner)

@@ -8,7 +8,8 @@ from django.test import override_settings
 from stripe.webhook import WebhookSignature
 
 import cjworkbench.models.stripe
-from cjworkbench.models.plan import Plan
+from cjworkbench.models.price import Price
+from cjworkbench.models.product import Product
 from cjworkbench.models.userprofile import UserProfile
 from cjworkbench.views.stripe import (
     webhook,
@@ -29,17 +30,21 @@ def create_user(
     return user
 
 
-def create_plan(**kwargs):
+def create_product(*, stripe_product_id="prod_1", stripe_product_name="Premium Plan"):
+    return Product.objects.create(
+        stripe_product_id=stripe_product_id, stripe_product_name=stripe_product_name
+    )
+
+
+def create_price(*, product, **kwargs):
     kwargs = {
         "stripe_price_id": "price_1",
-        "stripe_product_id": "product_1",
-        "stripe_product_name": "Premium Plan",
         "stripe_active": True,
         "stripe_amount": 100,
         "stripe_currency": "usd",
         **kwargs,
     }
-    return Plan.objects.create(**kwargs)
+    return product.prices.create(**kwargs)
 
 
 class WebhookTest(DbTestCase):
@@ -158,22 +163,35 @@ class WebhookTest(DbTestCase):
 
 
 class CreateCheckoutSessionTest(DbTestCase):
+    def _post_json(self, **json_kwargs):
+        return self.client.post(
+            "/stripe/create-checkout-session",
+            json.dumps(json_kwargs),
+            content_type="application/json",
+        )
+
     def test_require_logged_in(self):
-        response = self.client.post("/stripe/create-checkout-session")
+        response = self._post_json(stripePriceId="price_123")
         self.assertEqual(response.status_code, 302)  # redirect to login
 
-    @override_settings(STRIPE_API_KEY="key_123")
-    def test_404_no_plan(self):
+    @override_settings(STRIPE_API_KEY="key_123", STRIPE_PUBLIC_API_KEY="pk_123")
+    def test_400_no_price(self):
         self.client.force_login(create_user())
-        response = self.client.post("/stripe/create-checkout-session")
+        response = self._post_json()
+        self.assertEqual(response.status_code, 400)
+
+    @override_settings(STRIPE_API_KEY="key_123", STRIPE_PUBLIC_API_KEY="pk_123")
+    def test_404_missing_price(self):
+        self.client.force_login(create_user())
+        response = self._post_json(stripePriceId="price_123")
         self.assertEqual(response.status_code, 404)
 
     @override_settings()
     def test_404_no_stripe_api_key(self):
         del settings.STRIPE_API_KEY  # restored because override_settings() is above
         self.client.force_login(create_user())
-        create_plan(stripe_price_id="price_123")
-        response = self.client.post("/stripe/create-checkout-session")
+        create_price(product=create_product(), stripe_price_id="price_123")
+        response = self._post_json(stripePriceId="price_123")
         self.assertEqual(response.status_code, 404)
 
     @patch.object(
@@ -187,8 +205,8 @@ class CreateCheckoutSessionTest(DbTestCase):
     def test_happy_path(self, create_checkout_session):
         user = create_user()
         self.client.force_login(user)
-        plan = create_plan(stripe_price_id="price_123")
-        response = self.client.post("/stripe/create-checkout-session")
+        price = create_price(product=create_product(), stripe_price_id="price_123")
+        response = self._post_json(stripePriceId="price_123")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(
@@ -201,7 +219,7 @@ class CreateCheckoutSessionTest(DbTestCase):
 
         # We sent the right stuff to Stripe
         create_checkout_session.assert_called_with(
-            user.id, plan, "http://testserver/settings/billing"
+            user.id, price, "http://testserver/settings/billing"
         )
 
 

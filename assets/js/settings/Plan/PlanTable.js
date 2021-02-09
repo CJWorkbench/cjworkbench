@@ -22,61 +22,87 @@ function formatMaxDeltaAge (nDays) {
   }
 }
 
-function PlanTh (props) {
-  const { plan, active, onClickSubscribe, user } = props
+function Price (props) {
+  const { price, onClickSubscribe } = props
+
+  const handleClickSubscribe = React.useMemo(
+    () => onClickSubscribe ? () => onClickSubscribe(price.stripePriceId) : null,
+    [onClickSubscribe, price]
+  )
 
   return (
-    <th className={active ? 'active' : ''}>
+    <div className='price'>
+      <div className='amount' key={price.stripePriceId}>
+        <StripeAmount amount={price.amount} currency={price.currency} interval={price.interval} />
+      </div>
+      {handleClickSubscribe ? <Subscribe onClick={handleClickSubscribe} /> : null}
+    </div>
+  )
+}
+Price.propTypes = {
+  price: PropTypes.shape({
+    stripePriceId: PropTypes.string.isRequired,
+    amount: PropTypes.number.isRequired,
+    currency: PropTypes.string.isRequired,
+    interval: PropTypes.oneOf(['month', 'year']).isRequired
+  }).isRequired,
+  onClickSubscribe: PropTypes.func // func(stripePriceId) => undefined, or null for no button
+}
+
+function ProductTh (props) {
+  const { product, subscribed, onClickSubscribe, user } = props
+
+  return (
+    <th className={subscribed ? 'subscribed' : ''}>
       <div>
-        <h2>{plan.name}</h2>
-        {plan.amount ? (
-          <div className='amount'>
-            <Trans id='js.settings.Plan.PlanTable.amount'>
-              <strong><StripeAmount value={plan.amount} currency={plan.currency} /></strong>/month
-            </Trans>
-          </div>
-        ) : null}
-        {!user && !plan.amount ? (
-          <a href='/account/login/?next=%2Fsettings%2Fplan'>
-            <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>Choose {plan.name}</Trans>
-          </a>
-        ) : null}
-        {active ? (
+        <h2>{product.name}</h2>
+        {product.prices.map(price => (
+          <Price
+            key={price.stripePriceId}
+            price={price}
+            user={user}
+            onClickSubscribe={subscribed ? null : onClickSubscribe}
+          />
+        ))}
+        {subscribed ? (
           <div className='current'>
             <Trans id='js.settings.Plan.PlanTable.current'>Current plan</Trans>
           </div>
         ) : null}
-        {plan.amount && !active ? (
-          user ? (
-            <Subscribe onClick={onClickSubscribe} />
-          ) : (
-            <a href='/account/login/?next=%2Fsettings%2Fplan'>
-              <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>Choose {plan.name}</Trans>
-            </a>
-          )
+        {!user ? (
+          <a href='/account/login/?next=%2Fsettings%2Fplan'>
+            {product.prices.length ? (
+              <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>Choose {product.name}</Trans>
+            ) : (
+              <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>Choose {product.name}</Trans>
+            )}
+          </a>
         ) : null}
       </div>
     </th>
   )
 }
-PlanTh.propTypes = {
-  onClickSubscribe: PropTypes.func.isRequired, // func() => undefined
-  plan: PropTypes.shape({
+ProductTh.propTypes = {
+  onClickSubscribe: PropTypes.func, // func(stripePriceId) => undefined, or null for no button
+  product: PropTypes.shape({
+    stripeProductId: PropTypes.string, // or null for free plan
     name: PropTypes.string.isRequired,
-    amount: PropTypes.number.isRequired,
-    currency: PropTypes.string.isRequired
+    prices: PropTypes.arrayOf(
+      PropTypes.shape({
+        amount: PropTypes.number.isRequired,
+        currency: PropTypes.string.isRequired,
+        interval: PropTypes.oneOf(['month', 'year']).isRequired
+      }).isRequired
+    ).isRequired
   }).isRequired,
   user: PropTypes.object, // or null if not signed in
-  active: PropTypes.bool.isRequired
+  subscribed: PropTypes.bool.isRequired
 }
 
 export default function PlanTable (props) {
-  const { plans, onClickSubscribe, user } = props
+  const { products, onClickSubscribe, user } = props
 
-  const activePlanIds = React.useMemo(
-    () => user ? user.subscribedPlans.map(p => p.stripePriceId) : [],
-    [user]
-  )
+  const activeStripeProductIds = user ? user.subscribedStripeProductIds : []
 
   return (
     <div className='plan-table'>
@@ -84,14 +110,14 @@ export default function PlanTable (props) {
         <thead>
           <tr>
             <th />
-            {plans.map(plan => (
-              <PlanTh
-                key={plan.stripePriceId}
-                plan={plan}
+            {products.map(product => (
+              <ProductTh
+                key={product.stripeProductId}
+                product={product}
                 user={user}
-                active={
-                  activePlanIds.includes(plan.stripePriceId) ||
-                  Boolean(activePlanIds.length === 0 && plan.amount === 0 && user)
+                subscribed={
+                  activeStripeProductIds.includes(product.stripeProductId) ||
+                  Boolean(activeStripeProductIds.length === 0 && product.prices.length === 0 && user)
                 }
                 onClickSubscribe={onClickSubscribe}
               />
@@ -104,10 +130,10 @@ export default function PlanTable (props) {
               <h3><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.title'>Automatic updates</Trans></h3>
               <p><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.description'>Per day</Trans></p>
             </th>
-            {plans.map(plan => (
-              <td key={plan.stripePriceId}>
+            {products.map(product => (
+              <td key={product.stripeProductId}>
                 <div>
-                  <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>{i18n.number(plan.maxFetchesPerDay)} updates</Trans>
+                  <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>{i18n.number(product.maxFetchesPerDay)} updates</Trans>
                 </div>
               </td>
             ))}
@@ -116,9 +142,9 @@ export default function PlanTable (props) {
             <th>
               <h3><Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>Undo history</Trans></h3>
             </th>
-            {plans.map(plan => (
-              <td key={plan.stripePriceId}>
-                <div>{formatMaxDeltaAge(plan.maxDeltaAgeInDays)}</div>
+            {products.map(product => (
+              <td key={product.stripeProductId}>
+                <div>{formatMaxDeltaAge(product.maxDeltaAgeInDays)}</div>
               </td>
             ))}
           </tr>
@@ -129,15 +155,21 @@ export default function PlanTable (props) {
 }
 PlanTable.propTypes = {
   onClickSubscribe: PropTypes.func.isRequired, // func() => undefined
-  plans: PropTypes.arrayOf(
+  products: PropTypes.arrayOf(
     PropTypes.shape({
+      stripeProductId: PropTypes.string, // or null for free plan
+      name: PropTypes.string.isRequired,
+      prices: PropTypes.arrayOf(
+        PropTypes.shape({
+          stripePriceId: PropTypes.string.isRequired,
+          amount: PropTypes.number.isRequired,
+          currency: PropTypes.string.isRequired,
+          interval: PropTypes.oneOf(['month', 'year']).isRequired
+        }).isRequired
+      ).isRequired
     }).isRequired
   ).isRequired,
   user: PropTypes.shape({
-    subscribedPlans: PropTypes.arrayOf(
-      PropTypes.shape({
-        stripePriceId: PropTypes.string.isRequired
-      }).isRequired
-    ).isRequired
+    subscribedStripeProductIds: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
   }) // or null for anonymous
 }

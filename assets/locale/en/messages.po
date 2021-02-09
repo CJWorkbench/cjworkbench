@@ -1783,11 +1783,7 @@ msgstr "Current Subscription"
 msgid "js.settings.BillingPage.title"
 msgstr "Billing"
 
-#: assets/js/settings/Plan/PlanTable.js:34
-msgid "js.settings.Plan.PlanTable.amount"
-msgstr "<0><1/></0>/month"
-
-#: assets/js/settings/Plan/PlanTable.js:46
+#: assets/js/settings/Plan/PlanTable.js:62
 msgid "js.settings.Plan.PlanTable.current"
 msgstr "Current plan"
 
@@ -1799,27 +1795,27 @@ msgstr "{nDays, plural, one {# day} other {# days}}"
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr "{nMonths, plural, one {# month} other {# months}}"
 
-#: assets/js/settings/Plan/PlanTable.js:117
+#: assets/js/settings/Plan/PlanTable.js:136
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr "Undo history"
 
-#: assets/js/settings/Plan/PlanTable.js:110
+#: assets/js/settings/Plan/PlanTable.js:129
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr "{0} updates"
 
-#: assets/js/settings/Plan/PlanTable.js:105
+#: assets/js/settings/Plan/PlanTable.js:124
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr "Per day"
 
-#: assets/js/settings/Plan/PlanTable.js:104
+#: assets/js/settings/Plan/PlanTable.js:123
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr "Automatic updates"
 
-#: assets/js/settings/Plan/PlanTable.js:41
+#: assets/js/settings/Plan/PlanTable.js:57
 msgid "js.settings.Plan.PlanTable.signInForFreePlan"
 msgstr "Choose {0}"
 
-#: assets/js/settings/Plan/PlanTable.js:54
+#: assets/js/settings/Plan/PlanTable.js:70
 msgid "js.settings.Plan.PlanTable.signInToSubscribe"
 msgstr "Choose {0}"
 

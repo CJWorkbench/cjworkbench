@@ -1,6 +1,8 @@
 from django.contrib import admin
+
+from cjworkbench.models.price import Price
+from cjworkbench.models.product import Product
 from cjworkbench.models.userprofile import UserProfile
-from cjworkbench.models.plan import Plan
 
 
 class ReadOnlyModelAdmin(admin.ModelAdmin):
@@ -23,15 +25,26 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ("user__email", "user__username")
 
 
-class PlanAdmin(ReadOnlyModelAdmin):
-    """Plans, maintained on Stripe.
+class ProductAdmin(ReadOnlyModelAdmin):
+    """Products, maintained on Stripe.
 
-    Users may not edit these plans. They must set up Plans using Products on the
+    Users may not edit these products. They set up Prices and Products on the
     Stripe Dashboard, then call `python ./manage.py import-plans-from-stripe`.
     """
 
     ordering = ("stripe_product_name",)
 
 
+class PriceAdmin(ReadOnlyModelAdmin):
+    """Prices, maintained on Stripe.
+
+    Users may not edit these prices. They set up Prices and Products on the
+    Stripe Dashboard, then call `python ./manage.py import-plans-from-stripe`.
+    """
+
+    ordering = ("product__stripe_product_name", "stripe_amount")
+
+
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(Plan, PlanAdmin)
+admin.site.register(Price, PriceAdmin)
+admin.site.register(Product, ProductAdmin)

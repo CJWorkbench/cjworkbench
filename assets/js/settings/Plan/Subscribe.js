@@ -18,5 +18,5 @@ export default function Subscribe (props) {
   )
 }
 Subscribe.propTypes = {
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired // func(stripePriceId) => undefined
 }

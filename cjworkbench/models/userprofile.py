@@ -61,8 +61,10 @@ class UserProfile(models.Model):
             [
                 self.max_fetches_per_day,
                 *[
-                    subscription.plan.max_fetches_per_day
-                    for subscription in self.user.subscriptions.select_related("plan")
+                    subscription.price.product.max_fetches_per_day
+                    for subscription in self.user.subscriptions.select_related(
+                        "price", "price__product"
+                    )
                 ],
             ]
         )
