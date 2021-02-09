@@ -18,7 +18,7 @@ class TestExampleWorkflow(WorkbenchBase):
         accounts.login(b, self.admin.email, self.admin.email)
 
         b.visit("/workflows/")
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
         # Wait for page to load
         b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 
@@ -63,10 +63,9 @@ class TestExampleWorkflow(WorkbenchBase):
         accounts.login(b, self.user1.email, self.user1.email)
 
         # Demo should appear in Workflow list
-        b.visit("/workflows/")
+        b.visit("/workflows/examples")
         # Wait for page to load
         b.assert_element("a", text="Example Workflow", wait=True)
-        b.assert_element("a", text="by Workbench")
         b.click_link("Example Workflow")
 
         # Wait for page to load

@@ -3,12 +3,22 @@ import PropTypes from 'prop-types'
 import { DropdownContext } from './Dropdown'
 
 export default function DropdownToggle (props) {
-  const { isOpen, disabled, setToggleElement, toggle } = React.useContext(DropdownContext)
+  const {
+    isOpen,
+    disabled,
+    setToggleElement,
+    toggle
+  } = React.useContext(DropdownContext)
 
-  const { children, caret, title, className, name } = props
-  const classNames = ['btn btn-secondary']
+  const {
+    className = 'btn btn-secondary',
+    children,
+    caret,
+    title,
+    name
+  } = props
+  const classNames = [className]
   if (caret) classNames.push('dropdown-toggle')
-  if (className) classNames.push(className)
 
   return (
     <button
@@ -25,8 +35,8 @@ export default function DropdownToggle (props) {
 }
 DropdownToggle.propTypes = {
   children: PropTypes.node.isRequired,
+  className: PropTypes.string, // default 'btn btn-secondary'
   caret: PropTypes.bool, // adds 'dropdown-toggle' className
-  className: PropTypes.string, // adds to `btn btn-secondary (dropdown-toggle?)`
   name: PropTypes.string, // HTML `name` property (useful in tests, CSS)
   title: PropTypes.string
 }

@@ -38,7 +38,6 @@ $we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll b
 @import 'components/Accounts.scss';
 @import 'components/Spinner.scss';
 @import 'components/Navbar.scss';
-@import 'components/WorkflowList.scss';
 @import 'components/Lesson.scss';
 @import 'components/LessonList.scss';
 @import 'components/Metadata.scss';
@@ -63,5 +62,7 @@ $we-changed-what-rem-means-and-now-we-regret-it: 10px; // TODO DELETEME (it'll b
 @import 'BigTable/index';
 @import 'settings/index';
 @import 'ExportModal';
+@import 'Page/index';
+@import 'Workflows/index';
 
 @import 'i18n/LocaleSwitcher';

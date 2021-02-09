@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from allauth.account.utils import user_display
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
@@ -33,14 +34,19 @@ def jsonize_subscription(subscription: Subscription) -> Dict[str, Any]:
 
 
 def jsonize_user(user: User) -> Dict[str, Any]:
+    if user.is_anonymous:
+        return None
+
     active_plans = [
         jsonize_plan(subscription.plan) for subscription in user.subscriptions.all()
     ]
+    stripe_customer_id = user.user_profile.stripe_customer_id
 
     return {
         "username": user.username,
+        "display_name": user_display(user),
         "subscribedPlans": active_plans,
-        "stripeCustomerId": user.user_profile.stripe_customer_id,
+        "stripeCustomerId": stripe_customer_id,
     }
 
 
@@ -59,7 +65,6 @@ def jsonize_plans() -> Dict[str, Dict[str, Any]]:
     ]
 
 
-@login_required
 def get(request: HttpRequest):
     """Display the billing React app."""
     init_state = {

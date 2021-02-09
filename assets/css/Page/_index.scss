@@ -1,0 +1,51 @@
+@mixin media-when-we-pin-main-nav-sidebar {
+  @include media-breakpoint-up(md) {
+    @content;
+  }
+}
+$main-nav-sidebar-width: rem(15);
+$main-nav-open-bg: $heading-bg;
+$main-nav-bg: $document-blue;
+$main-nav-padding: rem(1.5);
+$main-padding: rem(1);
+$main-padding-desktop: rem(2);
+
+.page {
+  font: rem(.9) $font-family-sans-serif;
+
+  main {
+    // bottom padding helps suggest to the user the page has ended (we have no <footer>)
+    padding: 0 $main-padding rem(2);
+
+    @include media-when-we-pin-main-nav-sidebar {
+      padding-left: $main-padding-desktop;
+      padding-right: $main-padding-desktop;
+      max-width: rem(55);
+      margin: 0 auto;
+    }
+
+    header {
+      // big top padding:
+      // on desktop, show up below the logo (which is to the left)
+      // on mobile, show up below the logo (which is above, position:fixed)
+      margin: 0;
+      padding: rem(6) 0 rem(2);
+
+      @include media-when-we-pin-main-nav-sidebar {
+        padding-top: rem(5);
+      }
+
+      h1 {
+        margin: 0;
+        font-weight: bold;
+        color: $main-nav-open-bg;
+      }
+    }
+  }
+
+  @include media-when-we-pin-main-nav-sidebar {
+    margin-left: $main-nav-sidebar-width;
+  }
+}
+
+@import './MainNav/index'

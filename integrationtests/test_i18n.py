@@ -11,16 +11,15 @@ def switch_locale_django(browser: Browser, to_locale_name: str):
     browser.wait_for_element("a#locale-switcher-dropdown", text=to_locale_name)
 
 
-def switch_locale_react(browser: Browser, to_locale_name: str):
-    browser.click_whatever(".navbar .dropdown button")
-    browser.click_whatever(".dropdown-item i.icon-language", wait=True)
+def switch_locale_react(browser: Browser, language_text, to_locale_name: str):
+    browser.click_link(language_text)
     browser.click_button(to_locale_name, wait=True)
 
     # wait for page reload
     # 1. wait for the existing page to go away (by testing the modal is gone)
     browser.assert_no_element(".modal.locale-switcher", wait=True)
     # 2. wait for an element on the new page
-    browser.assert_element(".navbar .dropdown button", wait=True)
+    browser.assert_element("nav.main-nav", wait=True)
 
 
 class TestI18n(WorkbenchBase):
@@ -37,7 +36,7 @@ class TestI18n(WorkbenchBase):
 
         login(b, self.user.email, self.user.email)
         b.visit("/workflows/")
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
         # Wait for page to load
         b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
         b.assert_element(".attribution .metadata", text="by Jane Doe")
@@ -69,26 +68,26 @@ class TestI18n(WorkbenchBase):
         b = self.browser
 
         login(b, self.user.email, self.user.email)
-        b.visit("/workflows/")
+        b.visit("/workflows")
         # Start in workflows page with en
         b.assert_element(
             'form.create-workflow button[type="submit"]',
-            text="Create Workflow",
+            text="Create your first workflow",
             wait=True,
         )
         # Change locale to el
-        switch_locale_react(b, "Ελληνικά")
+        switch_locale_react(b, "Language", "Ελληνικά")
         b.assert_element(
             'form.create-workflow button[type="submit"]',
-            text="Δημιουργία ροής εργασιών",
+            text="Δημιουργήστε την πρώτη σας ροή εργασιών",
             wait=True,
         )
         # Move to another page and confirm it's in el too
-        b.click_link("ΕΚΠΑΙΔΕΥΣΗ")
-        b.assert_element("a", text="ΜΑΘΗΜΑΤΑ", wait=True)
+        b.click_link("Συνταγές")
+        b.assert_element("h1", text="Συνταγές", wait=True)
         # Change locale to en again
-        switch_locale_react(b, "English")
-        b.assert_element("a", text="TUTORIALS", wait=True)
+        switch_locale_react(b, "Γλώσσα", "English")
+        b.assert_element("a", text="Example workflows", wait=True)
 
     def test_signup_el(self):
         b = self.browser
@@ -125,7 +124,7 @@ class TestI18n(WorkbenchBase):
         b.fill_in("login", "user-el@example.org", wait=True)
         b.fill_in("password", "?P455W0rd!")
         b.click_button("Σύνδεση")
-        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ")
+        b.wait_for_element("a", text="Οι ροές εργασιών μου")
 
     def test_remember_signup_locale(self):
         b = self.browser
@@ -171,7 +170,7 @@ class TestI18n(WorkbenchBase):
         b.fill_in("login", "user-el@example.org", wait=True)
         b.fill_in("password", "?P455W0rd!")
         b.click_button("Sign In")
-        b.wait_for_element("a", text="ΟΙ ΡΟΈΣ ΕΡΓΑΣΙΏΝ ΜΟΥ")
+        b.wait_for_element("a", text="Οι ροές εργασιών μου")
 
         # After logout, page must still be in Greek.
         logout(b)
@@ -185,16 +184,16 @@ class TestI18n(WorkbenchBase):
 
         # Login (in English)
         login(b, self.user.email, self.user.email)
-        b.visit("/workflows/")
+        b.visit("/workflows")
 
         b.assert_element(
             'form.create-workflow button[type="submit"]',
-            text="Create Workflow",
+            text="Create your first workflow",
             wait=True,
         )
 
         # Switch to Greek and then logout. After logout, page must still be in Greek.
-        switch_locale_react(b, "Ελληνικά")
+        switch_locale_react(b, "Language", "Ελληνικά")
         logout(b)
         b.assert_element('input[name="password"][placeholder="Συνθηματικό"]', wait=True)
         b.assert_element('button[type="submit"]', text="Σύνδεση")
@@ -204,6 +203,6 @@ class TestI18n(WorkbenchBase):
         login(b, self.user.email, self.user.email)
         b.assert_element(
             'form.create-workflow button[type="submit"]',
-            text="Δημιουργία ροής εργασιών",
+            text="Δημιουργήστε την πρώτη σας ροή εργασιών",
             wait=True,
         )

@@ -5,7 +5,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
     def test_new_workflow(self):
         b = self.browser
 
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
 
         # Empty step list
         b.wait_for_element(".step-list", wait=True)

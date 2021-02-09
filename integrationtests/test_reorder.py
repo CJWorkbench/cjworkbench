@@ -9,7 +9,7 @@
 #        super().setUp()
 #
 #        b = self.browser
-#        b.click_button('Create Workflow') # navigate to a workflow page
+#        b.click_button('Create your first workflow') # navigate to a workflow page
 #
 #        # wait for page load
 #        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)

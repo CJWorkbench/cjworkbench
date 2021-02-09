@@ -4,17 +4,12 @@ import re
 
 # Step expand/collapse, notes, context menu, export, delete
 class TestEmbed(LoggedInIntegrationTest):
-    def setUp(self):
-        super().setUp()
-
-        b = self.browser
-        b.click_button("Create Workflow")  # navigate to a workflow page
-
-        # wait for page load
-        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
-
     def test_embed(self):
         b = self.browser
+
+        b.click_button("Create your first workflow")  # navigate to a workflow page
+        # wait for page load
+        b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)
 
         # Create workflow with chart
         self.add_csv_data_module("a,b,c\n1,2,3")

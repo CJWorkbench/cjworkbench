@@ -1,1155 +1,567 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Workflow list page renders My workflows correctly 1`] = `
+exports[`Workflow list page renders Examples correctly 1`] = `
 <div>
   <div
-    class="workflows-page"
+    class="page"
   >
-    <div>
-      <nav
-        class="navbar"
-      >
-        <div
-          class="logo"
+    <nav
+      class="main-nav"
+    >
+      <header>
+        <a
+          href="/workflows"
         >
           <img
-            class="logo"
-            src="undefinedimages/logo.svg"
+            alt="Workbench"
+            src="undefinedimages/workbench-logo-white.svg"
           />
-          <img
-            class="logo-text"
-            src="undefinedimages/logo-text-dark.svg"
-          />
-        </div>
-        <div
-          class="links"
+        </a>
+        <button
+          class="toggle-open"
+          title="menu"
         >
-          <a
-            class="inactive"
-            href="/workflows"
-          >
-            WORKFLOWS
-          </a>
-          <a
-            class="inactive"
-            href="/lessons/en"
-          >
-            TRAINING
-          </a>
-        </div>
-        <div
-          class="dropdown"
-        >
-          <button
-            aria-expanded="false"
-            class="btn btn-secondary context-button"
-            title="menu"
-          >
-            <i
-              class="icon-more"
-            />
-          </button>
-        </div>
-        <form
-          action="/account/logout/"
-          method="post"
-          style="display: none;"
-        >
-          <input
-            name="csrfmiddlewaretoken"
-            type="hidden"
-            value=""
-          />
-          <input
-            type="submit"
-          />
-        </form>
-      </nav>
-    </div>
-    <a
-      class="lesson-banner mx-auto"
-      href="/lessons/"
-    >
-      <div>
-        <div
-          class="content-1"
-        >
-          NEW
-        </div>
-        <div
-          class="d-flex"
-        >
-          <span
-            class="icon-star"
-          />
-          TRAINING
-        </div>
-      </div>
-      <p>
-        Learn how to work with data without coding
-      </p>
-    </a>
-    <form
-      action="/workflows/"
-      class="create-workflow"
-      method="post"
-    >
-      <input
-        name="csrfmiddlewaretoken"
-        type="hidden"
-        value=""
-      />
-      <button
-        type="submit"
-      >
-        Create Workflow
-      </button>
-    </form>
-    <div
-      class="workflow-lists"
-    >
+          /app/assets/icons/menu.svg
+        </button>
+      </header>
       <div
-        class="nav"
+        class="details"
       >
-        <ul
-          class="workflow-tabs"
-          id="workflow-tabs"
-          role="tablist"
-        >
+        <ul>
           <li
-            class="nav-item active"
+            class=""
           >
             <a
-              aria-controls="workflow-tab-owned"
-              aria-selected="true"
-              class="nav-link active"
-              href="#owned"
-              id="workflow-tab-link-owned"
+              href="/workflows"
             >
               My workflows
             </a>
           </li>
           <li
-            class="nav-item"
+            class=""
           >
             <a
-              aria-controls="workflow-tab-shared"
-              aria-selected="false"
-              class="nav-link"
-              href="#shared"
-              id="workflow-tab-link-shared"
+              href="/workflows/shared-with-me"
             >
               Shared with me
             </a>
           </li>
           <li
-            class="nav-item"
+            class="open"
+          >
+            <a>
+              Example workflows
+            </a>
+          </li>
+          <li
+            class="parent"
           >
             <a
-              aria-controls="workflow-tab-templates"
-              aria-selected="false"
-              class="nav-link"
-              href="#templates"
-              id="workflow-tab-link-templates"
+              href="/lessons"
             >
-              Recipes
+              Training
             </a>
           </li>
         </ul>
         <div
-          class="sort-menu"
+          class="user-paths"
         >
-          <div
-            class="dropdown"
+          <h3
+            class="display-name"
           >
-            <button
-              aria-expanded="false"
-              class="btn btn-secondary"
+            Example User
+          </h3>
+          <ul>
+            <li
+              class="parent"
             >
-              Sort
-               
-              <i
-                class="icon-caret-down"
-              />
-            </button>
-          </div>
+              <a
+                href="/settings/plan"
+              >
+                Plan & Billing
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+              >
+                Language
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+              >
+                Log Out
+              </a>
+              <form
+                action="/account/logout/"
+                class="hidden"
+                method="post"
+              >
+                <input
+                  name="csrfmiddlewaretoken"
+                  type="hidden"
+                  value=""
+                />
+                <input
+                  name="next"
+                  type="hidden"
+                  value="/workflows/examples"
+                />
+                <input
+                  type="submit"
+                />
+              </form>
+            </li>
+          </ul>
         </div>
       </div>
+    </nav>
+    <main
+      class="workflows"
+    >
+      <header>
+        <h1>
+          Example workflows
+        </h1>
+      </header>
       <div
-        class="tab-content"
+        class="workflow-list example"
       >
-        <div
-          aria-labelledby="workflow-tab-link-owned"
-          class="tab-pane show active"
-          id="workflow-tab-owned"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/3"
+        <table>
+          <thead>
+            <tr>
+              <th
+                class="title"
               >
-                <div
-                  class="workflow-title"
+                <a
+                  href="#"
                 >
-                  Analysis
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                  Title
+                </a>
+              </th>
+              <th
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/1"
+                Owner
+              </th>
+              <th
+                class="updated"
               >
-                <div
-                  class="workflow-title"
+                <a
+                  href="#"
                 >
-                  Cleaning
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      public
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                  Updated
+                  /app/assets/icons/sort-descending.svg
+                </a>
+              </th>
+              <th
+                class="privacy"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/2"
+                Privacy
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="title"
               >
-                <div
-                  class="workflow-title"
-                >
-                  Charting
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-labelledby="workflow-tab-link-shared"
-          class="tab-pane"
-          id="workflow-tab-shared"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/8"
-              >
-                <div
-                  class="workflow-title"
-                >
-                  Document search
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Sally Sallerson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      public
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/7"
-              >
-                <div
-                  class="workflow-title"
-                >
-                  Messy data cleanup
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by John Johnson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-labelledby="workflow-tab-link-templates"
-          class="tab-pane"
-          id="workflow-tab-templates"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/10"
-              >
-                <div
-                  class="workflow-title"
+                <a
+                  href="/workflows/10"
                 >
                   Demo 1
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Workbench
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                </a>
+              </td>
+              <td
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/10"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                  Workbench
+                </a>
+              </td>
+              <td
+                class="updated"
+              >
+                <a
+                  href="/workflows/10"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
+              </td>
+              <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/10"
+                >
+                  private
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </main>
   </div>
 </div>
 `;
 
-exports[`Workflow list page renders Recipes correctly 1`] = `
+exports[`Workflow list page renders My workflows correctly 1`] = `
 <div>
   <div
-    class="workflows-page"
+    class="page"
   >
-    <div>
-      <nav
-        class="navbar"
-      >
-        <div
-          class="logo"
-        >
+    <nav
+      class="main-nav"
+    >
+      <header>
+        <a>
           <img
-            class="logo"
-            src="undefinedimages/logo.svg"
+            alt="Workbench"
+            src="undefinedimages/workbench-logo-white.svg"
           />
-          <img
-            class="logo-text"
-            src="undefinedimages/logo-text-dark.svg"
-          />
-        </div>
-        <div
-          class="links"
+        </a>
+        <button
+          class="toggle-open"
+          title="menu"
         >
-          <a
-            class="inactive"
-            href="/workflows"
-          >
-            WORKFLOWS
-          </a>
-          <a
-            class="inactive"
-            href="/lessons/en"
-          >
-            TRAINING
-          </a>
-        </div>
-        <div
-          class="dropdown"
-        >
-          <button
-            aria-expanded="false"
-            class="btn btn-secondary context-button"
-            title="menu"
-          >
-            <i
-              class="icon-more"
-            />
-          </button>
-        </div>
-        <form
-          action="/account/logout/"
-          method="post"
-          style="display: none;"
-        >
-          <input
-            name="csrfmiddlewaretoken"
-            type="hidden"
-            value=""
-          />
-          <input
-            type="submit"
-          />
-        </form>
-      </nav>
-    </div>
-    <a
-      class="lesson-banner mx-auto"
-      href="/lessons/"
-    >
-      <div>
-        <div
-          class="content-1"
-        >
-          NEW
-        </div>
-        <div
-          class="d-flex"
-        >
-          <span
-            class="icon-star"
-          />
-          TRAINING
-        </div>
-      </div>
-      <p>
-        Learn how to work with data without coding
-      </p>
-    </a>
-    <form
-      action="/workflows/"
-      class="create-workflow"
-      method="post"
-    >
-      <input
-        name="csrfmiddlewaretoken"
-        type="hidden"
-        value=""
-      />
-      <button
-        type="submit"
-      >
-        Create Workflow
-      </button>
-    </form>
-    <div
-      class="workflow-lists"
-    >
+          /app/assets/icons/menu.svg
+        </button>
+      </header>
       <div
-        class="nav"
+        class="details"
       >
-        <ul
-          class="workflow-tabs"
-          id="workflow-tabs"
-          role="tablist"
-        >
+        <ul>
           <li
-            class="nav-item"
+            class="open"
           >
-            <a
-              aria-controls="workflow-tab-owned"
-              aria-selected="false"
-              class="nav-link"
-              href="#owned"
-              id="workflow-tab-link-owned"
-            >
+            <a>
               My workflows
             </a>
           </li>
           <li
-            class="nav-item"
+            class=""
           >
             <a
-              aria-controls="workflow-tab-shared"
-              aria-selected="false"
-              class="nav-link"
-              href="#shared"
-              id="workflow-tab-link-shared"
+              href="/workflows/shared-with-me"
             >
               Shared with me
             </a>
           </li>
           <li
-            class="nav-item active"
+            class=""
           >
             <a
-              aria-controls="workflow-tab-templates"
-              aria-selected="true"
-              class="nav-link active"
-              href="#templates"
-              id="workflow-tab-link-templates"
+              href="/workflows/examples"
             >
-              Recipes
+              Example workflows
+            </a>
+          </li>
+          <li
+            class="parent"
+          >
+            <a
+              href="/lessons"
+            >
+              Training
             </a>
           </li>
         </ul>
         <div
-          class="sort-menu"
+          class="user-paths"
         >
-          <div
-            class="dropdown"
+          <h3
+            class="display-name"
           >
-            <button
-              aria-expanded="false"
-              class="btn btn-secondary"
-            >
-              Sort
-               
-              <i
-                class="icon-caret-down"
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-      <div
-        class="tab-content"
-      >
-        <div
-          aria-labelledby="workflow-tab-link-owned"
-          class="tab-pane"
-          id="workflow-tab-owned"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
+            Example User
+          </h3>
+          <ul>
+            <li
+              class="parent"
             >
               <a
-                href="/workflows/3"
+                href="/settings/plan"
               >
-                <div
-                  class="workflow-title"
+                Plan & Billing
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+              >
+                Language
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+              >
+                Log Out
+              </a>
+              <form
+                action="/account/logout/"
+                class="hidden"
+                method="post"
+              >
+                <input
+                  name="csrfmiddlewaretoken"
+                  type="hidden"
+                  value=""
+                />
+                <input
+                  name="next"
+                  type="hidden"
+                  value="/workflows"
+                />
+                <input
+                  type="submit"
+                />
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main
+      class="workflows"
+    >
+      <header>
+        <h1>
+          My workflows
+        </h1>
+      </header>
+      <form
+        action="/workflows"
+        class="create-workflow"
+        method="post"
+      >
+        <input
+          name="csrfmiddlewaretoken"
+          type="hidden"
+          value=""
+        />
+        <button
+          type="submit"
+        >
+          Create Workflow
+        </button>
+      </form>
+      <div
+        class="workflow-list owned"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th
+                class="title"
+              >
+                <a
+                  href="#"
+                >
+                  Title
+                </a>
+              </th>
+              <th
+                class="owner"
+              >
+                Owner
+              </th>
+              <th
+                class="updated"
+              >
+                <a
+                  href="#"
+                >
+                  Updated
+                  /app/assets/icons/sort-descending.svg
+                </a>
+              </th>
+              <th
+                class="privacy"
+              >
+                Privacy
+              </th>
+              <th
+                class="actions"
+              />
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="title"
+              >
+                <a
+                  href="/workflows/3"
                 >
                   Analysis
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                </a>
+              </td>
+              <td
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/3"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/1"
+                  Fred Frederson
+                </a>
+              </td>
+              <td
+                class="updated"
+              >
+                <a
+                  href="/workflows/3"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
+              </td>
+              <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/3"
+                >
+                  private
+                </a>
+              </td>
+              <td
+                class="actions"
               >
                 <div
-                  class="workflow-title"
+                  class="dropdown"
+                >
+                  <button
+                    aria-expanded="false"
+                    class="icon-button"
+                    title="menu"
+                  >
+                    /app/assets/icons/context-menu.svg
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="title"
+              >
+                <a
+                  href="/workflows/1"
                 >
                   Cleaning
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      public
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                </a>
+              </td>
+              <td
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/1"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/2"
+                  Fred Frederson
+                </a>
+              </td>
+              <td
+                class="updated"
+              >
+                <a
+                  href="/workflows/1"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
+              </td>
+              <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/1"
+                >
+                  public
+                </a>
+              </td>
+              <td
+                class="actions"
               >
                 <div
-                  class="workflow-title"
+                  class="dropdown"
+                >
+                  <button
+                    aria-expanded="false"
+                    class="icon-button"
+                    title="menu"
+                  >
+                    /app/assets/icons/context-menu.svg
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="title"
+              >
+                <a
+                  href="/workflows/2"
                 >
                   Charting
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                </a>
+              </td>
+              <td
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/2"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-labelledby="workflow-tab-link-shared"
-          class="tab-pane"
-          id="workflow-tab-shared"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/8"
+                  Fred Frederson
+                </a>
+              </td>
+              <td
+                class="updated"
+              >
+                <a
+                  href="/workflows/2"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
+              </td>
+              <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/2"
+                >
+                  private
+                </a>
+              </td>
+              <td
+                class="actions"
               >
                 <div
-                  class="workflow-title"
+                  class="dropdown"
                 >
-                  Document search
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
+                  <button
+                    aria-expanded="false"
+                    class="icon-button"
+                    title="menu"
                   >
-                    <span
-                      class="metadata"
-                    >
-                      by Sally Sallerson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      public
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/7"
-              >
-                <div
-                  class="workflow-title"
-                >
-                  Messy data cleanup
+                    /app/assets/icons/context-menu.svg
+                  </button>
                 </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by John Johnson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-labelledby="workflow-tab-link-templates"
-          class="tab-pane show active"
-          id="workflow-tab-templates"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/10"
-              >
-                <div
-                  class="workflow-title"
-                >
-                  Demo 1
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Workbench
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </main>
   </div>
 </div>
 `;
@@ -1157,576 +569,251 @@ exports[`Workflow list page renders Recipes correctly 1`] = `
 exports[`Workflow list page renders Shared correctly 1`] = `
 <div>
   <div
-    class="workflows-page"
+    class="page"
   >
-    <div>
-      <nav
-        class="navbar"
-      >
-        <div
-          class="logo"
+    <nav
+      class="main-nav"
+    >
+      <header>
+        <a
+          href="/workflows"
         >
           <img
-            class="logo"
-            src="undefinedimages/logo.svg"
+            alt="Workbench"
+            src="undefinedimages/workbench-logo-white.svg"
           />
-          <img
-            class="logo-text"
-            src="undefinedimages/logo-text-dark.svg"
-          />
-        </div>
-        <div
-          class="links"
+        </a>
+        <button
+          class="toggle-open"
+          title="menu"
         >
-          <a
-            class="inactive"
-            href="/workflows"
-          >
-            WORKFLOWS
-          </a>
-          <a
-            class="inactive"
-            href="/lessons/en"
-          >
-            TRAINING
-          </a>
-        </div>
-        <div
-          class="dropdown"
-        >
-          <button
-            aria-expanded="false"
-            class="btn btn-secondary context-button"
-            title="menu"
-          >
-            <i
-              class="icon-more"
-            />
-          </button>
-        </div>
-        <form
-          action="/account/logout/"
-          method="post"
-          style="display: none;"
-        >
-          <input
-            name="csrfmiddlewaretoken"
-            type="hidden"
-            value=""
-          />
-          <input
-            type="submit"
-          />
-        </form>
-      </nav>
-    </div>
-    <a
-      class="lesson-banner mx-auto"
-      href="/lessons/"
-    >
-      <div>
-        <div
-          class="content-1"
-        >
-          NEW
-        </div>
-        <div
-          class="d-flex"
-        >
-          <span
-            class="icon-star"
-          />
-          TRAINING
-        </div>
-      </div>
-      <p>
-        Learn how to work with data without coding
-      </p>
-    </a>
-    <form
-      action="/workflows/"
-      class="create-workflow"
-      method="post"
-    >
-      <input
-        name="csrfmiddlewaretoken"
-        type="hidden"
-        value=""
-      />
-      <button
-        type="submit"
-      >
-        Create Workflow
-      </button>
-    </form>
-    <div
-      class="workflow-lists"
-    >
+          /app/assets/icons/menu.svg
+        </button>
+      </header>
       <div
-        class="nav"
+        class="details"
       >
-        <ul
-          class="workflow-tabs"
-          id="workflow-tabs"
-          role="tablist"
-        >
+        <ul>
           <li
-            class="nav-item"
+            class=""
           >
             <a
-              aria-controls="workflow-tab-owned"
-              aria-selected="false"
-              class="nav-link"
-              href="#owned"
-              id="workflow-tab-link-owned"
+              href="/workflows"
             >
               My workflows
             </a>
           </li>
           <li
-            class="nav-item active"
+            class="open"
           >
-            <a
-              aria-controls="workflow-tab-shared"
-              aria-selected="true"
-              class="nav-link active"
-              href="#shared"
-              id="workflow-tab-link-shared"
-            >
+            <a>
               Shared with me
             </a>
           </li>
           <li
-            class="nav-item"
+            class=""
           >
             <a
-              aria-controls="workflow-tab-templates"
-              aria-selected="false"
-              class="nav-link"
-              href="#templates"
-              id="workflow-tab-link-templates"
+              href="/workflows/examples"
             >
-              Recipes
+              Example workflows
+            </a>
+          </li>
+          <li
+            class="parent"
+          >
+            <a
+              href="/lessons"
+            >
+              Training
             </a>
           </li>
         </ul>
         <div
-          class="sort-menu"
+          class="user-paths"
         >
-          <div
-            class="dropdown"
+          <h3
+            class="display-name"
           >
-            <button
-              aria-expanded="false"
-              class="btn btn-secondary"
+            Example User
+          </h3>
+          <ul>
+            <li
+              class="parent"
             >
-              Sort
-               
-              <i
-                class="icon-caret-down"
-              />
-            </button>
-          </div>
+              <a
+                href="/settings/plan"
+              >
+                Plan & Billing
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+              >
+                Language
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+              >
+                Log Out
+              </a>
+              <form
+                action="/account/logout/"
+                class="hidden"
+                method="post"
+              >
+                <input
+                  name="csrfmiddlewaretoken"
+                  type="hidden"
+                  value=""
+                />
+                <input
+                  name="next"
+                  type="hidden"
+                  value="/workflows/shared-with-me"
+                />
+                <input
+                  type="submit"
+                />
+              </form>
+            </li>
+          </ul>
         </div>
       </div>
+    </nav>
+    <main
+      class="workflows"
+    >
+      <header>
+        <h1>
+          Workflows shared with me
+        </h1>
+      </header>
       <div
-        class="tab-content"
+        class="workflow-list shared-with-me"
       >
-        <div
-          aria-labelledby="workflow-tab-link-owned"
-          class="tab-pane"
-          id="workflow-tab-owned"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/3"
+        <table>
+          <thead>
+            <tr>
+              <th
+                class="title"
               >
-                <div
-                  class="workflow-title"
+                <a
+                  href="#"
                 >
-                  Analysis
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                  Title
+                </a>
+              </th>
+              <th
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/1"
+                Owner
+              </th>
+              <th
+                class="updated"
               >
-                <div
-                  class="workflow-title"
+                <a
+                  href="#"
                 >
-                  Cleaning
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      public
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                  Updated
+                  /app/assets/icons/sort-descending.svg
+                </a>
+              </th>
+              <th
+                class="privacy"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/2"
+                Privacy
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="title"
               >
-                <div
-                  class="workflow-title"
-                >
-                  Charting
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Fred Frederson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
-              >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
-                >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-labelledby="workflow-tab-link-shared"
-          class="tab-pane show active"
-          id="workflow-tab-shared"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/8"
-              >
-                <div
-                  class="workflow-title"
+                <a
+                  href="/workflows/8"
                 >
                   Document search
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Sally Sallerson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      public
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                </a>
+              </td>
+              <td
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/8"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/7"
+                  Sally Sallerson
+                </a>
+              </td>
+              <td
+                class="updated"
               >
-                <div
-                  class="workflow-title"
+                <a
+                  href="/workflows/8"
+                >
+                  <time>
+                    10y ago
+                  </time>
+                </a>
+              </td>
+              <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/8"
+                >
+                  public
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="title"
+              >
+                <a
+                  href="/workflows/7"
                 >
                   Messy data cleanup
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by John Johnson
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                </a>
+              </td>
+              <td
+                class="owner"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/7"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          aria-labelledby="workflow-tab-link-templates"
-          class="tab-pane"
-          id="workflow-tab-templates"
-          role="tabpanel"
-        >
-          <div
-            class="workflow-list"
-          >
-            <div
-              class="workflow"
-            >
-              <a
-                href="/workflows/10"
+                  John Johnson
+                </a>
+              </td>
+              <td
+                class="updated"
               >
-                <div
-                  class="workflow-title"
+                <a
+                  href="/workflows/7"
                 >
-                  Demo 1
-                </div>
-                <ul
-                  class="metadata-container"
-                >
-                  <li
-                    class="attribution"
-                  >
-                    <span
-                      class="metadata"
-                    >
-                      by Workbench
-                    </span>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                  </li>
-                  <li>
-                    Updated 10y ago
-                  </li>
-                  <li>
-                    <span
-                      class="separator"
-                    >
-                      -
-                    </span>
-                    <button
-                      class="public-private"
-                      title="Change privacy"
-                      type="button"
-                    >
-                      private
-                    </button>
-                  </li>
-                </ul>
-              </a>
-              <div
-                class="dropdown"
+                  <time>
+                    10y ago
+                  </time>
+                </a>
+              </td>
+              <td
+                class="privacy"
               >
-                <button
-                  aria-expanded="false"
-                  class="btn btn-secondary context-button"
+                <a
+                  href="/workflows/7"
                 >
-                  <i
-                    class="icon-more"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                  private
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </main>
   </div>
 </div>
 `;

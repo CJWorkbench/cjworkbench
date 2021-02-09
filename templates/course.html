@@ -4,38 +4,32 @@
 {% block title %}{% trans_html "py.templates.course.workbenchTraining.title" default="Workbench Training" %}{% endblock %}
 
 {% block body %}
-  <div id="root">
-    <div class="lessons-page">
-      <div class="navbar-wrapper"></div>
-      <div class="container">
-        <div class="courses-nav">
-          <ul>
-            <!-- "Training" has a special URL -->
-            <li class="{% if not course.slug %}active{% endif %}">
-              <a href="/lessons/{{course.locale_id}}">{% trans_html "py.templates.course.tutorials.link" default="TUTORIALS" comment="This must be all-caps for styling reasons" %}</a>
+  <div class="page">
+    <nav class="main-nav"><!-- filled in by React --></nav>
+    <main class="lessons-page">
+      <header>
+        <h1>
+          {% if course.slug %}
+            {{ course.title }}
+          {% else %}
+            {% trans_html "py.templates.course.tutorials.link" default="Tutorials" %}
+          {% endif %}
+        </h1>
+      </header>
+      <div class="course">
+        <div class="introduction">{{course.introduction_html|safe}}</div>
+        <ul class="lessons">
+          {% for lesson in lessons %}
+            <li class="lesson">
+              <a href="{{lesson_url_prefix}}/{{lesson.slug}}">
+                <h2>{{lesson.title}}</h2>
+                <div class="description">{{lesson.header.html|safe}}</div>
+              </a>
             </li>
-            {% for c in courses %}
-              <li class="{% if c is course %}active{% endif %}">
-                <a href="/courses/{{c.locale_id}}/{{c.slug}}">{{c.title}}</a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-        <div class="course">
-          <div class="introduction">{{course.introduction_html|safe}}</div>
-          <ul class="lessons">
-            {% for lesson in lessons %}
-              <li class="lesson">
-                <a href="{{lesson_url_prefix}}/{{lesson.slug}}">
-                  <h2>{{lesson.title}}</h2>
-                  <div class="description">{{lesson.header.html|safe}}</div>
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
+          {% endfor %}
+        </ul>
       </div>
-    </div>
-    {% render_bundle 'lessons' 'js' %}
+    </main>
   </div>
+  {% render_bundle 'lessons' 'js' %}
 {% endblock %}

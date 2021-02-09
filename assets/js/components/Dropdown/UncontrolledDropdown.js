@@ -2,26 +2,21 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Dropdown from './Dropdown'
 
-export default class UncontrolledDropdown extends React.PureComponent {
-  static propTypes = {
-    disabled: PropTypes.bool,
-    children: PropTypes.node.isRequired
-  }
+export default function UncontrolledDropdown (props) {
+  const [isOpen, toggleOpen] = React.useReducer(open => !open, false)
+  const { disabled, children } = props
 
-  state = {
-    isOpen: false
-  }
-
-  toggleIsOpen = () => {
-    this.setState(s => ({ isOpen: !s.isOpen }))
-  }
-
-  render () {
-    const { isOpen } = this.state
-
-    return (
-      // this.props includes .children,
-      <Dropdown isOpen={isOpen} toggle={this.toggleIsOpen} {...this.props} />
-    )
-  }
+  return (
+    <Dropdown
+      isOpen={isOpen}
+      toggle={toggleOpen}
+      disabled={disabled}
+    >
+      {children}
+    </Dropdown>
+  )
+}
+UncontrolledDropdown.propTypes = {
+  disabled: PropTypes.bool,
+  children: PropTypes.node.isRequired
 }

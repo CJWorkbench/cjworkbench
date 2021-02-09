@@ -33,12 +33,6 @@ class Workflow(models.Model):
     #                         original_workflow_id)
     #     WHERE anonymous_owner_session_key IS NOT NULL
     #       AND original_workflow_id IS NOT NULL
-    #     """,
-    #     """
-    #     CREATE UNIQUE INDEX unique_workflow_copy_by_user
-    #     ON server_workflow (owner_id, original_workflow_id)
-    #     WHERE owner_id IS NOT NULL
-    #       AND original_workflow_id IS NOT NULL
     #     """
     # ])
     #
@@ -60,12 +54,6 @@ class Workflow(models.Model):
     #                                 name='unique_workflow_copy_by_session',
     #                                 condition=models.Q(
     #                                     anonymous_owner_session_key__isnull=False,
-    #                                     original_workflow_id__isnull=False,
-    #                                 ),
-    #         models.UniqueConstraint(fields=['owner_id', 'original_workflow_id'],
-    #                                 name='unique_workflow_copy_by_user',
-    #                                 condition=models.Q(
-    #                                     owner_id__isnull=False,
     #                                     original_workflow_id__isnull=False,
     #                                 ),
     #    ]

@@ -958,6 +958,8 @@ class Migration(migrations.Migration):
                 WHERE anonymous_owner_session_key IS NOT NULL
                   AND original_workflow_id IS NOT NULL
                 """,
+                # [adamhooper, 2021-02-24] next time we squash, delete this
+                # second index SQL -- it's deleted in 0034.
                 """
                 CREATE UNIQUE INDEX unique_workflow_copy_by_user
                 ON server_workflow (owner_id, original_workflow_id)

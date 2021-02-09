@@ -1,13 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Navbar from '../Workflows/Navbar'
+import MainNavFragment from '../Page/MainNav/MainNavFragment'
 import InternationalizedPage from '../i18n/InternationalizedPage'
+
+const initState = JSON.parse(window.initState || '{}')
 
 ReactDOM.render(
   (
     <InternationalizedPage>
-      <Navbar user={JSON.parse(window.initState || '{}').loggedInUser || null} />
+      <MainNavFragment
+        courses={initState.courses || null}
+        currentPath={window.location.pathname}
+        user={initState.loggedInUser || null}
+      />
     </InternationalizedPage>
   ),
-  document.querySelector('.navbar-wrapper')
+  document.querySelector('nav.main-nav')
 )

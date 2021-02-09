@@ -8,7 +8,7 @@ class TestQuickFix(LoggedInIntegrationTest):
     def _create_simple_workflow(self, *, csv_data, expected_colnames_and_types):
         b = self.browser
 
-        b.click_button("Create Workflow")
+        b.click_button("Create your first workflow")
         b.assert_element(
             'input[name="name"][value="Untitled Workflow"]', wait=True
         )  # Wait for page to load

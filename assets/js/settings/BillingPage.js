@@ -1,11 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
-import Main from './Main'
-import SidebarNav from './SidebarNav'
-import getSettingsPages from './settingsPages'
+import { Page, MainNav } from '../Page'
 import Billing from './Billing'
-import Navbar from '../Workflows/Navbar'
 
 export default function BillingPage (props) {
   const { api, user } = props
@@ -16,19 +13,18 @@ export default function BillingPage (props) {
   }, [api])
 
   return (
-    <>
-      <Navbar user={user} />
-      <Main>
-        <SidebarNav pages={getSettingsPages()} activePath='/settings/billing' />
-        <div>
+    <Page>
+      <MainNav user={user} currentPath='/settings/billing' />
+      <main>
+        <header>
           <h1><Trans id='js.settings.BillingPage.title'>Billing</Trans></h1>
-          <Billing
-            user={user}
-            onClickManage={createBillingPortalSessionAndRedirect}
-          />
-        </div>
-      </Main>
-    </>
+        </header>
+        <Billing
+          user={user}
+          onClickManage={createBillingPortalSessionAndRedirect}
+        />
+      </main>
+    </Page>
   )
 }
 BillingPage.propTypes = {

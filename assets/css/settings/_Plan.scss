@@ -1,11 +1,9 @@
-table.plans {
-  table-layout: fixed; // give all columns the same width
-  border-collapse: collapse;
-  width: 100%;
-  height: 1px; // so <div> in <td> can have height:100%: https://stackoverflow.com/a/22220780
+.plan-table {
   $well-padding: rem(1.5);
   $well-gutter: rem(1);
   $data-line-height: rem(1.5);
+
+  overflow: visible auto;
 
   @mixin plan-table-well() {
     // A <div> inside a <td> that has height:100%....
@@ -23,9 +21,17 @@ table.plans {
     background: white;
   }
 
+  table {
+    table-layout: fixed; // give all columns the same width
+    border-collapse: collapse;
+    min-width: 100%;
+    height: 1px; // so <div> in <td> can have height:100%: https://stackoverflow.com/a/22220780
+  }
+
   th, td {
     height: 100%; // so divs inside can have height:100%;
     padding: 0;
+    white-space: nowrap; // scroll, don't wrap, on mobile (least-ugly of the two ugly options)
   }
 
   thead {
@@ -47,7 +53,7 @@ table.plans {
           margin-top: rem(1);
         }
 
-        button {
+        button, a {
           @include action-button;
           @include button-pink-fill;
           margin-top: rem(1);
@@ -67,7 +73,17 @@ table.plans {
     }
 
     th {
-      padding: $well-padding $well-padding $well-padding 0; // line up with <td>
+      // Move the baseline up by a bit to account for the difference in font
+      // size between <h3> (here) and <td> (next cell). Depends on the font
+      // (Roboto Sans), the two sizes (defined elsewhere), and the rendering
+      // engine (which we can't control).
+      $baseline_tweak: -.15rem; // 2021-02-05 looks good on Chrome 88 on Fedora Linux.
+
+      // We move the baseline using padding. We need to also adjust the
+      // _bottom_ padding so that a <th><h3></h3></th> remains vertically
+      // centered.
+      $well-padding-with-baseline-tweak: $well-padding + $baseline_tweak;
+      padding: $well-padding-with-baseline-tweak $well-padding $well-padding-with-baseline-tweak 0; // line up with <td>
     }
 
     td>div {

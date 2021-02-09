@@ -1,3 +1,5 @@
+import logging
+
 import httpx
 from django.test import override_settings
 
@@ -23,18 +25,20 @@ class FilesTest(DbTestCaseWithModuleRegistry):
             file_upload_api_token="abc123",
             params={"file": None},
         )
-        response = self.client.post(
-            f"/api/v1/workflows/{workflow.id}/steps/step-123/files",
-            HTTP_AUTHORIZATION="Bearer abc123",
-            content_type="application/json",
-            data={"filename": "foo bar.csv", "size": 12345},
-        )
+        with self.assertLogs("httpx._client", level=logging.DEBUG):
+            response = self.client.post(
+                f"/api/v1/workflows/{workflow.id}/steps/step-123/files",
+                HTTP_AUTHORIZATION="Bearer abc123",
+                content_type="application/json",
+                data={"filename": "foo bar.csv", "size": 12345},
+            )
         self.assertEqual(response.status_code, 200)
 
         tus_upload_url = response.json()["tusUploadUrl"]
 
         # Upload was created on tusd
-        response = httpx.head(tus_upload_url, headers={"Tus-Resumable": "1.0.0"})
+        with self.assertLogs("httpx._client", level=logging.DEBUG):
+            response = httpx.head(tus_upload_url, headers={"Tus-Resumable": "1.0.0"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Tus-Resumable"], "1.0.0")
         self.assertEqual(response.headers["Upload-Length"], "12345")

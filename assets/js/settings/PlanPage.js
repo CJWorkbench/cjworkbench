@@ -2,10 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { loadStripe } from '@stripe/stripe-js'
-import Main from './Main'
-import SidebarNav from './SidebarNav'
-import getSettingsPages from './settingsPages'
-import Navbar from '../Workflows/Navbar'
+import { Page, MainNav } from '../Page'
 import PlanTable from './Plan/PlanTable'
 
 export default function PlanPage (props) {
@@ -21,26 +18,25 @@ export default function PlanPage (props) {
   }, [api])
 
   return (
-    <>
-      <Navbar user={user} />
-      <Main>
-        <SidebarNav pages={getSettingsPages()} activePath='/settings/plan' />
-        <div>
+    <Page>
+      <MainNav user={user} currentPath='/settings/plan' />
+      <main>
+        <header>
           <h1><Trans id='js.settings.PlanPage.title'>Plan</Trans></h1>
-          <PlanTable
-            plans={plans}
-            onClickSubscribe={handleClickSubscribe}
-            activePlanIds={user.subscribedPlans.map(p => p.stripePriceId)}
-          />
-        </div>
-      </Main>
-    </>
+        </header>
+        <PlanTable
+          plans={plans}
+          onClickSubscribe={handleClickSubscribe}
+          user={user}
+        />
+      </main>
+    </Page>
   )
 }
 PlanPage.propTypes = {
   api: PropTypes.shape({
     createStripeCheckoutSession: PropTypes.func.isRequired
   }).isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object, // or null if anonymous
   plans: PropTypes.array.isRequired
 }

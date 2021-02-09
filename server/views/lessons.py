@@ -239,7 +239,7 @@ def render_lesson_detail(request, locale_id, slug):
 def _render_course(request, course, lesson_url_prefix):
     logged_in_user = None
     if request.user and request.user.is_authenticated:
-        logged_in_user = jsonize_user(request.user)
+        logged_in_user = jsonize_user(request.user, request.user.user_profile)
 
     try:
         courses = AllCoursesByLocale[course.locale_id]
@@ -251,7 +251,15 @@ def _render_course(request, course, lesson_url_prefix):
         request,
         "course.html",
         {
-            "initState": json.dumps({"loggedInUser": logged_in_user}),
+            "initState": json.dumps(
+                {
+                    "loggedInUser": logged_in_user,
+                    "courses": [
+                        dict(href=course.href, title=course.title)
+                        for course in AllCoursesByLocale.get(request.locale_id, [])
+                    ],
+                }
+            ),
             "course": course,
             "courses": courses,
             "lessons": list(course.lessons.values()),

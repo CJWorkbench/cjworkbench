@@ -1,5 +1,7 @@
+from django.contrib.auth.models import AnonymousUser
 from django.template.response import TemplateResponse
 from django.views.decorators.clickjacking import xframe_options_exempt
+
 from cjwstate.models import Step
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from server.serializers import (
@@ -31,10 +33,11 @@ def embed(request, step_id):
 
     if step:
         ctx = JsonizeContext(
-            request.user,
-            request.session,
-            request.locale_id,
-            {module_zipfile.module_id: module_zipfile},
+            user=AnonymousUser(),
+            user_profile=None,
+            session=None,
+            locale_id=request.locale_id,
+            module_zipfiles={module_zipfile.module_id: module_zipfile},
         )
         init_state = {
             "workflow": jsonize_clientside_workflow(

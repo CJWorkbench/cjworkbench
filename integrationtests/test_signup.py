@@ -34,4 +34,4 @@ class TestSignup(WorkbenchBase):
         b.fill_in("login", "user@example.org", wait=True)
         b.fill_in("password", "?P455W0rd!")
         b.click_button("Sign In")
-        b.wait_for_element("a", text="MY WORKFLOWS", wait=True)
+        b.wait_for_element("a", text="My workflows", wait=True)

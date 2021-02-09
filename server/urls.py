@@ -28,8 +28,11 @@ urlpatterns = [
     # ex: /
     #    url(r'^$', views.index, name='index'),
     url(r"^$", redirect("/workflows")),
+    url(r"^workflows/$", redirect("/workflows")),
     # list all workflows
-    url(r"^workflows/$", workflows.Index.as_view(), name="workflows"),
+    url(r"^workflows$", workflows.Index.as_view()),
+    url(r"^workflows/shared-with-me$", workflows.shared_with_me),
+    url(r"^workflows/examples$", workflows.examples),
     # lessons and courses
     url(r"^lessons/(?P<locale_id>[a-z]{2})$", lessons.render_lesson_list),
     url(r"^lessons/(?P<locale_id>[a-z]{2})/$", redirect("/lessons/%(locale_id)s")),

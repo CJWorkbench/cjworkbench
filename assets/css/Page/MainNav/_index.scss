@@ -1,0 +1,87 @@
+nav.main-nav {
+  background: $main-nav-bg;
+  color: white;
+  position: fixed;
+  width: 100%;
+  z-index: $zindex-fixed;
+
+  div.details {
+    display: none;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding-bottom: rem(.75);
+
+    &.open {
+      display: flex;
+    }
+
+    @include media-when-we-pin-main-nav-sidebar {
+      display: flex;
+
+      ul:first-child {
+        // the first <ul> stretches to the bottom of the page
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  div.user-paths {
+    margin: rem(1) 0 0;
+    padding-top: rem(.75);
+    border-top: 1px solid $item-border;
+  }
+
+  h3.display-name {
+    margin: 0;
+    padding: rem(1) $main-nav-padding rem(.75);
+    font: inherit;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    a {
+      display: block;
+      color: inherit;
+      padding: rem(.75) $main-nav-padding;
+      text-decoration: none;
+
+      &[href]:hover {
+        background: $main-nav-open-bg;
+      }
+    }
+
+    li.parent.open>a {
+      font-weight: bold;
+    }
+
+    li:not(.parent).open a {
+      background: $main-nav-open-bg;
+      font-weight: bold;
+    }
+
+    li li a {
+      padding-left: 2 * $main-nav-padding;
+    }
+  }
+
+  form.hidden {
+    display: none;
+  }
+
+  @include media-when-we-pin-main-nav-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $main-nav-sidebar-width;
+    height: 100vh;
+  }
+
+}
+
+@import './MainNavHeader'
