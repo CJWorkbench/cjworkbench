@@ -174,13 +174,13 @@ class CreateCheckoutSessionTest(DbTestCase):
         response = self._post_json(stripePriceId="price_123")
         self.assertEqual(response.status_code, 302)  # redirect to login
 
-    @override_settings(STRIPE_API_KEY="key_123")
+    @override_settings(STRIPE_API_KEY="key_123", STRIPE_PUBLIC_API_KEY="pk_123")
     def test_400_no_price(self):
         self.client.force_login(create_user())
         response = self._post_json()
         self.assertEqual(response.status_code, 400)
 
-    @override_settings(STRIPE_API_KEY="key_123")
+    @override_settings(STRIPE_API_KEY="key_123", STRIPE_PUBLIC_API_KEY="pk_123")
     def test_404_missing_price(self):
         self.client.force_login(create_user())
         response = self._post_json(stripePriceId="price_123")
