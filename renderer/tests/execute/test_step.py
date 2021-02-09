@@ -88,6 +88,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
         )
         with self.assertLogs(level=logging.INFO):
@@ -139,6 +140,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             # returns different data -- but CorruptCacheError means we won't care.
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
         )
@@ -188,6 +190,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             # returns different error
             python_code='import pandas as pd\ndef render(table, params): return [{"id": "err"}]',
         )
@@ -278,6 +281,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             # returns different data
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
         )
@@ -326,6 +330,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             # returns different data
             python_code="import pandas as pd\ndef render(table, params): return pd.DataFrame({})",
         )
@@ -368,6 +373,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             python_code=textwrap.dedent(
                 """
                 import pyarrow as pa
@@ -425,6 +431,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             python_code=textwrap.dedent(
                 """
                 import pandas as pd
@@ -466,6 +473,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             python_code=textwrap.dedent(
                 """
                 import pandas as pd
@@ -504,6 +512,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             python_code=textwrap.dedent(
                 """
                 import pandas as pd
@@ -546,6 +555,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         module_zipfile = create_module_zipfile(
             "x",
+            spec_kwargs={"loads_data": True},
             python_code=textwrap.dedent(
                 """
                 import pandas as pd
@@ -572,6 +582,46 @@ class StepTests(DbTestCaseWithModuleRegistry):
             )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    def test_render_without_input_or_loads_data_raises_no_loaded_data(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        step = tab.steps.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+        )
+        module_zipfile = create_module_zipfile(
+            "x",
+            spec_kwargs={"loads_data": False},
+            python_code="def render(table, params): return None",
+        )
+
+        result = self.run_with_async_db(
+            execute_step(
+                self.chroot_context,
+                workflow,
+                step,
+                module_zipfile,
+                {},
+                Tab(tab.slug, tab.name),
+                RenderResult(),
+                {},
+                self.output_path,
+            )
+        )
+        assert_render_result_equals(
+            result,
+            RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage("py.renderer.execute.step.NoLoadedDataError")
+                    )
+                ]
+            ),
+        )
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     def test_report_module_error(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
@@ -583,7 +633,9 @@ class StepTests(DbTestCaseWithModuleRegistry):
         )
 
         module_zipfile = create_module_zipfile(
-            "x", python_code="def render(table, params):\n  undefined()"
+            "x",
+            spec_kwargs={"loads_data": True},
+            python_code="def render(table, params):\n  undefined()",
         )
 
         with self.assertLogs(level=logging.INFO):

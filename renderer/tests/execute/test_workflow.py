@@ -65,6 +65,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.first()
         create_module_zipfile(
             "mod",
+            spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"B": [2]})',
         )
         step = tab.steps.create(
@@ -89,7 +90,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         # /tmp is RAM; /var/tmp is disk. Assert big files go on disk.
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        create_module_zipfile("mod")
+        create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         tab.steps.create(order=0, slug="step-1", module_id_name="mod")
 
         with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
@@ -99,7 +100,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_execute_race_delete_workflow(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        create_module_zipfile("mod")
+        create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         tab.steps.create(order=0, slug="step-1", module_id_name="mod")
         tab.steps.create(order=1, slug="step-2", module_id_name="mod")
 
@@ -126,7 +127,9 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.first()
         delta_id = workflow.last_delta_id
         create_module_zipfile(
-            "mod", python_code='def render(table, params): return "error, not warning"'
+            "mod",
+            spec_kwargs={"loads_data": True},
+            python_code='def render(table, params): return "error, not warning"',
         )
         step1 = tab.steps.create(order=0, slug="step-1", module_id_name="mod")
         step2 = tab.steps.create(order=1, slug="step-2", module_id_name="mod")
@@ -170,7 +173,10 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.first()
         create_module_zipfile(
             "mod",
-            spec_kwargs={"parameters": [{"id_name": "x", "type": "string"}]},
+            spec_kwargs={
+                "loads_data": True,
+                "parameters": [{"id_name": "x", "type": "string"}],
+            },
             python_code=textwrap.dedent(
                 """
                 import json
@@ -196,7 +202,8 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         create_module_zipfile(
             "mod",
             spec_kwargs={
-                "parameters": [{"id_name": "x", "type": "string", "default": "def"}]
+                "loads_data": True,
+                "parameters": [{"id_name": "x", "type": "string", "default": "def"}],
             },
             python_code=textwrap.dedent(
                 """
@@ -253,6 +260,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             # ... step2's output depends on whether we run this on
             # step1.
             "mod",
+            spec_kwargs={"loads_data": True},
             python_code="def render(table, params): return table * 2",
         )
 
@@ -286,6 +294,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.create(position=0)
         create_module_zipfile(
             "mod",
+            spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
         )
         step = tab.steps.create(
@@ -311,6 +320,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.create(position=0)
         create_module_zipfile(
             "mod",
+            spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
         )
         step = tab.steps.create(
@@ -343,6 +353,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.create(position=0)
         create_module_zipfile(
             "mod",
+            spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
         )
         step = tab.steps.create(

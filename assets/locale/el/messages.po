@@ -2089,38 +2089,42 @@ msgstr "Λήξη χρονικού ορίου κατά την ανανέωση τ
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
 
-#: renderer/execute/step.py:137
+#: renderer/execute/step.py:138
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
 "προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
 "Κωδικός σφάλματος: {message}"
 
-#: renderer/execute/step.py:364
+#: renderer/execute/step.py:372
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
 "Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
 "βήματος."
 
-#: renderer/execute/step.py:391
+#: renderer/execute/step.py:399
+msgid "py.renderer.execute.step.NoLoadedDataError"
+msgstr ""
+
+#: renderer/execute/step.py:410
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
 "Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
 "καρτέλα."
 
-#: renderer/execute/step.py:402
+#: renderer/execute/step.py:421
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
-#: renderer/execute/types.py:47
+#: renderer/execute/types.py:50
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr ""
 
-#: renderer/execute/types.py:65
+#: renderer/execute/types.py:68
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 
-#: renderer/execute/types.py:127
+#: renderer/execute/types.py:130
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr "Μετατροπή σε κείμενο."
@@ -2128,7 +2132,7 @@ msgstr "Μετατροπή σε κείμενο."
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:133
+#: renderer/execute/types.py:136
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
@@ -2139,7 +2143,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#: renderer/execute/types.py:176
+#: renderer/execute/types.py:179
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρεπει να μετατραπεί σε "
@@ -2153,7 +2157,7 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:189
+#: renderer/execute/types.py:192
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""

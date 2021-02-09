@@ -8,19 +8,22 @@ from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
 class UnneededExecution(Exception):
     """A render would produce useless results."""
 
-    pass
-
 
 class TabCycleError(Exception):
     """The chosen tab exists, and it depends on the output of this tab."""
-
-    pass
 
 
 class TabOutputUnreachableError(Exception):
     """The chosen tab exists, and it is empty or has an error."""
 
-    pass
+
+class NoLoadedDataError(Exception):
+    """This first Step in its Tab has a spec with loads_data: false.
+
+    Modules with `loads_data: false` may assume the input table is non-empty.
+    Their `render()` might crash if we called them with input `None`. Better
+    to raise this error.
+    """
 
 
 class PromptingError(Exception):

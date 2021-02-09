@@ -66,7 +66,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_hit(self):
-        module_zipfile = create_module_zipfile("mod")
+        module_zipfile = create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step1 = tab.steps.create(
@@ -104,7 +104,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_miss(self):
-        module_zipfile = create_module_zipfile("mod")
+        module_zipfile = create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step1 = tab.steps.create(
@@ -142,7 +142,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_partial_cache_hit(self):
-        module_zipfile = create_module_zipfile("mod")
+        module_zipfile = create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         # step1: cached result is fresh. Should not render.
@@ -197,7 +197,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_resume_backtrack_on_corrupt_cache_error(self):
-        module_zipfile = create_module_zipfile("mod")
+        module_zipfile = create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         # step1: cached result is fresh -- but CORRUPT

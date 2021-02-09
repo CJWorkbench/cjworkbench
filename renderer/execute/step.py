@@ -27,6 +27,7 @@ import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
 from renderer import notifications
 from .types import (
+    NoLoadedDataError,
     TabCycleError,
     TabOutputUnreachableError,
     UnneededExecution,
@@ -222,12 +223,16 @@ def _execute_step_pre(
     """First step of execute_step().
 
     Raise TabCycleError or TabOutputUnreachableError if the module depends on
-    tabs with errors. (We won't call the render() method in that case.)
+    tabs with errors.
 
-    Raise PromptingError if the module parameters are invalid. (We'll skip
-    render() and prompt the user with quickfixes in that case.)
+    Raise NoLoadedDataError if there is no input table and the module's
+    loads_data is False (the default).
+
+    Raise PromptingError if the module parameters are invalid.
 
     Raise UnneededExecution if `step` has changed.
+
+    (We won't call the render() method in any of these cases.)
 
     All this runs synchronously within a database lock. (It's a separate
     function so that when we're done awaiting it, we can continue executing in
@@ -240,6 +245,9 @@ def _execute_step_pre(
         fetch_result = _load_fetch_result(safe_step, basedir, exit_stack)
 
         module_spec = module_zipfile.get_spec()
+        if not module_spec.loads_data and input_table.table is None:
+            raise NoLoadedDataError
+
         param_schema = module_spec.get_param_schema()
         render_context = renderprep.RenderContext(
             step.id,
@@ -373,7 +381,7 @@ async def _render_step(
     with contextlib.ExitStack() as exit_stack:
         try:
             # raise UnneededExecution, TabCycleError, TabOutputUnreachableError,
-            # PromptingError
+            # NoLoadedDataError, PromptingError
             fetch_result, params = await _execute_step_pre(
                 basedir,
                 exit_stack,
@@ -383,6 +391,17 @@ async def _render_step(
                 raw_params,
                 input_result.table,
                 tab_results,
+            )
+        except NoLoadedDataError:
+            return RenderResult(
+                errors=[
+                    RenderError(
+                        I18nMessage.trans(
+                            "py.renderer.execute.step.NoLoadedDataError",
+                            default="Please Add Data before this step.",
+                        )
+                    )
+                ]
             )
         except TabCycleError:
             return RenderResult(

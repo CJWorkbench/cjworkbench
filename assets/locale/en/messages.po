@@ -2037,42 +2037,46 @@ msgstr "Timeout during OAuth2 token refresh"
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "HTTP error during OAuth2 token refresh: {error}"
 
-#: renderer/execute/step.py:137
+#: renderer/execute/step.py:138
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "
 "fix it. If this persists, contact us. Error code: {message}"
 
-#: renderer/execute/step.py:364
+#: renderer/execute/step.py:372
 msgid "py.renderer.execute.step.noModule"
 msgstr "Please delete this step: an administrator uninstalled its code."
 
-#: renderer/execute/step.py:391
+#: renderer/execute/step.py:399
+msgid "py.renderer.execute.step.NoLoadedDataError"
+msgstr "Please Add Data before this step."
+
+#: renderer/execute/step.py:410
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
-#: renderer/execute/step.py:402
+#: renderer/execute/step.py:421
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
-#: renderer/execute/types.py:47
+#: renderer/execute/types.py:50
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr "“{value}” is not a number. Please enter a number."
 
-#: renderer/execute/types.py:65
+#: renderer/execute/types.py:68
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 "“{value}” is not a timestamp. Please enter a value with the format “YYYY-"
 "MM-DD” or “YYYY-MM-DDThh:mmZ”."
 
-#: renderer/execute/types.py:127
+#: renderer/execute/types.py:130
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr "Convert to Text"
 
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:133
+#: renderer/execute/types.py:136
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
 "Convert {found_type, select, text {Text} number {Numbers} timestamp "
@@ -2082,7 +2086,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#: renderer/execute/types.py:176
+#: renderer/execute/types.py:179
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {The column “{0}” must be converted to "
@@ -2095,7 +2099,7 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:189
+#: renderer/execute/types.py:192
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 "{ columns, plural, offset:2 =1 {The column “{0}” must be converted from {"
