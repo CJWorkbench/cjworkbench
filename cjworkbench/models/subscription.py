@@ -3,7 +3,7 @@ import enum
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .plan import Plan
+from .price import Price
 
 
 User = get_user_model()
@@ -40,8 +40,8 @@ class Subscription(models.Model):
     )
     """User who is subscribed."""
 
-    plan = models.ForeignKey(Plan, on_delete=models.PROTECT)
-    """Plan the subscription is for."""
+    price = models.ForeignKey(Price, on_delete=models.PROTECT)
+    """Price the subscription is for."""
 
     stripe_subscription_id = models.SlugField(
         blank=False,

@@ -1,3 +1,3 @@
 from .userprofile import UserProfile
-from .plan import Plan
+from .price import Price
 from .subscription import Subscription

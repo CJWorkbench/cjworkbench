@@ -5,7 +5,7 @@ from django.contrib.sessions.models import Session
 
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
-from cjworkbench.models.plan import Plan
+from cjworkbench.models.product import Product
 from cjworkbench.models.subscription import Subscription
 from cjworkbench.models.userprofile import UserProfile
 from server.handlers.autofetch import list_autofetches_json, isoformat
@@ -38,17 +38,19 @@ class AutoupdateTest(DbTestCase):
 
     def test_list_autofetches_gets_plan_max_fetches_per_day(self):
         user = User.objects.create(username="a", email="a@example.org")
-        plan = Plan.objects.create(
-            stripe_price_id="price_123",
+        product = Product.objects.create(
             stripe_product_id="prod_123",
-            stripe_active=True,
             max_fetches_per_day=2000,
+        )
+        price = product.prices.create(
+            stripe_price_id="price_123",
+            stripe_active=True,
             stripe_amount=100,
             stripe_currency="usd",
         )
         Subscription.objects.create(
             user=user,
-            plan=plan,
+            price=price,
             stripe_subscription_id="sub_123",
             stripe_status="active",
             created_at=datetime.datetime.now(),

@@ -92,9 +92,10 @@ def find_workflows_with_stale_deltas(
             user_limits AS (
                 SELECT
                     subscription.user_id,
-                    MAX(plan.max_delta_age_in_days) AS max_delta_age_in_days
+                    MAX(product.max_delta_age_in_days) AS max_delta_age_in_days
                 FROM subscription
-                INNER JOIN plan ON subscription.plan_id = plan.id
+                INNER JOIN price ON price.id = subscription.price_id
+                INNER JOIN product ON product.id = price.product_id
                 GROUP BY subscription.user_id
             ),
             workflow_ids AS (

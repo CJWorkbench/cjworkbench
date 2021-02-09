@@ -433,8 +433,8 @@ export default class WorkbenchAPI {
   /**
    * Construct { checkoutSession, apiKey } pair, for @stripe/stripe-js calls.
    */
-  async createStripeCheckoutSession () {
-    return this._post('/stripe/create-checkout-session')
+  async createStripeCheckoutSession (stripePriceId) {
+    return this._post('/stripe/create-checkout-session', { stripePriceId })
   }
 
   /**

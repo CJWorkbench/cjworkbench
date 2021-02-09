@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 import stripe
 
 import cjworkbench.models.stripe
-from cjworkbench.models.plan import Plan
+from cjworkbench.models.price import Price
 from cjworkbench.models.userprofile import UserProfile
 
 
@@ -77,25 +77,27 @@ def create_checkout_session(request: HttpRequest) -> HttpResponse:
 
     The JavaScript client uses this object to redirect the user to Stripe's
     checkout page.
-
-    TODO unit-test
     """
     if not hasattr(settings, "STRIPE_PUBLIC_API_KEY") or not hasattr(
         settings, "STRIPE_API_KEY"
     ):
         raise Http404("Stripe is disabled: there is no API key")
 
-    plans = list(Plan.objects.filter(stripe_active=True))
-    if len(plans) == 0:
-        raise Http404("Stripe is disabled: there are no plans")
-    elif len(plans) > 1:
-        raise RuntimeError(
-            "There are too many Stripe plans! We only support one for now"
+    try:
+        stripe_price_id = str(json.loads(request.body)["stripePriceId"])
+    except (TypeError, ValueError, KeyError):
+        return JsonResponse(
+            {"error": "You must pass a JSON { stripePriceId } Object"}, status=400
         )
-    plan = plans[0]
+
+    try:
+        price = Price.objects.get(stripe_price_id=stripe_price_id)
+    except Price.DoesNotExist:
+        raise Http404("You requested a Price that does not exist")
+
     billing_url = request.build_absolute_uri(reverse("settings_billing"))
     checkout_session = cjworkbench.models.stripe.create_checkout_session(
-        request.user.id, plan, billing_url
+        request.user.id, price, billing_url
     )
 
     return JsonResponse(
@@ -115,7 +117,7 @@ def create_billing_portal_session(request: HttpRequest) -> HttpResponse:
     The JavaScript client uses this object to redirect the user to Stripe's
     checkout page.
 
-    Raises Http404 if UserProfile.stripe_customer_id is null.
+    Raise Http404 if UserProfile.stripe_customer_id is null.
     """
     billing_url = request.build_absolute_uri(reverse("settings_billing"))
     try:

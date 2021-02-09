@@ -12,17 +12,13 @@ const DATE_FORMAT = {
 }
 
 export default function Subscription (props) {
-  const { plan, createdAt, renewedAt, stripeStatus } = props
-  const { name, amount, currency } = plan
+  const { price, createdAt, renewedAt, stripeStatus } = props
+  const { product: { name }, amount, currency, interval } = price
 
   return (
     <div className='subscription'>
       <h3>{name}</h3>
-      <h4>
-        <Trans id='js.settings.billing.Subscription.amount' comment='e.g., "$8/month"'>
-          <StripeAmount value={amount} currency={currency} />/month
-        </Trans>
-      </h4>
+      <h4><StripeAmount amount={amount} currency={currency} interval={interval} /></h4>
       <div className='metadata'>
         <span className='stripe-subscription-status'><StripeSubscriptionStatus stripeStatus={stripeStatus} /></span>
         <span className='stripe-created-at'>
@@ -42,10 +38,13 @@ export default function Subscription (props) {
   )
 }
 Subscription.propTypes = {
-  plan: PropTypes.shape({
-    name: PropTypes.string.isRequired,
+  price: PropTypes.shape({
+    product: PropTypes.shape({
+      name: PropTypes.string.isRequired
+    }).isRequired,
     amount: PropTypes.number.isRequired,
-    currency: PropTypes.string.isRequired
+    currency: PropTypes.string.isRequired,
+    interval: PropTypes.oneOf(['month', 'year']).isRequired
   }).isRequired,
   createdAt: PropTypes.string.isRequired, // ISO8601 Date
   renewedAt: PropTypes.string.isRequired, // ISO8601 Date

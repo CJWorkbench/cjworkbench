@@ -5,11 +5,11 @@ import WorkbenchAPI from '../WorkbenchAPI'
 import InternationalizedPage from '../i18n/InternationalizedPage'
 
 const api = new WorkbenchAPI(null) // no websocket
-const { user, plans } = window.initState
+const { user, products } = window.initState
 
 ReactDOM.render((
   <InternationalizedPage>
-    <PlanPage api={api} user={user} plans={plans} />
+    <PlanPage api={api} user={user} products={products} />
   </InternationalizedPage>
 ), document.getElementById('root'))
 

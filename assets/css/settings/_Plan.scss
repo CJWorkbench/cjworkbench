@@ -22,7 +22,7 @@
   }
 
   table {
-    table-layout: fixed; // give all columns the same width
+    table-layout: fixed;
     border-collapse: collapse;
     min-width: 100%;
     height: 1px; // so <div> in <td> can have height:100%: https://stackoverflow.com/a/22220780
@@ -36,6 +36,8 @@
 
   thead {
     th {
+      width: 33%;
+
       &>div {
         @include plan-table-well();
         flex-direction: column;
@@ -43,21 +45,32 @@
         border-top-width: 1px;
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
+      }
 
-        .amount {
-          @include title-2;
-          color: $brand-learn;
-        }
+      .price {
+        margin-top: rem(1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        @include title-2;
+        color: $brand-learn;
+      }
 
-        div.current {
-          margin-top: rem(1);
-        }
+      div.current {
+        margin-top: rem(1);
+      }
 
-        button, a {
-          @include action-button;
-          @include button-pink-fill;
-          margin-top: rem(1);
-        }
+      button, a {
+        @include action-button;
+        @include button-pink-fill;
+      }
+
+      button {
+        margin-left: rem(1);
+      }
+
+      a {
+        margin-top: rem(1);
       }
     }
   }

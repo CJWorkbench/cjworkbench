@@ -5,17 +5,22 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Page, MainNav } from '../Page'
 import PlanTable from './Plan/PlanTable'
 
-export default function PlanPage (props) {
-  const { api, user, plans } = props
+async function createCheckoutSession (api, stripePriceId) {
+  const { checkoutSession, apiKey } = await api.createStripeCheckoutSession(stripePriceId)
+  const stripe = await loadStripe(apiKey)
+  const result = await stripe.redirectToCheckout({ sessionId: checkoutSession.id })
+  if (result.error) {
+    console.error(result.error)
+  }
+}
 
-  const handleClickSubscribe = React.useCallback(async () => {
-    const { checkoutSession, apiKey } = await api.createStripeCheckoutSession()
-    const stripe = await loadStripe(apiKey)
-    const result = await stripe.redirectToCheckout({ sessionId: checkoutSession.id })
-    if (result.error) {
-      console.error(result.error)
-    }
-  }, [api])
+export default function PlanPage (props) {
+  const { api, user, products } = props
+
+  const handleClickSubscribe = React.useMemo(
+    () => (user ? stripePriceId => { createCheckoutSession(api, stripePriceId) } : null),
+    [user, api]
+  )
 
   return (
     <Page>
@@ -25,7 +30,7 @@ export default function PlanPage (props) {
           <h1><Trans id='js.settings.PlanPage.title'>Plan</Trans></h1>
         </header>
         <PlanTable
-          plans={plans}
+          products={products}
           onClickSubscribe={handleClickSubscribe}
           user={user}
         />
@@ -38,5 +43,5 @@ PlanPage.propTypes = {
     createStripeCheckoutSession: PropTypes.func.isRequired
   }).isRequired,
   user: PropTypes.object, // or null if anonymous
-  plans: PropTypes.array.isRequired
+  products: PropTypes.array.isRequired
 }

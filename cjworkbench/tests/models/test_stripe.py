@@ -6,7 +6,8 @@ from django.contrib.auth import get_user_model
 from django.test import override_settings
 import stripe
 
-from cjworkbench.models.plan import Plan
+from cjworkbench.models.price import Price
+from cjworkbench.models.product import Product
 from cjworkbench.models.stripe import (
     create_checkout_session,
     create_billing_portal_session,
@@ -29,17 +30,21 @@ def create_user(
     return user
 
 
-def create_plan(**kwargs):
+def create_product(*, stripe_product_id="prod_1", stripe_product_name="name"):
+    return Product.objects.create(
+        stripe_product_id="prod_1", stripe_product_name="name"
+    )
+
+
+def create_price(*, product, **kwargs):
     kwargs = {
         "stripe_price_id": "price_1",
-        "stripe_product_id": "product_1",
-        "stripe_product_name": "Premium Plan",
         "stripe_active": True,
         "stripe_amount": 100,
         "stripe_currency": "usd",
         **kwargs,
     }
-    return Plan.objects.create(**kwargs)
+    return product.prices.create(**kwargs)
 
 
 class TestHandleCheckoutSessionCompleted(DbTestCase):
@@ -58,7 +63,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_create_subscription(self, retrieve_subscription):
-        plan = create_plan(stripe_price_id="price_123")
+        price = create_price(product=create_product(), stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_123")
         handle_checkout_session_completed(
             stripe.api_resources.checkout.Session.construct_from(
@@ -82,7 +87,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
         subscriptions = list(user.subscriptions.all())
         self.assertEqual(len(subscriptions), 1)
         subscription = subscriptions[0]
-        self.assertEqual(subscription.plan_id, plan.id)
+        self.assertEqual(subscription.price_id, price.id)
         self.assertEqual(subscription.stripe_subscription_id, "sub_123")
         self.assertEqual(subscription.stripe_status, "active")
         self.assertEqual(
@@ -114,7 +119,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_value_error_when_two_items(self, retrieve_subscription):
-        create_plan(stripe_price_id="price_123")
+        create_price(product=create_product(), stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_123")
         with self.assertRaises(ValueError):
             handle_checkout_session_completed(
@@ -143,9 +148,9 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_plan_does_not_exist(self, retrieve_subscription):
-        create_plan(stripe_price_id="price_321")  # wrong ID
+        create_price(product=create_product(), stripe_price_id="price_321")  # wrong ID
         user = create_user(stripe_customer_id="cus_123")
-        with self.assertRaises(Plan.DoesNotExist):
+        with self.assertRaises(Price.DoesNotExist):
             handle_checkout_session_completed(
                 stripe.api_resources.checkout.Session.construct_from(
                     dict(
@@ -172,7 +177,7 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
     )
     @override_settings(STRIPE_API_KEY="key_123")
     def test_user_profile_does_not_exist(self, retrieve_subscription):
-        create_plan(stripe_price_id="price_123")
+        create_price(product=create_product(), stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_321")  # wrong user
         with self.assertRaises(UserProfile.DoesNotExist):
             handle_checkout_session_completed(
@@ -189,10 +194,10 @@ class TestHandleCheckoutSessionCompleted(DbTestCase):
 
 class TestHandleCustomerSubscriptionDeleted(DbTestCase):
     def test_delete_existing_subscription(self):
-        plan = create_plan(stripe_price_id="price_123")
+        price = create_price(product=create_product(), stripe_price_id="price_123")
         user = create_user(stripe_customer_id="cus_123")
         subscription = user.subscriptions.create(
-            plan=plan,
+            price=price,
             stripe_subscription_id="sub_123",
             created_at=datetime.datetime.now().astimezone(datetime.timezone.utc),
             renewed_at=datetime.datetime.now().astimezone(datetime.timezone.utc),
@@ -205,7 +210,7 @@ class TestHandleCustomerSubscriptionDeleted(DbTestCase):
         self.assertEqual(Subscription.objects.count(), 0)
 
     def test_delete_missing_subscription(self):
-        plan = create_plan(stripe_product_id="prod_123")
+        price = create_price(product=create_product())
         handle_customer_subscription_deleted(
             stripe.Subscription.construct_from({"id": "sub_123"}, "api-key")
         )
@@ -214,10 +219,10 @@ class TestHandleCustomerSubscriptionDeleted(DbTestCase):
 
 class TestHandleCustomerSubscriptionUpdated(DbTestCase):
     def test_update_existing_subscription(self):
-        plan = create_plan(stripe_product_id="prod_123")
+        price = create_price(product=create_product())
         user = create_user(stripe_customer_id="cus_123")
         subscription = user.subscriptions.create(
-            plan=plan,
+            price=price,
             stripe_subscription_id="sub_123",
             created_at=datetime.datetime.now().astimezone(datetime.timezone.utc),
             renewed_at=datetime.datetime.now().astimezone(datetime.timezone.utc),
@@ -242,7 +247,7 @@ class TestHandleCustomerSubscriptionUpdated(DbTestCase):
         )
 
     def test_update_missing_subscription(self):
-        plan = create_plan(stripe_product_id="prod_123")
+        price = create_price(product=create_product())
         # Don't crash
         handle_customer_subscription_updated(
             stripe.Subscription.construct_from(
@@ -267,8 +272,10 @@ class TestCreateCheckoutSession(DbTestCase):
     @override_settings(STRIPE_API_KEY="key_123")
     def test_reuse_existing_stripe_customer_id(self, create_session):
         user = create_user(stripe_customer_id="cus_123", locale_id="fr")
-        plan = create_plan(stripe_price_id="price_123")
-        checkout_session = create_checkout_session(user.id, plan, "https://example.com")
+        price = create_price(product=create_product(), stripe_price_id="price_123")
+        checkout_session = create_checkout_session(
+            user.id, price, "https://example.com"
+        )
         self.assertTrue(create_session.called)
         _, kwargs = create_session.call_args
 
@@ -305,8 +312,10 @@ class TestCreateCheckoutSession(DbTestCase):
             stripe_customer_id=None,
             locale_id="fr",
         )
-        plan = create_plan(stripe_price_id="price_123")
-        checkout_session = create_checkout_session(user.id, plan, "https://example.com")
+        price = create_price(product=create_product(), stripe_price_id="price_123")
+        checkout_session = create_checkout_session(
+            user.id, price, "https://example.com"
+        )
 
         # stripe.Customer.create was called as expected
         self.assertTrue(create_customer.called)
@@ -339,9 +348,9 @@ class TestCreateCheckoutSession(DbTestCase):
         self, create_customer, create_session
     ):
         user = create_user(stripe_customer_id=None)
-        plan = create_plan(stripe_price_id="price_123")
+        price = create_price(product=create_product(), stripe_price_id="price_123")
         with self.assertRaises(RuntimeError):
-            create_checkout_session(user.id, plan, "https://example.com")
+            create_checkout_session(user.id, price, "https://example.com")
 
         user.user_profile.refresh_from_db()
         self.assertEqual(user.user_profile.stripe_customer_id, "cus_123")

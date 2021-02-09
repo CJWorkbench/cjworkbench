@@ -14,7 +14,7 @@ export default function Billing (props) {
           {subscriptions.map(subscription => (
             <li key={subscription.stripeSubscriptionId}>
               <Subscription
-                plan={subscription.plan}
+                price={subscription.price}
                 createdAt={subscription.createdAt}
                 renewedAt={subscription.renewedAt}
                 stripeStatus={subscription.stripeStatus}
@@ -47,19 +47,22 @@ Billing.propTypes = {
   onClickManage: PropTypes.func.isRequired,
   user: PropTypes.shape({
     stripeCustomerId: PropTypes.string, // or null
-    subscriptions: PropTypes.arrayOf(PropTypes.shape({
-      stripeSubscriptionId: PropTypes.string.isRequired,
-      createdAt: PropTypes.string.isRequired, // ISO8601 Date
-      renewedAt: PropTypes.string.isRequired, // ISO8601 Date
-      stripeStatus: PropTypes.oneOf([
-        'trialing',
-        'active',
-        'incomplete',
-        'incomplete_expired',
-        'past_due',
-        'canceled',
-        'unpaid'
-      ]).isRequired
-    }).isRequired).isRequired
+    subscriptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        stripeSubscriptionId: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired, // ISO8601 Date
+        renewedAt: PropTypes.string.isRequired, // ISO8601 Date
+        price: PropTypes.object.isRequired,
+        stripeStatus: PropTypes.oneOf([
+          'trialing',
+          'active',
+          'incomplete',
+          'incomplete_expired',
+          'past_due',
+          'canceled',
+          'unpaid'
+        ]).isRequired
+      }).isRequired
+    ).isRequired
   }).isRequired
 }

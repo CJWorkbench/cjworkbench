@@ -1830,11 +1830,7 @@ msgstr ""
 msgid "js.settings.BillingPage.title"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:34
-msgid "js.settings.Plan.PlanTable.amount"
-msgstr ""
-
-#: assets/js/settings/Plan/PlanTable.js:46
+#: assets/js/settings/Plan/PlanTable.js:62
 msgid "js.settings.Plan.PlanTable.current"
 msgstr ""
 
@@ -1846,27 +1842,27 @@ msgstr ""
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:117
+#: assets/js/settings/Plan/PlanTable.js:136
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:110
+#: assets/js/settings/Plan/PlanTable.js:129
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:105
+#: assets/js/settings/Plan/PlanTable.js:124
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:104
+#: assets/js/settings/Plan/PlanTable.js:123
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:41
+#: assets/js/settings/Plan/PlanTable.js:57
 msgid "js.settings.Plan.PlanTable.signInForFreePlan"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:54
+#: assets/js/settings/Plan/PlanTable.js:70
 msgid "js.settings.Plan.PlanTable.signInToSubscribe"
 msgstr ""
 
