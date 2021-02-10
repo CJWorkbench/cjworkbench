@@ -1783,7 +1783,15 @@ msgstr "Current Subscription"
 msgid "js.settings.BillingPage.title"
 msgstr "Billing"
 
-#: assets/js/settings/Plan/PlanTable.js:62
+#: assets/js/settings/StripeAmount.js:24
+msgid "js.settings.Plan.PlanTable.amount.perMonth"
+msgstr "<0>{price}</0>/year"
+
+#: assets/js/settings/StripeAmount.js:26
+msgid "js.settings.Plan.PlanTable.amount.perYear"
+msgstr "<0>{price}</0>/month"
+
+#: assets/js/settings/Plan/PlanTable.js:69
 msgid "js.settings.Plan.PlanTable.current"
 msgstr "Current plan"
 
@@ -1795,31 +1803,31 @@ msgstr "{nDays, plural, one {# day} other {# days}}"
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr "{nMonths, plural, one {# month} other {# months}}"
 
-#: assets/js/settings/Plan/PlanTable.js:136
+#: assets/js/settings/Plan/PlanTable.js:143
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr "Undo history"
 
-#: assets/js/settings/Plan/PlanTable.js:129
+#: assets/js/settings/Plan/PlanTable.js:136
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr "{0} updates"
 
-#: assets/js/settings/Plan/PlanTable.js:124
+#: assets/js/settings/Plan/PlanTable.js:131
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr "Per day"
 
-#: assets/js/settings/Plan/PlanTable.js:123
+#: assets/js/settings/Plan/PlanTable.js:130
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr "Automatic updates"
 
-#: assets/js/settings/Plan/PlanTable.js:57
+#: assets/js/settings/Plan/PlanTable.js:75
 msgid "js.settings.Plan.PlanTable.signInForFreePlan"
 msgstr "Choose {0}"
 
-#: assets/js/settings/Plan/PlanTable.js:70
+#: assets/js/settings/Plan/PlanTable.js:77
 msgid "js.settings.Plan.PlanTable.signInToSubscribe"
 msgstr "Choose {0}"
 
-#: assets/js/settings/PlanPage.js:25
+#: assets/js/settings/PlanPage.js:30
 msgid "js.settings.PlanPage.title"
 msgstr "Plan"
 
@@ -1827,18 +1835,13 @@ msgstr "Plan"
 msgid "js.settings.SettingsPages.plan.title"
 msgstr "Plan"
 
-#. e.g., "$8/month"
-#: assets/js/settings/Billing/Subscription.js:22
-msgid "js.settings.billing.Subscription.amount"
-msgstr "<0/>/month"
-
 #. e.g., "Subscribed January 27, 2021"
-#: assets/js/settings/Billing/Subscription.js:29
+#: assets/js/settings/Billing/Subscription.js:25
 msgid "js.settings.billing.Subscription.createdAt"
 msgstr "Subscribed <0>{0}</0>"
 
 #. e.g., "Renewed February 27, 2021"
-#: assets/js/settings/Billing/Subscription.js:35
+#: assets/js/settings/Billing/Subscription.js:31
 msgid "js.settings.billing.Subscription.renewedAt"
 msgstr "Renewed <0>{0}</0>"
 

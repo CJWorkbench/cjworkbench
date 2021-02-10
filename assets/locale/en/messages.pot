@@ -2142,8 +2142,18 @@ msgstr ""
 msgid "js.settings.BillingPage.title"
 msgstr ""
 
+#. default-message: <0>{price}</0>/year
+#: assets/js/settings/StripeAmount.js:24
+msgid "js.settings.Plan.PlanTable.amount.perMonth"
+msgstr ""
+
+#. default-message: <0>{price}</0>/month
+#: assets/js/settings/StripeAmount.js:26
+msgid "js.settings.Plan.PlanTable.amount.perYear"
+msgstr ""
+
 #. default-message: Current plan
-#: assets/js/settings/Plan/PlanTable.js:62
+#: assets/js/settings/Plan/PlanTable.js:69
 msgid "js.settings.Plan.PlanTable.current"
 msgstr ""
 
@@ -2158,37 +2168,37 @@ msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr ""
 
 #. default-message: Undo history
-#: assets/js/settings/Plan/PlanTable.js:136
+#: assets/js/settings/Plan/PlanTable.js:143
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr ""
 
 #. default-message: {0} updates
-#: assets/js/settings/Plan/PlanTable.js:129
+#: assets/js/settings/Plan/PlanTable.js:136
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.cell"
 msgstr ""
 
 #. default-message: Per day
-#: assets/js/settings/Plan/PlanTable.js:124
+#: assets/js/settings/Plan/PlanTable.js:131
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.description"
 msgstr ""
 
 #. default-message: Automatic updates
-#: assets/js/settings/Plan/PlanTable.js:123
+#: assets/js/settings/Plan/PlanTable.js:130
 msgid "js.settings.Plan.PlanTable.maxFetchesPerDay.title"
 msgstr ""
 
 #. default-message: Choose {0}
-#: assets/js/settings/Plan/PlanTable.js:57
+#: assets/js/settings/Plan/PlanTable.js:75
 msgid "js.settings.Plan.PlanTable.signInForFreePlan"
 msgstr ""
 
 #. default-message: Choose {0}
-#: assets/js/settings/Plan/PlanTable.js:70
+#: assets/js/settings/Plan/PlanTable.js:77
 msgid "js.settings.Plan.PlanTable.signInToSubscribe"
 msgstr ""
 
 #. default-message: Plan
-#: assets/js/settings/PlanPage.js:25
+#: assets/js/settings/PlanPage.js:30
 msgid "js.settings.PlanPage.title"
 msgstr ""
 
@@ -2197,21 +2207,15 @@ msgstr ""
 msgid "js.settings.SettingsPages.plan.title"
 msgstr ""
 
-#. e.g., "$8/month"
-#. default-message: <0/>/month
-#: assets/js/settings/Billing/Subscription.js:22
-msgid "js.settings.billing.Subscription.amount"
-msgstr ""
-
 #. e.g., "Subscribed January 27, 2021"
 #. default-message: Subscribed <0>{0}</0>
-#: assets/js/settings/Billing/Subscription.js:29
+#: assets/js/settings/Billing/Subscription.js:25
 msgid "js.settings.billing.Subscription.createdAt"
 msgstr ""
 
 #. e.g., "Renewed February 27, 2021"
 #. default-message: Renewed <0>{0}</0>
-#: assets/js/settings/Billing/Subscription.js:35
+#: assets/js/settings/Billing/Subscription.js:31
 msgid "js.settings.billing.Subscription.renewedAt"
 msgstr ""
 
