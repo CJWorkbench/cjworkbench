@@ -1,12 +1,13 @@
 {%  extends 'base_no_intercom.html' %}
 {% load i18n_icu %}
+{% load bundle_path from webpack %}
 
 {% block title %}
    {% trans_html "py.templates.oauth_token_request_denied.title" default="OAuth Error" %} 
 {% endblock %}
 
 {% block stylesheets %}
-  <link rel="stylesheet" href="{% bundle_path('style.css') %}" />
+  <link rel="stylesheet" href="{% bundle_path 'style.css' %}" />
 {% endblock %}
 
 {% block body %}
