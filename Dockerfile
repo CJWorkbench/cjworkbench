@@ -244,7 +244,7 @@ CMD [ "bin/cron-prod" ]
 # 3.5. frontend: serves website
 FROM base AS frontend
 COPY assets/icons/ /app/assets/icons/
-COPY --from=jsbuild /app/webpack-stats.json /app/
+COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
 # Beware: uvicorn does not serve static files! Use migrate-prod to push them

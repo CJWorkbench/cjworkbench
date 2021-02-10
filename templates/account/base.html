@@ -1,41 +1,35 @@
 {% extends 'minimum.html' %}
-{% load render_bundle from webpack_loader %}
+{% load bundle_path from webpack %}
 {% load static %}
 
 {% block headscripts %}
-  <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
+  <script defer src="{% bundle_path 'login.js' %}"></script>
 {% endblock %}
 
 {% block stylesheets %}
-  {% render_bundle 'style' 'css' %}
+  <link rel="stylesheet" href="{% bundle_path 'style.css' %}" />
 {% endblock %}
 
 {% block body %}
-    <div class="account-fullscreen-container">
-      <div class="background"></div>
-      <div class="container">
-        <div class="account-bigbrand">
-          <a class="logo-container" href="http://workbenchdata.com">
-            <img src="{% static 'images/workbench-logo-white.svg' %}" class="logo"/>
-          </a>
-        </div>
-        {% if messages %}
+  <div class="account-fullscreen-container">
+    <div class="background"></div>
+    <div class="container">
+      <div class="account-bigbrand">
+        <a class="logo-container" href="http://workbenchdata.com">
+          <img src="{% static 'images/workbench-logo-white.svg' %}" class="logo"/>
+        </a>
+      </div>
+      {% if messages %}
         <ul class="messages">
           {% for message in messages %}
-          <li>{{message}}</li>
+            <li>{{message}}</li>
           {% endfor %}
         </ul>
-        {% endif %}
-        <div class="card card-block account-card mx-auto drop-shadow">
-           <!-- <h1 class="text-center title-1 t-d-gray">CJ Workbench</h1> -->
-           {% block content %}{% endblock %}
-        </div>
-        {% include "locale_switcher.html" %}
+      {% endif %}
+      <div class="card card-block account-card mx-auto drop-shadow">
+         {% block content %}{% endblock %}
       </div>
+      {% include "locale_switcher.html" %}
     </div>
-
-    <!-- JavaScript scripts -->
-    {% render_bundle 'login' 'js' %}
-
-  </body>
+  </div>
 {% endblock %}

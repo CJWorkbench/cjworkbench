@@ -1,5 +1,5 @@
 {%  extends 'base.html' %}
-{% load render_bundle from webpack_loader %}
+{% load bundle_path from webpack %}
 {% load account %}
 {% load i18n_icu %}
 
@@ -7,7 +7,10 @@
     class="embed_container"
 {% endblock %}
 
+{% block headscripts %}
+  <script defer src="{% bundle_path 'login.js' %}"></script>
+{% endblock %}
+
 {% block body %}
     <h1>{% trans_html "py.templates.embed_404.notAvailable.header" default="This workflow is not available :(" %}(</h1>
-    {% render_bundle 'login' 'js' %}
 {% endblock %}

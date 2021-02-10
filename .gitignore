@@ -6,7 +6,6 @@ __pycache__/
 # Django stuff:
 *.log
 local_settings.py
-webpack-stats.json
 db.sqlite3
 db.sqlite3-journal
 dbdata/

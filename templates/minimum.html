@@ -14,8 +14,13 @@
     <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
     <meta name="theme-color" content="white">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
+    {% block headscripts_globals %}{% endblock %}
     {% block headscripts %}{% endblock %}
-    {% include 'tracking.html' %}
+    {% block headscripts_init_state %}{% endblock %}
+    {% block analytics %}
+      {% include 'tracking.html' %}
+    {% endblock %}
     {% block stylesheets %}{% endblock %}
   </head>
   <body>

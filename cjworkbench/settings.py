@@ -182,7 +182,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "channels",
-    "webpack_loader",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -291,14 +290,6 @@ STATICFILES_STORAGE = "server.storage.s3_storage_for_collectstatic.S3Storage"
 # in DEBUG mode. That's good! We need absolute URLs even in DEBUG mode,
 # because lessons include data files the fetcher must access.
 STATIC_URL = os.environ.get("STATIC_URL", "http://localhost:8000/static/")
-
-# Webpack loads all our js/css into handy bundles
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
-    }
-}
 
 LOGGING = {
     "version": 1,

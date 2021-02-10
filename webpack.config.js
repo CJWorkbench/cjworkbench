@@ -1,6 +1,7 @@
 const path = require('path')
-const BundleTracker = require('webpack-bundle-tracker')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 
 module.exports = {
   context: __dirname,
@@ -34,7 +35,8 @@ module.exports = {
   devtool: 'source-map',
 
   plugins: [
-    new BundleTracker({ filename: './webpack-stats.json' }),
+    new CleanWebpackPlugin(),
+    new WebpackManifestPlugin({ fileName: 'webpack-manifest.json' }),
     new MiniCssExtractPlugin({
       filename: '[name]-[contenthash].css'
     })

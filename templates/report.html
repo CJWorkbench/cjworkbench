@@ -1,5 +1,5 @@
 {% extends 'minimum.html' %}
-{% load render_bundle from webpack_loader %}
+{% load bundle_path from webpack %}
 {% load i18n_icu %}
 {% load json_filters %}
 {% load markdown %}
@@ -9,16 +9,19 @@
   {{ workflow.name }} | Workbench
 {% endblock %}
 
-{% block headscripts %}
+{% block headscripts_globals %}
   <script>
     window.initState = {{initState|json_in_script_tag}}
     window.i18nConfig = {locale: '{{ i18n.locale_id }}', localesData: {{ i18n.locales_data|json_in_script_tag }}}
-    window.STATIC_URL = '{% get_static_prefix %}'
   </script>
 {% endblock %}
 
 {% block stylesheets %}
-  {% render_bundle 'report-styles' 'css' %}
+  <link rel="stylesheet" href="{% bundle_path 'report-styles.css' %}" />
+{% endblock %}
+
+{% block headscripts %}
+  <script defer src="{% bundle_path 'report.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -56,5 +59,4 @@
       </section>
     {% endfor %}
   </article>
-  {% render_bundle 'report' 'js' %}
 {% endblock %}

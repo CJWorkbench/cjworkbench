@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
-{% load render_bundle from webpack_loader %}
+{% load bundle_path from webpack %}
+
+{% block headscripts %}
+  <script defer src="{% bundle_path 'billing.js' %}"></script>
+{% endblock %}
 
 {% block body %}
   <div id="root"></div>
-  {% render_bundle 'billing' 'js' %}
 {% endblock %}

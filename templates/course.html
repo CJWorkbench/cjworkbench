@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
-{% load render_bundle from webpack_loader %}
+{% load bundle_path from webpack %}
 {% load i18n_icu %}
-{% block title %}{% trans_html "py.templates.course.workbenchTraining.title" default="Workbench Training" %}{% endblock %}
+
+{% block title %}
+  {% trans_html "py.templates.course.workbenchTraining.title" default="Workbench Training" %}
+{% endblock %}
+
+{% block headscripts %}
+  <script defer src="{% bundle_path 'lessons.js' %}"></script>
+{% endblock %}
 
 {% block body %}
   <div class="page">
@@ -31,5 +38,4 @@
       </div>
     </main>
   </div>
-  {% render_bundle 'lessons' 'js' %}
 {% endblock %}

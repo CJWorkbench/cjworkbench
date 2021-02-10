@@ -1,9 +1,18 @@
-{%  extends 'base_no_intercom.html' %}
-{% load render_bundle from webpack_loader %}
-{% load account i18n_icu %}
+{% extends 'base_no_intercom.html' %}
+{% load bundle_path from webpack %}
+{% load account %}
+{% load i18n_icu %}
 
 {% block title %}
-    {% trans_html "py.templates.403.title"  default="403 Forbidden" %}
+  {% trans_html "py.templates.403.title"  default="403 Forbidden" %}
+{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{% bundle_path 'style.css' %}" />
+{% endblock %}
+
+{% block headscripts %}
+  <script src="{% bundle_path 'login.js' %}" defer></script>
 {% endblock %}
 
 {% block body %}
@@ -15,7 +24,6 @@
         <div class="title-1 text-center mb-5">{% trans_html "py.templates.403.description" default="The account you are logged in does not have access to this page" %}</div>
         <a href="/workflows" style="width:200px" class="button-white action-button mx-auto mb-3">{% trans_html "py.templates.403.goBack.link" default="Go back to my workspace" %}</a>
         {% include "locale_switcher.html" %}
-        {% render_bundle 'login' 'js' %}
       </div>
     </div>
   <div>

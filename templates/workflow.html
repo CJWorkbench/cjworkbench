@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
-{% load render_bundle from webpack_loader %}
+{% load bundle_path from webpack %}
 {% load i18n_icu %}
 
 {% block title %}{% trans_html "py.templates.workflow.title" default="Workbench" %}{% endblock %}
 
+{% block headscripts %}
+  <script defer src="{% bundle_path 'workflow.js' %}"></script>
+{% endblock %}
+
 {% block body %}
   <div id="root"></div>
-  {% render_bundle 'workflow' 'js' %}
 
   <div class="not-enough-px-warning">
     <div class="background"></div>

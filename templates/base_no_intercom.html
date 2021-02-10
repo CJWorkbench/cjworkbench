@@ -1,47 +1,21 @@
+{% extends 'minimum.html' %}
 {% load analytics_tags %}
 {% load json_filters %}
-{% load render_bundle from webpack_loader %}
-{% load static %}
 
 {% load_analytics_ids as analytics_ids %}
 
-<!DOCTYPE html>
-<html lang="en" {% block html_tag_attrs %}{% endblock %}>
+{% block headscripts_globals %}
+  <script type="text/javascript">window.initState = {{initState|json_in_script_tag}}</script>
+{% endblock %}
 
-  <head>
-
-    <meta charset="utf-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/app-icons/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/app-icons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/app-icons/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'images/app-icons/manifest.json' %}">
-    <link rel="mask-icon" href="{% static 'images/app-icons/safari-pinned-tab.svg' %}" color="#5bbad5">
-    <link rel="shortcut icon" href="{% static 'images/app-icons/favicon.ico' %}">
-    <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
-    <meta name="theme-color" content="white">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
-
-    {% if analytics_ids.google_analytics_id %}
-      <script async src="https://www.googletagmanager.com/gtag/js?id={{ analytics_ids.google_analytics_id }}"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '{{ analytics_ids.google_analytics_id }}');
-      </script>
-    {% endif %}
-
-    <script type="text/javascript">
-      window.initState = {{initState|json_in_script_tag}};
+{% block analytics %}
+  {% if analytics_ids.google_analytics_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ analytics_ids.google_analytics_id }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ analytics_ids.google_analytics_id }}');
     </script>
-
-    {% render_bundle 'style' 'css' %}
-  </head>
-
-  <body {% block body_tag_attrs %}{% endblock %}>
-
-    {% block body %}{% endblock %}
-  </body>
-</html>
+  {% endif %}
+{% endblock analytics %}

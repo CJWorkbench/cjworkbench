@@ -14,6 +14,5 @@ local_mail/
 media/
 node_modules/
 tmp/
-webpack-stats.json
 .DS_Store
 stresstest/
