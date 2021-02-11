@@ -46,7 +46,7 @@ def _workflow_group_name(workflow_id: int) -> str:
 
 def acking_callback(fn):
     """
-    Decorate a callback to ack when finished or close the connection on error.
+    Decorate a callback to ack when finished or crash on error.
 
     Usage:
 
@@ -62,11 +62,28 @@ def acking_callback(fn):
     async def inner(message):
         channel = message.channel
         delivery_tag = message.delivery.delivery_tag
+
         try:
             body = msgpack.unpackb(message.body)
             await fn(body)
-        finally:
             await channel.basic_ack(delivery_tag)
+        except Exception as err:
+            # [2021-02-11, adamhooper] The errors we see on production might
+            # be different than in dev mode; so we'll always re-raise them.
+            # The behavior we want: on production, _any_ error causes the
+            # whole fetch to crash without acking. Not-acking means RabbitMQ
+            # won't send us any more messages. So let's shut down, leading to
+            # a restart of the whole process.
+            #
+            # In the case of `fn()` raising an exception, we _want_ that message
+            # logged. Ditto when `channel.basic_ack()` fails.
+            #
+            # We don't want to log exceptions during graceful shutdown, though.
+            logger.exception("Failed to consume a message; shutting down")
+            try:
+                await get_connection().close()
+            finally:
+                raise err
 
     return inner
 
