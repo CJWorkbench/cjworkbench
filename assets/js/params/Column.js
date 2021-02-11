@@ -1,5 +1,4 @@
 // Pick a single column
-import React from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'

@@ -1,9 +1,9 @@
 /* globals HTMLElement */
-import React from 'react'
+import { createContext, useCallback, useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { usePopper } from 'react-popper'
 
-export const DropdownContext = React.createContext()
+export const DropdownContext = createContext()
 DropdownContext.Provider.propTypes = {
   value: PropTypes.shape({
     disabled: PropTypes.bool.isRequired,
@@ -37,15 +37,15 @@ export default function Dropdown (props) {
     children
   } = props
 
-  const handleClickToggle = React.useCallback(ev => {
+  const handleClickToggle = useCallback(ev => {
     if (disabled) return
     toggle(ev)
   }, [disabled, toggle])
-  const [toggleElement, setToggleElement] = React.useState(null)
-  const [menuElement, setMenuElement] = React.useState(null)
+  const [toggleElement, setToggleElement] = useState(null)
+  const [menuElement, setMenuElement] = useState(null)
   const popperStuff = usePopper(toggleElement, menuElement, PopperOptions)
 
-  const dropdownContext = React.useMemo(() => ({
+  const dropdownContext = useMemo(() => ({
     disabled,
     isOpen,
     toggle: handleClickToggle,

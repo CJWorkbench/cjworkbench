@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { MaybeLabel } from './util'
 import { t } from '@lingui/macro'
 
-export default class TabParam extends React.PureComponent {
+export default class TabParam extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func(tabSlugOrEmptyString) => undefined

@@ -1,5 +1,5 @@
 /* globals HTMLElement */
-import React from 'react'
+import { PureComponent, useState, useMemo, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import detectOverflow from '@popperjs/core/lib/utils/detectOverflow.js'
@@ -255,7 +255,7 @@ const PopperModifiers = [
 
 const PopperModifiersLastButton = [...PopperModifiers, PopperOffsetToCoverReference]
 
-export class Popup extends React.PureComponent {
+export class Popup extends PureComponent {
   static propTypes = {
     tabSlug: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
@@ -312,16 +312,16 @@ export function PopperPopup (props) {
     onClose,
     addStep
   } = props
-  const [popperElement, setPopperElement] = React.useState(null)
-  const popperOptions = React.useMemo(() => {
+  const [popperElement, setPopperElement] = useState(null)
+  const popperOptions = useMemo(() => {
     return { modifiers: isLastAddButton ? PopperModifiersLastButton : PopperModifiers }
   }, [isLastAddButton])
   const { styles, attributes, forceUpdate } = usePopper(popperAnchor, popperElement, popperOptions)
-  const scheduleUpdate = React.useCallback(() => {
+  const scheduleUpdate = useCallback(() => {
     if (forceUpdate) forceUpdate()
   }, [forceUpdate])
 
-  const handleClickDocument = React.useCallback(ev => {
+  const handleClickDocument = useCallback(ev => {
     if (!popperElement || !popperAnchor) return
 
     // Copy/paste from Reactstrap src/Dropdown.js
@@ -336,7 +336,7 @@ export function PopperPopup (props) {
     onClose()
   }, [onClose, popperAnchor, popperElement])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const Events = ['click', 'touchstart', 'keyup']
     Events.forEach(eventName => {
       document.addEventListener(eventName, handleClickDocument, true)

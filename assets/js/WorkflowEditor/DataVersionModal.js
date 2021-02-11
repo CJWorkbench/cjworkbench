@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import { i18n } from '@lingui/core'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
@@ -18,7 +18,7 @@ export function formatDateUTCForTesting () {
 /**
  * Form <input type="radio">. Calls onSelect on change.
  */
-class FetchVersion extends React.PureComponent {
+class FetchVersion extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired, // version ID
     date: PropTypes.instanceOf(Date).isRequired, // version date
@@ -64,7 +64,7 @@ class FetchVersion extends React.PureComponent {
  * Implemented as a checkbox with an onChange event. ([2018-06-22] it _looks_
  * like a <button>, but it's a checkbox in a <label>.)
  */
-class NotificationsForm extends React.PureComponent {
+class NotificationsForm extends PureComponent {
   static propTypes = {
     notificationsEnabled: PropTypes.bool.isRequired,
     onSubmit: PropTypes.func.isRequired // func(bool) => undefined
@@ -111,7 +111,7 @@ class NotificationsForm extends React.PureComponent {
   }
 }
 
-export class DataVersionModal extends React.PureComponent {
+export class DataVersionModal extends PureComponent {
   static propTypes = {
     fetchStepId: PropTypes.number.isRequired,
     fetchVersions: PropTypes.arrayOf(PropTypes.shape({

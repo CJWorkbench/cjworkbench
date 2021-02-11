@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { generateFieldId } from './util'
 import deepEqual from 'fast-deep-equal'
@@ -28,7 +28,7 @@ function onDragStartPreventDrag (dragEvent) {
   dragEvent.stopPropagation()
 }
 
-export default class Param extends React.PureComponent {
+export default class Param extends PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and the user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,

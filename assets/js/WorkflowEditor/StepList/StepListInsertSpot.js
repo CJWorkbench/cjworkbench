@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import ModuleSearch from '../ModuleSearch'
 import StepDropSpot from './StepDropSpot'

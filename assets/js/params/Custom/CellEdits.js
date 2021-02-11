@@ -1,7 +1,7 @@
-import React from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 
-export default class CellEdits extends React.Component {
+export default class CellEdits extends Component {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
       row: PropTypes.number.isRequired,

@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import AclEntry from './AclEntry'
 import NewAclEntry from './NewAclEntry'
 import OwnerAclEntry from './OwnerAclEntry'
 
-export default class Acl extends React.PureComponent {
+export default class Acl extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? otherwise ACL is read-only
     ownerEmail: PropTypes.string.isRequired,

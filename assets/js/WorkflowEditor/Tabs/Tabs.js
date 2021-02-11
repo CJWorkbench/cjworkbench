@@ -1,11 +1,11 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import TabList from './TabList'
 import NewTabPrompt from './NewTabPrompt'
 import * as propTypes from '../propTypes'
 import { t } from '@lingui/macro'
 
-export default class Tabs extends React.PureComponent {
+export default class Tabs extends PureComponent {
   static propTypes = {
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,

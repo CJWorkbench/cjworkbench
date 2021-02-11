@@ -1,5 +1,4 @@
 /* global describe, it, expect, jest */
-import React from 'react'
 import { OutputPane } from './OutputPane'
 import OutputIframe from '../OutputIframe'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'

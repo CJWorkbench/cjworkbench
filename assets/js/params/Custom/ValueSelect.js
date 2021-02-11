@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent, createRef } from 'react'
 import PropTypes from 'prop-types'
 import { withFetchedData } from './FetchedData'
 import { FixedSizeList } from 'react-window'
@@ -31,7 +31,7 @@ function formatCount (count) {
 /**
  * Displays a list item of check box, name (of item), and count
  */
-class ValueItem extends React.PureComponent {
+class ValueItem extends PureComponent {
   static propTypes = {
     item: PropTypes.string, // new value -- may be empty string
     count: PropTypes.number.isRequired, // number, strictly greater than 0
@@ -62,7 +62,7 @@ class ValueItem extends React.PureComponent {
   }
 }
 
-class ListRow extends React.PureComponent {
+class ListRow extends PureComponent {
   // extend PureComponent so we get a shouldComponentUpdate() function
 
   // PropTypes all supplied by FixedSizeList
@@ -96,7 +96,7 @@ class ListRow extends React.PureComponent {
   }
 }
 
-class ValueList extends React.PureComponent {
+class ValueList extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
@@ -154,7 +154,7 @@ class ValueList extends React.PureComponent {
  * The trick is: first we render a dummy list and calculate those styles.
  * Then we delete the dummy list and use the calculated heights.
  */
-class DynamicallySizedValueList extends React.PureComponent {
+class DynamicallySizedValueList extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
@@ -164,7 +164,7 @@ class DynamicallySizedValueList extends React.PureComponent {
     onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined -- passed to <ListRow>
   }
 
-  sizerRef = React.createRef()
+  sizerRef = createRef()
 
   state = {
     itemHeight: null,
@@ -226,7 +226,7 @@ class DynamicallySizedValueList extends React.PureComponent {
  *
  * `valueCounts` describes the input: `{ "foo": 1, "bar": 3, ... }`
  */
-export class ValueSelect extends React.PureComponent {
+export class ValueSelect extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // null (when loading or waiting for user input) or { value1: n, value2: n, ... }
     loading: PropTypes.bool.isRequired,

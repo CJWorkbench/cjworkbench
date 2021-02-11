@@ -1,5 +1,5 @@
 // ---- Utilities ---
-import React from 'react'
+import { useMemo, useCallback } from 'react'
 import { t } from '@lingui/macro'
 import * as Cookies from 'js-cookie'
 import { fromByteArray as base64Encode } from 'base64-js'
@@ -141,7 +141,7 @@ export function generateSlug (prefix) {
  *     return <button disabled={handleClick === null} onClick={handleClick}>...</button>
  */
 export function useCurriedCallbackOrNull (callbackOrNull, ...args) {
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (callbackOrNull === null) return null
     return () => callbackOrNull(...args)
   }, [callbackOrNull, ...args])
@@ -156,5 +156,5 @@ export function useCurriedCallbackOrNull (callbackOrNull, ...args) {
  *     return <button onClick={handleClick}>...</button>
  */
 export function useCurriedCallback (func, ...args) {
-  return React.useCallback(() => func(...args), [func, ...args])
+  return useCallback(() => func(...args), [func, ...args])
 }

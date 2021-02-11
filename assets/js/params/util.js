@@ -1,5 +1,3 @@
-import React from 'react'
-
 export function generateFieldId (stepId, name) {
   const cleanName = name.replace(/[^0-9a-zA-Z_-]/g, '-')
   return `field-${stepId}-${cleanName}`

@@ -2,11 +2,11 @@
 
 // Display error message, if any
 // BUG - Tying this to Props will ensure that error message stays displayed, even after resolution
-import React, { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import QuickFix, { QuickFixPropTypes } from './QuickFix'
 
-const StatusLine = React.memo(function StatusLine ({ status, errors, applyQuickFix, isReadOnly }) {
+const StatusLine = memo(function StatusLine ({ status, errors, applyQuickFix, isReadOnly }) {
   const [clickedAnyQuickFix, setClickedQuickFix] = useState(false)
   const doApplyQuickFix = useCallback((...args) => {
     setClickedQuickFix(true)

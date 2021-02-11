@@ -1,10 +1,10 @@
-import React from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { idxToLetter } from '../../utils'
 import { withJsonStringValues } from '../util'
 import { Trans } from '@lingui/macro'
 
-export class ReorderHistory extends React.Component {
+export class ReorderHistory extends Component {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
       column: PropTypes.string.isRequired,

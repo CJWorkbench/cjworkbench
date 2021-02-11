@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { Manager as PopperManager, Reference as PopperReference, Popper } from 'react-popper'
@@ -8,7 +8,7 @@ const PopperModifiers = [
   { name: 'offset', options: { offset: [0, 12] } } // nudge to the right of the scrollbar+arrow
 ]
 
-class SearchResultDescription extends React.PureComponent {
+class SearchResultDescription extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired
@@ -36,7 +36,7 @@ class SearchResultDescription extends React.PureComponent {
   }
 }
 
-export default class SearchResult extends React.PureComponent {
+export default class SearchResult extends PureComponent {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,

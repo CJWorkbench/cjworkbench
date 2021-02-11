@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import Renames from './Renames'
 import { mount } from 'enzyme'
 

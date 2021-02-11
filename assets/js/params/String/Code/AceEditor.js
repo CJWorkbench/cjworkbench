@@ -1,4 +1,4 @@
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace/lib/ace'
 import memoize from 'memoize-one'
@@ -36,7 +36,7 @@ function SyntaxHelp ({ syntax }) {
   }
 }
 
-export default class WorkbenchAceEditor extends React.PureComponent {
+export default class WorkbenchAceEditor extends PureComponent {
   static propTypes = {
     // When isZenMode changes, we'll call componentDidUpdate()
     isZenMode: PropTypes.bool.isRequired,
@@ -53,7 +53,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     height: '100%'
   }
 
-  wrapperRef = React.createRef()
+  wrapperRef = createRef()
 
   componentDidMount () {
     this.updateSize()

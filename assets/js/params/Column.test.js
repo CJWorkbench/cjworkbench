@@ -1,5 +1,4 @@
 /* global describe, it, expect, jest */
-import React from 'react'
 import Column from './Column'
 import { mountWithI18n } from '../i18n/test-utils'
 import { tick } from '../test-utils'

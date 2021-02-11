@@ -1,20 +1,20 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 
 export default function StepDropSpot (props) {
   const { index, draggedStep, reorderStep } = props
-  const [isDragHovering, setDragHovering] = React.useState(false)
+  const [isDragHovering, setDragHovering] = useState(false)
 
-  const handleDragOver = React.useCallback(ev => {
+  const handleDragOver = useCallback(ev => {
     ev.preventDefault() // unlike default, this is a valid drop target
   })
-  const handleDragEnter = React.useCallback(ev => {
+  const handleDragEnter = useCallback(ev => {
     setDragHovering(true)
   }, [setDragHovering])
-  const handleDragLeave = React.useCallback(ev => {
+  const handleDragLeave = useCallback(ev => {
     setDragHovering(false)
   }, [setDragHovering])
-  const handleDrop = React.useCallback(ev => {
+  const handleDrop = useCallback(ev => {
     ev.preventDefault() // We want no browser defaults
     const { tabSlug, slug } = draggedStep
     setDragHovering(false) // otherwise, will stay hovering next drag

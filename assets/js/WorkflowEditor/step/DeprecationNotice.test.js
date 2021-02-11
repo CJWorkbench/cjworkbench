@@ -1,5 +1,4 @@
 /* globals describe, it, expect */
-import React from 'react'
 import DeprecationNotice from './DeprecationNotice'
 import { mountWithI18n } from '../../i18n/test-utils'
 

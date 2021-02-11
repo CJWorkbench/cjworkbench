@@ -1,15 +1,15 @@
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 
-export default class Prompt extends React.PureComponent {
+export default class Prompt extends PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // may be empty
     cancel: PropTypes.func.isRequired, // func() => undefined -- should close this prompt
     onChange: PropTypes.func.isRequired // func(value) => undefined
   }
 
-  inputRef = React.createRef()
+  inputRef = createRef()
 
   componentDidMount () {
     // auto-focus

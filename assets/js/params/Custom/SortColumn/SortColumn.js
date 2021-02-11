@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ColumnParam from '../../Column'
 import RadioParam from '../../Radio.js'
@@ -28,7 +28,7 @@ AscendingParam.propTypes = {
   value: PropTypes.bool.isRequired
 }
 
-export default class SortColumn extends React.PureComponent {
+export default class SortColumn extends PureComponent {
   static propTypes = {
 
     isReadOnly: PropTypes.bool.isRequired,

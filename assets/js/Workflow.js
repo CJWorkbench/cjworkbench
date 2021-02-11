@@ -1,6 +1,6 @@
 // This is the main script for the Workflow view
 
-import React from 'react'
+import { PureComponent } from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
 import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
@@ -58,7 +58,7 @@ export function MaybeNotYourWorkflow (props) {
 
 // ---- WorkflowMain ----
 
-export class Workflow extends React.PureComponent {
+export class Workflow extends PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
     isReadOnly: PropTypes.bool.isRequired,

@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom'
 import MainNavFragment from '../Page/MainNav/MainNavFragment'
 import InternationalizedPage from '../i18n/InternationalizedPage'

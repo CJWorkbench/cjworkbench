@@ -1,5 +1,5 @@
 /* eslint no-new-func: 0 */
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 import { connect } from 'react-redux'
@@ -7,7 +7,7 @@ import { createSelector } from 'reselect'
 import { addStepAction, setStepParamsAction, setSelectedStepAction } from '../workflow-reducer'
 import { Plural, t } from '@lingui/macro'
 
-class Action extends React.PureComponent {
+class Action extends PureComponent {
   static propTypes = {
     idName: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -26,7 +26,7 @@ class Action extends React.PureComponent {
   }
 }
 
-export class SelectedRowsActions extends React.PureComponent {
+export class SelectedRowsActions extends PureComponent {
   static propTypes = {
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
     stepId: PropTypes.number, // or null/undefined if none selected

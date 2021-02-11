@@ -1,5 +1,4 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
-import React from 'react'
 import StringParam from './String'
 import { mountWithI18n } from '../../i18n/test-utils'
 

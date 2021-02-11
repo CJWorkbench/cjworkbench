@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { loadStripe } from '@stripe/stripe-js'
@@ -17,7 +17,7 @@ async function createCheckoutSession (api, stripePriceId) {
 export default function PlanPage (props) {
   const { api, user, products } = props
 
-  const handleClickSubscribe = React.useMemo(
+  const handleClickSubscribe = useMemo(
     () => (user ? stripePriceId => { createCheckoutSession(api, stripePriceId) } : null),
     [user, api]
   )

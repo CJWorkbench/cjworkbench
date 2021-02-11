@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
@@ -6,7 +6,7 @@ import IconTable from '../../../icons/table.svg'
 
 export default function AddTableBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
-  const handleClick = React.useCallback(ev => {
+  const handleClick = useCallback(ev => {
     onSubmit({ tabSlug: ev.target.getAttribute('data-tab-slug') })
   }, [onSubmit])
 

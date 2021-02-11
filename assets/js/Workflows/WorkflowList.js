@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import Workflow from './Workflow'
@@ -15,7 +15,7 @@ export { WorkflowListPropType }
 function SortableColumnName (props) {
   const { sort, sortKey, defaultAscending, onChangeSort, children } = props
 
-  const handleClickSort = React.useCallback(ev => {
+  const handleClickSort = useCallback(ev => {
     ev.preventDefault()
     const ascending = sort.key === sortKey ? !sort.ascending : defaultAscending
     onChangeSort({ key: sortKey, ascending })
@@ -51,9 +51,9 @@ export default function WorkflowList (props) {
     onWorkflowDuplicating = null,
     onWorkflowDuplicated = null
   } = props
-  const [sort, setSort] = React.useState({ key: 'last_update', ascending: false })
+  const [sort, setSort] = useState({ key: 'last_update', ascending: false })
   const showActions = Boolean(api)
-  const sortedWorkflows = React.useMemo(() => {
+  const sortedWorkflows = useMemo(() => {
     const TextComparator = new Intl.Collator() // locale alphabetical
     const { key, ascending } = sort
     // workflow.last_update is ISO8601 Date. We can sort it lexicographically.

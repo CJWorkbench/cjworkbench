@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownDivider, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
@@ -14,27 +14,27 @@ const DisplayNoneStyle = { display: 'none' }
 export default function WfHamburgerMenu (props) {
   const { api = null, workflowId = null, user = null } = props
 
-  const [isImportModalOpen, setImportModalOpen] = React.useState(false)
-  const [isLocaleSwitcherOpen, setLocaleSwitcherOpen] = React.useState(false)
-  const logoutFormRef = React.useRef(null)
+  const [isImportModalOpen, setImportModalOpen] = useState(false)
+  const [isLocaleSwitcherOpen, setLocaleSwitcherOpen] = useState(false)
+  const logoutFormRef = useRef(null)
 
-  const handleClickOpenImportModal = React.useCallback(
+  const handleClickOpenImportModal = useCallback(
     () => setImportModalOpen(true),
     [setImportModalOpen]
   )
-  const handleCloseImportModal = React.useCallback(
+  const handleCloseImportModal = useCallback(
     () => setImportModalOpen(false),
     [setImportModalOpen]
   )
-  const handleClickOpenLocaleSwitcher = React.useCallback(
+  const handleClickOpenLocaleSwitcher = useCallback(
     () => setLocaleSwitcherOpen(true),
     [setLocaleSwitcherOpen]
   )
-  const handleCloseLocaleSwitcher = React.useCallback(
+  const handleCloseLocaleSwitcher = useCallback(
     () => setLocaleSwitcherOpen(false),
     [setLocaleSwitcherOpen]
   )
-  const handleClickLogOut = React.useCallback(
+  const handleClickLogOut = useCallback(
     () => {
       const logoutForm = logoutFormRef.current
       if (logoutForm) {

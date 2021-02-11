@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import ReportHeader from './ReportHeader'
 import Block from './Block'
@@ -9,7 +9,7 @@ export default function Report ({
 }) {
   const isReadOnly = workflow.read_only
   const handleClickDelete = deleteBlock
-  const handleClickMoveUp = React.useCallback(slug => {
+  const handleClickMoveUp = useCallback(slug => {
     const slugs = blocks.map(b => b.slug) // we're going to mutate it
     const index = slugs.indexOf(slug)
     if (index > 0) {
@@ -17,7 +17,7 @@ export default function Report ({
       reorderBlocks(slugs)
     }
   }, [blocks, reorderBlocks])
-  const handleClickMoveDown = React.useCallback(slug => {
+  const handleClickMoveDown = useCallback(slug => {
     const slugs = blocks.map(b => b.slug) // we're going to mutate it
     const index = slugs.indexOf(slug)
     if (index >= 0 && index < slugs.length - 1) {
@@ -33,7 +33,7 @@ export default function Report ({
         <AddBlockPrompt position={0} tabs={reportableTabs} onSubmit={addBlock} />
       )}
       {blocks.map((block, position) => (
-        <React.Fragment key={block.slug}>
+        <Fragment key={block.slug}>
           <Block
             workflowId={workflow.id}
             block={block}
@@ -46,7 +46,7 @@ export default function Report ({
           {isReadOnly ? null : (
             <AddBlockPrompt position={position + 1} tabs={reportableTabs} onSubmit={addBlock} />
           )}
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   )

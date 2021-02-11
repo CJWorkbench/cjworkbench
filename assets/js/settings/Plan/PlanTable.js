@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 import { i18n } from '@lingui/core'
@@ -25,7 +25,7 @@ function formatMaxDeltaAge (nDays) {
 function Price (props) {
   const { price, onClickSubscribe } = props
 
-  const handleClickSubscribe = React.useMemo(
+  const handleClickSubscribe = useMemo(
     () => onClickSubscribe ? () => onClickSubscribe(price.stripePriceId) : null,
     [onClickSubscribe, price]
   )

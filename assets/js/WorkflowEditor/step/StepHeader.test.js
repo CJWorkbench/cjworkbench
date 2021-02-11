@@ -1,5 +1,4 @@
 /* globals describe, it, expect */
-import React from 'react'
 import StepHeader from './StepHeader'
 import { mount } from 'enzyme'
 

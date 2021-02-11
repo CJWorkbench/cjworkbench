@@ -1,7 +1,7 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
-export default class Checkbox extends React.PureComponent {
+export default class Checkbox extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,

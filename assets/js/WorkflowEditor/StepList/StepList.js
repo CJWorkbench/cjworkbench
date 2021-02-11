@@ -1,5 +1,5 @@
 /* globals HTMLElement */
-import React from 'react'
+import { createRef, Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import AddData from '../AddData'
 import Step from '../step/Step'
@@ -34,7 +34,7 @@ function partitionSteps (steps, modules) {
   }
 }
 
-export default class StepList extends React.Component {
+export default class StepList extends Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     tabSlug: PropTypes.string,
@@ -51,7 +51,7 @@ export default class StepList extends React.Component {
 
   // Track state of where we last auto-scrolled.
   // Don't store it in this.state because we never want it to lead to a render
-  scrollRef = React.createRef()
+  scrollRef = createRef()
 
   lastScrolledStep = { tabSlug: null, index: null } // or { tabSlug, index } pair
 
@@ -143,7 +143,7 @@ export default class StepList extends React.Component {
       // If this item is replacing a placeholder, disable the enter animations
       if (!item) {
         return (
-          <React.Fragment key={`placeholder-${i}`}>
+          <Fragment key={`placeholder-${i}`}>
             <StepListInsertSpot
               index={i}
               tabSlug={tabSlug}
@@ -159,11 +159,11 @@ export default class StepList extends React.Component {
               moduleIcon=''
               isSelected={false}
             />
-          </React.Fragment>
+          </Fragment>
         )
       } else {
         return (
-          <React.Fragment key={`module-${item.id}`}>
+          <Fragment key={`module-${item.id}`}>
             <StepListInsertSpot
               index={i}
               tabSlug={tabSlug}
@@ -188,7 +188,7 @@ export default class StepList extends React.Component {
               onDragStart={this.handleDragStart}
               onDragEnd={this.handleDragEnd}
             />
-          </React.Fragment>
+          </Fragment>
         )
       }
     })

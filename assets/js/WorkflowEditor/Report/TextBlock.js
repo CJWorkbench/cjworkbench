@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Markdown from 'react-markdown'
 import BlockFrame from './BlockFrame'
@@ -14,15 +14,15 @@ export default function TextBlock (props) {
     setBlockMarkdown
   } = props
   const { slug, markdown } = block
-  const [editedMarkdown, setEditedMarkdown] = React.useState(null) // non-null means, "editing"
-  const handleClickEdit = React.useMemo(() => {
+  const [editedMarkdown, setEditedMarkdown] = useState(null) // non-null means, "editing"
+  const handleClickEdit = useMemo(() => {
     if (editedMarkdown !== null) return null // so the button is disabled
     return () => setEditedMarkdown(markdown)
   }, [editedMarkdown, setEditedMarkdown])
 
   const handleChange = setEditedMarkdown
-  const handleCancel = React.useCallback(() => setEditedMarkdown(null), [setEditedMarkdown])
-  const handleSubmit = React.useCallback(() => {
+  const handleCancel = useCallback(() => setEditedMarkdown(null), [setEditedMarkdown])
+  const handleSubmit = useCallback(() => {
     if (editedMarkdown === '') {
       onClickDelete(slug)
     } else {

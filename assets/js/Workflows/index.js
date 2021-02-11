@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import { Page, MainNav } from '../Page'
 import { WorkflowListPropType } from './WorkflowList'

@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from './util'
 
-export default class MenuParam extends React.PureComponent {
+export default class MenuParam extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     enumOptions: PropTypes.arrayOf(

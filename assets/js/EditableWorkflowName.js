@@ -1,16 +1,16 @@
-import React from 'react'
+import { createRef, Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { setWorkflowNameAction } from './workflow-reducer'
 
-export class EditableWorkflowName extends React.Component {
+export class EditableWorkflowName extends Component {
   static propTypes = {
     value: PropTypes.string,
     setWorkflowName: PropTypes.func.isRequired, // func(newName) => undefined
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  inputRef = React.createRef()
+  inputRef = createRef()
 
   state = {
     value: null // non-null only when editing

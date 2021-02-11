@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import ParamsForm from './ParamsForm'
 import { shallow } from 'enzyme'
 

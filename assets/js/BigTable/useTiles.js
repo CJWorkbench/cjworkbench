@@ -1,4 +1,4 @@
-import React from 'react'
+import { useReducer, useCallback, useEffect } from 'react'
 
 import placeTile from './placeTile'
 import findWantedLoadingTile from './findWantedLoadingTile'
@@ -121,11 +121,11 @@ function reducer (state, action) {
  */
 export default function useTiles (props) {
   const { fetchTile, nTileRows, nTileColumns } = props
-  const [{ sparseTileGrid, loadingTile }, dispatch] = React.useReducer(reducer, { nTileRows, nTileColumns }, init)
+  const [{ sparseTileGrid, loadingTile }, dispatch] = useReducer(reducer, { nTileRows, nTileColumns }, init)
   const isLoading = loadingTile !== null
-  const setWantedTileRange = React.useCallback((...payload) => dispatch({ type: 'setWantedTileRange', payload }), [dispatch])
+  const setWantedTileRange = useCallback((...payload) => dispatch({ type: 'setWantedTileRange', payload }), [dispatch])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loadingTile === null) return
 
     // call fetchTile() from useEffect(), not from reducer. Reducers should not

@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent, Component, createRef } from 'react'
 import PropTypes from 'prop-types'
 import ColumnContextMenu from './ColumnContextMenu'
 import { connect } from 'react-redux'
@@ -17,7 +17,7 @@ ColumnType.propTypes = {
   columnType: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
 }
 
-class ReorderColumnDropZone extends React.PureComponent {
+class ReorderColumnDropZone extends PureComponent {
   static propTypes = {
     leftOrRight: PropTypes.oneOf(['left', 'right']).isRequired,
     fromIndex: PropTypes.number.isRequired,
@@ -71,7 +71,7 @@ class ReorderColumnDropZone extends React.PureComponent {
   }
 }
 
-export class EditableColumnName extends React.Component {
+export class EditableColumnName extends Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
@@ -170,7 +170,7 @@ export class EditableColumnName extends React.Component {
 }
 
 // Sort arrows, A-Z letter identifiers
-export class ColumnHeader extends React.PureComponent {
+export class ColumnHeader extends PureComponent {
   static propTypes = {
     stepId: PropTypes.number,
     columnKey: PropTypes.string.isRequired,
@@ -184,7 +184,7 @@ export class ColumnHeader extends React.PureComponent {
     dispatchTableAction: PropTypes.func.isRequired // func(stepId, moduleIdName, forceNewModule, params)
   }
 
-  inputRef = React.createRef()
+  inputRef = createRef()
 
   state = {
     isHovered: false,

@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import LessonSection from './LessonSection'
 import { shallow } from 'enzyme'
 

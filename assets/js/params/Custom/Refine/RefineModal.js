@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import RefineBins from './RefineBins'
 import RefineClusterer from './RefineClusterer'
@@ -7,7 +7,7 @@ import RefineStatus from './RefineStatus'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
 import { Trans } from '@lingui/macro'
 
-export default class RefineModal extends React.PureComponent {
+export default class RefineModal extends PureComponent {
   static propTypes = {
     bucket: PropTypes.object.isRequired, // { "str": Number(count), ... }
     onClose: PropTypes.func.isRequired, // onClose() => undefined

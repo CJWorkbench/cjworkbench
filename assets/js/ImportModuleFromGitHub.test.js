@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import ConnectedImportModuleFromGitHub from './ImportModuleFromGitHub'
 import { mountWithI18n } from './i18n/test-utils'
 import { Provider } from 'react-redux'

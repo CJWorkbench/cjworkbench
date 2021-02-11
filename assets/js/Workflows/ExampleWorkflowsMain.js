@@ -1,4 +1,3 @@
-import React from 'react'
 import { Trans } from '@lingui/macro'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
 

@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Role from './Role'
 
-export default class AclEntry extends React.PureComponent {
+export default class AclEntry extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     email: PropTypes.string.isRequired,

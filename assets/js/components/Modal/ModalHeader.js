@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { ModalContext } from './Modal'
 
-export default class ModalHeader extends React.PureComponent {
+export default class ModalHeader extends PureComponent {
   static propTyes = {
     children: PropTypes.node.isRequired
   }

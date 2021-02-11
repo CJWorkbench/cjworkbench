@@ -1,5 +1,5 @@
 /* globals fetch */
-import React from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from './util'
 
@@ -31,12 +31,12 @@ function cleanTimezoneId (value, { timezones, aliases }) {
 export default function TimezoneParam (props) {
   const { fieldId, label, name, value, isReadOnly, onChange } = props
 
-  const [timezoneData, setTimezoneData] = React.useState(null)
-  const handleChange = React.useCallback(ev => {
+  const [timezoneData, setTimezoneData] = useState(null)
+  const handleChange = useCallback(ev => {
     onChange(ev.target.value)
   }, [onChange])
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchTimezones().then(setTimezoneData)
   }, [])
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import PublicPrivate from './PublicPrivate'
@@ -6,7 +6,7 @@ import Acl from './Acl'
 import Url from './Url'
 import { Trans } from '@lingui/macro'
 
-export default class _Modal extends React.PureComponent {
+export default class _Modal extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     url: PropTypes.string.isRequired,

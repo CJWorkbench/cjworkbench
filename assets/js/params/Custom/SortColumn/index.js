@@ -1,11 +1,11 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import SortColumn from './SortColumn.js'
 import { Trans } from '@lingui/macro'
 
 const DefaultValue = [{ colname: '', is_ascending: true }]
 
-export default class SortColumns extends React.PureComponent {
+export default class SortColumns extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>

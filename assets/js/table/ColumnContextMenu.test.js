@@ -1,5 +1,4 @@
 /* global describe, it, jest, expect */
-import React from 'react'
 import ColumnContextMenu from './ColumnContextMenu'
 import { mountWithI18n } from '../i18n/test-utils'
 

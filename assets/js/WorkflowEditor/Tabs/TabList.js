@@ -1,9 +1,9 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Tab from './Tab'
 import * as propTypes from '../propTypes'
 
-export default class TabList extends React.PureComponent {
+export default class TabList extends PureComponent {
   static propTypes = {
     tabs: PropTypes.arrayOf(PropTypes.shape({
       slug: PropTypes.string.isRequired,

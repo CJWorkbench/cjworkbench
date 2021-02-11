@@ -1,9 +1,9 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import SearchResult from './SearchResult'
 import ModuleCategoryName from './ModuleCategoryName'
 
-export default class SearchResultGroup extends React.PureComponent {
+export default class SearchResultGroup extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     activeModule: PropTypes.string, // idName, null if none active

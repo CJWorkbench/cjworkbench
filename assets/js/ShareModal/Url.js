@@ -1,9 +1,9 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 import ShareUrl from '../components/ShareUrl'
 
-export default class Url extends React.PureComponent {
+export default class Url extends PureComponent {
   static propTypes = {
     isPublic: PropTypes.bool.isRequired,
     url: PropTypes.string.isRequired,

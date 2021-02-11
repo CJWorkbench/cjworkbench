@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
-export default class LessonNav extends React.PureComponent {
+export default class LessonNav extends PureComponent {
   static propTypes = {
     currentSectionIndex: PropTypes.number.isRequired, // what the user is reading
     activeSectionIndex: PropTypes.number, // where the next incomplete step is (null if done)

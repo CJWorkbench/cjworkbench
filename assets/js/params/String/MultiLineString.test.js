@@ -1,6 +1,5 @@
 /* global describe, it, expect, jest */
-import React from 'react'
-import { mount } from 'enzyme' // mount, not shallow, because we do DOM calculations
+import { mount } from 'enzyme'
 import MultiLineString from './MultiLineString'
 
 describe('MultiLineString', () => {

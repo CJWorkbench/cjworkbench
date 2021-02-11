@@ -1,5 +1,5 @@
 /* globals gapi, google */
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 
@@ -144,7 +144,7 @@ async function loadDefaultPickerFactory () {
   return new PickerFactory()
 }
 
-export default class Gdrivefile extends React.PureComponent {
+export default class Gdrivefile extends PureComponent {
   static propTypes = {
     createOauthAccessToken: PropTypes.func.isRequired, // func() => Promise[str or null]
     isReadOnly: PropTypes.bool.isRequired,

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import UndoRedoButtons from './UndoRedoButtons'
@@ -90,7 +90,7 @@ function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   }
 }
 
-export default class WorkflowNavBar extends React.Component {
+export default class WorkflowNavBar extends Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     workflow: PropTypes.object.isRequired,

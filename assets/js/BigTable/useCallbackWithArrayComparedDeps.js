@@ -1,4 +1,4 @@
-import React from 'react'
+import { useRef } from 'react'
 
 function isArrayEqual (lhs, rhs) {
   return lhs.length === rhs.length && lhs.every((v, i) => v === rhs[i])
@@ -12,7 +12,7 @@ function areDepsEqualWithArrayCompare (lhs, rhs) {
  * Like React.useCallback() ... but Array dependencies are compared deeply for one level.
  */
 export default function useCallbackWithArrayComparedDeps (callback, deps) {
-  const last = React.useRef(null)
+  const last = useRef(null)
 
   if (last.current === null || !areDepsEqualWithArrayCompare(last.current.deps, deps)) {
     last.current = { deps, callback }

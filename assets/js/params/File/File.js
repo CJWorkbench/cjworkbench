@@ -1,9 +1,9 @@
-import React from 'react'
+import { memo, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import UploadedFileSelect from './UploadedFileSelect'
 import { Trans, t } from '@lingui/macro'
 
-const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
+const UploadProgress = memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
   const percent = (nBytesUploaded || 0) / nBytesTotal * 100
   const title = nBytesUploaded === null
     ? ''
@@ -35,7 +35,7 @@ const UploadProgress = React.memo(function UploadProgress ({ nBytesTotal, nBytes
  * After changing `value`, we auto-submit our new params.
  * Prompts user when `value` is not in `files`.
  */
-export default class File extends React.PureComponent {
+export default class File extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // onChange(n) => undefined

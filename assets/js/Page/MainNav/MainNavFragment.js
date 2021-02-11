@@ -1,4 +1,4 @@
-import React from 'react'
+import { useReducer } from 'react'
 import PropTypes from 'prop-types'
 import MainNavHeader from './MainNavHeader'
 import TopPaths from './TopPaths'
@@ -6,7 +6,7 @@ import UserPaths from './UserPaths'
 
 export default function MainNavFragment (props) {
   const { courses, currentPath, user } = props
-  const [open, toggleOpen] = React.useReducer(open => !open, false)
+  const [open, toggleOpen] = useReducer(open => !open, false)
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, DropdownDivider } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
@@ -6,7 +6,7 @@ import { Trans } from '@lingui/macro'
 /**
  * Drop-down menu on Workflows List page to sort the list
  */
-export default class SortMenu extends React.Component {
+export default class SortMenu extends Component {
   static propTypes = {
     comparator: PropTypes.oneOf(['last_update|ascending', 'last_update|descending', 'name|ascending', 'name|descending']).isRequired,
     setComparator: PropTypes.func.isRequired // func(comparator) => undefined

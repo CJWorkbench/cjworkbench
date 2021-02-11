@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { Page, MainNav } from '../Page'
@@ -7,7 +7,7 @@ import Billing from './Billing'
 export default function BillingPage (props) {
   const { api, user } = props
 
-  const createBillingPortalSessionAndRedirect = React.useCallback(async () => {
+  const createBillingPortalSessionAndRedirect = useCallback(async () => {
     const { billingPortalSession } = await api.createStripeBillingPortalSession()
     window.location = billingPortalSession.url
   }, [api])

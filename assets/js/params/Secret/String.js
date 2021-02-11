@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 import { timeDifference } from '../../utils'
@@ -11,19 +11,19 @@ import { Trans } from '@lingui/macro'
  * When the user clicks "submit", the state of this container will change irreversibly.
  */
 function StringPrompt ({ label, name, fieldId, placeholder, pattern, help, helpUrl, helpUrlPrompt, submit }) {
-  const [value, setValue] = React.useState('')
-  const [isValid, setValid] = React.useState(false)
-  const [isSubmitted, setSubmitted] = React.useState(false)
-  const handleChange = React.useCallback(ev => {
+  const [value, setValue] = useState('')
+  const [isValid, setValid] = useState(false)
+  const [isSubmitted, setSubmitted] = useState(false)
+  const handleChange = useCallback(ev => {
     setValue(ev.target.value)
     setValid(ev.target.validity.valid)
   })
-  const handleSubmit = React.useCallback(() => {
+  const handleSubmit = useCallback(() => {
     if (!isValid) return
     submit(name, value)
     setSubmitted(true)
   })
-  const handleKeyDown = React.useCallback(ev => {
+  const handleKeyDown = useCallback(ev => {
     if (ev.key === 'Enter') {
       ev.preventDefault()
       ev.stopPropagation()
@@ -65,8 +65,8 @@ function StringPrompt ({ label, name, fieldId, placeholder, pattern, help, helpU
 }
 
 function StringDisplay ({ isOwner, secretMetadata, label, name, fieldId, deleteSecret }) {
-  const [isSubmitted, setSubmitted] = React.useState(false)
-  const handleSubmit = React.useCallback(() => {
+  const [isSubmitted, setSubmitted] = useState(false)
+  const handleSubmit = useCallback(() => {
     deleteSecret(name)
     setSubmitted(true)
   })

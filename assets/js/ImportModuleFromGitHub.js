@@ -1,11 +1,11 @@
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { updateModuleAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
 
-class StaffImportModuleFromGitHub extends React.PureComponent {
+class StaffImportModuleFromGitHub extends PureComponent {
   static propTypes = {
     closeModal: PropTypes.func.isRequired,
     api: PropTypes.shape({
@@ -18,7 +18,7 @@ class StaffImportModuleFromGitHub extends React.PureComponent {
     status: { message: '', error: null }
   }
 
-  inputRef = React.createRef()
+  inputRef = createRef()
 
   handleSubmit = (ev) => {
     ev.preventDefault() // don't submit browser-default GET/POST

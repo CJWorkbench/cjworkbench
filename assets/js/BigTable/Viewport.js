@@ -1,12 +1,12 @@
-import React from 'react'
+import { useState, useMemo, useCallback, useLayoutEffect } from 'react'
 import PropTypes from 'prop-types'
 import useThrottledRequestAnimationFrame from './useThrottledRequestAnimationFrame'
 import Table from './Table'
 
 export default function Viewport ({ nRows, columns, cells, nSkipRows, nSkipColumns, setFocusCellRange }) {
-  const [viewport, setViewport] = React.useState(null)
-  const [tbody, setTbody] = React.useState(null)
-  const columnOffsetsAfterTh = React.useMemo(() => {
+  const [viewport, setViewport] = useState(null)
+  const [tbody, setTbody] = useState(null)
+  const columnOffsetsAfterTh = useMemo(() => {
     const ret = new Array(columns.length).fill(0)
     let x = 0
     columns.forEach((column, i) => {
@@ -16,7 +16,7 @@ export default function Viewport ({ nRows, columns, cells, nSkipRows, nSkipColum
     return ret
   }, [columns])
 
-  const refresh = React.useCallback(() => {
+  const refresh = useCallback(() => {
     if (viewport === null || tbody === null) {
       return // a race? [adamhooper, 2020-11-11] dunno if this can ever be reached
     }
@@ -59,7 +59,7 @@ export default function Viewport ({ nRows, columns, cells, nSkipRows, nSkipColum
   }, [viewport, tbody, nRows, JSON.stringify(columnOffsetsAfterTh) /* array-compare */, setFocusCellRange])
   const throttledRefresh = useThrottledRequestAnimationFrame(refresh)
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (viewport !== null && tbody !== null) {
       // Call setFocusCellRange() ... and schedule it to happen when anything resizes
       refresh()

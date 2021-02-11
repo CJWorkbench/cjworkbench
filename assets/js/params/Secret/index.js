@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import OAuth from './OAuth'
 import String_ from './String'

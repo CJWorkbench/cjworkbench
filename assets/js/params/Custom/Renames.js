@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { generateFieldId } from '../util'
 
-export class RenameEntry extends React.PureComponent {
+export class RenameEntry extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     colname: PropTypes.string.isRequired,
@@ -58,7 +58,7 @@ export class RenameEntry extends React.PureComponent {
   }
 }
 
-export default class RenameEntries extends React.PureComponent {
+export default class RenameEntries extends PureComponent {
   static propTypes = {
     inputColumns: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired

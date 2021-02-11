@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Aggregation from './Aggregation'
 import { Trans } from '@lingui/macro'
@@ -6,7 +6,7 @@ import { Trans } from '@lingui/macro'
 const DefaultValue = [{ operation: 'size', colname: '', outname: '' }]
 const DefaultAddValue = { operation: 'sum', colname: '', outname: '' }
 
-export default class Aggregations extends React.PureComponent {
+export default class Aggregations extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>

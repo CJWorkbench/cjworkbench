@@ -1,5 +1,5 @@
 /* globals confirm */
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 import { Trans, t } from '@lingui/macro'
@@ -15,9 +15,9 @@ export default function WorkflowContextMenu (props) {
     onWorkflowDuplicating,
     onWorkflowDuplicated
   } = props
-  const [isShareModalOpen, setShareModalOpen] = React.useState(false)
+  const [isShareModalOpen, setShareModalOpen] = useState(false)
 
-  const handleClickDelete = React.useCallback(() => {
+  const handleClickDelete = useCallback(() => {
     if (!confirm(
       t({ id: 'js.Workflows.delete.permanentyDeleteWarning', message: 'Permanently delete this workflow?' })
     )) {
@@ -27,16 +27,16 @@ export default function WorkflowContextMenu (props) {
     onWorkflowChanging(workflow.id, { isDeleted: true })
     api.deleteWorkflow(workflow.id).then(() => onWorkflowChanged(workflow.id))
   }, [api, workflow, onWorkflowChanging, onWorkflowChanged])
-  const handleClickDuplicate = React.useCallback(() => {
+  const handleClickDuplicate = useCallback(() => {
     onWorkflowDuplicating(workflow.id, {})
     api.duplicateWorkflow(workflow.id).then(json => {
       onWorkflowDuplicated(workflow.id, json)
     })
   }, [api, workflow, onWorkflowDuplicating, onWorkflowDuplicated])
-  const handleClickShare = React.useCallback(() => {
+  const handleClickShare = useCallback(() => {
     setShareModalOpen(true)
   }, [setShareModalOpen])
-  const handleCloseShareModal = React.useCallback(() => {
+  const handleCloseShareModal = useCallback(() => {
     setShareModalOpen(false)
   }, [setShareModalOpen])
 

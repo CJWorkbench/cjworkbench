@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 
@@ -11,7 +11,7 @@ import { MaybeLabel } from '../util'
  * `upstreamValue` (the value before edits) and `value` (the value it sends in
  * `onChange(value)`).
  */
-export default class SingleLineString extends React.PureComponent {
+export default class SingleLineString extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     label: PropTypes.string.isRequired,

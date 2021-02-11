@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import BigTable from '../BigTable'
@@ -21,12 +21,12 @@ function buildColumnHeaderComponent ({ name, type }) {
 function Table ({ workflowId, stepSlug, deltaId, nRows, columns, nRowsPerTile, nColumnsPerTile }) {
   const nTileRows = Math.ceil(nRows / nRowsPerTile)
   const nTileColumns = Math.ceil(columns.length / nColumnsPerTile)
-  const fetchTile = React.useCallback((tileRow, tileColumn, fetchOptions) => {
+  const fetchTile = useCallback((tileRow, tileColumn, fetchOptions) => {
     const url = `/workflows/${workflowId}/tiles/${stepSlug}/delta-${deltaId}/${tileRow},${tileColumn}.json`
     return global.fetch(url, fetchOptions)
   }, [workflowId, stepSlug, deltaId])
   const { sparseTileGrid, setWantedTileRange } = useTiles({ fetchTile, nTileRows, nTileColumns })
-  const bigColumns = React.useMemo(() => columns.map(column => ({
+  const bigColumns = useMemo(() => columns.map(column => ({
     ...column,
     width: 180,
     headerComponent: buildColumnHeaderComponent(column),

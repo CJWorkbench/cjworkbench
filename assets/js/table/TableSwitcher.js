@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Spinner from '../Spinner'
 import TableView from './TableView'
@@ -41,7 +41,7 @@ const UnreachableStepTable = () => (
   />
 )
 
-const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, stepId, deltaId, columns, nRows, loadRows }) {
+const OkStepTable = memo(function OkStepTable ({ isLoaded, isReadOnly, stepId, deltaId, columns, nRows, loadRows }) {
   return (
     <>
       <TableView
@@ -57,7 +57,7 @@ const OkStepTable = React.memo(function OkStepTable ({ isLoaded, isReadOnly, ste
   )
 })
 
-const TableSwitcherContents = React.memo(function TableSwitcherContents ({ status, nRows, ...props }) {
+const TableSwitcherContents = memo(function TableSwitcherContents ({ status, nRows, ...props }) {
   if (status === null) {
     return <NoStepTable />
   } else if (status === 'busy') {
@@ -82,7 +82,7 @@ const TableSwitcherContents = React.memo(function TableSwitcherContents ({ statu
  * There is no ErrorStepTable, because we never show an Error-status step. (We
  * show its input.)
  */
-export default class TableSwitcher extends React.PureComponent {
+export default class TableSwitcher extends PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet

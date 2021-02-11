@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 
@@ -10,7 +10,7 @@ import { t } from '@lingui/macro'
  * search input.
  */
 export default function FacetSearch ({ onChange, onReset, value }) {
-  const onKeyDown = React.useCallback(ev => {
+  const onKeyDown = useCallback(ev => {
     switch (ev.key) {
       case 'Escape':
         return onReset()
@@ -18,7 +18,7 @@ export default function FacetSearch ({ onChange, onReset, value }) {
         ev.preventDefault() // prevent form submit
     }
   }, [onReset])
-  const onChangeCallback = React.useCallback(ev => onChange(ev.target.value), [onChange])
+  const onChangeCallback = useCallback(ev => onChange(ev.target.value), [onChange])
 
   return (
     <fieldset className='facet-search' onReset={onReset}>

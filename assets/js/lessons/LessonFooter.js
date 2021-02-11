@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Confetti from 'react-dom-confetti'
 import { Trans } from '@lingui/macro'
@@ -13,7 +13,7 @@ const ConfettiConfig = {
   ]
 }
 
-export default class LessonFooter extends React.PureComponent {
+export default class LessonFooter extends PureComponent {
   static propTypes = {
     title: PropTypes.string.isRequired,
     html: PropTypes.string,

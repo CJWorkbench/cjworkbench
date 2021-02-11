@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
 import ColGroup from './ColGroup'

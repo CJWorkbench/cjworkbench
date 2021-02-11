@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo, useCallback, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 import { createSelector } from 'reselect'
@@ -9,9 +9,9 @@ import { connect } from 'react-redux'
 import Modules from './Modules'
 import Search from './Search'
 
-export const Modal = React.memo(function Modal ({ modules, tabSlug, close, addStep }) {
-  const onSelectModule = React.useCallback(moduleIdName => addStep(tabSlug, moduleIdName))
-  const [search, setSearch] = React.useState('')
+export const Modal = memo(function Modal ({ modules, tabSlug, close, addStep }) {
+  const onSelectModule = useCallback(moduleIdName => addStep(tabSlug, moduleIdName))
+  const [search, setSearch] = useState('')
 
   return (
     <section className='add-data-modal'>

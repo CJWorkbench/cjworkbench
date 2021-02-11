@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import memoize from 'memoize-one'
 import { ModulePropType } from './PropTypes'
@@ -55,7 +55,7 @@ const escapeRegexCharacters = (str) => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export default class SearchResults extends React.PureComponent {
+export default class SearchResults extends PureComponent {
   static propTypes = {
     search: PropTypes.string.isRequired, // search string, to filter modules
     modules: PropTypes.arrayOf(ModulePropType.isRequired).isRequired,

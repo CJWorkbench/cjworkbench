@@ -1,5 +1,4 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
-import React from 'react'
 import { act } from 'react-dom/test-utils'
 import ConnectedStep, { Step } from './Step'
 import DataVersionModal from '../DataVersionModal'

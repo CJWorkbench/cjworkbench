@@ -1,8 +1,8 @@
 // Simple wrapper over HTML <select>
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
-export default class RadioParam extends React.PureComponent {
+export default class RadioParam extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired, // <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>

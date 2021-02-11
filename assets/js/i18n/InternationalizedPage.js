@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { en, el } from 'make-plural/plurals'
 import { i18n } from '@lingui/core'
@@ -23,9 +23,9 @@ async function loadLocale (localeId) {
 }
 
 function useActivatedI18n (localeId) {
-  const [i18n, setI18n] = React.useState(null)
+  const [i18n, setI18n] = useState(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadLocale(currentLocaleId).then(setI18n)
   }, [])
 

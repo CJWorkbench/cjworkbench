@@ -1,8 +1,8 @@
-import React from 'react'
+import { memo } from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
 
-const ColGroup = React.memo(function ColGroup ({ columns }) {
+const ColGroup = memo(function ColGroup ({ columns }) {
   return (
     <colgroup>
       <col className='row-number' />

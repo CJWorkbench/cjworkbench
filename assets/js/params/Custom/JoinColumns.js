@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Checkbox from '../Checkbox'
 import Multicolumn from '../Multicolumn'
 import { t } from '@lingui/macro'
 
-export default class JoinColumns extends React.PureComponent {
+export default class JoinColumns extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func({ on: '...', right: '...' }) => undefined

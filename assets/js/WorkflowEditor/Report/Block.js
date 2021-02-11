@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import ChartBlock from './ChartBlock'
 import TableBlock from './TableBlock'

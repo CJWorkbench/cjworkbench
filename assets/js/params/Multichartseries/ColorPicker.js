@@ -1,11 +1,11 @@
 /* globals HTMLElement */
-import React from 'react'
+import { PureComponent, createContext, createRef } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { Popper } from 'react-popper'
 import { t } from '@lingui/macro'
 
-class ColorChoice extends React.PureComponent {
+class ColorChoice extends PureComponent {
   static propTypes = {
     color: PropTypes.string.isRequired, // like '#abcdef'
     onClick: PropTypes.func.isRequired // onClick('#abcdef') => undefined
@@ -34,7 +34,7 @@ class ColorChoice extends React.PureComponent {
 /**
  * a <button> and <input> that let the user write a color.
  */
-class CustomColorChoice extends React.PureComponent {
+class CustomColorChoice extends PureComponent {
   static propTypes = {
     defaultValue: PropTypes.string.isRequired, // '#abcdef'-style string
     onChange: PropTypes.func.isRequired, // onChange('#abcdef') => undefined
@@ -122,14 +122,14 @@ class CustomColorChoice extends React.PureComponent {
  *       <Popper referenceElement={context.referenceElement}>...</Popper> -- reads context.referenceElement
  *     </ColorPicker>
  */
-const ColorPickerContext = React.createContext()
+const ColorPickerContext = createContext()
 ColorPickerContext.Provider.propTypes = {
   value: PropTypes.shape({
     referenceElement: PropTypes.instanceOf(HTMLElement) // or undefined -- which is the case during load
   })
 }
 
-class ColorPickerPopover extends React.PureComponent {
+class ColorPickerPopover extends PureComponent {
   static propTypes = {
     value: PropTypes.string, // Like '#abcdef'; default is '#000000'
     choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
@@ -139,7 +139,7 @@ class ColorPickerPopover extends React.PureComponent {
 
   static contextType = ColorPickerContext // this.context.referenceElement is the button that opened the menu
 
-  containerRef = React.createRef()
+  containerRef = createRef()
 
   componentDidMount () {
     document.addEventListener('mousedown', this.handleMouseDown, true)
@@ -203,7 +203,7 @@ class ColorPickerPopover extends React.PureComponent {
  * A simulation for `<input type="color" list=...`, which has lousy
  * cross-browser support in 2018.
  */
-export default class ColorPicker extends React.PureComponent {
+export default class ColorPicker extends PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // Like '#abcdef'
     choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,

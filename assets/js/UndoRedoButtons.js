@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 
-export default class UndoRedoButtons extends React.PureComponent {
+export default class UndoRedoButtons extends PureComponent {
   static propTypes = {
     undo: PropTypes.func.isRequired, // func() => undefined
     redo: PropTypes.func.isRequired // func() => undefined

@@ -1,4 +1,3 @@
-import React from 'react'
 import Code from './Code'
 import MultiLineString from './MultiLineString'
 import SingleLineString from './SingleLineString'

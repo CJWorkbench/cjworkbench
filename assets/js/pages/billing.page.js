@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom'
 import BillingPage from '../settings/BillingPage'
 import WorkbenchAPI from '../WorkbenchAPI'

@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import Gdrivefile from './Gdrivefile'
 // import { mount } from 'enzyme'
 import { mountWithI18n } from '../i18n/test-utils'

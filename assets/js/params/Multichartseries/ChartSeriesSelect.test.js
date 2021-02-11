@@ -1,5 +1,4 @@
 /* global describe, it, expect, jest */
-import React from 'react'
 import ChartSeriesSelect from './ChartSeriesSelect'
 import { mountWithI18n } from '../../i18n/test-utils'
 

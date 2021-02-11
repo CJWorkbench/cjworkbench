@@ -1,4 +1,3 @@
-import React from 'react'
 import { formatLocale as d3FormatLocale } from 'd3-format'
 import EnUsLocale from 'd3-format/locale/en-US.json'
 

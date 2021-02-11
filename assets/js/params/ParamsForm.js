@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Param from './Param'
 import ParamsFormFooter from './ParamsFormFooter'
@@ -9,7 +9,7 @@ import { QuickFixPropTypes } from '../WorkflowEditor/step/QuickFix'
 /**
  * Displays Params and user's "edits".
  */
-export default class ParamsForm extends React.PureComponent {
+export default class ParamsForm extends PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,

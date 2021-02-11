@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
@@ -14,13 +14,13 @@ function SortIndicator ({ isActive, isAscending }) {
 
 export default function ValueSortSelect ({ value, onChange }) {
   const { by, isAscending } = value
-  const onClickValue = React.useCallback(() => {
+  const onClickValue = useCallback(() => {
     onChange({
       by: 'value',
       isAscending: by === 'value' ? !isAscending : true
     })
   })
-  const onClickCount = React.useCallback(() => {
+  const onClickCount = useCallback(() => {
     onChange({
       by: 'count',
       isAscending: by === 'count' ? !isAscending : false

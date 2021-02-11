@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import { Provider } from 'react-redux'
 import { mountWithI18n } from '../i18n/test-utils'
 import { mockStore, tick } from '../test-utils'

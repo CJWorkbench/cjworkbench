@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import LessonFooter from './LessonFooter'
 import LessonSection from './LessonSection'
@@ -6,7 +6,7 @@ import LessonNav from './LessonNav'
 import lessonSelector from './lessonSelector'
 import { connect } from 'react-redux'
 
-export class Lesson extends React.PureComponent {
+export class Lesson extends PureComponent {
   static propTypes = {
     header: PropTypes.shape({
       title: PropTypes.string.isRequired,

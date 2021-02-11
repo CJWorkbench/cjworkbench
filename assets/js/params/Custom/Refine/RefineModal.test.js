@@ -1,5 +1,4 @@
 /* global describe, it, expect, jest */
-import React from 'react'
 import { tick } from '../../../test-utils'
 import RefineModal from './RefineModal'
 import { mountWithI18n } from '../../../i18n/test-utils.js'

@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ExportModal from '../ExportModal'
 import SelectedRowsActions from './SelectedRowsActions'
@@ -6,7 +6,7 @@ import { Trans } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat('en-US')
 
-export default class TableInfo extends React.PureComponent {
+export default class TableInfo extends PureComponent {
   static propTypes = {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown

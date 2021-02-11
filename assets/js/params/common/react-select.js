@@ -1,4 +1,4 @@
-import React from 'react'
+import { forwardRef, useLayoutEffect, PureComponent } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
@@ -40,7 +40,7 @@ const NoStyles = {
 }
 
 const PopperModifiers = [PopperSameWidth]
-const PopperMenuPortalContents = React.forwardRef(({ style, placement, scheduleUpdate, children }, ref) => {
+const PopperMenuPortalContents = forwardRef(({ style, placement, scheduleUpdate, children }, ref) => {
   // When menu entries change, update Popper. That handles this case:
   //
   // 1. Open menu from near bottom of page. It opens upward.
@@ -48,7 +48,7 @@ const PopperMenuPortalContents = React.forwardRef(({ style, placement, scheduleU
   //
   // Expected results: menu is repositioned so its _bottom_ stays in a constant
   // position. That requires a scheduleUpdate().
-  React.useLayoutEffect(
+  useLayoutEffect(
     scheduleUpdate => scheduleUpdate ? scheduleUpdate() : undefined,
     [scheduleUpdate]
   )
@@ -87,7 +87,7 @@ const DefaultOverrideComponents = {
   MenuPortal: PopperMenuPortal
 }
 
-export default class ReactSelect extends React.PureComponent {
+export default class ReactSelect extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name="...">

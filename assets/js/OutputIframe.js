@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
@@ -8,7 +8,7 @@ import { setWorkflowPublicAction } from './ShareModal/actions'
 import { escapeHtml } from './utils'
 import EmbedIcon from '../icons/embed.svg'
 
-export class OutputIframe extends React.PureComponent {
+export class OutputIframe extends PureComponent {
   static propTypes = {
     deltaId: PropTypes.number, // null if added to empty workflow
     stepId: PropTypes.number, // null if no step

@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
@@ -9,7 +9,7 @@ import UpdateFrequencySelect from './UpdateFrequencySelect'
  * The button has type=submit: when the user clicks it, the parent form's
  * onSubmit() will be called.
  */
-export default class VersionSelect extends React.PureComponent {
+export default class VersionSelect extends PureComponent {
   static propTypes = {
     stepId: PropTypes.number.isRequired,
     isStepBusy: PropTypes.bool.isRequired,

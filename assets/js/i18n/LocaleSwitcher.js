@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { supportedLocalesData, currentLocaleId } from './locales'
@@ -9,8 +9,8 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
  * A menu for the user to select a locale.
  */
 export default function LocaleSwitcher ({ closeModal }) {
-  const [newLocaleId, setNewLocaleId] = React.useState(null) // null, "en", "fr", etc., ..., true if we don't know
-  const handleSubmit = React.useCallback(ev => {
+  const [newLocaleId, setNewLocaleId] = useState(null) // null, "en", "fr", etc., ..., true if we don't know
+  const handleSubmit = useCallback(ev => {
     if (newLocaleId !== null) {
       // we're already submitting. Ignore.
       ev.preventDefault()

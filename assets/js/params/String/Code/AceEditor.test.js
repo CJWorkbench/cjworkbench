@@ -1,5 +1,4 @@
 /* global describe, it, expect, jest */
-import React from 'react'
 import WorkbenchAceEditor from './AceEditor'
 import { shallow } from 'enzyme'
 import AceEditor from 'react-ace/lib/ace'

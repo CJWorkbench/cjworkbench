@@ -1,5 +1,4 @@
 /* global beforeEach, afterEach, describe, it, expect, jest */
-import React from 'react'
 import { Refine } from './index'
 import { mountWithI18n } from '../../../i18n/test-utils'
 

@@ -1,5 +1,4 @@
 /* globals describe, expect, it */
-import React from 'react'
 import { ReorderHistory } from './ReorderHistory'
 import { shallow } from 'enzyme'
 

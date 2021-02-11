@@ -1,5 +1,4 @@
 /* globals describe, expect, it, jest */
-import React from 'react'
 import { shallow, mount } from 'enzyme'
 import { mockStore, tick } from './test-utils'
 import { Provider } from 'react-redux'

@@ -1,5 +1,5 @@
 /* globals HTMLElement */
-import React from 'react'
+import { PureComponent, createRef, Component } from 'react'
 import PropTypes from 'prop-types'
 import { VariableSizeList, shouldComponentUpdate } from 'react-window'
 import memoize from 'memoize-one'
@@ -88,7 +88,7 @@ export class GroupForRender {
 /**
  * Displays a <button> prompt that opens a Modal.
  */
-class RefineModalPrompt extends React.PureComponent {
+class RefineModalPrompt extends PureComponent {
   static propTypes = {
     groups: PropTypes.arrayOf(PropTypes.instanceOf(util.Group).isRequired).isRequired,
     massRename: PropTypes.func.isRequired // func({ oldGroup: newGroup, ... }) => undefined
@@ -143,7 +143,7 @@ class RefineModalPrompt extends React.PureComponent {
   }
 }
 
-class RefineGroup extends React.Component { // uses react-window's shouldComponentUpdate, not PureComponent
+class RefineGroup extends Component { // uses react-window's shouldComponentUpdate, not PureComponent
   static propTypes = {
     style: PropTypes.object.isRequired, // CSS styles
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
@@ -159,7 +159,7 @@ class RefineGroup extends React.Component { // uses react-window's shouldCompone
   // over React.PureComponent because we don't re-render when scrolling
   shouldComponentUpdate = shouldComponentUpdate.bind(this)
 
-  textInput = React.createRef()
+  textInput = createRef()
 
   state = {
     name: this.props.group.name
@@ -351,7 +351,7 @@ const buildSpecModifier = (_this, helperName, shouldSubmit = false) => {
   }
 }
 
-class GroupList extends React.PureComponent {
+class GroupList extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
@@ -368,7 +368,7 @@ class GroupList extends React.PureComponent {
     outerRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }) // ref so caller can detect size
   }
 
-  listRef = React.createRef()
+  listRef = createRef()
 
   groupHeight (group) {
     const { groupHeight, valueHeight, expandedGroupHeight } = this.props
@@ -505,7 +505,7 @@ class GroupList extends React.PureComponent {
  * Then we delete the dummy list and use the calculated heights in an _actual_ list.
  * This lets us read data from CSS.
  */
-class DynamicallySizedGroupList extends React.PureComponent {
+class DynamicallySizedGroupList extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
@@ -517,7 +517,7 @@ class DynamicallySizedGroupList extends React.PureComponent {
     resetValue: PropTypes.func.isRequired // func(value) => undefined
   }
 
-  sizerRef = React.createRef()
+  sizerRef = createRef()
 
   state = {
     groupHeight: null,
@@ -634,7 +634,7 @@ class DynamicallySizedGroupList extends React.PureComponent {
  *
  * `valueCounts` describes the input: `{ "foo": 1, "bar": 3, ... }`
  */
-export class Refine extends React.PureComponent {
+export class Refine extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
     loading: PropTypes.bool.isRequired, // true iff loading from server

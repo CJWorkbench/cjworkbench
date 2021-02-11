@@ -1,5 +1,4 @@
 /* globals afterEach, describe, expect, it */
-import React from 'react'
 import { act } from 'react-dom/test-utils'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import { mountWithI18n } from './i18n/test-utils'

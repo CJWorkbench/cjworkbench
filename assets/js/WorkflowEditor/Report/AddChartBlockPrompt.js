@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
@@ -6,10 +6,10 @@ import IconChart from '../../../icons/chart.svg'
 
 export default function AddChartBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
-  const handleClick = React.useCallback(ev => {
+  const handleClick = useCallback(ev => {
     onSubmit({ stepSlug: ev.target.getAttribute('data-step-slug') })
   }, [onSubmit])
-  const chartSteps = React.useMemo(() => tabs.flatMap(
+  const chartSteps = useMemo(() => tabs.flatMap(
     ({ name: tabName, chartSteps }) => chartSteps.map(
       ({ slug: stepSlug, moduleName }) => ({
         tabName,

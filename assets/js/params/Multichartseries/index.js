@@ -1,11 +1,11 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ChartSeriesSelect from './ChartSeriesSelect'
 import { Trans, t } from '@lingui/macro'
 import IconAddcHollow from '../../../icons/addc-hollow.svg'
 import IconRemovecHollow from '../../../icons/removec-hollow.svg'
 
-export default class Multichartseries extends React.PureComponent {
+export default class Multichartseries extends PureComponent {
   static propTypes = {
     value: PropTypes.arrayOf(PropTypes.shape({
       column: PropTypes.string.isRequired,

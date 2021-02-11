@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
 import filesize from 'filesize'
@@ -9,7 +9,7 @@ function formatNBytes (nBytes) {
   return filesize(nBytes, FilesizeOptions)
 }
 
-class UploadedFileSelectModal extends React.PureComponent {
+class UploadedFileSelectModal extends PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // current uuid
     files: PropTypes.arrayOf(PropTypes.shape({
@@ -98,9 +98,9 @@ class UploadedFileSelectModal extends React.PureComponent {
 }
 
 export default function UploadedFileSelect ({ value, files, onChange }) {
-  const [isOpen, setOpen] = React.useState(false)
-  const open = React.useCallback(() => setOpen(true))
-  const close = React.useCallback(() => setOpen(false))
+  const [isOpen, setOpen] = useState(false)
+  const open = useCallback(() => setOpen(true))
+  const close = useCallback(() => setOpen(false))
 
   if (files.length === 0) return null // no files selected; maybe we're uploading our first
 

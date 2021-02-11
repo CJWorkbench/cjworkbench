@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Aggregations from './Aggregations'
 import CellEdits from './CellEdits'
 import ChartSeriesMultiSelect from './ChartSeriesMultiSelect'

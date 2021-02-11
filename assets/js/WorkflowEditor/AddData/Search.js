@@ -1,11 +1,11 @@
-import React from 'react'
+import { memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 
-const Search = React.memo(function Search ({ value, onChange }) {
-  const handleReset = React.useCallback(() => onChange(''))
-  const handleSubmit = React.useCallback(ev => { ev.preventDefault(); ev.stopPropagation() })
-  const handleChange = React.useCallback(ev => onChange(ev.target.value))
+const Search = memo(function Search ({ value, onChange }) {
+  const handleReset = useCallback(() => onChange(''))
+  const handleSubmit = useCallback(ev => { ev.preventDefault(); ev.stopPropagation() })
+  const handleChange = useCallback(ev => onChange(ev.target.value))
 
   return (
     <form className='search' onSubmit={handleSubmit} onReset={handleReset}>

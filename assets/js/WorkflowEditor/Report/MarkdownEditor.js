@@ -1,18 +1,18 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 
 export default function MarkdownEditor ({ value, onChange, onSubmit, onCancel }) {
-  const handleChange = React.useCallback(ev => onChange(ev.target.value), [onChange])
-  const handleSubmit = React.useCallback(ev => {
+  const handleChange = useCallback(ev => onChange(ev.target.value), [onChange])
+  const handleSubmit = useCallback(ev => {
     ev.preventDefault()
     onSubmit()
   }, [onSubmit])
-  const handleReset = React.useCallback(ev => {
+  const handleReset = useCallback(ev => {
     ev.preventDefault()
     onCancel()
   }, [onCancel])
-  const handleKeyDown = React.useCallback(ev => {
+  const handleKeyDown = useCallback(ev => {
     if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
       ev.preventDefault()
       onSubmit()

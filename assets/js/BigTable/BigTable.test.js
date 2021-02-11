@@ -1,6 +1,4 @@
 /* globals expect, test */
-import React from 'react'
-
 import '../__mocks__/ResizeObserver'
 import { renderWithI18n } from '../i18n/test-utils'
 import BigTable from './BigTable'

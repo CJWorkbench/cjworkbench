@@ -1,14 +1,14 @@
 /* globals HTMLElement */
-import React from 'react'
+import { memo, useState, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import Modal from './Modal'
 import { Trans } from '@lingui/macro'
 
-const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef }) {
-  const [isOpen, setOpen] = React.useState(false)
-  const open = React.useCallback(() => setOpen(true))
-  const close = React.useCallback(() => setOpen(false))
+const Button = memo(function Button ({ tabSlug, isLessonHighlight, paneRef }) {
+  const [isOpen, setOpen] = useState(false)
+  const open = useCallback(() => setOpen(true))
+  const close = useCallback(() => setOpen(false))
   // When opening a new workflow or switching to a tab, a new Button will
   // appear if there's no data module. Open it automatically!
   //
@@ -16,7 +16,7 @@ const Button = React.memo(function Button ({ tabSlug, isLessonHighlight, paneRef
   // `isOpen === false` during mount so we don't try to create a portal at that
   // point. After mount, `paneRef.current` is set and the portal can open.
   // Calling open() at that point invokes a state change, triggering render.
-  React.useEffect(open, [])
+  useEffect(open, [])
 
   return (
     <div className='add-data-button'>

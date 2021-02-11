@@ -1,4 +1,4 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 
 function TextareaAutosize (props, ref) {
@@ -32,7 +32,7 @@ export default function EditableNotes (props) {
   const { inputRef, isReadOnly, placeholder, value, onChange, onBlur, onCancel } = props
 
   // Make Enter key blur by default, instead of adding newline.
-  const handleKeyDown = React.useCallback(ev => {
+  const handleKeyDown = useCallback(ev => {
     if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Enter') {
       ev.preventDefault()
       ev.target.blur() // triggers this.props.onBlur, if set

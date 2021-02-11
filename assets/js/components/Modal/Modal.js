@@ -1,8 +1,8 @@
-import React from 'react'
+import { createContext, createRef, PureComponent } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 
-export const ModalContext = React.createContext()
+export const ModalContext = createContext()
 ModalContext.Provider.propTypes = {
   value: PropTypes.shape({
     toggle: PropTypes.func.isRequired // func() => undefined; should close the modal
@@ -24,7 +24,7 @@ export const FocusableElementsSelector = [
   '[contenteditable]:not([contenteditable="false"])'
 ].join(',')
 
-class OpenModal extends React.PureComponent {
+class OpenModal extends PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired,
     toggle: PropTypes.func.isRequired, // func() => undefined; should close the modal
@@ -32,7 +32,7 @@ class OpenModal extends React.PureComponent {
     size: PropTypes.oneOf(['lg', 'sm']) // if set, .modal-dialog becomes .modal-dialog.modal-lg
   }
 
-  modalRef = React.createRef()
+  modalRef = createRef()
 
   /**
    * Focus the "next" (by=1) or "previous" (by=-1) focusable HTML element.
@@ -139,7 +139,7 @@ class OpenModal extends React.PureComponent {
  *
  * https://getbootstrap.com/docs/4.0/components/modal/
  */
-export default class Modal extends React.PureComponent {
+export default class Modal extends PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired,
     toggle: PropTypes.func.isRequired, // func() => undefined; should close the modal

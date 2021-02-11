@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo, useRef } from 'react'
 import PropTypes from 'prop-types'
 import StepList from './StepList'
 import OutputPane from './OutputPane'
@@ -19,8 +19,8 @@ import Report from './Report'
  * a pane. (This is for <AddData>: its modal must appear atop the pane but not
  * atop the <PaneSelect>.)
  */
-const WorkflowEditor = React.memo(function WorkflowEditor ({ api, selectedPane, selectReportPane }) {
-  const paneRef = React.useRef(null)
+const WorkflowEditor = memo(function WorkflowEditor ({ api, selectedPane, selectReportPane }) {
+  const paneRef = useRef(null)
 
   return (
     <>

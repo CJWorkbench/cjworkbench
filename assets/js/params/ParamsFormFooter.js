@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import VersionSelect from './Custom/VersionSelect'
 import UploadApiModal from './File/UploadApiModal'
@@ -22,12 +22,12 @@ function isFileField ({ type }) {
 }
 
 export default function ParamsFormFooter ({ workflowId, stepId, stepSlug, isStepBusy, isReadOnly, isOwner, fields, isEditing }) {
-  const [isUploadApiModalOpen, setIsUploadApiModalOpen] = React.useState(false)
-  const handleClickOpenUploadApiModal = React.useCallback(
+  const [isUploadApiModalOpen, setIsUploadApiModalOpen] = useState(false)
+  const handleClickOpenUploadApiModal = useCallback(
     () => setIsUploadApiModalOpen(true),
     [setIsUploadApiModalOpen]
   )
-  const handleClickCloseUploadApiModal = React.useCallback(
+  const handleClickCloseUploadApiModal = useCallback(
     () => setIsUploadApiModalOpen(false),
     [setIsUploadApiModalOpen]
   )

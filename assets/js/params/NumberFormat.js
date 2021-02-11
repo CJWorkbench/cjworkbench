@@ -1,5 +1,4 @@
 /* eslint no-template-curly-in-string: 0 */
-import React from 'react'
 import Menu from './Menu'
 import { t } from '@lingui/macro'
 

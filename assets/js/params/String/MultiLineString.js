@@ -1,11 +1,11 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { MaybeLabel } from '../util'
 
 /**
  * A text field for multiline text areas
  */
-export default class MultiLineString extends React.PureComponent {
+export default class MultiLineString extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired, // func(str) => undefined

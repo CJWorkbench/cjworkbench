@@ -1,5 +1,4 @@
 /* globals beforeEach, describe, expect, it, jest */
-import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
 import { tick } from './test-utils'
 import { shallowWithI18n, mountWithI18n } from './i18n/test-utils'

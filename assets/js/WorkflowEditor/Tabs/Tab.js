@@ -1,8 +1,8 @@
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import TabDropdown from './TabDropdown'
 
-export default class Tab extends React.PureComponent {
+export default class Tab extends PureComponent {
   static propTypes = {
     slug: PropTypes.string.isRequired,
     isPending: PropTypes.bool, // or undefined
@@ -28,9 +28,9 @@ export default class Tab extends React.PureComponent {
     name: null
   }
 
-  inputRef = React.createRef()
+  inputRef = createRef()
 
-  liRef = React.createRef()
+  liRef = createRef()
 
   handleClickRename = () => {
     if (this.props.isReadOnly) return

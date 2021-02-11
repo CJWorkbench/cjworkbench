@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
 export const QuickFixPropTypes = {
@@ -12,7 +12,7 @@ export const QuickFixPropTypes = {
   ]).isRequired
 }
 
-export default class QuickFix extends React.PureComponent {
+export default class QuickFix extends PureComponent {
   static propTypes = {
     ...QuickFixPropTypes,
     disabled: PropTypes.bool.isRequired,

@@ -1,9 +1,9 @@
-import React from 'react'
+import { useReducer } from 'react'
 import PropTypes from 'prop-types'
 import Dropdown from './Dropdown'
 
 export default function UncontrolledDropdown (props) {
-  const [isOpen, toggleOpen] = React.useReducer(open => !open, false)
+  const [isOpen, toggleOpen] = useReducer(open => !open, false)
   const { disabled, children } = props
 
   return (

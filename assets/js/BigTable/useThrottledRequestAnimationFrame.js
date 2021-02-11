@@ -1,4 +1,4 @@
-import React from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 
 /**
  * Like requestAnimationFrame(), but a flurry of calls is coerced into just the last one.
@@ -23,14 +23,14 @@ import React from 'react'
  */
 export default function useThrottledRequestAnimationFrame (callback) {
   // use ref, not state -- state change would force re-render
-  const requestId = React.useRef(null)
+  const requestId = useRef(null)
 
-  const throttledCallback = React.useCallback(time => {
+  const throttledCallback = useCallback(time => {
     requestId.current = null
     callback(time)
   }, [callback])
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Whenever callback changes, cancel existing requests
     return () => {
       if (requestId.current) {
@@ -40,7 +40,7 @@ export default function useThrottledRequestAnimationFrame (callback) {
     }
   }, [callback])
 
-  return React.useCallback(function throttledRequestAnimationFrame () {
+  return useCallback(function throttledRequestAnimationFrame () {
     if (requestId.current === null) {
       requestId.current = global.requestAnimationFrame(throttledCallback)
     }

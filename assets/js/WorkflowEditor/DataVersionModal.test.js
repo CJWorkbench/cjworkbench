@@ -1,5 +1,4 @@
 /* globals afterEach, describe, expect, it, jest */
-import React from 'react'
 import { mountWithI18n } from '../i18n/test-utils'
 import ConnectedDataVersionModal, { DataVersionModal, formatDateUTCForTesting } from './DataVersionModal'
 import { Provider } from 'react-redux'

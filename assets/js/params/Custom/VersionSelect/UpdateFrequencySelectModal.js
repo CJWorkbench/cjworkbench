@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
 import QuotaExceeded from './QuotaExceeded'
@@ -29,7 +29,7 @@ function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
   }
 }
 
-export default class UpdateFrequencySelectModal extends React.PureComponent {
+export default class UpdateFrequencySelectModal extends PureComponent {
   static propTypes = {
     workflowId: PropTypes.number.isRequired,
     stepId: PropTypes.number.isRequired,

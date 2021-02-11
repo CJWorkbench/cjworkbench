@@ -1,5 +1,4 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
-import React from 'react'
 import { act } from 'react-dom/test-utils'
 import { fireEvent } from '@testing-library/react'
 import { renderWithI18n } from '../i18n/test-utils'

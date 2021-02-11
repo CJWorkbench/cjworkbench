@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { GroupPropType, ComparisonDefaultProps } from './PropTypes'
 import Comparison from './Comparison'
@@ -6,7 +6,7 @@ import AddButton from './AddButton'
 import AndOr from './AndOr'
 import { Trans } from '@lingui/macro'
 
-export default class Group extends React.PureComponent {
+export default class Group extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>
@@ -77,7 +77,7 @@ export default class Group extends React.PureComponent {
           ) : null}
         </div>
         {conditions.map((comparison, index) => (
-          <React.Fragment key={index}>
+          <Fragment key={index}>
             <Comparison
               isReadOnly={isReadOnly}
               name={`${name}[${index}]`}
@@ -109,7 +109,7 @@ export default class Group extends React.PureComponent {
                 onClickAddOr={this.handleClickAddOr}
               />
             )}
-          </React.Fragment>
+          </Fragment>
         ))}
       </div>
     )

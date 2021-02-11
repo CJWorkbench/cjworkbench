@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
 import { getApiToken, clearApiToken, resetApiToken } from './actions'
@@ -84,16 +84,16 @@ function ApiTokenOk ({ workflowId, stepSlug, apiToken, clearApiToken, resetApiTo
 }
 
 export function UploadApiModal ({ stepSlug, workflowId, onClickClose, getApiToken, resetApiToken, clearApiToken }) {
-  const [apiTokenState, setApiTokenState] = React.useState(new ApiTokenState(ApiTokenState.LOADING, null))
+  const [apiTokenState, setApiTokenState] = useState(new ApiTokenState(ApiTokenState.LOADING, null))
   const { apiToken } = apiTokenState
-  React.useEffect(() => {
+  useEffect(() => {
     getApiToken(stepSlug).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
   }, [stepSlug])
-  const doResetApiToken = React.useCallback(() => {
+  const doResetApiToken = useCallback(() => {
     setApiTokenState(new ApiTokenState(ApiTokenState.SENDING, apiTokenState.apiToken))
     resetApiToken(stepSlug).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, apiToken)))
   })
-  const doClearApiToken = React.useCallback(() => {
+  const doClearApiToken = useCallback(() => {
     setApiTokenState(new ApiTokenState(ApiTokenState.SENDING, null))
     clearApiToken(stepSlug).then(({ value }) => value).then(apiToken => setApiTokenState(new ApiTokenState(ApiTokenState.OK, null)))
   })

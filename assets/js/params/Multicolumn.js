@@ -1,12 +1,12 @@
 // Choose some columns
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ReactSelect from './common/react-select'
 import { components } from 'react-select'
 import { MaybeLabel } from './util'
 import { t, Trans } from '@lingui/macro'
 
-class MenuList extends React.PureComponent {
+class MenuList extends PureComponent {
   handleClickSelectAll = () => {
     const { setValue, selectProps } = this.props
     const { options } = selectProps
@@ -54,7 +54,7 @@ const Components = {
   MenuList
 }
 
-export default class Multicolumn extends React.PureComponent {
+export default class Multicolumn extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,

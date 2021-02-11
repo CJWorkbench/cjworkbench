@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Column from '../Column'
 import ColorPicker from './ColorPicker'
 import { defaultColors, getColor } from './ChartColors'
 
-export default class ChartSeriesSelect extends React.PureComponent {
+export default class ChartSeriesSelect extends PureComponent {
   static propTypes = {
     index: PropTypes.number.isRequired,
     column: PropTypes.string, // null if not selected

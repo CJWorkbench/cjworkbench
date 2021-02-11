@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Trans } from '@lingui/macro'
@@ -21,7 +21,7 @@ export function UnhandledErrorReport ({ error }) {
         <li><Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>It helps if you can describe what you were doing before you ran into the bug.</Trans></li>
       </ol>
     )
-    React.useEffect(() => {
+    useEffect(() => {
       window.Intercom(
         'showNewMessage',
         [

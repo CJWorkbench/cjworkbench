@@ -1,5 +1,4 @@
 /* globals beforeEach, describe, expect, it */
-import React from 'react'
 import Embed from './Embed'
 import { mountWithI18n } from './i18n/test-utils'
 

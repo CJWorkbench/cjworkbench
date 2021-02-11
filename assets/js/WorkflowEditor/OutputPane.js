@@ -1,4 +1,4 @@
-import React from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Trans } from '@lingui/macro'
@@ -8,7 +8,7 @@ import OutputIframe from '../OutputIframe'
 /**
  * Output of currently-selected module.
  */
-export class OutputPane extends React.Component {
+export class OutputPane extends Component {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowId: PropTypes.number.isRequired,

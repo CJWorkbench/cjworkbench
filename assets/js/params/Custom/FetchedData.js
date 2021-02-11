@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 
 // https://reactjs.org/docs/higher-order-components.html
 export function withFetchedData (WrappedComponent, dataName, fetchData, fetchDataCacheId) {
-  return class extends React.PureComponent {
+  return class extends PureComponent {
     state = {
       data: null,
       loading: false

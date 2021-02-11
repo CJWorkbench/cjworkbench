@@ -1,5 +1,5 @@
 /* globals expect, jest, test */
-import React from 'react'
+import { useEffect } from 'react'
 import { act, render, waitFor } from '@testing-library/react'
 import { AbortError } from 'node-fetch'
 
@@ -36,8 +36,8 @@ test('memoize the empty result', () => {
       nTileRows: 0,
       nTileColumns: 2
     })
-    React.useEffect(() => { nChanges++ }, [sparseTileGrid, setWantedTileRange, isLoading])
-    React.useEffect(() => { lastRenderNumber = renderNumber }, [renderNumber])
+    useEffect(() => { nChanges++ }, [sparseTileGrid, setWantedTileRange, isLoading])
+    useEffect(() => { lastRenderNumber = renderNumber }, [renderNumber])
     return <div />
   }
 
@@ -60,8 +60,8 @@ test('memoize a loading tile', async () => {
       nTileRows: 1,
       nTileColumns: 1
     })
-    React.useEffect(() => { nChanges++ }, [sparseTileGrid, setWantedTileRange, isLoading])
-    React.useEffect(() => { lastRenderNumber = renderNumber }, [renderNumber])
+    useEffect(() => { nChanges++ }, [sparseTileGrid, setWantedTileRange, isLoading])
+    useEffect(() => { lastRenderNumber = renderNumber }, [renderNumber])
     return <div />
   }
 
@@ -189,7 +189,7 @@ test('request a new tile when wanted tiles change', async () => {
       nTileRows: 1,
       nTileColumns: 2
     })
-    React.useEffect(() => {
+    useEffect(() => {
       ensureTilesLoadedRef.current = setWantedTileRange
     }, [setWantedTileRange])
     return isLoading ? <div className='loading' /> : (
@@ -228,7 +228,7 @@ test('expand a gap and load it when wanted tiles change', async () => {
       nTileRows: 5,
       nTileColumns: 1
     })
-    React.useEffect(() => {
+    useEffect(() => {
       ensureTilesLoadedRef.current = setWantedTileRange
     }, [setWantedTileRange])
     return (
@@ -260,7 +260,7 @@ test('continue requesting tiles (without abort) when requested rows are not all 
       nTileRows: 2,
       nTileColumns: 3
     })
-    React.useEffect(() => { setWantedTileRange(0, 2, 0, 3) }, [setWantedTileRange])
+    useEffect(() => { setWantedTileRange(0, 2, 0, 3) }, [setWantedTileRange])
     return (
       <div>
         {sparseTileGrid.map((tileColumns, tileRow) => (
@@ -286,7 +286,7 @@ test('continue fetching other tiles on error', async () => {
       nTileRows: 2,
       nTileColumns: 2
     })
-    React.useEffect(() => { setWantedTileRange(0, 2, 0, 2) }, [setWantedTileRange])
+    useEffect(() => { setWantedTileRange(0, 2, 0, 2) }, [setWantedTileRange])
     return (
       <div>
         {sparseTileGrid.map((tileColumns, tileRow) => (

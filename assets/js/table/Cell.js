@@ -1,4 +1,4 @@
-import React from 'react'
+import { isValidElement, cloneElement } from 'react'
 import { Cell } from 'react-data-grid'
 
 // Constants help tone down garbage collection
@@ -10,8 +10,8 @@ export default class CellWithoutGarbage extends Cell {
     const Formatter = this.getFormatter()
     let content
 
-    if (React.isValidElement(Formatter)) {
-      content = React.cloneElement(Formatter, props)
+    if (isValidElement(Formatter)) {
+      content = cloneElement(Formatter, props)
     } else {
       content = <Formatter value={this.props.value} />
     }

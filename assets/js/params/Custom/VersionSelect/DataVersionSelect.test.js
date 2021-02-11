@@ -1,5 +1,4 @@
 /* globals afterEach, describe, expect, it */
-import React from 'react'
 import ConnectedDataVersionSelect, { DataVersionSelect } from './DataVersionSelect'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal' // to check it's rendered in shallow()
 import { mountWithI18n, shallowWithI18n } from '../../../i18n/test-utils'

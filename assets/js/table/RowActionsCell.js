@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
 // Custom Formatter component, to render row number in a different style
-export default class RowActionsCell extends React.PureComponent {
+export default class RowActionsCell extends PureComponent {
   static propTypes = {
     rowIdx: PropTypes.number,
     value: PropTypes.bool,

@@ -1,14 +1,14 @@
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
-export default class NewAclEntry extends React.PureComponent {
+export default class NewAclEntry extends PureComponent {
   static propTypes = {
     ownerEmail: PropTypes.string.isRequired,
     updateAclEntry: PropTypes.func.isRequired // func(email, canEdit) => undefined
   }
 
-  emailRef = React.createRef()
+  emailRef = createRef()
 
   // No state: we're using uncontrolled components, because the logic is so
   // simple. If you're adding new features, consider switching to controlled

@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
 import { connect } from 'react-redux'
 import { t, Trans } from '@lingui/macro'
 
-export class DataVersionSelect extends React.PureComponent {
+export class DataVersionSelect extends PureComponent {
   static propTypes = {
     stepId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version

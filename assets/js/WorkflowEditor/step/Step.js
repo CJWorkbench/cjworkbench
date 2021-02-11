@@ -1,4 +1,4 @@
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import DataVersionModal from '../DataVersionModal'
 import ErrorBoundary from '../../ErrorBoundary'
 import ParamsForm from '../../params/ParamsForm'
@@ -28,7 +28,7 @@ import { t } from '@lingui/macro'
 /**
  * A single step within a tab
  */
-export class Step extends React.PureComponent {
+export class Step extends PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if true, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
@@ -93,7 +93,7 @@ export class Step extends React.PureComponent {
     setStepNotes: PropTypes.func.isRequired // func(stepId, notes) => undefined
   }
 
-  notesInputRef = React.createRef()
+  notesInputRef = createRef()
 
   state = {
     editedNotes: null, // when non-null, input is focused
@@ -528,7 +528,7 @@ export class Step extends React.PureComponent {
   }
 }
 
-class StepCollapseButton extends React.PureComponent {
+class StepCollapseButton extends PureComponent {
   static propTypes = {
     isCollapsed: PropTypes.bool.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,

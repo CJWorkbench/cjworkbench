@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import ErrorBoundary from '../../../ErrorBoundary'
 import { Trans } from '@lingui/macro'
 

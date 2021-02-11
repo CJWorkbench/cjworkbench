@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat()
 
-class RefineBin extends React.PureComponent {
+class RefineBin extends PureComponent {
   static propTypes = {
     index: PropTypes.number.isRequired,
     bin: PropTypes.shape({
@@ -78,7 +78,7 @@ class RefineBin extends React.PureComponent {
   }
 }
 
-export default class RefineBins extends React.PureComponent {
+export default class RefineBins extends PureComponent {
   static propTypes = {
     bins: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired, // editable by user

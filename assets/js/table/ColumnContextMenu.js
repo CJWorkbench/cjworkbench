@@ -1,12 +1,12 @@
 // Drop-down menu on Workflows List page, for each listed WF
 // triggered by click on three-dot icon next to listed workflow
 
-import React from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem, DropdownDivider } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
 
-export default class ColumnContextMenu extends React.Component {
+export default class ColumnContextMenu extends Component {
   static propTypes = {
     onClickAction: PropTypes.func.isRequired, // func(idName, forceNewModule, params)
     columnType: PropTypes.string.isRequired,

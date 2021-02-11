@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import memoize from 'memoize-one'
 import { clusterByKey, clusterByKnn } from 'clustring'
@@ -44,7 +44,7 @@ const Algorithms = [
   }
 ]
 
-export default class RefineClusterer extends React.PureComponent {
+export default class RefineClusterer extends PureComponent {
   static propTypes = {
     bucket: PropTypes.object.isRequired, // { "str": Number(count), ... }
     onProgress: PropTypes.func.isRequired, // onProgress(0.2) => undefined (means 20% clustered)

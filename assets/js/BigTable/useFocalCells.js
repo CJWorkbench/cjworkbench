@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import getCellRange from './getCellRange'
 
 /**
@@ -7,8 +7,8 @@ import getCellRange from './getCellRange'
 export default function useFocalCells ({ sparseTileGrid, nRowsPerTile, nColumnsPerTile, setWantedTileRange, fixedCellRange = null }) {
   // Begin with at least one cell visible (if there are enough rows). Viewport.js
   // will use its height for resize calculations.
-  const [dynamicCellRange, setCellRange] = React.useState([0, sparseTileGrid.length > 0 ? 1 : 0, 0, 1])
-  const setFocusCellRange = React.useCallback((...range) => {
+  const [dynamicCellRange, setCellRange] = useState([0, sparseTileGrid.length > 0 ? 1 : 0, 0, 1])
+  const setFocusCellRange = useCallback((...range) => {
     if (
       // Conditional on changes. The component that calls useFocalCells()
       // shouldn't need to re-render for spurious setCellRange() calls.
@@ -28,7 +28,7 @@ export default function useFocalCells ({ sparseTileGrid, nRowsPerTile, nColumnsP
   }, [setCellRange])
 
   const cellRange = fixedCellRange === null ? dynamicCellRange : fixedCellRange
-  const cells = React.useMemo(
+  const cells = useMemo(
     () => getCellRange(sparseTileGrid, nRowsPerTile, nColumnsPerTile, ...cellRange),
     [sparseTileGrid, nRowsPerTile, nColumnsPerTile, ...cellRange]
   )

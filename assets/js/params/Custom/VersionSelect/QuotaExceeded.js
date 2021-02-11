@@ -1,4 +1,4 @@
-import React from 'react'
+import { memo } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
@@ -23,7 +23,7 @@ function groupAutofetches (autofetches) {
   return Object.values(groups).sort((a, b) => b.nFetchesPerDay - a.nFetchesPerDay || a.workflow.name.localeCompare(b.workflow.name))
 }
 
-const QuotaExceeded = React.memo(function QuotaExceeded ({ workflowId, stepId, maxFetchesPerDay, nFetchesPerDay, autofetches }) {
+const QuotaExceeded = memo(function QuotaExceeded ({ workflowId, stepId, maxFetchesPerDay, nFetchesPerDay, autofetches }) {
   const autofetchGroups = groupAutofetches(autofetches)
 
   return (

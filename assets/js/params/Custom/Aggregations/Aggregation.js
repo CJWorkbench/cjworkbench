@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Operation from './Operation'
 import ColumnParam from '../../Column'
 import { Trans, t } from '@lingui/macro'
 
-export default class Aggregation extends React.PureComponent {
+export default class Aggregation extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>

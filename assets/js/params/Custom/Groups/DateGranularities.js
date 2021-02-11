@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import DateGranularity from './DateGranularity'
 import { Trans } from '@lingui/macro'
@@ -21,7 +21,7 @@ function DateGranularityList ({ isReadOnly, name, colnames, value, onChange }) {
   )
 }
 
-export default class DateGranularities extends React.PureComponent {
+export default class DateGranularities extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <select> names

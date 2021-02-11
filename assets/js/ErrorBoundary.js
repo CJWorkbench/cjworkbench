@@ -1,7 +1,7 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import { Trans } from '@lingui/macro'
 
-export default class ErrorBoundary extends React.PureComponent {
+export default class ErrorBoundary extends PureComponent {
   state = {
     error: null
   }

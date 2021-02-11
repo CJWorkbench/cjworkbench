@@ -1,4 +1,4 @@
-import React from 'react'
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { DropdownContext } from './Dropdown'
 
@@ -8,7 +8,7 @@ export default function DropdownToggle (props) {
     disabled,
     setToggleElement,
     toggle
-  } = React.useContext(DropdownContext)
+  } = useContext(DropdownContext)
 
   const {
     className = 'btn btn-secondary',

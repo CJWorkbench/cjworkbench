@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import AddTextBlockPrompt from './AddTextBlockPrompt'
 import AddTableBlockPrompt from './AddTableBlockPrompt'
@@ -6,39 +6,39 @@ import AddChartBlockPrompt from './AddChartBlockPrompt'
 import MarkdownEditor from './MarkdownEditor'
 
 export default function AddBlockPrompt ({ position, tabs, onSubmit }) {
-  const [openMenu, setOpenMenu] = React.useState(null) // null, 'table', 'chart'
-  const [markdown, setMarkdown] = React.useState('')
-  const [isEditingMarkdown, setEditingMarkdown] = React.useState(false)
-  const handleClickAddText = React.useCallback(() => {
+  const [openMenu, setOpenMenu] = useState(null) // null, 'table', 'chart'
+  const [markdown, setMarkdown] = useState('')
+  const [isEditingMarkdown, setEditingMarkdown] = useState(false)
+  const handleClickAddText = useCallback(() => {
     setEditingMarkdown(!isEditingMarkdown)
   }, [isEditingMarkdown, setEditingMarkdown])
-  const handleOpenChartMenu = React.useCallback(() => {
+  const handleOpenChartMenu = useCallback(() => {
     setOpenMenu('chart')
     setEditingMarkdown(false)
   }, [setOpenMenu])
-  const handleOpenTableMenu = React.useCallback(() => {
+  const handleOpenTableMenu = useCallback(() => {
     setOpenMenu('table')
     setEditingMarkdown(false)
   }, [setOpenMenu])
-  const handleCloseMenu = React.useCallback(() => {
+  const handleCloseMenu = useCallback(() => {
     setOpenMenu(null)
   }, [setOpenMenu])
 
-  const handleCancelAddText = React.useCallback(() => {
+  const handleCancelAddText = useCallback(() => {
     setMarkdown('')
     setEditingMarkdown(false)
   }, [setMarkdown, setEditingMarkdown])
-  const handleSubmitText = React.useCallback(() => {
+  const handleSubmitText = useCallback(() => {
     if (markdown) {
       onSubmit(position, { type: 'text', markdown })
       setMarkdown('')
     }
     setEditingMarkdown(false)
   }, [position, markdown, setMarkdown, setEditingMarkdown, onSubmit])
-  const handleSubmitTable = React.useCallback(block => {
+  const handleSubmitTable = useCallback(block => {
     onSubmit(position, { type: 'table', ...block })
   }, [position, onSubmit])
-  const handleSubmitChart = React.useCallback(block => {
+  const handleSubmitChart = useCallback(block => {
     onSubmit(position, { type: 'chart', ...block })
   }, [position, onSubmit])
   return (

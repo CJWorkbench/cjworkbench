@@ -1,12 +1,12 @@
-import React from 'react'
+import { useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import { csrfToken } from '../../utils'
 
 export default function LogoutLinkLi (props) {
   const { nextPath } = props
-  const logoutFormRef = React.useRef(null)
-  const handleClick = React.useCallback(ev => {
+  const logoutFormRef = useRef(null)
+  const handleClick = useCallback(ev => {
     ev.preventDefault()
     const logoutForm = logoutFormRef.current
     if (logoutForm) {

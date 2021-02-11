@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { ConditionPropType } from './PropTypes'
 import Group from './Group'
@@ -21,7 +21,7 @@ const DefaultValue = {
   conditions: [DefaultConditionLevel1]
 }
 
-export default class Condition extends React.PureComponent {
+export default class Condition extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>
@@ -85,44 +85,40 @@ export default class Condition extends React.PureComponent {
     const { isReadOnly, name, fieldId, inputColumns, onSubmit } = this.props
     const { operation, conditions } = this.value
 
-    return (
-      <>
-        {conditions.map((filter, index) => (
-          <React.Fragment key={index}>
-            <Group
-              isReadOnly={isReadOnly}
-              name={`${name}[${index}]`}
-              fieldId={`${fieldId}_${index}`}
-              index={index}
-              value={filter}
-              inputColumns={inputColumns}
-              onChange={this.handleChangeCondition}
-              onSubmit={onSubmit}
-              onDelete={conditions.length > 1 ? this.handleDeleteCondition : null}
-            />
-            {index < conditions.length - 1 ? (
-              <AndOr
-                isReadOnly={isReadOnly}
-                name={`${name}[${index}][operation]`}
-                fieldId={`${fieldId}_${index}_operation`}
-                value={operation}
-                onChange={this.handleChangeAndOr}
-              />
-            ) : (
-              <AddButton
-                className='add-group'
-                isReadOnly={isReadOnly}
-                name={`${name}[operation]`}
-                fieldId={`${fieldId}_operation`}
-                operation={operation}
-                isFirst={conditions.length <= 1}
-                onClickAddAnd={this.handleClickAddAnd}
-                onClickAddOr={this.handleClickAddOr}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </>
-    )
+    return conditions.map((filter, index) => (
+      <Fragment key={index}>
+        <Group
+          isReadOnly={isReadOnly}
+          name={`${name}[${index}]`}
+          fieldId={`${fieldId}_${index}`}
+          index={index}
+          value={filter}
+          inputColumns={inputColumns}
+          onChange={this.handleChangeCondition}
+          onSubmit={onSubmit}
+          onDelete={conditions.length > 1 ? this.handleDeleteCondition : null}
+        />
+        {index < conditions.length - 1 ? (
+          <AndOr
+            isReadOnly={isReadOnly}
+            name={`${name}[${index}][operation]`}
+            fieldId={`${fieldId}_${index}_operation`}
+            value={operation}
+            onChange={this.handleChangeAndOr}
+          />
+        ) : (
+          <AddButton
+            className='add-group'
+            isReadOnly={isReadOnly}
+            name={`${name}[operation]`}
+            fieldId={`${fieldId}_operation`}
+            operation={operation}
+            isFirst={conditions.length <= 1}
+            onClickAddAnd={this.handleClickAddAnd}
+            onClickAddOr={this.handleClickAddOr}
+          />
+        )}
+      </Fragment>
+    ))
   }
 }

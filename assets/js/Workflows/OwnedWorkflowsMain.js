@@ -1,4 +1,4 @@
-import React from 'react'
+import { useReducer, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
@@ -50,18 +50,18 @@ function reduceWorkflowEdit (state, action) {
  * last. TODO serialize requests or implement more complex logic.
  */
 function useWorkflowEdits (workflows) {
-  const [state, dispatch] = React.useReducer(reduceWorkflowEdit, { adds: [], edits: {} })
+  const [state, dispatch] = useReducer(reduceWorkflowEdit, { adds: [], edits: {} })
 
-  const handleWorkflowChanging = React.useCallback((id, changes) => {
+  const handleWorkflowChanging = useCallback((id, changes) => {
     dispatch({ type: 'begin-edit', payload: { id, changes } })
   }, [dispatch])
-  const handleWorkflowChanged = React.useCallback(id => {
+  const handleWorkflowChanged = useCallback(id => {
     dispatch({ type: 'end-edit', payload: { id } })
   }, [dispatch])
-  const handleWorkflowDuplicating = React.useCallback(id => {
+  const handleWorkflowDuplicating = useCallback(id => {
     dispatch({ type: 'begin-duplicate', payload: { id } })
   }, [dispatch])
-  const handleWorkflowDuplicated = React.useCallback((id, workflow) => {
+  const handleWorkflowDuplicated = useCallback((id, workflow) => {
     dispatch({ type: 'end-duplicate', payload: { id, workflow } })
   }, [dispatch])
 

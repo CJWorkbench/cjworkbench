@@ -1,5 +1,4 @@
 /* globals describe, expect, it */
-import React from 'react'
 import { mountWithI18n } from '../../i18n/test-utils'
 import Button from './Button'
 

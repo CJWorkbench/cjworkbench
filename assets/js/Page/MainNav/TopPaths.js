@@ -1,4 +1,3 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
 import LinkLi from './LinkLi'

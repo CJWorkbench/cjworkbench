@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Param from './Param'
 import { MaybeLabel, paramFieldToParamProps } from './util'
@@ -6,7 +6,7 @@ import { Trans } from '@lingui/macro'
 
 // A single repetition of the set of parameters defined by param_fields.child_parameters
 // which is ultimately set by the 'child_parameters' key of the 'list' parameter type in the module YAML
-class ChildParamsForm extends React.PureComponent {
+class ChildParamsForm extends PureComponent {
   static propTypes = {
     childParameters: PropTypes.array.isRequired, // essentially a copy of the child_parameters key in the module YAML
     value: PropTypes.object.isRequired,
@@ -63,7 +63,7 @@ class ChildParamsForm extends React.PureComponent {
 }
 
 // Multiple repetitions of a set of parameters
-export default class List extends React.PureComponent {
+export default class List extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     label: PropTypes.string.isRequired,

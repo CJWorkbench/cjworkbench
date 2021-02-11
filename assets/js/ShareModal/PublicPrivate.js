@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
@@ -22,7 +22,7 @@ const DescriptionWithToggle = ({ isPublic, onChange }) => (
   </label>
 )
 
-export default class PublicPrivate extends React.PureComponent {
+export default class PublicPrivate extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
     isPublic: PropTypes.bool.isRequired,

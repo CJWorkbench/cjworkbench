@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import ShareModal from './index'
 import { t } from '@lingui/macro'
@@ -10,9 +10,9 @@ import { t } from '@lingui/macro'
  * the modal, and then the <button> becomes clickable again.
  */
 export default function ShareButton ({ className, children }) {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const open = React.useCallback(() => setIsOpen(true))
-  const close = React.useCallback(() => setIsOpen(false))
+  const [isOpen, setIsOpen] = useState(false)
+  const open = useCallback(() => setIsOpen(true))
+  const close = useCallback(() => setIsOpen(false))
 
   return (
     <>

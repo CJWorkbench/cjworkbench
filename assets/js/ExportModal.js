@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ShareUrl from './components/ShareUrl'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { Trans } from '@lingui/macro'
 
-export default class ExportModal extends React.PureComponent {
+export default class ExportModal extends PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
     stepId: PropTypes.number.isRequired, // to build download URLs

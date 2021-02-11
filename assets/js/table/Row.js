@@ -1,4 +1,4 @@
-import React from 'react'
+import { createRef } from 'react'
 import { Row } from 'react-data-grid'
 import Cell from './Cell'
 
@@ -7,7 +7,7 @@ export default class RowWithoutCellGarbageOrCellKeyConflicts extends Row {
     ...Row.defaultProps
   }
 
-  actionCellRef = React.createRef()
+  actionCellRef = createRef()
 
   getCell = (column, i, selectedColumn) => {
     // work around https://github.com/adazzle/react-data-grid/issues/1269

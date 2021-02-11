@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
-export default class RefineClustererProgress extends React.PureComponent {
+export default class RefineClustererProgress extends PureComponent {
   static propTypes = {
     progress: PropTypes.number.isRequired
   }

@@ -1,5 +1,4 @@
 /* global describe, it, expect, jest */
-import React from 'react'
 import { mount } from 'enzyme'
 import Number from './Number'
 

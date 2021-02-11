@@ -1,5 +1,4 @@
 /* globals describe, expect, it */
-import React from 'react'
 import LessonStep from './LessonStep'
 import { shallow } from 'enzyme'
 

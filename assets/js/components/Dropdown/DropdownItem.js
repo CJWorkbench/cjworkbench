@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { DropdownContext } from './Dropdown'
 
@@ -17,7 +17,7 @@ import { DropdownContext } from './Dropdown'
  *
  * https://getbootstrap.com/docs/4.0/components/dropdowns/#menu-items
  */
-export default class DropdownItem extends React.PureComponent {
+export default class DropdownItem extends PureComponent {
   static propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string, // will be added to 'dropdown-item'

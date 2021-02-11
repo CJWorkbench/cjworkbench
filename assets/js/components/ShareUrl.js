@@ -1,15 +1,15 @@
-import React from 'react'
+import { useRef, useState, useCallback, useLayoutEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
 const AnimationTimeInMs = 10 // see _ShareUrl.scss
 
 export default function ShareUrl (props) {
-  const inputRef = React.useRef()
+  const inputRef = useRef()
   const { download = false, go = false, url } = props
-  const [lastUsedDate, setLastUsedDate] = React.useState(null)
+  const [lastUsedDate, setLastUsedDate] = useState(null)
 
-  const handleClickCopy = React.useCallback(() => {
+  const handleClickCopy = useCallback(() => {
     if (inputRef.current) {
       inputRef.current.focus()
       inputRef.current.select()
@@ -17,7 +17,7 @@ export default function ShareUrl (props) {
     window.navigator.clipboard.writeText(url).then(() => { setLastUsedDate(new Date()) })
   }, [inputRef, url, setLastUsedDate])
 
-  const handleClickDownload = React.useCallback(() => {
+  const handleClickDownload = useCallback(() => {
     // Don't ev.preventDefault()! We'll continue with the download; we just
     // want to animate as well.
     setLastUsedDate(new Date())
@@ -25,7 +25,7 @@ export default function ShareUrl (props) {
 
   const handleClickGo = handleClickDownload
 
-  React.useLayoutEffect(
+  useLayoutEffect(
     () => {
       if (lastUsedDate !== null) {
         const timeout = window.setTimeout(() => setLastUsedDate(null), AnimationTimeInMs)

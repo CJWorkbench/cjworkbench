@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { timeDifference } from './utils'
 import { i18n } from '@lingui/core'
@@ -24,11 +24,11 @@ function Logo (props) {
 
 function EmbedButton (props) {
   const { step } = props
-  const [isOpen, setOpen] = React.useState(false)
+  const [isOpen, setOpen] = useState(false)
 
   const iframeCode = `<iframe src="${window.location.origin}/embed/${step.id} width="560" height="315" frameborder="0"></iframe>`
-  const handleClickOpen = React.useCallback(() => setOpen(true), [setOpen])
-  const handleClickClose = React.useCallback(() => setOpen(false), [setOpen])
+  const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
+  const handleClickClose = useCallback(() => setOpen(false), [setOpen])
 
   return (
     <>

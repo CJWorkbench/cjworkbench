@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
@@ -21,7 +21,7 @@ const EditableRole = ({ canEdit, setCanEdit, unsetCanEdit }) => (
   </UncontrolledDropdown>
 )
 
-export default class Role extends React.PureComponent {
+export default class Role extends PureComponent {
   static propTypes = {
     canEdit: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired // func(canEdit) => undefined

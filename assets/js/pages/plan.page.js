@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom'
 import PlanPage from '../settings/PlanPage'
 import WorkbenchAPI from '../WorkbenchAPI'

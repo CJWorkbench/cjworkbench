@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom'
-import React from 'react'
 import Embed from '../Embed'
 import InternationalizedPage from '../i18n/InternationalizedPage'
 

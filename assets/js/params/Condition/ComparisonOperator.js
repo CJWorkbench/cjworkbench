@@ -1,11 +1,11 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { ComparisonOperatorPropType } from './PropTypes'
 import { t } from '@lingui/macro'
 
 export default function ComparisonOperator (props) {
   const { isReadOnly, onChange, name, value, dtype } = props
-  const handleChange = React.useCallback(ev => {
+  const handleChange = useCallback(ev => {
     onChange(ev.target.value || null)
   }, [onChange])
 

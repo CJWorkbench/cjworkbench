@@ -1,5 +1,5 @@
 /* globals beforeEach, describe, expect, it, jest */
-import React from 'react'
+import { createRef } from 'react'
 import EditableNotes from './EditableNotes'
 import { shallow, mount } from 'enzyme'
 
@@ -15,7 +15,7 @@ describe('EditableNotes', () => {
           isReadOnly
           placeholder='placeholder'
           value='This is the best module'
-          inputRef={React.createRef()}
+          inputRef={createRef()}
           onChange={jest.fn()}
           onBlur={jest.fn()}
           onCancel={jest.fn()}
@@ -41,7 +41,7 @@ describe('EditableNotes', () => {
         isReadOnly: false,
         placeholder: 'placeholder',
         value: 'This is the best module',
-        inputRef: React.createRef(),
+        inputRef: createRef(),
         onChange: jest.fn(),
         onBlur: jest.fn(),
         onCancel: jest.fn()

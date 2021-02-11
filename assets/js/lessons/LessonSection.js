@@ -1,9 +1,9 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import LessonStep from './LessonStep'
 import { Trans } from '@lingui/macro'
 
-export default class LessonSection extends React.PureComponent {
+export default class LessonSection extends PureComponent {
   static ropTypes = {
     title: PropTypes.string.isRequired,
     html: PropTypes.string.isRequired,

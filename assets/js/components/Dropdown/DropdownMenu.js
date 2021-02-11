@@ -1,4 +1,4 @@
-import React from 'react'
+import { useContext, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import { DropdownContext } from './Dropdown'
@@ -15,9 +15,9 @@ const KeyCodes = {
  */
 export function OpenDropdownMenu (props) {
   const { children } = props
-  const { setMenuElement, menuElement, toggleElement, popperStuff, toggle } = React.useContext(DropdownContext)
+  const { setMenuElement, menuElement, toggleElement, popperStuff, toggle } = useContext(DropdownContext)
 
-  const handleClickDocument = React.useCallback(ev => {
+  const handleClickDocument = useCallback(ev => {
     if (!menuElement) {
       // we're in the process of mounting -- the click handler was added mid-click
       // while the user clicked the DropdownToggle component. Ignore this event.
@@ -34,7 +34,7 @@ export function OpenDropdownMenu (props) {
     toggle(ev)
     ev.stopPropagation() // prevent event from triggering the toggle button in the same click -- which would reopen the menu
   }, [menuElement, toggle])
-  React.useEffect(() => {
+  useEffect(() => {
     const Events = ['click', 'touchstart', 'keyup']
     Events.forEach(eventName => {
       document.addEventListener(eventName, handleClickDocument, true)
@@ -55,7 +55,7 @@ export function OpenDropdownMenu (props) {
    *              trigger the menu item's onClick() instead.
    * Escape/Tab: close menu and focus trigger element.
    */
-  const handleKeyDown = React.useCallback(ev => {
+  const handleKeyDown = useCallback(ev => {
     /**
      * Focus next (by=1) or previous (by=-1) menuitem.
      */
@@ -94,7 +94,7 @@ export function OpenDropdownMenu (props) {
         ev.preventDefault() // Ctrl+n shoudn't open new browser window
     }
   }, [toggle, menuElement, toggleElement])
-  React.useEffect(() => {
+  useEffect(() => {
     document.addEventListener('keydown', handleKeyDown, true)
     return () => document.removeEventListener('keydown', handleKeyDown, true)
   }, [handleKeyDown])
@@ -122,7 +122,7 @@ OpenDropdownMenu.propTypes = {
  * handlers during mount/unmount.
  */
 export default function DropdownMenu (props) {
-  const { isOpen, disabled } = React.useContext(DropdownContext)
+  const { isOpen, disabled } = useContext(DropdownContext)
   if (disabled || !isOpen) {
     return null
   } else {

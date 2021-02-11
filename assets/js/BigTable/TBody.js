@@ -1,10 +1,10 @@
-import React from 'react'
+import { useMemo, forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
 import RowNumber from './RowNumber'
 
 function SkipRows ({ nRows, nColumns }) {
-  const trStyle = React.useMemo(() => ({ height: `calc(${nRows} * var(--row-height)` }), [nRows])
+  const trStyle = useMemo(() => ({ height: `calc(${nRows} * var(--row-height)` }), [nRows])
   return (
     <tr className='updating' data-n-rows={nRows} style={trStyle}>
       <th />
@@ -35,7 +35,7 @@ function ValueTd ({ value, valueType, component }) {
   return <td className={`type-${valueType}`}><Component value={value} /></td>
 }
 
-const TBody = React.forwardRef(function TBody ({ columns, nRows, nSkipRows, nSkipColumns, cells }, ref) {
+const TBody = forwardRef(function TBody ({ columns, nRows, nSkipRows, nSkipColumns, cells }, ref) {
   const nRowsAfter = nRows - nSkipRows - cells.length
   const nColumnsAfter = cells.length === 0 ? null /* never used */ : columns.length - nSkipColumns - cells[0].length
 

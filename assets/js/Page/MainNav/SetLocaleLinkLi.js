@@ -1,15 +1,15 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import { Trans } from '@lingui/macro'
 import LocaleSwitcher from '../../i18n/LocaleSwitcher'
 
 export default function SetLocaleLink () {
-  const [isDialogOpen, setDialogOpen] = React.useState(false)
+  const [isDialogOpen, setDialogOpen] = useState(false)
 
-  const handleClick = React.useCallback(ev => {
+  const handleClick = useCallback(ev => {
     ev.preventDefault()
     setDialogOpen(true)
   }, [setDialogOpen])
-  const handleClickClose = React.useCallback(ev => {
+  const handleClickClose = useCallback(ev => {
     ev.preventDefault()
     setDialogOpen(false)
   }, [setDialogOpen])

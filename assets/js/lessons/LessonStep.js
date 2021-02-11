@@ -1,7 +1,7 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
-export default class LessonStep extends React.PureComponent {
+export default class LessonStep extends PureComponent {
   render () {
     const { html, status } = this.props
 

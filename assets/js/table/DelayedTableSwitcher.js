@@ -1,5 +1,5 @@
 /* global requestAnimationFrame */
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import TableSwitcher from './TableSwitcher'
 
@@ -60,7 +60,7 @@ function tableProps ({ stepId, deltaId, columns, nRows, status }) {
  *
  * This file calls the phase between stages 1 and 2 `state.oneTickFromLoaded`.
  */
-export default class DelayedTableSwitcher extends React.PureComponent {
+export default class DelayedTableSwitcher extends PureComponent {
   isUnmounted = false
 
   static propTypes = {

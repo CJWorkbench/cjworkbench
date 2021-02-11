@@ -2,7 +2,7 @@
 // Displays a module's rendered output, if any
 // Handles paged loading of data, which also means it decides when to turn the OutputPane spinner on
 
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
@@ -12,7 +12,7 @@ import { Trans } from '@lingui/macro'
 
 export const NMaxColumns = 100
 
-export class TableView extends React.PureComponent {
+export class TableView extends PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     stepId: PropTypes.number, // immutable; null for placeholder table

@@ -1,9 +1,9 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { AndOrPropType } from './PropTypes'
 import { Trans } from '@lingui/macro'
 
-class AndOr extends React.PureComponent {
+class AndOr extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     operator: AndOrPropType.isRequired,
@@ -36,7 +36,7 @@ class AndOr extends React.PureComponent {
   }
 }
 
-export default class Operator extends React.PureComponent {
+export default class Operator extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,

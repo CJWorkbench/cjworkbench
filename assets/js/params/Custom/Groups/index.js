@@ -1,10 +1,10 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Multicolumn from '../../Multicolumn'
 import DateGranularities from './DateGranularities'
 import { Trans } from '@lingui/macro'
 
-export default class Groups extends React.PureComponent {
+export default class Groups extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <input> names

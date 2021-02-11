@@ -1,8 +1,8 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
-export default class OAuth extends React.PureComponent {
+export default class OAuth extends PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,

@@ -1,8 +1,8 @@
-import React from 'react'
+import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 
 export default function Module ({ isLessonHighlight, idName, name, description, icon, onClick }) {
-  const handleClick = React.useCallback(ev => { ev.preventDefault(); onClick(idName) })
+  const handleClick = useCallback(ev => { ev.preventDefault(); onClick(idName) })
 
   let className = 'module'
   if (isLessonHighlight) className += ' lesson-highlight'

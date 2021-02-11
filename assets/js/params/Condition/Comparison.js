@@ -1,4 +1,4 @@
-import React from 'react'
+import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { ComparisonPropType } from './PropTypes'
 import Column from '../Column'
@@ -6,7 +6,7 @@ import ComparisonOperator from './ComparisonOperator'
 import SingleLineString from '../String/SingleLineString'
 import { t, Trans } from '@lingui/macro'
 
-export default class Comparison extends React.PureComponent {
+export default class Comparison extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>

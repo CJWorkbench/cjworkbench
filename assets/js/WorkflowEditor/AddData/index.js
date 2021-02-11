@@ -1,10 +1,10 @@
 /* globals HTMLElement */
-import React from 'react'
+import { memo } from 'react'
 import PropTypes from 'prop-types'
 import Button from './Button'
 import Step from '../step/Step'
 
-const AddData = React.memo(function AddData ({ tabSlug, isLessonHighlight, isReadOnly, step, isZenMode, deleteStep, isSelected, api, setZenMode, paneRef }) {
+const AddData = memo(function AddData ({ tabSlug, isLessonHighlight, isReadOnly, step, isZenMode, deleteStep, isSelected, api, setZenMode, paneRef }) {
   if (step) {
     return (
       <Step

@@ -1,5 +1,4 @@
 /* globals expect, jest, test */
-import React from 'react'
 import { fireEvent } from '@testing-library/react'
 import { renderWithI18n } from '../../i18n/test-utils'
 import TextBlock from './TextBlock'

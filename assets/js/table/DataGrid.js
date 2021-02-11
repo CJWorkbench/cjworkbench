@@ -3,7 +3,7 @@
 // Contains all logic that interfaces with react-data-grid
 // Paged loading and other logic is in TableView, which is typically our parent
 
-import React from 'react'
+import { createRef, PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import ReactDataGrid from 'react-data-grid'
 import debounce from 'debounce'
@@ -91,7 +91,7 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
 
 // --- Main component  ---
 
-export default class DataGrid extends React.PureComponent {
+export default class DataGrid extends PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
@@ -127,7 +127,7 @@ export default class DataGrid extends React.PureComponent {
 
   emptyRow = buildEmptyRow(this.props.columns)
 
-  sizerRef = React.createRef()
+  sizerRef = createRef()
 
   // Cache some data that isn't props or state.
   //

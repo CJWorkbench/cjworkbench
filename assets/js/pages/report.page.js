@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import errorMiddleware from '../error-middleware'
 import UnhandledErrorReport from '../UnhandledErrorReport'
-import React from 'react'
 import ReactDOM from 'react-dom'
 import { workflowReducer, applyDeltaAction } from '../workflow-reducer'
 import Table from '../Report/Table'
