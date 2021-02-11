@@ -189,7 +189,7 @@ COPY assets/ /app/assets/
 # and currently we rely on this line in our CI scripts (cloudbuild.yaml).
 RUN npm test
 RUN npm run lint
-RUN node_modules/.bin/webpack -p
+RUN node_modules/.bin/webpack --mode=production
 
 
 # 3. Three prod servers will all be based on the same stuff:
