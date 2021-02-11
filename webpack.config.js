@@ -23,24 +23,32 @@ module.exports = {
 
   watchOptions: {
     ignored: /node_modules/,
-    poll: 500,
     aggregateTimeout: 300
   },
 
   output: {
     path: path.resolve('./assets/bundles/'),
-    filename: '[name]-[contenthash].js'
+    filename: '[name]-[contenthash].js',
+    publicPath: ''
   },
 
   devtool: 'source-map',
 
   plugins: [
     new CleanWebpackPlugin(),
-    new WebpackManifestPlugin({ fileName: 'webpack-manifest.json' }),
     new MiniCssExtractPlugin({
       filename: '[name]-[contenthash].css'
-    })
+    }),
+    new WebpackManifestPlugin({ fileName: 'webpack-manifest.json' })
   ],
+
+  stats: {
+    assets: true,
+    assetsSpace: Number.MAX_SAFE_INTEGER,
+    groupAssetsByChunk: false,
+    groupAssetsByInfo: false,
+    modules: false
+  },
 
   module: {
     rules: [
@@ -64,14 +72,24 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: ''
+            }
+          },
           'css-loader'
         ]
       },
       {
         test: /\.scss$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: ''
+            }
+          },
           'css-loader',
           'sass-loader'
         ]

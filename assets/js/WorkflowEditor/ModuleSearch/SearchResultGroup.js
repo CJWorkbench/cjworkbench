@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import SearchResult from './SearchResult'
-import ModuleCategoryName from '../../ModuleCategoryName'
+import ModuleCategoryName from './ModuleCategoryName'
 
 export default class SearchResultGroup extends React.PureComponent {
   static propTypes = {
