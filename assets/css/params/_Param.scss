@@ -3,7 +3,7 @@
     margin-top: $param-margin;
   }
 
-  &>label {
+  & > label {
     display: block;
     @extend %content-1;
     color: $labels;

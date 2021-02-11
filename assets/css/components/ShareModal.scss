@@ -40,7 +40,7 @@
     padding: 0 0 0 2rem;
     font-size: 1.3rem;
 
-    &>li {
+    & > li {
       display: block;
     }
 
@@ -66,8 +66,6 @@
         }
       }
 
-
-
       .dropdown-item.active {
         background-color: $dark-accent--medium;
         color: $brand-text--darker;
@@ -86,7 +84,6 @@
         &:hover {
           background-color: $brand-red;
         }
-
       }
     }
 
@@ -102,12 +99,12 @@
         z-index: 1;
 
         &.form-control:hover {
-          border-color: $dark-accent--medium!important;
+          border-color: $dark-accent--medium !important;
         }
 
         &.form-control:focus {
           box-shadow: none;
-          border-color: $brand-orange!important
+          border-color: $brand-orange !important;
         }
       }
       .input-group-append {
@@ -139,6 +136,10 @@
 }
 
 @keyframes flash-copied {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

@@ -1,10 +1,10 @@
 .param-valueselect {
   .value-list-container {
     // Copied from Refine.scss:.group-list-selector
-    margin-top: .3rem;
+    margin-top: 0.3rem;
     border: 1px solid $brand-orange;
-    border-radius: .5rem;
-    padding: .8rem .6rem .3rem;
+    border-radius: 0.5rem;
+    padding: 0.8rem 0.6rem 0.3rem;
   }
 
   .value-list {
@@ -25,7 +25,7 @@
       margin: 0; // Bootstrap margin messes with autosizing
       padding: 4px 0;
 
-      input[type=checkbox] {
+      input[type='checkbox'] {
         flex: 0 0 auto;
         vertical-align: middle;
         height: 1.6rem;
@@ -41,7 +41,7 @@
       .count {
         flex: 0 0 auto;
         margin-left: 1rem;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
         @include font-sans-light;
       }
     }

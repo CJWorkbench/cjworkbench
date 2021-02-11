@@ -1,5 +1,5 @@
 .param-renames {
-  padding-top: .5rem;
+  padding-top: 0.5rem;
   max-height: 25rem;
   overflow-y: auto;
 
@@ -38,16 +38,16 @@
       cursor: pointer;
       font-size: 1.3rem;
       position: absolute;
-      right: .2rem;
-      top: .2rem;
-      bottom: .2rem;
+      right: 0.2rem;
+      top: 0.2rem;
+      bottom: 0.2rem;
       width: 3rem;
       height: auto; // override .button-icon
-      background-color: transparent!important;
-      opacity:0;
+      background-color: transparent !important;
+      opacity: 0;
       &::before {
-        color:$medium-gray;
-        opacity: .6;
+        color: $medium-gray;
+        opacity: 0.6;
       }
       &:hover::before {
         opacity: 1;

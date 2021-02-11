@@ -12,8 +12,8 @@
     height: 3rem;
     width: 3rem;
     cursor: pointer;
-    border-radius: .3rem;
-    margin: 0 .6rem .6rem 0;
+    border-radius: 0.3rem;
+    margin: 0 0.6rem 0.6rem 0;
     border: none;
 
     &:last-of-type {
@@ -44,10 +44,10 @@
 
   // Arrow  and placement when popup is below or on-top of field
   &.bs-popover-bottom {
-    margin-top: .8rem;
+    margin-top: 0.8rem;
   }
 
   &.bs-popover-top {
-    margin-bottom: .8rem;
+    margin-bottom: 0.8rem;
   }
 }

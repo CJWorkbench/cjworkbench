@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: space-between;
   background-color: white;
-  padding:1.5rem;
+  padding: 1.5rem;
 
   .table-info-container {
     display: flex;
@@ -17,7 +17,7 @@
       margin-right: 3rem;
       height: 3rem;
       background-color: transparent;
-      width:7rem;
+      width: 7rem;
 
       .data {
         @extend .content-2;
@@ -27,7 +27,7 @@
       .value {
         @extend .content-1;
         color: $brand-text--dark;
-        margin-top: .7rem;
+        margin-top: 0.7rem;
       }
     }
 
@@ -36,33 +36,33 @@
       @extend .action-button;
       @extend .button-orange--fill;
       min-width: 16.5rem;
-      border-radius: .3rem;
+      border-radius: 0.3rem;
       -webkit-appearance: none;
       -moz-appearance: none;
-      background-image: url("../images/caret-down-white.png");
+      background-image: url('../images/caret-down-white.png');
       background-repeat: no-repeat;
       background-size: 1.3rem;
       background-position: 95% 47%;
-      padding:0 2rem 0 0;
+      padding: 0 2rem 0 0;
 
       &:active {
-        background-color: lighten($brand-orange,18%);
+        background-color: lighten($brand-orange, 18%);
         color: $brand-orange;
       }
 
       &:focus {
-        background-color: lighten($brand-orange,23%);
-        color: darken($brand-orange,10%);
+        background-color: lighten($brand-orange, 23%);
+        color: darken($brand-orange, 10%);
       }
 
       &.disabled {
         pointer-events: none; // REACT not taking care of it
         background-color: $dark-accent--soft;
         color: $placeholder;
-        opacity: .9;
+        opacity: 0.9;
         min-width: 16.5rem;
         cursor: default;
-        background-image: url("../images/caret-down.png");
+        background-image: url('../images/caret-down.png');
         background-position: 95% 52%;
         border-color: transparent;
 
@@ -71,7 +71,7 @@
           color: $document-blue;
         }
         &:focus {
-          background-color: transparent
+          background-color: transparent;
         }
       }
     }
@@ -82,16 +82,14 @@
       &.show {
         button {
           @extend .dropdown-item;
-          color:$brand-text--dark;
+          color: $brand-text--dark;
 
           &:hover {
-            color:$brand-text--dark;
+            color: $brand-text--dark;
           }
-
         }
       }
     }
-
   }
 
   // button to export data in table header

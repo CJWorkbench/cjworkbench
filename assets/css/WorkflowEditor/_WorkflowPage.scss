@@ -22,8 +22,6 @@
   .workflows-page {
     background-color: $Vlight-gray;
     padding-bottom: 20em;
-
-
   }
 
   /* Contains Navbar, StepList, and Outputpane */
@@ -63,11 +61,9 @@
     height: 5rem;
     z-index: 1;
 
-
-    &>* {
+    & > * {
       line-height: 2rem;
       margin: 0;
-
     }
 
     h3 {
@@ -80,7 +76,7 @@
       font-size: 1.3rem;
 
       a {
-        color:$white;
+        color: $white;
         text-decoration: underline;
       }
     }

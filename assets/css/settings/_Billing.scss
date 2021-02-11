@@ -17,7 +17,8 @@ section.billing {
   .subscription {
     margin-top: rem(1);
 
-    h3, h4 {
+    h3,
+    h4 {
       font: inherit;
       font-weight: bold;
     }
@@ -31,7 +32,7 @@ section.billing {
       span:not(:first-child) {
         &::before {
           content: '-';
-          padding: 0 rem(.5);
+          padding: 0 rem(0.5);
         }
       }
     }
@@ -40,7 +41,7 @@ section.billing {
   button.manage-billing {
     @include action-button;
     @include button-pink-fill;
-    margin-top: rem(.5);
+    margin-top: rem(0.5);
     display: inline-block;
   }
 }

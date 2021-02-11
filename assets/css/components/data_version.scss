@@ -41,9 +41,9 @@
       &.unseen {
         &::after {
           @extend .icon;
-          content: "\e917"; // .icon-notification
+          content: '\e917'; // .icon-notification
           position: relative;
-          top: .3rem;
+          top: 0.3rem;
         }
       }
 
@@ -78,18 +78,24 @@
           display: flex;
           align-items: center;
 
-          .on {color:$brand-workspace;}
+          .on {
+            color: $brand-workspace;
+          }
 
           i {
             margin-top: 0rem;
-            margin-right:.5rem;
+            margin-right: 0.5rem;
           }
 
-          .icon-notification {color:$brand-workspace;}
-          .icon-no-notification {color:$brand-red;}
+          .icon-notification {
+            color: $brand-workspace;
+          }
+          .icon-no-notification {
+            color: $brand-red;
+          }
           strong {
             text-transform: uppercase;
-            margin-left: .5rem;
+            margin-left: 0.5rem;
           }
         }
       }
@@ -110,7 +116,9 @@
           white-space: nowrap;
           background: transparent;
 
-          input[type="checkbox"] { display: none; }
+          input[type='checkbox'] {
+            display: none;
+          }
         }
       }
     }

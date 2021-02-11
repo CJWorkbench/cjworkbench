@@ -4,14 +4,15 @@
       @include autosize-with-textarea;
     }
 
-    .invisible-size-setter, textarea {
+    .invisible-size-setter,
+    textarea {
       @include module-parameter;
       height: auto; // unset module-parameter height: our height varies
       resize: none;
     }
   }
   //CSV textare are resizable
-  .param-string textarea[name="csv"] {
+  .param-string textarea[name='csv'] {
     resize: vertical;
   }
 }

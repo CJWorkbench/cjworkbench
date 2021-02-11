@@ -1,8 +1,8 @@
 .tabs {
   // If you're editing these, consider editing paddings and widths in
   // _PaneSelect.scss.
-  $tab-button-padding: .8rem .5rem .6rem;
-  $tab-name-padding: .8rem .5rem .6rem 1.5rem;
+  $tab-button-padding: 0.8rem 0.5rem 0.6rem;
+  $tab-name-padding: 0.8rem 0.5rem 0.6rem 1.5rem;
   $tab-button-width: 3rem; // for an absolute-positioning hack
   $overlap-width: 3px;
 
@@ -14,14 +14,14 @@
   padding-left: 1px;
 
   // list of tabs
-  &>ul {
+  & > ul {
     margin: 0;
     padding: 0;
     list-style: none;
     display: contents;
 
     // Single tab: ul > li > div.tab
-    &>li {
+    & > li {
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
 
@@ -40,13 +40,14 @@
 
         background: $pane-select-tab-bg;
         color: $pane-select-tab-fg;
-        border-top-left-radius: .5rem;
-        border-top-right-radius: .5rem;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
 
         font-size: 1.4rem;
         line-height: 1.5; // 2.1rem
 
-        .size-calculator, input[name="tab-name"] {
+        .size-calculator,
+        input[name='tab-name'] {
           white-space: pre; // do not collapse whitespace
           padding: $tab-name-padding;
         }
@@ -63,7 +64,7 @@
           }
         }
 
-        input[name="tab-name"] {
+        input[name='tab-name'] {
           display: block;
           font: inherit;
           line-height: inherit;
@@ -106,14 +107,14 @@
             i {
               display: inline-block;
               // icon font's caret is hard to size and position...:
-              font-size: .6rem;
+              font-size: 0.6rem;
               width: 2rem;
               height: 2rem;
-              padding-top: .7rem;
-              padding-left: .1rem;
+              padding-top: 0.7rem;
+              padding-left: 0.1rem;
               line-height: 1;
               border-radius: 50%;
-              opacity: .5;
+              opacity: 0.5;
               outline: 0; // even when :focusing in Webkit
             }
 
@@ -156,12 +157,20 @@
             // on top.
             //
             // See also .tab.dragging .tab .dropdown, for the same effect during drag-and-drop
-            background: linear-gradient(90deg, rgba($pane-select-tab-bg, 0) 0%, $pane-select-tab-bg 30%);
+            background: linear-gradient(
+              90deg,
+              rgba($pane-select-tab-bg, 0) 0%,
+              $pane-select-tab-bg 30%
+            );
           }
         }
 
         &.dragging .tab .dropdown {
-          background: linear-gradient(90deg, rgba($brand-orange, 0) 0%, $brand-orange 30%);
+          background: linear-gradient(
+            90deg,
+            rgba($brand-orange, 0) 0%,
+            $brand-orange 30%
+          );
         }
       }
 
@@ -195,7 +204,8 @@
       will-change: transform; // https://bugs.chromium.org/p/chromium/issues/detail?id=916801
     }
 
-    li.dropping-left::before, li.dropping-right::before {
+    li.dropping-left::before,
+    li.dropping-right::before {
       content: '';
       display: block;
       position: absolute;
@@ -217,7 +227,7 @@
   }
 
   button.new-tab {
-    margin-left: .8rem;
+    margin-left: 0.8rem;
     flex: 0 0 auto;
     align-self: center;
     width: 1.8rem;
@@ -229,7 +239,7 @@
     color: $pane-select-new-tab-button-fg;
     padding: 0;
     cursor: pointer;
-    opacity: .8;
+    opacity: 0.8;
 
     &:hover {
       opacity: 1;

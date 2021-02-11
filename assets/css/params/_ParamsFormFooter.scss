@@ -15,12 +15,12 @@
     font-size: 1.1rem;
   }
 
-  button[type="button"] {
+  button[type='button'] {
     @include button-blue();
     margin-right: auto; // put it as far to the left as possible
   }
 
-  button[type="submit"] {
+  button[type='submit'] {
     @include button-orange--fill();
 
     i::before {
@@ -29,7 +29,7 @@
     }
     &:disabled {
       @include button-blue();
-      opacity: .6;
+      opacity: 0.6;
       cursor: default;
 
       &:hover {

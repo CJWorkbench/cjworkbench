@@ -17,7 +17,7 @@
 }
 
 @mixin modal-header {
-  border-radius: .5rem .5rem 0 0;
+  border-radius: 0.5rem 0.5rem 0 0;
   height: 6rem;
   padding: 2rem 2.5rem;
   background-color: $modal-color;
@@ -27,7 +27,8 @@
   align-items: center;
   cursor: default;
 
-  h5, .modal-title {
+  h5,
+  .modal-title {
     @include title-2;
     font-weight: bold;
     color: white;
@@ -40,7 +41,7 @@
     cursor: pointer;
     font-size: 2.5rem;
     color: white;
-    opacity: .6; // TODO why white+opacity? Let's pick the color we want.
+    opacity: 0.6; // TODO why white+opacity? Let's pick the color we want.
     &:hover {
       opacity: 1;
     }
@@ -54,7 +55,7 @@
 
   .modal-content {
     border: 0;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
     overflow: hidden; // for box shadow in footer
 
     .modal-header {
@@ -73,7 +74,7 @@
       }
 
       .code-snippet {
-        margin-top: .5rem;
+        margin-top: 0.5rem;
         background-color: $dark-accent--soft;
         border-radius: 3px;
         padding: 1.5rem;
@@ -83,7 +84,7 @@
           @include content-1;
           margin-bottom: 0;
           border-radius: 3px;
-          word-wrap:break-word;
+          word-wrap: break-word;
         }
       }
     }
@@ -91,7 +92,7 @@
 
   /* imported modal settings */
   .modal-footer {
-    border-radius: 0 0 .5rem .5rem;
+    border-radius: 0 0 0.5rem 0.5rem;
     border-top: 0;
     padding: 1.5rem 2rem;
     display: flex;
@@ -114,12 +115,12 @@
   .input-dropdown {
     height: 4rem !important;
     color: #686768;
-    background-color: #FFFFFF;
-  	font-size: 1.4rem;
-  	font-weight: normal;
-  	line-height: 1.4rem;
-    border-radius:0px;
-    border: 1px solid $Vlight-gray
+    background-color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: normal;
+    line-height: 1.4rem;
+    border-radius: 0px;
+    border: 1px solid $Vlight-gray;
   }
 
   // Share workflow modal
@@ -131,7 +132,7 @@
 
   .clipboard {
     @include content-1;
-    margin-bottom: .3rem;
+    margin-bottom: 0.3rem;
     text-transform: uppercase;
     cursor: pointer;
     color: $brand-workspace;
@@ -152,10 +153,10 @@
       border-radius: 3px;
       @include font-sans-regular;
       font-size: 1.3rem;
-      padding: .5rem 1rem;
+      padding: 0.5rem 1rem;
 
       i {
-        margin-right: .8rem;
+        margin-right: 0.8rem;
       }
 
       &.facebook-share {
@@ -167,7 +168,7 @@
       }
 
       &.twitter-share {
-        background-color:  #1b95e0;
+        background-color: #1b95e0;
 
         &:hover {
           background-color: #0c7abf;

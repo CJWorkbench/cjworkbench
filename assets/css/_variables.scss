@@ -1,28 +1,28 @@
 // Override Bootstrap fonts
-$font-family-sans-serif: "Roboto", sans-serif;
-$font-family-monospace: "Roboto Mono", monospace;
+$font-family-sans-serif: 'Roboto', sans-serif;
+$font-family-monospace: 'Roboto Mono', monospace;
 
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
-$brand-workspace: #01A9D3;
+$brand-workspace: #01a9d3;
 $chart-title: #686768;
-$workspace-action: #1CC8DC;
-$brand-learn: #FF8BC2;
-$brand-orange: #FBAA6D;
-$brand-red: #E24F4A;
-$page-background: #F0F3F8;
+$workspace-action: #1cc8dc;
+$brand-learn: #ff8bc2;
+$brand-orange: #fbaa6d;
+$brand-red: #e24f4a;
+$page-background: #f0f3f8;
 $WF-background: $page-background;
-$module-background:#f8f8f8;
+$module-background: #f8f8f8;
 $table-background: #f3f3f3;
 $table-row-background-odd: #ecf4f8;
 $table-row-background-even: white;
 $table-row-background-hover: #dbebf3;
 $modal-color: $workspace-action;
 $document-blue: #466577;
-$hover-background: #F5F5F5;
+$hover-background: #f5f5f5;
 
-$item-border: #DEE1E6;
-$table-border: #CBE2E7;
+$item-border: #dee1e6;
+$table-border: #cbe2e7;
 
 // Secondary Colors (づ ￣ ³￣)づ
 
@@ -30,27 +30,27 @@ $SuperLightGray: #f9f9f9;
 $light-gray: #b4b4b4;
 $medium-gray: #a2a2a2;
 $dark-gray: #8b8b8b;
-$Vlight-gray: lighten($dark-gray,39%);
+$Vlight-gray: lighten($dark-gray, 39%);
 
 $modal-footer: $WF-background;
-$dark-orange:#F88630;
-$document-blue--light: #5C88A1;
+$dark-orange: #f88630;
+$document-blue--light: #5c88a1;
 $heading-bg: $document-blue--light;
 $header-hover: $document-blue;
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;
 
-$error-prompt: lighten($brand-red,18%);
-$error-prompt--light: lighten($brand-red,35%);
-$error-prompt--Vlight: lighten($brand-red,37%);
+$error-prompt: lighten($brand-red, 18%);
+$error-prompt--light: lighten($brand-red, 35%);
+$error-prompt--Vlight: lighten($brand-red, 37%);
 
 // Text colors ＼(＾O＾)／
-$brand-text--darker: #2B2A2A;
+$brand-text--darker: #2b2a2a;
 $brand-text--dark: #555555;
-$brand-text--medium: #7D7D7D;
+$brand-text--medium: #7d7d7d;
 $labels: $medium-gray;
-$link-hover-success: #2D9DAA;
+$link-hover-success: #2d9daa;
 $brand-text--learn: $brand-learn; // for lesson panel
 $text-muted: $medium-gray;
 
@@ -58,15 +58,14 @@ $text-muted: $medium-gray;
 $navbar-background: white;
 $wf-header: $brand-workspace;
 $lesson-header: $brand-learn;
-$pane-select-tab-bg: #009CC3;
+$pane-select-tab-bg: #009cc3;
 $pane-select-tab-fg: white;
 $pane-select-selected-tab-bg: $WF-background;
 $pane-select-selected-tab-fg: $brand-text--dark;
 $pane-select-new-tab-button-fg: white;
 
 // menus
-$data-action--border: lighten($brand-orange,7%);
-
+$data-action--border: lighten($brand-orange, 7%);
 
 // Accent: transparent light or dark color use on top of backgrounds
 // [adamhooper, 2019-01-09] DO NOT USE: transparent borders lead to one of two
@@ -74,38 +73,49 @@ $data-action--border: lighten($brand-orange,7%);
 // colors multiply the number of potential colors) or a page with few colors
 // that we've never actually _defined_. Instead of these, use the color we want.//FIXME PIERRE
 
-$dark-accent--soft: rgba(0,0,0,.05); // DO NOT USE: rgba is bad FIXME
-$dark-accent--soft-M: rgba(0,0,0,.075); // DO NOT USE: rgba is bad FIXME
-$dark-accent--medium: rgba(0,0,0,.1); // DO NOT USE: rgba is bad
-$dark-accent--strong: rgba(0,0,0,.15); // DO NOT USE: rgba is bad
+$dark-accent--soft: rgba(0, 0, 0, 0.05); // DO NOT USE: rgba is bad FIXME
+$dark-accent--soft-M: rgba(0, 0, 0, 0.075); // DO NOT USE: rgba is bad FIXME
+$dark-accent--medium: rgba(0, 0, 0, 0.1); // DO NOT USE: rgba is bad
+$dark-accent--strong: rgba(0, 0, 0, 0.15); // DO NOT USE: rgba is bad
 
-$light-accent--soft: rgba(255,255,255,.05); // DO NOT USE: rgba is bad FIXME
-$light-accent--medium: rgba(255,255,255,.1); // DO NOT USE: rgba is bad FIXME
-$light-accent--strong: rgba(255,255,255,.2); // DO NOT USE: rgba is bad
-$light-accent--Vstrong: rgba(255,255,255,0.5); // DO NOT USE: rgba is bad
-$light-accent--Extrastrong: rgba(255,255,255,0.9); // DO NOT USE: rgba is bad
+$light-accent--soft: rgba(255, 255, 255, 0.05); // DO NOT USE: rgba is bad FIXME
+$light-accent--medium: rgba(
+  255,
+  255,
+  255,
+  0.1
+); // DO NOT USE: rgba is bad FIXME
+$light-accent--strong: rgba(255, 255, 255, 0.2); // DO NOT USE: rgba is bad
+$light-accent--Vstrong: rgba(255, 255, 255, 0.5); // DO NOT USE: rgba is bad
+$light-accent--Extrastrong: rgba(255, 255, 255, 0.9); // DO NOT USE: rgba is bad
 
-$brand-workspace--Vlight: lighten($workspace-action,45%);
-$brand-workspace--light: lighten($workspace-action,39%);
-$brand-workspace--medium: lighten($workspace-action,15%);
+$brand-workspace--Vlight: lighten($workspace-action, 45%);
+$brand-workspace--light: lighten($workspace-action, 39%);
+$brand-workspace--medium: lighten($workspace-action, 15%);
 
-$brand-background: rgba($brand-workspace--medium, .25); // used for blending in backgrounds // DO NOT USE
-$brand-background--action:rgba($brand-workspace--medium, .60); // DO NOT USE
+$brand-background: rgba(
+  $brand-workspace--medium,
+  0.25
+); // used for blending in backgrounds // DO NOT USE
+$brand-background--action: rgba($brand-workspace--medium, 0.6); // DO NOT USE
 
-$brand-orange--light: #FFF1E7; //Should be renamed $brand-action
+$brand-orange--light: #fff1e7; //Should be renamed $brand-action
 $brand-orange--medium: #fcbe90;
-$brand-orange--medium-dark: lighten($brand-orange,9%);
+$brand-orange--medium-dark: lighten($brand-orange, 9%);
 $brand-orange--darker: darken($brand-orange, 10%);
 
 $brand-learn--light: lighten($brand-learn, 17%);
 $brand-learn--med-light: lighten($brand-learn, 10%);
 $brand-learn--medium: lighten($brand-learn, 5%);
 
-
 // Overlays
 
-$light-overlay: rgba(255,255,255,.5); // DO NOT USE: rgba is bad (see comment elsewhere)
-
+$light-overlay: rgba(
+  255,
+  255,
+  255,
+  0.5
+); // DO NOT USE: rgba is bad (see comment elsewhere)
 
 // Input fields  ᕕ( ᐛ )ᕗ
 
@@ -113,24 +123,24 @@ $placeholder: #959595;
 
 // box shadows ~~~~ ༼ つ ◕_◕ ༽つ
 
-$menu-shadow: -5px 8px 15px 0px rgba(0,0,0,.15);
-$modal-shadow: 0px 10px 30px 3px rgba(0,0,0,.3);
-$button-area: 0px 8px 3px -8px rgba(0,0,0,.15);
-$element-shadow: 0px 1px 3px 0px rgba(0,0,0,.15);
-$button-area--hover: -5px 10px 10px -8px rgba(0,0,0,.3);
-$overlay-shadow: 0px 8px 10px -1px rgba(0,0,0,0.2);
+$menu-shadow: -5px 8px 15px 0px rgba(0, 0, 0, 0.15);
+$modal-shadow: 0px 10px 30px 3px rgba(0, 0, 0, 0.3);
+$button-area: 0px 8px 3px -8px rgba(0, 0, 0, 0.15);
+$element-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.15);
+$button-area--hover: -5px 10px 10px -8px rgba(0, 0, 0, 0.3);
+$overlay-shadow: 0px 8px 10px -1px rgba(0, 0, 0, 0.2);
 
 // Modules (ᵔᴥᵔ)
 $module-width: 28rem;
 $module-margin-right: 2rem;
 $module-margin-left: 4rem;
-$module-color-ok: #1CC8DC;
+$module-color-ok: #1cc8dc;
 $module-color-unreachable: $item-border;
 $module-color-busy: $brand-orange;
 $module-color-error: $error-prompt;
 $module-padding: 1rem;
-$param-group-margin: .3rem;
-$param-margin: .8rem;
+$param-group-margin: 0.3rem;
+$param-margin: 0.8rem;
 
 // Helper ⊂(◉‿◉)つ
 

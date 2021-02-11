@@ -2,41 +2,46 @@ article.report {
   .add-block-prompt {
     margin: 0 2rem;
 
-    &:hover, &.active, &:focus-within {
-      &>.actions {
-        &>button, &>.dropdown>button {
+    &:hover,
+    &.active,
+    &:focus-within {
+      & > .actions {
+        & > button,
+        & > .dropdown > button {
           // Overridden by .actions>button:hover later in this file
           border-color: $heading-bg;
           color: $heading-bg;
           background: white;
         }
 
-        &::before, &::after {
+        &::before,
+        &::after {
           background: $heading-bg;
         }
       }
     }
 
-    &>.actions {
+    & > .actions {
       display: flex;
       align-items: center;
       margin: 1.5rem 0;
 
-      &>* {
+      & > * {
         // Middle items are buttons. They're fixed-size.
         flex: 0 0 auto;
         display: inline-block;
-        margin: 0 .5rem;
+        margin: 0 0.5rem;
       }
 
-      &::before, &::after {
+      &::before,
+      &::after {
         // Line to left and right of buttons, stretching to fill available space.
         flex: 1 1 auto;
         display: block;
         content: '';
-        height: .3rem;
+        height: 0.3rem;
         background: transparent;
-        border-radius: .15rem;
+        border-radius: 0.15rem;
       }
       &::before {
         margin-right: 2rem;
@@ -45,12 +50,13 @@ article.report {
         margin-left: 2rem;
       }
 
-      &>button, &>.dropdown>button {
+      & > button,
+      & > .dropdown > button {
         background: white;
         cursor: pointer;
         border: 1px solid $light-gray;
         border-radius: 50%;
-        padding: .8rem;
+        padding: 0.8rem;
         color: $light-gray;
         font-size: 1.6rem;
         line-height: 0;
@@ -59,14 +65,17 @@ article.report {
           color: white;
           background-color: $heading-bg;
         }
-        &.active, &:active, &[aria-expanded=true], &:focus {
+        &.active,
+        &:active,
+        &[aria-expanded='true'],
+        &:focus {
           color: white;
           border-color: $header-hover;
           background: $header-hover;
         }
       }
 
-      &>button {
+      & > button {
         // Bootstrap's .btn class has vertical-align: middle, and DropdownItem
         // uses that. Give our non-Bootstrap button the same vertical-align.
         vertical-align: middle;

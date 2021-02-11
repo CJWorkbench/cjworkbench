@@ -1,11 +1,8 @@
 .module-card-params {
-
-
   .table {
-
     //header
     thead tr {
-      height:2.5rem;
+      height: 2.5rem;
       border: 0;
 
       td {
@@ -18,13 +15,14 @@
         text-align: left;
       }
 
-      .reorder-position  {
+      .reorder-position {
         @extend .info-1;
         color: $labels;
         text-align: center;
       }
 
-      .reorder-from, .reorder-to {
+      .reorder-from,
+      .reorder-to {
         text-align: center;
       }
     }
@@ -33,15 +31,17 @@
     tbody tr {
       @extend .content-1;
       font-weight: normal;
-      height:3.5rem;
+      height: 3.5rem;
       background-color: $Vlight-gray;
-      border-bottom: 1px solid darken($Vlight-gray,5%);
+      border-bottom: 1px solid darken($Vlight-gray, 5%);
 
-      &:first-child { // first and last rows in any col has border radius
+      &:first-child {
+        // first and last rows in any col has border radius
         border-top-left-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
         border-top-right-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
       }
-      &:last-child { // first and last rows in any col has border radius
+      &:last-child {
+        // first and last rows in any col has border radius
         border-bottom-left-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
         border-bottom-right-radius: 3px; //FIXME border radius working but not visible?? Pierre 1/17/19
         border-bottom-color: transparent;
@@ -53,15 +53,14 @@
         background-color: transparent;
         text-align: center;
 
-
         &.reorder-idx {
           @extend %info-1;
           background-color: transparent;
         }
 
-        &.reorder-column{
+        &.reorder-column {
           text-align: left;
-          padding: .75rem 0 .75rem .75rem;
+          padding: 0.75rem 0 0.75rem 0.75rem;
           white-space: nowrap;
           overflow: hidden;
           max-width: 15rem;

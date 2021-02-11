@@ -9,9 +9,12 @@
     font-size: 2.25rem;
     width: 4rem;
     text-align: center;
-    padding-top: .7rem; // center with collapsed .wf-card
-    padding-bottom: .6rem; // so vertical line's distance is same above as below
-    color: darken($module-color-unreachable,15%); // a little darker to be visible when unreachable
+    padding-top: 0.7rem; // center with collapsed .wf-card
+    padding-bottom: 0.6rem; // so vertical line's distance is same above as below
+    color: darken(
+      $module-color-unreachable,
+      15%
+    ); // a little darker to be visible when unreachable
     background-color: $WF-background; // appear atop vertical line
     z-index: 1;
   }
@@ -66,13 +69,16 @@
       }
 
       &:hover .context-buttons {
-        a.help-button, button.edit-note, button.delete-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
+        a.help-button,
+        button.edit-note,
+        button.delete-button,
+        button.notifications:not(.enabled),
+        label.toggle-zen-mode:not(.is-zen-mode) {
           opacity: 1;
         }
       }
     }
   }
-
 
   @mixin module-colors($card-border-color, $number-color, $line-color) {
     // Color card border
@@ -85,20 +91,31 @@
       color: $number-color;
     }
 
-    &.status-unreachable h3 {color:darken($number-color,15%);}
+    &.status-unreachable h3 {
+      color: darken($number-color, 15%);
+    }
 
     // Color line to the left of the step list
-    &::before, & + .in-between-steps::before {
+    &::before,
+    & + .in-between-steps::before {
       background-color: $line-color;
     }
   }
 
   &.status-ok {
-    @include module-colors($module-color-ok, $module-color-ok, $module-color-ok);
+    @include module-colors(
+      $module-color-ok,
+      $module-color-ok,
+      $module-color-ok
+    );
   }
 
   &.status-unreachable {
-    @include module-colors($module-color-unreachable, $module-color-unreachable, transparent);
+    @include module-colors(
+      $module-color-unreachable,
+      $module-color-unreachable,
+      transparent
+    );
   }
 
   &.status-busy {
@@ -109,7 +126,11 @@
   }
 
   &.status-error {
-    @include module-colors($module-color-error, $module-color-error, transparent);
+    @include module-colors(
+      $module-color-error,
+      $module-color-error,
+      transparent
+    );
     .module-card {
       border-color: $module-color-error;
     }
@@ -158,7 +179,7 @@
 
       input {
         height: 3.5rem;
-        padding: .5rem 3.4rem .4rem; // left padding for "search" icon; right padding for "close" button
+        padding: 0.5rem 3.4rem 0.4rem; // left padding for "search" icon; right padding for "close" button
         display: block;
         width: 100%;
         color: $brand-text--dark;
@@ -175,32 +196,34 @@
         }
 
         //search placeholder when empty
-        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        &::-webkit-input-placeholder {
+          /* Chrome/Opera/Safari */
           color: $brand-text--dark;
-          opacity: .8;
+          opacity: 0.8;
         }
-        :-ms-input-placeholder { /* IE 10+ */
+        :-ms-input-placeholder {
+          /* IE 10+ */
           color: $brand-text--dark;
-          opacity: .8;
+          opacity: 0.8;
         }
-        :-moz-placeholder { /* Firefox 18- */
+        :-moz-placeholder {
+          /* Firefox 18- */
           color: $brand-text--dark;
-          opacity: .8;
+          opacity: 0.8;
         }
-
       }
 
       &::before {
         // "search" icon
         display: inline-block;
         position: absolute;
-        top: .8rem;
+        top: 0.8rem;
         left: 1.5rem;
         font-size: 1.4rem;
         font-family: 'Workbench';
-        content: "\e91a "; // .icon-search
+        content: '\e91a '; // .icon-search
         color: $brand-text--dark;
-        opacity:.9;
+        opacity: 0.9;
       }
 
       button.close {
@@ -228,12 +251,12 @@
       align-items: center;
 
       a {
-        text-decoration:none;
+        text-decoration: none;
         color: inherit;
       }
 
       .module-icon {
-        margin-right: .6rem;
+        margin-right: 0.6rem;
         font-size: 1.4rem;
       }
 
@@ -250,7 +273,7 @@
         border: 0;
         background: transparent;
         font-size: 1.2rem;
-        padding: .75rem .3rem .75rem 1.2rem;
+        padding: 0.75rem 0.3rem 0.75rem 1.2rem;
         cursor: pointer;
         opacity: 1;
         &:hover {
@@ -259,11 +282,17 @@
           }
         }
 
-        i.icon-caret-right {font-size:1rem;}
+        i.icon-caret-right {
+          font-size: 1rem;
+        }
 
-        i.icon-caret-down {font-size:.6rem;}
+        i.icon-caret-down {
+          font-size: 0.6rem;
+        }
 
-        i {color:$brand-text--dark}
+        i {
+          color: $brand-text--dark;
+        }
       }
 
       .context-collapse-button {
@@ -274,9 +303,9 @@
         align-items: center;
         justify-content: center;
         background-color: transparent;
-        color:$light-gray;
+        color: $light-gray;
         border-radius: 5rem;
-        margin-right:.5rem;
+        margin-right: 0.5rem;
         opacity: 0.5;
 
         &.lesson-highlight {
@@ -290,9 +319,11 @@
         align-items: center;
         flex: 0 0 auto; // fixed space
         white-space: nowrap;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
 
-        &>a, &>button, &>label {
+        & > a,
+        & > button,
+        & > label {
           display: inline-block;
           font-size: 1.2rem;
           width: 2.2rem;
@@ -324,12 +355,12 @@
         label.toggle-zen-mode {
           cursor: pointer;
 
-          input[type="checkbox"] {
+          input[type='checkbox'] {
             display: none;
           }
 
           i.icon-full-screen {
-            vertical-align: -.6rem; // icky glyph sizing in the font?
+            vertical-align: -0.6rem; // icky glyph sizing in the font?
             font-size: 1.25rem;
           }
 
@@ -339,27 +370,32 @@
           }
         }
 
-        a.help-button, button.edit-note, button.delete-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
-          opacity: .2; // only show context buttons when hovering over step card
+        a.help-button,
+        button.edit-note,
+        button.delete-button,
+        label.toggle-zen-mode:not(.is-zen-mode),
+        button.notifications:not(.enabled) {
+          opacity: 0.2; // only show context buttons when hovering over step card
         }
 
         i.icon-help {
-          vertical-align: -.6rem; // icky glyph sizing in the font?
+          vertical-align: -0.6rem; // icky glyph sizing in the font?
           font-size: 1.25rem;
         }
 
         .edit-note {
-          margin-left: .1rem;
-          margin-right: .2rem;
+          margin-left: 0.1rem;
+          margin-right: 0.2rem;
           i.icon-note {
-            margin-left: .2rem;
+            margin-left: 0.2rem;
           }
         }
 
-        i.icon-notification, .has-unseen {
+        i.icon-notification,
+        .has-unseen {
           position: relative;
           font-size: 1.35rem;
-          top: .1rem;
+          top: 0.1rem;
         }
       }
     }
@@ -378,7 +414,7 @@
     }
   }
 
-  .step-error-msg  {
+  .step-error-msg {
     padding: 1.5rem;
     background-color: $error-prompt--Vlight;
     color: $brand-red;
@@ -389,7 +425,7 @@
 
     p {
       margin: 0;
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
       white-space: pre-wrap; // double-newlines in HTML should make "paragraph" for https://www.pivotaltracker.com/story/show/165588183
     }
 
@@ -412,13 +448,13 @@
   &.status-ok .step-error-msg {
     background-color: $brand-workspace--light;
     color: $brand-workspace;
-    border-color: $brand-workspace--light
+    border-color: $brand-workspace--light;
   }
 
   //module being dragged (old position)
   &.selected.dragging .module-card-and-link {
     .module-card {
-      opacity: .6;
+      opacity: 0.6;
       border-color: $brand-orange;
     }
 
@@ -437,7 +473,7 @@
 // margin top to compensate for the absence of in-between module button
 .workflow-root.read-only {
   .step-notes {
-      margin-top: 1.5rem;
+    margin-top: 1.5rem;
   }
 }
 

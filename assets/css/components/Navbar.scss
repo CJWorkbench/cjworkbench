@@ -3,7 +3,7 @@
 .navbar {
   flex: 0 0 auto; // fixed height
   background-color: $navbar-background;
-  color: #FFFFFF;
+  color: #ffffff;
   padding: 1.1rem 4rem 1.1rem 4rem;
   height: 5.5rem;
   position: relative;
@@ -12,7 +12,7 @@
 
   .navbar-elements {
     width: 100%;
-    display:flex;
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -22,17 +22,20 @@
     display: flex;
     align-items: center;
 
-    &>button, .group--undo-redo>button { // '>' because dropdown may contain other buttons
+    & > button,
+    .group--undo-redo > button {
+      // '>' because dropdown may contain other buttons
       @extend .action-button;
       @extend .button-white;
       white-space: nowrap;
 
-      &[name=duplicate] {
+      &[name='duplicate'] {
         @extend .button-white--fill;
       }
     }
 
-    &>button, &>.group--undo-redo {
+    & > button,
+    & > .group--undo-redo {
       margin-right: 3rem;
     }
 
@@ -46,8 +49,8 @@
         width: 3.5rem;
         height: 3.5rem;
         padding: 0;
-        border:1px solid $white;
-        opacity: .8;
+        border: 1px solid $white;
+        opacity: 0.8;
         &:hover {
           border-color: $white;
           opacity: 1;
@@ -58,7 +61,7 @@
       }
     }
 
-    &>.dropdown {
+    & > .dropdown {
       display: inline-block;
     }
   }
@@ -66,7 +69,6 @@
   // Brand logo
 
   .logo {
-
     display: flex;
     align-items: center;
 
@@ -78,7 +80,7 @@
 
     img.logo-text {
       position: relative;
-      top:0;
+      top: 0;
       width: 12.5rem;
     }
   }
@@ -102,7 +104,7 @@
     position: relative;
     left: -7.7rem;
     height: 100%;
-    top: .8rem;
+    top: 0.8rem;
     cursor: pointer;
 
     a {
@@ -111,7 +113,7 @@
       color: $brand-text--dark;
       text-decoration: none;
       margin: 0 2rem;
-      padding-top: .9rem;
+      padding-top: 0.9rem;
       height: 4.5rem;
       &:hover {
         color: $brand-text--dark;
@@ -128,7 +130,7 @@
       }
 
       &.inactive {
-        opacity: .7;
+        opacity: 0.7;
         &::after {
           opacity: 0;
           background-color: $brand-learn;
@@ -147,7 +149,7 @@
   //// navbar in WF
 
   .workflow-container & {
-    padding: .5rem 2.5rem .5rem 1.2rem;
+    padding: 0.5rem 2.5rem 0.5rem 1.2rem;
     background-color: $wf-header;
     border-bottom: 0;
 
@@ -155,12 +157,12 @@
       margin-right: 1.5rem;
 
       img {
-        width:3.7rem;
+        width: 3.7rem;
         margin-top: 0rem;
       }
     }
 
-    .editable-title--container{
+    .editable-title--container {
       margin-right: 3.5rem;
       min-width: 90%;
     }
@@ -169,8 +171,8 @@
 
       .course {
         @include title-3;
-        margin-top: .2rem;
-        margin-bottom: .4rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0.4rem;
 
         a {
           color: white;
@@ -180,7 +182,7 @@
       .editable-title--field {
         @include title-2;
         position: relative;
-        top:.1rem;
+        top: 0.1rem;
         min-width: 100%;
         border: none;
         outline: none;
@@ -188,8 +190,8 @@
         resize: none;
         background: none;
         line-height: 1.8rem;
-        color: #FFFFFF;
-        padding-right:1.5rem;
+        color: #ffffff;
+        padding-right: 1.5rem;
         text-overflow: ellipsis;
 
         &:hover {
@@ -202,9 +204,7 @@
   ////navbar in lesson
 
   .workflow-root.in-lesson & {
-
-
-    button[name=duplicate] {
+    button[name='duplicate'] {
       display: none;
     }
 
@@ -224,9 +224,8 @@
   //No navbar at login / signup
 
   .navbar-login {
-    display:none;
+    display: none;
   }
-
 
   //// Readonly signout navbar
 
@@ -236,7 +235,7 @@
     font-size: 1.4rem;
     cursor: pointer;
     margin-right: 5rem;
-    color:$white;
+    color: $white;
 
     &:hover {
       text-decoration: underline;

@@ -29,12 +29,14 @@
     }
   }
 
-  &>* {
+  & > * {
     width: $module-width;
     margin-left: 4rem; // size of h3 numbers at the left-hand side
   }
 
-  textarea, .editable-notes-read-only, .invisible-size-setter {
+  textarea,
+  .editable-notes-read-only,
+  .invisible-size-setter {
     @include content-1;
     display: block;
     border: 0;

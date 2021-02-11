@@ -7,7 +7,6 @@
     align-items: center;
     position: relative;
 
-
     .version-box-option {
       font-size: 1.3rem;
     }
@@ -39,7 +38,7 @@
     align-items: flex-end;
 
     .no-versions {
-      margin-left: .5rem;
+      margin-left: 0.5rem;
     }
 
     button {
@@ -53,7 +52,7 @@
       color: $workspace-action;
       font-weight: bold;
       cursor: pointer;
-      margin-left: .5rem;
+      margin-left: 0.5rem;
 
       &:hover {
         color: $link-hover-success;
@@ -61,13 +60,14 @@
     }
   }
 
-  .version-row>button { // fetch button
+  .version-row > button {
+    // fetch button
     @include action-button;
     @include button-blue;
 
     .spinner {
       $spinner-color: $brand-orange;
-      position: absolute!important;
+      position: absolute !important;
 
       // overlap into the border's margin. There's tons of room because we use
       // rounded buttons and the spinner is also round
@@ -76,10 +76,26 @@
       height: 1.5rem;
       border-radius: 50%;
       background: #ffffff;
-      background: -moz-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-      background: -webkit-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-      background: -o-linear-gradient(left, $spinner-color 10%, rgba($spinner-color, 0) 42%);
-      background: linear-gradient(to right, $spinner-color 10%, rgba($spinner-color, 0) 42%);
+      background: -moz-linear-gradient(
+        left,
+        $spinner-color 10%,
+        rgba($spinner-color, 0) 42%
+      );
+      background: -webkit-linear-gradient(
+        left,
+        $spinner-color 10%,
+        rgba($spinner-color, 0) 42%
+      );
+      background: -o-linear-gradient(
+        left,
+        $spinner-color 10%,
+        rgba($spinner-color, 0) 42%
+      );
+      background: linear-gradient(
+        to right,
+        $spinner-color 10%,
+        rgba($spinner-color, 0) 42%
+      );
       position: relative;
       -webkit-animation: spinner-in-button 1.4s infinite linear;
       animation: spinner-in-button 1.4s infinite linear;
@@ -132,12 +148,14 @@
     flex-direction: row;
     justify-content: flex-start;
 
-    &>label {
+    & > label {
       width: 8rem;
       margin-right: 1rem;
       flex: 0 0 auto;
 
-      input { display: none; }
+      input {
+        display: none;
+      }
       color: $brand-workspace;
       font-weight: bold;
       font-size: 1.5rem;
@@ -157,19 +175,19 @@
     }
   }
 
-  .big-radio-checked>label .radio {
+  .big-radio-checked > label .radio {
     cursor: default;
     @include action-button;
     @include button-blue--fill;
   }
-  .big-radio-unchecked>label .radio {
+  .big-radio-unchecked > label .radio {
     cursor: pointer;
     @include action-button;
     @include button-gray;
   }
 
   .big-radio-unchecked {
-    opacity: .6;
+    opacity: 0.6;
   }
 
   .big-radio-checked {
@@ -182,7 +200,7 @@
 
   .big-radio-auto-update-false .big-radio-details {
     // Line up with label, which is ~2 lines high
-    padding-top: .75rem; // label padding
+    padding-top: 0.75rem; // label padding
   }
 
   .big-radio-auto-update-true {
@@ -190,11 +208,11 @@
       flex-wrap: nowrap;
 
       .custom-select {
-        border-radius: .3rem;
+        border-radius: 0.3rem;
       }
     }
 
-    input.form-control[type=number] {
+    input.form-control[type='number'] {
       @include module-parameter;
       width: 6rem;
       margin-right: 1rem;
@@ -230,9 +248,10 @@
       border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
       vertical-align: top;
-      padding: .5rem;
+      padding: 0.5rem;
       padding-bottom: 1rem;
     }
 
@@ -247,7 +266,7 @@
       ul {
         color: $brand-text--dark;
         list-style: none;
-        margin: .5rem 0 0;
+        margin: 0.5rem 0 0;
         padding: 0;
       }
     }
@@ -274,10 +293,11 @@
     border-top: 1px solid $page-background;
     padding-top: 2rem;
 
-    input { // checkbox
-      margin-bottom: -.2rem;
+    input {
+      // checkbox
+      margin-bottom: -0.2rem;
       &::after {
-       top:-2px;
+        top: -2px;
       }
     }
 

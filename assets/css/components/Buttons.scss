@@ -1,8 +1,7 @@
-
-
-
 //getting rid of Blue Focus
-button:focus { outline:0 !important; }
+button:focus {
+  outline: 0 !important;
+}
 
 /*overriding React styles for contextual button*/
 
@@ -11,7 +10,7 @@ button:focus { outline:0 !important; }
 }
 
 .btn:focus {
-  webkit-box-shadow:none;
+  webkit-box-shadow: none;
   box-shadow: none;
 }
 
@@ -19,15 +18,15 @@ button:focus { outline:0 !important; }
 .btn-secondary:not(:disabled):not(.disabled).active:focus,
 .show > .btn-secondary.dropdown-toggle:focus {
   box-shadow: none;
-  background-color:$Vlight-gray;
-  color:$dark-gray;
+  background-color: $Vlight-gray;
+  color: $dark-gray;
   opacity: 1;
 }
 
 // BUTTON IN FOCUS, After click
 .btn-secondary:focus {
-  background-color:$Vlight-gray;
-  color:$dark-gray;
+  background-color: $Vlight-gray;
+  color: $dark-gray;
   opacity: 1;
 }
 
@@ -47,14 +46,14 @@ button:focus { outline:0 !important; }
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  color:$dark-gray;
+  color: $dark-gray;
   border-radius: 5rem;
   opacity: 0.6;
-  margin-right:0;
+  margin-right: 0;
   font-size: 1.4rem;
   &:hover {
     border: none;
-    color:$brand-text--dark;
+    color: $brand-text--dark;
     opacity: 1;
   }
 }
@@ -62,27 +61,25 @@ button:focus { outline:0 !important; }
   @include context-button;
 }
 
-.context-button.btn-secondary.active{
-  background-color: #E7EAEB;
+.context-button.btn-secondary.active {
+  background-color: #e7eaeb;
   border-radius: 5rem;
-  color:#686768;
-  opacity:1;
+  color: #686768;
+  opacity: 1;
 }
 
 .navbar {
-
   .context-button {
     width: 3rem;
     height: 3rem;
-    color:$brand-text--dark;
-    opacity:.8;
+    color: $brand-text--dark;
+    opacity: 0.8;
     &:hover {
       background-color: $dark-accent--soft;
       opacity: 1;
-      color:$brand-text--darker;
+      color: $brand-text--darker;
     }
   }
-
 
   .btn-secondary:not(:disabled):not(.disabled):active,
   .btn-secondary:not(:disabled):not(.disabled).active,
@@ -90,10 +87,10 @@ button:focus { outline:0 !important; }
     box-shadow: none;
     background: $light-accent--strong;
     opacity: 1;
-    color:black;
+    color: black;
   }
 
-  .btn-secondary:focus{
+  .btn-secondary:focus {
     background-color: $light-accent--strong;
   }
 }
@@ -105,9 +102,9 @@ button:focus { outline:0 !important; }
   cursor: pointer;
   border: 1px solid $brand-workspace;
   min-width: 7rem;
-	height: 3.5rem;
+  height: 3.5rem;
   border-radius: 2.5rem;
-	@include content-1;
+  @include content-1;
   padding: 0 1.6rem;
   text-decoration: none;
   display: flex;
@@ -117,7 +114,7 @@ button:focus { outline:0 !important; }
   &:disabled {
     color: $light-gray;
     border-color: $light-gray;
-    &:hover{
+    &:hover {
       background-color: transparent;
       cursor: default;
     }
@@ -135,7 +132,7 @@ button:focus { outline:0 !important; }
   .action-button:disabled {
     color: $light-accent--Vstrong;
     border-color: $light-accent--Vstrong;
-    &:hover{
+    &:hover {
       background-color: transparent;
       cursor: default;
     }
@@ -196,10 +193,12 @@ button:focus { outline:0 !important; }
   color: white;
   border-color: $white;
   background-color: transparent;
-  &:hover, &:hover .spinner::after {
+  &:hover,
+  &:hover .spinner::after {
     background-color: $light-accent--strong;
   }
-  &:active, &:active .spinner::after {
+  &:active,
+  &:active .spinner::after {
     background-color: $light-accent--Vstrong;
   }
 }
@@ -210,14 +209,17 @@ button:focus { outline:0 !important; }
 .button-white--fill {
   color: $brand-workspace;
   border-color: $white;
-  &, .spinner::after {
+  &,
+  .spinner::after {
     background-color: white;
   }
-  &:hover, &:hover .spinner::after {
-    background-color:$light-accent--strong;
+  &:hover,
+  &:hover .spinner::after {
+    background-color: $light-accent--strong;
     color: white;
   }
-  &:active, &:active .spinner::after {
+  &:active,
+  &:active .spinner::after {
     background-color: $light-accent--Vstrong;
     border: 1px solid white;
   }
@@ -240,16 +242,17 @@ button:focus { outline:0 !important; }
   @include button-gray;
 }
 
-
 @mixin button-blue {
   color: $workspace-action;
   border-color: $workspace-action;
   background-color: transparent;
-  &:hover, &:hover .spinner::after {
+  &:hover,
+  &:hover .spinner::after {
     background-color: $brand-workspace--Vlight;
     color: $workspace-action;
   }
-  &:active, &:active .spinner::after {
+  &:active,
+  &:active .spinner::after {
     background-color: $workspace-action;
     color: white;
   }
@@ -261,11 +264,11 @@ button:focus { outline:0 !important; }
 @mixin button-blue--fill {
   background-color: $workspace-action;
   color: white;
-  border-color:transparent;
+  border-color: transparent;
   &:hover {
     background-color: $brand-workspace--Vlight;
     border-color: $workspace-action;
-    color:$workspace-action;
+    color: $workspace-action;
   }
   &:active {
     background-color: $brand-workspace;
@@ -279,12 +282,14 @@ button:focus { outline:0 !important; }
 
 @mixin button-red {
   color: $brand-red;
-  border-color: $brand-red ;
+  border-color: $brand-red;
   background-color: transparent;
-  &:hover, &:hover .spinner::after {
+  &:hover,
+  &:hover .spinner::after {
     background-color: $error-prompt--light;
   }
-  &:active, &:active .spinner::after {
+  &:active,
+  &:active .spinner::after {
     background-color: $error-prompt;
     color: white;
   }
@@ -294,7 +299,7 @@ button:focus { outline:0 !important; }
   color: white;
   background-color: $brand-learn;
   display: inline-flex;
-  border:1px solid $brand-learn;
+  border: 1px solid $brand-learn;
   &:hover {
     background-color: $brand-learn--light;
     border: 1px solid $brand-learn;
@@ -305,10 +310,9 @@ button:focus { outline:0 !important; }
   }
 }
 
-
 @mixin button-orange {
   color: $brand-orange;
-  border-color: $brand-orange ;
+  border-color: $brand-orange;
   background-color: transparent;
   &:hover {
     background-color: $brand-orange--light;
@@ -329,14 +333,16 @@ button:focus { outline:0 !important; }
     color: $brand-orange;
     background-color: white;
   }
-  &, .spinner::after {
+  &,
+  .spinner::after {
     background-color: $brand-orange;
   }
   &:hover .spinner::after {
-    background-color:$light-accent--strong;
+    background-color: $light-accent--strong;
     color: white;
   }
-  &:active, &:active .spinner::after {
+  &:active,
+  &:active .spinner::after {
     background-color: $light-accent--Vstrong;
     border: 1px solid $brand-orange;
   }
@@ -347,11 +353,11 @@ button:focus { outline:0 !important; }
 
 .button-dark-blue {
   color: $document-blue;
-  border-color: $document-blue ;
+  border-color: $document-blue;
   background-color: transparent;
   &:hover {
     background-color: $document-blue--light;
-    color: darken($document-blue,10%);
+    color: darken($document-blue, 10%);
   }
   &:active {
     background: $document-blue;
@@ -375,7 +381,7 @@ button:focus { outline:0 !important; }
   text-decoration: none;
   &:hover {
     background-color: $SuperLightGray;
-    text-decoration:none;
+    text-decoration: none;
     color: $brand-text--dark;
   }
 }
@@ -389,18 +395,18 @@ button:focus { outline:0 !important; }
   cursor: pointer;
   color: $workspace-action;
   font-weight: bold;
-	&:hover {
-		color: #2D9DAA;
-		text-decoration: none;
-	}
+  &:hover {
+    color: #2d9daa;
+    text-decoration: none;
+  }
 }
 .action-link {
-	@include action-link;
+  @include action-link;
 }
 
 @mixin export-link {
   // Appears at top-left of OutputPane and in reports.
-  // 
+  //
   // HTML:
   // <div className='export-link'>
   //   <i className='icon-download' />
@@ -414,9 +420,9 @@ button:focus { outline:0 !important; }
     margin-right: 1rem;
   }
 
-  &:not(:hover):not(:focus):not(:active) {	
-    // De-buttonize it when nobody's around, so it doesn't distract	
-    border-color: transparent;	
+  &:not(:hover):not(:focus):not(:active) {
+    // De-buttonize it when nobody's around, so it doesn't distract
+    border-color: transparent;
     background: transparent;
   }
 }

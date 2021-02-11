@@ -1,6 +1,6 @@
 .step-list {
   $in-between-steps-height: 2.2rem;
-  $in-between-steps-vpadding: .4rem; // included in $in-between-steps-height
+  $in-between-steps-vpadding: 0.4rem; // included in $in-between-steps-height
 
   flex: 0 0 auto; // auto-width: width of contents (including scrollbar)
   padding-top: 1.5rem;
@@ -16,7 +16,8 @@
     padding: $in-between-steps-vpadding 0;
   }
 
-  .caught-error { // when a module does not load
+  .caught-error {
+    // when a module does not load
     text-align: center;
     color: $error-prompt;
     @include content-1;
@@ -31,7 +32,7 @@
     top: 1.5rem;
     padding-bottom: 20rem; // so there's always a scrollbar, and clicking "ADD STEP" doesn't add one
 
-    &>button {
+    & > button {
       &:not(:hover):not(.active):not(.lesson-highlight) {
         // Color this one differently from all other buttons on the site
         background: transparent;
@@ -54,7 +55,8 @@
     margin-left: $module-margin-left;
     position: relative;
 
-    &:hover, &:focus-within {
+    &:hover,
+    &:focus-within {
       z-index: 2; // appear above the next module
     }
 
@@ -66,12 +68,12 @@
       cursor: pointer;
       border: 0;
       opacity: 0;
-      background: lighten($brand-orange,8%);
+      background: lighten($brand-orange, 8%);
       color: white;
       font-size: 1rem;
       border-radius: 1rem;
       transition-property: opacity;
-      transition-delay: .06s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here -- So that it does not flash when you hover past it. [PFC 2019-03-31]
+      transition-delay: 0.06s; // [adamhooper, 2019-03-28] why? Seems Workbench would feel snappier without transition here -- So that it does not flash when you hover past it. [PFC 2019-03-31]
 
       i.icon-add {
         position: relative;
@@ -82,7 +84,8 @@
         display: none; // no text
       }
 
-      &:hover, &.active {
+      &:hover,
+      &.active {
         opacity: 1;
       }
 
@@ -114,7 +117,7 @@
 
       i {
         font-size: 1rem;
-        vertical-align: -.1rem;
+        vertical-align: -0.1rem;
       }
     }
 
@@ -139,17 +142,19 @@
       }
 
       // No need to collapse the epxanded python module - this is solo module display
-      .context-collapse-button {display: none;}
+      .context-collapse-button {
+        display: none;
+      }
 
       .module-card-header {
         height: 5.5rem;
         padding-top: 1rem;
-
       }
 
       // Notes are the same width as step-list
 
-      textarea[name="notes"], .editable-notes-read-only {
+      textarea[name='notes'],
+      .editable-notes-read-only {
         width: 50rem;
       }
     }

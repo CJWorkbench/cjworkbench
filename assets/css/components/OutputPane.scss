@@ -24,7 +24,7 @@
     height: calc(100% - 2 * #{$iframe-padding});
   }
 
-  button[name="embed"] {
+  button[name='embed'] {
     // Appear alongside the vega-embed@6 context button
     position: absolute;
     top: $iframe-padding;
@@ -53,4 +53,3 @@
     }
   }
 }
-

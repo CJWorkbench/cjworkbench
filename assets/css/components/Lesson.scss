@@ -8,14 +8,19 @@ article.lesson {
   width: $lesson-sidebar-width;
   overflow-x: hidden; // be _strict_ about width: we assume later it's exactly what we set it to
 
-  .description, ol.steps {
+  .description,
+  ol.steps {
     @include content-3;
     font-weight: lighter;
   }
 
-  h1 { display: none; }
+  h1 {
+    display: none;
+  }
 
-  &>.description { display: none; }
+  & > .description {
+    display: none;
+  }
 
   .sections {
     flex-grow: 1;
@@ -39,7 +44,7 @@ article.lesson {
   .icon-insert {
     padding: 0;
     background-color: transparent;
-    padding: .5rem;
+    padding: 0.5rem;
     width: 3rem;
   }
 
@@ -97,7 +102,7 @@ article.lesson {
     }
 
     // Top part of section, outlining goals
-    &>.description {
+    & > .description {
       margin-top: 2rem;
       color: white;
 
@@ -106,19 +111,21 @@ article.lesson {
       }
     }
 
-    .copy-txt, .answer {
+    .copy-txt,
+    .answer {
       position: relative;
       width: 34rem;
       margin: -1rem 0 2rem 0;
-      padding: .5rem 1.5rem;
+      padding: 0.5rem 1.5rem;
       background-color: $dark-accent--medium;
       word-break: break-all;
-      border-radius: .3rem;
+      border-radius: 0.3rem;
       cursor: text;
       @include content-3;
     }
 
-    .copy-txt, .code-block {
+    .copy-txt,
+    .code-block {
       @include code-1;
     }
 
@@ -128,7 +135,7 @@ article.lesson {
     }
 
     figure {
-      margin: 1rem 0 2rem 0!important;
+      margin: 1rem 0 2rem 0 !important;
       max-width: 100%;
       margin: 0 auto; // in case image is too small
       &.half-width img {
@@ -143,7 +150,8 @@ article.lesson {
       }
     }
 
-    .instruction-detail, .question {
+    .instruction-detail,
+    .question {
       position: relative;
       font-weight: normal;
       margin-top: 1.5rem;
@@ -168,7 +176,7 @@ article.lesson {
       background-color: $dark-accent--medium;
       color: white;
       padding: 0.5rem;
-      border-radius: .3rem;
+      border-radius: 0.3rem;
     }
 
     kbd {
@@ -176,13 +184,14 @@ article.lesson {
       color: $brand-text--learn;
     }
 
-    h3.instructions { // Instructions title
+    h3.instructions {
+      // Instructions title
       color: $white;
       margin-top: 2rem;
       margin-bottom: 2rem;
     }
 
-    &>.instructions {
+    & > .instructions {
       color: white;
 
       ol.steps {
@@ -191,13 +200,16 @@ article.lesson {
         margin: 0;
         padding: 0;
 
-        &>li {
+        & > li {
           margin-bottom: 1rem;
           list-style-type: none;
           padding-left: 2rem;
 
           // off setting those elements to make them larger
-          figure img, figcaption, .instruction-detail, .image {
+          figure img,
+          figcaption,
+          .instruction-detail,
+          .image {
             left: -2rem;
           }
 
@@ -207,19 +219,19 @@ article.lesson {
           }
 
           &::before {
-            content: "\e946";
+            content: '\e946';
             color: $light-accent--Vstrong;
-            font-size: .8rem;
+            font-size: 0.8rem;
             font-family: Workbench;
             position: absolute;
             margin-left: -2rem;
           }
           &.active::before {
-            content: "\e946";
+            content: '\e946';
             color: $light-accent--Vstrong;
           }
           &.done::before {
-            content: "\e94a"; // icon-check
+            content: '\e94a'; // icon-check
             color: $brand-learn;
             font-size: 1.3rem;
           }
@@ -317,7 +329,7 @@ article.lesson {
         width: 9rem;
 
         &.lesson-highlight {
-          @include button-pink-fill
+          @include button-pink-fill;
         }
 
         &:disabled {
@@ -327,7 +339,7 @@ article.lesson {
 
       .current-and-total {
         @extend .content-1;
-        color:$white;
+        color: $white;
         white-space: nowrap;
       }
     }
@@ -343,23 +355,25 @@ article.lesson {
     width: 100%;
 
     figure {
-      img.full-width { // 3 sizes of content to play with
+      img.full-width {
+        // 3 sizes of content to play with
         width: 100%;
       }
       img.half-width {
         width: 50%;
       }
-      img.three-quarter-width{
+      img.three-quarter-width {
         width: 75%;
       }
-      .no-border { // Sometimes, border are not wanted
+      .no-border {
+        // Sometimes, border are not wanted
         background-color: transparent;
         padding-left: 0rem;
       }
     }
 
     iframe {
-      border: .5rem solid $brand-text--learn;
+      border: 0.5rem solid $brand-text--learn;
       margin-top: 1rem;
     }
 
@@ -388,7 +402,6 @@ article.lesson {
       a.backToLessons {
         display: none;
       }
-
     }
 
     footer {
@@ -400,7 +413,8 @@ article.lesson {
         justify-content: flex-start;
         padding-left: 2rem;
 
-        button, div {
+        button,
+        div {
           margin-right: 5rem;
         }
       }
@@ -423,7 +437,7 @@ article.lesson {
     // make sure .workflow-columns stays in the same place it would if the
     // lesson were visible. This assumes the sidebar is always exactly
     // $lesson-sidebar-width, regardless of its content.
-    &>:not(nav) {
+    & > :not(nav) {
       margin-left: $lesson-sidebar-width;
     }
 
@@ -434,7 +448,8 @@ article.lesson {
         padding: 0 2rem;
         margin: 0 auto;
 
-        .dropdown, .group--undo-redo {
+        .dropdown,
+        .group--undo-redo {
           display: none;
         }
       }

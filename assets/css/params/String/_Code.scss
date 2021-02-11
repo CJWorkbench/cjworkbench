@@ -5,7 +5,7 @@
 
     kbd {
       background-color: $dark-accent--soft;
-      color:$brand-text--dark;
+      color: $brand-text--dark;
     }
 
     a {
@@ -20,7 +20,7 @@
     height: 0;
     padding-bottom: 100%; // square
 
-    &>* {
+    & > * {
       position: absolute;
       top: 0;
       left: 0;
@@ -29,17 +29,18 @@
     }
 
     #code-editor {
-      border-radius: .3rem;
+      border-radius: 0.3rem;
       background-color: $Vlight-gray;
 
       .ace_content {
-        padding: .5rem;
+        padding: 0.5rem;
 
         .ace_layer {
           left: 0;
         }
 
-        .ace_layer.ace_cursor-layer { // cursor
+        .ace_layer.ace_cursor-layer {
+          // cursor
           .ace_cursor {
             color: $brand-workspace;
           }
@@ -57,26 +58,22 @@
 
       //Gutter is only visible in zen mode
       .ace_layer.ace_gutter-layer {
-        padding-top: .5rem;
+        padding-top: 0.5rem;
       }
 
       .ace_gutter-active-line {
-        margin-top: .5rem;
+        margin-top: 0.5rem;
       }
-
     }
 
     .ace-tomorrow .ace_gutter {
       background: $heading-bg !important;
-      color:#fff!important;
+      color: #fff !important;
     }
 
     .ace-tomorrow .ace_gutter-active-line {
-      background-color: #fff!important;
-      opacity: 1!important;
+      background-color: #fff !important;
+      opacity: 1 !important;
     }
-
   }
-
-
 }

@@ -26,79 +26,88 @@ body {
   Not sure why position absolute is needed, but it gets push down the screen (not flush with top) otherwise. */
 
 #root {
-	width: 100%;
+  width: 100%;
   background-color: $page-background;
 }
 
 ::-webkit-scrollbar-thumb {
-  width:0.2rem;
+  width: 0.2rem;
   opacity: 0.2;
 }
 
 // Getting rid of system blue
-textarea:focus, input:focus{
-    outline: none;
+textarea:focus,
+input:focus {
+  outline: none;
 }
 
 ::placeholder {
   color: $placeholder;
 }
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
   color: $placeholder;
   font-size: 1.4rem;
 }
-::-moz-placeholder { /* Firefox 19+ */
+::-moz-placeholder {
+  /* Firefox 19+ */
   color: $placeholder;
   font-size: 1.4rem;
 }
 
-:-ms-input-placeholder { /* IE 10+ */
+:-ms-input-placeholder {
+  /* IE 10+ */
   color: $placeholder;
   font-size: 1.4rem;
 }
 
-:-moz-placeholder { /* Firefox 18- */
+:-moz-placeholder {
+  /* Firefox 18- */
   color: $placeholder;
   font-size: 1.4rem;
 }
 
 /*Bigger size checkbox for non webkit browsers*/
-input[type=checkbox]
-{
+input[type='checkbox'] {
   -webkit-appearance: none;
-	background-color: transparent;
-	border: 1px solid $dark-accent--strong;
-	padding: 0.7rem;
-	border-radius: 3px;
-	display: inline-block;
-	position: relative;
+  background-color: transparent;
+  border: 1px solid $dark-accent--strong;
+  padding: 0.7rem;
+  border-radius: 3px;
+  display: inline-block;
+  position: relative;
   margin-right: 0.5rem;
   -ms-transform: scale(1.3); /* IE */
   -moz-transform: scale(1.3); /* FF */
   -o-transform: scale(1.3); /* Opera */
 }
 
-input[type=checkbox]:active, input[type=checkbox]:checked:active {
-	box-shadow: inset 0px 1px 0px $brand-orange;
+input[type='checkbox']:active,
+input[type='checkbox']:checked:active {
+  box-shadow: inset 0px 1px 0px $brand-orange;
 }
 
-input[type=checkbox]:checked {
-	background-color: $brand-orange;
-	border: 1px solid $brand-orange;
-	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
-	color: #99a1a7;
+input[type='checkbox']:checked {
+  background-color: $brand-orange;
+  border: 1px solid $brand-orange;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05),
+    inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05),
+    inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+  color: #99a1a7;
 }
 
-input[type=checkbox]:checked:after {
+input[type='checkbox']:checked:after {
   font-family: 'Workbench';
-	content: '\e94a';
-	font-size: 0.8rem;
-	position: absolute;
-	top: 1.5px;
-	left: 2.5px;
-	color: $white;
+  content: '\e94a';
+  font-size: 0.8rem;
+  position: absolute;
+  top: 1.5px;
+  left: 2.5px;
+  color: $white;
 }
 
-input[type=search] {
-  &::-webkit-search-cancel-button { display: none; } // #164095745
+input[type='search'] {
+  &::-webkit-search-cancel-button {
+    display: none;
+  } // #164095745
 }

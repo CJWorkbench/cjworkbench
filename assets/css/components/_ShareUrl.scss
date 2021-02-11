@@ -37,11 +37,11 @@
 
     &.used::after {
       transition: opacity linear 0s; // the "fade-_in_" transition
-      opacity: .8;
+      opacity: 0.8;
     }
   }
 
-  input[name="url"] {
+  input[name='url'] {
     display: block;
     width: 100%;
     font: inherit;
@@ -50,10 +50,11 @@
     text-overflow: ellipsis;
     border: 0;
     background-color: inherit;
-    padding: .5rem 0 .5rem 1rem;
+    padding: 0.5rem 0 0.5rem 1rem;
   }
 
-  button, a {
+  button,
+  a {
     display: block;
     flex: 0 0 auto;
     border: 0;
@@ -62,7 +63,7 @@
     font: inherit;
     line-height: inherit;
     margin-left: $share-url-border-width;
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     text-decoration: none;
 
     &:last-child {
@@ -70,7 +71,10 @@
     }
 
     &:focus:active {
-      @include box-shadow($btn-active-box-shadow, 0 0 0 $btn-focus-width rgba($secondary, .5));
+      @include box-shadow(
+        $btn-active-box-shadow,
+        0 0 0 $btn-focus-width rgba($secondary, 0.5)
+      );
       color: $medium-gray;
       background: white;
     }

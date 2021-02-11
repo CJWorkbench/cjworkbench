@@ -11,7 +11,7 @@ $main-padding: rem(1);
 $main-padding-desktop: rem(2);
 
 .page {
-  font: rem(.9) $font-family-sans-serif;
+  font: rem(0.9) $font-family-sans-serif;
 
   main {
     // bottom padding helps suggest to the user the page has ended (we have no <footer>)
@@ -48,4 +48,4 @@ $main-padding-desktop: rem(2);
   }
 }
 
-@import './MainNav/index'
+@import './MainNav/index';

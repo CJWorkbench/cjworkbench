@@ -9,10 +9,11 @@
     border: 2px solid $brand-orange;
     border-radius: 5px;
     box-shadow: $overlay-shadow;
-    padding: .5rem 0;
+    padding: 0.5rem 0;
     background: white;
 
-    .dropdown-item { // <a> or <button>
+    .dropdown-item {
+      // <a> or <button>
       display: block;
       appearance: none;
       -webkit-appearance: none;
@@ -27,10 +28,12 @@
 
       background-color: white;
 
-      &:disabled { // will never have :hover, :focus or :active
+      &:disabled {
+        // will never have :hover, :focus or :active
         color: $text-muted;
       }
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background-color: $dark-accent--soft;
       }
       &:active {
@@ -47,10 +50,10 @@
 
     i {
       display: inline-block;
-      margin-right: .75rem;
+      margin-right: 0.75rem;
       text-align: center;
       width: 1.8rem; // BUG in Workbench.woff: "icon-duplicate" has width>1em -- see https://www.pivotaltracker.com/story/show/164803718
-      margin-left: -.25rem; // to counteract BUG in Workbench.woff -- see https://www.pivotaltracker.com/story/show/164803718
+      margin-left: -0.25rem; // to counteract BUG in Workbench.woff -- see https://www.pivotaltracker.com/story/show/164803718
       font-size: 1.3rem;
     }
   }

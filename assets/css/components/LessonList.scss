@@ -9,7 +9,9 @@
   div.course {
     .introduction {
       background: white;
-      &:empty { display: none; }
+      &:empty {
+        display: none;
+      }
       padding: 1rem 3rem; // p,h3 vertical margin is 2rem
       border-radius: 10px;
 
@@ -48,7 +50,7 @@
           border-radius: 5px;
           border-bottom-width: 0; // our lesson bottoms are <img>; hide the bottom border for nicer box-shadow
           overflow: hidden;
-          transition: .05s transform ease-in-out;
+          transition: 0.05s transform ease-in-out;
 
           &:hover {
             box-shadow: $button-area--hover;

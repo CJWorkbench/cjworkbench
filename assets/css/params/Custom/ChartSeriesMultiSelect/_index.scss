@@ -3,7 +3,7 @@
   .buttons {
     display: flex;
     flex-direction: row-reverse;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     cursor: default;
 
     button {
@@ -12,7 +12,7 @@
       border: none;
       font-size: 1.6rem;
       padding-right: 0;
-      opacity: .7;
+      opacity: 0.7;
       cursor: pointer;
 
       &:hover {
@@ -47,4 +47,4 @@
   }
 }
 
-@import 'ColorPicker'
+@import 'ColorPicker';

@@ -5,7 +5,7 @@
   --row-height: #{$row-height}; // when skipping rows, we'll use calc() with data-skip-n-rows
   height: 12 * $row-height;
   max-height: 12 * $row-height;
-  font-size: rem(.875);
+  font-size: rem(0.875);
 
   col.row-number {
     // row number
@@ -27,7 +27,7 @@
 
       .column-name {
         @include content-1;
-        padding: rem(.625) rem(.625) rem(.3125) rem(.625);
+        padding: rem(0.625) rem(0.625) rem(0.3125) rem(0.625);
         white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
         text-overflow: ellipsis;
         overflow: hidden;
@@ -35,7 +35,7 @@
 
       .column-type {
         @include info-2;
-        padding: 0 rem(.625) rem(.625);
+        padding: 0 rem(0.625) rem(0.625);
       }
     }
   }
@@ -54,7 +54,8 @@
       }
     }
 
-    td, th {
+    td,
+    th {
       // [2020-11-10, adamhooper] attr(data-n-rows integer) can't be used in calc in latest Chrome/Firefox
       height: var(--row-height);
     }
@@ -64,40 +65,41 @@
       color: $labels;
       font-weight: 400;
       text-align: center;
-      font-size: rem(.4375); // smallest possible -- this is the fallback
+      font-size: rem(0.4375); // smallest possible -- this is the fallback
       border-right: 1px solid $table-border;
 
-      [data-n-chars="1"], [data-n-chars="2"] {
-        font-size: rem(.75);
+      [data-n-chars='1'],
+      [data-n-chars='2'] {
+        font-size: rem(0.75);
       }
 
-      [data-n-chars="3"] {
-        font-size: rem(.625);
+      [data-n-chars='3'] {
+        font-size: rem(0.625);
       }
 
-      [data-n-chars="4"] {
-        font-size: rem(.5625);
+      [data-n-chars='4'] {
+        font-size: rem(0.5625);
       }
 
-      [data-n-chars="5"] {
-        font-size: rem(.5);
+      [data-n-chars='5'] {
+        font-size: rem(0.5);
       }
     }
 
     td {
       color: $brand-text--darker;
       @include table-content;
-      padding: 0 rem(.625);
+      padding: 0 rem(0.625);
 
       &.type-number {
         text-align: right; // even nulls, which aren't .cell-number
       }
 
       &.type-text {
-        padding: 0 rem(.125) 0 rem(.625); // override regular padding to squeeze in a few pixels
+        padding: 0 rem(0.125) 0 rem(0.625); // override regular padding to squeeze in a few pixels
       }
 
-      &>* {
+      & > * {
         max-height: var(--row-height);
         display: block;
         overflow: hidden;
@@ -106,16 +108,17 @@
       }
 
       .cell-number {
-        .number-prefix, .number-suffix {
+        .number-prefix,
+        .number-suffix {
           @include font-sans-light;
         }
 
         .number-suffix {
-          padding-left: rem(.125);
+          padding-left: rem(0.125);
         }
 
         .number-prefix {
-          padding-right: rem(.125);
+          padding-right: rem(0.125);
         }
       }
 

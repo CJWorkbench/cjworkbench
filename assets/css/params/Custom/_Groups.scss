@@ -1,8 +1,8 @@
 .module-card-params .groups {
-  padding-bottom: .5rem;
+  padding-bottom: 0.5rem;
 
   .group-dates {
-    margin-top:$param-group-margin;
+    margin-top: $param-group-margin;
     text-align: right;
     font-size: 1.3rem;
     line-height: 1.4rem;
@@ -15,8 +15,8 @@
       position: absolute;
       margin-bottom: 0;
 
-
-      input::after { // to diplay checkbox correctly bug? // FIXME
+      input::after {
+        // to diplay checkbox correctly bug? // FIXME
         position: absolute;
         top: 1px;
       }

@@ -29,7 +29,7 @@
       // for the click-to-type stuff to work. (_inside_ it is a .react-select__input.)
       //
       // There's also .react-select__placeholder.
-      &>* {
+      & > * {
         display: inline-flex;
         max-width: 100%;
         white-space: nowrap;
@@ -70,7 +70,7 @@
       }
 
       .react-select__placeholder {
-        padding:3px 8px; // react-select default from .react-select__multi-value__label
+        padding: 3px 8px; // react-select default from .react-select__multi-value__label
       }
 
       .react-select__input {
@@ -102,8 +102,8 @@
       // Carret to open menu
       flex: 0 0 auto;
       cursor: pointer;
-      opacity: .6;
-      padding: 0 .5rem 0 0;
+      opacity: 0.6;
+      padding: 0 0.5rem 0 0;
 
       svg {
         color: $brand-text--medium;
@@ -115,7 +115,8 @@
     }
   }
 
-  .react-select__control.react-select__control--is-focused { // extra specificity above .react-select__control, to trump .react-select__control:hover
+  .react-select__control.react-select__control--is-focused {
+    // extra specificity above .react-select__control, to trump .react-select__control:hover
     box-shadow: none;
     border-color: $data-action--border;
   }
@@ -148,7 +149,7 @@
   width: 100%;
   z-index: $zindex-popover;
   border-radius: 0 0 5px 5px;
-  margin-top: -.2rem; // overlap the border of the .react-select__control
+  margin-top: -0.2rem; // overlap the border of the .react-select__control
   background-color: white;
   border: 2px solid $data-action--border;
   box-shadow: $menu-shadow;
@@ -170,11 +171,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
   }
   .react-select__option--is-focused {
     background-color: $dark-accent--soft;
-    color:$brand-text--darker;
+    color: $brand-text--darker;
   }
   // notice when no selection found
   .react-select__menu-notice {
@@ -186,7 +186,7 @@
 
   .multicolumn-select-all-none {
     border-bottom: 1px solid $Vlight-gray;
-    padding: .8rem 1.2rem;
+    padding: 0.8rem 1.2rem;
 
     button {
       display: inline-block;

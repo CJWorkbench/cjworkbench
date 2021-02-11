@@ -2,22 +2,22 @@
 
 .spinner-container {
   position: absolute;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  background-color:rgba(250,250,250,0.1);
+  background-color: rgba(250, 250, 250, 0.1);
 }
 
 /* don't dim contents underneath */
 .spinner-container-transparent {
   position: absolute;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -27,53 +27,49 @@
 }
 
 .spinner-l1 {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid transparent;
-    border-top-color: #00CBE1;
-    border-radius: 50%;
-    -webkit-animation: spin 1s linear infinite;
-    animation: spin 1s linear infinite;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid transparent;
+  border-top-color: #00cbe1;
+  border-radius: 50%;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 .spinner-l2 {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid transparent;
-    border-top-color: $brand-orange;
-    border-radius: 50%;
-
-
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid transparent;
+  border-top-color: $brand-orange;
+  border-radius: 50%;
 }
 
 .spinner-l3 {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid transparent;
-    border-top-color: #E24F4A;
-    border-radius: 50%;
-
-
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid transparent;
+  border-top-color: #e24f4a;
+  border-radius: 50%;
 }
 
 @-webkit-keyframes spin {
-    0%   {
-        -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
-        -ms-transform: rotate(0deg);  /* IE 9 */
-        transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
-    }
-    100% {
-        -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
-        -ms-transform: rotate(360deg);  /* IE 9 */
-        transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
-    }
+  0% {
+    -webkit-transform: rotate(0deg); /* Chrome, Opera 15+, Safari 3.1+ */
+    -ms-transform: rotate(0deg); /* IE 9 */
+    transform: rotate(0deg); /* Firefox 16+, IE 10+, Opera */
+  }
+  100% {
+    -webkit-transform: rotate(360deg); /* Chrome, Opera 15+, Safari 3.1+ */
+    -ms-transform: rotate(360deg); /* IE 9 */
+    transform: rotate(360deg); /* Firefox 16+, IE 10+, Opera */
+  }
 }

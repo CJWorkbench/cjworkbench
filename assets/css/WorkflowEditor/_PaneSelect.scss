@@ -1,7 +1,7 @@
 nav.pane-select {
   // values Copy/pasted from _Tabs.scss....
   $tabs-border: $document-blue;
-  $report-button-padding: .8rem 1.5rem .6rem;
+  $report-button-padding: 0.8rem 1.5rem 0.6rem;
   $overlap-width: 3px;
 
   display: flex;
@@ -34,7 +34,7 @@ nav.pane-select {
       color: $pane-select-tab-fg;
 
       svg {
-        margin-right: .5rem;
+        margin-right: 0.5rem;
         font-size: 1.6rem;
       }
 

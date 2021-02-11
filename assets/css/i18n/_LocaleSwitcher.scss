@@ -18,12 +18,14 @@
       padding: 1rem 0;
       color: $brand-text--darker;
 
-      &:disabled, &.submitting {
+      &:disabled,
+      &.submitting {
         color: $brand-workspace;
         font-weight: bold;
       }
 
-      &:not(:disabled):hover, &.submitting {
+      &:not(:disabled):hover,
+      &.submitting {
         text-decoration: underline;
       }
     }

@@ -7,8 +7,9 @@
     @include autosize-with-textarea;
   }
 
-  .invisible-size-setter, textarea {
-    font-family: "Roboto Mono", monospace;
+  .invisible-size-setter,
+  textarea {
+    font-family: 'Roboto Mono', monospace;
     color: $brand-text--dark;
     padding: 1em;
     display: block;
@@ -23,8 +24,7 @@
     justify-content: flex-end;
 
     button {
-      margin: .5em 0 0 .5em;
+      margin: 0.5em 0 0 0.5em;
     }
   }
 }
-

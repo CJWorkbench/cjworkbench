@@ -1,4 +1,4 @@
-$module-parameter-padding: .5rem 1rem;
+$module-parameter-padding: 0.5rem 1rem;
 
 @mixin module-parameter {
   @include content-1;
@@ -37,7 +37,8 @@ $module-parameter-padding: .5rem 1rem;
   position: relative;
   word-break: break-all;
 
-  .invisible-size-setter, textarea {
+  .invisible-size-setter,
+  textarea {
     white-space: pre-wrap;
   }
 
@@ -65,7 +66,7 @@ $module-parameter-padding: .5rem 1rem;
   width: $module-width;
   margin: 0 $module-margin-right 0 $module-margin-left;
 
-  &>button {
+  & > button {
     @include action-button;
     @include button-blue;
 
@@ -81,11 +82,11 @@ $module-parameter-padding: .5rem 1rem;
 
     i {
       font-size: 1.5rem;
-      margin-right: .7rem;
+      margin-right: 0.7rem;
     }
 
     span {
-      margin-top: .1rem;
+      margin-top: 0.1rem;
     }
   }
 }

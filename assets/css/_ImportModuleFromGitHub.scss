@@ -1,9 +1,10 @@
 #import-from-github-form {
-  input[type=url] {
+  input[type='url'] {
     @include module-parameter;
   }
 
-  .import-github-error, .import-github-success {
+  .import-github-error,
+  .import-github-success {
     @include font-sans-light;
     font-size: 1.3rem;
     line-height: 1.9rem;

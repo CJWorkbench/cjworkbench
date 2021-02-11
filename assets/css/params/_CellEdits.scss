@@ -13,11 +13,11 @@
 
     .cell-edits--row {
       background-color: $Vlight-gray;
-      line-height:2rem;
+      line-height: 2rem;
       height: 3.5rem;
-      width:none;
+      width: none;
       display: flex;
-      border-bottom: 1px solid darken($Vlight-gray,5%); // FIXME by creating a class for all module param borders
+      border-bottom: 1px solid darken($Vlight-gray, 5%); // FIXME by creating a class for all module param borders
 
       .edited-row {
         @extend .info-1;
@@ -27,22 +27,23 @@
         justify-content: flex-start;
         padding: 0 0 0 1rem;
         overflow-x: hidden;
-
       }
 
       .edited-text {
         display: flex;
         align-items: center;
-        padding:0.7rem;
-        line-height:2rem;
+        padding: 0.7rem;
+        line-height: 2rem;
         overflow-x: hidden;
         white-space: nowrap;
       }
-      &:first-child { // first and last rows in any col has border radius
+      &:first-child {
+        // first and last rows in any col has border radius
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
       }
-      &:last-child { // first and last rows in any col has border radius
+      &:last-child {
+        // first and last rows in any col has border radius
         border-bottom-left-radius: 3px;
         border-bottom-right-radius: 3px;
         border-bottom-color: transparent;

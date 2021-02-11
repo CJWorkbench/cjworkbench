@@ -13,7 +13,7 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("../images/caret-down.png");
+  background-image: url('../images/caret-down.png');
   background-repeat: no-repeat;
   background-size: 1.3rem;
   background-position: 97% 51%;
@@ -22,7 +22,7 @@
     border-color: darken($Vlight-gray, 7%);
   }
 
-  &:focus{
+  &:focus {
     box-shadow: none;
     border-color: $data-action--border;
   }

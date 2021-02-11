@@ -6,7 +6,7 @@
     margin-top: $param-margin;
 
     // Merge button changes color when at least 2 checkboxes have been selected
-    button[name=merge] {
+    button[name='merge'] {
       @include action-button;
       @include button-orange--fill;
       &:disabled {
@@ -17,7 +17,7 @@
     }
 
     //launches the clustering modal
-    button[name=cluster] {
+    button[name='cluster'] {
       @include action-button;
       @include button-orange;
       display: flex;
@@ -27,19 +27,21 @@
 
   .group-list-container {
     // Copied in ValueSelect.scss:.group-list-selector
-    margin-top: .3rem;
+    margin-top: 0.3rem;
     border: 1px solid $brand-orange;
-    border-radius: .5rem;
-    padding: .8rem .6rem .3rem;
+    border-radius: 0.5rem;
+    padding: 0.8rem 0.6rem 0.3rem;
   }
 
-  .refine-groups { // list of "groups" (each group is a set of renames)
+  .refine-groups {
+    // list of "groups" (each group is a set of renames)
     max-height: 30rem;
     margin-top: $param-group-margin;
     @include font-sans-regular;
     font-size: 1.3rem; // "No values match your search" / "Loading" / "Column does not have any values"
 
-    button { // "clear group" or "remove rename from group" button -- appear as inline text
+    button {
+      // "clear group" or "remove rename from group" button -- appear as inline text
       border: 0;
       margin: 0;
       padding: 0;
@@ -53,10 +55,11 @@
       }
     }
 
-    .refine-group { // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
+    .refine-group {
+      // group-name row: include checkbox; group-name input, expand checkbox, count, reset button
       overflow: hidden;
       // padding-right so span.count isn't flush with the scrollbar when there's a scrollbar
-      padding: 0 .5rem 0 0;
+      padding: 0 0.5rem 0 0;
     }
 
     div.summary {
@@ -69,7 +72,9 @@
 
       label.expand {
         // "expand" checkbox -- renders as an icon, not the checkbox
-        input { display: none; }
+        input {
+          display: none;
+        }
         cursor: pointer;
         margin: 0;
         padding: 0;
@@ -77,7 +82,7 @@
 
         i.expand-caret {
           display: block;
-          padding: .4rem;
+          padding: 0.4rem;
 
           &::before {
             content: '';
@@ -85,17 +90,17 @@
             border: 1px solid transparent;
             border-top-color: currentcolor;
             border-right-color: currentcolor;
-            width: .8rem;
-            height: .8rem;
+            width: 0.8rem;
+            height: 0.8rem;
           }
         }
 
         input:not(:checked) + i.expand-caret {
-          transform: translate(-.4rem, 0) rotate(45deg);
+          transform: translate(-0.4rem, 0) rotate(45deg);
         }
 
         input:checked + i.expand-caret {
-          transform: translate(-.2rem, -.2rem) rotate(135deg);
+          transform: translate(-0.2rem, -0.2rem) rotate(135deg);
         }
       }
 
@@ -104,7 +109,8 @@
         position: relative;
         height: 2.7rem; // highest item in the flexbox -- sets height for alignment
 
-        input.rename { // Click to rename value
+        input.rename {
+          // Click to rename value
           display: block;
           position: absolute;
           left: 0;
@@ -113,7 +119,7 @@
           height: 100%;
           border: 0;
           margin: 0;
-          padding: .4rem 0;
+          padding: 0.4rem 0;
           font-size: 1.3rem;
           background: transparent;
           color: $brand-text--dark;
@@ -126,7 +132,7 @@
       }
 
       .count-and-reset {
-        margin-left: .8rem;
+        margin-left: 0.8rem;
         @include font-sans-light;
         font-size: 1.3rem;
         line-height: 1;
@@ -137,13 +143,16 @@
           display: none;
           font: inherit;
           color: $brand-text--dark;
-          &:hover {color: $brand-text--darker; }
+          &:hover {
+            color: $brand-text--darker;
+          }
         }
       }
       &:hover .count-and-reset {
         button {
           display: block;
-          & + span { // only if there's a "reset" button, hide span.count
+          & + span {
+            // only if there's a "reset" button, hide span.count
             display: none;
           }
         }
@@ -156,19 +165,20 @@
       color: $brand-text--darker;
     }
 
-    ul.values { // details: list of values, each with a count and remove button
+    ul.values {
+      // details: list of values, each with a count and remove button
       display: block;
       list-style: none;
       margin: 0;
-      padding: 0 0 .5rem;
+      padding: 0 0 0.5rem;
 
-      &>li {
+      & > li {
         display: flex;
         width: 100%;
         overflow: hidden;
         @include font-sans-light;
         font-size: 1.3rem;
-        padding: .5rem 0 0 2.5rem;
+        padding: 0.5rem 0 0 2.5rem;
 
         .value {
           flex: 1 1 auto;
@@ -178,7 +188,7 @@
         }
 
         .count-and-remove {
-          margin-left: .8rem;
+          margin-left: 0.8rem;
           position: relative;
 
           // Display the count normally. If the user hovers, display a remove
@@ -188,7 +198,7 @@
             display: none;
             position: absolute;
             right: 0;
-            top: .1rem;
+            top: 0.1rem;
             font-size: 1.2rem;
             line-height: 1.4;
             color: $brand-text--dark;
@@ -236,15 +246,15 @@
       }
 
       .method-form {
-        padding:0 2rem;
+        padding: 0 2rem;
 
         .method-description {
           @include content-1;
           flex: 1 1 auto;
-          color:$brand-text--medium;
+          color: $brand-text--medium;
         }
 
-        input[id=refine-clusterer-max-distance] {
+        input[id='refine-clusterer-max-distance'] {
           background-color: $Vlight-gray;
           font-size: 1.4rem;
           height: 3.5rem;
@@ -255,7 +265,7 @@
           }
           &:focus {
             outline: none;
-            border:2px solid $brand-orange;
+            border: 2px solid $brand-orange;
           }
         }
       }
@@ -280,7 +290,7 @@
       @include title-2;
       font-size: 1.5rem;
       margin-bottom: 2rem;
-      color:$brand-orange;
+      color: $brand-orange;
       margin-left: 16.5rem;
     }
 
@@ -298,10 +308,11 @@
 
     td {
       vertical-align: top;
-      padding: .8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
+      padding: 0.8rem 0; // default all padding to the same size. We'll shrink the tr.value padding later.
     }
 
-    .value, .new-value {
+    .value,
+    .new-value {
       // Give these two _all_ the space
       width: 9999rem;
     }
@@ -321,7 +332,8 @@
     position: relative;
     // TODO @extend .single-line-text-field;
 
-    span, textarea {
+    span,
+    textarea {
       // Exact same font for invisible text and visible textarea
       font: inherit;
       word-break: break-all;
@@ -335,7 +347,7 @@
 
     textarea {
       position: absolute;
-      top: .5rem;
+      top: 0.5rem;
       left: 1rem;
       width: 93%;
       height: 100%; // grow to the same size as the div
@@ -347,10 +359,10 @@
   .modal-footer {
     .actions {
       display: flex;
-      button[name=submit]{
+      button[name='submit'] {
         @include button-orange--fill;
         &:disabled {
-          opacity: .6;
+          opacity: 0.6;
           @include button-orange;
           &:hover {
             background-color: transparent;

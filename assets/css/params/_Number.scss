@@ -1,4 +1,5 @@
-.param-integer, .param-float {
+.param-integer,
+.param-float {
   height: auto;
   padding: 0;
 
@@ -10,7 +11,8 @@
 
     // Hide "spin" arrows
     -moz-appearance: textfield;
-    &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }

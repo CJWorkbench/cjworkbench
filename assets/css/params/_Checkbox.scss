@@ -1,4 +1,5 @@
-.param-checkbox { // just a row, in which we can align right the checkbox
+.param-checkbox {
+  // just a row, in which we can align right the checkbox
 
   .checkbox-container {
     display: flex;
@@ -26,6 +27,7 @@
   }
 }
 
-.param.param-statictext + .param-checkbox { // checkbox following Static text get its own margin-top.
+.param.param-statictext + .param-checkbox {
+  // checkbox following Static text get its own margin-top.
   margin-top: 1.2rem;
 }

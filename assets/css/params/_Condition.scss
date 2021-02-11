@@ -14,7 +14,7 @@
   .group {
     border: 1px solid $brand-orange--medium;
     border-radius: 5px;
-    padding: .5rem;
+    padding: 0.5rem;
 
     & + .group {
       margin-top: 1rem;
@@ -25,8 +25,8 @@
 
       button.delete {
         position: absolute;
-        right: -.75rem;
-        top: -.25rem;
+        right: -0.75rem;
+        top: -0.25rem;
         border: 0;
         color: $brand-orange--darker;
       }
@@ -40,10 +40,11 @@
   .andor-operator {
     // both &>.andor-operator and .group>.andor-operator
     text-align: center;
-    margin-top: .6rem;
-    margin-bottom: .5rem;
+    margin-top: 0.6rem;
+    margin-bottom: 0.5rem;
 
-    button, span {
+    button,
+    span {
       background: none;
       box-shadow: none;
       margin: 0;
@@ -65,21 +66,22 @@
       }
 
       &:last-child {
-        margin-left: .5rem;
+        margin-left: 0.5rem;
         border-left: 1px solid $light-gray;
-        padding-left: .5rem;
+        padding-left: 0.5rem;
       }
     }
   }
 
-  .add-group, .add-comparison {
+  .add-group,
+  .add-comparison {
     button {
       background: none;
       border: 0;
       padding: 0;
       margin: 0;
       cursor: pointer;
-      color: $text-muted;;
+      color: $text-muted;
       font-weight: bold;
 
       &:hover {
@@ -88,25 +90,26 @@
     }
 
     button + button {
-      margin-left: .5rem;
+      margin-left: 0.5rem;
       border-left: 1px solid $light-gray;
-      padding-left: .4rem;
+      padding-left: 0.4rem;
     }
   }
 
   .add-group {
     text-align: center;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
   }
 
   .add-comparison {
-    margin-top: .5rem;
+    margin-top: 0.5rem;
   }
 
   .comparison {
     position: relative; // to position button.delete
 
-    button.delete { // delete condition
+    button.delete {
+      // delete condition
       margin-top: $param-group-margin;
       position: absolute;
       right: 0;
@@ -129,18 +132,20 @@
         margin-bottom: 0;
         font-size: 1.3rem;
         input {
-          vertical-align: -.3rem;
+          vertical-align: -0.3rem;
         }
       }
     }
   }
 
-  .react-select:not(:last-child):not(:last-of-type) .react-select__control { // #1, column always there - round border should only remain if it's the last child
+  .react-select:not(:last-child):not(:last-of-type) .react-select__control {
+    // #1, column always there - round border should only remain if it's the last child
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
 
-  select { // #2, select condition, aways there, 3px border-radius when no #3
+  select {
+    // #2, select condition, aways there, 3px border-radius when no #3
     background-color: $table-background;
     border: 2px solid $Vlight-gray;
     border-top-color: transparent;
@@ -162,7 +167,8 @@
     }
   }
 
-  .value .autosize textarea { // value displayed if required by condition in #2 -- always in last position
+  .value .autosize textarea {
+    // value displayed if required by condition in #2 -- always in last position
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     border-top-color: transparent;
@@ -177,17 +183,18 @@
   .value {
     .autosize {
       @include autosize-with-textarea;
-      &>* {
+      & > * {
         @include module-parameter;
         height: auto; // unset %module-parameter height: our height varies
       }
     }
   }
 
-  button.delete { // for all button.delette
+  button.delete {
+    // for all button.delette
     font-size: 1.1rem;
     background-color: transparent;
-    opacity: .5;
+    opacity: 0.5;
     cursor: pointer;
     &:hover {
       opacity: 1;
@@ -201,7 +208,6 @@
 
 //read-only edits
 .workflow-root.read-only {
-
   span.selected-operator {
     border-left: 0;
     margin-left: 0;
@@ -211,7 +217,7 @@
   label.case-sensitive {
     display: none;
   }
-  .comparison button.delete{
+  .comparison button.delete {
     display: none;
   }
 }

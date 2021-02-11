@@ -13,7 +13,7 @@
 
   input {
     // left padding for "search" icon; right padding for "close" button
-    padding: .5rem 3.4rem .5rem;
+    padding: 0.5rem 3.4rem 0.5rem;
     display: block;
     width: 100%;
     color: $brand-text--dark;
@@ -30,7 +30,7 @@
       // TODO white+opacity is not white. Do not use opacity: figure out the correct color and write it opaquely.
       color: $placeholder;
       font-weight: bold;
-      opacity: .9;
+      opacity: 0.9;
     }
   }
 
@@ -38,7 +38,7 @@
     // "search" icon
     display: inline-block;
     position: absolute;
-    top: .7rem;
+    top: 0.7rem;
     left: 1.4rem;
     font-size: 1.6rem;
     font-family: 'Workbench';
@@ -52,7 +52,7 @@
     background: transparent;
     position: absolute;
     right: 1.4rem;
-    top: .9rem;
+    top: 0.9rem;
     font-size: 1.4rem;
     margin: 0;
     padding: 0;
@@ -66,7 +66,7 @@
   }
 
   &:hover button.reset {
-    opacity: .5;
+    opacity: 0.5;
   }
 }
 
@@ -103,28 +103,28 @@
     @include content-1;
     box-shadow: $overlay-shadow;
     border: 1px solid $item-border;
-    border-radius: .5rem;
-
+    border-radius: 0.5rem;
   }
 
   // Make scrollbar always visible on Mac, as user tests show they don't know there's more menu otherwise
   ::-webkit-scrollbar {
-      -webkit-appearance: none;
-      width: 7px;
+    -webkit-appearance: none;
+    width: 7px;
   }
   ::-webkit-scrollbar-thumb {
-      border-radius: 5px;
-      background-color: $light-gray;
+    border-radius: 5px;
+    background-color: $light-gray;
   }
 
-  ul, li {
+  ul,
+  li {
     // reset styles. (we'll re-change this later.)
     display: block;
     margin: 0;
     padding: 0;
   }
 
-  &[data-popper-placement=top] {
+  &[data-popper-placement='top'] {
     // Backwards case: there isn't enough room below the module to render a list of
     // search results. So we'll display the search results _above_ the module ...
     // and therefore we show the <input> at the bottom, where the button is.
@@ -132,28 +132,28 @@
     // Search <input> appears at the _bottom_ of the search popup
     .module-search-field {
       order: 2;
-      border-bottom-left-radius: .5rem;
-      border-bottom-right-radius: .5rem;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
     }
 
     .module-search-result-groups {
       order: 1;
-      border-top-left-radius: .5rem;
-      border-top-right-radius: .5rem;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
       border-bottom: 0px;
     }
   }
 
-  &[data-popper-placement=bottom] {
+  &[data-popper-placement='bottom'] {
     // Search <input> appears at the _top_ of the search popup
     .module-search-field {
-      border-top-left-radius: .5rem;
-      border-top-right-radius: .5rem;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
     }
 
     .module-search-result-groups {
-      border-bottom-left-radius: .5rem;
-      border-bottom-right-radius: .5rem;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
       border-top: 0px;
     }
   }
@@ -168,8 +168,7 @@
 
     input {
       border-color: $item-border;
-      background-color: $dark-accent--soft;;
-
+      background-color: $dark-accent--soft;
     }
 
     &::before {
@@ -186,7 +185,7 @@
     }
   }
 
-  .lesson-highlight input[type=search] {
+  .lesson-highlight input[type='search'] {
     border-color: $brand-learn;
   }
 
@@ -277,7 +276,7 @@
   h3 {
     @include content-1;
     padding: 0;
-    margin: 0 0 .5rem;
+    margin: 0 0 0.5rem;
     border: 0;
     background: none;
     color: $brand-text--dark;
@@ -292,13 +291,14 @@
   .arrow {
     // https://popper.js.org/docs/v2/tutorial/#arrow
     // ... but we'll show up on top, not behind, to look fancy
-    &, &::before {
+    &,
+    &::before {
       position: absolute;
       width: 1.2rem;
       height: 1.2rem;
     }
 
-    left: -.6rem;
+    left: -0.6rem;
 
     &::before {
       content: '';

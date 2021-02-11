@@ -5,7 +5,7 @@ fieldset.facet-search {
 
   input {
     height: 3.5rem;
-    padding: .6rem 3.4rem .4rem; // left padding for "search" icon; right padding for "close" button
+    padding: 0.6rem 3.4rem 0.4rem; // left padding for "search" icon; right padding for "close" button
     display: block;
     width: 100%;
     color: $brand-text--dark;
@@ -21,17 +21,20 @@ fieldset.facet-search {
     }
 
     //search placeholder when empty
-    &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    &::-webkit-input-placeholder {
+      /* Chrome/Opera/Safari */
       color: $brand-text--dark;
-      opacity: .9;
+      opacity: 0.9;
     }
-    :-ms-input-placeholder { /* IE 10+ */
+    :-ms-input-placeholder {
+      /* IE 10+ */
       color: $brand-text--dark;
-      opacity: .9;
+      opacity: 0.9;
     }
-    :-moz-placeholder { /* Firefox 18- */
+    :-moz-placeholder {
+      /* Firefox 18- */
       color: $brand-text--dark;
-      opacity: .9;
+      opacity: 0.9;
     }
   }
 
@@ -39,11 +42,11 @@ fieldset.facet-search {
     // "search" icon
     display: inline-block;
     position: absolute;
-    top: .8rem;
+    top: 0.8rem;
     left: 1.3rem;
     font-size: 1.4rem;
     font-family: 'Workbench';
-    content: "\e920"; // .icon-search
+    content: '\e920'; // .icon-search
     color: $brand-text--dark;
   }
 

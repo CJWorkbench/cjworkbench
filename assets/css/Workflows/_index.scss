@@ -54,7 +54,7 @@ main.workflows {
       }
 
       svg {
-        margin-left: rem(.5);
+        margin-left: rem(0.5);
       }
     }
 
@@ -81,7 +81,8 @@ main.workflows {
       }
     }
 
-    td, th {
+    td,
+    th {
       // Anything but the .title may be the last column. Set its right padding to 0.
       padding: rem(1) 0 rem(1) rem(1);
       &:first-child {
@@ -95,7 +96,9 @@ main.workflows {
         padding: 0 0 0 rem(1);
       }
 
-      &.owner, &.updated, &.privacy {
+      &.owner,
+      &.updated,
+      &.privacy {
         // These columns are "optional". We only show them:
         // * when they make sense (e.g., "owner" doesn't make sense on "owned" workflows)
         // * when they fit (e.g., on mobile they may not fit)
@@ -111,7 +114,8 @@ main.workflows {
 
   .workflow-list.owned {
     table {
-      td, th {
+      td,
+      th {
         &.updated {
           display: table-cell;
         }
@@ -127,13 +131,15 @@ main.workflows {
 
   .workflow-list.shared-with-me {
     table {
-      td, th {
+      td,
+      th {
         &.owner {
           display: table-cell;
         }
 
         @include media-when-we-pin-main-nav-sidebar {
-          &.updated, &.privacy {
+          &.updated,
+          &.privacy {
             display: table-cell;
           }
         }
@@ -143,7 +149,8 @@ main.workflows {
 
   .workflow-list.example {
     table {
-      td, th {
+      td,
+      th {
         &.owner {
           display: table-cell;
         }
@@ -157,4 +164,3 @@ main.workflows {
     }
   }
 }
-

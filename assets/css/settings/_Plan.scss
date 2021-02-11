@@ -28,7 +28,8 @@
     height: 1px; // so <div> in <td> can have height:100%: https://stackoverflow.com/a/22220780
   }
 
-  th, td {
+  th,
+  td {
     height: 100%; // so divs inside can have height:100%;
     padding: 0;
     white-space: nowrap; // scroll, don't wrap, on mobile (least-ugly of the two ugly options)
@@ -38,7 +39,7 @@
     th {
       width: 33%;
 
-      &>div {
+      & > div {
         @include plan-table-well();
         flex-direction: column;
         align-items: flex-start;
@@ -60,7 +61,8 @@
         margin-top: rem(1);
       }
 
-      button, a {
+      button,
+      a {
         @include action-button;
         @include button-pink-fill;
       }
@@ -76,12 +78,14 @@
   }
 
   tbody {
-    h3, p {
+    h3,
+    p {
       margin: 0;
       line-height: $data-line-height;
     }
 
-    th, td {
+    th,
+    td {
       border-bottom: 1px solid $table-border;
     }
 
@@ -90,21 +94,22 @@
       // size between <h3> (here) and <td> (next cell). Depends on the font
       // (Roboto Sans), the two sizes (defined elsewhere), and the rendering
       // engine (which we can't control).
-      $baseline_tweak: -.15rem; // 2021-02-05 looks good on Chrome 88 on Fedora Linux.
+      $baseline_tweak: -0.15rem; // 2021-02-05 looks good on Chrome 88 on Fedora Linux.
 
       // We move the baseline using padding. We need to also adjust the
       // _bottom_ padding so that a <th><h3></h3></th> remains vertically
       // centered.
       $well-padding-with-baseline-tweak: $well-padding + $baseline_tweak;
-      padding: $well-padding-with-baseline-tweak $well-padding $well-padding-with-baseline-tweak 0; // line up with <td>
+      padding: $well-padding-with-baseline-tweak $well-padding
+        $well-padding-with-baseline-tweak 0; // line up with <td>
     }
 
-    td>div {
+    td > div {
       @include plan-table-well();
       line-height: $data-line-height;
     }
 
-    tr:last-child td>div {
+    tr:last-child td > div {
       // border-bottom-width: 0px means the rounded border isn't perfect.
       // But it's close enough. (The <td> has its own border-bottom, and the
       // effect we're going for is for one border to be "on top of" the other.)

@@ -9,7 +9,7 @@ nav.main-nav {
     display: none;
     flex: 1 1 auto;
     flex-direction: column;
-    padding-bottom: rem(.75);
+    padding-bottom: rem(0.75);
 
     &.open {
       display: flex;
@@ -27,13 +27,13 @@ nav.main-nav {
 
   div.user-paths {
     margin: rem(1) 0 0;
-    padding-top: rem(.75);
+    padding-top: rem(0.75);
     border-top: 1px solid $item-border;
   }
 
   h3.display-name {
     margin: 0;
-    padding: rem(1) $main-nav-padding rem(.75);
+    padding: rem(1) $main-nav-padding rem(0.75);
     font: inherit;
     font-weight: bold;
   }
@@ -46,7 +46,7 @@ nav.main-nav {
     a {
       display: block;
       color: inherit;
-      padding: rem(.75) $main-nav-padding;
+      padding: rem(0.75) $main-nav-padding;
       text-decoration: none;
 
       &[href]:hover {
@@ -54,7 +54,7 @@ nav.main-nav {
       }
     }
 
-    li.parent.open>a {
+    li.parent.open > a {
       font-weight: bold;
     }
 
@@ -81,7 +81,6 @@ nav.main-nav {
     width: $main-nav-sidebar-width;
     height: 100vh;
   }
-
 }
 
-@import './MainNavHeader'
+@import './MainNavHeader';

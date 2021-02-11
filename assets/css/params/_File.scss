@@ -86,14 +86,12 @@
     &:hover {
       border-color: transparent; // No input possible
     }
-
   }
 
   .status {
     display: flex; // so last action can appear on right
     justify-content: space-between; // .upload-progress at left; action at right
-    padding-top: .5rem;
-
+    padding-top: 0.5rem;
 
     button {
       // .uploaded-file-select and [name=cancel-upload]
@@ -106,7 +104,7 @@
       // Render as text, not as a button
     }
 
-    button[name=cancel-upload] {
+    button[name='cancel-upload'] {
       // in .uploading-file
       color: $brand-orange;
       &:hover {
@@ -119,7 +117,7 @@
       @include _texty-button;
       color: $brand-orange;
       &:hover {
-        color: $brand-orange--darker
+        color: $brand-orange--darker;
       }
     }
   }
@@ -149,7 +147,8 @@
     }
   }
 
-  .upload-progress, hr {
+  .upload-progress,
+  hr {
     display: block;
     width: 100%;
     height: 2px;
@@ -169,7 +168,7 @@
   padding: 2rem 0;
 
   .modal-dialog .modal-content .modal-body {
-    padding:0;
+    padding: 0;
     background-color: $WF-background;
     .files {
       list-style: none;
@@ -177,7 +176,7 @@
       padding: 0;
       display: block;
 
-      &>li {
+      & > li {
         margin: 0;
         padding: 0;
       }
@@ -216,7 +215,7 @@
             // Show " - " between elements
             content: '-';
             color: $text-muted;
-            padding: 0 .5rem;
+            padding: 0 0.5rem;
           }
         }
       }
@@ -227,11 +226,11 @@
     button {
       @include action-button;
 
-      &[name=select] {
+      &[name='select'] {
         @include button-orange--fill;
       }
 
-      &[name=close] {
+      &[name='close'] {
         @include button-blue;
       }
     }
@@ -246,7 +245,8 @@
     font-weight: bold;
   }
 
-  h5, p {
+  h5,
+  p {
     margin: 1rem 0;
   }
 
@@ -259,7 +259,7 @@
     display: grid;
     grid-template-columns: auto auto;
     column-gap: 1rem;
-    row-gap: .5rem;
+    row-gap: 0.5rem;
     justify-content: start;
     align-items: center;
   }

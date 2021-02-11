@@ -9,7 +9,7 @@ article.report {
     font-size: 1.4rem;
     line-height: 1.8rem;
 
-    &>div {
+    & > div {
       flex: 1 1 auto;
       max-width: calc(50% - 1rem); // 2rem gutter when not wrapped
     }
@@ -20,8 +20,9 @@ article.report {
       margin: 0;
     }
 
-    .workflow-public, .share-url {
-      margin-top: .5rem;
+    .workflow-public,
+    .share-url {
+      margin-top: 0.5rem;
     }
 
     p {

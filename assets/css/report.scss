@@ -30,17 +30,17 @@ header {
 
   h1 {
     @include font-sans-bold;
-    margin-bottom: .2rem;
+    margin-bottom: 0.2rem;
   }
 
   .metadata {
-    font-size: .8rem;
+    font-size: 0.8rem;
     color: $brand-text--medium;
     margin: 0;
 
     span::after {
       content: '-';
-      padding: 0 .15rem 0 .3rem;
+      padding: 0 0.15rem 0 0.3rem;
       color: $brand-text--medium;
     }
 

@@ -4,7 +4,7 @@
     align-items: center;
 
     // each radio group
-    label{
+    label {
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -20,9 +20,10 @@
         width: 1.8rem;
         background-color: $light-gray;
         border-radius: 1.5rem;
-        margin-right: .5rem;
+        margin-right: 0.5rem;
 
-        &:after {  // the circle checkmark
+        &:after {
+          // the circle checkmark
           content: '';
           height: 1.2rem;
           width: 1.2rem;
@@ -32,7 +33,7 @@
       }
     }
 
-    input[type=radio] {
+    input[type='radio'] {
       display: none;
       position: absolute;
 
@@ -43,8 +44,8 @@
   }
 }
 
-.workflow-root:not(.read-only) .params>.param-radio:last-child {
-  // A top-level radio param that shows up right before an "execute" button 
+.workflow-root:not(.read-only) .params > .param-radio:last-child {
+  // A top-level radio param that shows up right before an "execute" button
   // should appear _beside_ the button, not above it.
   margin-bottom: -3rem;
   margin-top: 1.5rem;
