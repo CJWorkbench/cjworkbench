@@ -20,15 +20,23 @@ function BillingPaths (props) {
   return (
     <>
       <LinkLi
-        href={user && user.stripeCustomerId ? '/settings/billing' : '/settings/plan'}
+        href={
+          user && user.stripeCustomerId ? '/settings/billing' : '/settings/plan'
+        }
         isOpen={/^\/settings\/(?:billing|plan)/.test(currentPath)}
-        title={t({ id: 'js.Page.MainNav.plan-and-billing.title', message: 'Plan & Billing' })}
+        title={t({
+          id: 'js.Page.MainNav.plan-and-billing.title',
+          message: 'Plan & Billing'
+        })}
       >
         <ul>
           <LinkLi
             href='/settings/billing'
             isOpen={currentPath === '/settings/billing'}
-            title={t({ id: 'js.Page.MainNav.billing.title', message: 'Billing' })}
+            title={t({
+              id: 'js.Page.MainNav.billing.title',
+              message: 'Billing'
+            })}
           />
           <LinkLi
             href='/settings/plan'
@@ -73,11 +81,9 @@ export default function UserPaths (props) {
 
   return (
     <div className='user-paths'>
-      {user ? (
-        <LoggedInUserPaths currentPath={currentPath} user={user} />
-      ) : (
-        <AnonymousUserPaths currentPath={currentPath} />
-      )}
+      {user
+        ? <LoggedInUserPaths currentPath={currentPath} user={user} />
+        : <AnonymousUserPaths currentPath={currentPath} />}
     </div>
   )
 }

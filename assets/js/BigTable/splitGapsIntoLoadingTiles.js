@@ -31,7 +31,11 @@ function needsChange (tileRows, tileRowBegin, tileRowEnd) {
  *
  * Assumes the first row is already split.
  */
-export default function splitGapsIntoLoadingTiles (tileRows, tileRowBegin, tileRowEnd) {
+export default function splitGapsIntoLoadingTiles (
+  tileRows,
+  tileRowBegin,
+  tileRowEnd
+) {
   if (!needsChange(tileRows, tileRowBegin, tileRowEnd)) {
     // Return input -- so React.useMemo() can help avoid renders
     return tileRows
@@ -58,7 +62,7 @@ export default function splitGapsIntoLoadingTiles (tileRows, tileRowBegin, tileR
           if (tileRow < tileRowBegin) {
             // there should be a gap at the start, after splitting (though it's smaller)
             newTileRows.push(tileRowBegin - tileRow)
-            item -= (tileRowBegin - tileRow)
+            item -= tileRowBegin - tileRow
             tileRow = tileRowBegin
           }
           // For each critical row, split the number into rows

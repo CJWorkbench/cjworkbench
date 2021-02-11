@@ -7,11 +7,7 @@ export default function UncontrolledDropdown (props) {
   const { disabled, children } = props
 
   return (
-    <Dropdown
-      isOpen={isOpen}
-      toggle={toggleOpen}
-      disabled={disabled}
-    >
+    <Dropdown isOpen={isOpen} toggle={toggleOpen} disabled={disabled}>
       {children}
     </Dropdown>
   )

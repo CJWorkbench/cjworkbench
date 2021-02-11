@@ -25,14 +25,9 @@ function formatCount (count) {
     n = count
     suffix = ''
   }
-  const approx = (n === Math.round(n)) ? '' : '~'
+  const approx = n === Math.round(n) ? '' : '~'
 
   return `${approx}${n.toFixed(0)}${suffix}`
-}
-
-function isObjectEmpty (obj) {
-  for (const v in obj) return false
-  return true
 }
 
 function immutableToggleInSet (set, value, isSet) {
@@ -66,13 +61,21 @@ export class GroupForRender {
     this.wantExpand = wantExpand
   }
 
-  get name () { return this.group ? this.group.name : undefined }
+  get name () {
+    return this.group ? this.group.name : undefined
+  }
 
-  get values () { return this.group ? this.group.values : undefined }
+  get values () {
+    return this.group ? this.group.values : undefined
+  }
 
-  get count () { return this.group ? this.group.count : undefined }
+  get count () {
+    return this.group ? this.group.count : undefined
+  }
 
-  get isEdited () { return this.group ? this.group.isEdited : undefined }
+  get isEdited () {
+    return this.group ? this.group.isEdited : undefined
+  }
 
   /**
    * Should this Group appear expanded?
@@ -90,7 +93,8 @@ export class GroupForRender {
  */
 class RefineModalPrompt extends PureComponent {
   static propTypes = {
-    groups: PropTypes.arrayOf(PropTypes.instanceOf(util.Group).isRequired).isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(util.Group).isRequired)
+      .isRequired,
     massRename: PropTypes.func.isRequired // func({ oldGroup: newGroup, ... }) => undefined
   }
 
@@ -115,7 +119,7 @@ class RefineModalPrompt extends PureComponent {
     this.setState({ isModalOpen: false })
   }
 
-  handleSubmit = (renames) => {
+  handleSubmit = renames => {
     this.handleCloseModal()
     this.props.massRename(renames)
   }
@@ -129,21 +133,32 @@ class RefineModalPrompt extends PureComponent {
 
     return (
       <div className='refine-modal-prompt'>
-        <button type='button' name='cluster' onClick={this.handleClickOpenModal}><Trans id='js.params.Refine.RefineModalPrompt.findClusters.button'>Find clusters...</Trans></button>
+        <button
+          type='button'
+          name='cluster'
+          onClick={this.handleClickOpenModal}
+        >
+          <Trans id='js.params.Refine.RefineModalPrompt.findClusters.button'>
+            Find clusters...
+          </Trans>
+        </button>
         <span className='instructions' />
-        {!isModalOpen ? null : (
-          <RefineModal
-            bucket={this.bucket}
-            onClose={this.handleCloseModal}
-            onSubmit={this.handleSubmit}
-          />
-        )}
+        {isModalOpen
+          ? (
+            <RefineModal
+              bucket={this.bucket}
+              onClose={this.handleCloseModal}
+              onSubmit={this.handleSubmit}
+            />
+            )
+          : null}
       </div>
     )
   }
 }
 
-class RefineGroup extends Component { // uses react-window's shouldComponentUpdate, not PureComponent
+class RefineGroup extends Component {
+  // uses react-window's shouldComponentUpdate, not PureComponent
   static propTypes = {
     style: PropTypes.object.isRequired, // CSS styles
     valueCounts: PropTypes.object, // null or { value1: n, value2: n, ... }
@@ -165,7 +180,7 @@ class RefineGroup extends Component { // uses react-window's shouldComponentUpda
     name: this.props.group.name
   }
 
-  handleChangeName = (ev) => {
+  handleChangeName = ev => {
     this.setState({ name: ev.target.value })
   }
 
@@ -213,23 +228,22 @@ class RefineGroup extends Component { // uses react-window's shouldComponentUpda
     }
   }
 
-  handleChangeIsSelected = (ev) => {
+  handleChangeIsSelected = ev => {
     this.props.setIsGroupSelected(this.props.group.name, ev.target.checked)
   }
 
-  handleChangeIsExpanded = (ev) => {
+  handleChangeIsExpanded = ev => {
     this.props.setIsGroupExpanded(this.props.group.name, ev.target.checked)
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     switch (ev.keyCode) {
       case 27: // Escape
         // We need to do two things: blur the <input> and reset self.state.
         // Beware: if we naively call this.textInput.current.blur(), we'll
         // submit the edit in our blur handler.
-        this.setState(
-          { name: this.props.group.name },
-          () => this.textInput.current ? this.textInput.current.blur() : null
+        this.setState({ name: this.props.group.name }, () =>
+          this.textInput.current ? this.textInput.current.blur() : null
         )
         return
       case 13: // Enter
@@ -241,11 +255,11 @@ class RefineGroup extends Component { // uses react-window's shouldComponentUpda
     }
   }
 
-  handleClickRemove = (ev) => {
+  handleClickRemove = ev => {
     this.props.resetValue(ev.target.getAttribute('data-value'))
   }
 
-  handleClickReset = (ev) => {
+  handleClickReset = ev => {
     this.props.resetGroup(this.props.group.name)
   }
 
@@ -255,56 +269,73 @@ class RefineGroup extends Component { // uses react-window's shouldComponentUpda
     // If user is _editing_, that doesn't mean the group is _edited_.
     const className = `refine-group ${group.isEdited ? 'edited' : 'original'}`
 
-    const maybeExpandCheckbox = group.isEdited ? (
-      <label className='expand'>
-        <input
-          type='checkbox'
-          name='expand'
-          title={group.isExpanded
-            ? t({ id: 'js.params.Refine.RefineGroup.expandStatus.expanded', message: 'Hide original values' })
-            : t({ id: 'js.params.Refine.RefineGroup.expandStatus.notExpanded', message: 'Show original values' })}
-          checked={group.isExpanded}
-          onChange={this.handleChangeIsExpanded}
-        />
-        <i className='expand-caret' />
-      </label>
-    ) : null
+    const maybeExpandCheckbox = group.isEdited
+      ? (
+        <label className='expand'>
+          <input
+            type='checkbox'
+            name='expand'
+            title={
+              group.isExpanded
+                ? t({
+                    id: 'js.params.Refine.RefineGroup.expandStatus.expanded',
+                    message: 'Hide original values'
+                  })
+                : t({
+                  id: 'js.params.Refine.RefineGroup.expandStatus.notExpanded',
+                  message: 'Show original values'
+                })
+            }
+            checked={group.isExpanded}
+            onChange={this.handleChangeIsExpanded}
+          />
+          <i className='expand-caret' />
+        </label>
+        )
+      : null
 
-    const maybeResetButton = group.isEdited ? (
-      <button
-        name='reset'
-        type='button'
-        title={t({ id: 'js.params.Refine.RefineGroup.cancelEdits', message: 'Cancel edits of these values' })}
-        onClick={this.handleClickReset}
-      >
-        <i className='icon-undo' />
-      </button>
-    ) : null
+    const maybeResetButton = group.isEdited
+      ? (
+        <button
+          name='reset'
+          type='button'
+          title={t({
+            id: 'js.params.Refine.RefineGroup.cancelEdits',
+            message: 'Cancel edits of these values'
+          })}
+          onClick={this.handleClickReset}
+        >
+          <i className='icon-undo' />
+        </button>
+        )
+      : null
 
-    const maybeValues = group.isExpanded ? (
-      <ul className='values'>
-        {group.values.sort(util.ValueCollator.compare).map(value => (
-          <li key={value}>
-            <span className='value'>{value}</span>
-            <span className='count-and-remove'>
-              {group.name === value ? null : (
-                <button
-                  type='button'
-                  name={`remove[${group.name}]`}
-                  data-value={value}
-                  onClick={this.handleClickRemove}
-                >
-                  ✕
-                </button>
-              )}
-              <span className='count'>
-                {valueCounts[value]}
+    const maybeValues = group.isExpanded
+      ? (
+        <ul className='values'>
+          {group.values.sort(util.ValueCollator.compare).map(value => (
+            <li key={value}>
+              <span className='value'>{value}</span>
+              <span className='count-and-remove'>
+                {group.name === value
+                  ? null
+                  : (
+                    <button
+                      type='button'
+                      name={`remove[${group.name}]`}
+                      data-value={value}
+                      onClick={this.handleClickRemove}
+                    >
+                      ✕
+                    </button>
+                    )}
+                <span className='count'>{valueCounts[value]}</span>
               </span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    ) : null
+            </li>
+          ))}
+        </ul>
+        )
+      : null
 
     return (
       <div className={className} style={style}>
@@ -313,7 +344,10 @@ class RefineGroup extends Component { // uses react-window's shouldComponentUpda
             className='select'
             name={`select[${group.name}]`}
             type='checkbox'
-            title={t({ id: 'js.params.Refine.RefineGroup.selectTheseRows', message: 'Select these rows' })}
+            title={t({
+              id: 'js.params.Refine.RefineGroup.selectTheseRows',
+              message: 'Select these rows'
+            })}
             checked={group.isSelected}
             onChange={this.handleChangeIsSelected}
           />
@@ -332,7 +366,9 @@ class RefineGroup extends Component { // uses react-window's shouldComponentUpda
           </div>
           <span className='count-and-reset'>
             {maybeResetButton}
-            <span className='count' title={NumberFormatter.format(group.count)}>{formatCount(group.count)}</span>
+            <span className='count' title={NumberFormatter.format(group.count)}>
+              {formatCount(group.count)}
+            </span>
           </span>
         </div>
         {maybeValues}
@@ -355,7 +391,8 @@ class GroupList extends PureComponent {
   static propTypes = {
     valueCounts: PropTypes.objectOf(PropTypes.number.isRequired), // value => count, or null if loading or no column selected -- passed to <ListRow>
     loading: PropTypes.bool.isRequired,
-    groups: PropTypes.arrayOf(PropTypes.instanceOf(GroupForRender).isRequired).isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(GroupForRender).isRequired)
+      .isRequired,
     changeGroupName: PropTypes.func.isRequired, // func(groupName, newGroupName) => undefined
     setIsGroupSelected: PropTypes.func.isRequired, // func(groupName, isSelected) => undefined
     setIsGroupExpanded: PropTypes.func.isRequired, // func(groupName, isExpanded) => undefined
@@ -381,7 +418,7 @@ class GroupList extends PureComponent {
 
   _itemKey = (index, data) => data.groups[index].name
 
-  _itemSize = (index) => {
+  _itemSize = index => {
     const { groups } = this.props
     const group = groups[index]
     return this.groupHeight(group)
@@ -400,7 +437,13 @@ class GroupList extends PureComponent {
 
   _renderRow = ({ index, style, data }) => {
     const { valueCounts, groups } = data
-    const { changeGroupName, setIsGroupSelected, setIsGroupExpanded, resetGroup, resetValue } = this.props
+    const {
+      changeGroupName,
+      setIsGroupSelected,
+      setIsGroupExpanded,
+      resetGroup,
+      resetValue
+    } = this.props
 
     return (
       <RefineGroup
@@ -434,7 +477,12 @@ class GroupList extends PureComponent {
 
   componentDidUpdate (_, __, snapshot) {
     const focusIndex = this.props.groups.findIndex(g => g.isFocused)
-    if (focusIndex !== -1 && snapshot && focusIndex !== snapshot.focusIndex && this.listRef.current) {
+    if (
+      focusIndex !== -1 &&
+      snapshot &&
+      focusIndex !== snapshot.focusIndex &&
+      this.listRef.current
+    ) {
       // From the user's point of view, the user clicking "Merge facets" is an
       // event that should scroll to the new group. We don't want to scroll
       // after _any_ render(): only after the first render() that happens after
@@ -454,11 +502,23 @@ class GroupList extends PureComponent {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return <Trans id='js.params.Refine.GroupList.loadingValues'>Loading values…</Trans>
-    } else if (isObjectEmpty(valueCounts)) {
-      return <Trans id='js.params.Refine.GroupList.noValuesInColumn'>This column does not have any values</Trans>
+      return (
+        <Trans id='js.params.Refine.GroupList.loadingValues'>
+          Loading values…
+        </Trans>
+      )
+    } else if (Object.keys(valueCounts).length === 0) {
+      return (
+        <Trans id='js.params.Refine.GroupList.noValuesInColumn'>
+          This column does not have any values
+        </Trans>
+      )
     } else if (groups.length === 0) {
-      return <Trans id='js.params.Refine.GroupList.noValuesMatchSearch'>No values match your search</Trans>
+      return (
+        <Trans id='js.params.Refine.GroupList.noValuesMatchSearch'>
+          No values match your search
+        </Trans>
+      )
     } else {
       if (this.listRef.current) {
         // If we're re-rendering this component, then it's likely a list item
@@ -493,7 +553,9 @@ class GroupList extends PureComponent {
     const { outerRef } = this.props
 
     return (
-      <div className='refine-groups' ref={outerRef}>{this.innerRender()}</div>
+      <div className='refine-groups' ref={outerRef}>
+        {this.innerRender()}
+      </div>
     )
   }
 }
@@ -539,11 +601,16 @@ class DynamicallySizedGroupList extends PureComponent {
     }
 
     const closedGroup = sizer.querySelector('.refine-group:nth-child(1)')
-    const expandedGroup1Value = sizer.querySelector('.refine-group:nth-child(2)')
-    const expandedGroup2Values = sizer.querySelector('.refine-group:nth-child(3)')
+    const expandedGroup1Value = sizer.querySelector(
+      '.refine-group:nth-child(2)'
+    )
+    const expandedGroup2Values = sizer.querySelector(
+      '.refine-group:nth-child(3)'
+    )
 
     const groupHeight = closedGroup.scrollHeight
-    const valueHeight = expandedGroup2Values.scrollHeight - expandedGroup1Value.scrollHeight
+    const valueHeight =
+      expandedGroup2Values.scrollHeight - expandedGroup1Value.scrollHeight
     const expandedGroupHeight = expandedGroup1Value.scrollHeight - valueHeight
 
     this.setState({
@@ -590,9 +657,24 @@ class DynamicallySizedGroupList extends PureComponent {
           valueCounts={{ a: 1, b1: 1, c: 1, c2: 1 }}
           loading={false}
           groups={[
-            new GroupForRender(new util.Group('a', ['a'], 1), false, false, false),
-            new GroupForRender(new util.Group('b', ['b1'], 1), false, false, true),
-            new GroupForRender(new util.Group('c', ['c', 'c2'], 1), false, false, true)
+            new GroupForRender(
+              new util.Group('a', ['a'], 1),
+              false,
+              false,
+              false
+            ),
+            new GroupForRender(
+              new util.Group('b', ['b1'], 1),
+              false,
+              false,
+              true
+            ),
+            new GroupForRender(
+              new util.Group('c', ['c', 'c2'], 1),
+              false,
+              false,
+              true
+            )
           ]}
           changeGroupName={() => {}}
           setIsGroupSelected={() => {}}
@@ -661,7 +743,10 @@ export class Refine extends PureComponent {
    * * `values`: strings describing the desired input; empty if no edits
    */
   get groups () {
-    const { valueCounts, value: { renames } } = this.props
+    const {
+      valueCounts,
+      value: { renames }
+    } = this.props
     const { sort } = this.state
     return this._buildGroups(valueCounts, renames, sort)
   }
@@ -671,7 +756,7 @@ export class Refine extends PureComponent {
     return util.buildGroupsForValueCounts(valueCounts, renames, sort)
   })
 
-  handleChangeSearch = (searchInput) => {
+  handleChangeSearch = searchInput => {
     this.setState({ searchInput, focusGroupName: null })
   }
 
@@ -682,15 +767,29 @@ export class Refine extends PureComponent {
   setIsGroupExpanded = (groupName, isExpanded) => {
     const { expandedGroupNames } = this.state
     if (isExpanded === expandedGroupNames.has(groupName)) return
-    const newExpandedGroupNames = immutableToggleInSet(expandedGroupNames, groupName, isExpanded)
-    this.setState({ expandedGroupNames: newExpandedGroupNames, focusGroupName: null })
+    const newExpandedGroupNames = immutableToggleInSet(
+      expandedGroupNames,
+      groupName,
+      isExpanded
+    )
+    this.setState({
+      expandedGroupNames: newExpandedGroupNames,
+      focusGroupName: null
+    })
   }
 
   setIsGroupSelected = (groupName, isSelected) => {
     const { selectedGroupNames } = this.state
     if (isSelected === selectedGroupNames.has(groupName)) return
-    const newSelectedGroupNames = immutableToggleInSet(selectedGroupNames, groupName, isSelected)
-    this.setState({ selectedGroupNames: newSelectedGroupNames, focusGroupName: null })
+    const newSelectedGroupNames = immutableToggleInSet(
+      selectedGroupNames,
+      groupName,
+      isSelected
+    )
+    this.setState({
+      selectedGroupNames: newSelectedGroupNames,
+      focusGroupName: null
+    })
   }
 
   handleClickNone = () => {
@@ -743,7 +842,9 @@ export class Refine extends PureComponent {
 
   handleClickMergeSelected = () => {
     const { selectedGroupNames } = this.state
-    const selectedGroups = this.groups.filter(g => selectedGroupNames.has(g.name))
+    const selectedGroups = this.groups.filter(g =>
+      selectedGroupNames.has(g.name)
+    )
 
     // Determine the name value to default to for new group.
     //
@@ -754,7 +855,9 @@ export class Refine extends PureComponent {
     // 3. if tied, Group with earliest alphabetical name
     function comparePriority (a, b) {
       if (b.count !== a.count) return b.count - a.count
-      if (b.values.length !== a.values.length) return b.values.length - a.values.length
+      if (b.values.length !== a.values.length) {
+        return b.values.length - a.values.length
+      }
       return a.name.localeCompare(b.name)
     }
     selectedGroups.sort(comparePriority)
@@ -765,10 +868,13 @@ export class Refine extends PureComponent {
       groupMap[fromGroup.name] = toGroup.name
     }
     this.massRename(groupMap)
-    this.setState({ selectedGroupNames: new Set(), focusGroupName: toGroup.name })
+    this.setState({
+      selectedGroupNames: new Set(),
+      focusGroupName: toGroup.name
+    })
   }
 
-  handleChangeSort = (sort) => {
+  handleChangeSort = sort => {
     this.setState({ sort })
   }
 
@@ -797,35 +903,49 @@ export class Refine extends PureComponent {
 
   render () {
     const { valueCounts, loading } = this.props
-    const { searchInput, selectedGroupNames, expandedGroupNames, focusGroupName, sort } = this.state
-    const groups = this.matchingGroups
-      .map(g => new GroupForRender(
-        g,
-        selectedGroupNames.has(g.name),
-        focusGroupName === g.name,
-        expandedGroupNames.has(g.name)
-      ))
+    const {
+      searchInput,
+      selectedGroupNames,
+      expandedGroupNames,
+      focusGroupName,
+      sort
+    } = this.state
+    const groups = this.matchingGroups.map(
+      g =>
+        new GroupForRender(
+          g,
+          selectedGroupNames.has(g.name),
+          focusGroupName === g.name,
+          expandedGroupNames.has(g.name)
+        )
+    )
 
     const canSearch = this.groups.length > 1
 
-    const maybeMergeButton = groups.length > 0 ? (
-      <button type='button' name='merge' onClick={this.handleClickMergeSelected} disabled={selectedGroupNames.size < 2}><Trans id='js.params.Refine.mergeFacets.button'>Merge facets</Trans></button>
-    ) : null
+    const maybeMergeButton = groups.length > 0
+      ? (
+        <button
+          type='button'
+          name='merge'
+          onClick={this.handleClickMergeSelected}
+          disabled={selectedGroupNames.size < 2}
+        >
+          <Trans id='js.params.Refine.mergeFacets.button'>Merge facets</Trans>
+        </button>
+        )
+      : null
 
     return (
       <>
-        {canSearch ? (
-          <FacetSearch
-            value={searchInput}
-            onChange={this.handleChangeSearch}
-            onReset={this.handleReset}
-          />
-        ) : null}
+        {canSearch
+          ? <FacetSearch
+              value={searchInput}
+              onChange={this.handleChangeSearch}
+              onReset={this.handleReset}
+            />
+          : null}
         <div className='group-list-and-chrome'>
-          <ValueSortSelect
-            value={sort}
-            onChange={this.handleChangeSort}
-          />
+          <ValueSortSelect value={sort} onChange={this.handleChangeSort} />
           <div className='group-list-container'>
             <AllNoneButtons
               isReadOnly={false}
@@ -846,7 +966,10 @@ export class Refine extends PureComponent {
         </div>
         <div className='refine-actions'>
           {maybeMergeButton}
-          <RefineModalPrompt groups={this.groups} massRename={this.massRename} />
+          <RefineModalPrompt
+            groups={this.groups}
+            massRename={this.massRename}
+          />
         </div>
       </>
     )
@@ -856,6 +979,10 @@ export class Refine extends PureComponent {
 export default withFetchedData(
   Refine,
   'valueCounts',
-  ({ api, inputStepId, selectedColumn }) => selectedColumn === null ? Promise.resolve(null) : api.valueCounts(inputStepId, selectedColumn),
-  ({ inputDeltaId, selectedColumn }) => selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
+  ({ api, inputStepId, selectedColumn }) =>
+    selectedColumn === null
+      ? Promise.resolve(null)
+      : api.valueCounts(inputStepId, selectedColumn),
+  ({ inputDeltaId, selectedColumn }) =>
+    selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
 )

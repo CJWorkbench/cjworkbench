@@ -59,6 +59,9 @@ describe('List', () => {
 
     const el = w.find('#list_1_x')
     el.simulate('change', { target: { name: el.prop('name'), value: 'baz' } })
-    expect(w.prop('onChange')).toHaveBeenCalledWith([{ x: 'foo' }, { x: 'baz' }])
+    expect(w.prop('onChange')).toHaveBeenCalledWith([
+      { x: 'foo' },
+      { x: 'baz' }
+    ])
   })
 })

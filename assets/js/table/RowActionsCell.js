@@ -13,8 +13,13 @@ export default class RowActionsCell extends PureComponent {
     dependentValues: PropTypes.object
   }
 
-  handleChange = (ev) => {
-    this.props.column.onCellChange(this.props.rowIdx, this.props.column.key, this.props.dependentValues, ev)
+  handleChange = ev => {
+    this.props.column.onCellChange(
+      this.props.rowIdx,
+      this.props.column.key,
+      this.props.dependentValues,
+      ev
+    )
   }
 
   render () {
@@ -24,7 +29,12 @@ export default class RowActionsCell extends PureComponent {
 
     return (
       <label className='is-row-selected'>
-        <input type='checkbox' name={checkboxName} checked={checked} onChange={this.handleChange} />
+        <input
+          type='checkbox'
+          name={checkboxName}
+          checked={checked}
+          onChange={this.handleChange}
+        />
         <span className={`row-number row-number-${text.length}`}>{text}</span>
       </label>
     )

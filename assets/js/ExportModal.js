@@ -33,22 +33,39 @@ export default class ExportModal extends PureComponent {
 
   render () {
     return (
-      <Modal isOpen={this.props.open} className='export' toggle={this.props.toggle}>
+      <Modal
+        isOpen={this.props.open}
+        className='export'
+        toggle={this.props.toggle}
+      >
         <ModalHeader>
-          <Trans id='js.ExportModal.header.title' comment='This should be all-caps for styling reasons'>
+          <Trans
+            id='js.ExportModal.header.title'
+            comment='This should be all-caps for styling reasons'
+          >
             EXPORT DATA
           </Trans>
         </ModalHeader>
         <ModalBody>
           <dl>
             <dt>
-              <Trans id='js.ExportModal.type.CSV' comment='"CSV" (all-caps) is a kind of file'>CSV</Trans>
+              <Trans
+                id='js.ExportModal.type.CSV'
+                comment='"CSV" (all-caps) is a kind of file'
+              >
+                CSV
+              </Trans>
             </dt>
             <dd>
               <ShareUrl url={this.csvUrlString} download />
             </dd>
             <dt>
-              <Trans id='js.ExportModal.type.JSON' comment='"JSON" (all-caps) is a kind of file'>JSON</Trans>
+              <Trans
+                id='js.ExportModal.type.JSON'
+                comment='"JSON" (all-caps) is a kind of file'
+              >
+                JSON
+              </Trans>
             </dt>
             <dd>
               <ShareUrl url={this.jsonUrlString} download />
@@ -56,8 +73,17 @@ export default class ExportModal extends PureComponent {
           </dl>
         </ModalBody>
         <ModalFooter>
-          <button type='button' onClick={this.handleClickClose} className='button-blue action-button test-done-button'>
-            <Trans id='js.ExportModal.footer.doneButton' comment='Acts as closing button'>Done</Trans>
+          <button
+            type='button'
+            onClick={this.handleClickClose}
+            className='button-blue action-button test-done-button'
+          >
+            <Trans
+              id='js.ExportModal.footer.doneButton'
+              comment='Acts as closing button'
+            >
+              Done
+            </Trans>
           </button>
         </ModalFooter>
       </Modal>

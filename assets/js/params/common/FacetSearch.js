@@ -10,21 +10,29 @@ import { t } from '@lingui/macro'
  * search input.
  */
 export default function FacetSearch ({ onChange, onReset, value }) {
-  const onKeyDown = useCallback(ev => {
-    switch (ev.key) {
-      case 'Escape':
-        return onReset()
-      case 'Enter':
-        ev.preventDefault() // prevent form submit
-    }
-  }, [onReset])
-  const onChangeCallback = useCallback(ev => onChange(ev.target.value), [onChange])
+  const onKeyDown = useCallback(
+    ev => {
+      switch (ev.key) {
+        case 'Escape':
+          return onReset()
+        case 'Enter':
+          ev.preventDefault() // prevent form submit
+      }
+    },
+    [onReset]
+  )
+  const onChangeCallback = useCallback(ev => onChange(ev.target.value), [
+    onChange
+  ])
 
   return (
     <fieldset className='facet-search' onReset={onReset}>
       <input
         type='search'
-        placeholder={t({ id: 'js.params.common.FacetSearch.searchFacets.placeholder', message: 'Search facets…' })}
+        placeholder={t({
+          id: 'js.params.common.FacetSearch.searchFacets.placeholder',
+          message: 'Search facets…'
+        })}
         autoComplete='off'
         value={value}
         onChange={onChangeCallback}
@@ -34,7 +42,10 @@ export default function FacetSearch ({ onChange, onReset, value }) {
         type='button'
         onClick={onReset}
         className='close'
-        title={t({ id: 'js.params.common.FacetSearch.clearSearch.hoverText', message: 'Clear Search' })}
+        title={t({
+          id: 'js.params.common.FacetSearch.clearSearch.hoverText',
+          message: 'Clear Search'
+        })}
       >
         <i className='icon-close' />
       </button>

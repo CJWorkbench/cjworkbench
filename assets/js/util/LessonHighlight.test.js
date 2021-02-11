@@ -2,11 +2,13 @@
 import PropTypes from 'prop-types'
 import { matchLessonHighlight, LessonHighlightsType } from './LessonHighlight'
 
-const isValid = (obj) => {
+const isValid = obj => {
   const globalConsole = global.console
   let ret = true
   global.console = {
-    error: (s) => { ret = false }
+    error: s => {
+      ret = false
+    }
   }
 
   const displayName = 'LessonHighlight' + Math.floor(99999999 * Math.random()) // random name => React never hides logs
@@ -38,10 +40,20 @@ describe('LessonHighlight', () => {
   })
 
   it('should allow StepContextButton', () => {
-    const valid = { type: 'StepContextButton', moduleIdName: 'Foo', button: 'notes' }
+    const valid = {
+      type: 'StepContextButton',
+      moduleIdName: 'Foo',
+      button: 'notes'
+    }
     expect(isValid([valid])).toBe(true)
-    expect(isValid([{ type: 'StepContextButton', moduleIdName: 'Foo', button: 'x' }])).toBe(false)
-    expect(isValid([{ type: 'StepContextButton', xoduleName: 'Foo', button: 'notes' }])).toBe(false)
+    expect(
+      isValid([{ type: 'StepContextButton', moduleIdName: 'Foo', button: 'x' }])
+    ).toBe(false)
+    expect(
+      isValid([
+        { type: 'StepContextButton', xoduleName: 'Foo', button: 'notes' }
+      ])
+    ).toBe(false)
   })
 
   it('should allow EditableNotes', () => {
@@ -50,20 +62,45 @@ describe('LessonHighlight', () => {
   })
 
   it('should match using deepEqual on array elements', () => {
-    const valid = [{ type: 'Module', id_name: 'Foo', index: 2 }, { type: 'EditableNotes' }]
-    expect(matchLessonHighlight(valid, { type: 'Module', id_name: 'Foo', index: 2 })).toBe(true)
-    expect(matchLessonHighlight(valid, { type: 'Module', id_name: 'Bar', index: 2 })).toBe(false)
+    const valid = [
+      { type: 'Module', id_name: 'Foo', index: 2 },
+      { type: 'EditableNotes' }
+    ]
+    expect(
+      matchLessonHighlight(valid, { type: 'Module', id_name: 'Foo', index: 2 })
+    ).toBe(true)
+    expect(
+      matchLessonHighlight(valid, { type: 'Module', id_name: 'Bar', index: 2 })
+    ).toBe(false)
     expect(matchLessonHighlight(valid, { type: 'EditableNotes' })).toBe(true)
     expect(matchLessonHighlight(valid, { type: 'XditableNotes' })).toBe(false)
   })
 
   it('should partial-match', () => {
-    const lessonHighlight = [{ type: 'Module', id_name: 'Foo' }, { type: 'EditableNotes' }]
-    expect(matchLessonHighlight(lessonHighlight, { type: 'Module', id_name: 'Foo', index: 2 })).toBe(true)
+    const lessonHighlight = [
+      { type: 'Module', id_name: 'Foo' },
+      { type: 'EditableNotes' }
+    ]
+    expect(
+      matchLessonHighlight(lessonHighlight, {
+        type: 'Module',
+        id_name: 'Foo',
+        index: 2
+      })
+    ).toBe(true)
   })
 
   it('should allow `null` as a "wildcard"', () => {
-    const lessonHighlight = [{ type: 'Module', id_name: 'Foo', index: 2 }, { type: 'EditableNotes' }]
-    expect(matchLessonHighlight(lessonHighlight, { type: 'Module', id_name: null, index: 2 })).toBe(true)
+    const lessonHighlight = [
+      { type: 'Module', id_name: 'Foo', index: 2 },
+      { type: 'EditableNotes' }
+    ]
+    expect(
+      matchLessonHighlight(lessonHighlight, {
+        type: 'Module',
+        id_name: null,
+        index: 2
+      })
+    ).toBe(true)
   })
 })

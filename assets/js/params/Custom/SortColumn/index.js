@@ -11,13 +11,17 @@ export default class SortColumns extends PureComponent {
     name: PropTypes.string.isRequired, // for <input name=...>
     fieldId: PropTypes.string.isRequired, // for <input id=...>
     onChange: PropTypes.func.isRequired, // func(index, value) => undefined
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })), // or null if unknown
-    value: PropTypes.arrayOf(PropTypes.shape({
-      colname: PropTypes.string.isRequired, // column string
-      is_ascending: PropTypes.bool.isRequired // sort direction
-    }).isRequired).isRequired
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ), // or null if unknown
+    value: PropTypes.arrayOf(
+      PropTypes.shape({
+        colname: PropTypes.string.isRequired, // column string
+        is_ascending: PropTypes.bool.isRequired // sort direction
+      }).isRequired
+    ).isRequired
   }
 
   handleChangeSortColumn = (index, sortColumn) => {
@@ -28,7 +32,7 @@ export default class SortColumns extends PureComponent {
     onChange(newValue)
   }
 
-  handleDeleteSortColumn = (index) => {
+  handleDeleteSortColumn = index => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -80,17 +84,19 @@ export default class SortColumns extends PureComponent {
             />
           ))}
         </ul>
-        {(isReadOnly || !inputColumns || value.length >= inputColumns.length) ? null : (
-          <button
-            type='button'
-            className='add'
-            name={`${name}[add]`}
-            onClick={this.handleClickAdd}
-          >
-            <i className='icon-add' /> {' '}
-            <Trans id='js.params.Custom.SortColumn.add'>Add</Trans>
-          </button>
-        )}
+        {isReadOnly || !inputColumns || value.length >= inputColumns.length
+          ? null
+          : (
+            <button
+              type='button'
+              className='add'
+              name={`${name}[add]`}
+              onClick={this.handleClickAdd}
+            >
+              <i className='icon-add' />{' '}
+              <Trans id='js.params.Custom.SortColumn.add'>Add</Trans>
+            </button>
+            )}
       </>
     )
   }

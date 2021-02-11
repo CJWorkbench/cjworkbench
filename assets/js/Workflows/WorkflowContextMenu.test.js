@@ -17,7 +17,9 @@ describe('WorkflowContextMenu', () => {
   it('deletes workflow', async () => {
     const workflow = { id: 123 }
     let resolvePromise
-    const promise = new Promise(resolve => { resolvePromise = resolve })
+    const promise = new Promise(resolve => {
+      resolvePromise = resolve
+    })
     const api = {
       deleteWorkflow: jest.fn(() => promise),
       duplicateWorkflow: jest.fn(),
@@ -55,7 +57,9 @@ describe('WorkflowContextMenu', () => {
   it('duplicates workflow', async () => {
     const workflow = { id: 123 }
     let resolvePromise
-    const promise = new Promise(resolve => { resolvePromise = resolve })
+    const promise = new Promise(resolve => {
+      resolvePromise = resolve
+    })
     const api = {
       deleteWorkflow: jest.fn(),
       duplicateWorkflow: jest.fn(() => promise),
@@ -89,9 +93,16 @@ describe('WorkflowContextMenu', () => {
   })
 
   it('sets workflow to public', async () => {
-    const workflow = { id: 123, public: false, owner_email: 'foo@example.org', acl: [] }
+    const workflow = {
+      id: 123,
+      public: false,
+      owner_email: 'foo@example.org',
+      acl: []
+    }
     let resolvePromise
-    const promise = new Promise(resolve => { resolvePromise = resolve })
+    const promise = new Promise(resolve => {
+      resolvePromise = resolve
+    })
     const api = {
       deleteWorkflow: jest.fn(),
       duplicateWorkflow: jest.fn(),
@@ -115,7 +126,11 @@ describe('WorkflowContextMenu', () => {
 
     fireEvent.click(getByTitle('menu'))
     fireEvent.click(getByText('Share'))
-    fireEvent.click(getByText('Anyone can view and duplicate this workflow, and see your email.'))
+    fireEvent.click(
+      getByText(
+        'Anyone can view and duplicate this workflow, and see your email.'
+      )
+    )
 
     expect(onWorkflowChanging).toHaveBeenCalledWith(123, { public: true })
     expect(api.setWorkflowPublic).toHaveBeenCalledWith(123, true)

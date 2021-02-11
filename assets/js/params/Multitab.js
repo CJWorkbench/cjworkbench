@@ -4,7 +4,18 @@ import { MaybeLabel } from './util'
 import { t } from '@lingui/macro'
 
 export default function MultitabParam (props) {
-  const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange } = props
+  const {
+    name,
+    value,
+    upstreamValue,
+    placeholder,
+    isReadOnly,
+    fieldId,
+    label,
+    tabs,
+    currentTab,
+    onChange
+  } = props
 
   const tabOptions = tabs
     .filter(({ slug }) => slug !== currentTab)
@@ -21,7 +32,13 @@ export default function MultitabParam (props) {
         value={value}
         onChange={onChange}
         isReadOnly={isReadOnly}
-        placeholder={placeholder || t({ id: 'js.params.MultitabParam.selectTabs.placeholder', message: 'Select Tabs' })}
+        placeholder={
+          placeholder ||
+          t({
+            id: 'js.params.MultitabParam.selectTabs.placeholder',
+            message: 'Select Tabs'
+          })
+        }
         isMulti
       />
     </>
@@ -36,9 +53,11 @@ MultitabParam.propTypes = {
   value: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // ['tab-slug', ...] or []
   upstreamValue: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired, // ['tab-slug', ...] or []
   placeholder: PropTypes.string, // default 'Select Tab'
-  tabs: PropTypes.arrayOf(PropTypes.shape({
-    slug: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
   currentTab: PropTypes.string.isRequired // 'tab-slug'
 }

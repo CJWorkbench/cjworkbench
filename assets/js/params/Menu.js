@@ -19,7 +19,7 @@ export default class MenuParam extends PureComponent {
     onChange: PropTypes.func.isRequired // onChange(newIndex) => undefined
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     this.props.onChange(ev.target.value)
   }
 
@@ -31,7 +31,11 @@ export default class MenuParam extends PureComponent {
         return <option disabled key={i} className='separator' />
       } else {
         // <option> value must always be String
-        return <option key={option.value} value={String(option.value)}>{option.label}</option>
+        return (
+          <option key={option.value} value={String(option.value)}>
+            {option.label}
+          </option>
+        )
       }
     })
 

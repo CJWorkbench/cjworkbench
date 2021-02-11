@@ -3,20 +3,21 @@ import { mount } from 'enzyme'
 import SingleLineString from './SingleLineString'
 
 describe('SingleLineString', () => {
-  const wrapper = (props) => mount(
-    <SingleLineString
-      onChange={jest.fn()}
-      onSubmit={jest.fn()}
-      isReadOnly={false}
-      name='field-name'
-      value='value'
-      upstreamValue='upstreamValue'
-      placeholder='a-placeholder'
-      fieldId='field-id'
-      label=''
-      {...props}
-    />
-  )
+  const wrapper = props =>
+    mount(
+      <SingleLineString
+        onChange={jest.fn()}
+        onSubmit={jest.fn()}
+        isReadOnly={false}
+        name='field-name'
+        value='value'
+        upstreamValue='upstreamValue'
+        placeholder='a-placeholder'
+        fieldId='field-id'
+        label=''
+        {...props}
+      />
+    )
 
   it('should call onChange when text changes', () => {
     const w = wrapper()
@@ -29,7 +30,10 @@ describe('SingleLineString', () => {
       value: 'new',
       upstreamValue: 'old'
     })
-    w.find('textarea').simulate('keydown', { key: 'Enter', preventDefault: jest.fn() })
+    w.find('textarea').simulate('keydown', {
+      key: 'Enter',
+      preventDefault: jest.fn()
+    })
     expect(w.prop('onSubmit')).toHaveBeenCalled()
   })
 
@@ -38,7 +42,10 @@ describe('SingleLineString', () => {
       value: 'new',
       upstreamValue: 'old'
     })
-    w.find('textarea').simulate('keydown', { key: 'Escape', preventDefault: jest.fn() })
+    w.find('textarea').simulate('keydown', {
+      key: 'Escape',
+      preventDefault: jest.fn()
+    })
     expect(w.prop('onChange')).toHaveBeenCalledWith('old')
   })
 

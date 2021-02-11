@@ -19,9 +19,7 @@ DropdownContext.Provider.propTypes = {
 
 const PopperOptions = {
   placement: 'bottom-end',
-  modifiers: [
-    { name: 'preventOverflow', options: { boundary: 'viewport' } }
-  ]
+  modifiers: [{ name: 'preventOverflow', options: { boundary: 'viewport' } }]
 }
 
 /**
@@ -30,31 +28,41 @@ const PopperOptions = {
  * Reference: https://getbootstrap.com/docs/4.0/components/dropdowns/#overview
  */
 export default function Dropdown (props) {
-  const {
-    isOpen,
-    toggle,
-    disabled = false,
-    children
-  } = props
+  const { isOpen, toggle, disabled = false, children } = props
 
-  const handleClickToggle = useCallback(ev => {
-    if (disabled) return
-    toggle(ev)
-  }, [disabled, toggle])
+  const handleClickToggle = useCallback(
+    ev => {
+      if (disabled) return
+      toggle(ev)
+    },
+    [disabled, toggle]
+  )
   const [toggleElement, setToggleElement] = useState(null)
   const [menuElement, setMenuElement] = useState(null)
   const popperStuff = usePopper(toggleElement, menuElement, PopperOptions)
 
-  const dropdownContext = useMemo(() => ({
-    disabled,
-    isOpen,
-    toggle: handleClickToggle,
-    setToggleElement,
-    toggleElement,
-    setMenuElement,
-    menuElement,
-    popperStuff
-  }), [disabled, isOpen, handleClickToggle, setToggleElement, toggleElement, setMenuElement, menuElement, popperStuff])
+  const dropdownContext = useMemo(
+    () => ({
+      disabled,
+      isOpen,
+      toggle: handleClickToggle,
+      setToggleElement,
+      toggleElement,
+      setMenuElement,
+      menuElement,
+      popperStuff
+    }),
+    [
+      disabled,
+      isOpen,
+      handleClickToggle,
+      setToggleElement,
+      toggleElement,
+      setMenuElement,
+      menuElement,
+      popperStuff
+    ]
+  )
 
   return (
     <DropdownContext.Provider value={dropdownContext}>

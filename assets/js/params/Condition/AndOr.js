@@ -22,17 +22,18 @@ class AndOr extends PureComponent {
       ? <Trans id='js.params.Condition.AndOr.and' comment='The logical AND operator'>AND</Trans>
       : <Trans id='js.params.Condition.AndOr.or' comment='The logical OR operator'>OR</Trans>
 
-    return checked ? (
-      <span className='selected-operator'>{text}</span>
-    ) : (
-      <button
-        type='button'
-        name={name}
-        className='unselected-operator'
-        onClick={this.handleClick}
-      >{text}
-      </button>
-    )
+    return checked
+      ? <span className='selected-operator'>{text}</span>
+      : (
+        <button
+          type='button'
+          name={name}
+          className='unselected-operator'
+          onClick={this.handleClick}
+        >
+          {text}
+        </button>
+        )
   }
 }
 
@@ -49,22 +50,26 @@ export default class Operator extends PureComponent {
 
     return (
       <div className='andor-operator'>
-        {(!isReadOnly || value === 'and') ? (
-          <AndOr
-            name={`${name}[and]`}
-            operator='and'
-            checked={value === 'and'}
-            onClick={onChange}
-          />
-        ) : null}
-        {(!isReadOnly || value === 'or') ? (
-          <AndOr
-            name={`${name}[or]`}
-            operator='or'
-            checked={value === 'or'}
-            onClick={onChange}
-          />
-        ) : null}
+        {!isReadOnly || value === 'and'
+          ? (
+            <AndOr
+              name={`${name}[and]`}
+              operator='and'
+              checked={value === 'and'}
+              onClick={onChange}
+            />
+            )
+          : null}
+        {!isReadOnly || value === 'or'
+          ? (
+            <AndOr
+              name={`${name}[or]`}
+              operator='or'
+              checked={value === 'or'}
+              onClick={onChange}
+            />
+            )
+          : null}
       </div>
     )
   }

@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import RowActionsCell from './RowActionsCell'
 
 describe('RowActionsCell', () => {
-  const wrapper = (rowIdx) => shallow(<RowActionsCell rowIdx={rowIdx} />)
+  const wrapper = rowIdx => shallow(<RowActionsCell rowIdx={rowIdx} />)
 
   it('renders number of digits in class name', () => {
     const w1 = wrapper(8)

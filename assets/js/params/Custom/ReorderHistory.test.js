@@ -4,9 +4,7 @@ import { shallow } from 'enzyme'
 
 describe('ReorderHistory', () => {
   it('renders with empty history', () => {
-    const tree = shallow(
-      <ReorderHistory value={[]} />
-    )
+    const tree = shallow(<ReorderHistory value={[]} />)
     expect(tree.find('.reorder-idx')).toHaveLength(0)
     expect(tree.find('.reorder-column')).toHaveLength(0)
     expect(tree.find('.reorder-from')).toHaveLength(0)

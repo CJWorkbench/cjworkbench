@@ -7,9 +7,11 @@ export default class LessonSection extends PureComponent {
   static ropTypes = {
     title: PropTypes.string.isRequired,
     html: PropTypes.string.isRequired,
-    steps: PropTypes.arrayOf(PropTypes.shape({
-      html: PropTypes.string.isRequired
-    })).isRequired,
+    steps: PropTypes.arrayOf(
+      PropTypes.shape({
+        html: PropTypes.string.isRequired
+      })
+    ).isRequired,
     isCurrent: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired, // to compare with activeSectionIndex
     activeSectionIndex: PropTypes.number, // or null
@@ -43,9 +45,7 @@ export default class LessonSection extends PureComponent {
   renderStep (step, index) {
     const status = this._stepStatus(index)
 
-    return (
-      <LessonStep key={index} html={step.html} status={status} />
-    )
+    return <LessonStep key={index} html={step.html} status={status} />
   }
 
   renderSteps (steps) {
@@ -67,9 +67,14 @@ export default class LessonSection extends PureComponent {
 
     return (
       <section className={isCurrent ? 'current' : 'not-current'}>
-        <a href='/lessons/' className='backToLessons'><Trans id='js.lessons.LessonSection.training.link'>Training</Trans></a>
+        <a href='/lessons/' className='backToLessons'>
+          <Trans id='js.lessons.LessonSection.training.link'>Training</Trans>
+        </a>
         <h2>{title}</h2>
-        <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
+        <div
+          className='description'
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
         {this.renderSteps(steps)}
       </section>
     )

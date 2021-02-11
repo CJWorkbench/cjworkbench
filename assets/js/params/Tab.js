@@ -14,19 +14,32 @@ export default class TabParam extends PureComponent {
     value: PropTypes.string.isRequired, // tab-slug, or ''
     upstreamValue: PropTypes.string.isRequired, // tab-slug, or ''
     placeholder: PropTypes.string, // default 'Select Tab'
-    tabs: PropTypes.arrayOf(PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
-    }).isRequired).isRequired,
+    tabs: PropTypes.arrayOf(
+      PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
     currentTab: PropTypes.string.isRequired // 'tab-slug'
   }
 
-  onChange = (value) => {
+  onChange = value => {
     this.props.onChange(value || '')
   }
 
   render () {
-    const { name, value, upstreamValue, placeholder, isReadOnly, fieldId, label, tabs, currentTab, onChange } = this.props
+    const {
+      name,
+      value,
+      upstreamValue,
+      placeholder,
+      isReadOnly,
+      fieldId,
+      label,
+      tabs,
+      currentTab,
+      onChange
+    } = this.props
 
     const tabOptions = tabs
       .filter(({ slug }) => slug !== currentTab)
@@ -43,7 +56,13 @@ export default class TabParam extends PureComponent {
           value={value || ''}
           onChange={onChange}
           isReadOnly={isReadOnly}
-          placeholder={placeholder || t({ id: 'js.params.Tab.selectTab.placeholder', message: 'Select Tab' })}
+          placeholder={
+            placeholder ||
+            t({
+              id: 'js.params.Tab.selectTab.placeholder',
+              message: 'Select Tab'
+            })
+          }
         />
       </>
     )

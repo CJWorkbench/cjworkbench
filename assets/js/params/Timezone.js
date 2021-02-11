@@ -11,7 +11,11 @@ function fetchTimezones () {
       const data = await response.json()
       const timezones = data.timezones
       const aliases = {}
-      timezones.forEach(({ id, aliases }) => aliases.forEach(alias => { aliases[alias] = id }))
+      timezones.forEach(({ id, aliases }) =>
+        aliases.forEach(alias => {
+          aliases[alias] = id
+        })
+      )
       return { timezones, aliases }
     })()
   }
@@ -32,9 +36,12 @@ export default function TimezoneParam (props) {
   const { fieldId, label, name, value, isReadOnly, onChange } = props
 
   const [timezoneData, setTimezoneData] = useState(null)
-  const handleChange = useCallback(ev => {
-    onChange(ev.target.value)
-  }, [onChange])
+  const handleChange = useCallback(
+    ev => {
+      onChange(ev.target.value)
+    },
+    [onChange]
+  )
 
   useEffect(() => {
     fetchTimezones().then(setTimezoneData)
@@ -52,9 +59,13 @@ export default function TimezoneParam (props) {
         onChange={handleChange}
         disabled={isReadOnly}
       >
-        {timezoneData ? timezoneData.timezones.map(({ id, offset, name }) => (
-          <option key={id} value={id}>{offset} {name}</option>
-        )) : null}
+        {timezoneData
+          ? timezoneData.timezones.map(({ id, offset, name }) => (
+            <option key={id} value={id}>
+              {offset} {name}
+            </option>
+            ))
+          : null}
       </select>
     </>
   )

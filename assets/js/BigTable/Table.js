@@ -4,13 +4,18 @@ import ColGroup from './ColGroup'
 import THead from './THead'
 import TBody from './TBody'
 
-export default function Table ({ columns, tbodyRef, nRows, nSkipRows, nSkipColumns, cells }) {
+export default function Table ({
+  columns,
+  tbodyRef,
+  nRows,
+  nSkipRows,
+  nSkipColumns,
+  cells
+}) {
   return (
     <table>
       <ColGroup columns={columns} />
-      <THead
-        columns={columns}
-      />
+      <THead columns={columns} />
       <TBody
         ref={tbodyRef}
         columns={columns}

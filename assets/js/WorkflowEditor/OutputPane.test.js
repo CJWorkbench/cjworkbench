@@ -35,10 +35,14 @@ describe('OutputPane', () => {
   })
 
   it('renders an iframe when htmlOutput', () => {
-    const w = wrapper({ step: { id: 1, deltaId: 2, htmlOutput: true, status: 'ok' } })
+    const w = wrapper({
+      step: { id: 1, deltaId: 2, htmlOutput: true, status: 'ok' }
+    })
     expect(w.find(OutputIframe)).toHaveLength(1)
 
-    const w2 = wrapper({ step: { id: 1, deltaId: 2, htmlOutput: false, status: 'ok' } })
+    const w2 = wrapper({
+      step: { id: 1, deltaId: 2, htmlOutput: false, status: 'ok' }
+    })
     expect(w2.find(OutputIframe)).toHaveLength(0)
   })
 
@@ -50,7 +54,11 @@ describe('OutputPane', () => {
     })
     expect(w.find(DelayedTableSwitcher).prop('stepId')).toEqual(1)
     expect(w.find(DelayedTableSwitcher).prop('deltaId')).toEqual(2)
-    expect(w.find("Trans[id='js.WorkflowEditor.OutputPane.showingInput.becauseError']")).toHaveLength(1)
+    expect(
+      w.find(
+        "Trans[id='js.WorkflowEditor.OutputPane.showingInput.becauseError']"
+      )
+    ).toHaveLength(1)
     expect(w.find(OutputIframe).prop('stepId')).toEqual(3)
     expect(w.find(OutputIframe).prop('deltaId')).toEqual(4)
   })

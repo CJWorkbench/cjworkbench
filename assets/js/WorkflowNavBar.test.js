@@ -88,12 +88,14 @@ describe('WorkflowNavBar', () => {
     }
 
     const api = {
-      duplicateWorkflow: jest.fn(() => Promise.resolve({
-        id: 77,
-        name: 'Copy of Original Version',
-        owner_name: 'Paula Plagarizer',
-        public: false
-      }))
+      duplicateWorkflow: jest.fn(() =>
+        Promise.resolve({
+          id: 77,
+          name: 'Copy of Original Version',
+          owner_name: 'Paula Plagarizer',
+          public: false
+        })
+      )
     }
 
     const wrapper = shallowWithI18n(

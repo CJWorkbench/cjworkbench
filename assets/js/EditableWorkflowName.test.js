@@ -2,7 +2,9 @@
 import { shallow, mount } from 'enzyme'
 import { mockStore, tick } from './test-utils'
 import { Provider } from 'react-redux'
-import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
+import ConnectedEditableWorkflowName, {
+  EditableWorkflowName
+} from './EditableWorkflowName'
 
 describe('EditableWorkflowName', () => {
   const wrapper = (extraProps = {}) => {

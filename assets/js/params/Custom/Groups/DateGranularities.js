@@ -25,7 +25,8 @@ export default class DateGranularities extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // for <select> names
-    value: PropTypes.objectOf(PropTypes.oneOf('STHDWMQY'.split('')).isRequired).isRequired,
+    value: PropTypes.objectOf(PropTypes.oneOf('STHDWMQY'.split('')).isRequired)
+      .isRequired,
     colnames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     dateColnames: PropTypes.arrayOf(PropTypes.string.isRequired), // null if unknown
     onChange: PropTypes.func.isRequired, // func(newObject) => undefined
@@ -44,39 +45,62 @@ export default class DateGranularities extends PureComponent {
   }
 
   render () {
-    const { isReadOnly, name, value, colnames, dateColnames, addConvertToDateModule } = this.props
+    const {
+      isReadOnly,
+      name,
+      value,
+      colnames,
+      dateColnames,
+      addConvertToDateModule
+    } = this.props
 
-    const focusColnames = colnames.filter(c => dateColnames !== null && dateColnames.includes(c))
+    const focusColnames = colnames.filter(
+      c => dateColnames !== null && dateColnames.includes(c)
+    )
 
     return (
       <div className='date-granularities'>
-        {focusColnames.length > 0 ? (
-          <DateGranularityList
-            isReadOnly={isReadOnly}
-            name={name}
-            colnames={focusColnames}
-            value={value}
-            onChange={this.handleChangeDateGranularity}
-          />
-        ) : (
-          <div className='no-date-selected'>
-            {(dateColnames !== null && dateColnames.length === 0) ? (
-              <>
-                <p><Trans id='js.params.Custom.Groups.DateGranularities.noTimestampToGroup'>There are no Date and Time columns to group by date </Trans></p>
-                <button
-                  type='button'
-                  name={`${name}[add-module]`}
-                  className='quick-fix action-button button-blue'
-                  onClick={addConvertToDateModule}
-                >
-                  <Trans id='js.params.Custom.Groups.DateGranularities.convertColumns'>Convert columns</Trans>
-                </button>
-              </>
-            ) : (
-              <p><Trans id='js.params.Custom.Groups.DateGranularities.selectTimestampToGroup'>Select a Date and Time column to group it by date</Trans></p>
+        {focusColnames.length > 0
+          ? (
+            <DateGranularityList
+              isReadOnly={isReadOnly}
+              name={name}
+              colnames={focusColnames}
+              value={value}
+              onChange={this.handleChangeDateGranularity}
+            />
+            )
+          : (
+            <div className='no-date-selected'>
+              {dateColnames !== null && dateColnames.length === 0
+                ? (
+                  <>
+                    <p>
+                      <Trans id='js.params.Custom.Groups.DateGranularities.noTimestampToGroup'>
+                        There are no Date and Time columns to group by date{' '}
+                      </Trans>
+                    </p>
+                    <button
+                      type='button'
+                      name={`${name}[add-module]`}
+                      className='quick-fix action-button button-blue'
+                      onClick={addConvertToDateModule}
+                    >
+                      <Trans id='js.params.Custom.Groups.DateGranularities.convertColumns'>
+                        Convert columns
+                      </Trans>
+                    </button>
+                  </>
+                  )
+                : (
+                  <p>
+                    <Trans id='js.params.Custom.Groups.DateGranularities.selectTimestampToGroup'>
+                      Select a Date and Time column to group it by date
+                    </Trans>
+                  </p>
+                  )}
+            </div>
             )}
-          </div>
-        )}
       </div>
     )
   }

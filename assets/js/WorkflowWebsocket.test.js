@@ -35,7 +35,9 @@ class MockSocket {
 
   onerror (ev) {}
 
-  send (data) { this.sends.push(data) }
+  send (data) {
+    this.sends.push(data)
+  }
 }
 
 describe('WorkflowWebsocket', () => {
@@ -70,8 +72,12 @@ describe('WorkflowWebsocket', () => {
     const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
     api.connect() // set api.socket
     const future = api.callServerHandler('foo.bar', { x: 'y' })
-    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }])
-    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
+    expect(socket.sends.map(JSON.parse)).toEqual([
+      { requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }
+    ])
+    socket.onmessage({
+      data: JSON.stringify({ response: { requestId: 1, data: 'ok' } })
+    })
     const data = await future
     expect(data).toEqual('ok')
   })
@@ -82,8 +88,12 @@ describe('WorkflowWebsocket', () => {
     const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
     api.connect() // set api.socket
     const future = api.callServerHandler('foo/bar', { x: 'y' })
-    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo/bar', arguments: { x: 'y' } }])
-    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, error: 'bad' } }) })
+    expect(socket.sends.map(JSON.parse)).toEqual([
+      { requestId: 1, path: 'foo/bar', arguments: { x: 'y' } }
+    ])
+    socket.onmessage({
+      data: JSON.stringify({ response: { requestId: 1, error: 'bad' } })
+    })
     let err = null
     try {
       await future // can't expect(() => await future).toThrow() because await is in a sync function there
@@ -97,28 +107,42 @@ describe('WorkflowWebsocket', () => {
 
   it('should queue callServerHandler() when sent before connect starts', async () => {
     let socket
-    const buildSocket = () => { socket = new MockSocket(); return socket }
+    const buildSocket = () => {
+      socket = new MockSocket()
+      return socket
+    }
     const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
     const future = api.callServerHandler('foo.bar', { x: 'y' })
     api.connect()
     expect(socket.sends.length).toEqual(0) // not connected yet
     await tick()
-    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }])
-    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
+    expect(socket.sends.map(JSON.parse)).toEqual([
+      { requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }
+    ])
+    socket.onmessage({
+      data: JSON.stringify({ response: { requestId: 1, data: 'ok' } })
+    })
     const data = await future
     expect(data).toEqual('ok')
   })
 
   it('should queue callServerHandler() when sent before connect completes', async () => {
     let socket
-    const buildSocket = () => { socket = new MockSocket(); return socket }
+    const buildSocket = () => {
+      socket = new MockSocket()
+      return socket
+    }
     const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
     api.connect()
     const future = api.callServerHandler('foo.bar', { x: 'y' }) // onopen not called yet
     expect(socket.sends.length).toEqual(0) // not connected yet
     await tick()
-    expect(socket.sends.map(JSON.parse)).toEqual([{ requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }])
-    socket.onmessage({ data: JSON.stringify({ response: { requestId: 1, data: 'ok' } }) })
+    expect(socket.sends.map(JSON.parse)).toEqual([
+      { requestId: 1, path: 'foo.bar', arguments: { x: 'y' } }
+    ])
+    socket.onmessage({
+      data: JSON.stringify({ response: { requestId: 1, data: 'ok' } })
+    })
     const data = await future
     expect(data).toEqual('ok')
   })
@@ -130,7 +154,9 @@ describe('WorkflowWebsocket', () => {
     const api = new WorkflowWebsocket(1, onDelta, () => socket)
     api.connect() // set api.socket
 
-    socket.onmessage({ data: JSON.stringify({ type: 'apply-delta', data: 'data' }) })
+    socket.onmessage({
+      data: JSON.stringify({ type: 'apply-delta', data: 'data' })
+    })
     expect(onDelta).toHaveBeenCalled()
   })
 })

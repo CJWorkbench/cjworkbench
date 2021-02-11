@@ -1,6 +1,11 @@
 import { PureComponent, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../components/Modal'
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from '../../components/Modal'
 import filesize from 'filesize'
 import { t, Trans } from '@lingui/macro'
 
@@ -12,12 +17,14 @@ function formatNBytes (nBytes) {
 class UploadedFileSelectModal extends PureComponent {
   static propTypes = {
     value: PropTypes.string.isRequired, // current uuid
-    files: PropTypes.arrayOf(PropTypes.shape({
-      uuid: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      size: PropTypes.number.isRequired,
-      createdAt: PropTypes.string.isRequired
-    }).isRequired).isRequired,
+    files: PropTypes.arrayOf(
+      PropTypes.shape({
+        uuid: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        size: PropTypes.number.isRequired,
+        createdAt: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
     onChange: PropTypes.func.isRequired, // onChoose(uuid) => undefined
     close: PropTypes.func.isRequired // close() => undefined
   }
@@ -26,7 +33,7 @@ class UploadedFileSelectModal extends PureComponent {
     newValue: this.props.value
   }
 
-  handleClickFile = (ev) => {
+  handleClickFile = ev => {
     const uuid = ev.currentTarget.getAttribute('data-uuid')
     this.setState({ newValue: uuid })
   }
@@ -53,27 +60,59 @@ class UploadedFileSelectModal extends PureComponent {
 
     return (
       <Modal className='uploaded-file-select-modal' isOpen toggle={close}>
-        <ModalHeader><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title' comment='This should be all-caps for styling reasons'>FILE HISTORY</Trans></ModalHeader>
+        <ModalHeader>
+          <Trans
+            id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.header.title'
+            comment='This should be all-caps for styling reasons'
+          >
+            FILE HISTORY
+          </Trans>
+        </ModalHeader>
         <ModalBody>
-          {files.length === 0 ? (
-            <p className='no-files'><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles'>You have not uploaded any files to this Step</Trans></p>
-          ) : (
-            <ol className='files'>
-              {files.map(({ uuid, size, name, createdAt }) => (
-                <li key={uuid}>
-                  <a data-uuid={uuid} href='#' onClick={this.handleClickFile} className={uuid === newValue ? 'selected' : ''}>
-                    <div className='name'>{name}</div>
-                    <div className='metadata'>
-                      <abbr className='size' title={`${numberFormat.format(size)} bytes`}>
-                        {formatNBytes(size)}
-                      </abbr>
-                      <time className='created-at' dateTime={createdAt} title={createdAt}><Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at' comment='The parameter will contain a specific date'>Uploaded {dateFormat.format(new Date(createdAt))}</Trans></time>
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ol>
-          )}
+          {files.length === 0
+            ? (
+              <p className='no-files'>
+                <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.noFiles'>
+                  You have not uploaded any files to this Step
+                </Trans>
+              </p>
+              )
+            : (
+              <ol className='files'>
+                {files.map(({ uuid, size, name, createdAt }) => (
+                  <li key={uuid}>
+                    <a
+                      data-uuid={uuid}
+                      href='#'
+                      onClick={this.handleClickFile}
+                      className={uuid === newValue ? 'selected' : ''}
+                    >
+                      <div className='name'>{name}</div>
+                      <div className='metadata'>
+                        <abbr
+                          className='size'
+                          title={`${numberFormat.format(size)} bytes`}
+                        >
+                          {formatNBytes(size)}
+                        </abbr>
+                        <time
+                          className='created-at'
+                          dateTime={createdAt}
+                          title={createdAt}
+                        >
+                          <Trans
+                            id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.uploaded_at'
+                            comment='The parameter will contain a specific date'
+                          >
+                            Uploaded {dateFormat.format(new Date(createdAt))}
+                          </Trans>
+                        </time>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+              )}
         </ModalBody>
         <ModalFooter>
           <button
@@ -82,14 +121,14 @@ class UploadedFileSelectModal extends PureComponent {
             onClick={this.handleClickSelect}
             disabled={newValue === value}
           >
-            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton'>Load</Trans>
+            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.loadButton'>
+              Load
+            </Trans>
           </button>
-          <button
-            type='button'
-            name='close'
-            onClick={close}
-          >
-            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton'>Cancel</Trans>
+          <button type='button' name='close' onClick={close}>
+            <Trans id='js.params.File.UploadedFileSelect.UploadedFileSelectModal.footer.cancelButton'>
+              Cancel
+            </Trans>
           </button>
         </ModalFooter>
       </Modal>
@@ -114,39 +153,55 @@ export default function UploadedFileSelect ({ value, files, onChange }) {
       <button
         className='uploaded-file-select'
         onClick={open}
-        title={canOpen ? t({ id: 'js.params.File.UploadedFileSelect.choosePreviousFile.hoverText', message: 'Choose a previously-uploaded file' }) : undefined}
+        title={
+          canOpen
+            ? t({
+                id:
+                  'js.params.File.UploadedFileSelect.choosePreviousFile.hoverText',
+                message: 'Choose a previously-uploaded file'
+              })
+            : undefined
+        }
         disabled={!canOpen}
       >
-        {valueIndex === -1 ? t({
-          id: 'js.params.File.UploadedFileSelect.choosePreviousFile.none',
-          comment: 'Means "No files exist". Very rare; most users will see js.params.File.UploadFileSelect.choosePreviousFile.text first',
-          message: 'File [NONE] of {nFiles}',
-          values: { nFiles }
-        }) : t({
-          id: 'js.params.File.UploadedFileSelect.choosePreviousFile.text',
-          comment: 'The parameter {fileNumber} is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is the total number of files',
-          message: 'File {fileNumber} of {nFiles}',
-          values: { fileNumber, nFiles }
-        })}
+        {valueIndex === -1
+          ? t({
+              id: 'js.params.File.UploadedFileSelect.choosePreviousFile.none',
+              comment:
+                'Means "No files exist". Very rare; most users will see js.params.File.UploadFileSelect.choosePreviousFile.text first',
+              message: 'File [NONE] of {nFiles}',
+              values: { nFiles }
+            })
+          : t({
+            id: 'js.params.File.UploadedFileSelect.choosePreviousFile.text',
+            comment:
+                'The parameter {fileNumber} is the number of the file (or js.params.File.UploadedFileSelect.choosePreviousFile.none) and {nFiles} is the total number of files',
+            message: 'File {fileNumber} of {nFiles}',
+            values: { fileNumber, nFiles }
+          })}
       </button>
-      {isOpen ? (
-        <UploadedFileSelectModal
-          value={value}
-          files={files}
-          onChange={onChange}
-          close={close}
-        />
-      ) : null}
+      {isOpen
+        ? (
+          <UploadedFileSelectModal
+            value={value}
+            files={files}
+            onChange={onChange}
+            close={close}
+          />
+          )
+        : null}
     </>
   )
 }
 UploadedFileSelect.propTypes = {
   value: PropTypes.string, // null if no file is selected (also: value might not be in files)
-  files: PropTypes.arrayOf(PropTypes.shape({
-    uuid: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    size: PropTypes.number.isRequired,
-    createdAt: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  files: PropTypes.arrayOf(
+    PropTypes.shape({
+      uuid: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      size: PropTypes.number.isRequired,
+      createdAt: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
   onChange: PropTypes.func.isRequired // func(uuid) => undefined
 }

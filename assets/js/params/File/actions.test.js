@@ -7,14 +7,22 @@ describe('File.actions', () => {
     it('should set inProgressUpload, update progress, and set done', async () => {
       let setUploadComplete
       const api = {
-        uploadFile: jest.fn(() => new Promise(resolve => { setUploadComplete = resolve }))
+        uploadFile: jest.fn(
+          () =>
+            new Promise(resolve => {
+              setUploadComplete = resolve
+            })
+        )
       }
-      const store = mockStore({
-        steps: {
-          1: { id: 1, foo: 'bar', slug: 'step-1' },
-          2: { id: 2, foo: 'baz', slug: 'step-2' }
-        }
-      }, api)
+      const store = mockStore(
+        {
+          steps: {
+            1: { id: 1, foo: 'bar', slug: 'step-1' },
+            2: { id: 2, foo: 'baz', slug: 'step-2' }
+          }
+        },
+        api
+      )
       const file = new File(['A\nab'], 't.csv')
 
       // upload
@@ -35,7 +43,9 @@ describe('File.actions', () => {
 
       // setProgress (callback invoked by the API)
       setProgress(3)
-      expect(store.getState().steps['2'].inProgressUpload.nBytesUploaded).toEqual(3)
+      expect(
+        store.getState().steps['2'].inProgressUpload.nBytesUploaded
+      ).toEqual(3)
 
       // completion
       setUploadComplete(undefined)
@@ -63,12 +73,20 @@ describe('File.actions', () => {
       const api = {
         cancelFileUpload: jest.fn(() => cancelled)
       }
-      const store = mockStore({
-        steps: {
-          1: { id: 1, slug: 'step-1', foo: 'bar' },
-          2: { id: 2, slug: 'step-2', foo: 'baz', inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 } }
-        }
-      }, api)
+      const store = mockStore(
+        {
+          steps: {
+            1: { id: 1, slug: 'step-1', foo: 'bar' },
+            2: {
+              id: 2,
+              slug: 'step-2',
+              foo: 'baz',
+              inProgressUpload: { name: 't.csv', size: 4, nBytesUploaded: 3 }
+            }
+          }
+        },
+        api
+      )
 
       // Begin the cancellation (sending a message to the server)
       const done = store.dispatch(actions.cancel('step-2'))

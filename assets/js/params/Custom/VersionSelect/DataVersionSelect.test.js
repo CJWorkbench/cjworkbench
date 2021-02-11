@@ -1,5 +1,7 @@
 /* globals afterEach, describe, expect, it */
-import ConnectedDataVersionSelect, { DataVersionSelect } from './DataVersionSelect'
+import ConnectedDataVersionSelect, {
+  DataVersionSelect
+} from './DataVersionSelect'
 import DataVersionModal from '../../../WorkflowEditor/DataVersionModal' // to check it's rendered in shallow()
 import { mountWithI18n, shallowWithI18n } from '../../../i18n/test-utils'
 import { Provider } from 'react-redux'
@@ -41,12 +43,24 @@ describe('DataVersionSelect', () => {
 
   it('should show text when read-only', () => {
     const w = wrapper({ isReadOnly: true })
-    expect(w.find('.read-only Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"]').prop('values')).toEqual({ 0: 7, nVersions: 7 })
+    expect(
+      w
+        .find(
+          '.read-only Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"]'
+        )
+        .prop('values')
+    ).toEqual({ 0: 7, nVersions: 7 })
   })
 
   it('should show a button', () => {
     const w = wrapper()
-    expect(w.find('button Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"]').prop('values')).toEqual({ 0: 7, nVersions: 7 })
+    expect(
+      w
+        .find(
+          'button Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"]'
+        )
+        .prop('values')
+    ).toEqual({ 0: 7, nVersions: 7 })
   })
 
   it('should open and close the dialog upon clicking the button', () => {
@@ -90,7 +104,7 @@ describe('DataVersionSelect', () => {
       }
     })
 
-    const connectedWrapper = (state) => {
+    const connectedWrapper = state => {
       const store = configureMockStore([])(state)
       _wrapper = mountWithI18n(
         <Provider store={store}>
@@ -102,7 +116,13 @@ describe('DataVersionSelect', () => {
 
     it('finds versions', () => {
       const w = connectedWrapper(IdealState)
-      expect(w.find('button Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"]').prop('values')).toEqual({ 0: 1, nVersions: 2 })
+      expect(
+        w
+          .find(
+            'button Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.versionCount"]'
+          )
+          .prop('values')
+      ).toEqual({ 0: 1, nVersions: 2 })
     })
 
     it('finds isReadOnly', () => {
@@ -113,7 +133,13 @@ describe('DataVersionSelect', () => {
           read_only: true
         }
       })
-      expect(w.find('.read-only Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"]').prop('values')).toEqual({ 0: 1, nVersions: 2 })
+      expect(
+        w
+          .find(
+            '.read-only Trans[id="js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"]'
+          )
+          .prop('values')
+      ).toEqual({ 0: 1, nVersions: 2 })
     })
 
     it('handles empty version list', () => {

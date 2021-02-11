@@ -29,7 +29,9 @@ describe('EditableNotes', () => {
     })
 
     it('renders plain note', () => {
-      expect(wrapper.find('div.editable-notes-read-only').text()).toEqual('This is the best module')
+      expect(wrapper.find('div.editable-notes-read-only').text()).toEqual(
+        'This is the best module'
+      )
     })
   })
 
@@ -55,15 +57,21 @@ describe('EditableNotes', () => {
     })
 
     it('renders note in edit state', () => {
-      expect(wrapper.find('textarea').prop('value')).toEqual('This is the best module')
+      expect(wrapper.find('textarea').prop('value')).toEqual(
+        'This is the best module'
+      )
     })
 
     it('lets user enter and save a note', () => {
       const textarea = wrapper.find('textarea')
-      textarea.simulate('change', { target: { value: 'This is a mediocre module' } })
+      textarea.simulate('change', {
+        target: { value: 'This is a mediocre module' }
+      })
       textarea.simulate('blur')
       expect(props.onChange).toHaveBeenCalled()
-      expect(props.onChange.mock.calls[0][0].target.value).toEqual('This is a mediocre module')
+      expect(props.onChange.mock.calls[0][0].target.value).toEqual(
+        'This is a mediocre module'
+      )
       expect(props.onBlur).toHaveBeenCalled()
     })
 
@@ -74,7 +82,10 @@ describe('EditableNotes', () => {
 
     it('exits if user presses Escape', () => {
       const textarea = wrapper.find('textarea')
-      textarea.simulate('keydown', { target: textarea.getDOMNode(), key: 'Escape' })
+      textarea.simulate('keydown', {
+        target: textarea.getDOMNode(),
+        key: 'Escape'
+      })
       expect(props.onCancel).toHaveBeenCalled()
       expect(props.onBlur).not.toHaveBeenCalled()
     })

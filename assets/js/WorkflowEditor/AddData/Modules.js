@@ -5,19 +5,28 @@ import { Trans } from '@lingui/macro'
 
 export default function Modules ({ modules, addStep, search }) {
   const searchKey = search.trim().toLowerCase()
-  const foundModules = modules
-    .filter(m => `${m.id_name}\n${m.name}\n${m.description}`.toLowerCase().includes(searchKey))
+  const foundModules = modules.filter(m =>
+    `${m.id_name}\n${m.name}\n${m.description}`
+      .toLowerCase()
+      .includes(searchKey)
+  )
 
   if (!foundModules.length) {
     return (
       <div className='modules no-results'>
-        <p><Trans id='js.WorkflowEditor.AddData.Modules.noModulesFound'>No data connectors match your search.</Trans></p>
+        <p>
+          <Trans id='js.WorkflowEditor.AddData.Modules.noModulesFound'>
+            No data connectors match your search.
+          </Trans>
+        </p>
       </div>
     )
   } else {
     return (
       <div className='modules'>
-        {foundModules.map(m => <Module key={m.idName} onClick={addStep} {...m} />)}
+        {foundModules.map(m => (
+          <Module key={m.idName} onClick={addStep} {...m} />
+        ))}
       </div>
     )
   }

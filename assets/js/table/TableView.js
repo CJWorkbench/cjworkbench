@@ -17,10 +17,12 @@ export class TableView extends PureComponent {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     stepId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
-    columns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-    }).isRequired), // immutable; null for placeholder table
+    columns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+      }).isRequired
+    ), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
     isReadOnly: PropTypes.bool.isRequired,
     ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
@@ -32,7 +34,7 @@ export class TableView extends PureComponent {
     selectedRowIndexes: []
   }
 
-  handleSetSelectedRowIndexes = (selectedRowIndexes) => {
+  handleSetSelectedRowIndexes = selectedRowIndexes => {
     this.setState({ selectedRowIndexes })
   }
 
@@ -62,10 +64,17 @@ export class TableView extends PureComponent {
         <div className='overlay'>
           <div>
             <div className='text'>
-              <Trans id='js.table.TableView.maxOf100ColumnsCanbeDIsplayed'>A maximum of 100 columns can be displayed</Trans>
+              <Trans id='js.table.TableView.maxOf100ColumnsCanbeDIsplayed'>
+                A maximum of 100 columns can be displayed
+              </Trans>
             </div>
-            <button className='add-select-module' onClick={this.handleClickSelectColumns}>
-              <Trans id='js.table.TableView.selectColumns.button'>Select columns</Trans>
+            <button
+              className='add-select-module'
+              onClick={this.handleClickSelectColumns}
+            >
+              <Trans id='js.table.TableView.selectColumns.button'>
+                Select columns
+              </Trans>
             </button>
           </div>
         </div>
@@ -94,12 +103,10 @@ export class TableView extends PureComponent {
           isReadOnly={isReadOnly}
           stepId={stepId}
           nRows={stepId ? nRows : null}
-          nColumns={(stepId && columns) ? columns.length : null}
+          nColumns={stepId && columns ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />
-        <div className='outputpane-data'>
-          {gridView}
-        </div>
+        <div className='outputpane-data'>{gridView}</div>
       </div>
     )
   }
@@ -107,22 +114,26 @@ export class TableView extends PureComponent {
 
 function mapDispatchToProps (dispatch) {
   return {
-    ensureSelectColumnsModule: (stepId) => {
+    ensureSelectColumnsModule: stepId => {
       dispatch(updateTableAction(stepId, 'selectcolumns', false, {}))
     },
     reorderColumn: (stepId, colname, fromIndex, toIndex) => {
-      dispatch(updateTableAction(stepId, 'reordercolumns', false, {
-        column: colname,
-        from: fromIndex,
-        to: toIndex
-      }))
+      dispatch(
+        updateTableAction(stepId, 'reordercolumns', false, {
+          column: colname,
+          from: fromIndex,
+          to: toIndex
+        })
+      )
     },
     editCell: (stepId, rowIndex, colname, newValue) => {
-      dispatch(updateTableAction(stepId, 'editcells', false, {
-        row: rowIndex,
-        col: colname,
-        value: newValue
-      }))
+      dispatch(
+        updateTableAction(stepId, 'editcells', false, {
+          row: rowIndex,
+          col: colname,
+          value: newValue
+        })
+      )
     }
   }
 }

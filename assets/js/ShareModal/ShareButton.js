@@ -20,15 +20,16 @@ export default function ShareButton ({ className, children }) {
         type='button'
         className='share-button'
         name='share'
-        title={t({ id: 'js.ShareModal.ShareButton.button.hoverText', message: 'Change Workflow sharing' })}
+        title={t({
+          id: 'js.ShareModal.ShareButton.button.hoverText',
+          message: 'Change Workflow sharing'
+        })}
         onClick={open}
       >
         {children}
       </button>
 
-      {isOpen ? (
-        <ShareModal onClickClose={close} />
-      ) : null}
+      {isOpen ? <ShareModal onClickClose={close} /> : null}
     </>
   )
 }

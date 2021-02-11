@@ -23,18 +23,18 @@ export default class NumberField extends PureComponent {
     placeholder: PropTypes.string // maybe empty
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     const value = ev.target.value === '' ? null : Number(ev.target.value)
     this.props.onChange(value)
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     switch (ev.key) {
       case 'Escape':
         ev.preventDefault()
         return this.props.onChange(this.props.upstreamValue)
       case 'Enter':
-        // The default is to submit the form -- which is what we want
+      // The default is to submit the form -- which is what we want
 
       // else handle the key as usual
     }

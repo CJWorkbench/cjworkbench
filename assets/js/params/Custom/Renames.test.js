@@ -11,16 +11,17 @@ describe('Renames', () => {
   const columnNames = ['name', 'build_year', 'narrative', 'cornerstone']
   const inputColumns = columnNames.map(name => ({ name }))
 
-  const wrapper = (extraProps = {}) => mount(
-    <Renames
-      inputColumns={inputColumns}
-      stepId={1}
-      onChange={jest.fn()}
-      value={testEntries}
-      isReadOnly={false}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    mount(
+      <Renames
+        inputColumns={inputColumns}
+        stepId={1}
+        onChange={jest.fn()}
+        value={testEntries}
+        isReadOnly={false}
+        {...extraProps}
+      />
+    )
 
   it('displays all columns when initialized empty', () => {
     // This test corresponds to behavior when added from module library.
@@ -43,7 +44,10 @@ describe('Renames', () => {
     const tree = wrapper()
     const yearInput = tree.find('input[value="host_name"]')
     yearInput.simulate('change', { target: { value: 'hn' } })
-    expect(tree.prop('onChange')).toHaveBeenCalledWith({ name: 'hn', narrative: 'nrtv' })
+    expect(tree.prop('onChange')).toHaveBeenCalledWith({
+      name: 'hn',
+      narrative: 'nrtv'
+    })
   })
 
   it('updates when receiving data from elsewhere', () => {
@@ -65,7 +69,11 @@ describe('Renames', () => {
 
   it('updates parameter upon deleting an entry', () => {
     const tree = wrapper()
-    tree.find('RenameEntry').first().find('.rename-delete').simulate('click')
+    tree
+      .find('RenameEntry')
+      .first()
+      .find('.rename-delete')
+      .simulate('click')
     expect(tree.prop('onChange')).toHaveBeenCalledWith({ narrative: 'nrtv' })
   })
 })

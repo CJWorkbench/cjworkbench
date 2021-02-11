@@ -25,8 +25,18 @@ describe('Embed', () => {
 
     it('Renders the embed widget with the correct information', () => {
       expect(wrapper.find('h1').text()).toBe('Workflow Title')
-      expect(wrapper.find('footer li').at(0).text()).toEqual('by Workflow Owner Name')
-      expect(wrapper.find('footer li').at(1).text()).toEqual('Updated 5h ago')
+      expect(
+        wrapper
+          .find('footer li')
+          .at(0)
+          .text()
+      ).toEqual('by Workflow Owner Name')
+      expect(
+        wrapper
+          .find('footer li')
+          .at(1)
+          .text()
+      ).toEqual('Updated 5h ago')
     })
 
     it('Displays the sharing overlay', () => {
@@ -37,12 +47,7 @@ describe('Embed', () => {
 
   describe('Unavailable workflow', () => {
     beforeEach(() => {
-      wrapper = mountWithI18n(
-        <Embed
-          step={null}
-          workflow={null}
-        />
-      )
+      wrapper = mountWithI18n(<Embed step={null} workflow={null} />)
     })
 
     it('Renders the embed widget with the correct information', () => {

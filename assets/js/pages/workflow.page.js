@@ -12,9 +12,8 @@ import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
 
 // --- Main ----
-const websocket = new WorkflowWebsocket(
-  window.initState.workflow.id,
-  delta => store.dispatch(applyDeltaAction(delta))
+const websocket = new WorkflowWebsocket(window.initState.workflow.id, delta =>
+  store.dispatch(applyDeltaAction(delta))
 )
 websocket.connect()
 
@@ -22,7 +21,11 @@ const api = new WorkbenchAPI(websocket)
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-const middlewares = [errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api)]
+const middlewares = [
+  errorMiddleware(),
+  promiseMiddleware,
+  thunk.withExtraArgument(api)
+]
 
 const store = createStore(
   workflowReducer,
@@ -30,7 +33,10 @@ const store = createStore(
     ...window.initState,
     selectedPane: {
       pane: 'tab',
-      tabSlug: window.initState.workflow.tab_slugs[window.initState.workflow.selected_tab_position]
+      tabSlug:
+        window.initState.workflow.tab_slugs[
+          window.initState.workflow.selected_tab_position
+        ]
     }
   },
   composeEnhancers(applyMiddleware(...middlewares))
@@ -38,14 +44,12 @@ const store = createStore(
 
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(
-  (
-    <InternationalizedPage>
-      <Provider store={store}>
-        <Workflow api={api} lesson={window.initState.lessonData} />
-        <UnhandledErrorReport />
-      </Provider>
-    </InternationalizedPage>
-  ),
+  <InternationalizedPage>
+    <Provider store={store}>
+      <Workflow api={api} lesson={window.initState.lessonData} />
+      <UnhandledErrorReport />
+    </Provider>
+  </InternationalizedPage>,
   document.getElementById('root')
 )
 

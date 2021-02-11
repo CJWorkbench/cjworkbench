@@ -171,7 +171,11 @@ describe('Step, not read-only mode', () => {
   })
 
   it('renders notifications, opening and closing a modal', () => {
-    const w = wrapper({ fetchModuleExists: true, isReadOnly: false, isAnonymous: false })
+    const w = wrapper({
+      fetchModuleExists: true,
+      isReadOnly: false,
+      isAnonymous: false
+    })
 
     w.find('button.notifications').simulate('click')
     expect(w.instance().props.clearNotifications).toHaveBeenCalledWith(999)
@@ -183,17 +187,30 @@ describe('Step, not read-only mode', () => {
   })
 
   it('hides notifications when isAnonymous', () => {
-    const w = wrapper({ fetchModuleExists: true, isReadOnly: false, isAnonymous: true })
+    const w = wrapper({
+      fetchModuleExists: true,
+      isReadOnly: false,
+      isAnonymous: true
+    })
     expect(w.find('button.notifications').length).toBe(0)
   })
 
   it('hides notifications when isReadOnly', () => {
-    const w = wrapper({ fetchModuleExists: true, isOwner: false, isReadOnly: true, isAnonymous: false })
+    const w = wrapper({
+      fetchModuleExists: true,
+      isOwner: false,
+      isReadOnly: true,
+      isAnonymous: false
+    })
     expect(w.find('button.notifications').length).toBe(0)
   })
 
   it('hides notifications when there is no fetch module', () => {
-    const w = wrapper({ fetchModuleExists: false, isReadOnly: false, isAnonymous: false })
+    const w = wrapper({
+      fetchModuleExists: false,
+      isReadOnly: false,
+      isAnonymous: false
+    })
     expect(w.find('button.notifications').length).toBe(0)
   })
 
@@ -203,10 +220,15 @@ describe('Step, not read-only mode', () => {
     expect(w.find('.step-notes.visible')).toHaveLength(0)
 
     w.find('button.edit-note').simulate('click')
-    w.find('EditableNotes').simulate('change', { target: { value: 'new note' } })
+    w.find('EditableNotes').simulate('change', {
+      target: { value: 'new note' }
+    })
     w.find('EditableNotes').simulate('blur')
 
-    expect(w.instance().props.setStepNotes).toHaveBeenCalledWith(step.id, 'new note')
+    expect(w.instance().props.setStepNotes).toHaveBeenCalledWith(
+      step.id,
+      'new note'
+    )
   })
 
   it('deletes a note', () => {
@@ -250,7 +272,11 @@ describe('Step, not read-only mode', () => {
     // (This is white-box testing -- we assume the .then() and the sync
     // call.)
     let onSetStepParamsDone = null
-    const setStepParams = jest.fn(() => ({ then: (fn) => { onSetStepParamsDone = fn } }))
+    const setStepParams = jest.fn(() => ({
+      then: fn => {
+        onSetStepParamsDone = fn
+      }
+    }))
     const w = wrapper({
       step,
       module: aModule,
@@ -305,7 +331,9 @@ describe('Step, not read-only mode', () => {
     w.find('ParamsForm').prop('onChange')({ url: 'http://example.org' })
     w.find('ParamsForm').prop('onSubmit')()
 
-    expect(setStepParams).toHaveBeenCalledWith(999, { url: 'http://example.org' })
+    expect(setStepParams).toHaveBeenCalledWith(999, {
+      url: 'http://example.org'
+    })
     expect(w.instance().props.maybeRequestFetch).toHaveBeenCalledWith(999)
   })
 
@@ -323,38 +351,45 @@ describe('Step, not read-only mode', () => {
     generateSlug.mockImplementation(prefix => prefix + 'X')
     const quickFix = {
       buttonText: 'Fix it',
-      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
-    }
-    const store = mockStore({
-      selectedPane: {
-        pane: 'tab',
-        tabSlug: 'tab-11'
-      },
-      workflow: {
-        id: 99,
-        tab_slugs: ['tab-11', 'tab-12'],
-        read_only: false,
-        is_owner: true,
-        is_anonymous: false
-      },
-      tabs: {
-        'tab-11': { slug: 'tab-11', name: 'Tab 1', step_ids: [10, 20] },
-        'tab-12': { slug: 'tab-12', name: 'Tab 2', step_ids: [] }
-      },
-      steps: {
-        10: { id: 10, slug: 'step-10', tab_slug: 'tab-11' },
-        20: { id: 20, slug: 'step-20', tab_slug: 'tab-11' }
-      },
-      modules: {
-        loadurl: {
-          name: 'Load from URL',
-          id_name: 'loadurl',
-          help_url: '',
-          icon: 'icon',
-          param_fields: []
-        }
+      action: {
+        type: 'prependStep',
+        moduleSlug: 'dosomething',
+        partialParams: { A: 'B' }
       }
-    }, mockApi)
+    }
+    const store = mockStore(
+      {
+        selectedPane: {
+          pane: 'tab',
+          tabSlug: 'tab-11'
+        },
+        workflow: {
+          id: 99,
+          tab_slugs: ['tab-11', 'tab-12'],
+          read_only: false,
+          is_owner: true,
+          is_anonymous: false
+        },
+        tabs: {
+          'tab-11': { slug: 'tab-11', name: 'Tab 1', step_ids: [10, 20] },
+          'tab-12': { slug: 'tab-12', name: 'Tab 2', step_ids: [] }
+        },
+        steps: {
+          10: { id: 10, slug: 'step-10', tab_slug: 'tab-11' },
+          20: { id: 20, slug: 'step-20', tab_slug: 'tab-11' }
+        },
+        modules: {
+          loadurl: {
+            name: 'Load from URL',
+            id_name: 'loadurl',
+            help_url: '',
+            icon: 'icon',
+            param_fields: []
+          }
+        }
+      },
+      mockApi
+    )
 
     lessonSelector.mockReset()
     lessonSelector.mockReturnValue({
@@ -367,7 +402,17 @@ describe('Step, not read-only mode', () => {
           isZenMode={false}
           isZenModeAllowed={false}
           index={1}
-          step={{ id: 20, slug: 'step-20', module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [quickFix] }], files: [] }}
+          step={{
+            id: 20,
+            slug: 'step-20',
+            module: 'loadurl',
+            is_collapsed: false,
+            output_status: 'error',
+            params: {},
+            secrets: {},
+            output_errors: [{ message: 'foo', quickFixes: [quickFix] }],
+            files: []
+          }}
           isSelected
           isAfterSelected={false}
           onDragStart={jest.fn()}
@@ -380,7 +425,13 @@ describe('Step, not read-only mode', () => {
     )
 
     w.find('button.quick-fix').simulate('click')
-    expect(mockApi.addStep).toHaveBeenCalledWith('tab-11', 'step-X', 'dosomething', 1, { A: 'B' })
+    expect(mockApi.addStep).toHaveBeenCalledWith(
+      'tab-11',
+      'step-X',
+      'dosomething',
+      1,
+      { A: 'B' }
+    )
   })
 
   describe('lesson highlights', () => {
@@ -441,7 +492,17 @@ describe('Step, not read-only mode', () => {
             isZenMode={false}
             isZenModeAllowed={false}
             index={1}
-            step={{ id: 20, slug: 'step-20', module: 'loadurl', is_collapsed: false, output_status: 'error', params: {}, secrets: {}, output_errors: [{ message: 'foo', quickFixes: [] }], files: [] }}
+            step={{
+              id: 20,
+              slug: 'step-20',
+              module: 'loadurl',
+              is_collapsed: false,
+              output_status: 'error',
+              params: {},
+              secrets: {},
+              output_errors: [{ message: 'foo', quickFixes: [] }],
+              files: []
+            }}
             isSelected
             isAfterSelected={false}
             onDragStart={jest.fn()}
@@ -462,39 +523,88 @@ describe('Step, not read-only mode', () => {
 
     it('highlights a Step', () => {
       highlight([{ type: 'Step', index: 1, moduleIdName: 'loadurl' }])
-      expect(wrapper.find('.step').prop('className')).toMatch(/\blesson-highlight\b/)
+      expect(wrapper.find('.step').prop('className')).toMatch(
+        /\blesson-highlight\b/
+      )
     })
 
     it('unhighlights a Step', () => {
       // wrong name
       highlight([{ type: 'Step', index: 1, moduleIdName: 'TestModule2' }])
-      expect(wrapper.find('.step').prop('className')).not.toMatch(/\blesson-highlight\b/)
+      expect(wrapper.find('.step').prop('className')).not.toMatch(
+        /\blesson-highlight\b/
+      )
     })
 
     it('highlights the "collapse" button', () => {
-      highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'loadurl', button: 'collapse' }])
-      expect(wrapper.find('i.context-collapse-button').prop('className')).toMatch(/\blesson-highlight\b/)
+      highlight([
+        {
+          type: 'StepContextButton',
+          index: 1,
+          moduleIdName: 'loadurl',
+          button: 'collapse'
+        }
+      ])
+      expect(
+        wrapper.find('i.context-collapse-button').prop('className')
+      ).toMatch(/\blesson-highlight\b/)
     })
 
     it('unhighlights the "collapse" button', () => {
       // wrong moduleIdName
-      highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'TestModule2', button: 'collapse' }])
-      expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
+      highlight([
+        {
+          type: 'StepContextButton',
+          index: 1,
+          moduleIdName: 'TestModule2',
+          button: 'collapse'
+        }
+      ])
+      expect(
+        wrapper.find('i.context-collapse-button').prop('className')
+      ).not.toMatch(/\blesson-highlight\b/)
 
       // wrong button
-      highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'loadurl', button: 'notes' }])
-      expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
+      highlight([
+        {
+          type: 'StepContextButton',
+          index: 1,
+          moduleIdName: 'loadurl',
+          button: 'notes'
+        }
+      ])
+      expect(
+        wrapper.find('i.context-collapse-button').prop('className')
+      ).not.toMatch(/\blesson-highlight\b/)
     })
 
     it('highlights the notes button', () => {
-      highlight([{ type: 'StepContextButton', index: 1, moduleIdName: 'loadurl', button: 'notes' }])
-      expect(wrapper.find('button.edit-note').prop('className')).toMatch(/\blesson-highlight\b/)
+      highlight([
+        {
+          type: 'StepContextButton',
+          index: 1,
+          moduleIdName: 'loadurl',
+          button: 'notes'
+        }
+      ])
+      expect(wrapper.find('button.edit-note').prop('className')).toMatch(
+        /\blesson-highlight\b/
+      )
     })
 
     it('unhighlights the notes button', () => {
       // wrong moduleName
-      highlight([{ type: 'StepContextButton', index: 1, moduleName: 'TestModule2', button: 'notes' }])
-      expect(wrapper.find('button.edit-note').prop('className')).not.toMatch(/\blesson-highlight\b/)
+      highlight([
+        {
+          type: 'StepContextButton',
+          index: 1,
+          moduleName: 'TestModule2',
+          button: 'notes'
+        }
+      ])
+      expect(wrapper.find('button.edit-note').prop('className')).not.toMatch(
+        /\blesson-highlight\b/
+      )
     })
   })
 })

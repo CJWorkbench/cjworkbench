@@ -7,13 +7,17 @@ export default function ManageBilling (props) {
   const [loading, setLoading] = useState(false)
   const handleClick = useCallback(async () => {
     setLoading(true)
-    try { await onClick() } catch {}
+    try {
+      await onClick()
+    } catch {}
     setLoading(false)
   }, [onClick])
 
   return (
     <button className='manage-billing' onClick={handleClick} disabled={loading}>
-      <Trans id='js.settings.Billing.ManageBilling.buttonText'>Manage payments with Stripe</Trans>
+      <Trans id='js.settings.Billing.ManageBilling.buttonText'>
+        Manage payments with Stripe
+      </Trans>
     </button>
   )
 }

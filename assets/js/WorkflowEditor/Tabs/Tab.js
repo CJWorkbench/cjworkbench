@@ -39,11 +39,11 @@ export default class Tab extends PureComponent {
     this.inputRef.current.select()
   }
 
-  handleNameChange = (ev) => {
+  handleNameChange = ev => {
     this.setState({ name: ev.target.value })
   }
 
-  handleNameKeyDown = (ev) => {
+  handleNameKeyDown = ev => {
     switch (ev.key) {
       case 'Enter':
         this.props.setName(this.props.slug, this.state.name)
@@ -82,7 +82,7 @@ export default class Tab extends PureComponent {
     return this.props.dragging !== null
   }
 
-  handleDragStart = (ev) => {
+  handleDragStart = ev => {
     const { isReadOnly, onDragStart, index, name } = this.props
     if (isReadOnly) return
 
@@ -99,7 +99,7 @@ export default class Tab extends PureComponent {
     onDragStart(index)
   }
 
-  handleDragOver = (ev) => {
+  handleDragOver = ev => {
     if (!this.isDragMode) return // we aren't dragging a tab
     ev.preventDefault() // drop is ok
 
@@ -118,7 +118,7 @@ export default class Tab extends PureComponent {
     this.props.onDragEnd()
   }
 
-  handleDrop = (ev) => {
+  handleDrop = ev => {
     if (!this.isDragMode) return // we aren't dragging a tab
     ev.preventDefault() // we want no browser defaults
     this.props.onDrop()
@@ -185,10 +185,7 @@ export default class Tab extends PureComponent {
      * <input>: what the user sees
      */
     return (
-      <li
-        ref={this.liRef}
-        className={classNames.join(' ')}
-      >
+      <li ref={this.liRef} className={classNames.join(' ')}>
         <div
           className='tab'
           draggable={!isReadOnly}

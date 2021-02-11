@@ -11,7 +11,11 @@ export default class RefineClustererProgress extends PureComponent {
     return (
       <div className='refine-clusterer-progress'>
         <progress value={this.props.progress} />
-        <div className='message'><Trans id='js.params.Custom.RefineClustererProgress.findingClusters'>Finding clusters…</Trans></div>
+        <div className='message'>
+          <Trans id='js.params.Custom.RefineClustererProgress.findingClusters'>
+            Finding clusters…
+          </Trans>
+        </div>
       </div>
     )
   }

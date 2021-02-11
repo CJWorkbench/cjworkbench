@@ -7,11 +7,13 @@ import { t } from '@lingui/macro'
 
 export default class Tabs extends PureComponent {
   static propTypes = {
-    tabs: PropTypes.arrayOf(PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      isPending: PropTypes.bool // or undefined
-    }).isRequired).isRequired,
+    tabs: PropTypes.arrayOf(
+      PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        isPending: PropTypes.bool // or undefined
+      }).isRequired
+    ).isRequired,
     selectedPane: propTypes.selectedPane.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     create: PropTypes.func.isRequired, // func(name) => undefined
@@ -25,7 +27,8 @@ export default class Tabs extends PureComponent {
   create = () => {
     this.props.create(
       t({
-        comment: "The tab prefix will be used as the first part of the default name of tabs, i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2', etc",
+        comment:
+          "The tab prefix will be used as the first part of the default name of tabs, i.e. if the tab prefix is 'Tab', the default names can be 'Tab 1', 'Tab 2', etc",
         id: 'js.WorkflowEditor.Tabs.create.defaultPrefix',
         message: 'Tab'
       })
@@ -33,7 +36,16 @@ export default class Tabs extends PureComponent {
   }
 
   render () {
-    const { tabs, isReadOnly, selectedPane, setName, select, destroy, duplicate, setOrder } = this.props
+    const {
+      tabs,
+      isReadOnly,
+      selectedPane,
+      setName,
+      select,
+      destroy,
+      duplicate,
+      setOrder
+    } = this.props
 
     return (
       <div className='tabs'>
@@ -47,11 +59,7 @@ export default class Tabs extends PureComponent {
           select={select}
           setOrder={setOrder}
         />
-        {isReadOnly ? null : (
-          <NewTabPrompt
-            create={this.create}
-          />
-        )}
+        {isReadOnly ? null : <NewTabPrompt create={this.create} />}
       </div>
     )
   }

@@ -38,7 +38,8 @@ function selectOutputStep (id, steps) {
 
 function selectTab (slug, tabs, steps) {
   const tab = tabs[slug]
-  const outputStepId = tab.step_ids.length === 0 ? null : tab.step_ids[tab.step_ids.length - 1]
+  const outputStepId =
+    tab.step_ids.length === 0 ? null : tab.step_ids[tab.step_ids.length - 1]
   const outputStep = outputStepId ? selectOutputStep(outputStepId, steps) : null
   return {
     slug,
@@ -49,10 +50,14 @@ function selectTab (slug, tabs, steps) {
 
 function selectBlock (slug, { type, ...rest }, tabs, steps, stepsBySlug) {
   switch (type) {
-    case 'chart': return { slug, type, step: stepsBySlug[rest.stepSlug] }
-    case 'table': return { slug, type, tab: selectTab(rest.tabSlug, tabs, steps) }
-    case 'text': return { slug, type, markdown: rest.markdown }
-    default: throw new Error('Unknown block type')
+    case 'chart':
+      return { slug, type, step: stepsBySlug[rest.stepSlug] }
+    case 'table':
+      return { slug, type, tab: selectTab(rest.tabSlug, tabs, steps) }
+    case 'text':
+      return { slug, type, markdown: rest.markdown }
+    default:
+      throw new Error('Unknown block type')
   }
 }
 
@@ -62,11 +67,16 @@ const selectCustomReport = createSelector(
   selectTabs,
   selectSteps,
   selectStepsBySlug,
-  (blockSlugs, blocks, tabs, steps, stepsBySlug) => blockSlugs.map(slug => selectBlock(slug, blocks[slug], tabs, steps, stepsBySlug))
+  (blockSlugs, blocks, tabs, steps, stepsBySlug) =>
+    blockSlugs.map(slug =>
+      selectBlock(slug, blocks[slug], tabs, steps, stepsBySlug)
+    )
 )
 
 function selectNonOptimisticReport (state) {
-  return state.workflow.hasCustomReport ? selectCustomReport(state) : selectAutoReport(state)
+  return state.workflow.hasCustomReport
+    ? selectCustomReport(state)
+    : selectAutoReport(state)
 }
 
 /**

@@ -12,7 +12,8 @@ const NoStepTableColumns = [
   { name: '   ', type: 'text' },
   { name: '    ', type: 'text' }
 ]
-const NoStepLoadRows = () => Promise.resolve([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
+const NoStepLoadRows = () =>
+  Promise.resolve([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
 const NoStepTable = () => (
   <TableView
     loadRows={NoStepLoadRows}
@@ -25,9 +26,7 @@ const NoStepTable = () => (
 )
 
 // BusyStepTable: shown when Step render() has not yet been called
-const BusyStepTable = () => (
-  <Spinner />
-)
+const BusyStepTable = () => <Spinner />
 
 // UnreachableStepTable: shown when selected Step comes after an error
 const UnreachableStepTable = () => (
@@ -41,7 +40,15 @@ const UnreachableStepTable = () => (
   />
 )
 
-const OkStepTable = memo(function OkStepTable ({ isLoaded, isReadOnly, stepId, deltaId, columns, nRows, loadRows }) {
+const OkStepTable = memo(function OkStepTable ({
+  isLoaded,
+  isReadOnly,
+  stepId,
+  deltaId,
+  columns,
+  nRows,
+  loadRows
+}) {
   return (
     <>
       <TableView
@@ -57,7 +64,11 @@ const OkStepTable = memo(function OkStepTable ({ isLoaded, isReadOnly, stepId, d
   )
 })
 
-const TableSwitcherContents = memo(function TableSwitcherContents ({ status, nRows, ...props }) {
+const TableSwitcherContents = memo(function TableSwitcherContents ({
+  status,
+  nRows,
+  ...props
+}) {
   if (status === null) {
     return <NoStepTable />
   } else if (status === 'busy') {
@@ -90,10 +101,12 @@ export default class TableSwitcher extends PureComponent {
     stepId: PropTypes.number, // or null, if no selection
     deltaId: PropTypes.number, // or null, if status!=ok
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
-    columns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'timestamp', 'number']).isRequired
-    }).isRequired), // or null, if status!=ok
+    columns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'timestamp', 'number']).isRequired
+      }).isRequired
+    ), // or null, if status!=ok
     nRows: PropTypes.number // or null, if status!=ok
   }
 

@@ -16,8 +16,17 @@ function IframeContainer (props) {
 
 function Logo (props) {
   return (
-    <a className='logo' href='https://workbenchdata.com' target='_blank' rel='noopener noreferrer'>
-      <img src={`${window.STATIC_URL}images/logo.png`} width='35' alt='Workbench' />
+    <a
+      className='logo'
+      href='https://workbenchdata.com'
+      target='_blank'
+      rel='noopener noreferrer'
+    >
+      <img
+        src={`${window.STATIC_URL}images/logo.png`}
+        width='35'
+        alt='Workbench'
+      />
     </a>
   )
 }
@@ -35,14 +44,31 @@ function EmbedButton (props) {
       <button name='embed' type='button' onClick={handleClickOpen}>
         <EmbedIcon />
       </button>
-      <div className={'embed-overlay' + (isOpen ? ' open' : '')} onClick={handleClickClose}>
-        <div className='embed-share-links' onClick={(e) => { e.stopPropagation() }}>
-          <h2><Trans id='js.Embed.embedThisChart' comment='This should be all-caps for styling reasons'>EMBED THIS CHART</Trans></h2>
-          <h3><Trans id='js.Embed.embedCode'>Paste this code into any webpage HTML</Trans></h3>
+      <div
+        className={'embed-overlay' + (isOpen ? ' open' : '')}
+        onClick={handleClickClose}
+      >
+        <div
+          className='embed-share-links'
+          onClick={e => {
+            e.stopPropagation()
+          }}
+        >
+          <h2>
+            <Trans
+              id='js.Embed.embedThisChart'
+              comment='This should be all-caps for styling reasons'
+            >
+              EMBED THIS CHART
+            </Trans>
+          </h2>
+          <h3>
+            <Trans id='js.Embed.embedCode'>
+              Paste this code into any webpage HTML
+            </Trans>
+          </h3>
           <div className='code-snippet'>
-            <code className='embed--share-code'>
-              {iframeCode}
-            </code>
+            <code className='embed--share-code'>{iframeCode}</code>
           </div>
         </div>
       </div>
@@ -59,12 +85,20 @@ function Footer (props) {
       <Logo />
       <div className='metadata'>
         <h1>
-          <a href={`/workflows/${workflow.id}/`} target='_blank' rel='noopener noreferrer'>
+          <a
+            href={`/workflows/${workflow.id}/`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             {workflow.name}
           </a>
         </h1>
         <ul>
-          <li><Trans id='js.Embed.metadata.author'>by {workflow.owner_name}</Trans></li>
+          <li>
+            <Trans id='js.Embed.metadata.author'>
+              by {workflow.owner_name}
+            </Trans>
+          </li>
           <li>
             <Trans
               id='js.Embed.metadata.updated'
@@ -83,11 +117,19 @@ function Footer (props) {
 function NotAvailable () {
   return (
     <>
-      <p className='not-available'><Trans id='js.Embed.workflowNotAvailable.title'>This workflow is not available</Trans></p>
+      <p className='not-available'>
+        <Trans id='js.Embed.workflowNotAvailable.title'>
+          This workflow is not available
+        </Trans>
+      </p>
       <footer>
         <Logo />
         <div className='embed-footer-meta'>
-          <h1><Trans id='js.Embed.workflowNotAvailable.footer.logo'>Workbench</Trans></h1>
+          <h1>
+            <Trans id='js.Embed.workflowNotAvailable.footer.logo'>
+              Workbench
+            </Trans>
+          </h1>
         </div>
       </footer>
     </>

@@ -1,4 +1,8 @@
-import { addStepAction, setStepParamsAction, setSelectedStepAction } from '../workflow-reducer'
+import {
+  addStepAction,
+  setStepParamsAction,
+  setSelectedStepAction
+} from '../workflow-reducer'
 
 /**
  * Module param-building functions per id_name.
@@ -52,8 +56,9 @@ function findStepWithIds (state, focusStepId, moduleIdName) {
   // validIdsOrNulls: [ 2, null, null, 65 ] means indices 0 and 3 are for
   // desired module (and have stepIds 2 and 64), 1 and 2 aren't for
   // desired module
-  const validIdsOrNulls = tab.step_ids
-    .map(id => steps[String(id)].module === moduleIdName ? id : null)
+  const validIdsOrNulls = tab.step_ids.map(id =>
+    steps[String(id)].module === moduleIdName ? id : null
+  )
 
   const focusIndex = tab.step_ids.indexOf(focusStepId)
   if (focusIndex === -1) return null
@@ -71,7 +76,8 @@ function findStepWithIds (state, focusStepId, moduleIdName) {
 
   // Is the _next_ step valid? If so, return that
   const nextIndex = focusIndex + 1
-  const atNextIndex = nextIndex >= validIdsOrNulls.length ? null : validIdsOrNulls[nextIndex]
+  const atNextIndex =
+    nextIndex >= validIdsOrNulls.length ? null : validIdsOrNulls[nextIndex]
   if (atNextIndex !== null) {
     const step = steps[String(atNextIndex)]
     return {
@@ -99,7 +105,9 @@ export function updateTableAction (stepId, idName, forceNewModule, params) {
       return
     }
 
-    const existingStep = forceNewModule ? null : findStepWithIds(state, stepId, idName)
+    const existingStep = forceNewModule
+      ? null
+      : findStepWithIds(state, stepId, idName)
     const newParams = moduleParamsBuilders[idName](
       existingStep ? existingStep.params : null,
       params,
@@ -168,11 +176,13 @@ function buildSelectColumnsParams (oldParams, params) {
 }
 
 function buildEditCellsParams (oldParams, params) {
-  const edits = (oldParams && oldParams.celledits) ? oldParams.celledits : []
+  const edits = oldParams && oldParams.celledits ? oldParams.celledits : []
   const edit = params
 
   // Remove the previous edit to the same cell
-  const idx = edits.findIndex(({ row, col }) => row === edit.row && col === edit.col)
+  const idx = edits.findIndex(
+    ({ row, col }) => row === edit.row && col === edit.col
+  )
 
   if (idx === -1) {
     edits.push(edit)
@@ -220,11 +230,13 @@ function newParamsUnlessNoChange (oldParams, newParams) {
 
 function genericAddColumn (key) {
   return (oldParams, params) => {
-    const colnames = oldParams ? (oldParams[key] || []) : []
+    const colnames = oldParams ? oldParams[key] || [] : []
     if (!params.columnKey) throw new Error('Expected "columnKey" column to add')
     const colname = params.columnKey
 
-    if (!colname) throw new Error('Unexpected params: ' + JSON.stringify(params))
+    if (!colname) {
+      throw new Error('Unexpected params: ' + JSON.stringify(params))
+    }
 
     if (colnames.includes(colname)) {
       return null
@@ -248,14 +260,17 @@ function buildRenameColumnsParams (oldParams, params, isNext) {
   if (renames[prevName] === newName) return null // no-op
 
   // conflictPrevName: if we're renaming B=>C and renames has A=>C, delete A=>C.
-  const conflictPrevName = Object.keys(renames).find(k => renames[k] === newName) || null
+  const conflictPrevName =
+    Object.keys(renames).find(k => renames[k] === newName) || null
   delete renames[conflictPrevName]
 
   if (isNext) {
     renames[prevName] = newName
   } else {
     // originalPrevName, realPrevName: if we're renaming B=>C and original has A=>B, return A=>C.
-    const originalPrevName = Object.keys(renames).find(k => renames[k] === prevName)
+    const originalPrevName = Object.keys(renames).find(
+      k => renames[k] === prevName
+    )
     const realPrevName = originalPrevName || prevName
     renames[realPrevName] = newName
   }
@@ -265,7 +280,10 @@ function buildRenameColumnsParams (oldParams, params, isNext) {
 
 function buildReorderColumnsParams (oldParams, params) {
   // Yes, yes, this is half-broken -- https://www.pivotaltracker.com/story/show/162592381
-  const historyEntries = (oldParams && oldParams['reorder-history']) ? JSON.parse(oldParams['reorder-history']) : []
+  const historyEntries =
+    oldParams && oldParams['reorder-history']
+      ? JSON.parse(oldParams['reorder-history'])
+      : []
 
   let { column, to, from } = params
 
@@ -283,7 +301,10 @@ function buildSortColumnsParams (oldParams, params) {
   // 1. If the column is already the first param and directions the same, return null
   // 2. Remove existing column from param list, if it exists
   // 3. Prepend list with new column
-  const newColumn = { colname: params.columnKey, is_ascending: params.is_ascending }
+  const newColumn = {
+    colname: params.columnKey,
+    is_ascending: params.is_ascending
+  }
 
   if (oldParams == null) {
     return { sort_columns: [newColumn], keep_top: '' }
@@ -291,11 +312,16 @@ function buildSortColumnsParams (oldParams, params) {
 
   const columns = oldParams.sort_columns
 
-  if (columns[0].colname === newColumn.colname && columns[0].is_ascending === newColumn.is_ascending) {
+  if (
+    columns[0].colname === newColumn.colname &&
+    columns[0].is_ascending === newColumn.is_ascending
+  ) {
     return null
   }
 
-  const sortColumns = columns.filter(column => column.colname !== params.columnKey)
+  const sortColumns = columns.filter(
+    column => column.colname !== params.columnKey
+  )
   sortColumns.unshift(newColumn)
 
   const newParams = { sort_columns: sortColumns, keep_top: oldParams.keep_top }

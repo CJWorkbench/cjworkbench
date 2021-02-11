@@ -3,7 +3,7 @@ import OAuth from './OAuth'
 import { mountWithI18n } from '../../i18n/test-utils'
 
 describe('OAuth', () => {
-  const wrapper = (extraProps) => {
+  const wrapper = extraProps => {
     return mountWithI18n(
       <OAuth
         name='x'

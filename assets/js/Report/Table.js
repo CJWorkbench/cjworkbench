@@ -18,20 +18,39 @@ function buildColumnHeaderComponent ({ name, type }) {
   return () => <ColumnHeader name={name} type={type} />
 }
 
-function Table ({ workflowId, stepSlug, deltaId, nRows, columns, nRowsPerTile, nColumnsPerTile }) {
+function Table ({
+  workflowId,
+  stepSlug,
+  deltaId,
+  nRows,
+  columns,
+  nRowsPerTile,
+  nColumnsPerTile
+}) {
   const nTileRows = Math.ceil(nRows / nRowsPerTile)
   const nTileColumns = Math.ceil(columns.length / nColumnsPerTile)
-  const fetchTile = useCallback((tileRow, tileColumn, fetchOptions) => {
-    const url = `/workflows/${workflowId}/tiles/${stepSlug}/delta-${deltaId}/${tileRow},${tileColumn}.json`
-    return global.fetch(url, fetchOptions)
-  }, [workflowId, stepSlug, deltaId])
-  const { sparseTileGrid, setWantedTileRange } = useTiles({ fetchTile, nTileRows, nTileColumns })
-  const bigColumns = useMemo(() => columns.map(column => ({
-    ...column,
-    width: 180,
-    headerComponent: buildColumnHeaderComponent(column),
-    valueComponent: columnToCellFormatter(column)
-  })), [columns])
+  const fetchTile = useCallback(
+    (tileRow, tileColumn, fetchOptions) => {
+      const url = `/workflows/${workflowId}/tiles/${stepSlug}/delta-${deltaId}/${tileRow},${tileColumn}.json`
+      return global.fetch(url, fetchOptions)
+    },
+    [workflowId, stepSlug, deltaId]
+  )
+  const { sparseTileGrid, setWantedTileRange } = useTiles({
+    fetchTile,
+    nTileRows,
+    nTileColumns
+  })
+  const bigColumns = useMemo(
+    () =>
+      columns.map(column => ({
+        ...column,
+        width: 180,
+        headerComponent: buildColumnHeaderComponent(column),
+        valueComponent: columnToCellFormatter(column)
+      })),
+    [columns]
+  )
 
   return (
     <BigTable
@@ -55,7 +74,9 @@ Table.propTypes = {
 }
 
 function mapStateToProps (state, { stepSlug }) {
-  const step = Object.values(state.steps).filter(step => step.slug === stepSlug)[0]
+  const step = Object.values(state.steps).filter(
+    step => step.slug === stepSlug
+  )[0]
   return {
     workflowId: state.workflow.id,
     deltaId: step.cached_render_result_delta_id,

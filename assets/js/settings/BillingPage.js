@@ -8,7 +8,9 @@ export default function BillingPage (props) {
   const { api, user } = props
 
   const createBillingPortalSessionAndRedirect = useCallback(async () => {
-    const { billingPortalSession } = await api.createStripeBillingPortalSession()
+    const {
+      billingPortalSession
+    } = await api.createStripeBillingPortalSession()
     window.location = billingPortalSession.url
   }, [api])
 
@@ -17,7 +19,9 @@ export default function BillingPage (props) {
       <MainNav user={user} currentPath='/settings/billing' />
       <main>
         <header>
-          <h1><Trans id='js.settings.BillingPage.title'>Billing</Trans></h1>
+          <h1>
+            <Trans id='js.settings.BillingPage.title'>Billing</Trans>
+          </h1>
         </header>
         <Billing
           user={user}

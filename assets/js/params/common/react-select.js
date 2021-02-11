@@ -40,31 +40,34 @@ const NoStyles = {
 }
 
 const PopperModifiers = [PopperSameWidth]
-const PopperMenuPortalContents = forwardRef(({ style, placement, scheduleUpdate, children }, ref) => {
-  // When menu entries change, update Popper. That handles this case:
-  //
-  // 1. Open menu from near bottom of page. It opens upward.
-  // 2. Search. Number of menu entries shrinks.
-  //
-  // Expected results: menu is repositioned so its _bottom_ stays in a constant
-  // position. That requires a scheduleUpdate().
-  useLayoutEffect(
-    scheduleUpdate => scheduleUpdate ? scheduleUpdate() : undefined,
-    [scheduleUpdate]
-  )
+const PopperMenuPortalContents = forwardRef(
+  ({ style, placement, scheduleUpdate, children }, ref) => {
+    // When menu entries change, update Popper. That handles this case:
+    //
+    // 1. Open menu from near bottom of page. It opens upward.
+    // 2. Search. Number of menu entries shrinks.
+    //
+    // Expected results: menu is repositioned so its _bottom_ stays in a constant
+    // position. That requires a scheduleUpdate().
+    useLayoutEffect(
+      scheduleUpdate => (scheduleUpdate ? scheduleUpdate() : undefined),
+      [scheduleUpdate]
+    )
 
-  return (
-    <div
-      ref={ref}
-      className='react-select-menu-portal'
-      style={style}
-      data-placement={placement}
-      children={children}
-    />
-  )
-})
+    return (
+      <div
+        ref={ref}
+        className='react-select-menu-portal'
+        style={style}
+        data-placement={placement}
+      >
+        {children}
+      </div>
+    )
+  }
+)
 function PopperMenuPortal (props) {
-  return ReactDOM.createPortal((
+  return ReactDOM.createPortal(
     <Popper
       referenceElement={props.controlElement}
       placement={props.menuPlacement}
@@ -76,11 +79,13 @@ function PopperMenuPortal (props) {
           style={style}
           placement={placement}
           scheduleUpdate={scheduleUpdate}
-          children={props.children}
-        />
+        >
+          {props.children}
+        </PopperMenuPortalContents>
       )}
-    </Popper>
-  ), props.appendTo)
+    </Popper>,
+    props.appendTo
+  )
 }
 
 const DefaultOverrideComponents = {
@@ -93,10 +98,12 @@ export default class ReactSelect extends PureComponent {
     name: PropTypes.string.isRequired, // <input name="...">
     inputId: PropTypes.string.isRequired, // <input id="...">
     placeholder: PropTypes.string.isRequired,
-    options: PropTypes.arrayOf(PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.any.isRequired
-    }).isRequired).isRequired,
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        value: PropTypes.any.isRequired
+      }).isRequired
+    ).isRequired,
     value: PropTypes.oneOfType([
       // either selected === options[X].value or selected[a] === options[X].value
       PropTypes.arrayOf(PropTypes.any.isRequired).isRequired,
@@ -115,9 +122,14 @@ export default class ReactSelect extends PureComponent {
     ...(this.props.components || {})
   }
 
-  noOptionsMessage = () => this.props.noOptionsMessage || t({ id: 'js.params.common.ReactSelect.noOptionsMessage', message: 'No options' })
+  noOptionsMessage = () =>
+    this.props.noOptionsMessage ||
+    t({
+      id: 'js.params.common.ReactSelect.noOptionsMessage',
+      message: 'No options'
+    })
 
-  handleChange = (reactSelectValue) => {
+  handleChange = reactSelectValue => {
     const { isMulti, onChange } = this.props
 
     let value
@@ -131,13 +143,27 @@ export default class ReactSelect extends PureComponent {
   }
 
   render () {
-    const { name, inputId, placeholder, options, isLoading, isMulti, isReadOnly, addMenuListClassName, value } = this.props
+    const {
+      name,
+      inputId,
+      placeholder,
+      options,
+      isLoading,
+      isMulti,
+      isReadOnly,
+      addMenuListClassName,
+      value
+    } = this.props
 
     let reactSelectValue
     if (isMulti) {
-      reactSelectValue = options ? options.filter(option => value.includes(option.value)) : []
+      reactSelectValue = options
+        ? options.filter(option => value.includes(option.value))
+        : []
     } else {
-      reactSelectValue = options ? (options.find(option => value === option.value) || null) : null
+      reactSelectValue = options
+        ? options.find(option => value === option.value) || null
+        : null
     }
 
     const classNames = ['react-select']
@@ -158,7 +184,9 @@ export default class ReactSelect extends PureComponent {
         classNamePrefix='react-select'
         captureMenuScroll={false} // https://www.pivotaltracker.com/story/show/170759719
         addMenuListClassName={addMenuListClassName}
-        menuPortalTarget={document.body /* passed as props.appendTo to PopperMenuPortal */}
+        menuPortalTarget={
+          document.body /* passed as props.appendTo to PopperMenuPortal */
+        }
         styles={NoStyles}
         components={this.components}
         noOptionsMessage={this.noOptionsMessage}

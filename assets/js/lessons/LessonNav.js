@@ -11,11 +11,15 @@ export default class LessonNav extends PureComponent {
   }
 
   handleClickPrevious = () => {
-    this.props.setCurrentSectionIndex(Math.max(0, this.props.currentSectionIndex - 1))
+    this.props.setCurrentSectionIndex(
+      Math.max(0, this.props.currentSectionIndex - 1)
+    )
   }
 
   handleClickNext = () => {
-    this.props.setCurrentSectionIndex(Math.min(this.props.currentSectionIndex + 1, this.props.nSections))
+    this.props.setCurrentSectionIndex(
+      Math.min(this.props.currentSectionIndex + 1, this.props.nSections)
+    )
   }
 
   render () {
@@ -32,26 +36,42 @@ export default class LessonNav extends PureComponent {
         <div className='buttons-container'>
           <button
             name='Previous'
-            className={`previous action-button button-white ${a < c ? 'lesson-highlight' : ''}`}
+            className={`previous action-button button-white ${
+              a < c ? 'lesson-highlight' : ''
+            }`}
             disabled={c <= 0}
             onClick={this.handleClickPrevious}
           >
-            <Trans id='js.lessons.LessonNav.previous.button' comment="As in 'previous step'">Previous</Trans>
+            <Trans
+              id='js.lessons.LessonNav.previous.button'
+              comment="As in 'previous step'"
+            >
+              Previous
+            </Trans>
           </button>
-          {c === n ? null : (
-            <div className='current-and-total'>
-              <span className='current'>{c + 1}</span>
-              <span> of </span>
-              <span className='total'>{n}</span>
-            </div>
-          )}
+          {c === n
+            ? null
+            : (
+              <div className='current-and-total'>
+                <span className='current'>{c + 1}</span>
+                <span> of </span>
+                <span className='total'>{n}</span>
+              </div>
+              )}
           <button
             name='Next'
-            className={`next action-button button-white ${a > c ? 'lesson-highlight' : ''}`}
+            className={`next action-button button-white ${
+              a > c ? 'lesson-highlight' : ''
+            }`}
             disabled={c + 1 > n}
             onClick={this.handleClickNext}
           >
-            <Trans id='js.lessons.LessonNav.next.button' comment="As in 'next step'">Next</Trans>
+            <Trans
+              id='js.lessons.LessonNav.next.button'
+              comment="As in 'next step'"
+            >
+              Next
+            </Trans>
           </button>
         </div>
       </footer>

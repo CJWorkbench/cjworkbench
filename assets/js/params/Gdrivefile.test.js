@@ -47,7 +47,10 @@ describe('Gdrivefile', () => {
 
   it('shows loading when google API has not loaded', async () => {
     const w = wrapper({
-      loadPickerFactory: () => new Promise(resolve => { /* never resolve */ })
+      loadPickerFactory: () =>
+        new Promise(resolve => {
+          /* never resolve */
+        })
     })
     await tick()
     w.update()
@@ -66,7 +69,10 @@ describe('Gdrivefile', () => {
 
   it('shows loading when fetching access token', async () => {
     const w = wrapper({
-      createOauthAccessToken: () => new Promise(resolve => { /* never resolve */ })
+      createOauthAccessToken: () =>
+        new Promise(resolve => {
+          /* never resolve */
+        })
     })
     await tick()
     w.update()
@@ -92,7 +98,9 @@ describe('Gdrivefile', () => {
     await tick()
     w.update()
     expect(w.find('button')).toHaveLength(1)
-    expect(w.find('button Trans[id="js.params.Gdrivefile.change.button"]')).toHaveLength(1)
+    expect(
+      w.find('button Trans[id="js.params.Gdrivefile.change.button"]')
+    ).toHaveLength(1)
 
     pickerFactory.open.mockImplementation((accessToken, onPick, onCancel) => {
       expect(accessToken).toEqual('access-token')
@@ -133,7 +141,9 @@ describe('Gdrivefile', () => {
     const w = wrapper({ value: null })
     await tick()
     w.update()
-    expect(w.find('button Trans[id="js.params.Gdrivefile.choose.button"]')).toHaveLength(1)
+    expect(
+      w.find('button Trans[id="js.params.Gdrivefile.choose.button"]')
+    ).toHaveLength(1)
   })
 
   it('closes on unmount', async () => {

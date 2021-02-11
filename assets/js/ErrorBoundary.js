@@ -18,9 +18,13 @@ export default class ErrorBoundary extends PureComponent {
     if (this.state.error) {
       return (
         <div className='caught-error'>
-          <Trans id='js.ErrorBoundary.somethingIsWrong'>Something is wrong.</Trans>
+          <Trans id='js.ErrorBoundary.somethingIsWrong'>
+            Something is wrong.
+          </Trans>
           <br />
-          <Trans id='js.ErrorBoundary.pleaseRefreshPage'>Please refresh the page.</Trans>
+          <Trans id='js.ErrorBoundary.pleaseRefreshPage'>
+            Please refresh the page.
+          </Trans>
         </div>
       )
     } else {

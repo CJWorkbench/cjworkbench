@@ -55,12 +55,20 @@ export default class WorkbenchAPI {
       .then(() => fetch(url, realOptions))
       .then(res => {
         if (!res.ok) {
-          throw new RangeError(`Server responded with non-200 status code ${res.status}`)
+          throw new RangeError(
+            `Server responded with non-200 status code ${res.status}`
+          )
         }
         if (res.status === 204) {
           return null // No content
         }
-        if (res.headers.get('content-type') && res.headers.get('content-type').toLowerCase().indexOf('application/json') === -1) {
+        if (
+          res.headers.get('content-type') &&
+          res.headers
+            .get('content-type')
+            .toLowerCase()
+            .indexOf('application/json') === -1
+        ) {
           throw new TypeError('Server response is not JSON', res)
         }
         // throws:
@@ -99,11 +107,16 @@ export default class WorkbenchAPI {
   }
 
   updateAclEntry (workflowId, email, canEdit) {
-    return this._put(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`, { canEdit })
+    return this._put(
+      `/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`,
+      { canEdit }
+    )
   }
 
   deleteAclEntry (workflowId, email) {
-    return this._delete(`/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`)
+    return this._delete(
+      `/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`
+    )
   }
 
   setTabOrder (tabSlugs) {
@@ -200,7 +213,9 @@ export default class WorkbenchAPI {
         url += 'startrow=' + startrow
       }
       if (endrow) {
-        if (startrow) { url += '&' }
+        if (startrow) {
+          url += '&'
+        }
         url += 'endrow=' + endrow
       }
     }
@@ -209,7 +224,11 @@ export default class WorkbenchAPI {
   }
 
   valueCounts (stepId, column) {
-    return this._fetch(`/api/wfmodules/${stepId}/value-counts?column=${encodeURIComponent(column)}`)
+    return this._fetch(
+      `/api/wfmodules/${stepId}/value-counts?column=${encodeURIComponent(
+        column
+      )}`
+    )
       .catch(err => {
         if (err instanceof RangeError) {
           return { values: {} }
@@ -225,7 +244,9 @@ export default class WorkbenchAPI {
   }
 
   getTile (stepId, deltaId, tileRow, tileColumn) {
-    return this._fetch(`/api/wfmodules/${stepId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`)
+    return this._fetch(
+      `/api/wfmodules/${stepId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`
+    )
   }
 
   setTabName (tabSlug, name) {
@@ -299,16 +320,17 @@ export default class WorkbenchAPI {
   }
 
   clearStepUnseenNotifications (stepId) {
-    return this._callExpectingNull('step.clear_unseen_notifications', { stepId })
+    return this._callExpectingNull('step.clear_unseen_notifications', {
+      stepId
+    })
   }
 
   importModuleFromGitHub (url) {
-    return this._post('/api/importfromgithub/', { url })
-      .then(json => {
-        // Turn OK {'error': 'no can do'} into a Promise Error
-        if (json.error) throw new Error(json.error)
-        return json
-      })
+    return this._post('/api/importfromgithub/', { url }).then(json => {
+      // Turn OK {'error': 'no can do'} into a Promise Error
+      if (json.error) throw new Error(json.error)
+      return json
+    })
   }
 
   requestFetch (stepId) {
@@ -323,13 +345,14 @@ export default class WorkbenchAPI {
    * On auth error (or any other error), warn on console and return null.
    */
   createOauthAccessToken (stepId, param) {
-    return this.websocket.callServerHandler('step.generate_secret_access_token', {
-      stepId,
-      param
-    })
+    return this.websocket
+      .callServerHandler('step.generate_secret_access_token', {
+        stepId,
+        param
+      })
       .then(
         ({ token }) => token, // token may be null
-        (err) => {
+        err => {
           console.warn('Server did not generate OAuth token:', err)
           return null
         }
@@ -346,7 +369,7 @@ export default class WorkbenchAPI {
     /**
      * Return true if popup is pointed at an oauth-success page.
      */
-    const isOauthFinished = (popup) => {
+    const isOauthFinished = popup => {
       try {
         if (!/^\/oauth\/?/.test(popup.location.pathname)) {
           // We're at the wrong URL.
@@ -402,7 +425,9 @@ export default class WorkbenchAPI {
 
   async _getUploadManagerPromise () {
     if (!this._uploadManagerPromise) {
-      const { default: UploadManager } = await import(/* webpackChunkName: "upload-manager" */ './UploadManager')
+      const { default: UploadManager } = await import(
+        /* webpackChunkName: "upload-manager" */ './UploadManager'
+      )
       this._uploadManagerPromise = new UploadManager(this.websocket)
     }
     return this._uploadManagerPromise
@@ -419,15 +444,21 @@ export default class WorkbenchAPI {
   }
 
   async getStepFileUploadApiToken (stepSlug) {
-    return this.websocket.callServerHandler('step.get_file_upload_api_token', { stepSlug }).then(({ apiToken }) => apiToken)
+    return this.websocket
+      .callServerHandler('step.get_file_upload_api_token', { stepSlug })
+      .then(({ apiToken }) => apiToken)
   }
 
   async resetStepFileUploadApiToken (stepSlug) {
-    return this.websocket.callServerHandler('step.reset_file_upload_api_token', { stepSlug }).then(({ apiToken }) => apiToken)
+    return this.websocket
+      .callServerHandler('step.reset_file_upload_api_token', { stepSlug })
+      .then(({ apiToken }) => apiToken)
   }
 
   async clearStepFileUploadApiToken (stepSlug) {
-    return this._callExpectingNull('step.clear_file_upload_api_token', { stepSlug })
+    return this._callExpectingNull('step.clear_file_upload_api_token', {
+      stepSlug
+    })
   }
 
   /**

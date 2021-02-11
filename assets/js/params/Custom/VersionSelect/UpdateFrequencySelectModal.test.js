@@ -39,12 +39,30 @@ describe('UpdateFrequencySelectModal', () => {
     // retry, and ultimately end up happy
     const w = wrapper({
       isAutofetch: false,
-      trySetAutofetch: jest.fn(() => Promise.resolve({ value: { isAutofetch: false, fetchInterval: 3600, quotaExceeded: { maxFetchesPerDay: 500, nFetchesPerDay: 600, autofetches: [] } } }))
+      trySetAutofetch: jest.fn(() =>
+        Promise.resolve({
+          value: {
+            isAutofetch: false,
+            fetchInterval: 3600,
+            quotaExceeded: {
+              maxFetchesPerDay: 500,
+              nFetchesPerDay: 600,
+              autofetches: []
+            }
+          }
+        })
+      )
     })
-    w.find('input[name="isAutofetch"][value="true"]').simulate('change', { target: { checked: true, value: 'true' } })
+    w.find('input[name="isAutofetch"][value="true"]').simulate('change', {
+      target: { checked: true, value: 'true' }
+    })
     expect(w.find('fieldset.autofetch').prop('disabled')).toBe(true) // we're submitting
     // Loop until fetch completes. (This is React 16.8. React 16.9 might do better)
-    for (let i = 0; i < 10 && w.find('fieldset.autofetch').prop('disabled'); i++) {
+    for (
+      let i = 0;
+      i < 10 && w.find('fieldset.autofetch').prop('disabled');
+      i++
+    ) {
       await tick()
       w.update() // async
     }

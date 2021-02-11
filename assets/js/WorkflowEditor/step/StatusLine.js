@@ -6,7 +6,12 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import QuickFix, { QuickFixPropTypes } from './QuickFix'
 
-const StatusLine = memo(function StatusLine ({ status, errors, applyQuickFix, isReadOnly }) {
+const StatusLine = memo(function StatusLine ({
+  status,
+  errors,
+  applyQuickFix,
+  isReadOnly
+}) {
   const [clickedAnyQuickFix, setClickedQuickFix] = useState(false)
   const doApplyQuickFix = useCallback((...args) => {
     setClickedQuickFix(true)
@@ -25,19 +30,21 @@ const StatusLine = memo(function StatusLine ({ status, errors, applyQuickFix, is
       {errors.map(({ message, quickFixes }, j) => (
         <div className='step-error-msg' key={j}>
           <p>{message}</p>
-          {quickFixes.length && !isReadOnly ? (
-            <ul className='quick-fixes'>
-              {quickFixes.map((quickFix, i) => (
-                <li key={i}>
-                  <QuickFix
-                    disabled={clickedAnyQuickFix}
-                    applyQuickFix={doApplyQuickFix}
-                    {...quickFix}
-                  />
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          {quickFixes.length && !isReadOnly
+            ? (
+              <ul className='quick-fixes'>
+                {quickFixes.map((quickFix, i) => (
+                  <li key={i}>
+                    <QuickFix
+                      disabled={clickedAnyQuickFix}
+                      applyQuickFix={doApplyQuickFix}
+                      {...quickFix}
+                    />
+                  </li>
+                ))}
+              </ul>
+              )
+            : null}
         </div>
       ))}
     </>
@@ -46,7 +53,13 @@ const StatusLine = memo(function StatusLine ({ status, errors, applyQuickFix, is
 StatusLine.propTypes = {
   status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
   isReadOnly: PropTypes.bool.isRequired, // if true, cannot apply quick fixes
-  errors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
+  errors: PropTypes.arrayOf(
+    PropTypes.shape({
+      message: PropTypes.string.isRequired,
+      quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes))
+        .isRequired
+    }).isRequired
+  ).isRequired, // may be empty
   applyQuickFix: PropTypes.func.isRequired // func(action, args) => undefined
 }
 

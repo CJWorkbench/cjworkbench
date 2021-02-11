@@ -11,15 +11,15 @@ export default function Workflows (props) {
   return (
     <Page>
       <MainNav user={user} currentPath={currentPath} />
-      {currentPath === '/workflows' ? (
-        <OwnedWorkflowsMain workflows={workflows} user={user} api={api} />
-      ) : null}
-      {currentPath === '/workflows/shared-with-me' ? (
-        <WorkflowsSharedWithMeMain workflows={workflows} user={user} api={api} />
-      ) : null}
-      {currentPath === '/workflows/examples' ? (
-        <ExampleWorkflowsMain workflows={workflows} user={user} api={api} />
-      ) : null}
+      {currentPath === '/workflows'
+        ? <OwnedWorkflowsMain workflows={workflows} user={user} api={api} />
+        : null}
+      {currentPath === '/workflows/shared-with-me'
+        ? <WorkflowsSharedWithMeMain workflows={workflows} user={user} api={api} />
+        : null}
+      {currentPath === '/workflows/examples'
+        ? <ExampleWorkflowsMain workflows={workflows} user={user} api={api} />
+        : null}
     </Page>
   )
 }

@@ -3,20 +3,24 @@ import { mountWithI18n } from '../i18n/test-utils'
 import NewAclEntry from './NewAclEntry'
 
 describe('NewAclEntry', () => {
-  const wrapper = (extraProps = {}) => mountWithI18n(
-    <NewAclEntry
-      ownerEmail='owner@example.org'
-      updateAclEntry={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    mountWithI18n(
+      <NewAclEntry
+        ownerEmail='owner@example.org'
+        updateAclEntry={jest.fn()}
+        {...extraProps}
+      />
+    )
 
   it('should add an email', () => {
     const w = wrapper()
     w.find('input[name="email"]').instance().value = 'a@example.com'
     w.find('form').simulate('submit')
 
-    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith('a@example.com', false)
+    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith(
+      'a@example.com',
+      false
+    )
     expect(w.find('input[name="email"]').instance().value).toEqual('')
   })
 

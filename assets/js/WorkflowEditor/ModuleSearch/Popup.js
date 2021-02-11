@@ -99,7 +99,7 @@ const PopperFlipBasedOnScrollPosition = {
   name: 'flip',
   fn: ({ state, options, name }) => {
     const refBox = state.rects.reference
-    const refCenterY = refBox.y + (refBox.height / 2)
+    const refCenterY = refBox.y + refBox.height / 2
     // How to find the height of the reference's _boundary_? Use
     // detectOverflow(). For instance, if boundary is outer box and reference
     // is inner box:
@@ -115,7 +115,10 @@ const PopperFlipBasedOnScrollPosition = {
     //   |        | (-overflow.bottom)
     //   +--------+
     //
-    const overflow = detectOverflow(state, { ...options, elementContext: 'reference' })
+    const overflow = detectOverflow(state, {
+      ...options,
+      elementContext: 'reference'
+    })
     const boundaryHeight = -overflow.bottom - overflow.top + refBox.height
     const boundaryTop = refBox.y + overflow.top
     // If prompt is past the 60% mark on the page, open upwards.
@@ -135,7 +138,8 @@ const PopperOffsetFormBelowReference = {
   fn: ({ state, name }) => {
     let y = 0
     if (state.placement === 'top') {
-      const formHeight = state.elements.popper.querySelector('form').clientHeight
+      const formHeight = state.elements.popper.querySelector('form')
+        .clientHeight
       y = formHeight + state.rects.reference.height
     }
 
@@ -186,7 +190,9 @@ const PopperMaxHeight = {
   fn: ({ state, name, options }) => {
     const overflow = detectOverflow(state, { ...options, altBoundary: true })
     // detectOverflow() neglects modifiersData
-    const y = state.modifiersData.preventOverflow ? state.modifiersData.preventOverflow.y : 0
+    const y = state.modifiersData.preventOverflow
+      ? state.modifiersData.preventOverflow.y
+      : 0
     const { height } = state.rects.popper
 
     // maxHeight = height - (overflow-top if placing above, overflow-bottom if placing below)
@@ -234,9 +240,10 @@ const PopperPreventOverflowKeepPopperOnscreen = {
 
     const offset = popperOffsets.y
 
-    const preventedOffset = state.placement === 'top'
-      ? Math.min(offset, offset - overflow.bottom)
-      : Math.max(offset, offset + overflow.top)
+    const preventedOffset =
+      state.placement === 'top'
+        ? Math.min(offset, offset - overflow.bottom)
+        : Math.max(offset, offset + overflow.top)
 
     popperOffsets.y = preventedOffset
     state.modifiersData[name] = { x: 0, y: preventedOffset - offset }
@@ -253,7 +260,10 @@ const PopperModifiers = [
   PopperApplyMaxHeight
 ]
 
-const PopperModifiersLastButton = [...PopperModifiers, PopperOffsetToCoverReference]
+const PopperModifiersLastButton = [
+  ...PopperModifiers,
+  PopperOffsetToCoverReference
+]
 
 export class Popup extends PureComponent {
   static propTypes = {
@@ -270,7 +280,7 @@ export class Popup extends PureComponent {
     search: ''
   }
 
-  handleChangeSearchInput = (value) => {
+  handleChangeSearchInput = value => {
     this.setState({ search: value })
   }
 
@@ -279,7 +289,7 @@ export class Popup extends PureComponent {
     if (this.props.onUpdate) this.props.onUpdate()
   }
 
-  handleClickModule = (moduleIdName) => {
+  handleClickModule = moduleIdName => {
     const { tabSlug, index, addStep, onClose } = this.props
     addStep(tabSlug, index, moduleIdName)
     onClose()
@@ -294,8 +304,16 @@ export class Popup extends PureComponent {
 
     return (
       <div className={classNames.join(' ')}>
-        <Prompt cancel={onClose} onChange={this.handleChangeSearchInput} value={search} />
-        <SearchResults search={search} modules={modules} onClickModule={this.handleClickModule} />
+        <Prompt
+          cancel={onClose}
+          onChange={this.handleChangeSearchInput}
+          value={search}
+        />
+        <SearchResults
+          search={search}
+          modules={modules}
+          onClickModule={this.handleClickModule}
+        />
       </div>
     )
   }
@@ -314,27 +332,45 @@ export function PopperPopup (props) {
   } = props
   const [popperElement, setPopperElement] = useState(null)
   const popperOptions = useMemo(() => {
-    return { modifiers: isLastAddButton ? PopperModifiersLastButton : PopperModifiers }
+    return {
+      modifiers: isLastAddButton ? PopperModifiersLastButton : PopperModifiers
+    }
   }, [isLastAddButton])
-  const { styles, attributes, forceUpdate } = usePopper(popperAnchor, popperElement, popperOptions)
+  const { styles, attributes, forceUpdate } = usePopper(
+    popperAnchor,
+    popperElement,
+    popperOptions
+  )
   const scheduleUpdate = useCallback(() => {
     if (forceUpdate) forceUpdate()
   }, [forceUpdate])
 
-  const handleClickDocument = useCallback(ev => {
-    if (!popperElement || !popperAnchor) return
+  const handleClickDocument = useCallback(
+    ev => {
+      if (!popperElement || !popperAnchor) return
 
-    // Copy/paste from Reactstrap src/Dropdown.js
-    if (ev && (ev.which === 3 || (ev.type === 'keyup' && ev.which !== KeyCodes.Tab))) return
+      // Copy/paste from Reactstrap src/Dropdown.js
+      if (
+        ev &&
+        (ev.which === 3 || (ev.type === 'keyup' && ev.which !== KeyCodes.Tab))
+      ) {
+        return
+      }
 
-    // Clicking popperAnchor should do nothing -- the element itself will close
-    // the menu (through keyboard _or_ click)
-    if ((popperAnchor.contains(ev.target) || popperElement.contains(ev.target)) && (ev.type !== 'keyup' || ev.which === KeyCodes.Tab)) {
-      return
-    }
+      // Clicking popperAnchor should do nothing -- the element itself will close
+      // the menu (through keyboard _or_ click)
+      if (
+        (popperAnchor.contains(ev.target) ||
+          popperElement.contains(ev.target)) &&
+        (ev.type !== 'keyup' || ev.which === KeyCodes.Tab)
+      ) {
+        return
+      }
 
-    onClose()
-  }, [onClose, popperAnchor, popperElement])
+      onClose()
+    },
+    [onClose, popperAnchor, popperElement]
+  )
 
   useEffect(() => {
     const Events = ['click', 'touchstart', 'keyup']
@@ -348,7 +384,7 @@ export function PopperPopup (props) {
     }
   }, [handleClickDocument])
 
-  return ReactDOM.createPortal((
+  return ReactDOM.createPortal(
     <div
       className='module-search-popper'
       ref={setPopperElement}
@@ -364,8 +400,9 @@ export function PopperPopup (props) {
         addStep={addStep}
         onUpdate={scheduleUpdate}
       />
-    </div>
-  ), document.body)
+    </div>,
+    document.body
+  )
 }
 PopperPopup.propTypes = {
   popperAnchor: PropTypes.instanceOf(HTMLElement).isRequired,
@@ -381,14 +418,22 @@ PopperPopup.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const { testHighlight } = lessonSelector(state)
   return {
-    isLessonHighlight: testHighlight({ type: 'Module', id_name: null, index: ownProps.index }),
+    isLessonHighlight: testHighlight({
+      type: 'Module',
+      id_name: null,
+      index: ownProps.index
+    }),
     modules: Object.values(state.modules)
       .filter(m => m.uses_data)
       .filter(m => !m.deprecated)
       .map(module => {
         return {
           idName: module.id_name,
-          isLessonHighlight: testHighlight({ type: 'Module', id_name: module.id_name, index: ownProps.index }),
+          isLessonHighlight: testHighlight({
+            type: 'Module',
+            id_name: module.id_name,
+            index: ownProps.index
+          }),
           name: module.name,
           description: module.description,
           category: module.category,
@@ -398,7 +443,7 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     addStep (tabSlug, index, moduleIdName) {
       const action = addStepAction(moduleIdName, { tabSlug, index }, {})
@@ -407,7 +452,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(PopperPopup)
+export default connect(mapStateToProps, mapDispatchToProps)(PopperPopup)

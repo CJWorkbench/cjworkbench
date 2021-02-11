@@ -1,7 +1,11 @@
 import { PureComponent } from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
-import { Manager as PopperManager, Reference as PopperReference, Popper } from 'react-popper'
+import {
+  Manager as PopperManager,
+  Reference as PopperReference,
+  Popper
+} from 'react-popper'
 
 const PopperModifiers = [
   { name: 'preventOverflow', options: { boundariesElement: 'viewport' } },
@@ -17,7 +21,7 @@ class SearchResultDescription extends PureComponent {
   render () {
     const { name, description } = this.props
 
-    return ReactDOM.createPortal((
+    return ReactDOM.createPortal(
       <Popper modifiers={PopperModifiers} placement='right'>
         {({ ref, style, placement, arrowProps }) => (
           <div
@@ -31,8 +35,9 @@ class SearchResultDescription extends PureComponent {
             <p>{description}</p>
           </div>
         )}
-      </Popper>
-    ), document.body)
+      </Popper>,
+      document.body
+    )
   }
 }
 
@@ -57,7 +62,14 @@ export default class SearchResult extends PureComponent {
   }
 
   render () {
-    const { idName, isActive, isLessonHighlight, name, icon, description } = this.props
+    const {
+      idName,
+      isActive,
+      isLessonHighlight,
+      name,
+      icon,
+      description
+    } = this.props
 
     const className = ['module-search-result']
     if (isLessonHighlight) className.push('lesson-highlight')
@@ -87,7 +99,9 @@ export default class SearchResult extends PureComponent {
               </button>
             )}
           </PopperReference>
-          {isActive ? <SearchResultDescription name={name} description={description} /> : null}
+          {isActive
+            ? <SearchResultDescription name={name} description={description} />
+            : null}
         </li>
       </PopperManager>
     )

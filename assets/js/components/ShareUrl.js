@@ -14,7 +14,9 @@ export default function ShareUrl (props) {
       inputRef.current.focus()
       inputRef.current.select()
     }
-    window.navigator.clipboard.writeText(url).then(() => { setLastUsedDate(new Date()) })
+    window.navigator.clipboard.writeText(url).then(() => {
+      setLastUsedDate(new Date())
+    })
   }, [inputRef, url, setLastUsedDate])
 
   const handleClickDownload = useCallback(() => {
@@ -25,15 +27,15 @@ export default function ShareUrl (props) {
 
   const handleClickGo = handleClickDownload
 
-  useLayoutEffect(
-    () => {
-      if (lastUsedDate !== null) {
-        const timeout = window.setTimeout(() => setLastUsedDate(null), AnimationTimeInMs)
-        return () => window.clearTimeout(timeout)
-      }
-    },
-    [lastUsedDate, setLastUsedDate]
-  )
+  useLayoutEffect(() => {
+    if (lastUsedDate !== null) {
+      const timeout = window.setTimeout(
+        () => setLastUsedDate(null),
+        AnimationTimeInMs
+      )
+      return () => window.clearTimeout(timeout)
+    }
+  }, [lastUsedDate, setLastUsedDate])
 
   // Show as an <input> so that the user can press Ctrl+A to select all the text
   return (
@@ -44,16 +46,25 @@ export default function ShareUrl (props) {
       <button name='copy' onClick={handleClickCopy}>
         <Trans id='js.components.ShareUrl.copy'>Copy</Trans>
       </button>
-      {download ? (
-        <a href={url} download onClick={handleClickDownload}>
-          <Trans id='js.components.ShareUrl.download'>Download</Trans>
-        </a>
-      ) : null}
-      {go ? (
-        <a href={url} target='_blank' rel='noopener noreferrer' onClick={handleClickGo}>
-          <Trans id='js.components.ShareUrl.go'>Go</Trans>
-        </a>
-      ) : null}
+      {download
+        ? (
+          <a href={url} download onClick={handleClickDownload}>
+            <Trans id='js.components.ShareUrl.download'>Download</Trans>
+          </a>
+          )
+        : null}
+      {go
+        ? (
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={handleClickGo}
+          >
+            <Trans id='js.components.ShareUrl.go'>Go</Trans>
+          </a>
+          )
+        : null}
     </div>
   )
 }

@@ -8,7 +8,9 @@ const THead = memo(function THead ({ columns }) {
       <tr>
         <th className='row-number' scope='col' />
         {columns.map(({ headerComponent: Header }, i) => (
-          <th key={i} scope='col'><Header /></th>
+          <th key={i} scope='col'>
+            <Header />
+          </th>
         ))}
       </tr>
     </thead>

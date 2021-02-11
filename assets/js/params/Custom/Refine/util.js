@@ -53,7 +53,9 @@ export function buildGroupsForValueCounts (valueCounts, renames, sort) {
   if (sort.by === 'value') {
     groups.sort((a, b) => ValueCollator.compare(a.name, b.name))
   } else {
-    groups.sort((a, b) => a.count - b.count || ValueCollator.compare(a.name, b.name))
+    groups.sort(
+      (a, b) => a.count - b.count || ValueCollator.compare(a.name, b.name)
+    )
   }
   if (!sort.isAscending) {
     groups.reverse()

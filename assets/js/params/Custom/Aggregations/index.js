@@ -11,14 +11,27 @@ export default class Aggregations extends PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>
-    value: PropTypes.arrayOf(PropTypes.shape({
-      operation: PropTypes.oneOf(['size', 'nunique', 'sum', 'mean', 'median', 'min', 'max', 'first']).isRequired,
-      colname: PropTypes.string.isRequired,
-      outname: PropTypes.string.isRequired
-    }).isRequired).isRequired,
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })), // or null if unknown
+    value: PropTypes.arrayOf(
+      PropTypes.shape({
+        operation: PropTypes.oneOf([
+          'size',
+          'nunique',
+          'sum',
+          'mean',
+          'median',
+          'min',
+          'max',
+          'first'
+        ]).isRequired,
+        colname: PropTypes.string.isRequired,
+        outname: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ), // or null if unknown
     onChange: PropTypes.func.isRequired // func([aggregations]) => undefined
   }
 
@@ -30,7 +43,7 @@ export default class Aggregations extends PureComponent {
     onChange(newValue)
   }
 
-  handleDeleteAggregation = (index) => {
+  handleDeleteAggregation = index => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -67,7 +80,14 @@ export default class Aggregations extends PureComponent {
 
     return (
       <>
-        <label><Trans id='js.params.Custom.Aggregations.operations' comment='As in mathematical operations'>Operations</Trans></label>
+        <label>
+          <Trans
+            id='js.params.Custom.Aggregations.operations'
+            comment='As in mathematical operations'
+          >
+            Operations
+          </Trans>
+        </label>
         <ul>
           {value.map((aggregation, index) => (
             <Aggregation
@@ -83,17 +103,19 @@ export default class Aggregations extends PureComponent {
             />
           ))}
         </ul>
-        {isReadOnly ? null : (
-          <button
-            type='button'
-            className='add'
-            name={`${name}[add]`}
-            onClick={this.handleClickAdd}
-          >
-            <i className='icon-add' /> {' '}
-            <Trans id='js.params.Custom.Aggregations.addButton'>Add</Trans>
-          </button>
-        )}
+        {isReadOnly
+          ? null
+          : (
+            <button
+              type='button'
+              className='add'
+              name={`${name}[add]`}
+              onClick={this.handleClickAdd}
+            >
+              <i className='icon-add' />{' '}
+              <Trans id='js.params.Custom.Aggregations.addButton'>Add</Trans>
+            </button>
+            )}
       </>
     )
   }

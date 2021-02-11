@@ -16,9 +16,18 @@ test('get loaded cells at start', () => {
             ['A3', 'B3', 'C3', 'D3']
           ]
         ]
-      ], 10, 5, 0, 2, 0, 3
+      ],
+      10,
+      5,
+      0,
+      2,
+      0,
+      3
     )
-  ).toEqual([['A1', 'B1', 'C1'], ['A2', 'B2', 'C2']])
+  ).toEqual([
+    ['A1', 'B1', 'C1'],
+    ['A2', 'B2', 'C2']
+  ])
 })
 
 test('skip within a tile', () => {
@@ -32,18 +41,22 @@ test('skip within a tile', () => {
             ['A3', 'B3', 'C3', 'D3']
           ]
         ]
-      ], 10, 5, 1, 2, 2, 3
+      ],
+      10,
+      5,
+      1,
+      2,
+      2,
+      3
     )
   ).toEqual([['C2']])
 })
 
 test('render a loading tile as nulls', () => {
-  expect(
-    getCellRange(
-      [[null]],
-      10, 5, 1, 3, 2, 5
-    )
-  ).toEqual([[null, null, null], [null, null, null]])
+  expect(getCellRange([[null]], 10, 5, 1, 3, 2, 5)).toEqual([
+    [null, null, null],
+    [null, null, null]
+  ])
 })
 
 test('skip a gap', () => {
@@ -58,9 +71,18 @@ test('skip a gap', () => {
             ['A3', 'B3', 'C3', 'D3']
           ]
         ]
-      ], 10, 5, 30, 32, 0, 3
+      ],
+      10,
+      5,
+      30,
+      32,
+      0,
+      3
     )
-  ).toEqual([['A1', 'B1', 'C1'], ['A2', 'B2', 'C2']])
+  ).toEqual([
+    ['A1', 'B1', 'C1'],
+    ['A2', 'B2', 'C2']
+  ])
 })
 
 test('skip a tile', () => {
@@ -75,9 +97,18 @@ test('skip a tile', () => {
             ['A3', 'B3', 'C3', 'D3']
           ]
         ]
-      ], 10, 5, 0, 2, 5, 8
+      ],
+      10,
+      5,
+      0,
+      2,
+      5,
+      8
     )
-  ).toEqual([['A1', 'B1', 'C1'], ['A2', 'B2', 'C2']])
+  ).toEqual([
+    ['A1', 'B1', 'C1'],
+    ['A2', 'B2', 'C2']
+  ])
 })
 
 test('span tiles horizontally', () => {
@@ -98,9 +129,18 @@ test('span tiles horizontally', () => {
             ['G2', 'H2', 'I2']
           ]
         ]
-      ], 10, 3, 0, 2, 2, 8
+      ],
+      10,
+      3,
+      0,
+      2,
+      2,
+      8
     )
-  ).toEqual([['C1', 'D1', 'E1', 'F1', 'G1', 'H1'], ['C2', 'D2', 'E2', 'F2', 'G2', 'H2']])
+  ).toEqual([
+    ['C1', 'D1', 'E1', 'F1', 'G1', 'H1'],
+    ['C2', 'D2', 'E2', 'F2', 'G2', 'H2']
+  ])
 })
 
 test('span tiles horizontally across an error tile', () => {
@@ -118,9 +158,18 @@ test('span tiles horizontally across an error tile', () => {
             ['G2', 'H2', 'I2']
           ]
         ]
-      ], 10, 3, 0, 2, 2, 8
+      ],
+      10,
+      3,
+      0,
+      2,
+      2,
+      8
     )
-  ).toEqual([['C1', null, null, null, 'G1', 'H1'], ['C2', null, null, null, 'G2', 'H2']])
+  ).toEqual([
+    ['C1', null, null, null, 'G1', 'H1'],
+    ['C2', null, null, null, 'G2', 'H2']
+  ])
 })
 
 test('span tiles vertically', () => {
@@ -148,7 +197,13 @@ test('span tiles vertically', () => {
             ['A9', 'B9']
           ]
         ]
-      ], 3, 5, 2, 8, 1, 2
+      ],
+      3,
+      5,
+      2,
+      8,
+      1,
+      2
     )
   ).toEqual([['B3'], ['B4'], ['B5'], ['B6'], ['B7'], ['B8']])
 })
@@ -172,7 +227,13 @@ test('span tiles vertically across a gap', () => {
             ['A12', 'B12']
           ]
         ]
-      ], 3, 5, 2, 10, 1, 2
+      ],
+      3,
+      5,
+      2,
+      10,
+      1,
+      2
     )
   ).toEqual([['B3'], [null], [null], [null], [null], [null], [null], ['B10']])
 })

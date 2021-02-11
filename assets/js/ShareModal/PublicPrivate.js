@@ -3,11 +3,20 @@ import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 
 const Description = ({ isPublic }) => {
-  const message = isPublic
-    ? <Trans id='js.ShareModal.PublicPrivate.description.public'>Anyone on the Internet may view and duplicate this Workflow.</Trans>
-    : <Trans id='js.ShareModal.PublicPrivate.description.private'>Only collaborators can view this Workflow.</Trans>
   return (
-    <p>{message}</p>
+    <p>
+      {isPublic
+        ? (
+          <Trans id='js.ShareModal.PublicPrivate.description.public'>
+            Anyone on the Internet may view and duplicate this Workflow.
+          </Trans>
+          )
+        : (
+          <Trans id='js.ShareModal.PublicPrivate.description.private'>
+            Only collaborators can view this Workflow.
+          </Trans>
+          )}
+    </p>
   )
 }
 
@@ -16,7 +25,7 @@ const DescriptionWithToggle = ({ isPublic, onChange }) => (
     <input type='checkbox' checked={isPublic} onChange={onChange} />
     <span>
       <Trans id='js.ShareModal.PublicPrivate.descriptionWithToggle'>
-            Anyone can view and duplicate this workflow, and see your email.
+        Anyone can view and duplicate this workflow, and see your email.
       </Trans>
     </span>
   </label>
@@ -29,7 +38,7 @@ export default class PublicPrivate extends PureComponent {
     setIsPublic: PropTypes.func.isRequired // func(isPublic) => undefined
   }
 
-  handleChangeIsPublic = (ev) => {
+  handleChangeIsPublic = ev => {
     const { isReadOnly, setIsPublic } = this.props
     if (isReadOnly) return // should be redundant
     setIsPublic(ev.target.checked)
@@ -37,15 +46,15 @@ export default class PublicPrivate extends PureComponent {
 
   render () {
     const { isReadOnly, isPublic } = this.props
-    const className = `public-private ${isPublic ? 'is-public' : 'is-private'} ${isReadOnly ? 'read-only' : 'read-write'}`
+    const className = `public-private ${
+      isPublic ? 'is-public' : 'is-private'
+    } ${isReadOnly ? 'read-only' : 'read-write'}`
 
     return (
       <div className={className}>
-        {isReadOnly ? (
-          <Description isPublic={isPublic} />
-        ) : (
-          <DescriptionWithToggle isPublic={isPublic} onChange={this.handleChangeIsPublic} />
-        )}
+        {isReadOnly
+          ? <Description isPublic={isPublic} />
+          : <DescriptionWithToggle isPublic={isPublic} onChange={this.handleChangeIsPublic} />}
       </div>
     )
   }

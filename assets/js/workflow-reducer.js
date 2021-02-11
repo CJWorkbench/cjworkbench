@@ -47,7 +47,11 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
  * (all String).
  */
 function handleError (state, action) {
-  console.warn('Unhandled error during %s dispatch', action.type, action.payload)
+  console.warn(
+    'Unhandled error during %s dispatch',
+    action.type,
+    action.payload
+  )
 
   if (state.firstUnhandledError) {
     return state
@@ -240,17 +244,16 @@ export function addStepAction (moduleIdName, position, parameterValues) {
     return dispatch({
       type: ADD_STEP,
       payload: {
-        promise: (
-          api.addStep(tabSlug, slug, moduleIdName, index, parameterValues || {})
-            .then(response => {
-              return {
-                tabSlug,
-                slug,
-                nonce: nonce,
-                data: response
-              }
-            })
-        ),
+        promise: api
+          .addStep(tabSlug, slug, moduleIdName, index, parameterValues || {})
+          .then(response => {
+            return {
+              tabSlug,
+              slug,
+              nonce: nonce,
+              data: response
+            }
+          }),
         data: {
           tabSlug,
           slug,
@@ -366,7 +369,9 @@ export function setSelectedStepAction (stepId) {
 
     // Fire-and-forget: tell the server about this new selection
     // so next time we load the page it will pass it in initState.
-    const promise = workflow.read_only ? Promise.resolve(null) : api.setSelectedStep(stepId)
+    const promise = workflow.read_only
+      ? Promise.resolve(null)
+      : api.setSelectedStep(stepId)
     return dispatch({
       type: SET_SELECTED_MODULE,
       payload: {
@@ -383,7 +388,8 @@ registerReducerFunc(SET_SELECTED_MODULE + '_PENDING', (state, action) => {
 
   return {
     ...state,
-    selectedPane: { // so we navigate to the Step
+    selectedPane: {
+      // so we navigate to the Step
       pane: 'tab',
       tabSlug
     },
@@ -413,15 +419,22 @@ export function maybeRequestStepFetchAction (stepId) {
     const { steps, modules } = getState()
     const step = steps[String(stepId)]
     const module = step.module ? modules[step.module] : null
-    const hasVersionSelect = module ? !!module.param_fields.find(ps => ps.idName === 'version_select') : null
+    const hasVersionSelect = module
+      ? !!module.param_fields.find(ps => ps.idName === 'version_select')
+      : null
 
     if (!hasVersionSelect) return
 
     return dispatch({
       type: REQUEST_STEP_FETCH,
       payload: {
-        promise: api.requestFetch(stepId)
-          .then(() => ({ stepId }), (err) => { console.warn(err); return { stepId } }),
+        promise: api.requestFetch(stepId).then(
+          () => ({ stepId }),
+          err => {
+            console.warn(err)
+            return { stepId }
+          }
+        ),
         data: { stepId }
       }
     })
@@ -522,10 +535,9 @@ export function trySetStepAutofetchAction (stepId, isAutofetch, fetchInterval) {
     return dispatch({
       type: TRY_SET_STEP_AUTOFETCH,
       payload: {
-        promise: (
-          api.trySetStepAutofetch(stepId, isAutofetch, fetchInterval)
-            .then(obj => ({ stepId, ...obj }))
-        )
+        promise: api
+          .trySetStepAutofetch(stepId, isAutofetch, fetchInterval)
+          .then(obj => ({ stepId, ...obj }))
       }
     })
   }

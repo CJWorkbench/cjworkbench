@@ -6,7 +6,7 @@ const NormalClassName = 'react-grid-Cell'
 const LockedClassName = 'react-grid-Cell react-grid-Cell--locked'
 
 export default class CellWithoutGarbage extends Cell {
-  renderCellContent = (props) => {
+  renderCellContent = props => {
     const Formatter = this.getFormatter()
     let content
 
@@ -16,12 +16,12 @@ export default class CellWithoutGarbage extends Cell {
       content = <Formatter value={this.props.value} />
     }
 
-    return (
-      <div className='react-grid-Cell__value'>{content}</div>
-    )
+    return <div className='react-grid-Cell__value'>{content}</div>
   }
 
-  storeRef = (node) => { this.node = node }
+  storeRef = node => {
+    this.node = node
+  }
 
   render () {
     const { value, column, rowIdx } = this.props
@@ -35,11 +35,13 @@ export default class CellWithoutGarbage extends Cell {
 
     const className = column.locked ? LockedClassName : NormalClassName
 
-    const cellContent = this.props.children || this.renderCellContent({
-      value: value,
-      column: column,
-      rowIdx: rowIdx
-    })
+    const cellContent =
+      this.props.children ||
+      this.renderCellContent({
+        value: value,
+        column: column,
+        rowIdx: rowIdx
+      })
 
     const handleClick = this.onCellClick
     const handleFocus = this.onCellFocus

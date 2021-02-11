@@ -70,21 +70,27 @@ describe('ModuleSearch Popup', () => {
   it('searches by module name', () => {
     const w = wrapper()
 
-    w.find('input[type="search"]').simulate('change', { target: { value: 'a' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'a' }
+    })
     expect(w.text()).toMatch(/Load from Enigma/)
     expect(w.text()).not.toMatch(/Filter by Text/)
   })
 
   it('searches by module description', () => {
     const w = wrapper()
-    w.find('input[type="search"]').simulate('change', { target: { value: 'description' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'description' }
+    })
     expect(w.text()).toMatch(/Load from Enigma/)
     expect(w.text()).toMatch(/Filter by Text/)
   })
 
   it('schedules Popper resize when search results change', () => {
     const w = wrapper()
-    w.find('input[type="search"]').simulate('change', { target: { value: 'description' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'description' }
+    })
     expect(w.prop('onUpdate')).toHaveBeenCalled()
   })
 
@@ -138,8 +144,12 @@ describe('ModuleSearch Popup', () => {
 
   it('should highlight lesson-suggested module', () => {
     const w = wrapper()
-    expect(w.find('button[data-module-slug="enigma"]').hasClass('lesson-highlight')).toBe(true)
-    expect(w.find('button[data-module-slug="filter"]').hasClass('lesson-highlight')).toBe(false)
+    expect(
+      w.find('button[data-module-slug="enigma"]').hasClass('lesson-highlight')
+    ).toBe(true)
+    expect(
+      w.find('button[data-module-slug="filter"]').hasClass('lesson-highlight')
+    ).toBe(false)
   })
 
   describe('connected component', () => {
@@ -164,8 +174,22 @@ describe('ModuleSearch Popup', () => {
     it('gets modules from the store', async () => {
       const store = mockStore({
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
+          a: {
+            id_name: 'a',
+            name: 'AAA',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'A A',
+            icon: 'a'
+          },
+          b: {
+            id_name: 'b',
+            name: 'BBB',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'B B',
+            icon: 'b'
+          }
         }
       })
       const w = await wrapper(store)
@@ -175,8 +199,22 @@ describe('ModuleSearch Popup', () => {
     it('hides !uses_data modules', async () => {
       const store = mockStore({
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: false, description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
+          a: {
+            id_name: 'a',
+            name: 'AAA',
+            category: 'Analyze',
+            uses_data: false,
+            description: 'A A',
+            icon: 'a'
+          },
+          b: {
+            id_name: 'b',
+            name: 'BBB',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'B B',
+            icon: 'b'
+          }
         }
       })
       const w = await wrapper(store)
@@ -187,7 +225,14 @@ describe('ModuleSearch Popup', () => {
     it('hides deprecated modules', async () => {
       const store = mockStore({
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
+          a: {
+            id_name: 'a',
+            name: 'AAA',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'A A',
+            icon: 'a'
+          },
           b: {
             id_name: 'b',
             name: 'BBB',
@@ -207,21 +252,38 @@ describe('ModuleSearch Popup', () => {
     it('dispatches addStep', async () => {
       const api = { addStep: jest.fn(() => new Promise(() => {})) } // never resolves
       generateSlug.mockImplementation(prefix => prefix + 'X')
-      const store = mockStore({
-        tabs: {
-          'tab-1': {
-            step_ids: [1, 2]
+      const store = mockStore(
+        {
+          tabs: {
+            'tab-1': {
+              step_ids: [1, 2]
+            }
+          },
+          steps: {
+            1: {},
+            2: {}
+          },
+          modules: {
+            a: {
+              id_name: 'a',
+              name: 'AAA',
+              category: 'Analyze',
+              uses_data: true,
+              description: 'A A',
+              icon: 'a'
+            },
+            b: {
+              id_name: 'b',
+              name: 'BBB',
+              category: 'Analyze',
+              uses_data: true,
+              description: 'B B',
+              icon: 'b'
+            }
           }
         },
-        steps: {
-          1: {},
-          2: {}
-        },
-        modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
-        }
-      }, api)
+        api
+      )
       const onClose = jest.fn()
       const w = await wrapper(store, { tabSlug: 'tab-1', index: 2, onClose })
       w.find('button[data-module-slug="a"]').simulate('click')
@@ -250,14 +312,34 @@ describe('ModuleSearch Popup', () => {
           'tab-1': { step_ids: [] }
         },
         modules: {
-          a: { id_name: 'a', name: 'AAA', category: 'Analyze', uses_data: true, description: 'A A', icon: 'a' },
-          b: { id_name: 'b', name: 'BBB', category: 'Analyze', uses_data: true, description: 'B B', icon: 'b' }
+          a: {
+            id_name: 'a',
+            name: 'AAA',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'A A',
+            icon: 'a'
+          },
+          b: {
+            id_name: 'b',
+            name: 'BBB',
+            category: 'Analyze',
+            uses_data: true,
+            description: 'B B',
+            icon: 'b'
+          }
         }
       })
 
       it('lesson-highlights the desired module', async () => {
         const w = await wrapper(store, { index: 0 })
-        expect(w.find('.module-search-result[data-module-slug="a"].lesson-highlight').text()).toEqual('AAA')
+        expect(
+          w
+            .find(
+              '.module-search-result[data-module-slug="a"].lesson-highlight'
+            )
+            .text()
+        ).toEqual('AAA')
       })
 
       it('lesson-highlights the entire component', async () => {

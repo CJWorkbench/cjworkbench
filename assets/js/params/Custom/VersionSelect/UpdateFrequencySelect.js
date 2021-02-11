@@ -2,7 +2,10 @@ import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
-import { trySetStepAutofetchAction, setStepNotificationsAction } from '../../../workflow-reducer'
+import {
+  trySetStepAutofetchAction,
+  setStepNotificationsAction
+} from '../../../workflow-reducer'
 import { connect } from 'react-redux'
 import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
@@ -26,7 +29,7 @@ export const UpdateFrequencySelect = class UpdateFrequencySelect extends PureCom
     quotaExceeded: null // JSON response -- contains autofetch info iff we exceeded quota
   }
 
-  handleClickOpenModal = (ev) => {
+  handleClickOpenModal = ev => {
     if (ev && ev.preventDefault) ev.preventDefault() // <a> => do not change URL
     if (this.props.isReadOnly) return
     if (this.props.isAnonymous) return
@@ -42,7 +45,7 @@ export const UpdateFrequencySelect = class UpdateFrequencySelect extends PureCom
     })
   }
 
-  setEmailUpdates = (isEmailUpdates) => {
+  setEmailUpdates = isEmailUpdates => {
     const { setEmailUpdates, stepId } = this.props
     setEmailUpdates(stepId, isEmailUpdates)
   }
@@ -53,43 +56,82 @@ export const UpdateFrequencySelect = class UpdateFrequencySelect extends PureCom
   }
 
   render () {
-    const { lastCheckDate, isAutofetch, fetchInterval, isEmailUpdates, workflowId, stepId } = this.props
+    const {
+      lastCheckDate,
+      isAutofetch,
+      fetchInterval,
+      isEmailUpdates,
+      workflowId,
+      stepId
+    } = this.props
     const { isModalOpen } = this.state
 
     return (
       <div className='update-frequency-select'>
         <div className='update-option'>
-          <span className='version-box-option'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>Update</Trans> </span>
+          <span className='version-box-option'>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>
+              Update
+            </Trans>{' '}
+          </span>
           <a
             href='#'
-            title={t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText', message: 'change auto-update settings' })}
+            title={t({
+              id:
+                'js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText',
+              message: 'change auto-update settings'
+            })}
             className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
             {isAutofetch
-              ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto' comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Auto</Trans>
-              : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual' comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'">Manual</Trans>}
+              ? (
+                <Trans
+                  id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto'
+                  comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
+                >
+                  Auto
+                </Trans>
+                )
+              : (
+                <Trans
+                  id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual'
+                  comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
+                >
+                  Manual
+                </Trans>
+                )}
           </a>
         </div>
-        {lastCheckDate ? (
-          <div className='last-checked'>
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked' comment="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag.">
-                Checked <time dateTime={this.props.lastCheckDate.toISOString()}>{timeDifference(lastCheckDate, Date.now(), i18n)}</time>
-            </Trans>
-          </div>
-        ) : null}
-        {isModalOpen ? (
-          <UpdateFrequencySelectModal
-            workflowId={workflowId}
-            stepId={stepId}
-            isEmailUpdates={isEmailUpdates}
-            isAutofetch={isAutofetch}
-            fetchInterval={fetchInterval}
-            setEmailUpdates={this.setEmailUpdates}
-            trySetAutofetch={this.trySetAutofetch}
-            onClose={this.handleCloseModal}
-          />
-        ) : null}
+        {lastCheckDate
+          ? (
+            <div className='last-checked'>
+              <Trans
+                id='js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked'
+                comment="The parameter is a time difference (i.e. something like '4h ago'. The tag is a <time> tag."
+              >
+                Checked{' '}
+                <time dateTime={this.props.lastCheckDate.toISOString()}>
+                  {timeDifference(lastCheckDate, Date.now(), i18n)}
+                </time>
+              </Trans>
+            </div>
+            )
+          : null}
+        {isModalOpen
+          ? (
+            <UpdateFrequencySelectModal
+              workflowId={workflowId}
+              stepId={stepId}
+              isEmailUpdates={isEmailUpdates}
+              isAutofetch={isAutofetch}
+              fetchInterval={fetchInterval}
+              setEmailUpdates={this.setEmailUpdates}
+              trySetAutofetch={this.trySetAutofetch}
+              onClose={this.handleCloseModal}
+            />
+            )
+          : null}
       </div>
     )
   }
@@ -101,7 +143,9 @@ const mapStateToProps = (state, ownProps) => {
   // We need a "default" value for everything: step might be a placeholder
 
   const lastCheckString = step.last_update_check // JSON has no date -- that's a STring
-  const lastCheckDate = lastCheckString ? new Date(Date.parse(lastCheckString)) : null
+  const lastCheckDate = lastCheckString
+    ? new Date(Date.parse(lastCheckString))
+    : null
 
   return {
     lastCheckDate,
@@ -119,4 +163,7 @@ const mapDispatchToProps = {
   setEmailUpdates: setStepNotificationsAction
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateFrequencySelect)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UpdateFrequencySelect)

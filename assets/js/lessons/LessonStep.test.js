@@ -10,7 +10,9 @@ describe('LessonStep', () => {
 
   it('renders the description HTML', () => {
     const wrapper = shallow(<LessonStep {...step} />)
-    expect(wrapper.find('.description').html()).toEqual('<div class="description"><p>This is</p><p>a <em>step</em></p></div>')
+    expect(wrapper.find('.description').html()).toEqual(
+      '<div class="description"><p>This is</p><p>a <em>step</em></p></div>'
+    )
   })
 
   it('renders the status', () => {

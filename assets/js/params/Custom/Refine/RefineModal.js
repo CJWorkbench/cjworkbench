@@ -4,7 +4,12 @@ import RefineBins from './RefineBins'
 import RefineClusterer from './RefineClusterer'
 import RefineClustererProgress from './RefineClustererProgress'
 import RefineStatus from './RefineStatus'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from '../../../components/Modal'
 import { Trans } from '@lingui/macro'
 
 export default class RefineModal extends PureComponent {
@@ -20,11 +25,11 @@ export default class RefineModal extends PureComponent {
     bins: null // array of { name, isSelected, count, bucket } objects after clustering
   }
 
-  handleClustererProgress = (clustererProgress) => {
+  handleClustererProgress = clustererProgress => {
     this.setState({ clustererProgress, bins: null })
   }
 
-  handleClustererComplete = (bins) => {
+  handleClustererComplete = bins => {
     bins = bins.map(bin => ({
       ...bin,
       isSelected: true
@@ -32,7 +37,7 @@ export default class RefineModal extends PureComponent {
     this.setState({ clustererProgress: null, bins })
   }
 
-  handleChangeBins = (bins) => {
+  handleChangeBins = bins => {
     this.setState({ clustererProgress: null, bins })
   }
 
@@ -57,25 +62,46 @@ export default class RefineModal extends PureComponent {
     const canSubmit = nBinsSelected > 0
 
     return (
-      <Modal className='refine-modal' size='lg' isOpen fade={false} toggle={onClose}>
-        <ModalHeader toggle={onClose}><Trans id='js.params.Custom.RefineModal.header.title' comment='This should be all-caps for styling reasons'>CLUSTER</Trans></ModalHeader>
+      <Modal
+        className='refine-modal'
+        size='lg'
+        isOpen
+        fade={false}
+        toggle={onClose}
+      >
+        <ModalHeader toggle={onClose}>
+          <Trans
+            id='js.params.Custom.RefineModal.header.title'
+            comment='This should be all-caps for styling reasons'
+          >
+            CLUSTER
+          </Trans>
+        </ModalHeader>
         <ModalBody>
           <RefineClusterer
             bucket={bucket}
             onProgress={this.handleClustererProgress}
             onComplete={this.handleClustererComplete}
           />
-          {bins ? <RefineBins bins={bins} onChange={this.handleChangeBins} /> : <RefineClustererProgress progress={clustererProgress} />}
+          {bins
+            ? <RefineBins bins={bins} onChange={this.handleChangeBins} />
+            : <RefineClustererProgress progress={clustererProgress} />}
         </ModalBody>
         <ModalFooter>
-          <RefineStatus clustererProgress={clustererProgress} nBinsTotal={nBinsTotal} />
+          <RefineStatus
+            clustererProgress={clustererProgress}
+            nBinsTotal={nBinsTotal}
+          />
           <div className='actions'>
             <button
               type='button'
               name='close'
               className='action-button button-gray'
               onClick={onClose}
-            ><Trans id='js.params.Custom.RefineModal.footer.cancelButton'>Cancel</Trans>
+            >
+              <Trans id='js.params.Custom.RefineModal.footer.cancelButton'>
+                Cancel
+              </Trans>
             </button>
             <button
               name='submit'
@@ -83,7 +109,10 @@ export default class RefineModal extends PureComponent {
               className='action-button button-blue'
               onClick={this.handleSubmit}
               disabled={!canSubmit}
-            ><Trans id='js.params.Custom.RefineModal.footer.mergeSelectedButton'>Merge selected</Trans>
+            >
+              <Trans id='js.params.Custom.RefineModal.footer.mergeSelectedButton'>
+                Merge selected
+              </Trans>
             </button>
           </div>
         </ModalFooter>

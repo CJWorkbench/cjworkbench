@@ -18,18 +18,21 @@ class RefineBin extends PureComponent {
 
   get bucketList () {
     const bucket = this.props.bin.bucket
-    const values = Object.keys(bucket).map(k => ({ value: k, count: bucket[k] }))
+    const values = Object.keys(bucket).map(k => ({
+      value: k,
+      count: bucket[k]
+    }))
     values.sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
     return values
   }
 
-  handleChangeIsSelected = (ev) => {
+  handleChangeIsSelected = ev => {
     this.props.onChange(this.props.index, {
       isSelected: ev.target.checked
     })
   }
 
-  handleChangeName = (ev) => {
+  handleChangeName = ev => {
     this.props.onChange(this.props.index, {
       name: ev.target.value
     })
@@ -49,10 +52,15 @@ class RefineBin extends PureComponent {
               name={`selected-${index}`}
               checked={isSelected}
               onChange={this.handleChangeIsSelected}
-              placeholder={t({ id: 'js.params.Custom.RefineBins.newValue.placeholder', message: 'New Value' })}
+              placeholder={t({
+                id: 'js.params.Custom.RefineBins.newValue.placeholder',
+                message: 'New Value'
+              })}
             />
           </td>
-          <td rowSpan={values.length} className='cluster-size'>{numberFormat.format(count)}</td>
+          <td rowSpan={values.length} className='cluster-size'>
+            {numberFormat.format(count)}
+          </td>
           <td className='value'>{values[0].value}</td>
           <td className='count'>{numberFormat.format(values[0].count)}</td>
           <td className='new-value'>
@@ -60,7 +68,11 @@ class RefineBin extends PureComponent {
               <span className='autosize-cluster-text'>{name}</span>
               <textarea
                 name={`value-${index}`}
-                placeholder={t({ id: 'js.params.Custom.RefineBins.RefineBin.newValue.placeholder', message: 'New Value' })}
+                placeholder={t({
+                  id:
+                    'js.params.Custom.RefineBins.RefineBin.newValue.placeholder',
+                  message: 'New Value'
+                })}
                 value={name}
                 onChange={this.handleChangeName}
               />
@@ -80,12 +92,14 @@ class RefineBin extends PureComponent {
 
 export default class RefineBins extends PureComponent {
   static propTypes = {
-    bins: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired, // editable by user
-      isSelected: PropTypes.bool.isRequired,
-      count: PropTypes.number.isRequired,
-      bucket: PropTypes.object.isRequired // { "str": Number(count), ... }
-    })),
+    bins: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired, // editable by user
+        isSelected: PropTypes.bool.isRequired,
+        count: PropTypes.number.isRequired,
+        bucket: PropTypes.object.isRequired // { "str": Number(count), ... }
+      })
+    ),
     onChange: PropTypes.func.isRequired // func(newBins) => undefined
   }
 
@@ -106,7 +120,11 @@ export default class RefineBins extends PureComponent {
     if (bins.length === 0) {
       return (
         <div className='refine-bins'>
-          <div className='no-bins'><Trans id='js.params.Custom.RefineBins.noClustersFound'>No clusters found. Try different settings.</Trans></div>
+          <div className='no-bins'>
+            <Trans id='js.params.Custom.RefineBins.noClustersFound'>
+              No clusters found. Try different settings.
+            </Trans>
+          </div>
         </div>
       )
     }
@@ -117,14 +135,37 @@ export default class RefineBins extends PureComponent {
           <thead>
             <tr>
               <th className='is-selected' />
-              <th className='cluster-size'><Trans id='js.params.Custom.RefineBins.clusterSize.heading'>Cluster size</Trans></th>
-              <th className='value'><Trans id='js.params.Custom.RefineBins.values.heading'>Values</Trans></th>
-              <th className='count'><Trans id='js.params.Custom.RefineBins.countRows.heading'># rows</Trans></th>
-              <th className='new-value'><Trans id='js.params.Custom.RefineBins.newValue.heading'>New value</Trans></th>
+              <th className='cluster-size'>
+                <Trans id='js.params.Custom.RefineBins.clusterSize.heading'>
+                  Cluster size
+                </Trans>
+              </th>
+              <th className='value'>
+                <Trans id='js.params.Custom.RefineBins.values.heading'>
+                  Values
+                </Trans>
+              </th>
+              <th className='count'>
+                <Trans id='js.params.Custom.RefineBins.countRows.heading'>
+                  # rows
+                </Trans>
+              </th>
+              <th className='new-value'>
+                <Trans id='js.params.Custom.RefineBins.newValue.heading'>
+                  New value
+                </Trans>
+              </th>
             </tr>
           </thead>
           <tbody>
-            {bins.map((bin, i) => <RefineBin key={i} index={i} onChange={this.handleChange} bin={bin} />)}
+            {bins.map((bin, i) => (
+              <RefineBin
+                key={i}
+                index={i}
+                onChange={this.handleChange}
+                bin={bin}
+              />
+            ))}
           </tbody>
         </table>
       </div>

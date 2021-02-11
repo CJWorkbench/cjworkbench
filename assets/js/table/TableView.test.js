@@ -79,30 +79,42 @@ describe('TableView', () => {
     // lots: ignoring workflow-reducer means tests miss bugs.
     const api = { addStep: jest.fn(() => Promise.resolve(null)) }
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-    const store = mockStore({
-      workflow: {
-        tab_slugs: ['tab-1']
+    const store = mockStore(
+      {
+        workflow: {
+          tab_slugs: ['tab-1']
+        },
+        tabs: {
+          'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
+        },
+        steps: {
+          2: { tab_slug: 'tab-1' },
+          3: {}
+        },
+        modules: {
+          reordercolumns: {}
+        }
       },
-      tabs: {
-        'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
-      },
-      steps: {
-        2: { tab_slug: 'tab-1' },
-        3: {}
-      },
-      modules: {
-        reordercolumns: {}
-      }
-    }, api)
+      api
+    )
 
     const tree = wrapper(store, { stepId: 2 })
-    tree.find('DataGrid').instance().handleDropColumnIndexAtIndex(0, 2)
+    tree
+      .find('DataGrid')
+      .instance()
+      .handleDropColumnIndexAtIndex(0, 2)
 
     await tick()
 
-    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'reordercolumns', 1, {
-      'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
-    })
+    expect(api.addStep).toHaveBeenCalledWith(
+      'tab-1',
+      'step-X',
+      'reordercolumns',
+      1,
+      {
+        'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
+      }
+    )
 
     await tick() // let things settle
   })
@@ -110,37 +122,51 @@ describe('TableView', () => {
   it('edits cells', async () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
-    const api = { addStep: jest.fn().mockImplementation(() => Promise.resolve(null)) }
+    const api = {
+      addStep: jest.fn().mockImplementation(() => Promise.resolve(null))
+    }
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
-    const store = mockStore({
-      workflow: {
-        tab_slugs: ['tab-1']
+    const store = mockStore(
+      {
+        workflow: {
+          tab_slugs: ['tab-1']
+        },
+        tabs: {
+          'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
+        },
+        steps: {
+          2: { tab_slug: 'tab-1' },
+          3: {}
+        },
+        modules: {
+          editcells: {}
+        }
       },
-      tabs: {
-        'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
-      },
-      steps: {
-        2: { tab_slug: 'tab-1' },
-        3: {}
-      },
-      modules: {
-        editcells: {}
-      }
-    }, api)
+      api
+    )
 
     const tree = wrapper(store, { stepId: 2 })
     await tick() // load data
-    tree.find('DataGrid').instance().handleGridRowsUpdated({
-      fromRow: 0,
-      fromRowData: { a: 'a1', b: 'b1', c: 'c1' },
-      toRow: 0,
-      cellKey: 'b',
-      updated: { b: 'b2' }
-    })
+    tree
+      .find('DataGrid')
+      .instance()
+      .handleGridRowsUpdated({
+        fromRow: 0,
+        fromRowData: { a: 'a1', b: 'b1', c: 'c1' },
+        toRow: 0,
+        cellKey: 'b',
+        updated: { b: 'b2' }
+      })
 
-    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'editcells', 1, {
-      celledits: [{ row: 0, col: 'b', value: 'b2' }]
-    })
+    expect(api.addStep).toHaveBeenCalledWith(
+      'tab-1',
+      'step-X',
+      'editcells',
+      1,
+      {
+        celledits: [{ row: 0, col: 'b', value: 'b2' }]
+      }
+    )
 
     await tick() // let things settle
   })

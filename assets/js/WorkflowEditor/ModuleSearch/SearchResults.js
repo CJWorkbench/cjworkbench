@@ -51,7 +51,7 @@ function groupModules (items) {
   return ret
 }
 
-const escapeRegexCharacters = (str) => {
+const escapeRegexCharacters = str => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
@@ -79,13 +79,17 @@ export default class SearchResults extends PureComponent {
   _buildResultGroups = memoize((groups, search) => {
     const escapedValue = escapeRegexCharacters(search.trim())
     const regex = new RegExp(escapedValue, 'i')
-    const predicate = (module) => (regex.test(module.name) || regex.test(module.description))
+    const predicate = module =>
+      regex.test(module.name) || regex.test(module.description)
     return groups
-      .map(({ name, modules }) => ({ name, modules: modules.filter(predicate) }))
+      .map(({ name, modules }) => ({
+        name,
+        modules: modules.filter(predicate)
+      }))
       .filter(({ modules }) => modules.length > 0)
   })
 
-  handleMouseEnterModule = (moduleIdName) => {
+  handleMouseEnterModule = moduleIdName => {
     this.setState({ activeModule: moduleIdName })
   }
 

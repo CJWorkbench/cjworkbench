@@ -23,7 +23,7 @@ function formatCount (count) {
     n = count
     suffix = ''
   }
-  const approx = (n === Math.round(n)) ? '' : '~'
+  const approx = n === Math.round(n) ? '' : '~'
 
   return `${approx}${n.toFixed(0)}${suffix}`
 }
@@ -39,7 +39,7 @@ class ValueItem extends PureComponent {
     onChangeItem: PropTypes.func.isRequired // func(item, isSelected) => undefined
   }
 
-  handleChangeItem = (ev) => {
+  handleChangeItem = ev => {
     this.props.onChangeItem(this.props.item, ev.target.checked)
   }
 
@@ -51,12 +51,17 @@ class ValueItem extends PureComponent {
         <input
           name={`include[${item}]`}
           type='checkbox'
-          title={t({ id: 'js.params.Custom.ValueSelect.ValueItem.includeTheseRows', message: 'Include these rows' })}
+          title={t({
+            id: 'js.params.Custom.ValueSelect.ValueItem.includeTheseRows',
+            message: 'Include these rows'
+          })}
           checked={isSelected}
           onChange={this.handleChangeItem}
         />
         <div className='text'>{item}</div>
-        <div className='count' title={i18n.number(count)}>{formatCount(count)}</div>
+        <div className='count' title={i18n.number(count)}>
+          {formatCount(count)}
+        </div>
       </label>
     )
   }
@@ -78,7 +83,11 @@ class ListRow extends PureComponent {
   }
 
   render () {
-    const { data: { valueCounts, items, selection, onChangeItem }, style, index } = this.props
+    const {
+      data: { valueCounts, items, selection, onChangeItem },
+      style,
+      index
+    } = this.props
     const item = items[index]
     const count = valueCounts[item]
     const isSelected = selection.has(item)
@@ -111,17 +120,36 @@ class ValueList extends PureComponent {
   _itemKey = (index, data) => data.items[index]
 
   innerRender () {
-    const { valueCounts, loading, items, nItemsTotal, maxHeight, itemHeight } = this.props
+    const {
+      valueCounts,
+      loading,
+      items,
+      nItemsTotal,
+      maxHeight,
+      itemHeight
+    } = this.props
 
     if (!valueCounts && !loading) {
       // Waiting for user to select a column
       return null
     } else if (loading) {
-      return <Trans id='js.params.Custom.ValueSelect.ValueList.loadingValues'>Loading values…</Trans>
+      return (
+        <Trans id='js.params.Custom.ValueSelect.ValueList.loadingValues'>
+          Loading values…
+        </Trans>
+      )
     } else if (nItemsTotal === 0) {
-      return <Trans id='js.params.Custom.ValueSelect.ValueList.noValuesInColumn'>Column does not have any values</Trans>
+      return (
+        <Trans id='js.params.Custom.ValueSelect.ValueList.noValuesInColumn'>
+          Column does not have any values
+        </Trans>
+      )
     } else if (items.length === 0) {
-      return <Trans id='js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch'>No values match your search</Trans>
+      return (
+        <Trans id='js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch'>
+          No values match your search
+        </Trans>
+      )
     } else {
       const height = Math.min(maxHeight, items.length * itemHeight)
       return (
@@ -130,7 +158,10 @@ class ValueList extends PureComponent {
           height={height}
           itemSize={itemHeight}
           itemCount={items.length}
-          itemData={this.props /* a bit more than we want, but not _much_ more than we want */}
+          itemData={
+            this
+              .props /* a bit more than we want, but not _much_ more than we want */
+          }
           itemKey={this._itemKey}
         >
           {ListRow}
@@ -143,7 +174,9 @@ class ValueList extends PureComponent {
     const { outerRef } = this.props
 
     return (
-      <div className='value-list' ref={outerRef}>{this.innerRender()}</div>
+      <div className='value-list' ref={outerRef}>
+        {this.innerRender()}
+      </div>
     )
   }
 }
@@ -253,7 +286,10 @@ export class ValueSelect extends PureComponent {
   }
 
   get matchingSortedValues () {
-    return this._buildMatchingSortedValues(this.sortedValues, this.state.searchInput)
+    return this._buildMatchingSortedValues(
+      this.sortedValues,
+      this.state.searchInput
+    )
   }
 
   _buildSelectedValues = memoize(values => new Set(values))
@@ -267,7 +303,9 @@ export class ValueSelect extends PureComponent {
     } else {
       values = Object.keys(valueCounts)
         .map(v => ({ value: v, count: valueCounts[v] }))
-        .sort((a, b) => a.count - b.count || ValueCollator.compare(a.value, b.value))
+        .sort(
+          (a, b) => a.count - b.count || ValueCollator.compare(a.value, b.value)
+        )
         .map(({ value }) => value)
     }
     if (!isAscending) values.reverse()
@@ -287,15 +325,15 @@ export class ValueSelect extends PureComponent {
     this.setState({ searchInput: '' })
   }
 
-  handleChangeSort = (sort) => {
+  handleChangeSort = sort => {
     this.setState({ sort })
   }
 
-  onKeyDown = (ev) => {
+  onKeyDown = ev => {
     if (ev.keyCode === 27) this.handleResetSearch() // Esc => reset
   }
 
-  handleChangeSearch = (searchInput) => {
+  handleChangeSearch = searchInput => {
     this.setState({ searchInput })
   }
 
@@ -310,10 +348,7 @@ export class ValueSelect extends PureComponent {
     } else {
       const index = value.indexOf(item)
       if (index !== -1) {
-        onChange([
-          ...(value.slice(0, index)),
-          ...(value.slice(index + 1))
-        ])
+        onChange([...value.slice(0, index), ...value.slice(index + 1)])
       } else {
         // no-op: deleting an already-missing element
       }
@@ -334,22 +369,21 @@ export class ValueSelect extends PureComponent {
     const { loading } = this.props
     const { searchInput, sort } = this.state
     const canSearch = this.sortedValues.length > 1
-    const isSearching = (searchInput !== '')
+    const isSearching = searchInput !== ''
 
     return (
       <>
-        {canSearch ? (
-          <FacetSearch
-            value={searchInput}
-            onChange={this.handleChangeSearch}
-            onReset={this.handleResetSearch}
-          />
-        ) : null}
+        {canSearch
+          ? (
+            <FacetSearch
+              value={searchInput}
+              onChange={this.handleChangeSearch}
+              onReset={this.handleResetSearch}
+            />
+            )
+          : null}
         <div className='value-list-and-chrome'>
-          <ValueSortSelect
-            value={sort}
-            onChange={this.handleChangeSort}
-          />
+          <ValueSortSelect value={sort} onChange={this.handleChangeSort} />
           <div className='value-list-container'>
             <AllNoneButtons
               isReadOnly={isSearching}
@@ -374,6 +408,10 @@ export class ValueSelect extends PureComponent {
 export default withFetchedData(
   ValueSelect,
   'valueCounts',
-  ({ api, inputStepId, selectedColumn }) => selectedColumn === null ? Promise.resolve(null) : api.valueCounts(inputStepId, selectedColumn),
-  ({ inputDeltaId, selectedColumn }) => selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
+  ({ api, inputStepId, selectedColumn }) =>
+    selectedColumn === null
+      ? Promise.resolve(null)
+      : api.valueCounts(inputStepId, selectedColumn),
+  ({ inputDeltaId, selectedColumn }) =>
+    selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
 )

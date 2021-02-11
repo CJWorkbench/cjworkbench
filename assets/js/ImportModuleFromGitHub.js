@@ -20,19 +20,25 @@ class StaffImportModuleFromGitHub extends PureComponent {
 
   inputRef = createRef()
 
-  handleSubmit = (ev) => {
+  handleSubmit = ev => {
     ev.preventDefault() // don't submit browser-default GET/POST
 
     this.setState({
-      status: { message: t({ id: 'js.ImportModuleFromGithub.status.processing', message: 'Processing…' }) }
+      status: {
+        message: t({
+          id: 'js.ImportModuleFromGithub.status.processing',
+          message: 'Processing…'
+        })
+      }
     })
 
     const url = this.inputRef.current.value
-    this.props.api.importModuleFromGitHub(url)
+    this.props.api
+      .importModuleFromGitHub(url)
       .then(this.onImportSuccess, this.onImportFailure)
   }
 
-  onImportSuccess = (data) => {
+  onImportSuccess = data => {
     this.props.addModuleToState(data)
     const module = data.name
     this.setState({
@@ -47,7 +53,7 @@ class StaffImportModuleFromGitHub extends PureComponent {
     })
   }
 
-  onImportFailure = (error) => {
+  onImportFailure = error => {
     this.setState({
       status: {
         error: error.message
@@ -61,7 +67,9 @@ class StaffImportModuleFromGitHub extends PureComponent {
     return (
       <Modal isOpen toggle={this.props.closeModal}>
         <ModalHeader toggle={this.props.closeModal}>
-          <Trans id='js.ImportModuleFromGithub.staff.header.title'>Import Custom Module</Trans>
+          <Trans id='js.ImportModuleFromGithub.staff.header.title'>
+            Import Custom Module
+          </Trans>
         </ModalHeader>
         <ModalBody>
           <form id='import-from-github-form' onSubmit={this.handleSubmit}>
@@ -74,25 +82,37 @@ class StaffImportModuleFromGitHub extends PureComponent {
                 placeholder='https://github.com/user/repo.git'
               />
             </div>
-            {status.message ? (
-              <div className='import-github-success'>{status.message}</div>
-            ) : null}
-            {status.error ? (
-              <div className='import-github-error'>{status.error}</div>
-            ) : null}
+            {status.message
+              ? <div className='import-github-success'>{status.message}</div>
+              : null}
+            {status.error
+              ? <div className='import-github-error'>{status.error}</div>
+              : null}
             <div className='label-margin t-m-gray info-1'>
               <Trans id='js.ImportModuleFromGithub.staff.buildingModuleTutorialLink'>
-                Learn about how to build your own module {''}
-                <a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>
-                    here
+                Learn about how to build your own module
+                <a
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module'
+                  className='action-link'
+                >
+                  here
                 </a>
               </Trans>
             </div>
           </form>
         </ModalBody>
         <ModalFooter>
-          <button type='submit' className='action-button button-blue' name='import' form='import-from-github-form'>
-            <Trans id='js.ImportModuleFromGithub.footer.importButton'>Import</Trans>
+          <button
+            type='submit'
+            className='action-button button-blue'
+            name='import'
+            form='import-from-github-form'
+          >
+            <Trans id='js.ImportModuleFromGithub.footer.importButton'>
+              Import
+            </Trans>
           </button>
         </ModalFooter>
       </Modal>
@@ -104,20 +124,32 @@ function PublicImportModuleFromGitHub ({ closeModal }) {
   return (
     <Modal isOpen toggle={closeModal}>
       <ModalHeader toggle={closeModal}>
-        <Trans id='js.ImportModuleFromGithub.public.header.title'>Import Custom Module</Trans>
+        <Trans id='js.ImportModuleFromGithub.public.header.title'>
+          Import Custom Module
+        </Trans>
       </ModalHeader>
       <ModalBody>
         <div className='label-margin t-m-gray info-1'>
           <Trans id='js.ImportModuleFromGithub.public.buildingModuleTutorialLink'>
-            Learn about how to build your own module {''}
-            <a target='_blank' rel='noopener noreferrer' href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module' className='action-link'>
-                here
+            Learn about how to build your own module
+            <a
+              target='_blank'
+              rel='noopener noreferrer'
+              href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module'
+              className='action-link'
+            >
+              here
             </a>
           </Trans>
         </div>
       </ModalBody>
       <ModalFooter>
-        <button type='button' className='action-button button-blue' name='close' onClick={closeModal}>
+        <button
+          type='button'
+          className='action-button button-blue'
+          name='close'
+          onClick={closeModal}
+        >
           <Trans id='js.ImportModuleFromGithub.footer.closeButton'>Close</Trans>
         </button>
       </ModalFooter>
@@ -126,7 +158,9 @@ function PublicImportModuleFromGitHub ({ closeModal }) {
 }
 
 export function ImportModuleFromGitHub ({ isStaff, ...innerProps }) {
-  const Component = isStaff ? StaffImportModuleFromGitHub : PublicImportModuleFromGitHub
+  const Component = isStaff
+    ? StaffImportModuleFromGitHub
+    : PublicImportModuleFromGitHub
   return <Component {...innerProps} />
 }
 ImportModuleFromGitHub.propTypes = {
@@ -138,7 +172,7 @@ ImportModuleFromGitHub.propTypes = {
   addModuleToState: PropTypes.func.isRequired // func(moduleObject) => undefined
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isStaff: state.loggedInUser.is_staff
 })
 

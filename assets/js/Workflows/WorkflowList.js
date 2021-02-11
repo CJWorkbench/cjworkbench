@@ -5,28 +5,34 @@ import Workflow from './Workflow'
 import SortAscendingIcon from '../../icons/sort-ascending.svg'
 import SortDescendingIcon from '../../icons/sort-descending.svg'
 
-const WorkflowListPropType = PropTypes.arrayOf(PropTypes.shape({
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  last_update: PropTypes.string.isRequired // ISO8601 String
-}).isRequired)
+const WorkflowListPropType = PropTypes.arrayOf(
+  PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    last_update: PropTypes.string.isRequired // ISO8601 String
+  }).isRequired
+)
 export { WorkflowListPropType }
 
 function SortableColumnName (props) {
   const { sort, sortKey, defaultAscending, onChangeSort, children } = props
 
-  const handleClickSort = useCallback(ev => {
-    ev.preventDefault()
-    const ascending = sort.key === sortKey ? !sort.ascending : defaultAscending
-    onChangeSort({ key: sortKey, ascending })
-  }, [sort, sortKey, defaultAscending, onChangeSort])
+  const handleClickSort = useCallback(
+    ev => {
+      ev.preventDefault()
+      const ascending =
+        sort.key === sortKey ? !sort.ascending : defaultAscending
+      onChangeSort({ key: sortKey, ascending })
+    },
+    [sort, sortKey, defaultAscending, onChangeSort]
+  )
 
   return (
     <a href='#' onClick={handleClickSort}>
       {children}
-      {sort.key === sortKey ? (
-        sort.ascending ? <SortAscendingIcon /> : <SortDescendingIcon />
-      ) : null}
+      {sort.key === sortKey
+        ? (sort.ascending ? <SortAscendingIcon /> : <SortDescendingIcon />)
+        : null}
     </a>
   )
 }
@@ -57,7 +63,9 @@ export default function WorkflowList (props) {
     const TextComparator = new Intl.Collator() // locale alphabetical
     const { key, ascending } = sort
     // workflow.last_update is ISO8601 Date. We can sort it lexicographically.
-    const ret = workflows.slice().sort((a, b) => TextComparator.compare(a[key], b[key]))
+    const ret = workflows
+      .slice()
+      .sort((a, b) => TextComparator.compare(a[key], b[key]))
     if (!ascending) {
       ret.reverse()
     }
@@ -95,9 +103,7 @@ export default function WorkflowList (props) {
             <th className='privacy'>
               <Trans id='js.Workflows.WorkflowList.privacy'>Privacy</Trans>
             </th>
-            {showActions ? (
-              <th className='actions' />
-            ) : null}
+            {showActions ? <th className='actions' /> : null}
           </tr>
         </thead>
         <tbody>

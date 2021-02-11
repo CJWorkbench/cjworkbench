@@ -6,9 +6,13 @@ import { Page, MainNav } from '../Page'
 import PlanTable from './Plan/PlanTable'
 
 async function createCheckoutSession (api, stripePriceId) {
-  const { checkoutSession, apiKey } = await api.createStripeCheckoutSession(stripePriceId)
+  const { checkoutSession, apiKey } = await api.createStripeCheckoutSession(
+    stripePriceId
+  )
   const stripe = await loadStripe(apiKey)
-  const result = await stripe.redirectToCheckout({ sessionId: checkoutSession.id })
+  const result = await stripe.redirectToCheckout({
+    sessionId: checkoutSession.id
+  })
   if (result.error) {
     console.error(result.error)
   }
@@ -18,7 +22,12 @@ export default function PlanPage (props) {
   const { api, user, products } = props
 
   const handleClickSubscribe = useMemo(
-    () => (user ? stripePriceId => { createCheckoutSession(api, stripePriceId) } : null),
+    () =>
+      user
+        ? stripePriceId => {
+            createCheckoutSession(api, stripePriceId)
+          }
+        : null,
     [user, api]
   )
 
@@ -27,7 +36,9 @@ export default function PlanPage (props) {
       <MainNav user={user} currentPath='/settings/plan' />
       <main>
         <header>
-          <h1><Trans id='js.settings.PlanPage.title'>Plan</Trans></h1>
+          <h1>
+            <Trans id='js.settings.PlanPage.title'>Plan</Trans>
+          </h1>
         </header>
         <PlanTable
           products={products}

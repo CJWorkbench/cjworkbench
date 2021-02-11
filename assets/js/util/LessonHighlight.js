@@ -3,10 +3,12 @@ import PropTypes from 'prop-types'
 const P = PropTypes
 
 function Shape (type, propTypes) {
-  return P.shape(Object.assign(
-    { type: P.oneOf([type]).isRequired }, // hack: only allow the exact given type
-    propTypes
-  )).isRequired
+  return P.shape(
+    Object.assign(
+      { type: P.oneOf([type]).isRequired }, // hack: only allow the exact given type
+      propTypes
+    )
+  ).isRequired
 }
 
 const LessonHighlightType = P.oneOfType([
@@ -23,8 +25,7 @@ const LessonHighlightType = P.oneOfType([
     button: P.oneOf(['notes', 'collapse']).isRequired,
     index: P.number
   }),
-  Shape('EditableNotes', {
-  })
+  Shape('EditableNotes', {})
 ])
 
 /**
@@ -41,7 +42,9 @@ const LessonHighlightType = P.oneOfType([
 export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
 
 const matchOneLessonHighlight = (lessonHighlight, test) => {
-  return !Object.keys(lessonHighlight).some(key => test[key] !== null && test[key] !== lessonHighlight[key])
+  return !Object.keys(lessonHighlight).some(
+    key => test[key] !== null && test[key] !== lessonHighlight[key]
+  )
 }
 
 /**

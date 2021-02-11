@@ -13,24 +13,48 @@ describe('lessonSelector', () => {
         title: 'Section One',
         html: '<p>Section One HTML</p>',
         steps: [
-          { html: 'Step One-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [{ type: 'Step', moduleIdName: 'foo' }], testJs: 'return false' }
+          {
+            html: 'Step One-Ay',
+            highlight: [{ type: 'EditableNotes' }],
+            testJs: 'return false'
+          },
+          {
+            html: 'Step One-<strong>Bee</strong>',
+            highlight: [{ type: 'Step', moduleIdName: 'foo' }],
+            testJs: 'return false'
+          }
         ]
       },
       {
         title: 'Section Two',
         html: '<p>Section Two HTML</p>',
         steps: [
-          { html: 'Step Two-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [{ type: 'Step', moduleIdName: 'foo' }], testJs: 'return false' }
+          {
+            html: 'Step Two-Ay',
+            highlight: [{ type: 'EditableNotes' }],
+            testJs: 'return false'
+          },
+          {
+            html: 'Step Two-<strong>Bee</strong>',
+            highlight: [{ type: 'Step', moduleIdName: 'foo' }],
+            testJs: 'return false'
+          }
         ]
       },
       {
         title: 'Last Section',
         html: '<p>Section Three HTML</p>',
         steps: [
-          { html: 'Step Three-Ay', highlight: [{ type: 'EditableNotes' }], testJs: 'return false' },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [{ type: 'Step', moduleIdName: 'foo' }], testJs: 'return false' }
+          {
+            html: 'Step Three-Ay',
+            highlight: [{ type: 'EditableNotes' }],
+            testJs: 'return false'
+          },
+          {
+            html: 'Step Three-<strong>Bee</strong>',
+            highlight: [{ type: 'Step', moduleIdName: 'foo' }],
+            testJs: 'return false'
+          }
         ]
       }
     ]
@@ -38,7 +62,11 @@ describe('lessonSelector', () => {
 
   it('should give null values if there is no lesson', () => {
     const state = { workflow: {} }
-    const { activeSectionIndex, activeStepIndex, testHighlight } = lessonSelector(state)
+    const {
+      activeSectionIndex,
+      activeStepIndex,
+      testHighlight
+    } = lessonSelector(state)
     expect(activeSectionIndex).toBe(null)
     expect(activeStepIndex).toBe(null)
     // components will still call testHighlight(), so make it return null
@@ -214,8 +242,14 @@ describe('lessonSelector', () => {
         sections: [
           {
             steps: [
-              { testJs: 'return state.selectedStep.moduleSlug === "bar" /* yep */' },
-              { testJs: 'return state.selectedStep.moduleSlug === "baz" /* nope */' }
+              {
+                testJs:
+                  'return state.selectedStep.moduleSlug === "bar" /* yep */'
+              },
+              {
+                testJs:
+                  'return state.selectedStep.moduleSlug === "baz" /* nope */'
+              }
             ]
           },
           ...lessonFixture.sections.slice(1)
@@ -259,9 +293,7 @@ describe('lessonSelector', () => {
         lessonData: {
           sections: [
             {
-              steps: [
-                { testJs: 'return nonexistentVar' }
-              ]
+              steps: [{ testJs: 'return nonexistentVar' }]
             }
           ]
         },

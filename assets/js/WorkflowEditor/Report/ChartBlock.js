@@ -1,7 +1,13 @@
 import PropTypes from 'prop-types'
 import BlockFrame from './BlockFrame'
 
-export default function ChartBlock ({ block, isReadOnly, onClickDelete, onClickMoveDown, onClickMoveUp }) {
+export default function ChartBlock ({
+  block,
+  isReadOnly,
+  onClickDelete,
+  onClickMoveDown,
+  onClickMoveUp
+}) {
   const { slug, step } = block
   const deltaId = step.cached_render_result_delta_id || 'rendering'
 

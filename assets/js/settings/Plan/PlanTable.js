@@ -26,16 +26,27 @@ function Price (props) {
   const { price, onClickSubscribe } = props
 
   const handleClickSubscribe = useMemo(
-    () => onClickSubscribe ? () => onClickSubscribe(price.stripePriceId) : null,
+    () =>
+      onClickSubscribe
+        ? () => onClickSubscribe(price.stripePriceId)
+        : null,
     [onClickSubscribe, price]
   )
 
   return (
     <div className='price'>
       <div className='amount' key={price.stripePriceId}>
-        <StripeAmount amount={price.amount} currency={price.currency} interval={price.interval} />
+        <StripeAmount
+          amount={price.amount}
+          currency={price.currency}
+          interval={price.interval}
+        />
       </div>
-      {handleClickSubscribe ? <Subscribe onClick={handleClickSubscribe} /> : null}
+      {handleClickSubscribe
+        ? (
+          <Subscribe onClick={handleClickSubscribe} />
+          )
+        : null}
     </div>
   )
 }
@@ -64,20 +75,30 @@ function ProductTh (props) {
             onClickSubscribe={subscribed ? null : onClickSubscribe}
           />
         ))}
-        {subscribed ? (
-          <div className='current'>
-            <Trans id='js.settings.Plan.PlanTable.current'>Current plan</Trans>
-          </div>
-        ) : null}
-        {!user ? (
-          <a href='/account/login/?next=%2Fsettings%2Fplan'>
-            {product.prices.length ? (
-              <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>Choose {product.name}</Trans>
-            ) : (
-              <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>Choose {product.name}</Trans>
+        {subscribed
+          ? (
+            <div className='current'>
+              <Trans id='js.settings.Plan.PlanTable.current'>Current plan</Trans>
+            </div>
+            )
+          : null}
+        {user
+          ? null
+          : (
+            <a href='/account/login/?next=%2Fsettings%2Fplan'>
+              {product.prices.length
+                ? (
+                  <Trans id='js.settings.Plan.PlanTable.signInForFreePlan'>
+                    Choose {product.name}
+                  </Trans>
+                  )
+                : (
+                  <Trans id='js.settings.Plan.PlanTable.signInToSubscribe'>
+                    Choose {product.name}
+                  </Trans>
+                  )}
+            </a>
             )}
-          </a>
-        ) : null}
       </div>
     </th>
   )
@@ -117,7 +138,11 @@ export default function PlanTable (props) {
                 user={user}
                 subscribed={
                   activeStripeProductIds.includes(product.stripeProductId) ||
-                  Boolean(activeStripeProductIds.length === 0 && product.prices.length === 0 && user)
+                  Boolean(
+                    activeStripeProductIds.length === 0 &&
+                      product.prices.length === 0 &&
+                      user
+                  )
                 }
                 onClickSubscribe={onClickSubscribe}
               />
@@ -127,20 +152,34 @@ export default function PlanTable (props) {
         <tbody>
           <tr>
             <th>
-              <h3><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.title'>Automatic updates</Trans></h3>
-              <p><Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.description'>Per day</Trans></p>
+              <h3>
+                <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.title'>
+                  Automatic updates
+                </Trans>
+              </h3>
+              <p>
+                <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.description'>
+                  Per day
+                </Trans>
+              </p>
             </th>
             {products.map(product => (
               <td key={product.stripeProductId}>
                 <div>
-                  <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>{i18n.number(product.maxFetchesPerDay)} updates</Trans>
+                  <Trans id='js.settings.Plan.PlanTable.maxFetchesPerDay.cell'>
+                    {i18n.number(product.maxFetchesPerDay)} updates
+                  </Trans>
                 </div>
               </td>
             ))}
           </tr>
           <tr>
             <th>
-              <h3><Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>Undo history</Trans></h3>
+              <h3>
+                <Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>
+                  Undo history
+                </Trans>
+              </h3>
             </th>
             {products.map(product => (
               <td key={product.stripeProductId}>
@@ -170,6 +209,7 @@ PlanTable.propTypes = {
     }).isRequired
   ).isRequired,
   user: PropTypes.shape({
-    subscribedStripeProductIds: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+    subscribedStripeProductIds: PropTypes.arrayOf(PropTypes.string.isRequired)
+      .isRequired
   }) // or null for anonymous
 }

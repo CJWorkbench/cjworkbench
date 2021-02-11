@@ -3,9 +3,7 @@ import MainNav from './MainNav'
 
 export function Page (props) {
   const { children } = props
-  return (
-    <div className='page'>{children}</div>
-  )
+  return <div className='page'>{children}</div>
 }
 Page.propTypes = {
   children: PropTypes.node.isRequired

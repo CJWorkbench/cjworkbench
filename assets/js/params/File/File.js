@@ -3,15 +3,19 @@ import PropTypes from 'prop-types'
 import UploadedFileSelect from './UploadedFileSelect'
 import { Trans, t } from '@lingui/macro'
 
-const UploadProgress = memo(function UploadProgress ({ nBytesTotal, nBytesUploaded }) {
-  const percent = (nBytesUploaded || 0) / nBytesTotal * 100
-  const title = nBytesUploaded === null
-    ? ''
-    : t({
-      id: 'js.params.File.UploadProgress.hoverText',
-      message: '{0}% uploaded',
-      values: { 0: percent.toFixed(1) }
-    })
+const UploadProgress = memo(function UploadProgress ({
+  nBytesTotal,
+  nBytesUploaded
+}) {
+  const percent = ((nBytesUploaded || 0) / nBytesTotal) * 100
+  const title =
+    nBytesUploaded === null
+      ? ''
+      : t({
+        id: 'js.params.File.UploadProgress.hoverText',
+        message: '{0}% uploaded',
+        values: { 0: percent.toFixed(1) }
+      })
   return (
     <div className='upload-progress' title={title}>
       <div className='value' style={{ width: `${percent}%` }} />
@@ -41,12 +45,14 @@ export default class File extends PureComponent {
     onChange: PropTypes.func.isRequired, // onChange(n) => undefined
     onSubmit: PropTypes.func.isRequired, // onSubmit() => undefined
     name: PropTypes.string.isRequired, // <input name=...>
-    files: PropTypes.arrayOf(PropTypes.shape({
-      uuid: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      size: PropTypes.number.isRequired,
-      createdAt: PropTypes.string.isRequired // ISO8601-formatted date
-    }).isRequired).isRequired,
+    files: PropTypes.arrayOf(
+      PropTypes.shape({
+        uuid: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        size: PropTypes.number.isRequired,
+        createdAt: PropTypes.string.isRequired // ISO8601-formatted date
+      }).isRequired
+    ).isRequired,
     stepId: PropTypes.number.isRequired,
     stepSlug: PropTypes.string.isRequired,
     inProgressUpload: PropTypes.shape({
@@ -65,14 +71,14 @@ export default class File extends PureComponent {
     isUploadApiModalOpen: false
   }
 
-  _upload = (file) => {
+  _upload = file => {
     const { uploadFile, stepSlug } = this.props
     uploadFile(stepSlug, file)
     // Once the upload completes, the handler will change SetStepParams
     // server-side. We'll get a Websockets notification when that's done.
   }
 
-  handleDragOver = (ev) => {
+  handleDragOver = ev => {
     const items = ev.dataTransfer.items
     if (items && items.length === 1 && items[0].kind === 'file') {
       // allow dropping
@@ -82,7 +88,7 @@ export default class File extends PureComponent {
     }
   }
 
-  handleDragEnter = (ev) => {
+  handleDragEnter = ev => {
     // DO NOT use `this.state`!
     //
     // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
@@ -101,7 +107,7 @@ export default class File extends PureComponent {
     ev.currentTarget.classList.add('dragging-over')
   }
 
-  handleDragLeave = (ev) => {
+  handleDragLeave = ev => {
     if (
       ev.currentTarget.classList.contains('dragging-over') &&
       ev.target !== ev.currentTarget
@@ -121,7 +127,7 @@ export default class File extends PureComponent {
     ev.currentTarget.classList.remove('dragging-over')
   }
 
-  handleDrop = (ev) => {
+  handleDrop = ev => {
     const file = ev.dataTransfer.files[0]
     ev.preventDefault() // don't open the file with the web browser
     ev.stopPropagation() // don't open the file with the web browser
@@ -129,12 +135,12 @@ export default class File extends PureComponent {
     ev.currentTarget.classList.remove('dragging-over')
   }
 
-  handleChange = (value) => {
+  handleChange = value => {
     const { setStepParams, stepId, name } = this.props
     setStepParams(stepId, { [name]: value })
   }
 
-  handleChangeFileInput = (ev) => {
+  handleChangeFileInput = ev => {
     const file = ev.target.files[0]
     this._upload(file)
   }
@@ -145,7 +151,14 @@ export default class File extends PureComponent {
   }
 
   render () {
-    const { name, value, files, inProgressUpload, fieldId, isReadOnly } = this.props
+    const {
+      name,
+      value,
+      files,
+      inProgressUpload,
+      fieldId,
+      isReadOnly
+    } = this.props
     const file = files.find(f => f.uuid === value)
 
     return (
@@ -156,65 +169,99 @@ export default class File extends PureComponent {
         onDragEnter={this.handleDragEnter}
         onDragLeave={this.handleDragLeave}
       >
-        {inProgressUpload ? (
-          <div className='uploading-file'>
-            <div className='filename'>{inProgressUpload.name}</div>
-            <div className='status'>
-              <UploadedFileSelect isReadOnly value={value} files={files} onChange={this.handleChange} />
-              <button
-                type='button'
-                onClick={this.handleClickCancelUpload}
-                name='cancel-upload'
-                title={t({ id: 'js.params.Custom.File.cancelUpload.hoverText', message: 'Cancel upload' })}
-              >
-                <Trans id='js.params.Custom.File.cancelUpload.button'>Cancel Upload</Trans>
-              </button>
-            </div>
-            <UploadProgress
-              nBytesTotal={inProgressUpload.size}
-              nBytesUploaded={inProgressUpload.nBytesUploaded}
-            />
-          </div>
-        ) : (file ? (
-          <div className='existing-file'>
-            <div className='filename'>{file.name}</div>
-            <div className='status'>
-              <UploadedFileSelect isReadOnly={isReadOnly} value={value} files={files} onChange={this.handleChange} />
-              <p className='file-select-button'>
-                <label htmlFor={fieldId}>
-                  <Trans id='js.params.Custom.File.replace'>Replace</Trans>
-                </label>
-                <input
-                  name={name}
-                  type='file'
-                  id={fieldId}
-                  readOnly={isReadOnly}
-                  onChange={this.handleChangeFileInput}
+        {inProgressUpload
+          ? (
+            <div className='uploading-file'>
+              <div className='filename'>{inProgressUpload.name}</div>
+              <div className='status'>
+                <UploadedFileSelect
+                  isReadOnly
+                  value={value}
+                  files={files}
+                  onChange={this.handleChange}
                 />
-              </p>
-            </div>
-            <hr />
-          </div>
-        ) : (
-          <div className='no-file'>
-            <p><Trans id='js.params.Custom.File.dragfilehere'>Drag file here</Trans></p>
-            <p><Trans id='js.params.Custom.File.or' comment='This is shown after js.params.Custom.File.dragfilehere'>or</Trans></p>
-            <p className='file-select-button'>
-              <label htmlFor={fieldId}>
-                <Trans id='js.params.Custom.File.browse.label'>Browse</Trans>
-              </label>
-              <input
-                name={name}
-                type='file'
-                id={fieldId}
-                readOnly={isReadOnly}
-                onChange={this.handleChangeFileInput}
+                <button
+                  type='button'
+                  onClick={this.handleClickCancelUpload}
+                  name='cancel-upload'
+                  title={t({
+                    id: 'js.params.Custom.File.cancelUpload.hoverText',
+                    message: 'Cancel upload'
+                  })}
+                >
+                  <Trans id='js.params.Custom.File.cancelUpload.button'>
+                    Cancel Upload
+                  </Trans>
+                </button>
+              </div>
+              <UploadProgress
+                nBytesTotal={inProgressUpload.size}
+                nBytesUploaded={inProgressUpload.nBytesUploaded}
               />
-            </p>
-          </div>
-        ))}
+            </div>
+            )
+          : file
+            ? (
+              <div className='existing-file'>
+                <div className='filename'>{file.name}</div>
+                <div className='status'>
+                  <UploadedFileSelect
+                    isReadOnly={isReadOnly}
+                    value={value}
+                    files={files}
+                    onChange={this.handleChange}
+                  />
+                  <p className='file-select-button'>
+                    <label htmlFor={fieldId}>
+                      <Trans id='js.params.Custom.File.replace'>Replace</Trans>
+                    </label>
+                    <input
+                      name={name}
+                      type='file'
+                      id={fieldId}
+                      readOnly={isReadOnly}
+                      onChange={this.handleChangeFileInput}
+                    />
+                  </p>
+                </div>
+                <hr />
+              </div>
+              )
+            : (
+              <div className='no-file'>
+                <p>
+                  <Trans id='js.params.Custom.File.dragfilehere'>
+                    Drag file here
+                  </Trans>
+                </p>
+                <p>
+                  <Trans
+                    id='js.params.Custom.File.or'
+                    comment='This is shown after js.params.Custom.File.dragfilehere'
+                  >
+                    or
+                  </Trans>
+                </p>
+                <p className='file-select-button'>
+                  <label htmlFor={fieldId}>
+                    <Trans id='js.params.Custom.File.browse.label'>Browse</Trans>
+                  </label>
+                  <input
+                    name={name}
+                    type='file'
+                    id={fieldId}
+                    readOnly={isReadOnly}
+                    onChange={this.handleChangeFileInput}
+                  />
+                </p>
+              </div>
+              )}
         <div className='drop-here'>
-          <p><Trans id='js.params.Custom.File.dropFileHere'>Drop file here</Trans> </p>
+          <p>
+            <Trans id='js.params.Custom.File.dropFileHere'>
+              Drop file here
+            </Trans>{' '}
+          </p>
         </div>
       </div>
     )

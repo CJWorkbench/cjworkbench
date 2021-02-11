@@ -4,18 +4,19 @@ import { mountWithI18n } from '../i18n/test-utils'
 import { tick } from '../test-utils'
 
 describe('Column', () => {
-  const wrapper = (props) => mountWithI18n(
-    <Column
-      value={null}
-      name='col'
-      fieldId='col'
-      placeholder='SelectACol'
-      isReadOnly={false}
-      inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}
-      onChange={jest.fn()}
-      {...props}
-    />
-  )
+  const wrapper = props =>
+    mountWithI18n(
+      <Column
+        value={null}
+        name='col'
+        fieldId='col'
+        placeholder='SelectACol'
+        isReadOnly={false}
+        inputColumns={[{ name: 'A' }, { name: 'B' }, { name: 'C' }]}
+        onChange={jest.fn()}
+        {...props}
+      />
+    )
 
   it('matches snapshot', async () => {
     const w = wrapper({ value: null })
@@ -25,7 +26,11 @@ describe('Column', () => {
   })
 
   it('renders loading', () => {
-    const w = wrapper({ value: 'A', placeholder: 'Prompt!', inputColumns: null })
+    const w = wrapper({
+      value: 'A',
+      placeholder: 'Prompt!',
+      inputColumns: null
+    })
 
     // dropdown has 1 option, prompt as placeholder
     const select = w.find('Select')
@@ -48,7 +53,10 @@ describe('Column', () => {
     await tick() // load columns
     w.update()
 
-    w.find('Select').at(0).props().onChange({ value: 'B' })
+    w.find('Select')
+      .at(0)
+      .props()
+      .onChange({ value: 'B' })
     expect(w.prop('onChange')).toHaveBeenCalledWith('B')
   })
 
@@ -70,7 +78,12 @@ describe('Column', () => {
     await tick() // load columns
     w.update()
 
-    w.find('Select').at(0).props().onChange({ value: 'column  with  double  spaces' })
-    expect(w.prop('onChange')).toHaveBeenCalledWith('column  with  double  spaces')
+    w.find('Select')
+      .at(0)
+      .props()
+      .onChange({ value: 'column  with  double  spaces' })
+    expect(w.prop('onChange')).toHaveBeenCalledWith(
+      'column  with  double  spaces'
+    )
   })
 })

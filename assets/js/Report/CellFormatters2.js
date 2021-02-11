@@ -24,7 +24,9 @@ export function NullCell () {
   return (
     <Trans
       id='js.WorkflowEditor.Report.nullCell'
-      render={({ translation }) => <div className='cell-null' data-text={translation} />}
+      render={({ translation }) => (
+        <div className='cell-null' data-text={translation} />
+      )}
     >
       null
     </Trans>
@@ -40,10 +42,14 @@ export function TextCellFormatter ({ value }) {
   // can see spaces.
   const oneLineValue = value.replace(
     UnicodeWhitespace,
-    (x) => UnicodeWhitespaceReplacements[x]
+    x => UnicodeWhitespaceReplacements[x]
   )
 
-  return <div className='cell-text' title={value}>{oneLineValue}</div>
+  return (
+    <div className='cell-text' title={value}>
+      {oneLineValue}
+    </div>
+  )
 }
 
 /**
@@ -53,7 +59,9 @@ export function TextCellFormatter ({ value }) {
  */
 function parseFormat (format) {
   try {
-    const [, prefix, specifierString, suffix] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+    const [, prefix, specifierString, suffix] = /(.*?)\{:?(.*)\}(.*)/.exec(
+      format
+    )
     return { prefix, suffix, specifierString }
   } catch (e) {
     if (e instanceof TypeError) {
@@ -74,7 +82,7 @@ export function NumberCellFormatter (format) {
   let f
   if (specifierString.endsWith('%')) {
     suffix = '%' + suffix
-    f = (n) => d3Format(n).slice(0, -1)
+    f = n => d3Format(n).slice(0, -1)
   } else {
     f = d3Format
   }
@@ -105,9 +113,13 @@ export function TimestampCellFormatter ({ value }) {
   // Strip the end of the ISO string if it's all-zero. Restore the 'Z' at
   // the very end iff there's no time component. (The time component starts
   // with 'T'.)
-  const text = value.replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
+  const text = value.replace(ZeroEndOfDate, m => (m[0][0] === 'T' ? '' : 'Z'))
 
-  return <time className='cell-timestamp' dateTime={value}>{text}</time>
+  return (
+    <time className='cell-timestamp' dateTime={value}>
+      {text}
+    </time>
+  )
 }
 
 const TypeToCellFormatter = {

@@ -9,9 +9,8 @@ import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
 
 // --- Main ----
-const websocket = new WorkflowWebsocket(
-  window.initState.workflow.id,
-  delta => store.dispatch(applyDeltaAction(delta))
+const websocket = new WorkflowWebsocket(window.initState.workflow.id, delta =>
+  store.dispatch(applyDeltaAction(delta))
 )
 websocket.connect()
 
@@ -25,14 +24,12 @@ const store = createStore(
 const tables = document.querySelectorAll('.data-table[data-step-slug]')
 Array.prototype.forEach.call(tables, el => {
   ReactDOM.render(
-    (
-      <InternationalizedPage>
-        <Provider store={store}>
-          <Table stepSlug={el.getAttribute('data-step-slug')} />
-          <UnhandledErrorReport />
-        </Provider>
-      </InternationalizedPage>
-    ),
+    <InternationalizedPage>
+      <Provider store={store}>
+        <Table stepSlug={el.getAttribute('data-step-slug')} />
+        <UnhandledErrorReport />
+      </Provider>
+    </InternationalizedPage>,
     el
   )
 })

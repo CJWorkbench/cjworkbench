@@ -5,7 +5,9 @@ function isArrayEqual (lhs, rhs) {
 }
 
 function areDepsEqualWithArrayCompare (lhs, rhs) {
-  return lhs.every((v, i) => Array.isArray(v) ? isArrayEqual(v, rhs[i]) : Object.is(v, rhs[i]))
+  return lhs.every((v, i) =>
+    Array.isArray(v) ? isArrayEqual(v, rhs[i]) : Object.is(v, rhs[i])
+  )
 }
 
 /**
@@ -14,7 +16,10 @@ function areDepsEqualWithArrayCompare (lhs, rhs) {
 export default function useCallbackWithArrayComparedDeps (callback, deps) {
   const last = useRef(null)
 
-  if (last.current === null || !areDepsEqualWithArrayCompare(last.current.deps, deps)) {
+  if (
+    last.current === null ||
+    !areDepsEqualWithArrayCompare(last.current.deps, deps)
+  ) {
     last.current = { deps, callback }
   }
 

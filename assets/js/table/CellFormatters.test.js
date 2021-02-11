@@ -6,7 +6,7 @@ import { columnToCellFormatter } from './CellFormatters'
 describe('NumberCellFormatter', () => {
   describe('default formatter', () => {
     const Formatter = columnToCellFormatter({ type: 'number', format: '{:,}' })
-    const wrapper = (value) => shallow(<Formatter value={value} />)
+    const wrapper = value => shallow(<Formatter value={value} />)
 
     it('renders integers with numberFormat', () => {
       const w = wrapper(1234)
@@ -37,8 +37,11 @@ describe('NumberCellFormatter', () => {
   })
 
   it('renders floats with prefix and suffix', () => {
-    const Formatter = columnToCellFormatter({ type: 'number', format: '${:,.2f}!' })
-    const wrapper = (value) => shallow(<Formatter value={value} />)
+    const Formatter = columnToCellFormatter({
+      type: 'number',
+      format: '${:,.2f}!'
+    })
+    const wrapper = value => shallow(<Formatter value={value} />)
     const w = wrapper(1234.567)
     expect(w.text()).toEqual('$1,234.57!')
     expect(w.find('.number-value').text()).toEqual('1,234.57')
@@ -47,8 +50,11 @@ describe('NumberCellFormatter', () => {
   })
 
   it('renders percentage of floats with numberFormat, with "%" as a suffix', () => {
-    const Formatter = columnToCellFormatter({ type: 'number', format: '{:,.1%}!' })
-    const wrapper = (value) => shallow(<Formatter value={value} />)
+    const Formatter = columnToCellFormatter({
+      type: 'number',
+      format: '{:,.1%}!'
+    })
+    const wrapper = value => shallow(<Formatter value={value} />)
     const w = wrapper(12.3456)
     expect(w.text()).toEqual('1,234.6%!')
     expect(w.find('.number-value').text()).toEqual('1,234.6')
@@ -59,8 +65,11 @@ describe('NumberCellFormatter', () => {
     // Saw this in production on 2019-04-05 -- same day we deployed type
     // formatting for the first time.
 
-    const Formatter = columnToCellFormatter({ type: 'number', format: '{:nope' })
-    const wrapper = (value) => shallow(<Formatter value={value} />)
+    const Formatter = columnToCellFormatter({
+      type: 'number',
+      format: '{:nope'
+    })
+    const wrapper = value => shallow(<Formatter value={value} />)
     const w = wrapper(1234.5678)
     expect(w.text()).toEqual('1,234.5678')
   })
@@ -68,7 +77,7 @@ describe('NumberCellFormatter', () => {
 
 describe('TextCellFormatter', () => {
   const Formatter = columnToCellFormatter({ type: 'text' })
-  const wrapper = (value) => shallow(<Formatter value={value} />)
+  const wrapper = value => shallow(<Formatter value={value} />)
 
   it('renders the text', () => {
     const w = wrapper('hi')
@@ -112,7 +121,7 @@ describe('TextCellFormatter', () => {
 
 describe('TimestampCellFormatter', () => {
   const Formatter = columnToCellFormatter({ type: 'timestamp' })
-  const wrapper = (value) => shallow(<Formatter value={value} />)
+  const wrapper = value => shallow(<Formatter value={value} />)
 
   it('renders with millisecond precision', () => {
     const w = wrapper('2018-08-29T18:34:01.002Z')

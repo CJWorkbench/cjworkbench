@@ -16,7 +16,7 @@ export default class MultiLineString extends PureComponent {
     placeholder: PropTypes.string // sometimes empty string
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     this.props.onChange(ev.target.value)
   }
 

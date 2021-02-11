@@ -1,6 +1,9 @@
 /* globals afterEach, describe, expect, it, jest */
 import { mountWithI18n } from '../i18n/test-utils'
-import ConnectedDataVersionModal, { DataVersionModal, formatDateUTCForTesting } from './DataVersionModal'
+import ConnectedDataVersionModal, {
+  DataVersionModal,
+  formatDateUTCForTesting
+} from './DataVersionModal'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
 
@@ -22,7 +25,7 @@ describe('DataVersionModal', () => {
     }
   })
 
-  const wrapper = (extraProps) => {
+  const wrapper = extraProps => {
     _wrapper = mountWithI18n(
       <DataVersionModal
         fetchStepId={123}
@@ -47,7 +50,9 @@ describe('DataVersionModal', () => {
 
   it('displays versions', () => {
     const w = wrapper()
-    expect(w.find('label.seen.selected time').text()).toEqual('Jan 2, 1970, 10:17 AM')
+    expect(w.find('label.seen.selected time').text()).toEqual(
+      'Jan 2, 1970, 10:17 AM'
+    )
     expect(w.find('label.unseen time').text()).toEqual('Jan 3, 1970, 5:09 PM')
   })
 
@@ -55,7 +60,9 @@ describe('DataVersionModal', () => {
     const w = wrapper()
 
     // Click new version; verify it's clicked
-    w.find('label.unseen input').simulate('change', { target: { checked: true } })
+    w.find('label.unseen input').simulate('change', {
+      target: { checked: true }
+    })
     expect(w.find('label.unseen input').prop('checked')).toBe(true)
 
     // Click 'Load'
@@ -68,7 +75,9 @@ describe('DataVersionModal', () => {
     const w = wrapper()
 
     // Click new version; verify it's clicked
-    w.find('label.unseen input').simulate('change', { target: { checked: true } })
+    w.find('label.unseen input').simulate('change', {
+      target: { checked: true }
+    })
 
     w.find('button.close').simulate('click')
     expect(w.prop('onClose')).toHaveBeenCalled()
@@ -77,15 +86,29 @@ describe('DataVersionModal', () => {
   it('enables/disables notifications', () => {
     const w = wrapper()
 
-    w.find('input[name="notifications-enabled"]').simulate('change', { target: { checked: true } })
-    expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(124, true)
+    w.find('input[name="notifications-enabled"]').simulate('change', {
+      target: { checked: true }
+    })
+    expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(
+      124,
+      true
+    )
     w.setProps({ notificationsEnabled: true }) // simulate onChangeNotificationsEnabled()
-    expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(true)
+    expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(
+      true
+    )
 
-    w.find('input[name="notifications-enabled"]').simulate('change', { target: { checked: false } })
-    expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(124, true)
+    w.find('input[name="notifications-enabled"]').simulate('change', {
+      target: { checked: false }
+    })
+    expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(
+      124,
+      true
+    )
     w.setProps({ notificationsEnabled: false }) // simulate onChangeNotificationsEnabled()
-    expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(false)
+    expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(
+      false
+    )
   })
 
   it('omits notifications settings when isAnonymous', () => {
@@ -132,14 +155,11 @@ describe('DataVersionModal', () => {
       }
     }
 
-    const connectedWrapper = (state) => {
+    const connectedWrapper = state => {
       const store = configureMockStore([])(state)
       _wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedDataVersionModal
-            stepId={124}
-            onClose={jest.fn()}
-          />
+          <ConnectedDataVersionModal stepId={124} onClose={jest.fn()} />
         </Provider>
       )
       return _wrapper
@@ -147,7 +167,9 @@ describe('DataVersionModal', () => {
 
     it('should find notificationsEnabled', () => {
       const w = connectedWrapper(IdealState)
-      expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(true)
+      expect(
+        w.find('input[name="notifications-enabled"]').prop('checked')
+      ).toBe(true)
     })
 
     // it('should set fetchModuleName', () => {
@@ -158,8 +180,12 @@ describe('DataVersionModal', () => {
     it('should set fetchVersions', () => {
       const w = connectedWrapper(IdealState)
 
-      expect(w.find('label.selected time[time="2018-06-22T20:09:41.649Z"]').length).toBe(1)
-      expect(w.find('label.unseen time[time="2018-06-23T20:09:41.649Z"]').length).toBe(1)
+      expect(
+        w.find('label.selected time[time="2018-06-22T20:09:41.649Z"]').length
+      ).toBe(1)
+      expect(
+        w.find('label.unseen time[time="2018-06-23T20:09:41.649Z"]').length
+      ).toBe(1)
     })
   })
 })

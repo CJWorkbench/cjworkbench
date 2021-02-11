@@ -26,15 +26,26 @@ describe('ChartSeriesSelect', () => {
 
   it('should change column', () => {
     const w = wrapper()
-    w.find('ColumnParam').at(0).prop('onChange')('bar')
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'bar', color: '#abcdef' })
+    w
+      .find('ColumnParam')
+      .at(0)
+      .prop('onChange')('bar')
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
+      index: 2,
+      column: 'bar',
+      color: '#abcdef'
+    })
   })
 
   it('should change color', () => {
     const w = wrapper()
     w.find('button[title="Pick color"]').simulate('click')
     w.find('button[name="color-fbaa6d"]').simulate('click')
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'foo', color: '#fbaa6d' })
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
+      index: 2,
+      column: 'foo',
+      color: '#fbaa6d'
+    })
 
     // test that picker disappears
     w.update()
@@ -46,7 +57,14 @@ describe('ChartSeriesSelect', () => {
     w.find('button[title="Pick color"]').simulate('click')
     w.find('button[name="color-fbaa6d"]').simulate('click')
     expect(w.prop('onChange')).not.toHaveBeenCalled()
-    w.find('ColumnParam[fieldId="series_2_column"]').at(0).prop('onChange')('bar')
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ index: 2, column: 'bar', color: '#fbaa6d' })
+    w
+      .find('ColumnParam[fieldId="series_2_column"]')
+      .at(0)
+      .prop('onChange')('bar')
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
+      index: 2,
+      column: 'bar',
+      color: '#fbaa6d'
+    })
   })
 })

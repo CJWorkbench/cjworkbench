@@ -6,7 +6,7 @@ import InternationalizedPage from '../i18n/InternationalizedPage'
 const api = new WorkbenchAPI(null) // no websocket
 const { workflows, loggedInUser } = window.initState
 
-ReactDOM.render((
+ReactDOM.render(
   <InternationalizedPage>
     <Workflows
       api={api}
@@ -14,8 +14,9 @@ ReactDOM.render((
       user={loggedInUser}
       currentPath={window.location.pathname}
     />
-  </InternationalizedPage>
-), document.getElementById('root'))
+  </InternationalizedPage>,
+  document.getElementById('root')
+)
 
 // Start Intercom, if we're that sort of installation
 if (window.APP_ID) {

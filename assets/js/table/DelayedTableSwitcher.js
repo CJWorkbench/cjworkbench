@@ -7,8 +7,7 @@ function areSameTable (props1, props2) {
   if (props1 === null && props2 === null) return true // both null => true
   if ((props1 === null) !== (props2 === null)) return false // one null => false
 
-  return props1.stepId === props2.stepId &&
-    props1.deltaId === props2.deltaId
+  return props1.stepId === props2.stepId && props1.deltaId === props2.deltaId
 }
 
 /**
@@ -69,10 +68,12 @@ export default class DelayedTableSwitcher extends PureComponent {
     stepId: PropTypes.number, // or null, if no selection
     deltaId: PropTypes.number, // or null, if status!=ok
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
-    columns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'timestamp', 'number']).isRequired
-    }).isRequired), // or null, if status!=ok
+    columns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'timestamp', 'number']).isRequired
+      }).isRequired
+    ), // or null, if status!=ok
     nRows: PropTypes.number // or null, if status!=ok
   }
 
@@ -124,7 +125,8 @@ export default class DelayedTableSwitcher extends PureComponent {
    * Call this.prop.loadRows() and ensure state.loaded is set after it returns.
    */
   loadRows = (stepId, deltaId, startRow, endRow) => {
-    return this.props.loadRows(stepId, deltaId, startRow, endRow)
+    return this.props
+      .loadRows(stepId, deltaId, startRow, endRow)
       .finally(() => {
         if (
           stepId === this.props.stepId &&
@@ -168,24 +170,28 @@ export default class DelayedTableSwitcher extends PureComponent {
     // and later set isReadOnly=false
     return (
       <div className={className}>
-        {loaded ? (
-          <TableSwitcher
-            isReadOnly={isReadOnly}
-            isLoaded
-            key={tableKey(loaded)}
-            loadRows={this.loadRows}
-            {...loaded}
-          />
-        ) : null}
-        {loading ? (
-          <TableSwitcher
-            isReadOnly={isReadOnly}
-            isLoaded={false}
-            key={tableKey(this.props)}
-            loadRows={this.loadRows}
-            {...tableProps(this.props)}
-          />
-        ) : null}
+        {loaded
+          ? (
+            <TableSwitcher
+              isReadOnly={isReadOnly}
+              isLoaded
+              key={tableKey(loaded)}
+              loadRows={this.loadRows}
+              {...loaded}
+            />
+            )
+          : null}
+        {loading
+          ? (
+            <TableSwitcher
+              isReadOnly={isReadOnly}
+              isLoaded={false}
+              key={tableKey(this.props)}
+              loadRows={this.loadRows}
+              {...tableProps(this.props)}
+            />
+            )
+          : null}
       </div>
     )
   }

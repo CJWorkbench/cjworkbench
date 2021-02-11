@@ -7,7 +7,10 @@ export default class LessonStep extends PureComponent {
 
     return (
       <li className={status}>
-        <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
+        <div
+          className='description'
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       </li>
     )
   }

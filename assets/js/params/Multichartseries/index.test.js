@@ -28,7 +28,11 @@ describe('Multichartseries', () => {
 
   it('should change column', () => {
     const w = wrapper()
-    w.find('ChartSeriesSelect[column="B"]').prop('onChange')({ index: 1, column: 'C', color: '#bbbbbb' })
+    w.find('ChartSeriesSelect[column="B"]').prop('onChange')({
+      index: 1,
+      column: 'C',
+      color: '#bbbbbb'
+    })
     expect(w.prop('onChange')).toHaveBeenCalledWith([
       { column: 'A', color: '#aaaaaa' },
       { column: 'C', color: '#bbbbbb' }
@@ -38,7 +42,10 @@ describe('Multichartseries', () => {
   it('should add a column', async () => {
     const w = wrapper()
     w.find('button[title="add another column"]').simulate('click')
-    w.find('ChartSeriesSelect').at(2).prop('onChange')({ index: 2, column: 'C', color: '#fbaa6d' })
+    w
+      .find('ChartSeriesSelect')
+      .at(2)
+      .prop('onChange')({ index: 2, column: 'C', color: '#fbaa6d' })
     expect(w.prop('onChange')).toHaveBeenCalledWith([
       { column: 'A', color: '#aaaaaa' },
       { column: 'B', color: '#bbbbbb' },
@@ -72,9 +79,7 @@ describe('Multichartseries', () => {
 
   it('should not allow removing last column', () => {
     const w = wrapper({
-      value: [
-        { column: 'A', color: '#aaaaaa' }
-      ]
+      value: [{ column: 'A', color: '#aaaaaa' }]
     })
     expect(w.find('button[title="remove last column"]')).toHaveLength(0)
   })

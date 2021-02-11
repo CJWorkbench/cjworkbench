@@ -43,7 +43,7 @@ export class OutputIframe extends PureComponent {
     window.removeEventListener('message', this.handleMessage)
   }
 
-  handleMessage = (ev) => {
+  handleMessage = ev => {
     const data = ev.data
     if (data && data.from === 'outputIframe') {
       if (data.stepId !== this.props.stepId) {
@@ -86,7 +86,9 @@ export class OutputIframe extends PureComponent {
 
   handleClickModalClose = this.closeModal
 
-  handleClickSetWorkflowPublic = () => { this.props.setWorkflowPublic() }
+  handleClickSetWorkflowPublic = () => {
+    this.props.setWorkflowPublic()
+  }
 
   isModalOpen (name) {
     if (!this.state.isModalOpen) return false
@@ -102,27 +104,41 @@ export class OutputIframe extends PureComponent {
       <Modal isOpen={this.isModalOpen('public')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
           <div className='modal-title'>
-            <Trans id='js.OutputIframe.private.header.title' comment='This should be all-caps for styling reasons'>
+            <Trans
+              id='js.OutputIframe.private.header.title'
+              comment='This should be all-caps for styling reasons'
+            >
               SHARE THIS WORKFLOW
             </Trans>
           </div>
         </ModalHeader>
         <ModalBody>
           <div className='title-3 mb-3'>
-            <Trans id='js.OutputIframe.private.workflowIsPrivate'>This workflow is currently private</Trans>
+            <Trans id='js.OutputIframe.private.workflowIsPrivate'>
+              This workflow is currently private
+            </Trans>
           </div>
           <div className='info-3 t-d-gray'>
             <Trans id='js.OutputIframe.private.setToPublic'>
-              Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+              Set this workflow to Public in order to share it? Anyone with the
+              URL will be able to access and duplicate it.
             </Trans>
           </div>
         </ModalBody>
         <ModalFooter>
-          <div onClick={this.handleClickModalClose} className='button-gray action-button mr-4'>
+          <div
+            onClick={this.handleClickModalClose}
+            className='button-gray action-button mr-4'
+          >
             <Trans id='js.OutputIframe.footer.cancelButton'>Cancel</Trans>
           </div>
-          <div onClick={this.handleClickSetWorkflowPublic} className='button-blue action-button test-public-button'>
-            <Trans id='js.OutputIframe.footer.setPublicButton'>Set public</Trans>
+          <div
+            onClick={this.handleClickSetWorkflowPublic}
+            className='button-blue action-button test-public-button'
+          >
+            <Trans id='js.OutputIframe.footer.setPublicButton'>
+              Set public
+            </Trans>
           </div>
         </ModalFooter>
       </Modal>
@@ -130,29 +146,43 @@ export class OutputIframe extends PureComponent {
   }
 
   renderEmbedModal () {
-    const iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.stepId + '" width="560" height="315" frameborder="0"></iframe>')
+    const iframeCode = escapeHtml(
+      '<iframe src="' +
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        '/embed/' +
+        this.props.stepId +
+        '" width="560" height="315" frameborder="0"></iframe>'
+    )
 
     return (
       <Modal isOpen={this.isModalOpen('embed')} toggle={this.closeModal}>
         <ModalHeader toggle={this.closeModal}>
           <div className='modal-title'>
-            <Trans id='js.OutputIframe.embed.header.title' comment='This should be all-caps for styling reasons'>
+            <Trans
+              id='js.OutputIframe.embed.header.title'
+              comment='This should be all-caps for styling reasons'
+            >
               EMBED THIS CHART
             </Trans>
           </div>
         </ModalHeader>
         <ModalBody>
           <p className='info'>
-            <Trans id='js.OutputIframe.embed.embedCode'>Paste this code into any webpage HTML</Trans>
+            <Trans id='js.OutputIframe.embed.embedCode'>
+              Paste this code into any webpage HTML
+            </Trans>
           </p>
           <div className='code-snippet'>
-            <code className='chart-embed'>
-              {iframeCode}
-            </code>
+            <code className='chart-embed'>{iframeCode}</code>
           </div>
         </ModalBody>
         <div className='modal-footer'>
-          <div onClick={this.handleClickModalClose} className='button-gray action-button'>
+          <div
+            onClick={this.handleClickModalClose}
+            className='button-gray action-button'
+          >
             <Trans id='js.OutputIframe.footer.OKButton'>OK</Trans>
           </div>
         </div>
@@ -182,7 +212,10 @@ export class OutputIframe extends PureComponent {
         <iframe src={src} />
         <button
           name='embed'
-          title={t({ id: 'js.OutputIframe.getEmbeddableUrl.hoverText', message: 'Get an embeddable URL' })}
+          title={t({
+            id: 'js.OutputIframe.getEmbeddableUrl.hoverText',
+            message: 'Get an embeddable URL'
+          })}
           onClick={this.handleClickOpenEmbedModal}
         >
           <EmbedIcon />
@@ -194,7 +227,7 @@ export class OutputIframe extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => ({})
+const mapStateToProps = state => ({})
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
@@ -207,7 +240,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OutputIframe)
+export default connect(mapStateToProps, mapDispatchToProps)(OutputIframe)

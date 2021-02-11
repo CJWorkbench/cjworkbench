@@ -78,10 +78,5 @@ export default function NumberFormat (props) {
     }
   ]
 
-  return (
-    <Menu
-      {...props}
-      enumOptions={enumOptions}
-    />
-  )
+  return <Menu {...props} enumOptions={enumOptions} />
 }

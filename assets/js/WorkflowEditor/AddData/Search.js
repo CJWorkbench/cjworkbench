@@ -4,14 +4,20 @@ import { t } from '@lingui/macro'
 
 const Search = memo(function Search ({ value, onChange }) {
   const handleReset = useCallback(() => onChange(''))
-  const handleSubmit = useCallback(ev => { ev.preventDefault(); ev.stopPropagation() })
+  const handleSubmit = useCallback(ev => {
+    ev.preventDefault()
+    ev.stopPropagation()
+  })
   const handleChange = useCallback(ev => onChange(ev.target.value))
 
   return (
     <form className='search' onSubmit={handleSubmit} onReset={handleReset}>
       <input
         type='search'
-        placeholder={t({ id: 'js.WorkflowEditor.AddData.Search.placeholder', message: 'Search…' })}
+        placeholder={t({
+          id: 'js.WorkflowEditor.AddData.Search.placeholder',
+          message: 'Search…'
+        })}
         name='moduleQ'
         autoFocus
         autoComplete='off'
@@ -21,7 +27,10 @@ const Search = memo(function Search ({ value, onChange }) {
       <button
         type='reset'
         className='reset'
-        title={t({ id: 'js.WorkflowEditor.AddData.Search.clearButton.hoverText', message: 'Clear Search' })}
+        title={t({
+          id: 'js.WorkflowEditor.AddData.Search.clearButton.hoverText',
+          message: 'Clear Search'
+        })}
       >
         <i className='icon-close' />
       </button>

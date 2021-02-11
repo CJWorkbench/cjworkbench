@@ -33,7 +33,8 @@ export default class Param extends PureComponent {
     isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and the user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
-    api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
+    api: PropTypes.shape({
+      // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
       valueCounts: PropTypes.func.isRequired // for ValueFilter/Refine
     }),
@@ -44,32 +45,46 @@ export default class Param extends PureComponent {
     secretLogic: PropTypes.object, // only defined if type == 'secret'
     label: PropTypes.string.isRequired, // or ''
     type: PropTypes.string.isRequired,
-    enumOptions: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any.isRequired,
-      label: PropTypes.string.isRequired
-    }).isRequired), // for menu/radio
+    enumOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.any.isRequired,
+        label: PropTypes.string.isRequired
+      }).isRequired
+    ), // for menu/radio
     isMultiline: PropTypes.bool.isRequired,
     placeholder: PropTypes.string.isRequired, // may be ''
     visibleIf: PropTypes.object, // JSON spec or null
     upstreamValue: PropTypes.any, // `null` if server hasn't been contacted or if actual value is `null`
     value: PropTypes.any, // local value: `null` if server hasn't been contacted or if actual value is `null`
     stepId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
-    stepOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
+    stepOutputErrors: PropTypes.arrayOf(
+      PropTypes.shape({
+        message: PropTypes.string.isRequired,
+        quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes))
+          .isRequired
+      }).isRequired
+    ).isRequired, // may be empty
     isStepBusy: PropTypes.bool.isRequired,
     inputStepId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-    }).isRequired), // null while rendering
-    tabs: PropTypes.arrayOf(PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      outputColumns: PropTypes.arrayOf(PropTypes.shape({
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
         name: PropTypes.string.isRequired,
         type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-      }).isRequired) // null while rendering
-    }).isRequired).isRequired,
+      }).isRequired
+    ), // null while rendering
+    tabs: PropTypes.arrayOf(
+      PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        outputColumns: PropTypes.arrayOf(
+          PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+          }).isRequired
+        ) // null while rendering
+      }).isRequired
+    ).isRequired,
     currentTab: PropTypes.string.isRequired, // "tab-slug" this form appears in
     selectedTab: PropTypes.string, // "tab-slug" of one "tab" param elsewhere in this form
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
@@ -81,30 +96,50 @@ export default class Param extends PureComponent {
 
   get innerComponent () {
     switch (this.props.type) {
-      case 'checkbox': return Checkbox
-      case 'column': return Column
-      case 'condition': return Condition
-      case 'custom': return Custom
-      case 'float': return Number_
-      case 'file': return File
-      case 'gdrivefile': return Gdrivefile
-      case 'integer': return Number_
-      case 'menu': return Menu
-      case 'multicolumn': return Multicolumn
-      case 'multitab': return Multitab
-      case 'multichartseries': return Multichartseries
-      case 'numberformat': return NumberFormat
-      case 'radio': return Radio
-      case 'secret': return Secret
-      case 'statictext': return StaticText
-      case 'string': return String_
-      case 'tab': return Tab
-      case 'timezone': return Timezone
-      case 'list': return List
+      case 'checkbox':
+        return Checkbox
+      case 'column':
+        return Column
+      case 'condition':
+        return Condition
+      case 'custom':
+        return Custom
+      case 'float':
+        return Number_
+      case 'file':
+        return File
+      case 'gdrivefile':
+        return Gdrivefile
+      case 'integer':
+        return Number_
+      case 'menu':
+        return Menu
+      case 'multicolumn':
+        return Multicolumn
+      case 'multitab':
+        return Multitab
+      case 'multichartseries':
+        return Multichartseries
+      case 'numberformat':
+        return NumberFormat
+      case 'radio':
+        return Radio
+      case 'secret':
+        return Secret
+      case 'statictext':
+        return StaticText
+      case 'string':
+        return String_
+      case 'tab':
+        return Tab
+      case 'timezone':
+        return Timezone
+      case 'list':
+        return List
     }
   }
 
-  handleChange = (value) => {
+  handleChange = value => {
     const { name, onChange } = this.props
     onChange(name, value)
   }
@@ -137,7 +172,12 @@ export default class Param extends PureComponent {
     if (!deepEqual(value, upstreamValue)) className += ' editing'
 
     return (
-      <div data-name={name} className={className} draggable onDragStart={onDragStartPreventDrag}>
+      <div
+        data-name={name}
+        className={className}
+        draggable
+        onDragStart={onDragStartPreventDrag}
+      >
         <this.innerComponent
           {...this.props}
           fieldId={safeFieldId}

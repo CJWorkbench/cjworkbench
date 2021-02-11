@@ -3,12 +3,9 @@ import PropTypes from 'prop-types'
 import { DropdownContext } from './Dropdown'
 
 export default function DropdownToggle (props) {
-  const {
-    isOpen,
-    disabled,
-    setToggleElement,
-    toggle
-  } = useContext(DropdownContext)
+  const { isOpen, disabled, setToggleElement, toggle } = useContext(
+    DropdownContext
+  )
 
   const {
     className = 'btn btn-secondary',
@@ -27,10 +24,11 @@ export default function DropdownToggle (props) {
       onClick={toggle}
       disabled={disabled}
       aria-expanded={isOpen}
-      children={children}
       title={title}
       ref={setToggleElement}
-    />
+    >
+      {children}
+    </button>
   )
 }
 DropdownToggle.propTypes = {

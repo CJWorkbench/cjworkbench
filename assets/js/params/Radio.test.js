@@ -4,16 +4,17 @@ import { mount } from 'enzyme'
 import Radio from './Radio'
 
 describe('Radio', () => {
-  const wrapper = (extraProps = {}) => mount(
-    <Radio
-      isReadOnly={false}
-      name='radio'
-      fieldId='radio'
-      value={0}
-      onChange={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    mount(
+      <Radio
+        isReadOnly={false}
+        name='radio'
+        fieldId='radio'
+        value={0}
+        onChange={jest.fn()}
+        {...extraProps}
+      />
+    )
 
   it('renders correctly', () => {
     const w = wrapper({ enumOptions: [{ value: 'x', label: 'X' }] })

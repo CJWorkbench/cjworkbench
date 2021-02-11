@@ -24,13 +24,13 @@ export default class SingleLineString extends PureComponent {
     placeholder: PropTypes.string // sometimes empty string
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     // Remove newlines. We simply won't let this input produce one.
     const value = ev.target.value.replace(/[\r\n]/g, '')
     this.props.onChange(value)
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     switch (ev.key) {
       case 'Escape':
         ev.preventDefault()

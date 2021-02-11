@@ -16,15 +16,15 @@ export default class Prompt extends PureComponent {
     this.inputRef.current.focus()
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     this.props.onChange(ev.target.value)
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     if (ev.keyCode === 27) this.props.cancel() // Esc => cancel
   }
 
-  handleSubmit = (ev) => {
+  handleSubmit = ev => {
     ev.preventDefault()
   }
 
@@ -32,12 +32,18 @@ export default class Prompt extends PureComponent {
     const { value, cancel } = this.props
 
     return (
-      <form className='module-search-field' onSubmit={this.handleSubmit} onReset={cancel}>
-
+      <form
+        className='module-search-field'
+        onSubmit={this.handleSubmit}
+        onReset={cancel}
+      >
         <input
           type='search'
           name='moduleQ'
-          placeholder={t({ id: 'js.WorkflowEditor.ModuleSearch.Prompt.placeholder', message: 'Search…' })}
+          placeholder={t({
+            id: 'js.WorkflowEditor.ModuleSearch.Prompt.placeholder',
+            message: 'Search…'
+          })}
           autoComplete='off'
           ref={this.inputRef}
           value={value}
@@ -48,7 +54,10 @@ export default class Prompt extends PureComponent {
         <button
           type='reset'
           className='reset'
-          title={t({ id: 'js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText', message: 'Close Search' })}
+          title={t({
+            id: 'js.WorkflowEditor.ModuleSearch.Prompt.closeButton.hoverText',
+            message: 'Close Search'
+          })}
         >
           <i className='icon-close' />
         </button>

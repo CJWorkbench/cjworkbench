@@ -19,8 +19,12 @@ export default function Workflow (props) {
 
   return (
     <tr className={workflow.nPendingChanges ? 'changing' : null}>
-      <td className='title'><a href={`/workflows/${workflow.id}`}>{workflow.name}</a></td>
-      <td className='owner'><a href={`/workflows/${workflow.id}`}>{workflow.owner_name}</a></td>
+      <td className='title'>
+        <a href={`/workflows/${workflow.id}`}>{workflow.name}</a>
+      </td>
+      <td className='owner'>
+        <a href={`/workflows/${workflow.id}`}>{workflow.owner_name}</a>
+      </td>
       <td className='updated'>
         <a href={`/workflows/${workflow.id}`}>
           <time dateTime={workflow.last_updated}>{timeAgo}</time>
@@ -28,25 +32,25 @@ export default function Workflow (props) {
       </td>
       <td className='privacy'>
         <a href={`/workflows/${workflow.id}`}>
-          {workflow.public ? (
-            <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
-          ) : (
-            <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>
-          )}
+          {workflow.public
+            ? <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
+            : <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>}
         </a>
       </td>
-      {showActions ? (
-        <td className='actions'>
-          <WorkflowContextMenu
-            workflow={workflow}
-            api={api}
-            onWorkflowChanging={onWorkflowChanging}
-            onWorkflowChanged={onWorkflowChanged}
-            onWorkflowDuplicating={onWorkflowDuplicating}
-            onWorkflowDuplicated={onWorkflowDuplicated}
-          />
-        </td>
-      ) : null}
+      {showActions
+        ? (
+          <td className='actions'>
+            <WorkflowContextMenu
+              workflow={workflow}
+              api={api}
+              onWorkflowChanging={onWorkflowChanging}
+              onWorkflowChanged={onWorkflowChanged}
+              onWorkflowDuplicating={onWorkflowDuplicating}
+              onWorkflowDuplicated={onWorkflowDuplicated}
+            />
+          </td>
+          )
+        : null}
     </tr>
   )
 }

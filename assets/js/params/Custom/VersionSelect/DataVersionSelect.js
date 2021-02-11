@@ -30,7 +30,7 @@ export class DataVersionSelect extends PureComponent {
         <>
           <div className='label'>
             <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label'>
-                Version
+              Version
             </Trans>
           </div>
           <div className='no-versions'>–</div>
@@ -39,7 +39,10 @@ export class DataVersionSelect extends PureComponent {
     } else if (isReadOnly) {
       inner = (
         <div className='read-only'>
-          <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label' comment='The parameter {0} will be the current version and {nVersions} will be the number of versions'>
+          <Trans
+            id='js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label'
+            comment='The parameter {0} will be the current version and {nVersions} will be the number of versions'
+          >
             Version {nVersions - currentVersionIndex} of {nVersions}
           </Trans>
         </div>
@@ -49,12 +52,16 @@ export class DataVersionSelect extends PureComponent {
         <>
           <div className='label'>
             <Trans id='js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label'>
-                Version
+              Version
             </Trans>
           </div>
           <button
             type='button'
-            title={t({ id: 'js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText', message: 'Select version' })}
+            title={t({
+              id:
+                'js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText',
+              message: 'Select version'
+            })}
             onClick={this.handleClickOpenModal}
           >
             <Trans
@@ -64,21 +71,14 @@ export class DataVersionSelect extends PureComponent {
               {nVersions - currentVersionIndex} of {nVersions}
             </Trans>
           </button>
-          {isDataVersionModalOpen ? (
-            <DataVersionModal
-              stepId={stepId}
-              onClose={this.handleCloseModal}
-            />
-          ) : null}
+          {isDataVersionModalOpen
+            ? <DataVersionModal stepId={stepId} onClose={this.handleCloseModal} />
+            : null}
         </>
       )
     }
 
-    return (
-      <div className='version-item'>
-        {inner}
-      </div>
-    )
+    return <div className='version-item'>{inner}</div>
   }
 }
 
@@ -104,6 +104,4 @@ function mapStateToProps (state, { stepId }) {
   }
 }
 
-export default connect(
-  mapStateToProps
-)(DataVersionSelect)
+export default connect(mapStateToProps)(DataVersionSelect)

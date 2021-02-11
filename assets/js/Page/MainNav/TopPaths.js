@@ -12,17 +12,26 @@ export default function TopPaths (props) {
       <LinkLi
         href='/workflows'
         isOpen={currentPath === '/workflows'}
-        title={t({ id: 'js.Page.MainNav.workflows.title', message: 'My workflows' })}
+        title={t({
+          id: 'js.Page.MainNav.workflows.title',
+          message: 'My workflows'
+        })}
       />
       <LinkLi
         href='/workflows/shared-with-me'
         isOpen={currentPath === '/workflows/shared-with-me'}
-        title={t({ id: 'js.Page.MainNav.workflows-shared-with-me.title', message: 'Shared with me' })}
+        title={t({
+          id: 'js.Page.MainNav.workflows-shared-with-me.title',
+          message: 'Shared with me'
+        })}
       />
       <LinkLi
         href='/workflows/examples'
         isOpen={currentPath === '/workflows/examples'}
-        title={t({ id: 'js.Page.MainNav.examples.title', message: 'Example workflows' })}
+        title={t({
+          id: 'js.Page.MainNav.examples.title',
+          message: 'Example workflows'
+        })}
       />
       <LinkLi
         href='/lessons'
@@ -33,7 +42,10 @@ export default function TopPaths (props) {
           <LinkLi
             href='/lessons'
             isOpen={/^\/lessons/.test(currentPath)}
-            title={t({ id: 'js.Page.MainNav.lessons.title', message: 'Tutorials' })}
+            title={t({
+              id: 'js.Page.MainNav.lessons.title',
+              message: 'Tutorials'
+            })}
           />
           {courses.map(({ href, title }) => (
             <LinkLi

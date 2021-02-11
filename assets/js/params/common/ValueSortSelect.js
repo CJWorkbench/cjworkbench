@@ -7,9 +7,7 @@ function SortIndicator ({ isActive, isAscending }) {
 
   const icon = isAscending ? 'icon-sort-up' : 'icon-sort-down'
 
-  return (
-    <i className={`icon ${icon}`} />
-  )
+  return <i className={`icon ${icon}`} />
 }
 
 export default function ValueSortSelect ({ value, onChange }) {
@@ -29,18 +27,22 @@ export default function ValueSortSelect ({ value, onChange }) {
 
   return (
     <div className='value-sort-select'>
-      <button className={by === 'value' ? 'active' : ''} name='by-value' type='button' onClick={onClickValue}>
+      <button
+        className={by === 'value' ? 'active' : ''}
+        name='by-value'
+        type='button'
+        onClick={onClickValue}
+      >
         <Trans id='js.params.common.ValueSortSelect.value'>Value</Trans>
-        <SortIndicator
-          isActive={by === 'value'}
-          isAscending={isAscending}
-        />
+        <SortIndicator isActive={by === 'value'} isAscending={isAscending} />
       </button>
-      <button className={by === 'count' ? 'active' : ''} name='by-count' type='button' onClick={onClickCount}>
-        <SortIndicator
-          isActive={by === 'count'}
-          isAscending={isAscending}
-        />
+      <button
+        className={by === 'count' ? 'active' : ''}
+        name='by-count'
+        type='button'
+        onClick={onClickCount}
+      >
+        <SortIndicator isActive={by === 'count'} isAscending={isAscending} />
         <Trans id='js.params.common.ValueSortSelect.rows'>Rows</Trans>
       </button>
     </div>

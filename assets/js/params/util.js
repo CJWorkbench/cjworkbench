@@ -10,11 +10,7 @@ export function generateFieldId (stepId, name) {
  */
 export function MaybeLabel ({ fieldId, label }) {
   if (!label) return null
-  return (
-    <label htmlFor={fieldId}>
-      {label}
-    </label>
-  )
+  return <label htmlFor={fieldId}>{label}</label>
 }
 
 /**
@@ -27,7 +23,7 @@ export function MaybeLabel ({ fieldId, label }) {
  * This will JSON-parse `value` and JSON-stringify in `onChange`.
  */
 export function withJsonStringValues (WrappedComponent, defaultValue) {
-  return (props) => {
+  return props => {
     const { value, upstreamValue, onChange } = props
     let realValue, realUpstreamValue
 
@@ -43,7 +39,7 @@ export function withJsonStringValues (WrappedComponent, defaultValue) {
       realUpstreamValue = defaultValue
     }
 
-    const onChangeJson = (value) => onChange(JSON.stringify(value))
+    const onChangeJson = value => onChange(JSON.stringify(value))
 
     return (
       <WrappedComponent

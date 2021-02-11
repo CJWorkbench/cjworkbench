@@ -21,7 +21,10 @@ class MenuList extends PureComponent {
   render () {
     const { name, addMenuListClassName } = this.props.selectProps
 
-    const className = ['react-select__menu-list', 'react-select__menu-list--is-multi']
+    const className = [
+      'react-select__menu-list',
+      'react-select__menu-list--is-multi'
+    ]
     if (addMenuListClassName) className.push(addMenuListClassName)
 
     return (
@@ -33,7 +36,9 @@ class MenuList extends PureComponent {
             onClick={this.handleClickSelectAll}
             className='multicolumn-select-all'
           >
-            <Trans id='js.params.Multicolumn.MenuList.selectAllButton'>Select all</Trans>
+            <Trans id='js.params.Multicolumn.MenuList.selectAllButton'>
+              Select all
+            </Trans>
           </button>
           <button
             name={`${name}-select-none`}
@@ -65,9 +70,11 @@ export default class Multicolumn extends PureComponent {
       PropTypes.string.isRequired, // e.g., 'A,B'; may be '' but not null
       PropTypes.arrayOf(PropTypes.string.isRequired).isRequired // may be [] but not null
     ]).isRequired,
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    }))
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    )
   }
 
   // For a transition period, we support "multicolumn" values being String.
@@ -87,20 +94,29 @@ export default class Multicolumn extends PureComponent {
     }
   }
 
-  handleChangeColumns = (columns) => {
-    const value = this.isDeprecatedMulticolumnParam ? columns.join(',') : columns
+  handleChangeColumns = columns => {
+    const value = this.isDeprecatedMulticolumnParam
+      ? columns.join(',')
+      : columns
     this.props.onChange(value)
   }
 
   render () {
-    const { inputColumns, isReadOnly, fieldId, name, placeholder, label, addMenuListClassName, noOptionsMessage } = this.props
+    const {
+      inputColumns,
+      isReadOnly,
+      fieldId,
+      name,
+      placeholder,
+      label,
+      addMenuListClassName,
+      noOptionsMessage
+    } = this.props
 
-    const columnOptions = (inputColumns || []).map(column => (
-      {
-        label: column.name,
-        value: column.name
-      }
-    ))
+    const columnOptions = (inputColumns || []).map(column => ({
+      label: column.name,
+      value: column.name
+    }))
 
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
@@ -118,7 +134,13 @@ export default class Multicolumn extends PureComponent {
           noOptionsMessage={noOptionsMessage}
           components={Components}
           value={this.value}
-          placeholder={placeholder || t({ id: 'js.params.Multicolumn.selectColumn.placeholder', message: 'Select columns' })}
+          placeholder={
+            placeholder ||
+            t({
+              id: 'js.params.Multicolumn.selectColumn.placeholder',
+              message: 'Select columns'
+            })
+          }
         />
       </>
     )

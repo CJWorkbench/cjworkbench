@@ -2,7 +2,15 @@ import PropTypes from 'prop-types'
 import Report from './Report'
 import ShareCard from './ShareCard'
 
-export default function Dashboard ({ workflow, blocks, reportableTabs, addBlock, deleteBlock, reorderBlocks, setBlockMarkdown }) {
+export default function Dashboard ({
+  workflow,
+  blocks,
+  reportableTabs,
+  addBlock,
+  deleteBlock,
+  reorderBlocks,
+  setBlockMarkdown
+}) {
   return (
     <article className='report'>
       <ShareCard workflowId={workflow.id} isPublic={workflow.public} />

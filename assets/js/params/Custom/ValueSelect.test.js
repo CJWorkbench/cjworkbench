@@ -38,9 +38,24 @@ describe('ValueSelect', () => {
       value: []
     })
 
-    expect(w.find('.count').at(0).text()).toEqual('~1k')
-    expect(w.find('.count').at(1).text()).toEqual('~235M')
-    expect(w.find('.count').at(2).text()).toEqual('1k')
+    expect(
+      w
+        .find('.count')
+        .at(0)
+        .text()
+    ).toEqual('~1k')
+    expect(
+      w
+        .find('.count')
+        .at(1)
+        .text()
+    ).toEqual('~235M')
+    expect(
+      w
+        .find('.count')
+        .at(2)
+        .text()
+    ).toEqual('1k')
   })
 
   it('should render when valueCounts have not loaded', () => {
@@ -60,14 +75,29 @@ describe('ValueSelect', () => {
     })
 
     // 'a': selected value ("shown" checkbox is checked)
-    expect(w.find('.value').at(0).find('input[type="checkbox"]').prop('checked')).toBe(true)
+    expect(
+      w
+        .find('.value')
+        .at(0)
+        .find('input[type="checkbox"]')
+        .prop('checked')
+    ).toBe(true)
     // 'b': not selected value ("shown" checkbox is unchecked)
-    expect(w.find('.value').at(1).find('input[type="checkbox"]').prop('checked')).toBe(false)
+    expect(
+      w
+        .find('.value')
+        .at(1)
+        .find('input[type="checkbox"]')
+        .prop('checked')
+    ).toBe(false)
 
     const changeCalls = w.prop('onChange').mock.calls
 
     // Add 'b' to selected values
-    w.find('.value').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
+    w.find('.value')
+      .at(1)
+      .find('input[type="checkbox"]')
+      .simulate('change', { target: { checked: true } })
     expect(changeCalls).toHaveLength(1)
     expect(changeCalls[0][0]).toEqual(['a', 'b'])
 
@@ -79,7 +109,13 @@ describe('ValueSelect', () => {
       valueCounts: { a: 2, b: 1 },
       value: changeCalls[0][0]
     })
-    expect(w2.find('.value').at(1).find('input[type="checkbox"]').prop('checked')).toBe(true)
+    expect(
+      w2
+        .find('.value')
+        .at(1)
+        .find('input[type="checkbox"]')
+        .prop('checked')
+    ).toBe(true)
   })
 
   it('should find search results', () => {
@@ -90,7 +126,9 @@ describe('ValueSelect', () => {
 
     expect(w.find('.value')).toHaveLength(5)
 
-    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'b' }
+    })
     w.update()
     expect(w.find('.value')).toHaveLength(2)
   })
@@ -124,10 +162,16 @@ describe('ValueSelect', () => {
       value: ['a']
     })
 
-    w.find('input[type="search"]').simulate('change', { target: { value: 'a' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'a' }
+    })
     w.update()
-    expect(w.find('button[name="refine-select-all"]').prop('disabled')).toBe(true)
-    expect(w.find('button[name="refine-select-none"]').prop('disabled')).toBe(true)
+    expect(w.find('button[name="refine-select-all"]').prop('disabled')).toBe(
+      true
+    )
+    expect(w.find('button[name="refine-select-none"]').prop('disabled')).toBe(
+      true
+    )
 
     // Select All should be disabled
     expect(w.find('button[title="Select All"]').prop('disabled')).toEqual(true)

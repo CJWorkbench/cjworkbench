@@ -1,6 +1,8 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
 import { mockStore } from '../../../test-utils'
-import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
+import ConnectedUpdateFrequencySelect, {
+  UpdateFrequencySelect
+} from './UpdateFrequencySelect'
 import { mountWithI18n } from '../../../i18n/test-utils'
 import { Provider } from 'react-redux'
 
@@ -25,12 +27,9 @@ describe('UpdateFrequencySelect', () => {
     })
     afterEach(() => dateSpy.mockRestore())
 
-    const wrapper = (extraProps) => {
+    const wrapper = extraProps => {
       return mountWithI18n(
-        <UpdateFrequencySelect
-          {...defaultProps}
-          {...extraProps}
-        />
+        <UpdateFrequencySelect {...defaultProps} {...extraProps} />
       )
     }
 
@@ -76,7 +75,15 @@ describe('UpdateFrequencySelect', () => {
       },
       steps: {
         1: { id: 1, tab_slug: 'tab-11', name: 'Ignore this one' },
-        212: { id: 212, tab_slug: 'tab-11', auto_update_data: true, update_interval: 3600, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' }
+        212: {
+          id: 212,
+          tab_slug: 'tab-11',
+          auto_update_data: true,
+          update_interval: 3600,
+          update_units: 'days',
+          notifications: false,
+          last_update_check: '2018-05-28T19:00:54.154141Z'
+        }
       }
     }
 
@@ -88,13 +95,14 @@ describe('UpdateFrequencySelect', () => {
       }
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect
-            stepId={212}
-            lastCheckDate={null}
-          />
+          <ConnectedUpdateFrequencySelect stepId={212} lastCheckDate={null} />
         </Provider>
       )
-      const time = wrapper.find('Trans[id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"]').prop('components')[0]
+      const time = wrapper
+        .find(
+          'Trans[id="js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"]'
+        )
+        .prop('components')[0]
       expect(time.type).toEqual('time')
       expect(time.props.dateTime).toEqual('2018-05-28T19:00:54.154Z')
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
@@ -106,7 +114,12 @@ describe('UpdateFrequencySelect', () => {
       // can this even happen?
       const store = {
         getState: () => ({
-          workflow: { id: 123, read_only: false, is_anonymous: false, steps: ['nonce_212'] },
+          workflow: {
+            id: 123,
+            read_only: false,
+            is_anonymous: false,
+            steps: ['nonce_212']
+          },
           steps: {}
         }),
         dispatch: jest.fn(),
@@ -114,9 +127,7 @@ describe('UpdateFrequencySelect', () => {
       }
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect
-            stepId={212}
-          />
+          <ConnectedUpdateFrequencySelect stepId={212} />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
@@ -125,15 +136,14 @@ describe('UpdateFrequencySelect', () => {
 
     it('should set autofetch (calling API method)', () => {
       const api = {
-        trySetStepAutofetch: jest.fn(() => Promise.resolve({ isAutofetch: true, fetchInterval: 7200 }))
+        trySetStepAutofetch: jest.fn(() =>
+          Promise.resolve({ isAutofetch: true, fetchInterval: 7200 })
+        )
       }
       const store = mockStore(sampleState, api)
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect
-            stepId={212}
-            lastCheckDate={null}
-          />
+          <ConnectedUpdateFrequencySelect stepId={212} lastCheckDate={null} />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
@@ -149,10 +159,7 @@ describe('UpdateFrequencySelect', () => {
       const store = mockStore(sampleState, api)
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect
-            stepId={212}
-            lastCheckDate={null}
-          />
+          <ConnectedUpdateFrequencySelect stepId={212} lastCheckDate={null} />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')

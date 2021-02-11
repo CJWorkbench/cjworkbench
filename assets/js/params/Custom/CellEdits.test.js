@@ -22,9 +22,7 @@ describe('CellEdits', () => {
   })
 
   it('renders empty data', () => {
-    const wrapper = mount(
-      <CellEdits value={[]} />
-    )
+    const wrapper = mount(<CellEdits value={[]} />)
 
     expect(wrapper.find('.cell-edits--column')).toHaveLength(0)
     expect(wrapper.find('.cell-edits--row')).toHaveLength(0)

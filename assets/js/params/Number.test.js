@@ -3,19 +3,20 @@ import { mount } from 'enzyme'
 import Number from './Number'
 
 describe('Number', () => {
-  const wrapper = (props) => mount(
-    <Number
-      isReadOnly={false}
-      value={3}
-      upstreamValue={5}
-      name='name'
-      label='Label'
-      fieldId='field-id'
-      placeholder='a-placeholder'
-      onChange={jest.fn()}
-      {...props}
-    />
-  )
+  const wrapper = props =>
+    mount(
+      <Number
+        isReadOnly={false}
+        value={3}
+        upstreamValue={5}
+        name='name'
+        label='Label'
+        fieldId='field-id'
+        placeholder='a-placeholder'
+        onChange={jest.fn()}
+        {...props}
+      />
+    )
 
   it('should call onChange when text changes', () => {
     const w = wrapper()
@@ -28,7 +29,10 @@ describe('Number', () => {
       value: 6,
       upstreamValue: 5
     })
-    w.find('input').simulate('keydown', { key: 'Escape', preventDefault: jest.fn() })
+    w.find('input').simulate('keydown', {
+      key: 'Escape',
+      preventDefault: jest.fn()
+    })
     expect(w.prop('onChange')).toHaveBeenCalledWith(5)
   })
 

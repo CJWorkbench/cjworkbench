@@ -1,14 +1,28 @@
 import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { t } from '@lingui/macro'
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../../components/Dropdown'
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from '../../components/Dropdown'
 import IconTable from '../../../icons/table.svg'
 
-export default function AddTableBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onCloseMenu, onSubmit }) {
+export default function AddTableBlockPrompt ({
+  tabs,
+  isMenuOpen,
+  onOpenMenu,
+  onCloseMenu,
+  onSubmit
+}) {
   const handleToggleMenu = isMenuOpen ? onCloseMenu : onOpenMenu
-  const handleClick = useCallback(ev => {
-    onSubmit({ tabSlug: ev.target.getAttribute('data-tab-slug') })
-  }, [onSubmit])
+  const handleClick = useCallback(
+    ev => {
+      onSubmit({ tabSlug: ev.target.getAttribute('data-tab-slug') })
+    },
+    [onSubmit]
+  )
 
   return (
     <Dropdown isOpen={isMenuOpen} toggle={handleToggleMenu}>
@@ -36,10 +50,12 @@ export default function AddTableBlockPrompt ({ tabs, isMenuOpen, onOpenMenu, onC
   )
 }
 AddTableBlockPrompt.propTypes = {
-  tabs: PropTypes.arrayOf(PropTypes.shape({
-    slug: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
   isMenuOpen: PropTypes.bool.isRequired,
   onOpenMenu: PropTypes.func.isRequired,
   onCloseMenu: PropTypes.func.isRequired,

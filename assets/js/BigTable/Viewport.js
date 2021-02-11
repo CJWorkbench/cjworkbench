@@ -3,7 +3,14 @@ import PropTypes from 'prop-types'
 import useThrottledRequestAnimationFrame from './useThrottledRequestAnimationFrame'
 import Table from './Table'
 
-export default function Viewport ({ nRows, columns, cells, nSkipRows, nSkipColumns, setFocusCellRange }) {
+export default function Viewport ({
+  nRows,
+  columns,
+  cells,
+  nSkipRows,
+  nSkipColumns,
+  setFocusCellRange
+}) {
   const [viewport, setViewport] = useState(null)
   const [tbody, setTbody] = useState(null)
   const columnOffsetsAfterTh = useMemo(() => {
@@ -56,7 +63,13 @@ export default function Viewport ({ nRows, columns, cells, nSkipRows, nSkipColum
     }
 
     setFocusCellRange(r0, r1, c0, c1)
-  }, [viewport, tbody, nRows, JSON.stringify(columnOffsetsAfterTh) /* array-compare */, setFocusCellRange])
+  }, [
+    viewport,
+    tbody,
+    nRows,
+    JSON.stringify(columnOffsetsAfterTh) /* array-compare */,
+    setFocusCellRange
+  ])
   const throttledRefresh = useThrottledRequestAnimationFrame(refresh)
 
   useLayoutEffect(() => {

@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 export default function LinkLi (props) {
   const { href, isOpen, title, children } = props
 
-  const className = [
-    isOpen ? 'open' : null,
-    children ? 'parent' : null
-  ].filter(n => n).join(' ')
+  const className = [isOpen ? 'open' : null, children ? 'parent' : null]
+    .filter(n => n)
+    .join(' ')
 
   return (
     <li className={className}>

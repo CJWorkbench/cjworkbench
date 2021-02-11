@@ -7,19 +7,22 @@ describe('RefineModal', () => {
   // These are kinda integration-test-y. See RefineClusterer.test.js and
   // RefineBins.test.js for unit tests.
 
-  const wrapper = (extraProps = {}) => mountWithI18n(
-    <RefineModal
-      bucket={{ a: 1, b: 1 }}
-      onClose={jest.fn()}
-      onSubmit={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    mountWithI18n(
+      <RefineModal
+        bucket={{ a: 1, b: 1 }}
+        onClose={jest.fn()}
+        onSubmit={jest.fn()}
+        {...extraProps}
+      />
+    )
 
   it('should render "fingerprint"-algorithm progressbar on start', () => {
     const w = wrapper()
     // RefineClusterer starts correctly
-    expect(w.find('select[name="algorithm"]').prop('value')).toEqual('fingerprint')
+    expect(w.find('select[name="algorithm"]').prop('value')).toEqual(
+      'fingerprint'
+    )
     // RefineBins isn't rendered at all
     expect(w.find('table')).toHaveLength(0)
     expect(w.find('.no-bins')).toHaveLength(0)
@@ -44,7 +47,12 @@ describe('RefineModal', () => {
     w.update()
     // RefineBins renders .no-bins
     expect(w.find('table')).toHaveLength(1)
-    expect(w.find('td.value').at(0).text()).toEqual('a')
+    expect(
+      w
+        .find('td.value')
+        .at(0)
+        .text()
+    ).toEqual('a')
     // Progressbar isn't rendered
     expect(w.find('progress')).toHaveLength(0)
   })

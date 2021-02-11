@@ -4,18 +4,22 @@ import Groups from './index'
 import { mountWithI18n } from '../../../i18n/test-utils.js'
 
 describe('Groups', () => {
-  const wrapper = (extraProps = {}) => mountWithI18n(
-    <Groups
-      isReadOnly={false}
-      name='groups'
-      fieldId='groups'
-      value={{ colnames: [], group_dates: false, date_granularities: {} }}
-      inputColumns={[{ name: 'A', type: 'text' }, { name: 'B', type: 'timestamp' }]}
-      onChange={jest.fn()}
-      applyQuickFix={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    mountWithI18n(
+      <Groups
+        isReadOnly={false}
+        name='groups'
+        fieldId='groups'
+        value={{ colnames: [], group_dates: false, date_granularities: {} }}
+        inputColumns={[
+          { name: 'A', type: 'text' },
+          { name: 'B', type: 'timestamp' }
+        ]}
+        onChange={jest.fn()}
+        applyQuickFix={jest.fn()}
+        {...extraProps}
+      />
+    )
 
   it('should show pseudo-quick-fix when group_dates:true and there are no date columns', () => {
     const w = wrapper({
@@ -25,25 +29,41 @@ describe('Groups', () => {
     })
 
     w.find('button[name="w[date_granularities][add-module]"]').simulate('click')
-    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith({ type: 'prependStep', moduleSlug: 'convert-date', partialParams: {} })
+    expect(w.prop('applyQuickFix')).toHaveBeenCalledWith({
+      type: 'prependStep',
+      moduleSlug: 'convert-date',
+      partialParams: {}
+    })
   })
 
   it('should show message when group_dates:true and there are unselected date columns', () => {
     const w = wrapper({
       name: 'w',
       value: { colnames: ['A'], group_dates: true, date_granularities: {} },
-      inputColumns: [{ name: 'A', type: 'text' }, { name: 'B', type: 'timestamp' }]
+      inputColumns: [
+        { name: 'A', type: 'text' },
+        { name: 'B', type: 'timestamp' }
+      ]
     })
 
     expect(w.find('.no-date-selected')).toHaveLength(1)
-    expect(w.find('button[name="w[date_granularities][add-module]"]')).toHaveLength(0)
+    expect(
+      w.find('button[name="w[date_granularities][add-module]"]')
+    ).toHaveLength(0)
   })
 
   it('should show dropdown only for selected dates', () => {
     const w = wrapper({
       name: 'w',
-      value: { colnames: ['A'], group_dates: true, date_granularities: { A: 'H', B: 'H' } },
-      inputColumns: [{ name: 'A', type: 'timestamp' }, { name: 'B', type: 'timestamp' }]
+      value: {
+        colnames: ['A'],
+        group_dates: true,
+        date_granularities: { A: 'H', B: 'H' }
+      },
+      inputColumns: [
+        { name: 'A', type: 'timestamp' },
+        { name: 'B', type: 'timestamp' }
+      ]
     })
 
     expect(w.find('.no-date-selected')).toHaveLength(0)
@@ -55,20 +75,38 @@ describe('Groups', () => {
     const w = wrapper({
       name: 'w',
       value: { colnames: ['A'], group_dates: true, date_granularities: {} },
-      inputColumns: [{ name: 'A', type: 'timestamp' }, { name: 'B', type: 'text' }]
+      inputColumns: [
+        { name: 'A', type: 'timestamp' },
+        { name: 'B', type: 'text' }
+      ]
     })
 
-    w.find('select[name="w[date_granularities][A]"]').simulate('change', { target: { value: 'H' } })
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ colnames: ['A'], group_dates: true, date_granularities: { A: 'H' } })
+    w.find('select[name="w[date_granularities][A]"]').simulate('change', {
+      target: { value: 'H' }
+    })
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
+      colnames: ['A'],
+      group_dates: true,
+      date_granularities: { A: 'H' }
+    })
   })
 
   it('should show current date granularity', () => {
     const w = wrapper({
       name: 'w',
-      value: { colnames: ['A'], group_dates: true, date_granularities: { A: 'H' } },
-      inputColumns: [{ name: 'A', type: 'timestamp' }, { name: 'B', type: 'text' }]
+      value: {
+        colnames: ['A'],
+        group_dates: true,
+        date_granularities: { A: 'H' }
+      },
+      inputColumns: [
+        { name: 'A', type: 'timestamp' },
+        { name: 'B', type: 'text' }
+      ]
     })
 
-    expect(w.find('select[name="w[date_granularities][A]"]').prop('value')).toEqual('H')
+    expect(
+      w.find('select[name="w[date_granularities][A]"]').prop('value')
+    ).toEqual('H')
   })
 })

@@ -17,19 +17,16 @@ function selectModules (state) {
   return state.modules
 }
 
-const selectModulesWithCharts = createSelector(
-  selectModules,
-  modules => {
-    const ret = {}
-    Object.keys(modules).forEach(moduleId => {
-      const module = modules[moduleId]
-      if (modules[moduleId].has_html_output) {
-        ret[moduleId] = module.name
-      }
-    })
-    return ret
-  }
-)
+const selectModulesWithCharts = createSelector(selectModules, modules => {
+  const ret = {}
+  Object.keys(modules).forEach(moduleId => {
+    const module = modules[moduleId]
+    if (modules[moduleId].has_html_output) {
+      ret[moduleId] = module.name
+    }
+  })
+  return ret
+})
 
 const selectOrderedTabs = createSelector(
   selectWorkflowTabSlugs,
@@ -41,14 +38,18 @@ const selectOrderedTabsWithReportableSteps = createSelector(
   selectOrderedTabs,
   selectSteps,
   selectModulesWithCharts,
-  (tabs, steps, modules) => tabs.map(([tabSlug, tab]) => ({
-    slug: tabSlug,
-    name: tab.name,
-    chartSteps: tab.step_ids.map(id => steps[String(id)]).filter(step => step.module in modules).map(step => ({
-      slug: step.slug,
-      moduleName: modules[step.module]
+  (tabs, steps, modules) =>
+    tabs.map(([tabSlug, tab]) => ({
+      slug: tabSlug,
+      name: tab.name,
+      chartSteps: tab.step_ids
+        .map(id => steps[String(id)])
+        .filter(step => step.module in modules)
+        .map(step => ({
+          slug: step.slug,
+          moduleName: modules[step.module]
+        }))
     }))
-  }))
 )
 
 /**

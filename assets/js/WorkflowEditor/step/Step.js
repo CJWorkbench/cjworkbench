@@ -44,14 +44,16 @@ export class Step extends PureComponent {
       }), // undefined by default
       name: PropTypes.string.isRequired,
       icon: PropTypes.string.isRequired,
-      param_fields: PropTypes.arrayOf(PropTypes.shape({
-        idName: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
-        items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
-        multiline: PropTypes.bool, // required for String
-        placeholder: PropTypes.string, // required for many
-        visibleIf: PropTypes.object // JSON spec or null
-      }).isRequired).isRequired
+      param_fields: PropTypes.arrayOf(
+        PropTypes.shape({
+          idName: PropTypes.string.isRequired,
+          type: PropTypes.string.isRequired,
+          items: PropTypes.string, // "option0|option1|option2", null except when type=menu/radio
+          multiline: PropTypes.bool, // required for String
+          placeholder: PropTypes.string, // required for many
+          visibleIf: PropTypes.object // JSON spec or null
+        }).isRequired
+      ).isRequired
     }), // or null for no module
     index: PropTypes.number.isRequired,
     workflowId: PropTypes.number.isRequired,
@@ -67,10 +69,12 @@ export class Step extends PureComponent {
       id: PropTypes.number.isRequired,
       last_relevant_delta_id: PropTypes.number,
       cached_render_result_delta_id: PropTypes.number, // or null
-      output_columns: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-      })) // or null
+      output_columns: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+        })
+      ) // or null
     }), // or null
     isSelected: PropTypes.bool.isRequired,
     isAfterSelected: PropTypes.bool.isRequired,
@@ -102,7 +106,9 @@ export class Step extends PureComponent {
   }
 
   get hasFetch () {
-    return this.props.fields.some(f => f.type === 'custom' && f.idName === 'version_select')
+    return this.props.fields.some(
+      f => f.type === 'custom' && f.idName === 'version_select'
+    )
   }
 
   get isEditing () {
@@ -124,17 +130,17 @@ export class Step extends PureComponent {
     }
   }
 
-  startCreateSecret = (paramIdName) => {
+  startCreateSecret = paramIdName => {
     const { startCreateSecret, step } = this.props
     return startCreateSecret(step.id, paramIdName)
   }
 
-  deleteSecret = (paramIdName) => {
+  deleteSecret = paramIdName => {
     const { deleteSecret, step } = this.props
     return deleteSecret(step.id, paramIdName)
   }
 
-  handleDragStart = (ev) => {
+  handleDragStart = ev => {
     const dragObject = {
       type: 'Step',
       index: this.props.index,
@@ -148,7 +154,7 @@ export class Step extends PureComponent {
     this.props.onDragStart(dragObject)
   }
 
-  handleDragEnd = (ev) => {
+  handleDragEnd = ev => {
     this.props.onDragEnd()
   }
 
@@ -159,7 +165,11 @@ export class Step extends PureComponent {
   // Optimistically updates the state, and then sends the new state to the server,
   // where it's persisted across sessions and through time.
   setCollapsed (isCollapsed) {
-    this.props.setStepCollapsed(this.props.step.id, isCollapsed, this.props.isReadOnly)
+    this.props.setStepCollapsed(
+      this.props.step.id,
+      isCollapsed,
+      this.props.isReadOnly
+    )
   }
 
   handleClickCollapse = () => {
@@ -173,12 +183,13 @@ export class Step extends PureComponent {
   // when Notes icon is clicked, show notes and start in editable state if not read-only
   handleClickNoteButton = () => {
     const ref = this.notesInputRef.current
-    if (ref) { // only if not read-only
+    if (ref) {
+      // only if not read-only
       ref.focus() // calls this.handleFocusNote()
     }
   }
 
-  handleChangeNote = (ev) => {
+  handleChangeNote = ev => {
     this.setState({ editedNotes: ev.target.value })
   }
 
@@ -212,11 +223,11 @@ export class Step extends PureComponent {
     })
   }
 
-  applyQuickFix = (action) => {
+  applyQuickFix = action => {
     this.props.applyQuickFix(this.props.step.id, action)
   }
 
-  handleChangeIsZenMode = (ev) => {
+  handleChangeIsZenMode = ev => {
     this.props.setZenMode(this.props.step.id, ev.target.checked)
   }
 
@@ -225,20 +236,33 @@ export class Step extends PureComponent {
 
     if (!isZenModeAllowed) return null
 
-    const className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
+    const className = `toggle-zen-mode ${
+      isZenMode ? 'is-zen-mode' : 'not-zen-mode'
+    }`
     const title = isZenMode
-      ? t({ id: 'js.WorkflowEditor.step.ZenMode.exit', message: 'exit Zen mode' })
-      : t({ id: 'js.WorkflowEditor.step.ZenMode.enter', message: 'enter Zen mode' })
+      ? t({
+          id: 'js.WorkflowEditor.step.ZenMode.exit',
+          message: 'exit Zen mode'
+        })
+      : t({
+        id: 'js.WorkflowEditor.step.ZenMode.enter',
+        message: 'enter Zen mode'
+      })
 
     return (
       <label className={className} title={title}>
-        <input type='checkbox' name='zen-mode' checked={isZenMode} onChange={this.handleChangeIsZenMode} />
+        <input
+          type='checkbox'
+          name='zen-mode'
+          checked={isZenMode}
+          onChange={this.handleChangeIsZenMode}
+        />
         <i className='icon-full-screen' />
       </label>
     )
   }
 
-  handleChangeParams = (edits) => {
+  handleChangeParams = edits => {
     this.setState({ edits })
   }
 
@@ -313,13 +337,10 @@ export class Step extends PureComponent {
       // (This happens after the user clicks to change something -- or clicks
       // "fetch" -- and before the server updates the status.)
       step.nClientRequests > 0 ||
-
       // The module is performing a fetch
       step.is_busy ||
-
       // Step is rendering
       step.last_relevant_delta_id !== step.cached_render_result_delta_id ||
-
       // Step is a placeholder? TODO verify this can actually happen
       !step.output_status
     ) {
@@ -330,22 +351,38 @@ export class Step extends PureComponent {
   }
 
   render () {
-    const { isReadOnly, index, step, module, inputStep, tabs, currentTab } = this.props
+    const {
+      isReadOnly,
+      index,
+      step,
+      module,
+      inputStep,
+      tabs,
+      currentTab
+    } = this.props
 
     const moduleSlug = module ? module.id_name : '_undefined'
     const moduleName = module ? module.name : '_undefined'
     const moduleIcon = module ? module.icon : '_undefined'
     const moduleHelpUrl = module ? module.help_url : ''
 
-    const isNoteVisible = this.state.editedNotes !== null || !!this.props.step.notes
+    const isNoteVisible =
+      this.state.editedNotes !== null || !!this.props.step.notes
 
     const notes = (
       <div className={`step-notes${isNoteVisible ? ' visible' : ''}`}>
         <EditableNotes
           isReadOnly={isReadOnly}
           inputRef={this.notesInputRef}
-          placeholder={t({ id: 'js.WorkflowEditor.step.EditableNotes.placeholder', message: 'Type a note…' })}
-          value={this.state.editedNotes === null ? (this.props.step.notes || '') : this.state.editedNotes}
+          placeholder={t({
+            id: 'js.WorkflowEditor.step.EditableNotes.placeholder',
+            message: 'Type a note…'
+          })}
+          value={
+            this.state.editedNotes === null
+              ? this.props.step.notes || ''
+              : this.state.editedNotes
+          }
           onChange={this.handleChangeNote}
           onFocus={this.handleFocusNote}
           onBlur={this.handleBlurNote}
@@ -355,19 +392,37 @@ export class Step extends PureComponent {
     )
 
     let alertButton = null
-    if (this.props.fetchModuleExists && !isReadOnly && !this.props.isAnonymous) {
+    if (
+      this.props.fetchModuleExists &&
+      !isReadOnly &&
+      !this.props.isAnonymous
+    ) {
       const notifications = step.notifications
       const hasUnseen = step.has_unseen_notification
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
       const title = notifications
-        ? t({ id: 'js.WorkflowEditor.step.alert.enabled', message: 'Email alerts enabled' })
-        : t({ id: 'js.WorkflowEditor.step.alert.disabled', message: 'Email alerts disabled' })
+        ? t({
+            id: 'js.WorkflowEditor.step.alert.enabled',
+            message: 'Email alerts enabled'
+          })
+        : t({
+          id: 'js.WorkflowEditor.step.alert.disabled',
+          message: 'Email alerts disabled'
+        })
 
       alertButton = (
-        <button title={title} className={className} onClick={this.handleClickNotification}>
-          <i className={` ${hasUnseen ? 'icon-notification-filled' : 'icon-notification'}`} />
+        <button
+          title={title}
+          className={className}
+          onClick={this.handleClickNotification}
+        >
+          <i
+            className={` ${
+              hasUnseen ? 'icon-notification-filled' : 'icon-notification'
+            }`}
+          />
         </button>
       )
     }
@@ -376,7 +431,10 @@ export class Step extends PureComponent {
     if (!this.props.isReadOnly) {
       helpIcon = (
         <a
-          title={t({ id: 'js.WorkflowEditor.step.help.hoverText', message: 'Help for this module' })}
+          title={t({
+            id: 'js.WorkflowEditor.step.help.hoverText',
+            message: 'Help for this module'
+          })}
           className='help-button'
           href={moduleHelpUrl}
           target='_blank'
@@ -391,8 +449,14 @@ export class Step extends PureComponent {
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
-          title={t({ id: 'js.WorkflowEditor.step.notes.edit.hoverText', message: 'Edit Note' })}
-          className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
+          title={t({
+            id: 'js.WorkflowEditor.step.notes.edit.hoverText',
+            message: 'Edit Note'
+          })}
+          className={
+            'btn edit-note' +
+            (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')
+          }
           onClick={this.handleClickNoteButton}
         >
           <i className='icon-note' />
@@ -404,7 +468,10 @@ export class Step extends PureComponent {
     if (!this.props.isReadOnly) {
       deleteIcon = (
         <button
-          title={t({ id: 'js.WorkflowEditor.step.delete.hoverText', message: 'Delete' })}
+          title={t({
+            id: 'js.WorkflowEditor.step.delete.hoverText',
+            message: 'Delete'
+          })}
           className='btn delete-button'
           onClick={this.handleClickDelete}
         >
@@ -444,7 +511,12 @@ export class Step extends PureComponent {
         {notes}
         <h3>{i18n.number(index + 1)}</h3>
         <div className='module-card-and-link'>
-          <div className='module-card' draggable={!isReadOnly && !!this.props.onDragStart} onDragStart={this.handleDragStart} onDragEnd={this.handleDragEnd}>
+          <div
+            className='module-card'
+            draggable={!isReadOnly && !!this.props.onDragStart}
+            onDragStart={this.handleDragStart}
+            onDragEnd={this.handleDragEnd}
+          >
             <div className='module-card-header'>
               <div className='controls'>
                 <StepCollapseButton
@@ -463,14 +535,19 @@ export class Step extends PureComponent {
                   {deleteIcon}
                 </div>
               </div>
-              {(!isReadOnly) ? (
-                <DeprecationNotice
-                  helpUrl={moduleHelpUrl}
-                  message={module && module.deprecated ? module.deprecated.message : null}
-                />
-              ) : null}
+              {isReadOnly
+                ? null
+                : (
+                  <DeprecationNotice
+                    helpUrl={moduleHelpUrl}
+                    message={module && module.deprecated ? module.deprecated.message : null}
+                  />)}
             </div>
-            <div className={`module-card-details ${step.is_collapsed ? 'collapsed' : 'expanded'}`}>
+            <div
+              className={`module-card-details ${
+                step.is_collapsed ? 'collapsed' : 'expanded'
+              }`}
+            >
               {/* --- Error message --- */}
               <StatusLine
                 module={module}
@@ -479,8 +556,9 @@ export class Step extends PureComponent {
                 errors={step.output_errors || []}
                 applyQuickFix={this.applyQuickFix}
               />
-              {this.props.module && !step.is_collapsed ? (
-                /*
+              {this.props.module && !step.is_collapsed
+                ? (
+              /*
                  * We only render <ParamsForm> when not collapsed. That's so
                  * that params are visible when mounted -- so they can
                  * auto-size themselves.
@@ -489,36 +567,43 @@ export class Step extends PureComponent {
                  * collapsed modules like Refine that make HTTP requests to
                  * display their components.
                  */
-                <ErrorBoundary>
-                  <ParamsForm
-                    isOwner={this.props.isOwner}
-                    isReadOnly={this.props.isReadOnly}
-                    isZenMode={this.props.isZenMode}
-                    api={this.props.api}
-                    fields={this.props.module.param_fields}
-                    value={this.props.step ? this.props.step.params : null}
-                    secrets={this.props.step ? this.props.step.secrets : null}
-                    files={this.props.step ? this.props.step.files : []}
-                    edits={this.state.edits}
-                    workflowId={this.props.workflowId}
-                    stepId={this.props.step ? this.props.step.id : null}
-                    stepSlug={this.props.step ? this.props.step.slug : null}
-                    stepOutputErrors={this.props.step ? this.props.step.output_errors : []}
-                    isStepBusy={this.stepStatus === 'busy'}
-                    inputStepId={inputStep ? inputStep.id : null}
-                    inputDeltaId={inputStep ? (inputStep.cached_render_result_delta_id || null) : null}
-                    inputColumns={inputStep ? inputStep.output_columns : null}
-                    tabs={tabs}
-                    currentTab={currentTab}
-                    applyQuickFix={this.applyQuickFix}
-                    startCreateSecret={this.startCreateSecret}
-                    submitSecret={this.submitSecret}
-                    deleteSecret={this.deleteSecret}
-                    onChange={this.handleChangeParams}
-                    onSubmit={this.handleSubmitParams}
-                  />
-                </ErrorBoundary>
-              ) : null}
+                  <ErrorBoundary>
+                    <ParamsForm
+                      isOwner={this.props.isOwner}
+                      isReadOnly={this.props.isReadOnly}
+                      isZenMode={this.props.isZenMode}
+                      api={this.props.api}
+                      fields={this.props.module.param_fields}
+                      value={this.props.step ? this.props.step.params : null}
+                      secrets={this.props.step ? this.props.step.secrets : null}
+                      files={this.props.step ? this.props.step.files : []}
+                      edits={this.state.edits}
+                      workflowId={this.props.workflowId}
+                      stepId={this.props.step ? this.props.step.id : null}
+                      stepSlug={this.props.step ? this.props.step.slug : null}
+                      stepOutputErrors={
+                      this.props.step ? this.props.step.output_errors : []
+                    }
+                      isStepBusy={this.stepStatus === 'busy'}
+                      inputStepId={inputStep ? inputStep.id : null}
+                      inputDeltaId={
+                      inputStep
+                        ? inputStep.cached_render_result_delta_id || null
+                        : null
+                    }
+                      inputColumns={inputStep ? inputStep.output_columns : null}
+                      tabs={tabs}
+                      currentTab={currentTab}
+                      applyQuickFix={this.applyQuickFix}
+                      startCreateSecret={this.startCreateSecret}
+                      submitSecret={this.submitSecret}
+                      deleteSecret={this.deleteSecret}
+                      onChange={this.handleChangeParams}
+                      onSubmit={this.handleSubmitParams}
+                    />
+                  </ErrorBoundary>
+                  )
+                : null}
             </div>
           </div>
         </div>
@@ -545,7 +630,9 @@ class StepCollapseButton extends PureComponent {
     const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''
     return (
       <button name={name} className='workflow-step-collapse' onClick={onClick}>
-        <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`} />
+        <i
+          className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`}
+        />
       </button>
     )
   }
@@ -554,53 +641,69 @@ class StepCollapseButton extends PureComponent {
 const getWorkflow = ({ workflow }) => workflow
 const getReadyTabs = ({ tabs }) => tabs
 const getPendingTabs = ({ pendingTabs }) => pendingTabs || {}
-const getReadyAndPendingTabs = createSelector([getReadyTabs, getPendingTabs], (readyTabs, pendingTabs) => {
-  return {
-    ...pendingTabs,
-    ...readyTabs
+const getReadyAndPendingTabs = createSelector(
+  [getReadyTabs, getPendingTabs],
+  (readyTabs, pendingTabs) => {
+    return {
+      ...pendingTabs,
+      ...readyTabs
+    }
   }
-})
+)
 const getSteps = ({ steps }) => steps
 const getSelectedPane = ({ selectedPane }) => selectedPane
-const getTabs = createSelector([getWorkflow, getReadyAndPendingTabs, getSteps], (workflow, tabs, steps) => {
-  return workflow.tab_slugs.map(slug => {
-    const tab = tabs[slug]
-    let outputColumns = null
-    if (tab.step_ids.length > 0) {
-      const lastIndex = tab.step_ids.length - 1
-      if (lastIndex >= 0) {
-        const lastStepId = tab.step_ids[lastIndex]
-        const lastStep = steps[lastStepId] // null if placeholder
-        if (lastStep && lastStep.last_relevant_delta_id === lastStep.cached_render_result_delta_id) {
-          outputColumns = lastStep.output_columns
+const getTabs = createSelector(
+  [getWorkflow, getReadyAndPendingTabs, getSteps],
+  (workflow, tabs, steps) => {
+    return workflow.tab_slugs.map(slug => {
+      const tab = tabs[slug]
+      let outputColumns = null
+      if (tab.step_ids.length > 0) {
+        const lastIndex = tab.step_ids.length - 1
+        if (lastIndex >= 0) {
+          const lastStepId = tab.step_ids[lastIndex]
+          const lastStep = steps[lastStepId] // null if placeholder
+          if (
+            lastStep &&
+            lastStep.last_relevant_delta_id ===
+              lastStep.cached_render_result_delta_id
+          ) {
+            outputColumns = lastStep.output_columns
+          }
         }
       }
-    }
-    return {
-      slug,
-      name: tab.name,
-      outputColumns
-    }
-  })
-})
-const getCurrentTab = createSelector([getSelectedPane, getReadyAndPendingTabs], (selectedPane, tabs) => {
-  const tabSlug = selectedPane.tabSlug
-  return tabs[tabSlug]
-})
+      return {
+        slug,
+        name: tab.name,
+        outputColumns
+      }
+    })
+  }
+)
+const getCurrentTab = createSelector(
+  [getSelectedPane, getReadyAndPendingTabs],
+  (selectedPane, tabs) => {
+    const tabSlug = selectedPane.tabSlug
+    return tabs[tabSlug]
+  }
+)
 const getModules = ({ modules }) => modules
 
 /**
  * Find first Step index that has a `.loads_data` ModuleVersion, or `null`
  */
-const firstFetchIndex = createSelector([getCurrentTab, getSteps, getModules], (tab, steps, modules) => {
-  const index = tab.step_ids.findIndex(id => {
-    const step = steps[String(id)]
-    if (!step) return false // add-module not yet loaded
-    const module = modules[step.module]
-    return module ? module.loads_data : false
-  })
-  return index === -1 ? null : index
-})
+const firstFetchIndex = createSelector(
+  [getCurrentTab, getSteps, getModules],
+  (tab, steps, modules) => {
+    const index = tab.step_ids.findIndex(id => {
+      const step = steps[String(id)]
+      if (!step) return false // add-module not yet loaded
+      const module = modules[step.module]
+      return module ? module.loads_data : false
+    })
+    return index === -1 ? null : index
+  }
+)
 
 function mapStateToProps (state, ownProps) {
   const { testHighlight } = lessonSelector(state)
@@ -615,8 +718,18 @@ function mapStateToProps (state, ownProps) {
     currentTab: getCurrentTab(state).slug,
     isZenModeAllowed: module ? !!module.has_zen_mode : false,
     isLessonHighlight: testHighlight({ type: 'Step', index, moduleIdName }),
-    isLessonHighlightCollapse: testHighlight({ type: 'StepContextButton', button: 'collapse', index, moduleIdName }),
-    isLessonHighlightNotes: testHighlight({ type: 'StepContextButton', button: 'notes', index, moduleIdName }),
+    isLessonHighlightCollapse: testHighlight({
+      type: 'StepContextButton',
+      button: 'collapse',
+      index,
+      moduleIdName
+    }),
+    isLessonHighlightNotes: testHighlight({
+      type: 'StepContextButton',
+      button: 'notes',
+      index,
+      moduleIdName
+    }),
     isOwner: state.workflow.is_owner,
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
@@ -638,7 +751,4 @@ const mapDispatchToProps = {
   startCreateSecret: startCreateSecretAction
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Step)
+export default connect(mapStateToProps, mapDispatchToProps)(Step)

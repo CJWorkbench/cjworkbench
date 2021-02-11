@@ -17,21 +17,30 @@ describe('Status line', () => {
   }
 
   it('renders an error message', () => {
-    const w = wrapper({ status: 'error', errors: [{ message: 'foo', quickFixes: [] }] })
+    const w = wrapper({
+      status: 'error',
+      errors: [{ message: 'foo', quickFixes: [] }]
+    })
     expect(w.find('p').text()).toEqual('foo')
   })
 
   it('renders and applies a quick fix', () => {
     const quickFix = {
       buttonText: 'Fix it',
-      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+      action: {
+        type: 'prependStep',
+        moduleSlug: 'dosomething',
+        partialParams: { A: 'B' }
+      }
     }
     const w = wrapper({
       status: 'error',
-      errors: [{
-        message: 'Wrong type',
-        quickFixes: [quickFix]
-      }]
+      errors: [
+        {
+          message: 'Wrong type',
+          quickFixes: [quickFix]
+        }
+      ]
     })
 
     expect(w.find('button').text()).toEqual('Fix it')
@@ -42,14 +51,20 @@ describe('Status line', () => {
   it('shows error but not quick fixes if isReadOnly', () => {
     const quickFix = {
       buttonText: 'Fix it',
-      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+      action: {
+        type: 'prependStep',
+        moduleSlug: 'dosomething',
+        partialParams: { A: 'B' }
+      }
     }
     const w = wrapper({
       status: 'error',
-      errors: [{
-        message: 'Wrong type',
-        quickFixes: [quickFix]
-      }],
+      errors: [
+        {
+          message: 'Wrong type',
+          quickFixes: [quickFix]
+        }
+      ],
       isReadOnly: true
     })
     expect(w.find('p').text()).toEqual('Wrong type')
@@ -59,26 +74,52 @@ describe('Status line', () => {
   it('prevents double-applying a quick fix', () => {
     const quickFix1 = {
       buttonText: 'Fix it',
-      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+      action: {
+        type: 'prependStep',
+        moduleSlug: 'dosomething',
+        partialParams: { A: 'B' }
+      }
     }
     const quickFix2 = {
       buttonText: 'Fix it more',
-      action: { type: 'prependStep', moduleSlug: 'dosomething2', partialParams: { B: 'C' } }
+      action: {
+        type: 'prependStep',
+        moduleSlug: 'dosomething2',
+        partialParams: { B: 'C' }
+      }
     }
     const w = wrapper({
       status: 'error',
-      errors: [{
-        message: 'Wrong type',
-        quickFixes: [quickFix1, quickFix2]
-      }]
+      errors: [
+        {
+          message: 'Wrong type',
+          quickFixes: [quickFix1, quickFix2]
+        }
+      ]
     })
 
-    w.find('button').at(0).simulate('click')
-    expect(w.find('button').at(0).prop('disabled')).toBe(true)
-    expect(w.find('button').at(1).prop('disabled')).toBe(true)
+    w.find('button')
+      .at(0)
+      .simulate('click')
+    expect(
+      w
+        .find('button')
+        .at(0)
+        .prop('disabled')
+    ).toBe(true)
+    expect(
+      w
+        .find('button')
+        .at(1)
+        .prop('disabled')
+    ).toBe(true)
 
-    w.find('button').at(0).simulate('click')
-    w.find('button').at(1).simulate('click')
+    w.find('button')
+      .at(0)
+      .simulate('click')
+    w.find('button')
+      .at(1)
+      .simulate('click')
     expect(w.prop('applyQuickFix')).not.toHaveBeenCalledTimes(2)
   })
 
@@ -89,28 +130,46 @@ describe('Status line', () => {
     // expected results: you can quick fix again
     const quickFix = {
       buttonText: 'Fix it',
-      action: { type: 'prependStep', moduleSlug: 'dosomething', partialParams: { A: 'B' } }
+      action: {
+        type: 'prependStep',
+        moduleSlug: 'dosomething',
+        partialParams: { A: 'B' }
+      }
     }
     const errorProps = {
       status: 'error',
-      errors: [{
-        message: 'Wrong type',
-        quickFixes: [quickFix]
-      }]
+      errors: [
+        {
+          message: 'Wrong type',
+          quickFixes: [quickFix]
+        }
+      ]
     }
 
     const w = wrapper(errorProps)
 
-    w.find('button').at(0).simulate('click')
+    w.find('button')
+      .at(0)
+      .simulate('click')
 
     w.update()
-    expect(w.find('button').at(0).prop('disabled')).toBe(true)
+    expect(
+      w
+        .find('button')
+        .at(0)
+        .prop('disabled')
+    ).toBe(true)
 
     w.setProps({ status: 'ok', errors: [] })
     w.setProps(errorProps)
 
     w.update()
-    expect(w.find('button').at(0).prop('disabled')).toBe(false)
+    expect(
+      w
+        .find('button')
+        .at(0)
+        .prop('disabled')
+    ).toBe(false)
   })
 
   it('renders null when no error', () => {
@@ -119,7 +178,10 @@ describe('Status line', () => {
   })
 
   it('renders null when busy', () => {
-    const w = wrapper({ status: 'busy', errors: [{ message: 'hi', quickFixes: [] }] })
+    const w = wrapper({
+      status: 'busy',
+      errors: [{ message: 'hi', quickFixes: [] }]
+    })
     expect(w.html()).toEqual('')
   })
 })

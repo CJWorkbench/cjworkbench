@@ -6,17 +6,26 @@ import { Trans, t } from '@lingui/macro'
 
 function AscendingParam (props) {
   const AscendingParamOptions = [
-    { value: true, label: t({ id: 'js.params.Custom.SortColumn.AscendingParam.ascending', message: 'Ascending' }) },
-    { value: false, label: t({ id: 'js.params.Custom.SortColumn.AscendingParam.descending', message: 'Descending' }) }
+    {
+      value: true,
+      label: t({
+        id: 'js.params.Custom.SortColumn.AscendingParam.ascending',
+        message: 'Ascending'
+      })
+    },
+    {
+      value: false,
+      label: t({
+        id: 'js.params.Custom.SortColumn.AscendingParam.descending',
+        message: 'Descending'
+      })
+    }
   ]
 
   return (
     // TODO find a better way to simulate .param-radio?
     <div className='param param-radio'>
-      <RadioParam
-        enumOptions={AscendingParamOptions}
-        {...props}
-      />
+      <RadioParam enumOptions={AscendingParamOptions} {...props} />
     </div>
   )
 }
@@ -30,40 +39,58 @@ AscendingParam.propTypes = {
 
 export default class SortColumn extends PureComponent {
   static propTypes = {
-
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired, // for <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>
     onChange: PropTypes.func.isRequired, // func(index, value) => undefined
     onDelete: PropTypes.func, // func(index) => undefined, or null if delete not allowed
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })), // or null if unknown
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ), // or null if unknown
     value: PropTypes.shape({
       colname: PropTypes.string.isRequired, // column string
       is_ascending: PropTypes.bool.isRequired // sort direction
     }).isRequired
   }
 
-  handleChangeIsAscending = (isAscending) => {
-    const { index, value: { colname }, onChange } = this.props
+  handleChangeIsAscending = isAscending => {
+    const {
+      index,
+      value: { colname },
+      onChange
+    } = this.props
     onChange(index, { colname, is_ascending: isAscending })
   }
 
-  handleChangeColname = (colnameOrNull) => {
+  handleChangeColname = colnameOrNull => {
     const { index, value, onChange } = this.props
-    onChange(index, { is_ascending: value.is_ascending, colname: (colnameOrNull || '') })
+    onChange(index, {
+      is_ascending: value.is_ascending,
+      colname: colnameOrNull || ''
+    })
   }
 
-  handleClickDelete = (ev) => {
+  handleClickDelete = ev => {
     const { index, onDelete } = this.props
     onDelete(index)
   }
 
   render () {
-    const { index, value, name, fieldId, onDelete, isReadOnly, inputColumns } = this.props
-    const label = index === 0 ? <Trans id='js.params.Custom.SortColumn.by.label'>By</Trans> : <Trans id='js.params.Custom.SortColumn.thenBy.label'>Then by</Trans>
+    const {
+      index,
+      value,
+      name,
+      fieldId,
+      onDelete,
+      isReadOnly,
+      inputColumns
+    } = this.props
+    const label = index === 0
+      ? <Trans id='js.params.Custom.SortColumn.by.label'>By</Trans>
+      : <Trans id='js.params.Custom.SortColumn.thenBy.label'>Then by</Trans>
 
     return (
       <li>
@@ -85,17 +112,19 @@ export default class SortColumn extends PureComponent {
           isReadOnly={isReadOnly}
           onChange={this.handleChangeIsAscending}
         />
-        {(onDelete && !isReadOnly) ? (
-          <div className='delete'>
-            <button
-              className='delete'
-              name={`${name}[delete]`}
-              onClick={this.handleClickDelete}
-            >
-              <i className='icon-close' />
-            </button>
-          </div>
-        ) : null}
+        {onDelete && !isReadOnly
+          ? (
+            <div className='delete'>
+              <button
+                className='delete'
+                name={`${name}[delete]`}
+                onClick={this.handleClickDelete}
+              >
+                <i className='icon-close' />
+              </button>
+            </div>
+            )
+          : null}
       </li>
     )
   }

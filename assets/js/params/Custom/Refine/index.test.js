@@ -7,15 +7,13 @@ const DefaultValue = { renames: {} }
 describe('Refine', () => {
   const wrapper = (props = {}, options = {}) => {
     const ret = mountWithI18n(
-      (
-        <Refine
-          valueCounts={{}}
-          loading={false}
-          value={DefaultValue}
-          onChange={jest.fn()}
-          {...props}
-        />
-      ),
+      <Refine
+        valueCounts={{}}
+        loading={false}
+        value={DefaultValue}
+        onChange={jest.fn()}
+        {...props}
+      />,
       options
     )
     ret.update() // after componentDidMount() -- does size calculations
@@ -43,9 +41,24 @@ describe('Refine', () => {
       value: DefaultValue
     })
 
-    expect(w.find('.count').at(0).text()).toEqual('~1k')
-    expect(w.find('.count').at(1).text()).toEqual('~235M')
-    expect(w.find('.count').at(2).text()).toEqual('1k')
+    expect(
+      w
+        .find('.count')
+        .at(0)
+        .text()
+    ).toEqual('~1k')
+    expect(
+      w
+        .find('.count')
+        .at(1)
+        .text()
+    ).toEqual('~235M')
+    expect(
+      w
+        .find('.count')
+        .at(2)
+        .text()
+    ).toEqual('1k')
   })
 
   it('should render a rename', () => {
@@ -72,7 +85,9 @@ describe('Refine', () => {
       value: { renames: {} }
     })
 
-    w.find('input[value="a"]').simulate('change', { target: { value: 'b' } }).simulate('blur')
+    w.find('input[value="a"]')
+      .simulate('change', { target: { value: 'b' } })
+      .simulate('blur')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
     expect(changeCalls[0][0].renames).toEqual({ a: 'b' })
@@ -84,7 +99,9 @@ describe('Refine', () => {
       value: { renames: { a: 'b' } }
     })
 
-    w.find('input[value="b"]').simulate('change', { target: { value: 'd' } }).simulate('blur')
+    w.find('input[value="b"]')
+      .simulate('change', { target: { value: 'd' } })
+      .simulate('blur')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
     expect(changeCalls[0][0].renames).toEqual({ a: 'd', b: 'd' })
@@ -99,12 +116,23 @@ describe('Refine', () => {
     expect(w.find('.values')).toHaveLength(0) // collapsed to begin with
 
     // expand to see the values
-    w.find('.summary').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.find('.summary')
+      .at(0)
+      .find('input[name="expand"]')
+      .simulate('change', { target: { checked: true } })
     w.update()
-    expect(w.find('.values').at(0).text()).toMatch(/a.*1.*b.*1/)
+    expect(
+      w
+        .find('.values')
+        .at(0)
+        .text()
+    ).toMatch(/a.*1.*b.*1/)
 
     // collapse to stop rendering them
-    w.find('.summary').at(0).find('label.expand input').simulate('change', { target: { checked: false } })
+    w.find('.summary')
+      .at(0)
+      .find('label.expand input')
+      .simulate('change', { target: { checked: false } })
     w.update()
     expect(w.find('.values')).toHaveLength(0) // collapsed to begin with
   })
@@ -118,11 +146,21 @@ describe('Refine', () => {
     // expand to see the values:
     // a 1 [x]
     // b 1 [x]
-    w.find('.summary').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.find('.summary')
+      .at(0)
+      .find('input[name="expand"]')
+      .simulate('change', { target: { checked: true } })
     w.update()
-    expect(w.find('.values').at(0).text()).toMatch(/a.*1.*b.*1/)
+    expect(
+      w
+        .find('.values')
+        .at(0)
+        .text()
+    ).toMatch(/a.*1.*b.*1/)
 
-    w.find('button[name="reset"]').at(0).simulate('click')
+    w.find('button[name="reset"]')
+      .at(0)
+      .simulate('click')
     // The change is only applied _after_ we change the prop; outside of the
     // test environment, this is the Redux state.
     const changeCalls = w.prop('onChange').mock.calls
@@ -139,9 +177,17 @@ describe('Refine', () => {
     // expand to see the values:
     // a 1 [x]
     // b 1 [x]
-    w.find('.summary').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.find('.summary')
+      .at(0)
+      .find('input[name="expand"]')
+      .simulate('change', { target: { checked: true } })
     w.update()
-    expect(w.find('.values').at(0).text()).toMatch(/a.*1.*b.*1/)
+    expect(
+      w
+        .find('.values')
+        .at(0)
+        .text()
+    ).toMatch(/a.*1.*b.*1/)
 
     w.find('.count-and-remove button[data-value="a"]').simulate('click')
     // The change is only applied _after_ we change the prop; outside of the
@@ -160,7 +206,10 @@ describe('Refine', () => {
     // expand to see the values:
     // a 1 [ ]
     // b 1 [x]
-    w.find('.summary').at(0).find('input[name="expand"]').simulate('change', { target: { checked: true } })
+    w.find('.summary')
+      .at(0)
+      .find('input[name="expand"]')
+      .simulate('change', { target: { checked: true } })
     w.update()
 
     expect(w.find('.count-and-remove button[data-value="a"]')).toHaveLength(0)
@@ -174,7 +223,9 @@ describe('Refine', () => {
     // Ensure 3 groups initially rendered
     expect(w.find('.refine-group')).toHaveLength(3)
 
-    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'b' }
+    })
     w.update()
     expect(w.find('.refine-group')).toHaveLength(2)
   })
@@ -189,7 +240,9 @@ describe('Refine', () => {
     })
 
     expect(w.find('input[checked=true]')).toHaveLength(5)
-    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'b' }
+    })
     w.update()
 
     w.find('button[title="Select None"]').simulate('click')
@@ -218,7 +271,9 @@ describe('Refine', () => {
     })
 
     expect(w.find('input[checked=true]')).toHaveLength(0)
-    w.find('input[type="search"]').simulate('change', { target: { value: 'b' } })
+    w.find('input[type="search"]').simulate('change', {
+      target: { value: 'b' }
+    })
     w.update()
 
     w.find('button[title="Select All"]').simulate('click')
@@ -240,21 +295,31 @@ describe('Refine', () => {
   it('should disable merge button when less than 2 values selected', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, bb: 1, d: 1 },
-      value: { renames: { } }
+      value: { renames: {} }
     })
     expect(w.find('button[name="merge"]').prop('disabled')).toEqual(true)
-    w.find('.summary').at(0).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
-    w.find('.summary').at(1).find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
+    w.find('.summary')
+      .at(0)
+      .find('input[type="checkbox"]')
+      .simulate('change', { target: { checked: true } })
+    w.find('.summary')
+      .at(1)
+      .find('input[type="checkbox"]')
+      .simulate('change', { target: { checked: true } })
     expect(w.find('button[name="merge"]').prop('disabled')).toEqual(false)
   })
 
   it('should merge values into one group when checked and merge button pressed', () => {
     const w = wrapper({
       valueCounts: { a: 1, b: 1, c: 1, bb: 2, d: 1 },
-      value: { renames: { } }
+      value: { renames: {} }
     })
-    w.find('input[name="select[b]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="select[bb]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="select[b]"]').simulate('change', {
+      target: { checked: true }
+    })
+    w.find('input[name="select[bb]"]').simulate('change', {
+      target: { checked: true }
+    })
     w.find('button[name="merge"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
@@ -267,8 +332,12 @@ describe('Refine', () => {
       value: { renames: { b: 'c' } } // a: 4, c: 3 (in 2 groups)
     })
     // Group 'value' count
-    w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="select[c]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="select[a]"]').simulate('change', {
+      target: { checked: true }
+    })
+    w.find('input[name="select[c]"]').simulate('change', {
+      target: { checked: true }
+    })
     w.find('button[name="merge"]').simulate('click')
     const changeCalls = w.prop('onChange').mock.calls
     expect(changeCalls).toHaveLength(1)
@@ -280,10 +349,16 @@ describe('Refine', () => {
       valueCounts: { a: 2, b: 1, c: 1 },
       value: { renames: { b: 'c' } } // a: 2, c: 2 (from 2 groups)
     })
-    w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="select[c]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="select[a]"]').simulate('change', {
+      target: { checked: true }
+    })
+    w.find('input[name="select[c]"]').simulate('change', {
+      target: { checked: true }
+    })
     w.find('button[name="merge"]').simulate('click')
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ renames: { a: 'c', b: 'c' } })
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
+      renames: { a: 'c', b: 'c' }
+    })
   })
 
   it('should choose group name alphabetically when merging and count+nValues are equal', () => {
@@ -291,10 +366,16 @@ describe('Refine', () => {
       valueCounts: { a: 1, b: 1, c: 1, d: 1 },
       value: { renames: { b: 'a', c: 'd' } } // a: 2, d: 2
     })
-    w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })
-    w.find('input[name="select[d]"]').simulate('change', { target: { checked: true } })
+    w.find('input[name="select[a]"]').simulate('change', {
+      target: { checked: true }
+    })
+    w.find('input[name="select[d]"]').simulate('change', {
+      target: { checked: true }
+    })
     w.find('button[name="merge"]').simulate('click')
-    expect(w.prop('onChange')).toHaveBeenCalledWith({ renames: { b: 'a', c: 'a', d: 'a' } })
+    expect(w.prop('onChange')).toHaveBeenCalledWith({
+      renames: { b: 'a', c: 'a', d: 'a' }
+    })
   })
 
   describe('attached to the document', () => {
@@ -314,14 +395,21 @@ describe('Refine', () => {
     })
 
     it('should focus the new group text for editing after merge', () => {
-      const w = wrapper({
-        valueCounts: { a: 1, b: 1, c: 1 },
-        value: { renames: { b: 'a' } }
-      }, { attachTo: div })
+      const w = wrapper(
+        {
+          valueCounts: { a: 1, b: 1, c: 1 },
+          value: { renames: { b: 'a' } }
+        },
+        { attachTo: div }
+      )
 
-      w.find('input[name="select[a]"]').simulate('change', { target: { checked: true } })
+      w.find('input[name="select[a]"]').simulate('change', {
+        target: { checked: true }
+      })
       // focus 'c'
-      w.find('input[name="select[c]"]').simulate('change', { target: { checked: true } })
+      w.find('input[name="select[c]"]').simulate('change', {
+        target: { checked: true }
+      })
       w.find('button[name="merge"]').simulate('click')
       expect(document.activeElement.value).toBe('a')
     })

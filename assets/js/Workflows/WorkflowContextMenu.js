@@ -1,7 +1,12 @@
 /* globals confirm */
 import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
+import {
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from '../components/Dropdown'
 import { Trans, t } from '@lingui/macro'
 import ShareModal from './ShareModal'
 import ContextMenuIcon from '../../icons/context-menu.svg'
@@ -18,9 +23,14 @@ export default function WorkflowContextMenu (props) {
   const [isShareModalOpen, setShareModalOpen] = useState(false)
 
   const handleClickDelete = useCallback(() => {
-    if (!confirm(
-      t({ id: 'js.Workflows.delete.permanentyDeleteWarning', message: 'Permanently delete this workflow?' })
-    )) {
+    if (
+      !confirm(
+        t({
+          id: 'js.Workflows.delete.permanentyDeleteWarning',
+          message: 'Permanently delete this workflow?'
+        })
+      )
+    ) {
       return
     }
 
@@ -45,34 +55,47 @@ export default function WorkflowContextMenu (props) {
       <UncontrolledDropdown>
         <DropdownToggle
           className='icon-button'
-          title={t({ id: 'js.Workflows.WorkflowContextMenu.hoverText', message: 'menu' })}
+          title={t({
+            id: 'js.Workflows.WorkflowContextMenu.hoverText',
+            message: 'menu'
+          })}
         >
           <ContextMenuIcon />
         </DropdownToggle>
         <DropdownMenu>
           <DropdownItem onClick={handleClickShare}>
             <i className='icon-share' />
-            <span><Trans id='js.Workflows.WorkflowContextMenu.share'>Share</Trans></span>
+            <span>
+              <Trans id='js.Workflows.WorkflowContextMenu.share'>Share</Trans>
+            </span>
           </DropdownItem>
           <DropdownItem onClick={handleClickDuplicate}>
             <i className='icon-duplicate' />
-            <span><Trans id='js.Workflows.WorkflowContextMenu.duplicate'>Duplicate</Trans></span>
+            <span>
+              <Trans id='js.Workflows.WorkflowContextMenu.duplicate'>
+                Duplicate
+              </Trans>
+            </span>
           </DropdownItem>
           <DropdownItem onClick={handleClickDelete}>
             <i className='icon-bin' />
-            <span><Trans id='js.Workflows.WorkflowContextMenu.delete'>Delete</Trans></span>
+            <span>
+              <Trans id='js.Workflows.WorkflowContextMenu.delete'>Delete</Trans>
+            </span>
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
-      {isShareModalOpen ? (
-        <ShareModal
-          workflow={workflow}
-          api={api}
-          onWorkflowChanging={onWorkflowChanging}
-          onWorkflowChanged={onWorkflowChanged}
-          onClose={handleCloseShareModal}
-        />
-      ) : null}
+      {isShareModalOpen
+        ? (
+          <ShareModal
+            workflow={workflow}
+            api={api}
+            onWorkflowChanging={onWorkflowChanging}
+            onWorkflowChanged={onWorkflowChanged}
+            onClose={handleCloseShareModal}
+          />
+          )
+        : null}
     </>
   )
 }

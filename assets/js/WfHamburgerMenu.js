@@ -1,6 +1,12 @@
 import { useState, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownDivider, DropdownToggle, DropdownMenu, DropdownItem } from './components/Dropdown'
+import {
+  UncontrolledDropdown,
+  DropdownDivider,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from './components/Dropdown'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import LocaleSwitcher from './i18n/LocaleSwitcher'
 import { csrfToken } from './utils'
@@ -22,10 +28,9 @@ export default function WfHamburgerMenu (props) {
     () => setImportModalOpen(true),
     [setImportModalOpen]
   )
-  const handleCloseImportModal = useCallback(
-    () => setImportModalOpen(false),
-    [setImportModalOpen]
-  )
+  const handleCloseImportModal = useCallback(() => setImportModalOpen(false), [
+    setImportModalOpen
+  ])
   const handleClickOpenLocaleSwitcher = useCallback(
     () => setLocaleSwitcherOpen(true),
     [setLocaleSwitcherOpen]
@@ -34,24 +39,23 @@ export default function WfHamburgerMenu (props) {
     () => setLocaleSwitcherOpen(false),
     [setLocaleSwitcherOpen]
   )
-  const handleClickLogOut = useCallback(
-    () => {
-      const logoutForm = logoutFormRef.current
-      if (logoutForm) {
-        logoutForm.submit()
-      }
-    },
-    [logoutFormRef]
-  )
+  const handleClickLogOut = useCallback(() => {
+    const logoutForm = logoutFormRef.current
+    if (logoutForm) {
+      logoutForm.submit()
+    }
+  }, [logoutFormRef])
 
   const loggedIn = !!user
 
   return (
     <>
       <UncontrolledDropdown>
-
         <DropdownToggle
-          title={t({ id: 'js.WfHamburgerMenu.toggle.hoverText', message: 'menu' })}
+          title={t({
+            id: 'js.WfHamburgerMenu.toggle.hoverText',
+            message: 'menu'
+          })}
           className='context-button'
         >
           <i className='icon-more' />
@@ -59,68 +63,83 @@ export default function WfHamburgerMenu (props) {
 
         <DropdownMenu>
           <DropdownItem onClick={handleClickOpenLocaleSwitcher}>
-            <i className='icon icon-language' /><Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans>
+            <i className='icon icon-language' />
+            <Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans>
           </DropdownItem>
           <DropdownDivider />
-          {loggedIn && workflowId ? (
-            // "Workflows"
-            <DropdownItem href='/workflows/'>
-              <Trans id='js.WfHamburgerMenu.menu.myWorkflows'>My Workflows</Trans>
-            </DropdownItem>
-          ) : (
-            // "Home"
-            <DropdownItem href='//workbenchdata.com'>
-              <Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans>
-            </DropdownItem>
-          )}
-          {loggedIn ? (
-            // "Billing", "Plan"
-            <>
-              <DropdownItem href='/settings/billing'>
-                <Trans id='js.WfHamburgerMenu.menu.billing'>Billing</Trans>
+          {loggedIn && workflowId
+            ? (
+          // "Workflows"
+              <DropdownItem href='/workflows/'>
+                <Trans id='js.WfHamburgerMenu.menu.myWorkflows'>
+                  My Workflows
+                </Trans>
               </DropdownItem>
-              <DropdownItem href='/settings/plan'>
-                <Trans id='js.WfHamburgerMenu.menu.plan'>Upgrade</Trans>
+              )
+            : (
+          // "Home"
+              <DropdownItem href='//workbenchdata.com'>
+                <Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans>
               </DropdownItem>
-            </>
-          ) : null}
-          {loggedIn && user.is_staff ? (
-            // "Import Module"
-            <>
-              <DropdownDivider />
-              <DropdownItem onClick={handleClickOpenImportModal}>
-                <Trans id='js.WfHamburgerMenu.menu.importModule'>Import Module</Trans>
-              </DropdownItem>
-            </>
-          ) : null}
-          {loggedIn ? (
-            // "Log Out" button
-            <>
-              <DropdownDivider />
-              <DropdownItem onClick={handleClickLogOut}>
-                <Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans>
-              </DropdownItem>
-            </>
-          ) : null}
+              )}
+          {loggedIn
+            ? (
+          // "Billing", "Plan"
+              <>
+                <DropdownItem href='/settings/billing'>
+                  <Trans id='js.WfHamburgerMenu.menu.billing'>Billing</Trans>
+                </DropdownItem>
+                <DropdownItem href='/settings/plan'>
+                  <Trans id='js.WfHamburgerMenu.menu.plan'>Upgrade</Trans>
+                </DropdownItem>
+              </>
+              )
+            : null}
+          {loggedIn && user.is_staff
+            ? (
+          // "Import Module"
+              <>
+                <DropdownDivider />
+                <DropdownItem onClick={handleClickOpenImportModal}>
+                  <Trans id='js.WfHamburgerMenu.menu.importModule'>
+                    Import Module
+                  </Trans>
+                </DropdownItem>
+              </>
+              )
+            : null}
+          {loggedIn
+            ? (
+          // "Log Out" button
+              <>
+                <DropdownDivider />
+                <DropdownItem onClick={handleClickLogOut}>
+                  <Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans>
+                </DropdownItem>
+              </>
+              )
+            : null}
         </DropdownMenu>
       </UncontrolledDropdown>
-      {loggedIn ? (
-        <form ref={logoutFormRef} style={DisplayNoneStyle} method='post' action='/account/logout/'>
-          <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
-          <input type='submit' />
-        </form>
-      ) : null}
-      {isImportModalOpen ? (
-        <ImportModuleFromGitHub
-          closeModal={handleCloseImportModal}
-          api={api}
-        />
-      ) : null}
-      {isLocaleSwitcherOpen ? (
-        <LocaleSwitcher
-          closeModal={handleCloseLocaleSwitcher}
-        />
-      ) : null}
+      {loggedIn
+        ? (
+          <form
+            ref={logoutFormRef}
+            style={DisplayNoneStyle}
+            method='post'
+            action='/account/logout/'
+          >
+            <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
+            <input type='submit' />
+          </form>
+          )
+        : null}
+      {isImportModalOpen
+        ? <ImportModuleFromGitHub closeModal={handleCloseImportModal} api={api} />
+        : null}
+      {isLocaleSwitcherOpen
+        ? <LocaleSwitcher closeModal={handleCloseLocaleSwitcher} />
+        : null}
     </>
   )
 }

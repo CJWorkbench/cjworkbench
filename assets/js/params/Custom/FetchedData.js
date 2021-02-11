@@ -1,7 +1,12 @@
 import { PureComponent } from 'react'
 
 // https://reactjs.org/docs/higher-order-components.html
-export function withFetchedData (WrappedComponent, dataName, fetchData, fetchDataCacheId) {
+export function withFetchedData (
+  WrappedComponent,
+  dataName,
+  fetchData,
+  fetchDataCacheId
+) {
   return class extends PureComponent {
     state = {
       data: null,
@@ -16,16 +21,15 @@ export function withFetchedData (WrappedComponent, dataName, fetchData, fetchDat
       // should probably change this to setState({data: null})
       this.setState({ loading: true })
 
-      fetchData(this.props)
-        .then(data => {
-          if (this.unmounted) return
-          if (fetchDataCacheId(this.props) !== cacheId) return // ignore wrong response in race
+      fetchData(this.props).then(data => {
+        if (this.unmounted) return
+        if (fetchDataCacheId(this.props) !== cacheId) return // ignore wrong response in race
 
-          this.setState({
-            loading: false,
-            data
-          })
+        this.setState({
+          loading: false,
+          data
         })
+      })
     }
 
     componentDidMount () {

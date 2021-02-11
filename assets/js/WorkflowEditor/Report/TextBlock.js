@@ -21,7 +21,9 @@ export default function TextBlock (props) {
   }, [editedMarkdown, setEditedMarkdown])
 
   const handleChange = setEditedMarkdown
-  const handleCancel = useCallback(() => setEditedMarkdown(null), [setEditedMarkdown])
+  const handleCancel = useCallback(() => setEditedMarkdown(null), [
+    setEditedMarkdown
+  ])
   const handleSubmit = useCallback(() => {
     if (editedMarkdown === '') {
       onClickDelete(slug)
@@ -41,18 +43,20 @@ export default function TextBlock (props) {
       onClickMoveDown={onClickMoveDown}
       onClickEdit={handleClickEdit}
     >
-      {editedMarkdown === null ? (
-        <div className='markdown'>
-          <Markdown source={markdown} />
-        </div>
-      ) : (
-        <MarkdownEditor
-          value={editedMarkdown}
-          onChange={handleChange}
-          onCancel={handleCancel}
-          onSubmit={handleSubmit}
-        />
-      )}
+      {editedMarkdown === null
+        ? (
+          <div className='markdown'>
+            <Markdown source={markdown} />
+          </div>
+          )
+        : (
+          <MarkdownEditor
+            value={editedMarkdown}
+            onChange={handleChange}
+            onCancel={handleCancel}
+            onSubmit={handleSubmit}
+          />
+          )}
     </BlockFrame>
   )
 }

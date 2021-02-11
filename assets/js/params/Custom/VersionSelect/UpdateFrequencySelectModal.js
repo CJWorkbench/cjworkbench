@@ -1,6 +1,11 @@
 import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from '../../../components/Modal'
 import QuotaExceeded from './QuotaExceeded'
 import { Trans, t } from '@lingui/macro'
 
@@ -52,7 +57,10 @@ export default class UpdateFrequencySelectModal extends PureComponent {
     // wantTimeUnitCount is string is so the user can type "1.5" ... or erase
     // the value and type something new. this.wantFetchInterval is null when
     // the user enters an invalid wantTimeUnitCount.
-    wantTimeUnitCount: String(this.props.fetchInterval / TimeUnits[findBestTimeUnitForNSeconds(this.props.fetchInterval)])
+    wantTimeUnitCount: String(
+      this.props.fetchInterval /
+        TimeUnits[findBestTimeUnitForNSeconds(this.props.fetchInterval)]
+    )
   }
 
   get wantFetchInterval () {
@@ -63,50 +71,61 @@ export default class UpdateFrequencySelectModal extends PureComponent {
     return (
       !this.state.isSettingAutofetch && // there's no pending request
       this.wantFetchInterval && // the text box is valid
-      (
-        // we've edited
-        this.wantFetchInterval !== this.props.fetchInterval ||
-        this.wantAutofetch !== this.props.isAutofetch
-      )
+      // we've edited
+      (this.wantFetchInterval !== this.props.fetchInterval ||
+        this.wantAutofetch !== this.props.isAutofetch)
     )
   }
 
-  handleChangeAutofetch = (ev) => {
-    this.setState({
-      wantAutofetch: ev.target.value === 'true'
-    }, this.handleSubmit)
+  handleChangeAutofetch = ev => {
+    this.setState(
+      {
+        wantAutofetch: ev.target.value === 'true'
+      },
+      this.handleSubmit
+    )
   }
 
-  handleChangeEmailUpdates = (ev) => {
+  handleChangeEmailUpdates = ev => {
     this.props.setEmailUpdates(ev.target.checked)
   }
 
-  handleChangeTimeUnitCount = (ev) => {
+  handleChangeTimeUnitCount = ev => {
     this.setState({ wantTimeUnitCount: ev.target.value })
   }
 
-  handleChangeTimeUnit = (ev) => {
+  handleChangeTimeUnit = ev => {
     this.setState({
       timeUnit: ev.target.value
     })
   }
 
-  handleSubmit = (ev) => {
+  handleSubmit = ev => {
     if (ev && ev.preventDefault) ev.preventDefault()
     if (ev && ev.stopPropagation) ev.stopPropagation()
 
     this.setState((state, props) => {
-      const { isSettingAutofetch, isAutofetch, fetchInterval, trySetAutofetch } = props
+      const {
+        isSettingAutofetch,
+        isAutofetch,
+        fetchInterval,
+        trySetAutofetch
+      } = props
       const { wantAutofetch } = state
       const wantFetchInterval = calculateFetchInterval(state) || fetchInterval
 
       if (isSettingAutofetch) return // only one submit at a time, please
-      if (wantAutofetch === isAutofetch && wantFetchInterval === fetchInterval) return // state == props
+      if (
+        wantAutofetch === isAutofetch &&
+        wantFetchInterval === fetchInterval
+      ) {
+        return
+      } // state == props
 
       // "Lock" state against future submits (isSettingAutofetch); then submit
       // and handle the response asynchronously.
-      trySetAutofetch(wantAutofetch, wantFetchInterval)
-        .then(({ value: { quotaExceeded, fetchInterval } }) => {
+      trySetAutofetch(wantAutofetch, wantFetchInterval).then(
+        ({ value: { quotaExceeded, fetchInterval } }) => {
           this.setState(state => {
             const nextState = {
               isSettingAutofetch: false,
@@ -114,11 +133,14 @@ export default class UpdateFrequencySelectModal extends PureComponent {
             }
             if (!quotaExceeded) {
               // If user asked for "5"s, replace with server-supplied "300"s.
-              nextState.wantTimeUnitCount = String(fetchInterval / TimeUnits[state.timeUnit])
+              nextState.wantTimeUnitCount = String(
+                fetchInterval / TimeUnits[state.timeUnit]
+              )
             }
             return nextState
           })
-        })
+        }
+      )
 
       return { isSettingAutofetch: true }
     })
@@ -126,12 +148,23 @@ export default class UpdateFrequencySelectModal extends PureComponent {
 
   render () {
     const { isEmailUpdates, onClose, workflowId, stepId } = this.props
-    const { wantAutofetch, wantTimeUnitCount, isSettingAutofetch, quotaExceeded, timeUnit } = this.state
+    const {
+      wantAutofetch,
+      wantTimeUnitCount,
+      isSettingAutofetch,
+      quotaExceeded,
+      timeUnit
+    } = this.state
 
     return (
       <Modal isOpen className='update-frequency-modal' toggle={onClose}>
         <ModalHeader>
-          <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title' comment='This should be all-caps for styling reasons'>WORKFLOW UPDATE</Trans>
+          <Trans
+            id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
+            comment='This should be all-caps for styling reasons'
+          >
+            WORKFLOW UPDATE
+          </Trans>
         </ModalHeader>
         <ModalBody>
           <form
@@ -142,7 +175,11 @@ export default class UpdateFrequencySelectModal extends PureComponent {
           >
             {/* disable fieldset if we're submitting -- the user can't submit during apply, and the user shouldn't be allowed to edit fields because that would be confusing. */}
             <fieldset className='autofetch' disabled={isSettingAutofetch}>
-              <div className={`big-radio big-radio-auto-update-true ${wantAutofetch ? 'big-radio-checked' : 'big-radio-unchecked'}`}>
+              <div
+                className={`big-radio big-radio-auto-update-true ${
+                  wantAutofetch ? 'big-radio-checked' : 'big-radio-unchecked'
+                }`}
+              >
                 <label>
                   <input
                     type='radio'
@@ -151,12 +188,31 @@ export default class UpdateFrequencySelectModal extends PureComponent {
                     checked={wantAutofetch}
                     onChange={this.handleChangeAutofetch}
                   />
-                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label' comment="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'">Auto</Trans></div>
+                  <div className='radio'>
+                    <Trans
+                      id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label'
+                      comment="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
+                    >
+                      Auto
+                    </Trans>
+                  </div>
                 </label>
                 <div className='big-radio-details'>
-                  <p><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>Automatically update this workflow with the newest data (old versions will be saved).</Trans></p>
-                  <label htmlFor='updateFrequencySelectTimeUnitCount'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>Check for update every</Trans></label>
-                  <fieldset className='fetch-interval' disabled={!wantAutofetch}>
+                  <p>
+                    <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>
+                      Automatically update this workflow with the newest data
+                      (old versions will be saved).
+                    </Trans>
+                  </p>
+                  <label htmlFor='updateFrequencySelectTimeUnitCount'>
+                    <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>
+                      Check for update every
+                    </Trans>
+                  </label>
+                  <fieldset
+                    className='fetch-interval'
+                    disabled={!wantAutofetch}
+                  >
                     <div className='input-group'>
                       <div className='input-group-prepend'>
                         <input
@@ -175,10 +231,34 @@ export default class UpdateFrequencySelectModal extends PureComponent {
                         value={timeUnit}
                         onChange={this.handleChangeTimeUnit}
                       >
-                        <option value='weeks'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option', message: 'weeks' })}</option>
-                        <option value='days'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option', message: 'days' })}</option>
-                        <option value='hours'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option', message: 'hours' })}</option>
-                        <option value='minutes'>{t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option', message: 'minutes' })}</option>
+                        <option value='weeks'>
+                          {t({
+                            id:
+                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option',
+                            message: 'weeks'
+                          })}
+                        </option>
+                        <option value='days'>
+                          {t({
+                            id:
+                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option',
+                            message: 'days'
+                          })}
+                        </option>
+                        <option value='hours'>
+                          {t({
+                            id:
+                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option',
+                            message: 'hours'
+                          })}
+                        </option>
+                        <option value='minutes'>
+                          {t({
+                            id:
+                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option',
+                            message: 'minutes'
+                          })}
+                        </option>
                       </select>
                       <div className='input-group-append'>
                         <button
@@ -187,23 +267,42 @@ export default class UpdateFrequencySelectModal extends PureComponent {
                           name='apply'
                           disabled={!this.isFetchIntervalSubmittable}
                         >
-                          {quotaExceeded ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry'>Retry</Trans> : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply'>Apply</Trans>}
+                          {quotaExceeded
+                            ? (
+                              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry'>
+                                Retry
+                              </Trans>
+                              )
+                            : (
+                              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply'>
+                                Apply
+                              </Trans>
+                              )}
                         </button>
                       </div>
-                    </div>{/* input-group */}
+                    </div>
+                    {/* input-group */}
                   </fieldset>
-                </div>{/* big-radio-details */}
-              </div>{/* big-radio */}
+                </div>
+                {/* big-radio-details */}
+              </div>
+              {/* big-radio */}
 
-              {quotaExceeded ? (
-                <QuotaExceeded
-                  workflowId={workflowId}
-                  stepId={stepId}
-                  {...quotaExceeded}
-                />
-              ) : null}
+              {quotaExceeded
+                ? (
+                  <QuotaExceeded
+                    workflowId={workflowId}
+                    stepId={stepId}
+                    {...quotaExceeded}
+                  />
+                  )
+                : null}
 
-              <div className={`big-radio big-radio-auto-update-false ${wantAutofetch ? 'big-radio-unchecked' : 'big-radio-checked'}`}>
+              <div
+                className={`big-radio big-radio-auto-update-false ${
+                  wantAutofetch ? 'big-radio-unchecked' : 'big-radio-checked'
+                }`}
+              >
                 <label>
                   <input
                     type='radio'
@@ -212,10 +311,21 @@ export default class UpdateFrequencySelectModal extends PureComponent {
                     checked={!wantAutofetch}
                     onChange={this.handleChangeAutofetch}
                   />
-                  <div className='radio'><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label' comment="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'">Manual</Trans></div>
+                  <div className='radio'>
+                    <Trans
+                      id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label'
+                      comment="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
+                    >
+                      Manual
+                    </Trans>
+                  </div>
                 </label>
                 <div className='big-radio-details'>
-                  <p><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description'>Check for new data manually.</Trans></p>
+                  <p>
+                    <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description'>
+                      Check for new data manually.
+                    </Trans>
+                  </p>
                 </div>
               </div>
             </fieldset>
@@ -229,10 +339,10 @@ export default class UpdateFrequencySelectModal extends PureComponent {
               checked={isEmailUpdates}
               onChange={this.handleChangeEmailUpdates}
             />
-            <label
-              htmlFor='update-frequency-select-modal-is-email-updates-checkbox'
-            >
-              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label'>Email me when data changes</Trans>
+            <label htmlFor='update-frequency-select-modal-is-email-updates-checkbox'>
+              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label'>
+                Email me when data changes
+              </Trans>
             </label>
           </div>
         </ModalBody>
@@ -240,10 +350,16 @@ export default class UpdateFrequencySelectModal extends PureComponent {
           <button
             type='button'
             className='close'
-            title={t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText', message: 'Close' })}
+            title={t({
+              id:
+                'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText',
+              message: 'Close'
+            })}
             onClick={onClose}
           >
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>Close</Trans>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>
+              Close
+            </Trans>
           </button>
         </ModalFooter>
       </Modal>

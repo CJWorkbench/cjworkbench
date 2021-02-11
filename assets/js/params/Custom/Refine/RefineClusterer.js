@@ -16,31 +16,55 @@ const Algorithms = [
     }),
     description: defineMessage({
       id: 'js.params.Custom.RefineClusterer.Algorithms.fingerprint.description',
-      message: 'Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".'
+      message:
+        'Group values by fingerprint. This method is effective when values are capitalized irregularly or if special characters are used in some and not others. For instance, "café" and "Cafe" both have the same fingerprint, "cafe".'
     }),
     defaultOptions: null,
     optionFields: null,
-    buildClusterer: (bucket) => clusterByKey(bucket, fingerprint())
+    buildClusterer: bucket => clusterByKey(bucket, fingerprint())
   },
   {
     name: 'levenshtein',
     selectName: defineMessage({
-      comment: "This is not an editing action. It's a short description of how the levenstein algorithm works (i.e. it compares strings relative to the number of characters in which they differ, hence the term edit distance).",
+      comment:
+        "This is not an editing action. It's a short description of how the levenstein algorithm works (i.e. it compares strings relative to the number of characters in which they differ, hence the term edit distance).",
       id: 'js.params.Custom.RefineClusterer.Algorithms.levenshtein.name',
       message: 'Edit distance'
     }),
     description: defineMessage({
       id: 'js.params.Custom.RefineClusterer.Algorithms.levenshtein.description',
-      message: 'Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to ‘Maximum distance’. For instance, the distance between "Cafés" and "cafe" is 3.'
+      message:
+        'Groups values if the number of characters added, edited or deleted to get from one value to the other is equal or inferior to ‘Maximum distance’. For instance, the distance between "Cafés" and "cafe" is 3.'
     }),
     defaultOptions: { maxDistance: 3 },
     optionFields: (handlers, options) => (
       <div className='form-group'>
-        <label htmlFor='refine-clusterer-max-distance'><Trans id='js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label'>Maximum distance</Trans></label>
-        <input className='form-control' id='refine-clusterer-max-distance' type='number' required name='maxDistance' size='2' value={options.maxDistance} min='1' max='999' placeholder='3' {...handlers} />
+        <label htmlFor='refine-clusterer-max-distance'>
+          <Trans id='js.params.Custom.RefineClusterer.Algorithms.levenshtein.options.maxDistance.label'>
+            Maximum distance
+          </Trans>
+        </label>
+        <input
+          className='form-control'
+          id='refine-clusterer-max-distance'
+          type='number'
+          required
+          name='maxDistance'
+          size='2'
+          value={options.maxDistance}
+          min='1'
+          max='999'
+          placeholder='3'
+          {...handlers}
+        />
       </div>
     ),
-    buildClusterer: (bucket, options) => clusterByKnn(bucket, levenshtein(options.maxDistance), options.maxDistance)
+    buildClusterer: (bucket, options) =>
+      clusterByKnn(
+        bucket,
+        levenshtein(options.maxDistance),
+        options.maxDistance
+      )
   }
 ]
 
@@ -71,7 +95,10 @@ export default class RefineClusterer extends PureComponent {
   })
 
   state = {
-    clusterer: this._startClusterer(Algorithms[0], Algorithms[0].defaultOptions),
+    clusterer: this._startClusterer(
+      Algorithms[0],
+      Algorithms[0].defaultOptions
+    ),
     algorithm: Algorithms[0],
     clustererOptions: Algorithms[0].defaultOptions
   }
@@ -92,7 +119,8 @@ export default class RefineClusterer extends PureComponent {
     }
     reportProgressUntilDoneOrCanceled()
 
-    clusterer.cluster()
+    clusterer
+      .cluster()
       .then(bins => {
         if (clusterer.canceled) {
           // the only way clusterer is canceled is if another is running --
@@ -132,13 +160,13 @@ export default class RefineClusterer extends PureComponent {
     })
   }
 
-  handleChangeAlgorithm = (ev) => {
+  handleChangeAlgorithm = ev => {
     const name = ev.target.value
     const algorithm = Algorithms.find(a => a.name === name)
     this.setClusterer(algorithm, algorithm.defaultOptions || null)
   }
 
-  onChangeOption = (ev) => {
+  onChangeOption = ev => {
     const { algorithm } = this.state
 
     const el = ev.target
@@ -156,10 +184,19 @@ export default class RefineClusterer extends PureComponent {
 
   renderSelect = () => {
     const { algorithm } = this.state
-    const options = Algorithms.map(({ name, selectName }) => <option key={name} value={name}>{i18n._(selectName)}</option>)
+    const options = Algorithms.map(({ name, selectName }) => (
+      <option key={name} value={name}>
+        {i18n._(selectName)}
+      </option>
+    ))
 
     return (
-      <select name='algorithm' className='custom-select' value={algorithm.name} onChange={this.handleChangeAlgorithm}>
+      <select
+        name='algorithm'
+        className='custom-select'
+        value={algorithm.name}
+        onChange={this.handleChangeAlgorithm}
+      >
         {options}
       </select>
     )
@@ -185,11 +222,11 @@ export default class RefineClusterer extends PureComponent {
 
     return (
       <div className='refine-clusterer'>
-        <legend><Trans id='js.params.Custom.RefineClusterer.method'>Method</Trans></legend>
+        <legend>
+          <Trans id='js.params.Custom.RefineClusterer.method'>Method</Trans>
+        </legend>
         <div className='method'>
-          <div className='method-select'>
-            {this.renderSelect()}
-          </div>
+          <div className='method-select'>{this.renderSelect()}</div>
           <div className='method-form'>
             <div className='method-description'>
               {i18n._(algorithm.description)}

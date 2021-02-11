@@ -4,7 +4,7 @@ import { deleteStepAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
 import lessonSelector from '../../lessons/lessonSelector'
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { modules, selectedPane, steps, tabs } = state
   const { testHighlight } = lessonSelector(state)
   const tabSlug = selectedPane.tabSlug
@@ -17,7 +17,8 @@ const mapStateToProps = (state) => {
     steps: tabSteps,
     modules,
     isReadOnly: state.workflow.read_only,
-    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', id_name: null, index: index })
+    testLessonHighlightIndex: index =>
+      testHighlight({ type: 'Module', id_name: null, index: index })
   }
 }
 
@@ -35,7 +36,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(StepList)
+export default connect(mapStateToProps, mapDispatchToProps)(StepList)

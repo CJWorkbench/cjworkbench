@@ -25,10 +25,13 @@ export default function useThrottledRequestAnimationFrame (callback) {
   // use ref, not state -- state change would force re-render
   const requestId = useRef(null)
 
-  const throttledCallback = useCallback(time => {
-    requestId.current = null
-    callback(time)
-  }, [callback])
+  const throttledCallback = useCallback(
+    time => {
+      requestId.current = null
+      callback(time)
+    },
+    [callback]
+  )
 
   useEffect(() => {
     // Whenever callback changes, cancel existing requests
@@ -40,9 +43,12 @@ export default function useThrottledRequestAnimationFrame (callback) {
     }
   }, [callback])
 
-  return useCallback(function throttledRequestAnimationFrame () {
-    if (requestId.current === null) {
-      requestId.current = global.requestAnimationFrame(throttledCallback)
-    }
-  }, [throttledCallback])
+  return useCallback(
+    function throttledRequestAnimationFrame () {
+      if (requestId.current === null) {
+        requestId.current = global.requestAnimationFrame(throttledCallback)
+      }
+    },
+    [throttledCallback]
+  )
 }

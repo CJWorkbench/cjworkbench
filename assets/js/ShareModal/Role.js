@@ -1,22 +1,43 @@
 import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
+import {
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
 
 const ReadOnlyRole = ({ canEdit }) => (
   <p className='role'>
-    {canEdit ? <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans> : <Trans id='js.ShareModal.Role.canView'>Can view</Trans>}
+    {canEdit
+      ? <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans>
+      : <Trans id='js.ShareModal.Role.canView'>Can view</Trans>}
   </p>
 )
 
 const EditableRole = ({ canEdit, setCanEdit, unsetCanEdit }) => (
   <UncontrolledDropdown>
     <DropdownToggle caret>
-      {canEdit ? <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans> : <Trans id='js.ShareModal.Role.canView'>Can view</Trans>}
+      {canEdit
+        ? <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans>
+        : <Trans id='js.ShareModal.Role.canView'>Can view</Trans>}
     </DropdownToggle>
     <DropdownMenu>
-      <DropdownItem className='can-edit-false' active={!canEdit} onClick={unsetCanEdit}><Trans id='js.ShareModal.Role.canView'>Can view</Trans></DropdownItem>
-      <DropdownItem className='can-edit-true' active={canEdit} onClick={setCanEdit}><Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans></DropdownItem>
+      <DropdownItem
+        className='can-edit-false'
+        active={!canEdit}
+        onClick={unsetCanEdit}
+      >
+        <Trans id='js.ShareModal.Role.canView'>Can view</Trans>
+      </DropdownItem>
+      <DropdownItem
+        className='can-edit-true'
+        active={canEdit}
+        onClick={setCanEdit}
+      >
+        <Trans id='js.ShareModal.Role.canEdit'>Can edit</Trans>
+      </DropdownItem>
     </DropdownMenu>
   </UncontrolledDropdown>
 )
@@ -43,7 +64,13 @@ export default class Role extends PureComponent {
     if (isReadOnly) {
       return <ReadOnlyRole canEdit={canEdit} />
     } else {
-      return <EditableRole canEdit={canEdit} setCanEdit={this.setCanEdit} unsetCanEdit={this.unsetCanEdit} />
+      return (
+        <EditableRole
+          canEdit={canEdit}
+          setCanEdit={this.setCanEdit}
+          unsetCanEdit={this.unsetCanEdit}
+        />
+      )
     }
   }
 }

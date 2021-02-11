@@ -7,15 +7,19 @@ import IconRemovecHollow from '../../../icons/removec-hollow.svg'
 
 export default class Multichartseries extends PureComponent {
   static propTypes = {
-    value: PropTypes.arrayOf(PropTypes.shape({
-      column: PropTypes.string.isRequired,
-      color: PropTypes.string.isRequired
-    })).isRequired,
+    value: PropTypes.arrayOf(
+      PropTypes.shape({
+        column: PropTypes.string.isRequired,
+        color: PropTypes.string.isRequired
+      })
+    ).isRequired,
     placeholder: PropTypes.string.isRequired,
     fieldId: PropTypes.string.isRequired,
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })), // or null if not loaded
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ), // or null if not loaded
     onChange: PropTypes.func.isRequired, // func([{column, color}, ...]) => undefined
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired
@@ -55,49 +59,76 @@ export default class Multichartseries extends PureComponent {
     const { isAddingPlaceholder } = this.state
     const { inputColumns, value, isReadOnly } = this.props
 
-    const showAddButton = !isReadOnly && !isAddingPlaceholder && value.length < (inputColumns || []).length
-    const showRemoveButton = !isReadOnly && (value.length > 1 || (value.length === 1 && isAddingPlaceholder))
+    const showAddButton =
+      !isReadOnly &&
+      !isAddingPlaceholder &&
+      value.length < (inputColumns || []).length
+    const showRemoveButton =
+      !isReadOnly &&
+      (value.length > 1 || (value.length === 1 && isAddingPlaceholder))
 
     if (!showAddButton && !showRemoveButton) {
       return null
     } else {
       return (
         <div className='buttons'>
-          {showRemoveButton ? (
-            <button
-              type='button'
-              title={t({ id: 'js.params.Multichartseries.removeLastColumn.hoverText', message: 'remove last column' })}
-              onClick={this.handleClickRemoveLast}
-            >
-              <IconRemovecHollow />
-            </button>
-          ) : null}
-          {showAddButton ? (
-            <button
-              type='button'
-              title={t({ id: 'js.params.Multichartseries.addColumn.hoverText', message: 'add another column' })}
-              onClick={this.handleClickAddPlaceholder}
-            >
-              <IconAddcHollow />
-            </button>
-          ) : null}
+          {showRemoveButton
+            ? (
+              <button
+                type='button'
+                title={t({
+                  id: 'js.params.Multichartseries.removeLastColumn.hoverText',
+                  message: 'remove last column'
+                })}
+                onClick={this.handleClickRemoveLast}
+              >
+                <IconRemovecHollow />
+              </button>
+              )
+            : null}
+          {showAddButton
+            ? (
+              <button
+                type='button'
+                title={t({
+                  id: 'js.params.Multichartseries.addColumn.hoverText',
+                  message: 'add another column'
+                })}
+                onClick={this.handleClickAddPlaceholder}
+              >
+                <IconAddcHollow />
+              </button>
+              )
+            : null}
         </div>
       )
     }
   }
 
   render () {
-    const { inputColumns, value, placeholder, isReadOnly, name, fieldId } = this.props
+    const {
+      inputColumns,
+      value,
+      placeholder,
+      isReadOnly,
+      name,
+      fieldId
+    } = this.props
 
     if (inputColumns === null) {
-      return <p className='loading'><Trans id='js.params.Multichartseries.loading'>Loading…</Trans></p>
+      return (
+        <p className='loading'>
+          <Trans id='js.params.Multichartseries.loading'>Loading…</Trans>
+        </p>
+      )
     }
 
     const pickedColumns = value.map(x => x.column)
     const pickers = value.map(({ column, color }, index) => {
       // Don't allow picking a column that's already picked
-      const availableColumns = (inputColumns || [])
-        .filter(({ name }) => pickedColumns.indexOf(name) === -1 || name === column)
+      const availableColumns = (inputColumns || []).filter(
+        ({ name }) => pickedColumns.indexOf(name) === -1 || name === column
+      )
 
       return (
         <ChartSeriesSelect
@@ -116,8 +147,9 @@ export default class Multichartseries extends PureComponent {
     })
 
     if (this.state.isAddingPlaceholder) {
-      const availableColumns = (inputColumns || [])
-        .filter(({ name }) => pickedColumns.indexOf(name) === -1)
+      const availableColumns = (inputColumns || []).filter(
+        ({ name }) => pickedColumns.indexOf(name) === -1
+      )
 
       pickers.push(
         <ChartSeriesSelect

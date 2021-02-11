@@ -12,14 +12,18 @@ export class Lesson extends PureComponent {
       title: PropTypes.string.isRequired,
       html: PropTypes.string.isRequired
     }).isRequired,
-    sections: PropTypes.arrayOf(PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      html: PropTypes.string.isRequired,
-      isFullScreen: PropTypes.bool.isRequired,
-      steps: PropTypes.arrayOf(PropTypes.shape({
-        html: PropTypes.string.isRequired
-      })).isRequired
-    })).isRequired,
+    sections: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        html: PropTypes.string.isRequired,
+        isFullScreen: PropTypes.bool.isRequired,
+        steps: PropTypes.arrayOf(
+          PropTypes.shape({
+            html: PropTypes.string.isRequired
+          })
+        ).isRequired
+      })
+    ).isRequired,
     footer: PropTypes.shape({
       title: PropTypes.string.isRequired,
       html: PropTypes.string.isRequired,
@@ -46,12 +50,18 @@ export class Lesson extends PureComponent {
     currentSectionIndex: 0
   }
 
-  setCurrentSectionIndex = (index) => {
+  setCurrentSectionIndex = index => {
     this.setState({ currentSectionIndex: index })
   }
 
   render () {
-    const { header, footer, sections, activeSectionIndex, activeStepIndex } = this.props
+    const {
+      header,
+      footer,
+      sections,
+      activeSectionIndex,
+      activeStepIndex
+    } = this.props
     const { currentSectionIndex } = this.state
 
     const sectionComponents = sections.map((s, i) => {
@@ -75,11 +85,12 @@ export class Lesson extends PureComponent {
     return (
       <article className={classNames.join(' ')}>
         <h1>{header.title}</h1>
-        <div className='description' dangerouslySetInnerHTML={({ __html: header.html })} />
+        <div
+          className='description'
+          dangerouslySetInnerHTML={{ __html: header.html }}
+        />
         <div className='sections'>
-          <div className='content'>
-            {sectionComponents}
-          </div>
+          <div className='content'>{sectionComponents}</div>
           <LessonFooter
             key='footer'
             isCurrent={this.state.currentSectionIndex === sections.length}
@@ -99,7 +110,7 @@ export class Lesson extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
   return { activeSectionIndex, activeStepIndex }
 }

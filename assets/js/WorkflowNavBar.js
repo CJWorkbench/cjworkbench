@@ -2,7 +2,9 @@ import { Component } from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import UndoRedoButtons from './UndoRedoButtons'
-import ConnectedEditableWorkflowName, { EditableWorkflowName } from './EditableWorkflowName'
+import ConnectedEditableWorkflowName, {
+  EditableWorkflowName
+} from './EditableWorkflowName'
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
 import { i18n } from '@lingui/core'
@@ -19,7 +21,9 @@ function LessonCourse ({ localeId, course }) {
     title = course.title
   } else {
     path = `/lessons/${localeId}`
-    title = <Trans id='js.WorkflowNavBar.LessonCourse.Lesson.title'>Training</Trans>
+    title = (
+      <Trans id='js.WorkflowNavBar.LessonCourse.Lesson.title'>Training</Trans>
+    )
   }
 
   return (
@@ -49,25 +53,38 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
     <div className='title-metadata-stack'>
       <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
       <ul className='metadata-container'>
-        {!workflow.is_anonymous ? (
-          <li className='attribution'>
-            <span className='metadata'><Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>by {owner}</Trans> </span>
-            <span className='separator'>-</span>
-          </li>
-        ) : null}
+        {!workflow.is_anonymous
+          ? (
+            <li className='attribution'>
+              <span className='metadata'>
+                <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>
+                  by {owner}
+                </Trans>{' '}
+              </span>
+              <span className='separator'>-</span>
+            </li>
+            )
+          : null}
         <li>
-          <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated' comment="{timeAgo} will contain something like '4h ago'">
+          <Trans
+            id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated'
+            comment="{timeAgo} will contain something like '4h ago'"
+          >
             Updated {timeAgo}
           </Trans>
         </li>
-        {(!isReadOnly && !workflow.is_anonymous) ? (
-          <li>
-            <span className='separator'>-</span>
-            <ShareButton>
-              {workflow.public ? <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public'>Public</Trans> : <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private'>Private</Trans>}
-            </ShareButton>
-          </li>
-        ) : null}
+        {!isReadOnly && !workflow.is_anonymous
+          ? (
+            <li>
+              <span className='separator'>-</span>
+              <ShareButton>
+                {workflow.public
+                  ? <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public'>Public</Trans>
+                  : <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private'>Private</Trans>}
+              </ShareButton>
+            </li>
+            )
+          : null}
       </ul>
     </div>
   )
@@ -75,11 +92,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
 
 function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
   if (lesson) {
-    return (
-      <LessonWorkflowTitle
-        lesson={lesson}
-      />
-    )
+    return <LessonWorkflowTitle lesson={lesson} />
   } else {
     return (
       <OwnedWorkflowTitleAndMetadata
@@ -124,11 +137,10 @@ export default class WorkflowNavBar extends Component {
     if (this.state.spinnerVisible) return
 
     this.setState({ spinnerVisible: true })
-    this.props.api[verb](this.props.workflow.id)
-      .then(() => {
-        if (this.unmounted) return
-        this.setState({ spinnerVisible: false })
-      })
+    this.props.api[verb](this.props.workflow.id).then(() => {
+      if (this.unmounted) return
+      this.setState({ spinnerVisible: false })
+    })
   }
 
   undo = () => {
@@ -147,10 +159,9 @@ export default class WorkflowNavBar extends Component {
       // user IS logged in: start spinner, make duplicate & navigate there
       this.setState({ spinnerVisible: true })
 
-      this.props.api.duplicateWorkflow(this.props.workflow.id)
-        .then(json => {
-          goToUrl('/workflows/' + json.id)
-        })
+      this.props.api.duplicateWorkflow(this.props.workflow.id).then(json => {
+        goToUrl('/workflows/' + json.id)
+      })
     }
   }
 
@@ -176,15 +187,17 @@ export default class WorkflowNavBar extends Component {
       )
     }
 
-    const spinner = this.state.spinnerVisible ? (
-      <div className='spinner-container'>
-        <div className='spinner-l1'>
-          <div className='spinner-l2'>
-            <div className='spinner-l3' />
+    const spinner = this.state.spinnerVisible
+      ? (
+        <div className='spinner-container'>
+          <div className='spinner-l1'>
+            <div className='spinner-l2'>
+              <div className='spinner-l3' />
+            </div>
           </div>
         </div>
-      </div>
-    ) : null
+        )
+      : null
 
     return (
       <>
@@ -192,7 +205,10 @@ export default class WorkflowNavBar extends Component {
         <nav className='navbar'>
           <div className='navbar-elements'>
             <a href='/workflows/' className='logo-navbar'>
-              <img className='image' src={`${window.STATIC_URL}images/logo.svg`} />
+              <img
+                className='image'
+                src={`${window.STATIC_URL}images/logo.svg`}
+              />
             </a>
             <WorkflowTitleAndMetadata
               lesson={lesson}
@@ -200,17 +216,15 @@ export default class WorkflowNavBar extends Component {
               workflow={workflow}
             />
             <div className='nav-buttons'>
-              {isReadOnly ? null : (
-                <UndoRedoButtons undo={this.undo} redo={this.redo} />
-              )}
+              {isReadOnly
+                ? null
+                : <UndoRedoButtons undo={this.undo} redo={this.redo} />}
               <button name='duplicate' onClick={this.handleDuplicate}>
                 <Trans id='js.WorkflowNavBar.duplicate.button'>Duplicate</Trans>
               </button>
-              {lesson ? null : (/* We haven't yet designed what it means to share a lesson workflow. */
-                <ShareButton>
-                  <Trans id='js.WorkflowNavBar.share.shareButton'>Share</Trans>
-                </ShareButton>
-              )}
+              {lesson
+                ? null // We haven't yet designed what it means to share a lesson workflow
+                : <ShareButton><Trans id='js.WorkflowNavBar.share.shareButton'>Share</Trans></ShareButton>}
               {contextMenu}
             </div>
           </div>

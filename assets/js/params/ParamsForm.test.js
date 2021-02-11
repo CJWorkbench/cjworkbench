@@ -12,35 +12,36 @@ const field = (idName, type, extra = {}) => ({
 })
 
 describe('ParamsForm', () => {
-  const wrapper = (extraProps = {}) => shallow(
-    <ParamsForm
-      isOwner
-      isReadOnly={false}
-      isZenMode={false}
-      api={{ createOauthAccessToken: jest.fn(), valueCounts: jest.fn() }}
-      fields={[]}
-      files={[]}
-      value={{ }}
-      edits={{ }}
-      workflowId={99}
-      stepId={1}
-      stepSlug='step-1'
-      stepOutputErrors={[]}
-      isStepBusy={false}
-      inputStepId={null}
-      inputDeltaId={null}
-      inputColumns={[]}
-      tabs={[]}
-      currentTab='tab-1'
-      applyQuickFix={jest.fn()}
-      startCreateSecret={jest.fn()}
-      submitSecret={jest.fn()}
-      deleteSecret={jest.fn()}
-      onChange={jest.fn()}
-      onSubmit={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    shallow(
+      <ParamsForm
+        isOwner
+        isReadOnly={false}
+        isZenMode={false}
+        api={{ createOauthAccessToken: jest.fn(), valueCounts: jest.fn() }}
+        fields={[]}
+        files={[]}
+        value={{}}
+        edits={{}}
+        workflowId={99}
+        stepId={1}
+        stepSlug='step-1'
+        stepOutputErrors={[]}
+        isStepBusy={false}
+        inputStepId={null}
+        inputDeltaId={null}
+        inputColumns={[]}
+        tabs={[]}
+        currentTab='tab-1'
+        applyQuickFix={jest.fn()}
+        startCreateSecret={jest.fn()}
+        submitSecret={jest.fn()}
+        deleteSecret={jest.fn()}
+        onChange={jest.fn()}
+        onSubmit={jest.fn()}
+        {...extraProps}
+      />
+    )
 
   describe('value and edits', () => {
     it('should call onChange with new values', () => {
@@ -61,7 +62,10 @@ describe('ParamsForm', () => {
       })
       w.find('Param[name="c"]').prop('onChange')('c', 'foo')
 
-      expect(w.instance().props.onChange).toHaveBeenCalledWith({ a: 'x', c: 'foo' })
+      expect(w.instance().props.onChange).toHaveBeenCalledWith({
+        a: 'x',
+        c: 'foo'
+      })
     })
 
     it('should delete edits in onChange instead of sending original values', () => {
@@ -69,10 +73,7 @@ describe('ParamsForm', () => {
       // a change comes from the server the user will see it because the edits
       // won't overwrite it.
       const w = wrapper({
-        fields: [
-          field('a', 'string'),
-          field('b', 'string')
-        ],
+        fields: [field('a', 'string'), field('b', 'string')],
         value: {
           a: 'A',
           b: 'B'
@@ -89,9 +90,7 @@ describe('ParamsForm', () => {
 
     it('should not call onChange on no-op change', () => {
       const w = wrapper({
-        fields: [
-          field('a', 'string')
-        ],
+        fields: [field('a', 'string')],
         value: {
           a: 'A'
         },
@@ -114,7 +113,9 @@ describe('ParamsForm', () => {
         value: {},
         secrets: { a: { name: 'a@example.com' } }
       })
-      expect(w.find('Param[name="a"]').prop('secretMetadata')).toEqual({ name: 'a@example.com' })
+      expect(w.find('Param[name="a"]').prop('secretMetadata')).toEqual({
+        name: 'a@example.com'
+      })
     })
 
     it('should set secretMetadata=null when the field of type secret has no value', () => {
@@ -141,7 +142,9 @@ describe('ParamsForm', () => {
         value: { b: 'foo' },
         secrets: { a: { name: 'a@example.com' } }
       })
-      expect(w.find('Param[name="b"]').prop('secretMetadata')).toEqual({ name: 'a@example.com' })
+      expect(w.find('Param[name="b"]').prop('secretMetadata')).toEqual({
+        name: 'a@example.com'
+      })
     })
 
     it('should set secretMetadata=null when the field has a secretParameter with no secret set', () => {
@@ -170,7 +173,9 @@ describe('ParamsForm', () => {
               { value: 'banana', label: 'Banana' }
             ]
           }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
+          field('testme', 'string', {
+            visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] }
+          })
         ],
         value: {
           menu_select: 'banana',
@@ -190,7 +195,9 @@ describe('ParamsForm', () => {
               { value: 'banana', label: 'Banana' }
             ]
           }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] } })
+          field('testme', 'string', {
+            visibleIf: { idName: 'menu_select', value: ['banana', 'orange'] }
+          })
         ],
         value: {
           menu_select: 'mango',
@@ -210,7 +217,13 @@ describe('ParamsForm', () => {
               { value: 'banana', label: 'Banana' }
             ]
           }),
-          field('testme', 'string', { visibleIf: { idName: 'menu_select', value: ['banana', 'orange'], invert: true } })
+          field('testme', 'string', {
+            visibleIf: {
+              idName: 'menu_select',
+              value: ['banana', 'orange'],
+              invert: true
+            }
+          })
         ],
         value: {
           menu_select: 'banana',
@@ -224,7 +237,9 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('show', 'checkbox'),
-          field('testme', 'string', { visibleIf: { idName: 'show', value: true } })
+          field('testme', 'string', {
+            visibleIf: { idName: 'show', value: true }
+          })
         ],
         value: {
           show: true,
@@ -238,7 +253,9 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('show', 'checkbox'),
-          field('testme', 'string', { visibleIf: { idName: 'show', value: true } })
+          field('testme', 'string', {
+            visibleIf: { idName: 'show', value: true }
+          })
         ],
         value: {
           show: false,
@@ -252,7 +269,9 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('hide', 'checkbox'),
-          field('testme', 'string', { visibleIf: { idName: 'hide', value: true, invert: true } })
+          field('testme', 'string', {
+            visibleIf: { idName: 'hide', value: true, invert: true }
+          })
         ],
         value: {
           hide: false,
@@ -266,8 +285,12 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('show1', 'checkbox'),
-          field('show2', 'checkbox', { visibleIf: { idName: 'show1', value: true } }),
-          field('testme', 'string', { visibleIf: { idName: 'show2', value: true } })
+          field('show2', 'checkbox', {
+            visibleIf: { idName: 'show1', value: true }
+          }),
+          field('testme', 'string', {
+            visibleIf: { idName: 'show2', value: true }
+          })
         ],
         value: {
           show1: false, // hides show2
@@ -308,7 +331,9 @@ describe('ParamsForm', () => {
       const w = wrapper({
         fields: [
           field('boo', 'custom'),
-          field('testme', 'statictext', { visibleIf: { idName: 'boo', value: ['x', 'y'] } })
+          field('testme', 'statictext', {
+            visibleIf: { idName: 'boo', value: ['x', 'y'] }
+          })
         ],
         value: {
           boo: ['x', 'y'],

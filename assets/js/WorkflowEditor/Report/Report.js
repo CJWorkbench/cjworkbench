@@ -5,33 +5,55 @@ import Block from './Block'
 import AddBlockPrompt from './AddBlockPrompt'
 
 export default function Report ({
-  workflow, blocks, reportableTabs, addBlock, deleteBlock, reorderBlocks, setBlockMarkdown
+  workflow,
+  blocks,
+  reportableTabs,
+  addBlock,
+  deleteBlock,
+  reorderBlocks,
+  setBlockMarkdown
 }) {
   const isReadOnly = workflow.read_only
   const handleClickDelete = deleteBlock
-  const handleClickMoveUp = useCallback(slug => {
-    const slugs = blocks.map(b => b.slug) // we're going to mutate it
-    const index = slugs.indexOf(slug)
-    if (index > 0) {
-      slugs.splice(index - 1, 2, slug, slugs[index - 1])
-      reorderBlocks(slugs)
-    }
-  }, [blocks, reorderBlocks])
-  const handleClickMoveDown = useCallback(slug => {
-    const slugs = blocks.map(b => b.slug) // we're going to mutate it
-    const index = slugs.indexOf(slug)
-    if (index >= 0 && index < slugs.length - 1) {
-      slugs.splice(index, 2, slugs[index + 1], slug)
-      reorderBlocks(slugs)
-    }
-  }, [blocks, reorderBlocks])
+  const handleClickMoveUp = useCallback(
+    slug => {
+      const slugs = blocks.map(b => b.slug) // we're going to mutate it
+      const index = slugs.indexOf(slug)
+      if (index > 0) {
+        slugs.splice(index - 1, 2, slug, slugs[index - 1])
+        reorderBlocks(slugs)
+      }
+    },
+    [blocks, reorderBlocks]
+  )
+  const handleClickMoveDown = useCallback(
+    slug => {
+      const slugs = blocks.map(b => b.slug) // we're going to mutate it
+      const index = slugs.indexOf(slug)
+      if (index >= 0 && index < slugs.length - 1) {
+        slugs.splice(index, 2, slugs[index + 1], slug)
+        reorderBlocks(slugs)
+      }
+    },
+    [blocks, reorderBlocks]
+  )
 
   return (
-    <div className={`report-container ${isReadOnly ? 'report-read-only' : 'report-read-write'}`}>
+    <div
+      className={`report-container ${
+        isReadOnly ? 'report-read-only' : 'report-read-write'
+      }`}
+    >
       <ReportHeader title={workflow.name} />
-      {isReadOnly ? null : (
-        <AddBlockPrompt position={0} tabs={reportableTabs} onSubmit={addBlock} />
-      )}
+      {isReadOnly
+        ? null
+        : (
+          <AddBlockPrompt
+            position={0}
+            tabs={reportableTabs}
+            onSubmit={addBlock}
+          />
+          )}
       {blocks.map((block, position) => (
         <Fragment key={block.slug}>
           <Block
@@ -40,12 +62,20 @@ export default function Report ({
             isReadOnly={isReadOnly}
             onClickDelete={handleClickDelete}
             onClickMoveUp={position === 0 ? null : handleClickMoveUp}
-            onClickMoveDown={position === blocks.length - 1 ? null : handleClickMoveDown}
+            onClickMoveDown={
+              position === blocks.length - 1 ? null : handleClickMoveDown
+            }
             setBlockMarkdown={setBlockMarkdown}
           />
-          {isReadOnly ? null : (
-            <AddBlockPrompt position={position + 1} tabs={reportableTabs} onSubmit={addBlock} />
-          )}
+          {isReadOnly
+            ? null
+            : (
+              <AddBlockPrompt
+                position={position + 1}
+                tabs={reportableTabs}
+                onSubmit={addBlock}
+              />
+              )}
         </Fragment>
       ))}
     </div>

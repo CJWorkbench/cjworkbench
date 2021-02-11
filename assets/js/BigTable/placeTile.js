@@ -15,7 +15,9 @@ function findTileRowIndex (tileRows, tileRow) {
       tr += 1
     }
   }
-  throw new Error('Could not find tileRow in tileRows. Is there a gap that should not be there?')
+  throw new Error(
+    'Could not find tileRow in tileRows. Is there a gap that should not be there?'
+  )
 }
 
 /**

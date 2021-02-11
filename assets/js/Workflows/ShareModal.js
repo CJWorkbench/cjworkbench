@@ -8,23 +8,48 @@ function logShare (type) {
 }
 
 export default function ShareModal (props) {
-  const { api, workflow, onWorkflowChanging, onWorkflowChanged, onClose } = props
+  const {
+    api,
+    workflow,
+    onWorkflowChanging,
+    onWorkflowChanged,
+    onClose
+  } = props
 
-  const setIsPublic = useCallback((isPublic) => {
-    onWorkflowChanging(workflow.id, { public: isPublic })
-    api.setWorkflowPublic(workflow.id, isPublic)
-      .then(() => onWorkflowChanged(workflow.id))
-  }, [api, workflow, onWorkflowChanging, onWorkflowChanged])
-  const updateAclEntry = useCallback((email, canEdit) => {
-    onWorkflowChanging(workflow.id, { acl: [...workflow.acl.filter(e => e.email !== email), { email, canEdit }] })
-    api.updateAclEntry(workflow.id, email, canEdit)
-      .then(() => onWorkflowChanged(workflow.id))
-  }, [api, workflow, onWorkflowChanging, onWorkflowChanged])
-  const deleteAclEntry = useCallback((email, canEdit) => {
-    onWorkflowChanging(workflow.id, { acl: workflow.acl.filter(e => e.email !== email) })
-    api.deleteAclEntry(workflow.id, email)
-      .then(() => onWorkflowChanged(workflow.id))
-  }, [api, workflow, onWorkflowChanging, onWorkflowChanged])
+  const setIsPublic = useCallback(
+    isPublic => {
+      onWorkflowChanging(workflow.id, { public: isPublic })
+      api
+        .setWorkflowPublic(workflow.id, isPublic)
+        .then(() => onWorkflowChanged(workflow.id))
+    },
+    [api, workflow, onWorkflowChanging, onWorkflowChanged]
+  )
+  const updateAclEntry = useCallback(
+    (email, canEdit) => {
+      onWorkflowChanging(workflow.id, {
+        acl: [
+          ...workflow.acl.filter(e => e.email !== email),
+          { email, canEdit }
+        ]
+      })
+      api
+        .updateAclEntry(workflow.id, email, canEdit)
+        .then(() => onWorkflowChanged(workflow.id))
+    },
+    [api, workflow, onWorkflowChanging, onWorkflowChanged]
+  )
+  const deleteAclEntry = useCallback(
+    (email, canEdit) => {
+      onWorkflowChanging(workflow.id, {
+        acl: workflow.acl.filter(e => e.email !== email)
+      })
+      api
+        .deleteAclEntry(workflow.id, email)
+        .then(() => onWorkflowChanged(workflow.id))
+    },
+    [api, workflow, onWorkflowChanging, onWorkflowChanged]
+  )
 
   return (
     <Modal

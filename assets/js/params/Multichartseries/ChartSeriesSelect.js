@@ -13,9 +13,11 @@ export default class ChartSeriesSelect extends PureComponent {
     fieldId: PropTypes.string.isRequired, // <input id="...">
     placeholder: PropTypes.string.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
-    availableColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })), // or null if not loaded
+    availableColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ), // or null if not loaded
     onChange: PropTypes.func.isRequired // func({ index, column, color }) => undefined
   }
 
@@ -23,7 +25,7 @@ export default class ChartSeriesSelect extends PureComponent {
     color: null // when this.props.column is null, we can't call props.onChange()
   }
 
-  handlePickColor = (color) => {
+  handlePickColor = color => {
     if (this.props.column) {
       this.props.onChange({
         index: this.props.index,
@@ -35,7 +37,7 @@ export default class ChartSeriesSelect extends PureComponent {
     }
   }
 
-  handleSelectColumn = (column) => {
+  handleSelectColumn = column => {
     const { index, color } = this.props
     const safeColor = color || this.state.color || getColor(index)
 
@@ -49,7 +51,16 @@ export default class ChartSeriesSelect extends PureComponent {
   }
 
   render () {
-    const { availableColumns, column, color, index, placeholder, isReadOnly, name, fieldId } = this.props
+    const {
+      availableColumns,
+      column,
+      color,
+      index,
+      placeholder,
+      isReadOnly,
+      name,
+      fieldId
+    } = this.props
     const safeColor = color || this.state.color || getColor(index)
 
     return (

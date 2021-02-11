@@ -3,11 +3,13 @@ import PropTypes from 'prop-types'
 
 export default class CellEdits extends Component {
   static propTypes = {
-    value: PropTypes.arrayOf(PropTypes.shape({
-      row: PropTypes.number.isRequired,
-      col: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired
-    }).isRequired).isRequired
+    value: PropTypes.arrayOf(
+      PropTypes.shape({
+        row: PropTypes.number.isRequired,
+        col: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired
   }
 
   // Starting from a JSON array like this

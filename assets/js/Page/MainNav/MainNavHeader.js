@@ -10,13 +10,19 @@ export default function MainNavHeader (props) {
       <a href={href}>
         <img
           src={`${window.STATIC_URL}images/workbench-logo-white.svg`}
-          alt={t({ id: 'js.Page.MainNav.Header.brandName', message: 'Workbench' })}
+          alt={t({
+            id: 'js.Page.MainNav.Header.brandName',
+            message: 'Workbench'
+          })}
         />
       </a>
       <button
         className='toggle-open'
         onClick={onToggleOpen}
-        title={t({ id: 'js.WfHamburgerMenu.toggle.hoverText', message: 'menu' })}
+        title={t({
+          id: 'js.WfHamburgerMenu.toggle.hoverText',
+          message: 'menu'
+        })}
       >
         <MenuIcon />
       </button>

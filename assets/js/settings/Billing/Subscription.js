@@ -12,26 +12,49 @@ const DATE_FORMAT = {
 
 export default function Subscription (props) {
   const { price, createdAt, renewedAt, stripeStatus } = props
-  const { product: { name }, amount, currency, interval } = price
+  const {
+    product: { name },
+    amount,
+    currency,
+    interval
+  } = price
 
   return (
     <div className='subscription'>
       <h3>{name}</h3>
-      <h4><StripeAmount amount={amount} currency={currency} interval={interval} /></h4>
+      <h4>
+        <StripeAmount amount={amount} currency={currency} interval={interval} />
+      </h4>
       <div className='metadata'>
-        <span className='stripe-subscription-status'><StripeSubscriptionStatus stripeStatus={stripeStatus} /></span>
+        <span className='stripe-subscription-status'>
+          <StripeSubscriptionStatus stripeStatus={stripeStatus} />
+        </span>
         <span className='stripe-created-at'>
-          <Trans id='js.settings.billing.Subscription.createdAt' comment='e.g., "Subscribed January 27, 2021"'>
-            Subscribed <time dateTime={createdAt}>{i18n.date(createdAt, DATE_FORMAT)}</time>
+          <Trans
+            id='js.settings.billing.Subscription.createdAt'
+            comment='e.g., "Subscribed January 27, 2021"'
+          >
+            Subscribed{' '}
+            <time dateTime={createdAt}>
+              {i18n.date(createdAt, DATE_FORMAT)}
+            </time>
           </Trans>
         </span>
-        {createdAt !== renewedAt ? (
-          <span className='stripe-renewed-at'>
-            <Trans id='js.settings.billing.Subscription.renewedAt' comment='e.g., "Renewed February 27, 2021"'>
-              Renewed <time dateTime={renewedAt}>{i18n.date(createdAt, DATE_FORMAT)}</time>
-            </Trans>
-          </span>
-        ) : null}
+        {createdAt !== renewedAt
+          ? (
+            <span className='stripe-renewed-at'>
+              <Trans
+                id='js.settings.billing.Subscription.renewedAt'
+                comment='e.g., "Renewed February 27, 2021"'
+              >
+                Renewed{' '}
+                <time dateTime={renewedAt}>
+                  {i18n.date(createdAt, DATE_FORMAT)}
+                </time>
+              </Trans>
+            </span>
+            )
+          : null}
       </div>
     </div>
   )

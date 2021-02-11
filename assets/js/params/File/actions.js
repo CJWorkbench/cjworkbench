@@ -10,12 +10,15 @@ const API_TOKEN_NO_OP = 'API_TOKEN_NO_OP'
  */
 export function upload (stepSlug, file) {
   return (dispatch, getState, api) => {
-    const onProgress = (nBytesUploaded) => dispatch(setProgress(stepSlug, nBytesUploaded))
+    const onProgress = nBytesUploaded =>
+      dispatch(setProgress(stepSlug, nBytesUploaded))
     return dispatch({
       type: FILE_UPLOAD,
       payload: {
         // `api.uploadFile` will never error. At worst, it will retry indefinitely.
-        promise: api.uploadFile(stepSlug, file, onProgress).then(result => ({ stepSlug })),
+        promise: api
+          .uploadFile(stepSlug, file, onProgress)
+          .then(result => ({ stepSlug })),
         data: { stepSlug, name: file.name, size: file.size }
       }
     })
@@ -27,25 +30,34 @@ export function upload (stepSlug, file) {
  */
 function updateStepInProgressFileUpload (state, stepSlug, updateOrNull) {
   const step = findStep(state, stepSlug)
-  return step === null ? state : {
-    ...state,
-    steps: {
-      ...state.steps,
-      [String(step.id)]: {
-        ...step,
-        inProgressUpload: updateOrNull === null ? null : {
-          ...(step.inProgressUpload || {}),
-          ...updateOrNull
+  return step === null
+    ? state
+    : {
+        ...state,
+        steps: {
+          ...state.steps,
+          [String(step.id)]: {
+            ...step,
+            inProgressUpload:
+              updateOrNull === null
+                ? null
+                : {
+                    ...(step.inProgressUpload || {}),
+                    ...updateOrNull
+                  }
+          }
         }
       }
-    }
-  }
 }
 
 function reduceUploadPending (state, action) {
   const { stepSlug, name, size } = action.payload
   // `nBytesUploaded === null` will render as an "indeterminate" progressbar.
-  return updateStepInProgressFileUpload(state, stepSlug, { name, size, nBytesUploaded: null })
+  return updateStepInProgressFileUpload(state, stepSlug, {
+    name,
+    size,
+    nBytesUploaded: null
+  })
 }
 
 function reduceUploadFulfilled (state, action) {
@@ -55,7 +67,9 @@ function reduceUploadFulfilled (state, action) {
 
 function findStep (state, stepSlug) {
   // https://www.pivotaltracker.com/story/show/167600824
-  return Object.values(state.steps).find(({ slug }) => slug === stepSlug) || null
+  return (
+    Object.values(state.steps).find(({ slug }) => slug === stepSlug) || null
+  )
 }
 
 /**
@@ -68,7 +82,10 @@ export function cancel (stepSlug) {
     return dispatch({
       type: FILE_UPLOAD_CANCEL,
       payload: {
-        promise: (hasUpload ? api.cancelFileUpload(stepSlug) : Promise.resolve(null)).then(() => ({ stepSlug })),
+        promise: (hasUpload
+          ? api.cancelFileUpload(stepSlug)
+          : Promise.resolve(null)
+        ).then(() => ({ stepSlug })),
         data: { stepSlug }
       }
     })
@@ -78,7 +95,9 @@ export function cancel (stepSlug) {
 function reduceCancelPending (state, action) {
   const { stepSlug } = action.payload
   // `nBytesUploaded === null` will render as an "indeterminate" progressbar.
-  return updateStepInProgressFileUpload(state, stepSlug, { nBytesUploaded: null })
+  return updateStepInProgressFileUpload(state, stepSlug, {
+    nBytesUploaded: null
+  })
 }
 
 function reduceCancelFulfilled (state, action) {

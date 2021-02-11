@@ -20,7 +20,9 @@ test('modify text', () => {
   )
 
   fireEvent.click(container.querySelector('[name="edit"]'))
-  fireEvent.change(container.querySelector('textarea'), { target: { value: '# other text' } })
+  fireEvent.change(container.querySelector('textarea'), {
+    target: { value: '# other text' }
+  })
   fireEvent.click(container.querySelector('button[type="submit"]'))
   expect(setBlockMarkdown).toHaveBeenCalledWith('block-text-a', '# other text')
   expect(container.querySelector('textarea')).toBe(null)
@@ -43,7 +45,9 @@ test('delete the block when removing all text', () => {
   )
 
   fireEvent.click(container.querySelector('[name="edit"]'))
-  fireEvent.change(container.querySelector('textarea'), { target: { value: '' } })
+  fireEvent.change(container.querySelector('textarea'), {
+    target: { value: '' }
+  })
   fireEvent.click(container.querySelector('button[type="submit"]'))
   expect(onClickDelete).toHaveBeenCalledWith('block-text-a')
   expect(container.querySelector('textarea')).toBe(null)

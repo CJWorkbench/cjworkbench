@@ -10,9 +10,15 @@ function createMutationCreator (type) {
 }
 
 export const createAddBlockMutation = createMutationCreator(REPORT_ADD_BLOCK)
-export const createDeleteBlockMutation = createMutationCreator(REPORT_DELETE_BLOCK)
-export const createReorderBlocksMutation = createMutationCreator(REPORT_REORDER_BLOCKS)
-export const createSetBlockMarkdownMutation = createMutationCreator(REPORT_SET_BLOCK_MARKDOWN)
+export const createDeleteBlockMutation = createMutationCreator(
+  REPORT_DELETE_BLOCK
+)
+export const createReorderBlocksMutation = createMutationCreator(
+  REPORT_REORDER_BLOCKS
+)
+export const createSetBlockMarkdownMutation = createMutationCreator(
+  REPORT_SET_BLOCK_MARKDOWN
+)
 
 function insert (array, position, value) {
   return [...array.slice(0, position), value, ...array.slice(position)]
@@ -44,10 +50,14 @@ function addBlockToCustomReport (state, slug, position, block) {
 
 function reportBlockToStateBlock (block) {
   switch (block.type) {
-    case 'chart': return { type: block.type, stepSlug: block.step.slug }
-    case 'table': return { type: block.type, tabSlug: block.tab.slug }
-    case 'text': return { type: block.type, markdown: block.markdown }
-    default: throw new Error('Unknown block type ' + block.type)
+    case 'chart':
+      return { type: block.type, stepSlug: block.step.slug }
+    case 'table':
+      return { type: block.type, tabSlug: block.tab.slug }
+    case 'text':
+      return { type: block.type, markdown: block.markdown }
+    default:
+      throw new Error('Unknown block type ' + block.type)
   }
 }
 
@@ -66,7 +76,11 @@ function addBlockToAutoReport (state, slug, position, block) {
     workflow: {
       ...state.workflow,
       hasCustomReport: true,
-      blockSlugs: insert(autoBlocks.map(b => b.slug), position, slug)
+      blockSlugs: insert(
+        autoBlocks.map(b => b.slug),
+        position,
+        slug
+      )
     },
     blocks: {
       ...autoBlocksBySlug,
@@ -117,7 +131,16 @@ function willReorder (oldSlugs, newSlugs) {
     return false // no-op
   }
 
-  if (oldSlugs.splice().sort().join('|') !== newSlugs.splice().sort().join('|')) {
+  if (
+    oldSlugs
+      .splice()
+      .sort()
+      .join('|') !==
+    newSlugs
+      .splice()
+      .sort()
+      .join('|')
+  ) {
     return false // wrong newSlugs
   }
 
@@ -140,7 +163,12 @@ function reorderBlocksInCustomReport (state, slugs) {
 
 function reorderBlocksInAutoReport (state, slugs) {
   const autoBlocks = selectAutoReport(state)
-  if (!willReorder(autoBlocks.map(b => b.slug), slugs)) {
+  if (
+    !willReorder(
+      autoBlocks.map(b => b.slug),
+      slugs
+    )
+  ) {
     return state
   }
 

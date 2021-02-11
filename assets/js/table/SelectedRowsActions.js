@@ -1,10 +1,19 @@
 /* eslint no-new-func: 0 */
 import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from '../components/Dropdown'
+import {
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from '../components/Dropdown'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
-import { addStepAction, setStepParamsAction, setSelectedStepAction } from '../workflow-reducer'
+import {
+  addStepAction,
+  setStepParamsAction,
+  setSelectedStepAction
+} from '../workflow-reducer'
 import { Plural, t } from '@lingui/macro'
 
 class Action extends PureComponent {
@@ -28,12 +37,15 @@ class Action extends PureComponent {
 
 export class SelectedRowsActions extends PureComponent {
   static propTypes = {
-    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired)
+      .isRequired,
     stepId: PropTypes.number, // or null/undefined if none selected
-    rowActionModules: PropTypes.arrayOf(PropTypes.shape({
-      idName: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired
-    }).isRequired).isRequired,
+    rowActionModules: PropTypes.arrayOf(
+      PropTypes.shape({
+        idName: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
     onClickRowsAction: PropTypes.func.isRequired // func(stepId, moduleIdName, rowString) => undefined
   }
 
@@ -80,7 +92,7 @@ export class SelectedRowsActions extends PureComponent {
     return partStrings.join(', ')
   }
 
-  handleClickAction = (idName) => {
+  handleClickAction = idName => {
     const { stepId } = this.props
 
     this.props.onClickRowsAction(stepId, idName, this.rowString)
@@ -90,7 +102,12 @@ export class SelectedRowsActions extends PureComponent {
     const { selectedRowIndexes, stepId, rowActionModules } = this.props
 
     const actions = rowActionModules.map(({ idName, title }) => (
-      <Action key={idName} idName={idName} title={title} onClick={this.handleClickAction} />
+      <Action
+        key={idName}
+        idName={idName}
+        title={title}
+        onClick={this.handleClickAction}
+      />
     ))
 
     const disabled = !stepId || selectedRowIndexes.length === 0
@@ -100,7 +117,10 @@ export class SelectedRowsActions extends PureComponent {
     return (
       <UncontrolledDropdown disabled={disabled}>
         <DropdownToggle
-          title={t({ id: 'js.table.SelectedRowsActions.menu', message: 'menu' })}
+          title={t({
+            id: 'js.table.SelectedRowsActions.menu',
+            message: 'menu'
+          })}
           className={rowSelect}
         >
           <Plural
@@ -111,16 +131,14 @@ export class SelectedRowsActions extends PureComponent {
             other='# rows selected'
           />
         </DropdownToggle>
-        <DropdownMenu>
-          {actions}
-        </DropdownMenu>
+        <DropdownMenu>{actions}</DropdownMenu>
       </UncontrolledDropdown>
     )
   }
 }
 
 const getModules = ({ modules }) => modules
-const getRowActionModules = createSelector([getModules], (modules) => {
+const getRowActionModules = createSelector([getModules], modules => {
   const rowActionModules = []
   for (const moduleIdName in modules) {
     const module = modules[moduleIdName]
@@ -200,11 +218,13 @@ function ensureStepForRowsAction (currentStepId, moduleIdName, rowsString) {
 
     // Fallback behavior: add new module with the given rows.
     function simplyAdd () {
-      return dispatch(addStepAction(
-        moduleIdName,
-        { afterStepId: currentStepId },
-        { rows: rowsString }
-      ))
+      return dispatch(
+        addStepAction(
+          moduleIdName,
+          { afterStepId: currentStepId },
+          { rows: rowsString }
+        )
+      )
     }
 
     // Does currentStepId point to the very module we're asking to add?
@@ -215,7 +235,12 @@ function ensureStepForRowsAction (currentStepId, moduleIdName, rowsString) {
     const currentStep = steps[String(currentStepId)]
     if (currentStep.module === moduleIdName) {
       const currentModule = modules[currentStep.module]
-      const newParams = maybeAddSelectedRowsToParams(currentModule, currentStep, rowsString, false)
+      const newParams = maybeAddSelectedRowsToParams(
+        currentModule,
+        currentStep,
+        rowsString,
+        false
+      )
       if (newParams !== null) {
         return dispatch(setStepParamsAction(currentStepId, newParams))
       }
@@ -237,7 +262,12 @@ function ensureStepForRowsAction (currentStepId, moduleIdName, rowsString) {
 
     if (nextStep.module === moduleIdName) {
       const nextModule = modules[nextStep.module]
-      const newParams = maybeAddSelectedRowsToParams(nextModule, nextStep, rowsString, true)
+      const newParams = maybeAddSelectedRowsToParams(
+        nextModule,
+        nextStep,
+        rowsString,
+        true
+      )
       if (newParams !== null) {
         dispatch(setSelectedStepAction(nextStepId))
         return dispatch(setStepParamsAction(nextStepId, newParams))
@@ -248,7 +278,7 @@ function ensureStepForRowsAction (currentStepId, moduleIdName, rowsString) {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     onClickRowsAction: (...args) => dispatch(ensureStepForRowsAction(...args))
   }

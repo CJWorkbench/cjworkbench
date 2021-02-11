@@ -61,7 +61,9 @@ export function select (slug) {
     }
 
     // Only send API request if we're read-write
-    const promise = workflow.read_only ? Promise.resolve(null) : api.setSelectedTab(slug)
+    const promise = workflow.read_only
+      ? Promise.resolve(null)
+      : api.setSelectedTab(slug)
     return dispatch({
       type: TAB_SELECT,
       payload: {
@@ -87,7 +89,11 @@ export function create (tabPrefix) {
     }
 
     const slug = generateSlug('tab-')
-    const name = util.generateTabName(new RegExp(util.escapeRegExp(tabPrefix) + ' (\\d+)'), tabPrefix + ' %d', tabNames)
+    const name = util.generateTabName(
+      new RegExp(util.escapeRegExp(tabPrefix) + ' (\\d+)'),
+      tabPrefix + ' %d',
+      tabNames
+    )
 
     return dispatch({
       type: TAB_CREATE,
@@ -116,14 +122,18 @@ export function duplicate (oldSlug) {
     const oldTab = tabs[oldSlug]
     const oldNameBase = oldTab.name.replace(/ \((\d+)\)$/, '')
     const slug = generateSlug('tab-')
-    const nameRegex = new RegExp(util.escapeRegExp(oldNameBase) + ' \\((\\d+)\\)')
+    const nameRegex = new RegExp(
+      util.escapeRegExp(oldNameBase) + ' \\((\\d+)\\)'
+    )
     const namePattern = oldNameBase + ' (%d)'
     const name = util.generateTabName(nameRegex, namePattern, tabNames)
 
     return dispatch({
       type: TAB_DUPLICATE,
       payload: {
-        promise: api.duplicateTab(oldSlug, slug, name).then(() => ({ slug, name })),
+        promise: api
+          .duplicateTab(oldSlug, slug, name)
+          .then(() => ({ slug, name })),
         data: {
           slug,
           name,

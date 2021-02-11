@@ -19,7 +19,11 @@ import Report from './Report'
  * a pane. (This is for <AddData>: its modal must appear atop the pane but not
  * atop the <PaneSelect>.)
  */
-const WorkflowEditor = memo(function WorkflowEditor ({ api, selectedPane, selectReportPane }) {
+const WorkflowEditor = memo(function WorkflowEditor ({
+  api,
+  selectedPane,
+  selectReportPane
+}) {
   const paneRef = useRef(null)
 
   return (
@@ -29,14 +33,14 @@ const WorkflowEditor = memo(function WorkflowEditor ({ api, selectedPane, select
         selectReportPane={selectReportPane}
       />
 
-      {selectedPane.pane === 'tab' ? (
-        <div className='workflow-columns' ref={paneRef}>
-          <StepList api={api} paneRef={paneRef} />
-          <OutputPane />
-        </div>
-      ) : (
-        <Report />
-      )}
+      {selectedPane.pane === 'tab'
+        ? (
+          <div className='workflow-columns' ref={paneRef}>
+            <StepList api={api} paneRef={paneRef} />
+            <OutputPane />
+          </div>
+          )
+        : <Report />}
     </>
   )
 })

@@ -4,13 +4,7 @@ import Confetti from 'react-dom-confetti'
 import { Trans } from '@lingui/macro'
 
 const ConfettiConfig = {
-  colors: [
-    '#FFAAD2',
-    '#48C8D7',
-    '#E24F4A',
-    '#FBAA6D',
-    '#EDECEC'
-  ]
+  colors: ['#FFAAD2', '#48C8D7', '#E24F4A', '#FBAA6D', '#EDECEC']
 }
 
 export default class LessonFooter extends PureComponent {
@@ -37,12 +31,23 @@ export default class LessonFooter extends PureComponent {
     const { isFinished } = this.state
 
     return (
-      <section className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}>
-        <a href='/lessons/' className='backToLessons'><Trans id='js.lessons.LessonFooter.training.link'>Training</Trans></a>
+      <section
+        className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}
+      >
+        <a href='/lessons/' className='backToLessons'>
+          <Trans id='js.lessons.LessonFooter.training.link'>Training</Trans>
+        </a>
         <h2>{title}</h2>
-        <div className='description' dangerouslySetInnerHTML={({ __html: html })} />
+        <div
+          className='description'
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
         <div className='confetti-wrapper'>
-          <Confetti active={isFinished} config={ConfettiConfig} className='confetti' />
+          <Confetti
+            active={isFinished}
+            config={ConfettiConfig}
+            className='confetti'
+          />
         </div>
       </section>
     )

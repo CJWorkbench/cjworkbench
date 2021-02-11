@@ -9,8 +9,15 @@ import { connect } from 'react-redux'
 import Modules from './Modules'
 import Search from './Search'
 
-export const Modal = memo(function Modal ({ modules, tabSlug, close, addStep }) {
-  const onSelectModule = useCallback(moduleIdName => addStep(tabSlug, moduleIdName))
+export const Modal = memo(function Modal ({
+  modules,
+  tabSlug,
+  close,
+  addStep
+}) {
+  const onSelectModule = useCallback(moduleIdName =>
+    addStep(tabSlug, moduleIdName)
+  )
   const [search, setSearch] = useState('')
 
   return (
@@ -18,7 +25,10 @@ export const Modal = memo(function Modal ({ modules, tabSlug, close, addStep }) 
       <header>
         <div className='title'>
           <h5>
-            <Trans id='js.WorkflowEditor.AddData.Modal.header.title' comment='This should be all-caps for styling reasons'>
+            <Trans
+              id='js.WorkflowEditor.AddData.Modal.header.title'
+              comment='This should be all-caps for styling reasons'
+            >
               CHOOSE A DATA SOURCE
             </Trans>
           </h5>
@@ -27,12 +37,14 @@ export const Modal = memo(function Modal ({ modules, tabSlug, close, addStep }) 
             type='button'
             className='close'
             aria-label='Close'
-            title={t({ id: 'js.WorkflowEditor.AddData.Modal.closeButton.hoverText', message: 'Close' })}
+            title={t({
+              id: 'js.WorkflowEditor.AddData.Modal.closeButton.hoverText',
+              message: 'Close'
+            })}
             onClick={close}
           >
             ×
           </button>
-
         </div>
         <Search value={search} onChange={setSearch} />
       </header>
@@ -50,25 +62,32 @@ Modal.propTypes = {
 
 const NameCollator = new Intl.Collator()
 const getModules = ({ modules }) => modules
-const getLoadDataModules = createSelector([getModules, lessonSelector], (modules, { testHighlight }) => {
-  return Object.values(modules)
-    .filter(m => m.loads_data && !m.deprecated)
-    .sort((a, b) => NameCollator.compare(a.name, b.name))
-    .map(m => ({
-      idName: m.id_name,
-      isLessonHighlight: testHighlight({ type: 'Module', id_name: m.id_name, index: 0 }),
-      name: m.name,
-      description: m.description,
-      icon: m.icon,
-      category: m.category
-    }))
-})
+const getLoadDataModules = createSelector(
+  [getModules, lessonSelector],
+  (modules, { testHighlight }) => {
+    return Object.values(modules)
+      .filter(m => m.loads_data && !m.deprecated)
+      .sort((a, b) => NameCollator.compare(a.name, b.name))
+      .map(m => ({
+        idName: m.id_name,
+        isLessonHighlight: testHighlight({
+          type: 'Module',
+          id_name: m.id_name,
+          index: 0
+        }),
+        name: m.name,
+        description: m.description,
+        icon: m.icon,
+        category: m.category
+      }))
+  }
+)
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   modules: getLoadDataModules(state)
 })
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   addStep: (tabSlug, moduleIdName) => {
     dispatch(addStepAction(moduleIdName, { tabSlug, index: 0 }, {}))
   }

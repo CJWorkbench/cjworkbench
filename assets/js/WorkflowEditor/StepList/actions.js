@@ -43,16 +43,17 @@ export function reorderStep (tabSlug, stepSlug, position) {
       type: STEP_LIST_REORDER_STEPS,
       payload: {
         data,
-        promise: (
-          removePendingMutationOnError(api.reorderSteps(data), dispatch, mutationId)
-            .catch(err => {
-              // Shouldn't really be a _warning_ if the call fails because of a
-              // race. And we shouldn't really catch if the call failed because
-              // of a network error. TODO inspect server response to figure out
-              // whether to catch or not
-              console.warn('reorderSteps failed', err)
-            })
-        )
+        promise: removePendingMutationOnError(
+          api.reorderSteps(data),
+          dispatch,
+          mutationId
+        ).catch(err => {
+          // Shouldn't really be a _warning_ if the call fails because of a
+          // race. And we shouldn't really catch if the call failed because
+          // of a network error. TODO inspect server response to figure out
+          // whether to catch or not
+          console.warn('reorderSteps failed', err)
+        })
       }
     })
   }

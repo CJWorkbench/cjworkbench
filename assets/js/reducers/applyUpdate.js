@@ -1,5 +1,12 @@
 export default function applyUpdate (state, update) {
-  let { workflow, steps, tabs, blocks, pendingTabs, pendingMutations = [] } = state
+  let {
+    workflow,
+    steps,
+    tabs,
+    blocks,
+    pendingTabs,
+    pendingMutations = []
+  } = state
 
   if (update.updateWorkflow) {
     workflow = {
@@ -12,7 +19,7 @@ export default function applyUpdate (state, update) {
     steps = { ...steps }
 
     if (update.updateSteps) {
-      for (const stepId in (update.updateSteps || {})) {
+      for (const stepId in update.updateSteps || {}) {
         steps[stepId] = {
           ...steps[stepId],
           ...update.updateSteps[stepId]
@@ -22,7 +29,7 @@ export default function applyUpdate (state, update) {
 
     if (update.clearStepIds) {
       steps = { ...steps }
-      for (const stepId of (update.clearStepIds || [])) {
+      for (const stepId of update.clearStepIds || []) {
         delete steps[String(stepId)]
       }
     }
@@ -32,9 +39,11 @@ export default function applyUpdate (state, update) {
     tabs = { ...tabs }
     pendingTabs = { ...(pendingTabs || {}) } // shallow copy
 
-    for (const tabSlug in (update.updateTabs || {})) {
+    for (const tabSlug in update.updateTabs || {}) {
       const tabUpdate = update.updateTabs[tabSlug]
-      const oldPosition = tabs[tabSlug] ? tabs[tabSlug].selected_step_position : null
+      const oldPosition = tabs[tabSlug]
+        ? tabs[tabSlug].selected_step_position
+        : null
       tabs[tabSlug] = {
         ...tabs[tabSlug],
         ...tabUpdate
@@ -48,16 +57,20 @@ export default function applyUpdate (state, update) {
       delete pendingTabs[tabSlug] // if it's a pendingTab
     }
 
-    for (const tabSlug of (update.clearTabSlugs || [])) {
+    for (const tabSlug of update.clearTabSlugs || []) {
       delete tabs[tabSlug]
       delete pendingTabs[tabSlug]
     }
   }
 
   if (update.updateBlocks || update.clearBlockSlugs) {
-    blocks = update.updateBlocks ? { ...blocks, ...update.updateBlocks } : { ...blocks }
+    blocks = update.updateBlocks
+      ? { ...blocks, ...update.updateBlocks }
+      : { ...blocks }
     if (update.clearBlockSlugs) {
-      update.clearBlockSlugs.forEach(slug => { delete blocks[slug] })
+      update.clearBlockSlugs.forEach(slug => {
+        delete blocks[slug]
+      })
     }
   }
 

@@ -40,13 +40,15 @@ class OpenModal extends PureComponent {
    * Implements the algorithm described at:
    * https://developers.google.com/web/fundamentals/accessibility/focus/using-tabindex
    */
-  moveFocusBy = (by) => {
+  moveFocusBy = by => {
     if (!this.modalRef.current) return
 
     const oldActiveElement = document.activeElement
 
     // els should never be zero-length: the "close" button is tab-indexable
-    const els = [...this.modalRef.current.querySelectorAll(FocusableElementsSelector)]
+    const els = [
+      ...this.modalRef.current.querySelectorAll(FocusableElementsSelector)
+    ]
     const index = els.indexOf(oldActiveElement) // may be -1
 
     let nextIndex = index
@@ -72,7 +74,7 @@ class OpenModal extends PureComponent {
     if (this.previouslyFocusedElement) this.previouslyFocusedElement.focus()
   }
 
-  handleMouseDown = (ev) => {
+  handleMouseDown = ev => {
     if (ev.target === this.modalRef.current) {
       this.props.toggle(ev)
     }
@@ -84,7 +86,7 @@ class OpenModal extends PureComponent {
    * * "Escape" -> close dialog
    * * "Tab" / "Shift-Tab" -> select next/previous element
    */
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     switch (ev.key) {
       case 'Tab':
         ev.preventDefault()
@@ -109,7 +111,7 @@ class OpenModal extends PureComponent {
     const dialogClassNames = ['modal-dialog']
     if (size) dialogClassNames.push(`modal-${size}`)
 
-    return ReactDOM.createPortal((
+    return ReactDOM.createPortal(
       <ModalContext.Provider value={modalContext}>
         <div className='modal-backdrop' />
         <div
@@ -121,11 +123,12 @@ class OpenModal extends PureComponent {
           role='dialog'
         >
           <div className={dialogClassNames.join(' ')} role='document'>
-            <div className='modal-content' children={children} />
+            <div className='modal-content'>{children}</div>
           </div>
         </div>
-      </ModalContext.Provider>
-    ), document.body)
+      </ModalContext.Provider>,
+      document.body
+    )
   }
 }
 

@@ -12,7 +12,8 @@ export default class TableInfo extends PureComponent {
     nColumns: PropTypes.number, // or null if unknown
     isReadOnly: PropTypes.bool.isRequired,
     stepId: PropTypes.number, // or null if none selected
-    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired
+    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired)
+      .isRequired
   }
 
   state = {
@@ -23,23 +24,36 @@ export default class TableInfo extends PureComponent {
     this.setState({ isExportModalOpen: true })
   }
 
-  closeExportModal = (ev) => {
+  closeExportModal = ev => {
     this.setState({ isExportModalOpen: false })
   }
 
   render () {
-    const { nRows, nColumns, stepId, selectedRowIndexes, isReadOnly } = this.props
+    const {
+      nRows,
+      nColumns,
+      stepId,
+      selectedRowIndexes,
+      isReadOnly
+    } = this.props
     const { isExportModalOpen } = this.state
 
-    const nRowsString = nRows === null ? '' : numberFormat.format(nRows)
-    const nColumnsString = nColumns === null ? '' : numberFormat.format(nColumns)
+    const nRowsString = nRows === null
+      ? ''
+      : numberFormat.format(nRows)
+    const nColumnsString = nColumns === null
+      ? ''
+      : numberFormat.format(nColumns)
 
     return (
       <div className='outputpane-header'>
         <div className='table-info-container'>
           <div className='table-info'>
             <div className='data'>
-              <Trans id='js.table.TableInfo.rows' comment='This should be all-caps for styling reasons'>
+              <Trans
+                id='js.table.TableInfo.rows'
+                comment='This should be all-caps for styling reasons'
+              >
                 ROWS
               </Trans>
             </div>
@@ -47,35 +61,45 @@ export default class TableInfo extends PureComponent {
           </div>
           <div className='table-info'>
             <div className='data'>
-              <Trans id='js.table.TableInfo.columns' comment='This should be all-caps for styling reasons'>
+              <Trans
+                id='js.table.TableInfo.columns'
+                comment='This should be all-caps for styling reasons'
+              >
                 COLUMNS
               </Trans>
             </div>
             <div className='value'>{nColumnsString}</div>
           </div>
-          {isReadOnly ? null : (
-            <SelectedRowsActions
-              selectedRowIndexes={selectedRowIndexes}
-              stepId={stepId}
-            />
-          )}
+          {isReadOnly
+            ? null
+            : (
+              <SelectedRowsActions
+                selectedRowIndexes={selectedRowIndexes}
+                stepId={stepId}
+              />
+              )}
         </div>
 
-        {!stepId ? null : (
-          <>
-            <button className='export-table' onClick={this.handleClickExport}>
-              <i className='icon-download' />
-              <Trans id='js.table.TableInfo.export' comment='This should be all-caps for styling reasons'>
-                EXPORT
-              </Trans>
-            </button>
-            <ExportModal
-              open={isExportModalOpen}
-              stepId={stepId}
-              toggle={this.closeExportModal}
-            />
-          </>
-        )}
+        {!stepId
+          ? null
+          : (
+            <>
+              <button className='export-table' onClick={this.handleClickExport}>
+                <i className='icon-download' />
+                <Trans
+                  id='js.table.TableInfo.export'
+                  comment='This should be all-caps for styling reasons'
+                >
+                  EXPORT
+                </Trans>
+              </button>
+              <ExportModal
+                open={isExportModalOpen}
+                stepId={stepId}
+                toggle={this.closeExportModal}
+              />
+            </>
+            )}
       </div>
     )
   }

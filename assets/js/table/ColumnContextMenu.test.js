@@ -28,7 +28,9 @@ describe('ColumnContextMenu', () => {
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.drop-column').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('selectcolumns', false, { keep: false })
+    expect(onClickAction).toHaveBeenCalledWith('selectcolumns', false, {
+      keep: false
+    })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.rename-column-header').simulate('click')
@@ -44,10 +46,14 @@ describe('ColumnContextMenu', () => {
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-ascending').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('sort', false, { is_ascending: true })
+    expect(onClickAction).toHaveBeenCalledWith('sort', false, {
+      is_ascending: true
+    })
 
     wrapper.find('button').simulate('click') // open dropdown
     wrapper.find('DropdownItem.sort-descending').simulate('click')
-    expect(onClickAction).toHaveBeenCalledWith('sort', false, { is_ascending: false })
+    expect(onClickAction).toHaveBeenCalledWith('sort', false, {
+      is_ascending: false
+    })
   })
 })

@@ -7,9 +7,7 @@ import { workflowReducer } from './workflow-reducer'
 
 // Returns new mock function that returns given json. Used for mocking "get" API calls
 export function jsonResponseMock (json) {
-  return jest.fn().mockImplementation(() =>
-    Promise.resolve(json)
-  )
+  return jest.fn().mockImplementation(() => Promise.resolve(json))
 }
 
 // Returns new mock function that gives an OK HTTP response. Use for mocking "set" API calls
@@ -44,7 +42,9 @@ export function sleep (ms) {
  */
 export function createConditionVariable () {
   let notify
-  const promise = new Promise(resolve => { notify = resolve })
+  const promise = new Promise(resolve => {
+    notify = resolve
+  })
   return [notify, promise]
 }
 
@@ -63,7 +63,15 @@ export function createConditionVariable () {
  *     expect(store.getState().workflow).toEqual(...)
  */
 export function mockStore (initialState, api = {}) {
-  const middlewares = [errorMiddleware(), promiseMiddleware, thunk.withExtraArgument(api)]
-  const store = createStore(workflowReducer, initialState, applyMiddleware(...middlewares))
+  const middlewares = [
+    errorMiddleware(),
+    promiseMiddleware,
+    thunk.withExtraArgument(api)
+  ]
+  const store = createStore(
+    workflowReducer,
+    initialState,
+    applyMiddleware(...middlewares)
+  )
   return store
 }

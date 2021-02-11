@@ -8,9 +8,12 @@ import { Trans } from '@lingui/macro'
 
 function ColumnType (props) {
   switch (props.columnType) {
-    case 'text': return <Trans id='js.table.ColumnHeader.types.text'>text</Trans>
-    case 'number': return <Trans id='js.table.ColumnHeader.types.number'>number</Trans>
-    case 'timestamp': return <Trans id='js.table.ColumnHeader.types.timestamp'>timestamp</Trans>
+    case 'text':
+      return <Trans id='js.table.ColumnHeader.types.text'>text</Trans>
+    case 'number':
+      return <Trans id='js.table.ColumnHeader.types.number'>number</Trans>
+    case 'timestamp':
+      return <Trans id='js.table.ColumnHeader.types.timestamp'>timestamp</Trans>
   }
 }
 ColumnType.propTypes = {
@@ -33,23 +36,23 @@ class ReorderColumnDropZone extends PureComponent {
     }
   }
 
-  handleDragEnter = (ev) => {
+  handleDragEnter = ev => {
     this.setState({
       isDragHover: true
     })
   }
 
-  handleDragLeave = (ev) => {
+  handleDragLeave = ev => {
     this.setState({
       isDragHover: false
     })
   }
 
-  handleDragOver = (ev) => {
+  handleDragOver = ev => {
     ev.preventDefault() // allow drop by preventing the default, which is "no drop"
   }
 
-  handleDrop = (ev) => {
+  handleDrop = ev => {
     const { fromIndex, toIndex, onDropColumnIndexAtIndex } = this.props
     onDropColumnIndexAtIndex(fromIndex, toIndex)
   }
@@ -76,7 +79,9 @@ export class EditableColumnName extends Component {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
     onRename: PropTypes.func.isRequired,
-    inputRef: PropTypes.shape({ current: PropTypes.instanceOf(window.HTMLElement) }).isRequired,
+    inputRef: PropTypes.shape({
+      current: PropTypes.instanceOf(window.HTMLElement)
+    }).isRequired,
     isReadOnly: PropTypes.bool.isRequired
   }
 
@@ -105,7 +110,7 @@ export class EditableColumnName extends Component {
     this.setState({ editMode: false })
   }
 
-  handleInputChange = (ev) => {
+  handleInputChange = ev => {
     this.setState({ newName: ev.target.value })
   }
 
@@ -125,7 +130,7 @@ export class EditableColumnName extends Component {
     this.handleInputCommit()
   }
 
-  handleInputKeyDown = (ev) => {
+  handleInputKeyDown = ev => {
     // Changed to keyDown as esc does not fire keyPress
     if (ev.key === 'Enter') {
       this.handleInputCommit()
@@ -153,13 +158,8 @@ export class EditableColumnName extends Component {
       )
     } else {
       return (
-        <span
-          className='column-key'
-          onClick={this.handleEnterEditMode}
-        >
-          <div className='value'>
-            {this.state.newName}
-          </div>
+        <span className='column-key' onClick={this.handleEnterEditMode}>
+          <div className='value'>{this.state.newName}</div>
           <div className='column-type'>
             <ColumnType columnType={this.props.columnType} />
           </div>
@@ -197,7 +197,12 @@ export class ColumnHeader extends PureComponent {
       columnKey: this.props.columnKey
     }
 
-    this.props.dispatchTableAction(this.props.stepId, idName, forceNewModule, params)
+    this.props.dispatchTableAction(
+      this.props.stepId,
+      idName,
+      forceNewModule,
+      params
+    )
   }
 
   startRename = () => {
@@ -205,7 +210,10 @@ export class ColumnHeader extends PureComponent {
   }
 
   handleRename = ({ prevName, newName }) => {
-    this.props.dispatchTableAction(this.props.stepId, 'renamecolumns', false, { prevName, newName })
+    this.props.dispatchTableAction(this.props.stepId, 'renamecolumns', false, {
+      prevName,
+      newName
+    })
   }
 
   handleMouseEnter = () => {
@@ -216,7 +224,7 @@ export class ColumnHeader extends PureComponent {
     this.setState({ isHovered: false })
   }
 
-  handleDragStart = (ev) => {
+  handleDragStart = ev => {
     if (this.props.isReadOnly) {
       ev.preventDefault()
       return
@@ -249,17 +257,14 @@ export class ColumnHeader extends PureComponent {
   }
 
   render () {
-    const {
-      columnKey,
-      columnType,
-      index,
-      draggingColumnIndex
-    } = this.props
+    const { columnKey, columnType, index, draggingColumnIndex } = this.props
 
     const columnMenuSection = this.renderColumnMenu()
 
     const maybeDropZone = (leftOrRight, toIndex) => {
-      if (draggingColumnIndex === null || draggingColumnIndex === undefined) return null
+      if (draggingColumnIndex === null || draggingColumnIndex === undefined) {
+        return null
+      }
       if (draggingColumnIndex === toIndex) return null
 
       // Also, dragging to fromIndex+1 is a no-op
@@ -275,7 +280,7 @@ export class ColumnHeader extends PureComponent {
       )
     }
 
-    const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
+    const draggingClass = draggingColumnIndex === index ? 'dragging' : ''
 
     return (
       <>

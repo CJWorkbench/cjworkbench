@@ -19,39 +19,51 @@ describe('ImportModuleFromGitHub', () => {
 
   it('should load and replace a module', async () => {
     const api = {
-      importModuleFromGitHub: jest.fn().mockImplementation(() => Promise.resolve({
-        id_name: 'b',
-        author: 'Aut',
-        name: 'yay',
-        category: 'Other'
-      }))
+      importModuleFromGitHub: jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          id_name: 'b',
+          author: 'Aut',
+          name: 'yay',
+          category: 'Other'
+        })
+      )
     }
-    const store = mockStore({
-      modules: {
-        a: { foo: 'bar' }
+    const store = mockStore(
+      {
+        modules: {
+          a: { foo: 'bar' }
+        },
+        loggedInUser: { is_staff: true }
       },
-      loggedInUser: { is_staff: true }
-    }, null)
+      null
+    )
     const w = wrapper(store, { api })
     w.find('input').instance().value = 'https://github.com/example/repo'
     w.find('form').simulate('submit')
 
-    expect(api.importModuleFromGitHub).toHaveBeenCalledWith('https://github.com/example/repo')
+    expect(api.importModuleFromGitHub).toHaveBeenCalledWith(
+      'https://github.com/example/repo'
+    )
     await tick()
     expect(store.getState().modules).toEqual({
       a: { foo: 'bar' },
       b: { id_name: 'b', author: 'Aut', category: 'Other', name: 'yay' }
     })
 
-    expect(w.find('.import-github-success').text()).toEqual('Imported module yay')
+    expect(w.find('.import-github-success').text()).toEqual(
+      'Imported module yay'
+    )
   })
 
   it('should display a link but no form for non-staff users', () => {
     const api = { importModuleFromGitHub: jest.fn() }
-    const store = mockStore({
-      modules: {},
-      loggedInUser: { is_staff: false }
-    }, null)
+    const store = mockStore(
+      {
+        modules: {},
+        loggedInUser: { is_staff: false }
+      },
+      null
+    )
     const w = wrapper(store, { api })
     expect(w.find('input')).toHaveLength(0)
     expect(w.find('Trans[message*="<0>here</0>"]')).toHaveLength(1) // external link => to docs

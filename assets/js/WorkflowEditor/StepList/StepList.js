@@ -11,7 +11,9 @@ import { Trans } from '@lingui/macro'
 function EmptyReadOnlyStepList () {
   return (
     <div className='empty-read-only'>
-      <Trans id='js.WorkflowEditor.StepList.EmptyReadOnlyStepList'>This Tab has no Steps.</Trans>
+      <Trans id='js.WorkflowEditor.StepList.EmptyReadOnlyStepList'>
+        This Tab has no Steps.
+      </Trans>
     </div>
   )
 }
@@ -27,7 +29,11 @@ function EmptyReadOnlyStepList () {
  * and no `addDataStep`, and the server will actually try and render that.
  */
 function partitionSteps (steps, modules) {
-  if (steps[0] && modules[steps[0].module] && modules[steps[0].module].loads_data) {
+  if (
+    steps[0] &&
+    modules[steps[0].module] &&
+    modules[steps[0].module].loads_data
+  ) {
     return [steps[0], steps.slice(1)]
   } else {
     return [null, steps]
@@ -40,13 +46,16 @@ export default class StepList extends Component {
     tabSlug: PropTypes.string,
     selected_step_position: PropTypes.number,
     steps: PropTypes.arrayOf(PropTypes.object).isRequired,
-    modules: PropTypes.objectOf(PropTypes.shape({ loads_data: PropTypes.bool.isRequired })).isRequired,
+    modules: PropTypes.objectOf(
+      PropTypes.shape({ loads_data: PropTypes.bool.isRequired })
+    ).isRequired,
     reorderStep: PropTypes.func.isRequired, // func(tabSlug, oldIndex, newIndex) => undefined
     deleteStep: PropTypes.func.isRequired,
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
     isReadOnly: PropTypes.bool.isRequired,
     /** <WorkflowEditor/Pane> container, where the dialog will open */
-    paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
+    paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) })
+      .isRequired
   }
 
   // Track state of where we last auto-scrolled.
@@ -108,7 +117,7 @@ export default class StepList extends Component {
     }
   }
 
-  handleDragStart = (obj) => {
+  handleDragStart = obj => {
     this.setState({
       draggedStep: obj
     })
@@ -198,38 +207,44 @@ export default class StepList extends Component {
 
     return (
       <div className={className} ref={this.scrollRef}>
-        {isReadOnly && steps.length === 0 ? (
-          <EmptyReadOnlyStepList />
-        ) : (
-          <>
-            <AddData
-              key='add-data'
-              tabSlug={tabSlug}
-              isLessonHighlight={this.props.testLessonHighlightIndex(0)}
-              isReadOnly={this.props.isReadOnly}
-              step={addDataStep}
-              isSelected={!!addDataStep && this.props.selected_step_position === 0}
-              isZenMode={addDataStep && zenModeStepId === addDataStep.id}
-              api={this.props.api}
-              deleteStep={this.props.deleteStep}
-              setZenMode={this.setZenMode}
-              paneRef={paneRef}
-            />
-            {spotsAndItems}
-            {steps.length > 0 ? (
-              <StepListInsertSpot
-                key='last'
-                index={steps.length}
+        {isReadOnly && steps.length === 0
+          ? <EmptyReadOnlyStepList />
+          : (
+            <>
+              <AddData
+                key='add-data'
                 tabSlug={tabSlug}
-                isLast
-                draggedStep={draggedStep}
-                reorderStep={this.reorderStep}
-                isLessonHighlight={this.props.testLessonHighlightIndex(steps.length)}
-                isReadOnly={isReadOnly}
+                isLessonHighlight={this.props.testLessonHighlightIndex(0)}
+                isReadOnly={this.props.isReadOnly}
+                step={addDataStep}
+                isSelected={
+                !!addDataStep && this.props.selected_step_position === 0
+              }
+                isZenMode={addDataStep && zenModeStepId === addDataStep.id}
+                api={this.props.api}
+                deleteStep={this.props.deleteStep}
+                setZenMode={this.setZenMode}
+                paneRef={paneRef}
               />
-            ) : null}
-          </>
-        )}
+              {spotsAndItems}
+              {steps.length > 0
+                ? (
+                  <StepListInsertSpot
+                    key='last'
+                    index={steps.length}
+                    tabSlug={tabSlug}
+                    isLast
+                    draggedStep={draggedStep}
+                    reorderStep={this.reorderStep}
+                    isLessonHighlight={this.props.testLessonHighlightIndex(
+                      steps.length
+                    )}
+                    isReadOnly={isReadOnly}
+                  />
+                  )
+                : null}
+            </>
+            )}
       </div>
     )
   }

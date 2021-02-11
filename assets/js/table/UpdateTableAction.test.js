@@ -1,14 +1,24 @@
 /* globals it, jest, expect, describe, beforeEach, afterEach */
 import { updateTableAction } from './UpdateTableAction'
-import { addStepAction, setStepParamsAction, setSelectedStepAction } from '../workflow-reducer'
+import {
+  addStepAction,
+  setStepParamsAction,
+  setSelectedStepAction
+} from '../workflow-reducer'
 
 jest.mock('../workflow-reducer')
 
 describe('UpdateTableAction actions', () => {
   beforeEach(() => {
     addStepAction.mockImplementation((...args) => ['addStepAction', ...args])
-    setStepParamsAction.mockImplementation((...args) => ['setStepParamsAction', ...args])
-    setSelectedStepAction.mockImplementation((...args) => ['setSelectedStepAction', ...args])
+    setStepParamsAction.mockImplementation((...args) => [
+      'setStepParamsAction',
+      ...args
+    ])
+    setSelectedStepAction.mockImplementation((...args) => [
+      'setSelectedStepAction',
+      ...args
+    ])
   })
 
   let _alert
@@ -32,7 +42,10 @@ describe('UpdateTableAction actions', () => {
       }
     })
 
-    updateTableAction(17, 'filter', true, { columnKey: 'A' })(dispatch, getState)
+    updateTableAction(17, 'filter', true, { columnKey: 'A' })(
+      dispatch,
+      getState
+    )
     expect(window.alert).toHaveBeenCalledWith("Module 'filter' not imported.")
     expect(dispatch).not.toHaveBeenCalled()
   })
@@ -44,7 +57,11 @@ describe('UpdateTableAction actions', () => {
       },
       steps: {
         10: { tab_slug: 'tab-2' },
-        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] } }
+        11: {
+          tab_slug: 'tab-2',
+          module: 'duplicatecolumns',
+          params: { colnames: ['A'] }
+        }
       },
       modules: {
         loadurl: {},
@@ -52,9 +69,16 @@ describe('UpdateTableAction actions', () => {
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(10, 'duplicatecolumns', false, { columnKey: 'B' })(dispatch, getState)
+    updateTableAction(10, 'duplicatecolumns', false, { columnKey: 'B' })(
+      dispatch,
+      getState
+    )
     expect(dispatch).toHaveBeenCalledWith(['setSelectedStepAction', 11])
-    expect(dispatch).toHaveBeenCalledWith(['setStepParamsAction', 11, { colnames: ['A', 'B'] }])
+    expect(dispatch).toHaveBeenCalledWith([
+      'setStepParamsAction',
+      11,
+      { colnames: ['A', 'B'] }
+    ])
   })
 
   it('should insert a new module when the current+next have the wrong id_name', () => {
@@ -74,8 +98,16 @@ describe('UpdateTableAction actions', () => {
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith(['addStepAction', 'clean-text', { afterStepId: 11 }, { colnames: ['B'] }])
+    updateTableAction(11, 'clean-text', false, { columnKey: 'B' })(
+      dispatch,
+      getState
+    )
+    expect(dispatch).toHaveBeenCalledWith([
+      'addStepAction',
+      'clean-text',
+      { afterStepId: 11 },
+      { colnames: ['B'] }
+    ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
@@ -86,7 +118,11 @@ describe('UpdateTableAction actions', () => {
       },
       steps: {
         10: {},
-        11: { tab_slug: 'tab-2', module: 'duplicatecolumns', params: { colnames: ['A'] } }
+        11: {
+          tab_slug: 'tab-2',
+          module: 'duplicatecolumns',
+          params: { colnames: ['A'] }
+        }
       },
       modules: {
         loadurl: {},
@@ -94,8 +130,15 @@ describe('UpdateTableAction actions', () => {
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(11, 'duplicatecolumns', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith(['setStepParamsAction', 11, { colnames: ['A', 'B'] }])
+    updateTableAction(11, 'duplicatecolumns', false, { columnKey: 'B' })(
+      dispatch,
+      getState
+    )
+    expect(dispatch).toHaveBeenCalledWith([
+      'setStepParamsAction',
+      11,
+      { colnames: ['A', 'B'] }
+    ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
@@ -113,27 +156,35 @@ describe('UpdateTableAction actions', () => {
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(10, 'filter', true, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith(['addStepAction', 'filter', { afterStepId: 10 }, {
-      keep: true,
-      condition: {
-        operation: 'and',
-        conditions: [
-          {
-            operation: 'and',
-            conditions: [
-              {
-                operation: '',
-                column: 'B',
-                value: '',
-                isCaseSensitive: false,
-                isRegex: false
-              }
-            ]
-          }
-        ]
+    updateTableAction(10, 'filter', true, { columnKey: 'B' })(
+      dispatch,
+      getState
+    )
+    expect(dispatch).toHaveBeenCalledWith([
+      'addStepAction',
+      'filter',
+      { afterStepId: 10 },
+      {
+        keep: true,
+        condition: {
+          operation: 'and',
+          conditions: [
+            {
+              operation: 'and',
+              conditions: [
+                {
+                  operation: '',
+                  column: 'B',
+                  value: '',
+                  isCaseSensitive: false,
+                  isRegex: false
+                }
+              ]
+            }
+          ]
+        }
       }
-    }])
+    ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 
@@ -151,27 +202,35 @@ describe('UpdateTableAction actions', () => {
       }
     })
     const dispatch = jest.fn()
-    updateTableAction(11, 'filter', false, { columnKey: 'B' })(dispatch, getState)
-    expect(dispatch).toHaveBeenCalledWith(['addStepAction', 'filter', { afterStepId: 11 }, {
-      keep: true,
-      condition: {
-        operation: 'and',
-        conditions: [
-          {
-            operation: 'and',
-            conditions: [
-              {
-                operation: '',
-                column: 'B',
-                value: '',
-                isCaseSensitive: false,
-                isRegex: false
-              }
-            ]
-          }
-        ]
+    updateTableAction(11, 'filter', false, { columnKey: 'B' })(
+      dispatch,
+      getState
+    )
+    expect(dispatch).toHaveBeenCalledWith([
+      'addStepAction',
+      'filter',
+      { afterStepId: 11 },
+      {
+        keep: true,
+        condition: {
+          operation: 'and',
+          conditions: [
+            {
+              operation: 'and',
+              conditions: [
+                {
+                  operation: '',
+                  column: 'B',
+                  value: '',
+                  isCaseSensitive: false,
+                  isRegex: false
+                }
+              ]
+            }
+          ]
+        }
       }
-    }])
+    ])
     expect(dispatch).toHaveBeenCalledTimes(1) // no 'select' call
   })
 })

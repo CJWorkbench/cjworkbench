@@ -27,7 +27,12 @@ function init ({ nTileRows, nTileColumns }) {
 }
 
 function handleFetchSuccess (state, { tileRow, tileColumn, rows }) {
-  const sparseTileGrid = placeTile(state.sparseTileGrid, tileRow, tileColumn, rows)
+  const sparseTileGrid = placeTile(
+    state.sparseTileGrid,
+    tileRow,
+    tileColumn,
+    rows
+  )
   return {
     ...state,
     sparseTileGrid,
@@ -36,7 +41,9 @@ function handleFetchSuccess (state, { tileRow, tileColumn, rows }) {
 }
 
 function handleFetchError (state, { tileRow, tileColumn, error }) {
-  const sparseTileGrid = placeTile(state.sparseTileGrid, tileRow, tileColumn, { error })
+  const sparseTileGrid = placeTile(state.sparseTileGrid, tileRow, tileColumn, {
+    error
+  })
   return {
     ...state,
     sparseTileGrid,
@@ -61,7 +68,9 @@ function handleSetWantedTileRange (state, r1, r2, c1, c2) {
     ...state,
     sparseTileGrid,
     wantedTileRange,
-    loadingTile: state.loadingTile || findWantedLoadingTile(sparseTileGrid, ...wantedTileRange)
+    loadingTile:
+      state.loadingTile ||
+      findWantedLoadingTile(sparseTileGrid, ...wantedTileRange)
   }
 }
 
@@ -121,9 +130,16 @@ function reducer (state, action) {
  */
 export default function useTiles (props) {
   const { fetchTile, nTileRows, nTileColumns } = props
-  const [{ sparseTileGrid, loadingTile }, dispatch] = useReducer(reducer, { nTileRows, nTileColumns }, init)
+  const [{ sparseTileGrid, loadingTile }, dispatch] = useReducer(
+    reducer,
+    { nTileRows, nTileColumns },
+    init
+  )
   const isLoading = loadingTile !== null
-  const setWantedTileRange = useCallback((...payload) => dispatch({ type: 'setWantedTileRange', payload }), [dispatch])
+  const setWantedTileRange = useCallback(
+    (...payload) => dispatch({ type: 'setWantedTileRange', payload }),
+    [dispatch]
+  )
 
   useEffect(() => {
     if (loadingTile === null) return
@@ -146,7 +162,10 @@ export default function useTiles (props) {
             payload: {
               tileRow,
               tileColumn,
-              error: { type: 'httpStatusNotOk', httpStatus: `${response.status} ${response.statusText}` }
+              error: {
+                type: 'httpStatusNotOk',
+                httpStatus: `${response.status} ${response.statusText}`
+              }
             }
           })
         }

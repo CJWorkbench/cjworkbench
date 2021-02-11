@@ -24,11 +24,7 @@ export default class VersionSelect extends PureComponent {
     if (isReadOnly) return null
 
     return (
-      <button
-        name={name}
-        type='submit'
-        disabled={isStepBusy}
-      >
+      <button name={name} type='submit' disabled={isStepBusy}>
         {isStepBusy ? <i className='spinner' /> : null}
         {label}
       </button>
@@ -40,10 +36,7 @@ export default class VersionSelect extends PureComponent {
 
     return (
       <div className='version-select'>
-        <UpdateFrequencySelect
-          stepId={stepId}
-          isReadOnly={isReadOnly}
-        />
+        <UpdateFrequencySelect stepId={stepId} isReadOnly={isReadOnly} />
         <div className='version-row'>
           <DataVersionSelect stepId={stepId} />
           {this.renderMaybeButton()}

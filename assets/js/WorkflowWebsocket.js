@@ -1,10 +1,10 @@
 /* globals WebSocket */
 const MissingInflightHandler = {
-  resolve: (result) => {
+  resolve: result => {
     console.warn('Unhandled result from server', result)
   },
 
-  reject: (result) => {
+  reject: result => {
     console.error('Unhandled reror from server', result)
   }
 }
@@ -40,7 +40,7 @@ export default class WorkflowWebsocket {
     this.inflight = {} // { [requestId]: {resolve, reject} callbacks }
   }
 
-  onOpen = (ev) => {
+  onOpen = ev => {
     if (this.hasConnectedBefore) {
       console.log('Websocket reconnected')
     } else {
@@ -53,7 +53,7 @@ export default class WorkflowWebsocket {
     this.queuedMessages.splice(0, this.queuedMessages.length)
   }
 
-  onMessage = (ev) => {
+  onMessage = ev => {
     const data = JSON.parse(ev.data)
 
     if (data.response) {
@@ -79,12 +79,12 @@ export default class WorkflowWebsocket {
     }
   }
 
-  onError = (ev) => {
+  onError = ev => {
     // ignore: errors during connection are usually logged by browsers anyway;
     // other errors will cause onClose, leading to reconnect.
   }
 
-  onClose = (ev) => {
+  onClose = ev => {
     console.log(`Websocket closed. Reconnecting in ${this.reconnectDelay}ms`)
     setTimeout(this.connect, this.reconnectDelay)
   }
@@ -104,7 +104,7 @@ export default class WorkflowWebsocket {
    * failed messages. It does handle page init nicely by waiting for the page
    * to load before sending the first messages.
    */
-  _sendOrQueue = (message) => {
+  _sendOrQueue = message => {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(message)
     } else {

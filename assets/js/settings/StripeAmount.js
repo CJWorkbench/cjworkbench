@@ -13,16 +13,27 @@ import { Trans } from '@lingui/macro'
 export default function StripeAmount (props) {
   const { currency, amount, interval } = props
   const isoCurrency = currency.toUpperCase()
-  const ZeroDecimalCurrencies = 'BIF CLP DJF GNF JPY KMF KRW MGA PYG RWF UGX VND VUV XAF XOF XPF'
-  const value = ZeroDecimalCurrencies.includes(isoCurrency) ? amount : amount / 100
+  const ZeroDecimalCurrencies =
+    'BIF CLP DJF GNF JPY KMF KRW MGA PYG RWF UGX VND VUV XAF XOF XPF'
+  const value = ZeroDecimalCurrencies.includes(isoCurrency)
+    ? amount
+    : amount / 100
 
   const price = i18n.number(value, { style: 'currency', currency: isoCurrency })
 
   switch (interval) {
     case 'year':
-      return <Trans id='js.settings.Plan.PlanTable.amount.perMonth'><strong>{price}</strong>/year</Trans>
+      return (
+        <Trans id='js.settings.Plan.PlanTable.amount.perMonth'>
+          <strong>{price}</strong>/year
+        </Trans>
+      )
     default:
-      return <Trans id='js.settings.Plan.PlanTable.amount.perYear'><strong>{price}</strong>/month</Trans>
+      return (
+        <Trans id='js.settings.Plan.PlanTable.amount.perYear'>
+          <strong>{price}</strong>/month
+        </Trans>
+      )
   }
 }
 StripeAmount.propTypes = {

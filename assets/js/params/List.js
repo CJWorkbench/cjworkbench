@@ -25,12 +25,20 @@ class ChildParamsForm extends PureComponent {
     })
   }
 
-  handleClickDelete = (ev) => {
+  handleClickDelete = ev => {
     this.props.onDelete(this.props.index)
   }
 
   render () {
-    const { childParameters, value, upstreamValue, commonProps, onDelete, name, fieldId } = this.props
+    const {
+      childParameters,
+      value,
+      upstreamValue,
+      commonProps,
+      onDelete,
+      name,
+      fieldId
+    } = this.props
     return (
       <>
         {childParameters.map(childParameter => (
@@ -38,25 +46,29 @@ class ChildParamsForm extends PureComponent {
             key={childParameter.idName}
             {...commonProps}
             {...paramFieldToParamProps(childParameter)}
-            name={childParameter.idName /* should be `${name}[${childParameter.idName}]` but that breaks event handlers */}
+            name={
+              childParameter.idName /* should be `${name}[${childParameter.idName}]` but that breaks event handlers */
+            }
             fieldId={`${fieldId}_${childParameter.idName}`}
             value={value[childParameter.idName]}
             upstreamValue={upstreamValue[childParameter.idName]}
             onChange={this.handleChangeParam}
           />
         ))}
-        {onDelete ? (
-          <div className='delete'>
-            <button
-              type='button'
-              className='delete'
-              name={`${name}[delete]`}
-              onClick={this.handleClickDelete}
-            >
-              <i className='icon-close' />
-            </button>
-          </div>
-        ) : null}
+        {onDelete
+          ? (
+            <div className='delete'>
+              <button
+                type='button'
+                className='delete'
+                name={`${name}[delete]`}
+                onClick={this.handleClickDelete}
+              >
+                <i className='icon-close' />
+              </button>
+            </div>
+            )
+          : null}
       </>
     )
   }
@@ -99,7 +111,7 @@ export default class List extends PureComponent {
     onChange(newValue)
   }
 
-  handleDeleteChildForm = (index) => {
+  handleDeleteChildForm = index => {
     const { onChange, isReadOnly } = this.props
     if (isReadOnly) return
     const newValue = this.value.slice()
@@ -115,12 +127,23 @@ export default class List extends PureComponent {
   }
 
   render () {
-    const { childParameters, isReadOnly, name, label, fieldId, upstreamValue, childDefault } = this.props
+    const {
+      childParameters,
+      isReadOnly,
+      name,
+      label,
+      fieldId,
+      upstreamValue,
+      childDefault
+    } = this.props
 
     // Map twice: once for each repeated set of childParameters, and once for each parameter within each set
     return (
       <>
-        <MaybeLabel fieldId={`${fieldId}_0_${childParameters[0].idName}`} label={label} />
+        <MaybeLabel
+          fieldId={`${fieldId}_0_${childParameters[0].idName}`}
+          label={label}
+        />
         <ul>
           {this.value.map((item, index) => (
             <li key={index}>
@@ -138,17 +161,19 @@ export default class List extends PureComponent {
             </li>
           ))}
         </ul>
-        {isReadOnly ? null : (
-          <button
-            type='button'
-            className='add'
-            name={`${name}[add]`}
-            onClick={this.handleAdd}
-          >
-            <i className='icon-add' />
-            <Trans id='js.params.List.add'>Add</Trans>
-          </button>
-        )}
+        {isReadOnly
+          ? null
+          : (
+            <button
+              type='button'
+              className='add'
+              name={`${name}[add]`}
+              onClick={this.handleAdd}
+            >
+              <i className='icon-add' />
+              <Trans id='js.params.List.add'>Add</Trans>
+            </button>
+            )}
       </>
     )
   }

@@ -4,14 +4,15 @@ import { tick } from '../../../test-utils'
 import RefineClusterer from './RefineClusterer'
 
 describe('RefineClusterer', () => {
-  const wrapper = (extraProps = {}) => mountWithI18n(
-    <RefineClusterer
-      bucket={{ a: 1, b: 1, aaaaa: 2 }}
-      onProgress={jest.fn()}
-      onComplete={jest.fn()}
-      {...extraProps}
-    />
-  )
+  const wrapper = (extraProps = {}) =>
+    mountWithI18n(
+      <RefineClusterer
+        bucket={{ a: 1, b: 1, aaaaa: 2 }}
+        onProgress={jest.fn()}
+        onComplete={jest.fn()}
+        {...extraProps}
+      />
+    )
 
   it('should default to "fingerprint" algorithm', () => {
     const w = wrapper()
@@ -42,10 +43,9 @@ describe('RefineClusterer', () => {
     // JS Object elements are ordered  in insertion order
     const w = wrapper({ bucket: { x: 1, yy: 1, xxx: 2 } })
     w.find('select').simulate('change', { target: { value: 'levenshtein' } })
-    w.find('input#refine-clusterer-max-distance').simulate(
-      'change',
-      { target: { name: 'maxDistance', value: '2' } }
-    )
+    w.find('input#refine-clusterer-max-distance').simulate('change', {
+      target: { name: 'maxDistance', value: '2' }
+    })
     await tick() // let the algorithm run and let its complete handler run
     expect(w.prop('onComplete')).toHaveBeenCalledWith([
       {
@@ -60,7 +60,9 @@ describe('RefineClusterer', () => {
     const w = wrapper()
     w.find('select').simulate('change', { target: { value: 'levenshtein' } })
     w.update()
-    w.find('input[name="maxDistance"]').simulate('change', { target: { name: 'maxDistance', value: '6' } })
+    w.find('input[name="maxDistance"]').simulate('change', {
+      target: { name: 'maxDistance', value: '6' }
+    })
     await tick() // let the algorithm run and let its complete handler run
     expect(w.prop('onComplete')).toHaveBeenCalledWith([
       {

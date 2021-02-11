@@ -43,7 +43,7 @@ export default class RowWithoutCellGarbageOrCellKeyConflicts extends Row {
     }
   }
 
-  setScrollLeft = (scrollLeft) => {
+  setScrollLeft = scrollLeft => {
     // work around https://github.com/adazzle/react-data-grid/issues/1270
     this.actionCellRef.current.setScrollLeft(scrollLeft)
   }
@@ -51,12 +51,10 @@ export default class RowWithoutCellGarbageOrCellKeyConflicts extends Row {
   render () {
     const { idx, isSelected } = this.props
 
-    const className = `react-grid-Row react-grid-Row--${idx % 2 === 0 ? 'even' : 'odd'} ${isSelected ? 'row-selected' : ''}`
+    const className = `react-grid-Row react-grid-Row--${
+      idx % 2 === 0 ? 'even' : 'odd'
+    } ${isSelected ? 'row-selected' : ''}`
     const cells = this.getCells()
-    return (
-      <div className={className}>
-        {cells}
-      </div>
-    )
+    return <div className={className}>{cells}</div>
   }
 }

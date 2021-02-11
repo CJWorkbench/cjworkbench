@@ -11,9 +11,10 @@ function isFieldVersionSelect ({ type, idName }) {
 function isFieldStatic ({ type, idName }) {
   return (
     type === 'statictext' ||
-    (type === 'custom' && (
-      idName === 'celledits' || idName === 'reorder-history' || idName === 'version_select')
-    )
+    (type === 'custom' &&
+      (idName === 'celledits' ||
+        idName === 'reorder-history' ||
+        idName === 'version_select'))
   )
 }
 
@@ -21,7 +22,16 @@ function isFileField ({ type }) {
   return type === 'file'
 }
 
-export default function ParamsFormFooter ({ workflowId, stepId, stepSlug, isStepBusy, isReadOnly, isOwner, fields, isEditing }) {
+export default function ParamsFormFooter ({
+  workflowId,
+  stepId,
+  stepSlug,
+  isStepBusy,
+  isReadOnly,
+  isOwner,
+  fields,
+  isEditing
+}) {
   const [isUploadApiModalOpen, setIsUploadApiModalOpen] = useState(false)
   const handleClickOpenUploadApiModal = useCallback(
     () => setIsUploadApiModalOpen(true),
@@ -52,28 +62,31 @@ export default function ParamsFormFooter ({ workflowId, stepId, stepSlug, isStep
   const fileField = fields.find(isFileField)
   return (
     <div className='params-form-footer'>
-      {(fileField && isOwner) ? (
-        <button
-          type='button'
-          onClick={handleClickOpenUploadApiModal}
-          name='open-upload-api'
-          title={t({ id: 'js.params.Custom.File.uploadApi.hoverText', message: 'Open upload API instructions' })}
-        >
-          <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
-        </button>
-      ) : null}
-      {isUploadApiModalOpen ? (
-        <UploadApiModal
-          workflowId={workflowId}
-          stepSlug={stepSlug}
-          onClickClose={handleClickCloseUploadApiModal}
-        />
-      ) : null}
-      <button
-        name='submit'
-        type='submit'
-        disabled={!isEditing}
-      >
+      {fileField && isOwner
+        ? (
+          <button
+            type='button'
+            onClick={handleClickOpenUploadApiModal}
+            name='open-upload-api'
+            title={t({
+              id: 'js.params.Custom.File.uploadApi.hoverText',
+              message: 'Open upload API instructions'
+            })}
+          >
+            <Trans id='js.params.Custom.File.uploadApi.button'>API</Trans>
+          </button>
+          )
+        : null}
+      {isUploadApiModalOpen
+        ? (
+          <UploadApiModal
+            workflowId={workflowId}
+            stepSlug={stepSlug}
+            onClickClose={handleClickCloseUploadApiModal}
+          />
+          )
+        : null}
+      <button name='submit' type='submit' disabled={!isEditing}>
         <i className='icon-play' />
       </button>
     </div>
@@ -86,9 +99,11 @@ ParamsFormFooter.propTypes = {
   isStepBusy: PropTypes.bool.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
   isOwner: PropTypes.bool.isRequired,
-  fields: PropTypes.arrayOf(PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    idName: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  fields: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.string.isRequired,
+      idName: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
   isEditing: PropTypes.bool.isRequired
 }

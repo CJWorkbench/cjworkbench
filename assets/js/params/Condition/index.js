@@ -27,10 +27,12 @@ export default class Condition extends PureComponent {
     name: PropTypes.string.isRequired, // <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>
     value: ConditionPropType.isRequired,
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-    })), // or null if unknown
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+      })
+    ), // or null if unknown
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
   }
@@ -49,10 +51,7 @@ export default class Condition extends PureComponent {
     // Add a DefaultGroup to the end of the groups list
     const newValue = {
       operation: operator,
-      conditions: [
-        ...this.value.conditions,
-        DefaultConditionLevel1
-      ]
+      conditions: [...this.value.conditions, DefaultConditionLevel1]
     }
     this.props.onChange(newValue)
   }
@@ -60,7 +59,7 @@ export default class Condition extends PureComponent {
   handleClickAddAnd = () => this.addOperator('and')
   handleClickAddOr = () => this.addOperator('or')
 
-  handleDeleteCondition = (index) => {
+  handleDeleteCondition = index => {
     const value = this.value
     const conditions = value.conditions.slice() // copy: we'll mutate it
     conditions.splice(index, 1)
@@ -76,7 +75,7 @@ export default class Condition extends PureComponent {
     this.props.onChange(newValue)
   }
 
-  handleChangeAndOr = (operation) => {
+  handleChangeAndOr = operation => {
     const newValue = { ...this.value, operation }
     this.props.onChange(newValue)
   }
@@ -98,26 +97,28 @@ export default class Condition extends PureComponent {
           onSubmit={onSubmit}
           onDelete={conditions.length > 1 ? this.handleDeleteCondition : null}
         />
-        {index < conditions.length - 1 ? (
-          <AndOr
-            isReadOnly={isReadOnly}
-            name={`${name}[${index}][operation]`}
-            fieldId={`${fieldId}_${index}_operation`}
-            value={operation}
-            onChange={this.handleChangeAndOr}
-          />
-        ) : (
-          <AddButton
-            className='add-group'
-            isReadOnly={isReadOnly}
-            name={`${name}[operation]`}
-            fieldId={`${fieldId}_operation`}
-            operation={operation}
-            isFirst={conditions.length <= 1}
-            onClickAddAnd={this.handleClickAddAnd}
-            onClickAddOr={this.handleClickAddOr}
-          />
-        )}
+        {index < conditions.length - 1
+          ? (
+            <AndOr
+              isReadOnly={isReadOnly}
+              name={`${name}[${index}][operation]`}
+              fieldId={`${fieldId}_${index}_operation`}
+              value={operation}
+              onChange={this.handleChangeAndOr}
+            />
+            )
+          : (
+            <AddButton
+              className='add-group'
+              isReadOnly={isReadOnly}
+              name={`${name}[operation]`}
+              fieldId={`${fieldId}_operation`}
+              operation={operation}
+              isFirst={conditions.length <= 1}
+              onClickAddAnd={this.handleClickAddAnd}
+              onClickAddOr={this.handleClickAddOr}
+            />
+            )}
       </Fragment>
     ))
   }

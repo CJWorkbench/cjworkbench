@@ -4,7 +4,18 @@ import PropTypes from 'prop-types'
 import Button from './Button'
 import Step from '../step/Step'
 
-const AddData = memo(function AddData ({ tabSlug, isLessonHighlight, isReadOnly, step, isZenMode, deleteStep, isSelected, api, setZenMode, paneRef }) {
+const AddData = memo(function AddData ({
+  tabSlug,
+  isLessonHighlight,
+  isReadOnly,
+  step,
+  isZenMode,
+  deleteStep,
+  isSelected,
+  api,
+  setZenMode,
+  paneRef
+}) {
   if (step) {
     return (
       <Step
@@ -41,6 +52,7 @@ AddData.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   step: PropTypes.object, // or null if no Step
   /** <WorkflowEditor/Pane> container, where the dialog will open */
-  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
+  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) })
+    .isRequired
 }
 export default AddData

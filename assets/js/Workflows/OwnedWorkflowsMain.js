@@ -6,7 +6,10 @@ import CreateWorkflowButton from './CreateWorkflowButton'
 
 function beginEdit (edits, id, changes) {
   const edit = edits[id]
-    ? { changes: { ...edits[id].changes, ...changes }, nPendingChanges: edits[id].nPendingChanges + 1 }
+    ? {
+        changes: { ...edits[id].changes, ...changes },
+        nPendingChanges: edits[id].nPendingChanges + 1
+      }
     : { changes, nPendingChanges: 1 }
   return { ...edits, [id]: edit }
 }
@@ -50,28 +53,50 @@ function reduceWorkflowEdit (state, action) {
  * last. TODO serialize requests or implement more complex logic.
  */
 function useWorkflowEdits (workflows) {
-  const [state, dispatch] = useReducer(reduceWorkflowEdit, { adds: [], edits: {} })
+  const [state, dispatch] = useReducer(reduceWorkflowEdit, {
+    adds: [],
+    edits: {}
+  })
 
-  const handleWorkflowChanging = useCallback((id, changes) => {
-    dispatch({ type: 'begin-edit', payload: { id, changes } })
-  }, [dispatch])
-  const handleWorkflowChanged = useCallback(id => {
-    dispatch({ type: 'end-edit', payload: { id } })
-  }, [dispatch])
-  const handleWorkflowDuplicating = useCallback(id => {
-    dispatch({ type: 'begin-duplicate', payload: { id } })
-  }, [dispatch])
-  const handleWorkflowDuplicated = useCallback((id, workflow) => {
-    dispatch({ type: 'end-duplicate', payload: { id, workflow } })
-  }, [dispatch])
+  const handleWorkflowChanging = useCallback(
+    (id, changes) => {
+      dispatch({ type: 'begin-edit', payload: { id, changes } })
+    },
+    [dispatch]
+  )
+  const handleWorkflowChanged = useCallback(
+    id => {
+      dispatch({ type: 'end-edit', payload: { id } })
+    },
+    [dispatch]
+  )
+  const handleWorkflowDuplicating = useCallback(
+    id => {
+      dispatch({ type: 'begin-duplicate', payload: { id } })
+    },
+    [dispatch]
+  )
+  const handleWorkflowDuplicated = useCallback(
+    (id, workflow) => {
+      dispatch({ type: 'end-duplicate', payload: { id, workflow } })
+    },
+    [dispatch]
+  )
 
   const { adds, edits } = state
-  const editedWorkflows = adds.concat(workflows).map(workflow => {
-    const entry = edits[workflow.id]
-    return entry
-      ? { ...workflow, ...entry.changes, nPendingChanges: entry.nPendingChanges }
-      : workflow
-  }).filter(workflow => !workflow.isDeleted || workflow.nPendingChanges > 0)
+  const editedWorkflows = adds
+    .concat(workflows)
+    .map(workflow => {
+      const entry = edits[workflow.id]
+      return entry
+        ? {
+            ...workflow,
+            ...entry.changes,
+            nPendingChanges: entry.nPendingChanges
+          }
+        : workflow
+    })
+    .filter(workflow => !workflow.isDeleted || workflow.nPendingChanges > 0)
 
   return {
     editedWorkflows,
@@ -96,14 +121,19 @@ export default function OwnedWorkflowsMain (props) {
   return (
     <main className='workflows'>
       <header>
-        <h1><Trans id='js.Workflows.WorkflowLists.nav.myWorkflows'>My workflows</Trans></h1>
+        <h1>
+          <Trans id='js.Workflows.WorkflowLists.nav.myWorkflows'>
+            My workflows
+          </Trans>
+        </h1>
       </header>
-      {editedWorkflows.length ? (
-        <>
-          <CreateWorkflowButton>
-            <Trans id='js.Workflows.createWorkflowButton'>Create Workflow</Trans>
-          </CreateWorkflowButton>
-          <WorkflowList
+      <CreateWorkflowButton>
+        {editedWorkflows.length
+          ? <Trans id='js.Workflows.createWorkflowButton'>Create Workflow</Trans>
+          : <Trans id='js.Workflows.WorkflowLists.createYourFirtsWorkflow.button'>Create your first workflow</Trans>}
+      </CreateWorkflowButton>
+      {editedWorkflows.length
+        ? (<WorkflowList
             className='owned'
             workflows={editedWorkflows}
             api={api}
@@ -111,13 +141,9 @@ export default function OwnedWorkflowsMain (props) {
             onWorkflowDuplicated={handleWorkflowDuplicated}
             onWorkflowChanging={handleWorkflowChanging}
             onWorkflowChanged={handleWorkflowChanged}
-          />
-        </>
-      ) : (
-        <CreateWorkflowButton>
-          <Trans id='js.Workflows.WorkflowLists.createYourFirtsWorkflow.button'>Create your first workflow</Trans>
-        </CreateWorkflowButton>
-      )}
+           />
+          )
+        : null}
     </main>
   )
 }

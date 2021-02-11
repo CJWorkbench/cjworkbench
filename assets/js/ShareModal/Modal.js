@@ -13,10 +13,12 @@ export default class _Modal extends PureComponent {
     isPublic: PropTypes.bool.isRequired,
     logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
     ownerEmail: PropTypes.string.isRequired,
-    acl: PropTypes.arrayOf(PropTypes.shape({
-      email: PropTypes.string.isRequired,
-      canEdit: PropTypes.bool.isRequired
-    }).isRequired), // or null if loading
+    acl: PropTypes.arrayOf(
+      PropTypes.shape({
+        email: PropTypes.string.isRequired,
+        canEdit: PropTypes.bool.isRequired
+      }).isRequired
+    ), // or null if loading
     setIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
     updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
     deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
@@ -25,25 +27,42 @@ export default class _Modal extends PureComponent {
 
   render () {
     const {
-      url, isReadOnly, isPublic, setIsPublic, logShare, ownerEmail, acl,
-      updateAclEntry, deleteAclEntry, onClickClose
+      url,
+      isReadOnly,
+      isPublic,
+      setIsPublic,
+      logShare,
+      ownerEmail,
+      acl,
+      updateAclEntry,
+      deleteAclEntry,
+      onClickClose
     } = this.props
 
     return (
       <Modal className='share-modal' isOpen toggle={onClickClose}>
         <ModalHeader>
-          <Trans id='js.ShareModal.Modal.header.title' comment='This should be all-caps for styling reasons'>
+          <Trans
+            id='js.ShareModal.Modal.header.title'
+            comment='This should be all-caps for styling reasons'
+          >
             SHARE WORKFLOW
           </Trans>
         </ModalHeader>
         <ModalBody>
-          <h6><Trans id='js.ShareModal.Modal.shareWithTheWorld'>Share with the world</Trans></h6>
+          <h6>
+            <Trans id='js.ShareModal.Modal.shareWithTheWorld'>
+              Share with the world
+            </Trans>
+          </h6>
           <PublicPrivate
             isReadOnly={isReadOnly}
             isPublic={isPublic}
             setIsPublic={setIsPublic}
           />
-          <h6><Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans></h6>
+          <h6>
+            <Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans>
+          </h6>
           <Acl
             isReadOnly={isReadOnly}
             ownerEmail={ownerEmail}
@@ -51,11 +70,7 @@ export default class _Modal extends PureComponent {
             updateAclEntry={updateAclEntry}
             deleteAclEntry={deleteAclEntry}
           />
-          <Url
-            url={url}
-            isPublic={isPublic}
-            logShare={logShare}
-          />
+          <Url url={url} isPublic={isPublic} logShare={logShare} />
         </ModalBody>
         <ModalFooter>
           <div className='actions'>
@@ -63,7 +78,8 @@ export default class _Modal extends PureComponent {
               name='close'
               className='action-button button-gray'
               onClick={onClickClose}
-            ><Trans id='js.ShareModal.Modal.footer.closeButton'>Close</Trans>
+            >
+              <Trans id='js.ShareModal.Modal.footer.closeButton'>Close</Trans>
             </button>
           </div>
         </ModalFooter>

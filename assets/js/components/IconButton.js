@@ -1,13 +1,7 @@
 import PropTypes from 'prop-types'
 
 export default function IconButton (props) {
-  const {
-    name,
-    title,
-    children,
-    disabled = false,
-    onClick = null
-  } = props
+  const { name, title, children, disabled = false, onClick = null } = props
 
   return (
     <button

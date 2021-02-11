@@ -2,7 +2,12 @@ import Dashboard from './Dashboard'
 import { connect } from 'react-redux'
 import selectReport from '../../selectors/selectReport'
 import selectReportableTabs from '../../selectors/selectReportableTabs'
-import { addBlock, deleteBlock, reorderBlocks, setBlockMarkdown } from './actions'
+import {
+  addBlock,
+  deleteBlock,
+  reorderBlocks,
+  setBlockMarkdown
+} from './actions'
 
 function mapStateToProps (state) {
   return {

@@ -5,10 +5,20 @@ import useFocalCells from './useFocalCells'
 import Viewport from './Viewport'
 
 export default function BigTable ({
-  sparseTileGrid, nRows, columns, nRowsPerTile, nColumnsPerTile, setWantedTileRange, fixedCellRange = null
+  sparseTileGrid,
+  nRows,
+  columns,
+  nRowsPerTile,
+  nColumnsPerTile,
+  setWantedTileRange,
+  fixedCellRange = null
 }) {
   const { nSkipRows, nSkipColumns, cells, setFocusCellRange } = useFocalCells({
-    sparseTileGrid, nRowsPerTile, nColumnsPerTile, setWantedTileRange, fixedCellRange
+    sparseTileGrid,
+    nRowsPerTile,
+    nColumnsPerTile,
+    setWantedTileRange,
+    fixedCellRange
   })
 
   return (

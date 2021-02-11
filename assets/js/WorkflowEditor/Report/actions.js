@@ -55,7 +55,11 @@ export function addBlock (position, block) {
       type: REPORT_ADD_BLOCK,
       payload: {
         data: args,
-        promise: removePendingMutationOnError(api.addBlock(args), dispatch, mutationId)
+        promise: removePendingMutationOnError(
+          api.addBlock(args),
+          dispatch,
+          mutationId
+        )
       }
     })
   }
@@ -77,7 +81,11 @@ export function deleteBlock (slug) {
       type: REPORT_DELETE_BLOCK,
       payload: {
         data: args,
-        promise: removePendingMutationOnError(api.deleteBlock(args), dispatch, mutationId)
+        promise: removePendingMutationOnError(
+          api.deleteBlock(args),
+          dispatch,
+          mutationId
+        )
       }
     })
   }
@@ -99,7 +107,11 @@ export function reorderBlocks (slugs) {
       type: REPORT_REORDER_BLOCKS,
       payload: {
         data: args,
-        promise: removePendingMutationOnError(api.reorderBlocks(args), dispatch, mutationId)
+        promise: removePendingMutationOnError(
+          api.reorderBlocks(args),
+          dispatch,
+          mutationId
+        )
       }
     })
   }
@@ -121,14 +133,21 @@ export function setBlockMarkdown (slug, markdown) {
       type: REPORT_SET_BLOCK_MARKDOWN,
       payload: {
         data: args,
-        promise: removePendingMutationOnError(api.setBlockMarkdown(args), dispatch, mutationId)
+        promise: removePendingMutationOnError(
+          api.setBlockMarkdown(args),
+          dispatch,
+          mutationId
+        )
       }
     })
   }
 }
 
 function reduceSetBlockMarkdownPending (state, action) {
-  return addPendingMutation(state, createSetBlockMarkdownMutation(action.payload))
+  return addPendingMutation(
+    state,
+    createSetBlockMarkdownMutation(action.payload)
+  )
 }
 
 export const reducerFunctions = {

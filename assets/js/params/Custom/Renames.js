@@ -12,7 +12,7 @@ export class RenameEntry extends PureComponent {
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     const { onChange, colname } = this.props
     onChange(colname, ev.target.value)
   }
@@ -60,9 +60,11 @@ export class RenameEntry extends PureComponent {
 
 export default class RenameEntries extends PureComponent {
   static propTypes = {
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })), // or null for unknown list (loading or stalled)
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ), // or null for unknown list (loading or stalled)
     value: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired, // onChange({ old: new, ...}) => undefined
     isReadOnly: PropTypes.bool.isRequired
@@ -97,7 +99,7 @@ export default class RenameEntries extends PureComponent {
     this.props.onChange(newEntries)
   }
 
-  handleDeleteEntry = (prevName) => {
+  handleDeleteEntry = prevName => {
     const oldEntries = { ...this.saneValue }
     if (!(prevName in oldEntries)) return // no-op
 
@@ -130,10 +132,6 @@ export default class RenameEntries extends PureComponent {
 
   render () {
     const entries = this.renderEntries()
-    return (
-      <>
-        {entries}
-      </>
-    )
+    return <>{entries}</>
   }
 }

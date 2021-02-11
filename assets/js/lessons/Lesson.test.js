@@ -51,11 +51,19 @@ describe('Lesson', () => {
     }
 
     it('renders a title', () => {
-      expect(wrapper().find('h1').text()).toEqual('Lesson Title')
+      expect(
+        wrapper()
+          .find('h1')
+          .text()
+      ).toEqual('Lesson Title')
     })
 
     it('renders the description HTML', () => {
-      expect(wrapper().find('.description').html()).toEqual('<div class="description"><p>Lesson HTML</p></div>')
+      expect(
+        wrapper()
+          .find('.description')
+          .html()
+      ).toEqual('<div class="description"><p>Lesson HTML</p></div>')
     })
 
     it('renders LessonSections', () => {
@@ -69,12 +77,20 @@ describe('Lesson', () => {
 
     it('sets LessonSection activeSectionIndex and activeStepIndex', () => {
       const w1 = wrapper({ activeSectionIndex: 1, activeStepIndex: 2 })
-      expect(w1.find(LessonSection).map(s => s.prop('activeSectionIndex'))).toEqual([1, 1])
-      expect(w1.find(LessonSection).map(s => s.prop('activeStepIndex'))).toEqual([2, 2])
+      expect(
+        w1.find(LessonSection).map(s => s.prop('activeSectionIndex'))
+      ).toEqual([1, 1])
+      expect(
+        w1.find(LessonSection).map(s => s.prop('activeStepIndex'))
+      ).toEqual([2, 2])
     })
 
     it('defaults to currentSectionIndex=0', () => {
-      expect(wrapper().find('LessonNav').prop('currentSectionIndex')).toBe(0)
+      expect(
+        wrapper()
+          .find('LessonNav')
+          .prop('currentSectionIndex')
+      ).toBe(0)
     })
 
     it('does not set .fullscreen when not fullscreen', () => {
@@ -118,29 +134,56 @@ describe('Lesson', () => {
 
     it('shows "Next" and an unclickable "Previous"', () => {
       const w = wrapper()
-      expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(1)
+      expect(
+        w.find('footer button[name="Previous"][disabled=true]')
+      ).toHaveLength(1)
       expect(w.find('footer .current-and-total').text()).toEqual('1 of 2')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual(['current', 'not-current', 'lesson-footer not-current'])
-      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([
+        'current',
+        'not-current',
+        'lesson-footer not-current'
+      ])
+      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(
+        0
+      )
     })
 
     it('moves to the next section', () => {
       const w = wrapper()
       w.find('footer button[name="Next"]').simulate('click')
-      expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
+      expect(
+        w.find('footer button[name="Previous"][disabled=true]')
+      ).toHaveLength(0)
       expect(w.find('footer .current-and-total').text()).toEqual('2 of 2')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual(['not-current', 'current', 'lesson-footer not-current'])
-      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([
+        'not-current',
+        'current',
+        'lesson-footer not-current'
+      ])
+      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(
+        0
+      )
     })
 
     // the "footer" is the last "section" which usually says "you finished the lesson!" or something
     it('moves to the footer', () => {
       const w = wrapper()
-      w.find('footer button[name="Next"]').simulate('click').simulate('click').simulate('click')
-      expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
+      w.find('footer button[name="Next"]')
+        .simulate('click')
+        .simulate('click')
+        .simulate('click')
+      expect(
+        w.find('footer button[name="Previous"][disabled=true]')
+      ).toHaveLength(0)
       expect(w.find('footer .current-and-total')).toHaveLength(0)
-      expect(w.find('section').map(n => n.prop('className'))).toEqual(['not-current', 'not-current', 'lesson-footer current'])
-      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(1)
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([
+        'not-current',
+        'not-current',
+        'lesson-footer current'
+      ])
+      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(
+        1
+      )
     })
   })
 })

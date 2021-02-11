@@ -2,22 +2,36 @@ import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { Trans, t } from '@lingui/macro'
 
-export default function MarkdownEditor ({ value, onChange, onSubmit, onCancel }) {
+export default function MarkdownEditor ({
+  value,
+  onChange,
+  onSubmit,
+  onCancel
+}) {
   const handleChange = useCallback(ev => onChange(ev.target.value), [onChange])
-  const handleSubmit = useCallback(ev => {
-    ev.preventDefault()
-    onSubmit()
-  }, [onSubmit])
-  const handleReset = useCallback(ev => {
-    ev.preventDefault()
-    onCancel()
-  }, [onCancel])
-  const handleKeyDown = useCallback(ev => {
-    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
+  const handleSubmit = useCallback(
+    ev => {
       ev.preventDefault()
       onSubmit()
-    }
-  }, [onSubmit])
+    },
+    [onSubmit]
+  )
+  const handleReset = useCallback(
+    ev => {
+      ev.preventDefault()
+      onCancel()
+    },
+    [onCancel]
+  )
+  const handleKeyDown = useCallback(
+    ev => {
+      if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') {
+        ev.preventDefault()
+        onSubmit()
+      }
+    },
+    [onSubmit]
+  )
 
   return (
     <form
@@ -35,7 +49,8 @@ export default function MarkdownEditor ({ value, onChange, onSubmit, onCancel })
           placeholder={t({
             id: 'js.WorkflowEditor.Report.MarkdownEditor.placeholder',
             message: 'Enter MarkDown text here',
-            comment: 'When an editor adds a text block to a report, this placeholder text appears'
+            comment:
+              'When an editor adds a text block to a report, this placeholder text appears'
           })}
           value={value}
           onChange={handleChange}
@@ -44,10 +59,14 @@ export default function MarkdownEditor ({ value, onChange, onSubmit, onCancel })
       </div>
       <div className='buttons'>
         <button className='action-button button-gray' type='reset'>
-          <Trans id='js.WorkflowEditor.Report.MarkdownEditor.cancel'>Cancel</Trans>
+          <Trans id='js.WorkflowEditor.Report.MarkdownEditor.cancel'>
+            Cancel
+          </Trans>
         </button>
         <button className='action-button button-blue' type='submit'>
-          <Trans id='js.WorkflowEditor.Report.MarkdownEditor.submit'>Save</Trans>
+          <Trans id='js.WorkflowEditor.Report.MarkdownEditor.submit'>
+            Save
+          </Trans>
         </button>
       </div>
     </form>

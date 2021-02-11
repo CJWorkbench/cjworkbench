@@ -7,13 +7,15 @@ export default class SearchResultGroup extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     activeModule: PropTypes.string, // idName, null if none active
-    modules: PropTypes.arrayOf(PropTypes.shape({
-      isLessonHighlight: PropTypes.bool.isRequired,
-      idName: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      icon: PropTypes.string.isRequired
-    })).isRequired,
+    modules: PropTypes.arrayOf(
+      PropTypes.shape({
+        isLessonHighlight: PropTypes.bool.isRequired,
+        idName: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        icon: PropTypes.string.isRequired
+      })
+    ).isRequired,
     onClickModule: PropTypes.func.isRequired, // func(moduleIdName) => undefined
     onMouseEnterModule: PropTypes.func.isRequired // func(moduleIdName) => undefined
   }
@@ -33,7 +35,9 @@ export default class SearchResultGroup extends PureComponent {
 
     return (
       <li className='module-search-result-group' data-name={name}>
-        <h4><ModuleCategoryName category={name} /></h4>
+        <h4>
+          <ModuleCategoryName category={name} />
+        </h4>
         <ul className='module-search-results'>{children}</ul>
       </li>
     )

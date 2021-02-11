@@ -16,7 +16,12 @@ export default class ModalHeader extends PureComponent {
     return (
       <div className='modal-header'>
         <h5 className='modal-title'>{children}</h5>
-        <button type='button' className='close' aria-label='Close' onClick={toggle}>
+        <button
+          type='button'
+          className='close'
+          aria-label='Close'
+          onClick={toggle}
+        >
           <span aria-hidden='true'>×</span>
         </button>
       </div>

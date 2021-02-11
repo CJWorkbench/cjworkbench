@@ -16,11 +16,11 @@ export class EditableWorkflowName extends Component {
     value: null // non-null only when editing
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     this.setState({ value: ev.target.value })
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     if (ev.key === 'Enter') {
       ev.preventDefault() // [2018-12-13, adamhooper] why?
       this.inputRef.current.blur() // Blur event will trigger save
@@ -49,7 +49,7 @@ export class EditableWorkflowName extends Component {
     return (
       <div className='editable-title--container'>
         {this.props.isReadOnly
-          ? (<span className='editable-title--field'>{this.props.value}</span>)
+          ? <span className='editable-title--field'>{this.props.value}</span>
           : (
             <input
               type='text'
@@ -61,13 +61,13 @@ export class EditableWorkflowName extends Component {
               onBlur={this.handleBlur}
               onKeyDown={this.handleKeyDown}
             />
-          )}
+            )}
       </div>
     )
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     value: state.workflow.name
   }
@@ -77,4 +77,7 @@ const mapDispatchToProps = {
   setWorkflowName: setWorkflowNameAction
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditableWorkflowName)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditableWorkflowName)

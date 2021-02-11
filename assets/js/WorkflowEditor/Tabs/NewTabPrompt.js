@@ -8,7 +8,10 @@ export default function NewTabPrompt (props) {
     <button
       className='new-tab'
       onClick={create}
-      title={t({ id: 'js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title', message: 'Create tab' })}
+      title={t({
+        id: 'js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title',
+        message: 'Create tab'
+      })}
     >
       <IconAddc />
     </button>

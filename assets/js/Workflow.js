@@ -17,14 +17,25 @@ export function MaybeNotYourWorkflow (props) {
   if (props.isLoggedIn) {
     suggestion = (
       <h3 className='suggestion'>
-        <Trans id='js.Workflow.suggestion.duplicateToSaveChanges'>Duplicate it to save your changes</Trans>
+        <Trans id='js.Workflow.suggestion.duplicateToSaveChanges'>
+          Duplicate it to save your changes
+        </Trans>
       </h3>
     )
   } else {
     suggestion = (
       <h3 className='suggestion'>
-        <Trans id='js.Workflow.suggestion.signInToSaveChanges' comment='The tag is a link to the login page'>
-          <a href={`/account/login/?next=/workflows/${props.workflowId}`} className='action-button '>Sign in</a> to save your changes
+        <Trans
+          id='js.Workflow.suggestion.signInToSaveChanges'
+          comment='The tag is a link to the login page'
+        >
+          <a
+            href={`/account/login/?next=/workflows/${props.workflowId}`}
+            className='action-button '
+          >
+            Sign in
+          </a>{' '}
+          to save your changes
         </Trans>
       </h3>
     )
@@ -35,7 +46,9 @@ export function MaybeNotYourWorkflow (props) {
     className = 'is-anonymous'
     inner = (
       <>
-        <h3><Trans id='js.Workflow.isAnonymous'>Demo workflow</Trans> -</h3>
+        <h3>
+          <Trans id='js.Workflow.isAnonymous'>Demo workflow</Trans> -
+        </h3>
         <p className='message' />
         {suggestion}
       </>
@@ -44,16 +57,18 @@ export function MaybeNotYourWorkflow (props) {
     className = 'is-read-only'
     inner = (
       <>
-        <h3><Trans id='js.Workflow.isShared'>You are viewing a shared workflow</Trans></h3>
+        <h3>
+          <Trans id='js.Workflow.isShared'>
+            You are viewing a shared workflow
+          </Trans>
+        </h3>
         <p className='message' />
         {suggestion}
       </>
     )
   }
 
-  return (
-    <div className={`not-your-workflow ${className}`}>{inner}</div>
-  )
+  return <div className={`not-your-workflow ${className}`}>{inner}</div>
 }
 
 // ---- WorkflowMain ----
@@ -95,9 +110,7 @@ export class Workflow extends PureComponent {
             loggedInUser={this.props.loggedInUser}
           />
 
-          <WorkflowEditor
-            api={this.props.api}
-          />
+          <WorkflowEditor api={this.props.api} />
 
           <MaybeNotYourWorkflow
             workflowId={this.props.workflow.url_id}
@@ -112,7 +125,7 @@ export class Workflow extends PureComponent {
 }
 
 // Handles addStep (and any other actions that change top level workflow state)
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     workflow: state.workflow,
     loggedInUser: state.loggedInUser,
@@ -121,6 +134,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(
-  mapStateToProps
-)(Workflow)
+export default connect(mapStateToProps)(Workflow)

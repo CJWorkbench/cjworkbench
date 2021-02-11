@@ -60,11 +60,11 @@ class CustomColorChoice extends PureComponent {
     this.props.onChange(this.effectiveColor)
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     this.setState({ value: ev.target.value })
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     switch (ev.key) {
       case 'Enter':
         if (this.isValid) {
@@ -152,9 +152,12 @@ class ColorPickerPopover extends PureComponent {
   /**
    * Close the popover if we click outside it.
    */
-  handleMouseDown = (ev) => {
+  handleMouseDown = ev => {
     const { referenceElement } = this.context
-    if (referenceElement && (referenceElement === ev.target || referenceElement.contains(ev.target))) {
+    if (
+      referenceElement &&
+      (referenceElement === ev.target || referenceElement.contains(ev.target))
+    ) {
       // The user clicked the "toggle" button. Don't do anything -- the toggle-button
       // handler will close the popover for us.
       return
@@ -171,7 +174,7 @@ class ColorPickerPopover extends PureComponent {
     const { safeValue, choices } = this.props
     const { referenceElement } = this.context
 
-    return ReactDOM.createPortal((
+    return ReactDOM.createPortal(
       <Popper placement='bottom' referenceElement={referenceElement}>
         {({ ref, style, placement, arrowProps }) => (
           <div
@@ -183,7 +186,11 @@ class ColorPickerPopover extends PureComponent {
             <div className='arrow' {...arrowProps} />
             <div ref={this.containerRef} className='popover-body'>
               {choices.map(color => (
-                <ColorChoice key={'choice-' + color} color={color} onClick={this.props.onChange} />
+                <ColorChoice
+                  key={'choice-' + color}
+                  color={color}
+                  onClick={this.props.onChange}
+                />
               ))}
               <CustomColorChoice
                 key={'custom-choice-' + safeValue}
@@ -194,8 +201,9 @@ class ColorPickerPopover extends PureComponent {
             </div>
           </div>
         )}
-      </Popper>
-    ), document.body)
+      </Popper>,
+      document.body
+    )
   }
 }
 
@@ -210,7 +218,7 @@ export default class ColorPicker extends PureComponent {
     onChange: PropTypes.func.isRequired // onChange('#abcdef') => undefined
   }
 
-  setReferenceElement = (referenceElement) => {
+  setReferenceElement = referenceElement => {
     this.setState({ context: { referenceElement } })
   }
 
@@ -229,7 +237,7 @@ export default class ColorPicker extends PureComponent {
     this.setState({ isOpen: false })
   }
 
-  handleChange = (color) => {
+  handleChange = color => {
     this.props.onChange(color)
     this.setState({ isOpen: false })
   }
@@ -243,7 +251,10 @@ export default class ColorPicker extends PureComponent {
       <ColorPickerContext.Provider value={context}>
         <button
           type='button'
-          title={t({ id: 'js.params.Multichartseries.ColorPicker.pickColor.hoverText', message: 'Pick color' })}
+          title={t({
+            id: 'js.params.Multichartseries.ColorPicker.pickColor.hoverText',
+            message: 'Pick color'
+          })}
           onClick={this.handleClickButton}
           className='btn color-picker'
           style={{ background: safeValue }}
@@ -251,14 +262,16 @@ export default class ColorPicker extends PureComponent {
         >
           <i className='color-picker' />
         </button>
-        {isOpen ? (
-          <ColorPickerPopover
-            safeValue={safeValue}
-            choices={choices}
-            onChange={this.handleChange}
-            onClose={this.handleClickClose}
-          />
-        ) : null}
+        {isOpen
+          ? (
+            <ColorPickerPopover
+              safeValue={safeValue}
+              choices={choices}
+              onChange={this.handleChange}
+              onClose={this.handleClickClose}
+            />
+            )
+          : null}
       </ColorPickerContext.Provider>
     )
   }

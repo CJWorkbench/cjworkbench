@@ -20,8 +20,12 @@ export function escapeRegExp (string) {
  *                       matching parseFormat.)
  * @return String Unique, numbered tab name.
  */
-export function generateTabName (parseFormat, generateFormat, existingTabNames) {
-  const parseNumber = (tabName) => {
+export function generateTabName (
+  parseFormat,
+  generateFormat,
+  existingTabNames
+) {
+  const parseNumber = tabName => {
     const match = parseFormat.exec(tabName)
     return match ? +match[1] : null
   }
@@ -32,9 +36,14 @@ export function generateTabName (parseFormat, generateFormat, existingTabNames) 
   // because the user didn't understand the calling convention.
   return generateFormat.replace(/%(.)/g, (_, c) => {
     switch (c) {
-      case 'd': return String(nextNumber)
-      case '%': return '%'
-      default: throw new Error('Invalid %-escape pattern informat string: ' + generateFormat)
+      case 'd':
+        return String(nextNumber)
+      case '%':
+        return '%'
+      default:
+        throw new Error(
+          'Invalid %-escape pattern informat string: ' + generateFormat
+        )
     }
   })
 }

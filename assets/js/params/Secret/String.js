@@ -10,7 +10,17 @@ import { Trans } from '@lingui/macro'
  *
  * When the user clicks "submit", the state of this container will change irreversibly.
  */
-function StringPrompt ({ label, name, fieldId, placeholder, pattern, help, helpUrl, helpUrlPrompt, submit }) {
+function StringPrompt ({
+  label,
+  name,
+  fieldId,
+  placeholder,
+  pattern,
+  help,
+  helpUrl,
+  helpUrlPrompt,
+  submit
+}) {
   const [value, setValue] = useState('')
   const [isValid, setValid] = useState(false)
   const [isSubmitted, setSubmitted] = useState(false)
@@ -58,13 +68,22 @@ function StringPrompt ({ label, name, fieldId, placeholder, pattern, help, helpU
       </div>
       <p className='help'>
         <span className='text'>{help}</span>
-        <a target='_blank' rel='noopener noreferrer' href={helpUrl}>{helpUrlPrompt}</a>
+        <a target='_blank' rel='noopener noreferrer' href={helpUrl}>
+          {helpUrlPrompt}
+        </a>
       </p>
     </>
   )
 }
 
-function StringDisplay ({ isOwner, secretMetadata, label, name, fieldId, deleteSecret }) {
+function StringDisplay ({
+  isOwner,
+  secretMetadata,
+  label,
+  name,
+  fieldId,
+  deleteSecret
+}) {
   const [isSubmitted, setSubmitted] = useState(false)
   const handleSubmit = useCallback(() => {
     deleteSecret(name)
@@ -77,23 +96,38 @@ function StringDisplay ({ isOwner, secretMetadata, label, name, fieldId, deleteS
     <>
       <MaybeLabel fieldId={fieldId} label={label} />
       <div className='secret-string-display'>
-        <time dateTime={createdAt}>(Secret, saved {timeDifference(Date.parse(createdAt), new Date(), i18n)})</time>
-        {isOwner ? (
-          <button
-            type='button'
-            className='clear-secret'
-            onClick={handleSubmit}
-            disabled={isSubmitted}
-          >
-            <Trans id='js.params.Secret.String.StringDisplay.clear.button'>Clear</Trans>
-          </button>
-        ) : null}
+        <time dateTime={createdAt}>
+          (Secret, saved{' '}
+          {timeDifference(Date.parse(createdAt), new Date(), i18n)})
+        </time>
+        {isOwner
+          ? (
+            <button
+              type='button'
+              className='clear-secret'
+              onClick={handleSubmit}
+              disabled={isSubmitted}
+            >
+              <Trans id='js.params.Secret.String.StringDisplay.clear.button'>
+                Clear
+              </Trans>
+            </button>
+            )
+          : null}
       </div>
     </>
   )
 }
 
-export default function String_ ({ secretMetadata, isOwner, name, fieldId, secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt }, submitSecret, deleteSecret }) {
+export default function String_ ({
+  secretMetadata,
+  isOwner,
+  name,
+  fieldId,
+  secretLogic: { label, placeholder, pattern, help, helpUrl, helpUrlPrompt },
+  submitSecret,
+  deleteSecret
+}) {
   if (secretMetadata) {
     return (
       <StringDisplay
@@ -123,7 +157,9 @@ export default function String_ ({ secretMetadata, isOwner, name, fieldId, secre
   } else {
     return (
       <p className='not-owner'>
-        <Trans id='js.params.Secret.String.onlyOwnerCanEnterSecret'>Not authenticated. Only the workflow owner may authenticate.</Trans>
+        <Trans id='js.params.Secret.String.onlyOwnerCanEnterSecret'>
+          Not authenticated. Only the workflow owner may authenticate.
+        </Trans>
       </p>
     )
   }

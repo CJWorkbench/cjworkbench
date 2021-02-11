@@ -3,13 +3,24 @@ import ModuleSearch from '../ModuleSearch'
 import StepDropSpot from './StepDropSpot'
 
 export default function StepListInsertSpot (props) {
-  const { index, tabSlug, isLast, isReadOnly, isLessonHighlight, draggedStep, reorderStep } = props
+  const {
+    index,
+    tabSlug,
+    isLast,
+    isReadOnly,
+    isLessonHighlight,
+    draggedStep,
+    reorderStep
+  } = props
 
   if (isReadOnly) {
     return <div className='in-between-steps read-only' />
   }
 
-  const canDrop = draggedStep && draggedStep.index !== index && draggedStep.index !== index - 1
+  const canDrop =
+    draggedStep &&
+    draggedStep.index !== index &&
+    draggedStep.index !== index - 1
 
   return (
     <div className='in-between-steps'>
@@ -20,13 +31,9 @@ export default function StepListInsertSpot (props) {
         isLessonHighlight={isLessonHighlight}
         isLastAddButton={isLast}
       />
-      {canDrop ? (
-        <StepDropSpot
-          index={index}
-          draggedStep={draggedStep}
-          reorderStep={reorderStep}
-        />
-      ) : null}
+      {canDrop
+        ? <StepDropSpot index={index} draggedStep={draggedStep} reorderStep={reorderStep} />
+        : null}
     </div>
   )
 }

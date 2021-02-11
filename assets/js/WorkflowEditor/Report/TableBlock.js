@@ -3,7 +3,13 @@ import { Trans } from '@lingui/macro'
 import BlockFrame from './BlockFrame'
 import Table from '../../Report/Table'
 
-export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickMoveDown, onClickMoveUp }) {
+export default function TableBlock ({
+  block,
+  isReadOnly,
+  onClickDelete,
+  onClickMoveDown,
+  onClickMoveUp
+}) {
   const { slug, tab } = block
   const { name, outputStep } = tab
 
@@ -17,17 +23,29 @@ export default function TableBlock ({ block, isReadOnly, onClickDelete, onClickM
       onClickMoveUp={onClickMoveUp}
     >
       <h2>{name}</h2>
-      {outputStep && outputStep.outputStatus === 'ok' ? ([
-        <Table key='table' stepSlug={outputStep.slug} />,
-        <a key='download' download href={`/public/moduledata/live/${outputStep.id}.csv`}>
-          <i className='icon-download' />
-          <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>Download data as CSV</Trans>
-        </a>
-      ]) : (
-        <p className='no-table-data'>
-          <Trans id='js.WorkflowEditor.Report.TableBlock.noTableData'>No table data</Trans>
-        </p>
-      )}
+      {outputStep && outputStep.outputStatus === 'ok'
+        ? (
+            [
+              <Table key='table' stepSlug={outputStep.slug} />,
+              <a
+                key='download'
+                download
+                href={`/public/moduledata/live/${outputStep.id}.csv`}
+              >
+                <i className='icon-download' />
+                <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>
+                  Download data as CSV
+                </Trans>
+              </a>
+            ]
+          )
+        : (
+          <p className='no-table-data'>
+            <Trans id='js.WorkflowEditor.Report.TableBlock.noTableData'>
+              No table data
+            </Trans>
+          </p>
+          )}
     </BlockFrame>
   )
 }

@@ -98,28 +98,35 @@ describe('Reducer actions', () => {
     }
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
 
-    const store = mockStore({
-      workflow: {
-        tab_slugs: ['tab-1']
-      },
-      tabs: {
-        'tab-1': {
-          step_ids: [2, 3],
-          selected_step_position: 1
+    const store = mockStore(
+      {
+        workflow: {
+          tab_slugs: ['tab-1']
+        },
+        tabs: {
+          'tab-1': {
+            step_ids: [2, 3],
+            selected_step_position: 1
+          }
+        },
+        steps: {
+          2: {},
+          3: {}
+        },
+        modules: {
+          module2: {}
         }
       },
-      steps: {
-        2: {},
-        3: {}
-      },
-      modules: {
-        module2: {}
-      }
-    }, api)
+      api
+    )
 
-    await store.dispatch(wfr.addStepAction('module2', { tabSlug: 'tab-1', index: 0 }, { x: 'y' }))
+    await store.dispatch(
+      wfr.addStepAction('module2', { tabSlug: 'tab-1', index: 0 }, { x: 'y' })
+    )
 
-    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'module2', 0, { x: 'y' })
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'module2', 0, {
+      x: 'y'
+    })
     const state = store.getState()
     expect(state.tabs['tab-1'].selected_step_position).toEqual(0)
     expect(state.tabs['tab-1'].step_ids).toEqual(['nonce-module2-0', 2, 3])
@@ -131,27 +138,34 @@ describe('Reducer actions', () => {
     }
     generateSlug.mockImplementation(prefix => prefix + 'X')
 
-    const store = mockStore({
-      workflow: {
-        tab_slugs: ['tab-1']
-      },
-      tabs: {
-        'tab-1': {
-          step_ids: [2, 3],
-          selected_step_position: 1
+    const store = mockStore(
+      {
+        workflow: {
+          tab_slugs: ['tab-1']
+        },
+        tabs: {
+          'tab-1': {
+            step_ids: [2, 3],
+            selected_step_position: 1
+          }
+        },
+        steps: {
+          2: {},
+          3: { tab_slug: 'tab-1' }
+        },
+        modules: {
+          module2: {}
         }
       },
-      steps: {
-        2: {},
-        3: { tab_slug: 'tab-1' }
-      },
-      modules: {
-        module2: {}
-      }
-    }, api)
+      api
+    )
 
-    await store.dispatch(wfr.addStepAction('mod', { beforeStepId: 3 }, { x: 'y' }))
-    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
+    await store.dispatch(
+      wfr.addStepAction('mod', { beforeStepId: 3 }, { x: 'y' })
+    )
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, {
+      x: 'y'
+    })
   })
 
   it('adds a module after another', async () => {
@@ -160,27 +174,34 @@ describe('Reducer actions', () => {
     }
     generateSlug.mockImplementation(prefix => prefix + 'X')
 
-    const store = mockStore({
-      workflow: {
-        tab_slugs: ['tab-1']
-      },
-      tabs: {
-        'tab-1': {
-          step_ids: [2, 3],
-          selected_step_position: 1
+    const store = mockStore(
+      {
+        workflow: {
+          tab_slugs: ['tab-1']
+        },
+        tabs: {
+          'tab-1': {
+            step_ids: [2, 3],
+            selected_step_position: 1
+          }
+        },
+        steps: {
+          2: { tab_slug: 'tab-1' },
+          3: {}
+        },
+        modules: {
+          module2: {}
         }
       },
-      steps: {
-        2: { tab_slug: 'tab-1' },
-        3: {}
-      },
-      modules: {
-        module2: {}
-      }
-    }, api)
+      api
+    )
 
-    await store.dispatch(wfr.addStepAction('mod', { afterStepId: 2 }, { x: 'y' }))
-    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, { x: 'y' })
+    await store.dispatch(
+      wfr.addStepAction('mod', { afterStepId: 2 }, { x: 'y' })
+    )
+    expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'mod', 1, {
+      x: 'y'
+    })
   })
 
   it('deletes a module', async () => {
@@ -213,13 +234,16 @@ describe('Reducer actions', () => {
     const api = {
       setSelectedStep: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
-    const store = mockStore({
-      ...testState,
-      workflow: {
-        ...testState.workflow,
-        read_only: true
-      }
-    }, api)
+    const store = mockStore(
+      {
+        ...testState,
+        workflow: {
+          ...testState.workflow,
+          read_only: true
+        }
+      },
+      api
+    )
     await store.dispatch(wfr.setSelectedStepAction(20))
 
     expect(api.setSelectedStep).not.toHaveBeenCalled()
@@ -232,12 +256,15 @@ describe('Reducer actions', () => {
     const api = {
       setStepNotes: jest.fn().mockImplementation(() => Promise.resolve(null))
     }
-    const store = mockStore({
-      steps: {
-        1: { x: 'a', notes: 'foo' },
-        2: { x: 'b', notes: 'bar' }
-      }
-    }, api)
+    const store = mockStore(
+      {
+        steps: {
+          1: { x: 'a', notes: 'foo' },
+          2: { x: 'b', notes: 'bar' }
+        }
+      },
+      api
+    )
 
     await store.dispatch(wfr.setStepNotesAction(2, 'baz'))
 
@@ -272,17 +299,20 @@ describe('Reducer actions', () => {
     const api = {
       reorderSteps: jest.fn().mockImplementation(() => Promise.resolve(null))
     }
-    const store = mockStore({
-      workflow: {
-        tab_slugs: 'tab-1'
-      },
-      tabs: {
-        'tab-1': {
-          step_ids: [2, 4, 6],
-          selected_step_position: 2
+    const store = mockStore(
+      {
+        workflow: {
+          tab_slugs: 'tab-1'
+        },
+        tabs: {
+          'tab-1': {
+            step_ids: [2, 4, 6],
+            selected_step_position: 2
+          }
         }
-      }
-    }, api)
+      },
+      api
+    )
     await store.dispatch(wfr.moveStepAction('tab-1', 2, 0))
 
     // Change happens synchronously. No need to even await the promise :)
@@ -292,17 +322,23 @@ describe('Reducer actions', () => {
   })
 
   it('applies delta to a Workflow', () => {
-    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateWorkflow: { foo: 'bar' }
-    }))
+    const state = wfr.workflowReducer(
+      testState,
+      wfr.applyDeltaAction({
+        updateWorkflow: { foo: 'bar' }
+      })
+    )
     expect(state.workflow.steps).toBe(testState.workflow.steps) // old property
     expect(state.workflow.foo).toEqual('bar') // new property
   })
 
   it('applies delta to a Step', () => {
-    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateSteps: { 10: { foo: 'bar' } }
-    }))
+    const state = wfr.workflowReducer(
+      testState,
+      wfr.applyDeltaAction({
+        updateSteps: { 10: { foo: 'bar' } }
+      })
+    )
     expect(state.steps['10'].foo).toEqual('bar') // new property
     expect(state.steps['10'].params).toBe(testState.steps['10'].params) // old property
     expect(state.steps['20']).toBe(testState.steps['20']) // old Step
@@ -310,22 +346,28 @@ describe('Reducer actions', () => {
   })
 
   it('applies delta to clearing a Step', () => {
-    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateWorkflow: { steps: [10, 30] },
-      clearStepIds: [20]
-    }))
+    const state = wfr.workflowReducer(
+      testState,
+      wfr.applyDeltaAction({
+        updateWorkflow: { steps: [10, 30] },
+        clearStepIds: [20]
+      })
+    )
     expect(state.steps).not.toBe(testState.steps) // immutable
     expect(state.steps['10']).toBe(testState.steps['10']) // leave uncleared modules unchanged
     expect(state.steps['20']).not.toBeDefined()
   })
 
   it('applies delta to a Tab', () => {
-    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      updateTabs: {
-        'tab-91': { foo: 'bar', selected_step_position: 0 },
-        'tab-92': { foo: 'baz' }
-      }
-    }))
+    const state = wfr.workflowReducer(
+      testState,
+      wfr.applyDeltaAction({
+        updateTabs: {
+          'tab-91': { foo: 'bar', selected_step_position: 0 },
+          'tab-92': { foo: 'baz' }
+        }
+      })
+    )
     expect(state.tabs['tab-91'].foo).toEqual('bar') // new property
     expect(state.tabs['tab-92'].foo).toEqual('baz')
     expect(state.tabs['tab-91'].step_ids).toEqual([10, 20, 30]) // old property
@@ -333,9 +375,12 @@ describe('Reducer actions', () => {
   })
 
   it('applies delta to clearing a Tab', () => {
-    const state = wfr.workflowReducer(testState, wfr.applyDeltaAction({
-      clearTabSlugs: ['tab-91']
-    }))
+    const state = wfr.workflowReducer(
+      testState,
+      wfr.applyDeltaAction({
+        clearTabSlugs: ['tab-91']
+      })
+    )
     expect(state.tabs).toEqual({})
   })
 
@@ -345,18 +390,31 @@ describe('Reducer actions', () => {
     // haven't been applied on the server yet. TODO nix pendingTabs when we
     // have a sane way of doing that.
     const oldTab = { slug: 'tab-1', name: 'Old' }
-    const newTab = { slug: 'tab-NEW', name: 'New', step_ids: [], selected_step_position: null }
-    const realNewTab = { slug: 'tab-NEW', name: 'New', step_ids: [1, 2], selected_step_position: 1 } // e.g., from 'duplicate'
+    const newTab = {
+      slug: 'tab-NEW',
+      name: 'New',
+      step_ids: [],
+      selected_step_position: null
+    }
+    const realNewTab = {
+      slug: 'tab-NEW',
+      name: 'New',
+      step_ids: [1, 2],
+      selected_step_position: 1
+    } // e.g., from 'duplicate'
 
-    const state = wfr.workflowReducer({
-      workflow: {
-        tab_slugs: ['tab-1', 'tab-NEW']
+    const state = wfr.workflowReducer(
+      {
+        workflow: {
+          tab_slugs: ['tab-1', 'tab-NEW']
+        },
+        tabs: { 'tab-1': oldTab },
+        pendingTabs: { 'tab-NEW': newTab }
       },
-      tabs: { 'tab-1': oldTab },
-      pendingTabs: { 'tab-NEW': newTab }
-    }, wfr.applyDeltaAction({
-      updateTabs: { 'tab-NEW': realNewTab }
-    }))
+      wfr.applyDeltaAction({
+        updateTabs: { 'tab-NEW': realNewTab }
+      })
+    )
 
     expect(state.tabs).toEqual({
       'tab-1': oldTab,
@@ -382,16 +440,19 @@ describe('Reducer actions', () => {
       setStepParams: jest.fn(() => Promise.resolve(null))
     }
 
-    const store = mockStore({
-      steps: {
-        10: {
-          params: {
-            a: 'x',
-            b: 'y'
+    const store = mockStore(
+      {
+        steps: {
+          10: {
+            params: {
+              a: 'x',
+              b: 'y'
+            }
           }
         }
-      }
-    }, api)
+      },
+      api
+    )
     const done = store.dispatch(wfr.setStepParamsAction(10, { a: 'z' }))
 
     // should set value immediately
@@ -406,21 +467,21 @@ describe('Reducer actions', () => {
     const api = {
       requestFetch: jest.fn().mockImplementation(_ => Promise.resolve(null))
     }
-    const store = mockStore({
-      steps: {
-        10: {
-          module: 'mod'
+    const store = mockStore(
+      {
+        steps: {
+          10: {
+            module: 'mod'
+          }
+        },
+        modules: {
+          mod: {
+            param_fields: [{ idName: 'foo' }, { idName: 'version_select' }]
+          }
         }
       },
-      modules: {
-        mod: {
-          param_fields: [
-            { idName: 'foo' },
-            { idName: 'version_select' }
-          ]
-        }
-      }
-    }, api)
+      api
+    )
     const done = store.dispatch(wfr.maybeRequestStepFetchAction(10))
 
     // should set nClientRequests immediately.
@@ -439,7 +500,9 @@ describe('Reducer actions', () => {
         selectedVersion: '2018-02-21T03:09:10.214054Z'
       }
     })
-    expect(state.steps['10'].versions.selected).toBe('2018-02-21T03:09:10.214054Z')
+    expect(state.steps['10'].versions.selected).toBe(
+      '2018-02-21T03:09:10.214054Z'
+    )
   })
 
   it('clears the notification count', () => {
@@ -460,9 +523,12 @@ describe('Reducer actions', () => {
       }
     }
 
-    const store = mockStore({
-      workflow: { name: 'foo' }
-    }, api)
+    const store = mockStore(
+      {
+        workflow: { name: 'foo' }
+      },
+      api
+    )
     await store.dispatch(wfr.setWorkflowNameAction('bar'))
     expect(store.getState().firstUnhandledError).toEqual({
       type: 'SET_WORKFLOW_NAME',
@@ -480,9 +546,12 @@ describe('Reducer actions', () => {
       }
     }
 
-    const store = mockStore({
-      workflow: { name: 'foo' }
-    }, api)
+    const store = mockStore(
+      {
+        workflow: { name: 'foo' }
+      },
+      api
+    )
     await store.dispatch(wfr.setWorkflowNameAction('bar'))
     expect(store.getState().firstUnhandledError).toEqual({
       type: 'SET_WORKFLOW_NAME',
@@ -505,9 +574,12 @@ describe('Reducer actions', () => {
       }
     }
 
-    const store = mockStore({
-      workflow: { name: 'foo' }
-    }, api)
+    const store = mockStore(
+      {
+        workflow: { name: 'foo' }
+      },
+      api
+    )
     await store.dispatch(wfr.setWorkflowNameAction('bar')) // error
     await store.dispatch(wfr.setWorkflowNameAction('baz')) // second error -- we will ignore it
     expect(store.getState().firstUnhandledError).toEqual({

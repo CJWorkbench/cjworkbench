@@ -14,58 +14,75 @@ export default class ParamsForm extends PureComponent {
     isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
     isZenMode: PropTypes.bool.isRequired,
-    api: PropTypes.shape({ // We should nix this. Try to remove its properties, one by one....:
+    api: PropTypes.shape({
+      // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
       valueCounts: PropTypes.func.isRequired // for ValueFilter/Refine
     }),
-    fields: PropTypes.arrayOf(PropTypes.shape({
-      idName: PropTypes.string.isRequired,
-      name: PropTypes.string, // or null or ''
-      type: PropTypes.string.isRequired,
-      enumOptions: PropTypes.arrayOf(
-        PropTypes.oneOfType([
-          PropTypes.oneOf(['separator']), // menu only
-          PropTypes.shape({
-            value: PropTypes.any.isRequired,
-            label: PropTypes.string.isRequired
-          }).isRequired // menu or radio
-        ]).isRequired
-      ), // only set on menu/radio
-      multiline: PropTypes.bool, // required for String
-      syntax: PropTypes.oneOf(['python', 'sql']), // optional, only for String
-      placeholder: PropTypes.string, // required for many
-      visibleIf: PropTypes.object, // JSON spec or null,
-      childParameters: PropTypes.array,
-      childDefault: PropTypes.object
-    }).isRequired).isRequired,
-    files: PropTypes.arrayOf(PropTypes.shape({
-      uuid: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      size: PropTypes.number.isRequired,
-      createdAt: PropTypes.string.isRequired // ISO-8601
-    }).isRequired).isRequired,
+    fields: PropTypes.arrayOf(
+      PropTypes.shape({
+        idName: PropTypes.string.isRequired,
+        name: PropTypes.string, // or null or ''
+        type: PropTypes.string.isRequired,
+        enumOptions: PropTypes.arrayOf(
+          PropTypes.oneOfType([
+            PropTypes.oneOf(['separator']), // menu only
+            PropTypes.shape({
+              value: PropTypes.any.isRequired,
+              label: PropTypes.string.isRequired
+            }).isRequired // menu or radio
+          ]).isRequired
+        ), // only set on menu/radio
+        multiline: PropTypes.bool, // required for String
+        syntax: PropTypes.oneOf(['python', 'sql']), // optional, only for String
+        placeholder: PropTypes.string, // required for many
+        visibleIf: PropTypes.object, // JSON spec or null,
+        childParameters: PropTypes.array,
+        childDefault: PropTypes.object
+      }).isRequired
+    ).isRequired,
+    files: PropTypes.arrayOf(
+      PropTypes.shape({
+        uuid: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        size: PropTypes.number.isRequired,
+        createdAt: PropTypes.string.isRequired // ISO-8601
+      }).isRequired
+    ).isRequired,
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
     secrets: PropTypes.object, // upstream secrets. `null` if the server hasn't been contacted; otherwise, keys set only when params are filled in
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
     workflowId: PropTypes.number.isRequired,
     stepId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
     stepSlug: PropTypes.string, // should be .isRequired but Step.js does not handle placeholders yet
-    stepOutputErrors: PropTypes.arrayOf(PropTypes.shape({ message: PropTypes.string.isRequired, quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes)).isRequired }).isRequired).isRequired, // may be empty
+    stepOutputErrors: PropTypes.arrayOf(
+      PropTypes.shape({
+        message: PropTypes.string.isRequired,
+        quickFixes: PropTypes.arrayOf(PropTypes.shape(QuickFixPropTypes))
+          .isRequired
+      }).isRequired
+    ).isRequired, // may be empty
     isStepBusy: PropTypes.bool.isRequired,
     inputStepId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
-    inputColumns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-    }).isRequired),
-    tabs: PropTypes.arrayOf(PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      outputColumns: PropTypes.arrayOf(PropTypes.shape({
+    inputColumns: PropTypes.arrayOf(
+      PropTypes.shape({
         name: PropTypes.string.isRequired,
         type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-      }).isRequired) // null while rendering
-    }).isRequired).isRequired,
+      }).isRequired
+    ),
+    tabs: PropTypes.arrayOf(
+      PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        outputColumns: PropTypes.arrayOf(
+          PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+          }).isRequired
+        ) // null while rendering
+      }).isRequired
+    ).isRequired,
     currentTab: PropTypes.string.isRequired, // "tab-slug", never null
     applyQuickFix: PropTypes.func.isRequired, // func(action, args) => undefined
     startCreateSecret: PropTypes.func.isRequired, // func(idName) => undefined
@@ -75,14 +92,14 @@ export default class ParamsForm extends PureComponent {
     onSubmit: PropTypes.func.isRequired // func() => undefined
   }
 
-  handleKeyDown = (ev) => {
+  handleKeyDown = ev => {
     if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) {
       ev.preventDefault() // in case it was already going to submit
       this.handleSubmit()
     }
   }
 
-  handleSubmit = (maybeEv) => {
+  handleSubmit = maybeEv => {
     if (maybeEv) {
       // it's an HTML submit event: don't spawn the default HTTP request
       maybeEv.preventDefault()
@@ -152,12 +169,18 @@ export default class ParamsForm extends PureComponent {
       //
       // It's easier to _hide_ a broken field than _show_ it: hiding exits the
       // recursion and showing doesn't.
-      console.warn(`Field ${field.idName} visibleIf depends on the field's own visibility. Please remove this recursive loop.`)
+      console.warn(
+        `Field ${field.idName} visibleIf depends on the field's own visibility. Please remove this recursive loop.`
+      )
       return false
     }
-    const conditionField = this.props.fields.find(f => f.idName === condition.idName)
+    const conditionField = this.props.fields.find(
+      f => f.idName === condition.idName
+    )
     // Recurse to see if we depend on an invisible field
-    if (!this.isFieldVisible(conditionField, [...recurseDetector, field.idName])) {
+    if (
+      !this.isFieldVisible(conditionField, [...recurseDetector, field.idName])
+    ) {
       return false
     }
 
@@ -165,14 +188,20 @@ export default class ParamsForm extends PureComponent {
       const value = this.value[condition.idName]
 
       // If the condition value is a boolean:
-      if (typeof condition.value === 'boolean' || typeof condition.value === 'number') {
+      if (
+        typeof condition.value === 'boolean' ||
+        typeof condition.value === 'number'
+      ) {
         let match
         if (value === condition.value) {
           // Just return if it matches
           match = true
-        } else if (typeof condition.value === 'boolean' && typeof value !== 'boolean') {
+        } else if (
+          typeof condition.value === 'boolean' &&
+          typeof value !== 'boolean'
+        ) {
           // Test for _truthiness_, not truth.
-          match = condition.value === (!!value)
+          match = condition.value === !!value
         } else {
           match = false
         }
@@ -198,9 +227,27 @@ export default class ParamsForm extends PureComponent {
 
   render () {
     const {
-      api, isOwner, isReadOnly, isZenMode, workflowId, stepId, stepSlug, stepOutputErrors,
-      isStepBusy, inputStepId, inputDeltaId, inputColumns, tabs, currentTab, applyQuickFix,
-      startCreateSecret, deleteSecret, submitSecret, fields, files, secrets
+      api,
+      isOwner,
+      isReadOnly,
+      isZenMode,
+      workflowId,
+      stepId,
+      stepSlug,
+      stepOutputErrors,
+      isStepBusy,
+      inputStepId,
+      inputDeltaId,
+      inputColumns,
+      tabs,
+      currentTab,
+      applyQuickFix,
+      startCreateSecret,
+      deleteSecret,
+      submitSecret,
+      fields,
+      files,
+      secrets
     } = this.props
     const isEditing = this.isEditing
 
@@ -211,7 +258,8 @@ export default class ParamsForm extends PureComponent {
     // are nested together. Until then, we need to pass `selectedColumn` to the edit-value
     // components so they can load data.
     const columnParam = fields.find(f => f.type === 'column')
-    const selectedColumn = (columnParam && value && value[columnParam.idName]) || null
+    const selectedColumn =
+      (columnParam && value && value[columnParam.idName]) || null
     // TODO ditto JoinColumns
     const tabParam = fields.find(f => f.type === 'tab')
     const selectedTab = (tabParam && value && value[tabParam.idName]) || null
@@ -247,7 +295,9 @@ export default class ParamsForm extends PureComponent {
                 isZenMode={isZenMode}
                 key={field.idName}
                 {...paramFieldToParamProps(field)}
-                upstreamValue={upstreamValue ? upstreamValue[field.idName] : null}
+                upstreamValue={
+                  upstreamValue ? upstreamValue[field.idName] : null
+                }
                 secretMetadata={secretMetadata}
                 value={value ? value[field.idName] : null}
                 files={files}

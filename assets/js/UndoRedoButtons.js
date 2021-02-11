@@ -8,7 +8,7 @@ export default class UndoRedoButtons extends PureComponent {
     redo: PropTypes.func.isRequired // func() => undefined
   }
 
-  onDocumentKeyDown = (ev) => {
+  onDocumentKeyDown = ev => {
     const { undo, redo } = this.props
 
     // Ignore keypresses when they're users inputting into things.
@@ -27,7 +27,8 @@ export default class UndoRedoButtons extends PureComponent {
     // event.
     if (ev.defaultPrevented) return
 
-    if (ev.metaKey || ev.ctrlKey) { // Meta on OS X, Ctrl on Windows
+    if (ev.metaKey || ev.ctrlKey) {
+      // Meta on OS X, Ctrl on Windows
       switch (ev.key) {
         case 'Z':
         case 'z': // HTML spec says 'Z' but on Mac we get 'z'. React weirdness?
@@ -59,14 +60,20 @@ export default class UndoRedoButtons extends PureComponent {
       <div className='group--undo-redo'>
         <button
           name='undo'
-          title={t({ id: 'js.UndoRedoButtons.undo.hoverText', message: 'Undo' })}
+          title={t({
+            id: 'js.UndoRedoButtons.undo.hoverText',
+            message: 'Undo'
+          })}
           onClick={undo}
         >
           <i className='icon-undo' />
         </button>
         <button
           name='redo'
-          title={t({ id: 'js.UndoRedoButtons.redo.hoverText', message: 'Redo' })}
+          title={t({
+            id: 'js.UndoRedoButtons.redo.hoverText',
+            message: 'Redo'
+          })}
           onClick={redo}
         >
           <i className='icon-redo' />

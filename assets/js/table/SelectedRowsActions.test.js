@@ -4,7 +4,9 @@ import { Provider } from 'react-redux'
 import { mountWithI18n } from '../i18n/test-utils'
 import { mockStore, tick } from '../test-utils'
 import { generateSlug } from '../utils'
-import ConnectedSelectedRowsActions, { SelectedRowsActions } from './SelectedRowsActions'
+import ConnectedSelectedRowsActions, {
+  SelectedRowsActions
+} from './SelectedRowsActions'
 
 jest.mock('../utils')
 
@@ -27,15 +29,27 @@ describe('SelectedRowsActions', () => {
 
     it('should render number of selected columns', () => {
       const w = wrapper({ selectedRowIndexes: [2, 5, 6] })
-      expect(w.find('Trans[id="js.table.SelectedRowsActions.numberOfSelectedRows"]').prop('values')).toEqual({ 0: 3 })
+      expect(
+        w
+          .find('Trans[id="js.table.SelectedRowsActions.numberOfSelectedRows"]')
+          .prop('values')
+      ).toEqual({ 0: 3 })
     })
 
     it('should invoke an action with rows as a string, 1-based', async () => {
-      const w = wrapper({ selectedRowIndexes: [2, 3, 4, 5, 8000, 8001, 8002, 9] })
+      const w = wrapper({
+        selectedRowIndexes: [2, 3, 4, 5, 8000, 8001, 8002, 9]
+      })
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-      w.find('button').at(1).simulate('click')
-      expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 'dofoo', '3-6, 10, 8001-8003')
+      w.find('button')
+        .at(1)
+        .simulate('click')
+      expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(
+        99,
+        'dofoo',
+        '3-6, 10, 8001-8003'
+      )
     })
   })
 
@@ -93,49 +107,66 @@ describe('SelectedRowsActions', () => {
     it('should use addStepAction', async () => {
       generateSlug.mockImplementation(prefix => prefix + 'X')
 
-      const w = wrapper({
-        tabs: { 'tab-1': { step_ids: [2] } },
-        steps: {
-          2: { module: 'dofoo', tab_slug: 'tab-1' }
-        },
-        modules: {
-          dobar: {
-            row_action_menu_entry_title: 'Bar these rows'
+      const w = wrapper(
+        {
+          tabs: { 'tab-1': { step_ids: [2] } },
+          steps: {
+            2: { module: 'dofoo', tab_slug: 'tab-1' }
+          },
+          modules: {
+            dobar: {
+              row_action_menu_entry_title: 'Bar these rows'
+            }
           }
-        }
-      }, { stepId: 2 })
+        },
+        { stepId: 2 }
+      )
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Bar these rows/)
-      w.find('button').at(1).simulate('click')
+      w.find('button')
+        .at(1)
+        .simulate('click')
 
       await tick() // wait for all promises to settle
 
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'dobar', 1, { rows: '2, 4-5' })
+      expect(api.addStep).toHaveBeenCalledWith('tab-1', 'step-X', 'dobar', 1, {
+        rows: '2, 4-5'
+      })
     })
 
     it('should use setStepParams action, fromInput', async () => {
-      const w = wrapper({
-        workflow: { tab_slugs: ['tab-1'] },
-        tabs: { 'tab-1': { step_ids: [2, 3] } },
-        steps: {
-          2: { module: 'dofoo', tab_slug: 'tab-1' },
-          3: { module: 'dobaz', tab_slug: 'tab-1', params: { foo20: 'bar20' } }
-        },
-        modules: {
-          dobaz: {
-            row_action_menu_entry_title: 'Baz these rows',
-            js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
+      const w = wrapper(
+        {
+          workflow: { tab_slugs: ['tab-1'] },
+          tabs: { 'tab-1': { step_ids: [2, 3] } },
+          steps: {
+            2: { module: 'dofoo', tab_slug: 'tab-1' },
+            3: {
+              module: 'dobaz',
+              tab_slug: 'tab-1',
+              params: { foo20: 'bar20' }
+            }
+          },
+          modules: {
+            dobaz: {
+              row_action_menu_entry_title: 'Baz these rows',
+              js_module:
+                'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
+            }
           }
-        }
-      }, { stepId: 2 }) // selected module is the input
+        },
+        { stepId: 2 }
+      ) // selected module is the input
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
-      w.find('button').at(1).simulate('click')
+      w.find('button')
+        .at(1)
+        .simulate('click')
 
       await tick() // wait for all promises to settle
 
@@ -143,41 +174,53 @@ describe('SelectedRowsActions', () => {
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
       expect(api.setSelectedStep).toHaveBeenCalledWith(3)
-      expect(api.setStepParams).toHaveBeenCalledWith(
-        3,
-        { oldParams: { foo20: 'bar20' }, rows: '2, 4-5', fromInput: true }
-      )
+      expect(api.setStepParams).toHaveBeenCalledWith(3, {
+        oldParams: { foo20: 'bar20' },
+        rows: '2, 4-5',
+        fromInput: true
+      })
     })
 
     it('should use setStepParams action, fromInput=false (from output)', async () => {
-      const w = wrapper({
-        workflow: { tab_slugs: ['tab-1'] },
-        tabs: { 'tab-1': { step_ids: [2, 3] } },
-        steps: {
-          2: { module: 'dobaz', tab_slug: 'tab-1', params: { foo10: 'bar10' } },
-          3: { module: 'dofoo', tab_slug: 'tab-1' }
-        },
-        modules: {
-          dobaz: {
-            row_action_menu_entry_title: 'Baz these rows',
-            js_module: 'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
+      const w = wrapper(
+        {
+          workflow: { tab_slugs: ['tab-1'] },
+          tabs: { 'tab-1': { step_ids: [2, 3] } },
+          steps: {
+            2: {
+              module: 'dobaz',
+              tab_slug: 'tab-1',
+              params: { foo10: 'bar10' }
+            },
+            3: { module: 'dofoo', tab_slug: 'tab-1' }
+          },
+          modules: {
+            dobaz: {
+              row_action_menu_entry_title: 'Baz these rows',
+              js_module:
+                'module.exports = { addSelectedRows: (oldParams, rows, fromInput) => ({ oldParams, rows, fromInput }) }'
+            }
           }
-        }
-      }, { stepId: 2 }) // selected module is what's we're editing
+        },
+        { stepId: 2 }
+      ) // selected module is what's we're editing
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
       expect(w.find('.dropdown-menu').text()).toMatch(/Baz these rows/)
-      w.find('button').at(1).simulate('click')
+      w.find('button')
+        .at(1)
+        .simulate('click')
 
       await tick() // wait for all promises to settle
 
       // Check that the reducer did its stuff. We don't test that store.state
       // is changed because the fact these methods were called implies the
       // reducer was invoked correctly.
-      expect(api.setStepParams).toHaveBeenCalledWith(
-        2,
-        { oldParams: { foo10: 'bar10' }, rows: '2, 4-5', fromInput: false }
-      )
+      expect(api.setStepParams).toHaveBeenCalledWith(2, {
+        oldParams: { foo10: 'bar10' },
+        rows: '2, 4-5',
+        fromInput: false
+      })
     })
   })
 })

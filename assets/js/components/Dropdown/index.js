@@ -5,4 +5,11 @@ import DropdownMenu from './DropdownMenu'
 import DropdownItem from './DropdownItem'
 import DropdownDivider from './DropdownDivider'
 
-export { Dropdown, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, DropdownDivider }
+export {
+  Dropdown,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  DropdownDivider
+}

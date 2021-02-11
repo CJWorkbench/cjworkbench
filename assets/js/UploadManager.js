@@ -29,7 +29,10 @@ export default class UploadManager {
     const filename = file.name
     const size = file.size
 
-    const response = await this.websocket.callServerHandler('upload.create_upload', { stepSlug, filename, size })
+    const response = await this.websocket.callServerHandler(
+      'upload.create_upload',
+      { stepSlug, filename, size }
+    )
     const { tusUploadUrl } = response
 
     const promise = new Promise((resolve, reject) => {

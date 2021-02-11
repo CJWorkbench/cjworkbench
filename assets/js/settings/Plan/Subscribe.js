@@ -7,7 +7,9 @@ export default function Subscribe (props) {
   const [loading, setLoading] = useState(false)
   const handleClick = useCallback(async () => {
     setLoading(true)
-    try { await onClick() } catch {}
+    try {
+      await onClick()
+    } catch {}
     setLoading(false)
   }, [onClick])
 

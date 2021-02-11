@@ -29,10 +29,14 @@ export function TextCellFormatter ({ value }) {
   // can see spaces.
   const oneLineValue = value.replace(
     UnicodeWhitespace,
-    (x) => UnicodeWhitespaceReplacements[x]
+    x => UnicodeWhitespaceReplacements[x]
   )
 
-  return <div className='cell-text' title={value}>{oneLineValue}</div>
+  return (
+    <div className='cell-text' title={value}>
+      {oneLineValue}
+    </div>
+  )
 }
 
 /**
@@ -42,7 +46,9 @@ export function TextCellFormatter ({ value }) {
  */
 function parseFormat (format) {
   try {
-    const [, prefix, specifierString, suffix] = /(.*?)\{:?(.*)\}(.*)/.exec(format)
+    const [, prefix, specifierString, suffix] = /(.*?)\{:?(.*)\}(.*)/.exec(
+      format
+    )
     return { prefix, suffix, specifierString }
   } catch (e) {
     if (e instanceof TypeError) {
@@ -63,7 +69,7 @@ export function NumberCellFormatter (format) {
   let f
   if (specifierString.endsWith('%')) {
     suffix = '%' + suffix
-    f = (n) => d3Format(n).slice(0, -1)
+    f = n => d3Format(n).slice(0, -1)
   } else {
     f = d3Format
   }
@@ -101,9 +107,13 @@ export function TimestampCellFormatter ({ value }) {
   // the very end iff there's no time component. (The time component starts
   // with 'T'.)
   const isoText = date.toISOString()
-  const text = isoText.replace(ZeroEndOfDate, (m) => m[0][0] === 'T' ? '' : 'Z')
+  const text = isoText.replace(ZeroEndOfDate, m => (m[0][0] === 'T' ? '' : 'Z'))
 
-  return <time className='cell-timestamp' dateTime={isoText}>{text}</time>
+  return (
+    <time className='cell-timestamp' dateTime={isoText}>
+      {text}
+    </time>
+  )
 }
 
 const TypeToCellFormatter = {

@@ -35,16 +35,29 @@ export default function AddBlockPrompt ({ position, tabs, onSubmit }) {
     }
     setEditingMarkdown(false)
   }, [position, markdown, setMarkdown, setEditingMarkdown, onSubmit])
-  const handleSubmitTable = useCallback(block => {
-    onSubmit(position, { type: 'table', ...block })
-  }, [position, onSubmit])
-  const handleSubmitChart = useCallback(block => {
-    onSubmit(position, { type: 'chart', ...block })
-  }, [position, onSubmit])
+  const handleSubmitTable = useCallback(
+    block => {
+      onSubmit(position, { type: 'table', ...block })
+    },
+    [position, onSubmit]
+  )
+  const handleSubmitChart = useCallback(
+    block => {
+      onSubmit(position, { type: 'chart', ...block })
+    },
+    [position, onSubmit]
+  )
   return (
-    <div className={`add-block-prompt${(openMenu || isEditingMarkdown) ? ' active' : ''}`}>
+    <div
+      className={`add-block-prompt${
+        openMenu || isEditingMarkdown ? ' active' : ''
+      }`}
+    >
       <div className='actions'>
-        <AddTextBlockPrompt active={isEditingMarkdown} onClick={handleClickAddText} />
+        <AddTextBlockPrompt
+          active={isEditingMarkdown}
+          onClick={handleClickAddText}
+        />
         <AddTableBlockPrompt
           tabs={tabs}
           isMenuOpen={openMenu === 'table'}
@@ -60,26 +73,32 @@ export default function AddBlockPrompt ({ position, tabs, onSubmit }) {
           onSubmit={handleSubmitChart}
         />
       </div>
-      {isEditingMarkdown ? (
-        <MarkdownEditor
-          value={markdown}
-          onChange={setMarkdown}
-          onCancel={handleCancelAddText}
-          onSubmit={handleSubmitText}
-        />
-      ) : null}
+      {isEditingMarkdown
+        ? (
+          <MarkdownEditor
+            value={markdown}
+            onChange={setMarkdown}
+            onCancel={handleCancelAddText}
+            onSubmit={handleSubmitText}
+          />
+          )
+        : null}
     </div>
   )
 }
 AddBlockPrompt.propTypes = {
   position: PropTypes.number.isRequired,
-  tabs: PropTypes.arrayOf(PropTypes.shape({
-    slug: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    chartSteps: PropTypes.arrayOf(PropTypes.shape({
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
       slug: PropTypes.string.isRequired,
-      moduleName: PropTypes.string.isRequired
-    }).isRequired).isRequired
-  }).isRequired).isRequired,
+      name: PropTypes.string.isRequired,
+      chartSteps: PropTypes.arrayOf(
+        PropTypes.shape({
+          slug: PropTypes.string.isRequired,
+          moduleName: PropTypes.string.isRequired
+        }).isRequired
+      ).isRequired
+    }).isRequired
+  ).isRequired,
   onSubmit: PropTypes.func.isRequired // func(position, { type, ... }) => undefined
 }

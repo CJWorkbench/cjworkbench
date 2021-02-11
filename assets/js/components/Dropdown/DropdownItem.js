@@ -32,14 +32,22 @@ export default class DropdownItem extends PureComponent {
   static contextType = DropdownContext
 
   handleClick = this.props.onClick
-    ? (ev) => {
-      this.props.onClick(ev)
-      this.context.toggle()
-    }
+    ? ev => {
+        this.props.onClick(ev)
+        this.context.toggle()
+      }
     : undefined
 
   render () {
-    const { children, href, className, icon, active, disabled, ...rest } = this.props
+    const {
+      children,
+      href,
+      className,
+      icon,
+      active,
+      disabled,
+      ...rest
+    } = this.props
     const Tag = href ? 'a' : 'button'
 
     const classNames = ['dropdown-item']
@@ -48,7 +56,9 @@ export default class DropdownItem extends PureComponent {
 
     return (
       <Tag
-        {...rest /* pass through all other options -- _first_, so e.g. we'll overwrite onClick+className */}
+        {
+          ...rest /* pass through all other options -- _first_, so e.g. we'll overwrite onClick+className */
+        }
         className={classNames.join(' ')}
         href={href}
         onClick={this.handleClick}

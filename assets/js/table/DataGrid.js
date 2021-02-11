@@ -17,12 +17,14 @@ import { columnToCellFormatter } from './CellFormatters'
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 0 // ms after scroll before fetch
 
-const getRowSelection = memoize((indexes, onRowsSelected, onRowsDeselected) => ({
-  enableShiftSelect: true,
-  onRowsSelected,
-  onRowsDeselected,
-  selectBy: { indexes }
-}))
+const getRowSelection = memoize(
+  (indexes, onRowsSelected, onRowsDeselected) => ({
+    enableShiftSelect: true,
+    onRowsSelected,
+    onRowsDeselected,
+    selectBy: { indexes }
+  })
+)
 
 function buildEmptyRow (columns) {
   const row = {}
@@ -30,10 +32,18 @@ function buildEmptyRow (columns) {
   for (const column of columns) {
     let value
     switch (column.type) {
-      case 'text': value = ''; break
-      case 'number': value = null; break
-      case 'timestamp': value = null; break
-      default: value = null; break
+      case 'text':
+        value = ''
+        break
+      case 'number':
+        value = null
+        break
+      case 'timestamp':
+        value = null
+        break
+      default:
+        value = null
+        break
     }
 
     row[column.name] = value
@@ -97,14 +107,17 @@ export default class DataGrid extends PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     stepId: PropTypes.number, // immutable; null for placeholder table
     deltaId: PropTypes.number, // immutable; null for placeholder table
-    columns: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-    }).isRequired), // immutable; null for placeholder table
+    columns: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+      }).isRequired
+    ), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
     editCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
     reorderColumn: PropTypes.func.isRequired, // func(colname, fromIndex, toIndex) => undefined
-    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired, // may be empty
+    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired)
+      .isRequired, // may be empty
     onSetSelectedRowIndexes: PropTypes.func.isRequired // func([idx, ...]) => undefined
   }
 
@@ -182,27 +195,26 @@ export default class DataGrid extends PureComponent {
       }
     }
 
-    loadRows(stepId, deltaId, min, max)
-      .then(json => {
-        if (this.unmounted) return
+    loadRows(stepId, deltaId, min, max).then(json => {
+      if (this.unmounted) return
 
-        const loadedRows = this.state.loadedRows.slice()
+      const loadedRows = this.state.loadedRows.slice()
 
-        // expand the Array (filling undefined for missing values in between)
-        loadedRows[json.start_row] = null
-        // add the new rows
-        loadedRows.splice(json.start_row, json.rows.length, ...json.rows)
+      // expand the Array (filling undefined for missing values in between)
+      loadedRows[json.start_row] = null
+      // add the new rows
+      loadedRows.splice(json.start_row, json.rows.length, ...json.rows)
 
-        this.setState(() => {
-          this.firstMissingRowIndex = null
-          this.scheduleLoadTimeout = null
+      this.setState(() => {
+        this.firstMissingRowIndex = null
+        this.scheduleLoadTimeout = null
 
-          return {
-            loadedRows,
-            spinning: false
-          }
-        })
+        return {
+          loadedRows,
+          spinning: false
+        }
       })
+    })
   }
 
   componentDidMount () {
@@ -220,7 +232,7 @@ export default class DataGrid extends PureComponent {
     this.unmounted = true
   }
 
-  handleGridRowsUpdated = (data) => {
+  handleGridRowsUpdated = data => {
     const { fromRow, fromRowData, toRow, cellKey, updated } = data
 
     if (fromRow !== toRow) {
@@ -237,7 +249,8 @@ export default class DataGrid extends PureComponent {
     if (newValue !== (oldValue || '')) {
       // Edit value in-place in loadedRows. This should jive with getRow()
       // and prevent us from re-rendering the table.
-      this.state.loadedRows[fromRow][cellKey] = newValue
+      const mutateStateBecauseReactDataGridMadeUs = this.state.loadedRows[fromRow]
+      mutateStateBecauseReactDataGridMadeUs[cellKey] = newValue
 
       // Edit on the server and in state.
       this.props.editCell(fromRow, cellKey, newValue)
@@ -249,7 +262,7 @@ export default class DataGrid extends PureComponent {
     this.props.reorderColumn(colname, fromIndex, toIndex)
   }
 
-  handleDragStartColumnIndex = (index) => {
+  handleDragStartColumnIndex = index => {
     this.setState({
       draggingColumnIndex: index
     })
@@ -261,7 +274,7 @@ export default class DataGrid extends PureComponent {
     })
   }
 
-  onRowsSelected = (newRows) => {
+  onRowsSelected = newRows => {
     // Merge is O(n lg n), better than O(n^2) of naive algo
     const newIndexes = newRows.map(r => r.rowIdx).sort()
     const oldIndexes = this.props.selectedRowIndexes.slice().sort()
@@ -269,19 +282,20 @@ export default class DataGrid extends PureComponent {
     this.props.onSetSelectedRowIndexes(indexes)
   }
 
-  onRowsDeselected = (rows) => {
+  onRowsDeselected = rows => {
     // Nix by hash-map is slow, but it scales O(n) and we need that
     const nix = {}
     for (let i = 0; i < rows.length; i++) {
       nix[String(rows[i].rowIdx)] = null
     }
 
-    const selectedRowIndexes = this.props.selectedRowIndexes
-      .filter(i => !Object.prototype.hasOwnProperty.call(nix, String(i)))
+    const selectedRowIndexes = this.props.selectedRowIndexes.filter(
+      i => !Object.prototype.hasOwnProperty.call(nix, String(i))
+    )
     this.props.onSetSelectedRowIndexes(selectedRowIndexes)
   }
 
-  getRow = (i) => {
+  getRow = i => {
     // Be careful. This gets called during render(), so make sure there's
     // nothing in its innards that can ever call setState().
     //
@@ -298,7 +312,10 @@ export default class DataGrid extends PureComponent {
         // This is a placeholder table, not a real data table. Don't load.
       } else if (!this.scheduleLoadTimeout) {
         this.firstMissingRowIndex = i
-        this.scheduleLoadTimeout = window.setTimeout(() => this.load(), FetchTimeout)
+        this.scheduleLoadTimeout = window.setTimeout(
+          () => this.load(),
+          FetchTimeout
+        )
       } else {
         // We've already scheduled a load. No-op: when the load returns,
         // we'll render(), and that will call getRow() again, and that can
@@ -345,8 +362,14 @@ export default class DataGrid extends PureComponent {
     const { gridWidth, gridHeight } = this.state
     const { selectedRowIndexes, nRows } = this.props
 
-    const formattedColumns = this.makeFormattedCols(this.state.draggingColumnIndex)
-    const rowSelection = getRowSelection(selectedRowIndexes, this.onRowsSelected, this.onRowsDeselected)
+    const formattedColumns = this.makeFormattedCols(
+      this.state.draggingColumnIndex
+    )
+    const rowSelection = getRowSelection(
+      selectedRowIndexes,
+      this.onRowsSelected,
+      this.onRowsDeselected
+    )
 
     return (
       <ReactDataGridWithThinnerActionsColumn
@@ -382,7 +405,7 @@ export default class DataGrid extends PureComponent {
     // Beware: gridWidth = gridHeight = 0 in Enzyme tests with a fake DOM.
     return (
       <div className='data-grid-sizer' ref={this.sizerRef}>
-        {(gridWidth !== null && gridHeight !== null) ? this.renderGrid() : null}
+        {gridWidth !== null && gridHeight !== null ? this.renderGrid() : null}
         {spinning ? <Spinner /> : null}
       </div>
     )

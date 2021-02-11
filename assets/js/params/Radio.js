@@ -6,16 +6,18 @@ export default class RadioParam extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired, // <input name=...>
     fieldId: PropTypes.string.isRequired, // <input id=...>
-    enumOptions: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.any.isRequired,
-      label: PropTypes.string.isRequired
-    }).isRequired).isRequired,
+    enumOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.any.isRequired,
+        label: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
     value: PropTypes.any.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     onChange: PropTypes.func.isRequired // onChange(newIndex) => undefined
   }
 
-  handleChange = (ev) => {
+  handleChange = ev => {
     // <input value=...> is always a String. Our enumOptions values aren't.
     // Find the option matching the string, and return it.
     const { onChange, enumOptions } = this.props
@@ -32,7 +34,7 @@ export default class RadioParam extends PureComponent {
         <input
           type='radio'
           name={`${name}`}
-          id={`${fieldId}${i === 0 ? '' : ('_' + i)}`}
+          id={`${fieldId}${i === 0 ? '' : '_' + i}`}
           className='radio-button'
           value={String(value)}
           checked={String(value) === String(selectedValue)}
@@ -44,10 +46,6 @@ export default class RadioParam extends PureComponent {
       </label>
     ))
 
-    return (
-      <div className='radio-options'>
-        {optionComponents}
-      </div>
-    )
+    return <div className='radio-options'>{optionComponents}</div>
   }
 }

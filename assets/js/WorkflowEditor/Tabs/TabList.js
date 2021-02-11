@@ -5,11 +5,13 @@ import * as propTypes from '../propTypes'
 
 export default class TabList extends PureComponent {
   static propTypes = {
-    tabs: PropTypes.arrayOf(PropTypes.shape({
-      slug: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      isPending: PropTypes.bool // or undefined
-    }).isRequired).isRequired,
+    tabs: PropTypes.arrayOf(
+      PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        isPending: PropTypes.bool // or undefined
+      }).isRequired
+    ).isRequired,
     selectedPane: propTypes.selectedPane.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     setName: PropTypes.func.isRequired, // func(tabSlug, name) => undefined
@@ -23,11 +25,11 @@ export default class TabList extends PureComponent {
     dragging: null // { fromIndex, toIndex } of dragging state, or `null` if not dragging
   }
 
-  handleDragStart = (index) => {
+  handleDragStart = index => {
     this.setState({ dragging: { fromIndex: index, toIndex: index } })
   }
 
-  handleDragHoverIndex = (index) => {
+  handleDragHoverIndex = index => {
     const { dragging } = this.state
     if (dragging === null) return
 
@@ -76,7 +78,15 @@ export default class TabList extends PureComponent {
   }
 
   render () {
-    const { tabs, selectedPane, isReadOnly, setName, select, destroy, duplicate } = this.props
+    const {
+      tabs,
+      selectedPane,
+      isReadOnly,
+      setName,
+      select,
+      destroy,
+      duplicate
+    } = this.props
     const { dragging } = this.state
 
     return (
@@ -91,7 +101,9 @@ export default class TabList extends PureComponent {
             slug={slug}
             isPending={isPending}
             isReadOnly={isReadOnly}
-            isSelected={selectedPane.pane === 'tab' && selectedPane.tabSlug === slug}
+            isSelected={
+              selectedPane.pane === 'tab' && selectedPane.tabSlug === slug
+            }
             name={name}
             setName={setName}
             destroy={destroy}

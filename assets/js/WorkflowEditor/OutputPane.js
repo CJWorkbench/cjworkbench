@@ -16,21 +16,26 @@ export class OutputPane extends Component {
       id: PropTypes.number.isRequired,
       deltaId: PropTypes.number, // or null -- it may not be rendered
       status: PropTypes.oneOf(['ok', 'busy', 'unreachable']).isRequired, // can't be 'error'
-      columns: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-      }).isRequired), // or null
+      columns: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+        }).isRequired
+      ), // or null
       nRows: PropTypes.number // or null
     }), // or null if no error
     step: PropTypes.shape({
       id: PropTypes.number.isRequired,
       htmlOutput: PropTypes.bool.isRequired,
-      status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable']).isRequired,
+      status: PropTypes.oneOf(['ok', 'busy', 'error', 'unreachable'])
+        .isRequired,
       deltaId: PropTypes.number, // or null if not yet rendered
-      columns: PropTypes.arrayOf(PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-      }).isRequired), // or null
+      columns: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+        }).isRequired
+      ), // or null
       nRows: PropTypes.number // or null
     }), // or null if no selection
     isPublic: PropTypes.bool.isRequired,
@@ -91,16 +96,22 @@ export class OutputPane extends Component {
   render () {
     const { isReadOnly, loadRows, step, stepBeforeError } = this.props
     const stepForTable = this.stepForTable
-    const className = 'outputpane module-' + (step ? step.status : 'unreachable')
+    const className =
+      'outputpane module-' + (step ? step.status : 'unreachable')
 
     return (
       <div className={className}>
         {step && step.htmlOutput ? this.renderOutputIFrame() : null}
-        {stepBeforeError ? (
-          <p key='error' className='showing-input-because-error'>
-            <Trans id='js.WorkflowEditor.OutputPane.showingInput.becauseError'>This was the data that led to an error. Please correct the error in the left pane.</Trans>
-          </p>
-        ) : null}
+        {stepBeforeError
+          ? (
+            <p key='error' className='showing-input-because-error'>
+              <Trans id='js.WorkflowEditor.OutputPane.showingInput.becauseError'>
+                This was the data that led to an error. Please correct the error
+                in the left pane.
+              </Trans>
+            </p>
+            )
+          : null}
         <DelayedTableSwitcher
           key='table'
           stepId={stepForTable ? stepForTable.id : null}
@@ -125,13 +136,10 @@ function stepStatus (step) {
     // (This happens after the user clicks to change something -- or clicks
     // "fetch" -- and before the server updates the status.)
     step.nClientRequests > 0 ||
-
     // The module is performing a fetch
     step.is_busy ||
-
     // Step is a placeholder? TODO verify this can actually happen
     !step.output_status ||
-
     // Step is rendering
     step.last_relevant_delta_id !== step.cached_render_result_delta_id
   ) {
@@ -182,14 +190,18 @@ function mapStateToProps (state) {
 
   return {
     workflowId: workflow.id,
-    step: step ? {
-      id: step.id,
-      htmlOutput: modules[step.module] ? modules[step.module].has_html_output : false,
-      status,
-      deltaId: step.cached_render_result_delta_id,
-      columns: step.output_columns,
-      nRows: step.output_n_rows
-    } : null,
+    step: step
+      ? {
+          id: step.id,
+          htmlOutput: modules[step.module]
+            ? modules[step.module].has_html_output
+            : false,
+          status,
+          deltaId: step.cached_render_result_delta_id,
+          columns: step.output_columns,
+          nRows: step.output_n_rows
+        }
+      : null,
     stepBeforeError,
     isPublic: workflow.public,
     isReadOnly: workflow.read_only
@@ -206,7 +218,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OutputPane)
+export default connect(mapStateToProps, mapDispatchToProps)(OutputPane)

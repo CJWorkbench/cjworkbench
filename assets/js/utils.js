@@ -13,12 +13,12 @@ export const csrfToken = Cookies.get('csrftoken')
 
 // Gets the letter coordinate of a column from its index within the column names array
 export function idxToLetter (idx) {
-  var letters = ''
-  var cidx = parseInt(idx)
+  let letters = ''
+  let cidx = parseInt(idx)
   cidx += 1
   do {
     cidx -= 1
-    letters = String.fromCharCode(cidx % 26 + 65) + letters
+    letters = String.fromCharCode((cidx % 26) + 65) + letters
     cidx = Math.floor(cidx / 26)
   } while (cidx > 0)
   return letters
@@ -43,15 +43,35 @@ export function timeDifference (start, end, i18n) {
   const years = Math.floor(days / 365.25)
 
   if (years > 0) {
-    return t({ id: 'js.util.timeDifference.ago.years', message: '{years}y ago', values: { years } })
+    return t({
+      id: 'js.util.timeDifference.ago.years',
+      message: '{years}y ago',
+      values: { years }
+    })
   } else if (days > 0) {
-    return t({ id: 'js.util.timeDifference.ago.days', message: '{days}d ago', values: { days } })
+    return t({
+      id: 'js.util.timeDifference.ago.days',
+      message: '{days}d ago',
+      values: { days }
+    })
   } else if (hours > 0) {
-    return t({ id: 'js.util.timeDifference.ago.hours', message: '{hours}h ago', values: { hours } })
+    return t({
+      id: 'js.util.timeDifference.ago.hours',
+      message: '{hours}h ago',
+      values: { hours }
+    })
   } else if (minutes > 0) {
-    return t({ id: 'js.util.timeDifference.ago.minutes', message: '{minutes}m ago', values: { minutes } })
+    return t({
+      id: 'js.util.timeDifference.ago.minutes',
+      message: '{minutes}m ago',
+      values: { minutes }
+    })
   } else if (seconds > 0) {
-    return t({ id: 'js.util.timeDifference.ago.seconds', message: '{seconds}s ago', values: { seconds } })
+    return t({
+      id: 'js.util.timeDifference.ago.seconds',
+      message: '{seconds}s ago',
+      values: { seconds }
+    })
   } else {
     return t({ id: 'js.util.timeDifference.now', message: 'just now' })
   }
@@ -95,11 +115,11 @@ export function scrollTo (el, containerEl, marginTop, marginBottom) {
     // We do this before up because some els might be taller than containerEl,
     // and in that case we want scroll-up to override scroll-down (because the
     // top of el is more important than the bottom).
-    dy += (elRect.bottom + marginBottom - containerRect.bottom)
+    dy += elRect.bottom + marginBottom - containerRect.bottom
   }
   if (dy + elRect.top - marginTop < containerRect.top) {
     // Scroll up if we need to.
-    dy -= (containerRect.top - (elRect.top - marginTop))
+    dy -= containerRect.top - (elRect.top - marginTop)
   }
 
   containerEl.scrollTop += dy
@@ -125,10 +145,11 @@ export function scrollTo (el, containerEl, marginTop, marginBottom) {
 export function generateSlug (prefix) {
   const bytes = new Uint8Array(9)
   window.crypto.getRandomValues(bytes)
-  return prefix + (
+  return (
+    prefix +
     base64Encode(bytes)
       .replace(/\+/g, '-')
-      .replace(new RegExp('/', 'g'), '_')
+      .replace(/\//g, '_')
   )
 }
 

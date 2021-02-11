@@ -17,7 +17,12 @@ function isStepDone (sectionTitle, stepIndex, stateWithHelpers, step) {
     return fn(stateWithHelpers, stateWithHelpers.workflow)
   } catch (e) {
     console.error(e)
-    console.error('The previous error is a bug in this function, called with these arguments:', fn, stateWithHelpers, stateWithHelpers.workflow)
+    console.error(
+      'The previous error is a bug in this function, called with these arguments:',
+      fn,
+      stateWithHelpers,
+      stateWithHelpers.workflow
+    )
     return false
   }
 }
@@ -51,7 +56,9 @@ function calculateActiveStep (stateWithHelpers, sections) {
  * Return `false` always, so no component gets lesson-highlighted when there
  * is no lesson.
  */
-function testLessonHighlightButThereIsNoLesson (test) { return false }
+function testLessonHighlightButThereIsNoLesson (test) {
+  return false
+}
 
 const getWorkflow = ({ workflow }) => workflow
 const getTabs = ({ tabs }) => tabs
@@ -109,14 +116,19 @@ const getLesson = createSelector(
       selectedPane
     })
 
-    const { activeSectionIndex, activeStepIndex, activeStep } = calculateActiveStep(stateWithHelpers, lessonData.sections)
+    const {
+      activeSectionIndex,
+      activeStepIndex,
+      activeStep
+    } = calculateActiveStep(stateWithHelpers, lessonData.sections)
     const lessonHighlight = activeStep ? activeStep.highlight : []
-    const testHighlight = (test) => matchLessonHighlight(lessonHighlight, test)
+    const testHighlight = test => matchLessonHighlight(lessonHighlight, test)
 
     return {
       activeSectionIndex,
       activeStepIndex,
       testHighlight
     }
-  })
+  }
+)
 export default getLesson

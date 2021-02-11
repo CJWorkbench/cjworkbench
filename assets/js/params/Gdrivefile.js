@@ -34,7 +34,7 @@ class PickerFactory {
   open (accessToken, onPick, onCancel) {
     if (this.picker !== null) return
 
-    const onEvent = (data) => {
+    const onEvent = data => {
       switch (data.action) {
         case 'loaded':
           break
@@ -56,11 +56,15 @@ class PickerFactory {
       }
     }
 
-    const soloView = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+    const soloView = new google.picker.DocsView(
+      google.picker.ViewId.SPREADSHEETS
+    )
       .setIncludeFolders(true)
       .setMimeTypes(MimeTypesString)
 
-    const teamView = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+    const teamView = new google.picker.DocsView(
+      google.picker.ViewId.SPREADSHEETS
+    )
       .setIncludeFolders(true)
       .setEnableTeamDrives(true)
       .setMimeTypes(MimeTypesString)
@@ -91,7 +95,11 @@ class PickerFactory {
 function FileInfo ({ id, name, url }) {
   if (!id) {
     return (
-      <a className='file-info empty'><Trans id='js.params.Gdrivefile.FileInfo.chooseFile'>(please choose a file)</Trans></a>
+      <a className='file-info empty'>
+        <Trans id='js.params.Gdrivefile.FileInfo.chooseFile'>
+          (please choose a file)
+        </Trans>
+      </a>
     )
   } else {
     return (
@@ -106,7 +114,8 @@ function FileInfo ({ id, name, url }) {
         target='_blank'
         rel='noopener noreferrer'
         href={url}
-      >{name}
+      >
+        {name}
       </a>
     )
   }
@@ -123,7 +132,10 @@ let googleApiLoadedPromise = null
 async function loadDefaultPickerFactory () {
   if (googleApiLoadedPromise === null) {
     googleApiLoadedPromise = new Promise((resolve, reject) => {
-      const callbackName = `Gdrivefile_onload_${String(Math.random()).slice(2, 10)}`
+      const callbackName = `Gdrivefile_onload_${String(Math.random()).slice(
+        2,
+        10
+      )}`
       window[callbackName] = function () {
         delete window[callbackName]
         gapi.load('picker', function () {
@@ -192,27 +204,30 @@ export default class Gdrivefile extends PureComponent {
       unauthenticated: false
     })
 
-    return this.props.createOauthAccessToken()
-      .then(accessTokenOrNull => {
-        if (secretName !== (this.props.secretMetadata && this.props.secretMetadata.name)) {
-          // avoid race: another request is happening
-          return null
-        }
-        if (this._isUnmounted) {
-          // avoid race: we're closed
-          return null
-        }
+    return this.props.createOauthAccessToken().then(accessTokenOrNull => {
+      if (
+        secretName !==
+        (this.props.secretMetadata && this.props.secretMetadata.name)
+      ) {
+        // avoid race: another request is happening
+        return null
+      }
+      if (this._isUnmounted) {
+        // avoid race: we're closed
+        return null
+      }
 
-        this.setState({
-          loadingAccessToken: false,
-          unauthenticated: accessTokenOrNull === null
-        })
-        return accessTokenOrNull
+      this.setState({
+        loadingAccessToken: false,
+        unauthenticated: accessTokenOrNull === null
       })
+      return accessTokenOrNull
+    })
   }
 
   loadPickerFactory () {
-    const loadPickerFactory = this.props.loadPickerFactory || loadDefaultPickerFactory
+    const loadPickerFactory =
+      this.props.loadPickerFactory || loadDefaultPickerFactory
     loadPickerFactory().then(pf => {
       if (this._isUnmounted) return
       this.setState({ pickerFactory: pf })
@@ -234,18 +249,17 @@ export default class Gdrivefile extends PureComponent {
 
   openPicker () {
     const { pickerFactory } = this.state
-    this.fetchAccessToken()
-      .then(accessTokenOrNull => {
-        if (accessTokenOrNull) {
-          pickerFactory.open(accessTokenOrNull, this.handlePick, this.onCancel)
-        }
-        // otherwise, we've set this.state.unauthenticated
-      })
+    this.fetchAccessToken().then(accessTokenOrNull => {
+      if (accessTokenOrNull) {
+        pickerFactory.open(accessTokenOrNull, this.handlePick, this.onCancel)
+      }
+      // otherwise, we've set this.state.unauthenticated
+    })
   }
 
   handleClickOpenPicker = () => this.openPicker()
 
-  handlePick = (data) => {
+  handlePick = data => {
     this.props.onChange(data)
     this.props.onSubmit()
   }
@@ -261,33 +275,51 @@ export default class Gdrivefile extends PureComponent {
     if (!isReadOnly) {
       if (loadingAccessToken || !pickerFactory) {
         return (
-          <a className='file-info'><p className='loading'><Trans id='js.params.Gdrivefile.status.loading'>Loading...</Trans></p></a>
+          <a className='file-info'>
+            <p className='loading'>
+              <Trans id='js.params.Gdrivefile.status.loading'>Loading...</Trans>
+            </p>
+          </a>
         )
       } else if (unauthenticated) {
         return (
-          <a className='file-info'><p className='sign-in-error'><Trans id='js.params.Gdrivefile.status.failureRecconect'>failure: please reconnect</Trans></p></a>
+          <a className='file-info'>
+            <p className='sign-in-error'>
+              <Trans id='js.params.Gdrivefile.status.failureRecconect'>
+                failure: please reconnect
+              </Trans>
+            </p>
+          </a>
         )
       } else if (!secretMetadata) {
         return (
-          <a className='file-info'><p className='not-signed-in'><Trans id='js.params.Gdrivefile.status.pleaseSignin'>(please sign in)</Trans></p></a>
+          <a className='file-info'>
+            <p className='not-signed-in'>
+              <Trans id='js.params.Gdrivefile.status.pleaseSignin'>
+                (please sign in)
+              </Trans>
+            </p>
+          </a>
         )
       }
     }
 
     return (
       <>
-        <FileInfo
-          {...(value || {})}
-        />
-        {!isReadOnly ? (
-          <button
-            type='button'
-            className='change-file'
-            onClick={this.handleClickOpenPicker}
-          >
-            {value ? <Trans id='js.params.Gdrivefile.change.button'>Change</Trans> : <Trans id='js.params.Gdrivefile.choose.button'>Choose</Trans>}
-          </button>
-        ) : null}
+        <FileInfo {...(value || {})} />
+        {!isReadOnly
+          ? (
+            <button
+              type='button'
+              className='change-file'
+              onClick={this.handleClickOpenPicker}
+            >
+              {value
+                ? <Trans id='js.params.Gdrivefile.change.button'>Change</Trans>
+                : <Trans id='js.params.Gdrivefile.choose.button'>Choose</Trans>}
+            </button>
+            )
+          : null}
       </>
     )
   }

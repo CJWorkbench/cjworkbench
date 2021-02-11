@@ -6,23 +6,36 @@ import IconMoveDown from '../../../icons/move-down.svg'
 import IconDelete from '../../../icons/delete.svg'
 import IconEdit from '../../../icons/edit.svg'
 
-function BlockActions ({ onClickDelete, onClickMoveUp, onClickMoveDown, onClickEdit }) {
+function BlockActions ({
+  onClickDelete,
+  onClickMoveUp,
+  onClickMoveDown,
+  onClickEdit
+}) {
   return (
     <aside className='block-actions'>
-      {onClickEdit ? (
-        <button
-          name='edit'
-          title={t({ id: 'js.WorkflowEditor.Report.BlockFrame.edit.hoverText', message: 'Edit' })}
-          onClick={onClickEdit}
-        >
-          <IconEdit />
-        </button>
-      ) : null}
+      {onClickEdit
+        ? (
+          <button
+            name='edit'
+            title={t({
+              id: 'js.WorkflowEditor.Report.BlockFrame.edit.hoverText',
+              message: 'Edit'
+            })}
+            onClick={onClickEdit}
+          >
+            <IconEdit />
+          </button>
+          )
+        : null}
       <button
         name='move-up'
         disabled={onClickMoveUp === null}
         onClick={onClickMoveUp}
-        title={t({ id: 'js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText', message: 'Move up' })}
+        title={t({
+          id: 'js.WorkflowEditor.Report.BlockFrame.moveUp.hoverText',
+          message: 'Move up'
+        })}
       >
         <IconMoveUp />
       </button>
@@ -30,14 +43,20 @@ function BlockActions ({ onClickDelete, onClickMoveUp, onClickMoveDown, onClickE
         name='move-down'
         disabled={onClickMoveDown === null}
         onClick={onClickMoveDown}
-        title={t({ id: 'js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText', message: 'Move down' })}
+        title={t({
+          id: 'js.WorkflowEditor.Report.BlockFrame.moveDown.hoverText',
+          message: 'Move down'
+        })}
       >
         <IconMoveDown />
       </button>
       <button
         name='delete'
         onClick={onClickDelete}
-        title={t({ id: 'js.WorkflowEditor.Report.BlockFrame.delete.hoverText', message: 'Delete' })}
+        title={t({
+          id: 'js.WorkflowEditor.Report.BlockFrame.delete.hoverText',
+          message: 'Delete'
+        })}
       >
         <IconDelete />
       </button>
@@ -45,21 +64,32 @@ function BlockActions ({ onClickDelete, onClickMoveUp, onClickMoveDown, onClickE
   )
 }
 
-export default function BlockFrame ({ children, isReadOnly, className, slug, onClickDelete, onClickMoveUp, onClickMoveDown, onClickEdit }) {
+export default function BlockFrame ({
+  children,
+  isReadOnly,
+  className,
+  slug,
+  onClickDelete,
+  onClickMoveUp,
+  onClickMoveDown,
+  onClickEdit
+}) {
   const handleClickDelete = useCurriedCallback(onClickDelete, slug)
   const handleClickMoveUp = useCurriedCallbackOrNull(onClickMoveUp, slug)
   const handleClickMoveDown = useCurriedCallbackOrNull(onClickMoveDown, slug)
 
   return (
     <section className={`block ${className}`}>
-      {isReadOnly ? null : (
-        <BlockActions
-          onClickDelete={handleClickDelete}
-          onClickMoveUp={handleClickMoveUp}
-          onClickMoveDown={handleClickMoveDown}
-          onClickEdit={onClickEdit}
-        />
-      )}
+      {isReadOnly
+        ? null
+        : (
+          <BlockActions
+            onClickDelete={handleClickDelete}
+            onClickMoveUp={handleClickMoveUp}
+            onClickMoveDown={handleClickMoveDown}
+            onClickEdit={onClickEdit}
+          />
+          )}
       <div className='block-main'>{children}</div>
     </section>
   )

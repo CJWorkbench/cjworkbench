@@ -23,15 +23,20 @@ const Button = memo(function Button ({ tabSlug, isLessonHighlight, paneRef }) {
       <button type='button' onClick={open}>
         <i className='icon-add' />{' '}
         <span>
-          <Trans id='js.WorkflowEditor.AddData.button' comment='This should be all-caps for styling reasons'>ADD DATA</Trans>
+          <Trans
+            id='js.WorkflowEditor.AddData.button'
+            comment='This should be all-caps for styling reasons'
+          >
+            ADD DATA
+          </Trans>
         </span>
       </button>
-      {isOpen && paneRef.current ? ReactDOM.createPortal((
-        <Modal
-          tabSlug={tabSlug}
-          close={close}
-        />
-      ), paneRef.current) : null}
+      {isOpen && paneRef.current
+        ? ReactDOM.createPortal(
+          <Modal tabSlug={tabSlug} close={close} />,
+          paneRef.current
+          )
+        : null}
     </div>
   )
 })
@@ -39,6 +44,7 @@ Button.propTypes = {
   tabSlug: PropTypes.string.isRequired,
   isLessonHighlight: PropTypes.bool.isRequired,
   /** <WorkflowEditor/Pane> container, where the dialog will open */
-  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) }).isRequired
+  paneRef: PropTypes.shape({ current: PropTypes.instanceOf(HTMLElement) })
+    .isRequired
 }
 export default Button

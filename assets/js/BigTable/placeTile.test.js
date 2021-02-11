@@ -3,16 +3,16 @@ import placeTile from './placeTile'
 
 test('replace first loading tile with loaded tile', () => {
   const loadedTile = [['foo', 'bar']]
-  expect(
-    placeTile([[null, null]], 0, 0, loadedTile)
-  ).toEqual([[loadedTile, null]])
+  expect(placeTile([[null, null]], 0, 0, loadedTile)).toEqual([
+    [loadedTile, null]
+  ])
 })
 
 test('replace a loading tile with an error', () => {
   const errorTile = { error: { name: 'x', message: 'y' } }
-  expect(
-    placeTile([[null, null]], 0, 1, errorTile)
-  ).toEqual([[null, errorTile]])
+  expect(placeTile([[null, null]], 0, 1, errorTile)).toEqual([
+    [null, errorTile]
+  ])
 })
 
 test('replace middle loading tile with loaded tile', () => {
@@ -29,16 +29,6 @@ test('replace middle loading tile with loaded tile', () => {
 })
 
 test('skip a RowGapTile', () => {
-  const result = placeTile([
-    [[['A1']]],
-    2,
-    [null],
-    [[['A5']]]
-  ], 3, 0, [['A4']])
-  expect(result).toEqual([
-    [[['A1']]],
-    2,
-    [[['A4']]],
-    [[['A5']]]
-  ])
+  const result = placeTile([[[['A1']]], 2, [null], [[['A5']]]], 3, 0, [['A4']])
+  expect(result).toEqual([[[['A1']]], 2, [[['A4']]], [[['A5']]]])
 })

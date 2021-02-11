@@ -9,15 +9,20 @@ describe('Tabs.actions', () => {
   describe('setName', () => {
     it('should setName', async () => {
       let endDelay
-      const delay = new Promise((resolve, reject) => { endDelay = resolve })
+      const delay = new Promise((resolve, reject) => {
+        endDelay = resolve
+      })
       const api = {
         setTabName: jest.fn(() => delay)
       }
-      const store = mockStore({
-        tabs: {
-          t2: { name: 'foo', x: 'y' }
-        }
-      }, api)
+      const store = mockStore(
+        {
+          tabs: {
+            t2: { name: 'foo', x: 'y' }
+          }
+        },
+        api
+      )
 
       const done = store.dispatch(actions.setName('t2', 'bar'))
       expect(api.setTabName).toHaveBeenCalledWith('t2', 'bar')
@@ -33,13 +38,16 @@ describe('Tabs.actions', () => {
       const api = {
         setTabOrder: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        selectedPane: { pane: 'tab', tabSlug: 't1' },
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0
-        }
-      }, api)
+      const store = mockStore(
+        {
+          selectedPane: { pane: 'tab', tabSlug: 't1' },
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0
+          }
+        },
+        api
+      )
 
       await store.dispatch(actions.setOrder(['t2', 't1']))
 
@@ -52,12 +60,15 @@ describe('Tabs.actions', () => {
       const api = {
         setTabOrder: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2', 't3'],
-          selected_tab_position: 1 // tabSlug=t2
-        }
-      }, api)
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2', 't3'],
+            selected_tab_position: 1 // tabSlug=t2
+          }
+        },
+        api
+      )
 
       await store.dispatch(actions.setOrder(['t3', 't1', 't2']))
       expect(store.getState().workflow.selected_tab_position).toEqual(2)
@@ -69,20 +80,23 @@ describe('Tabs.actions', () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0
+          },
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't1'
+          },
+          tabs: {
+            t1: { slug: 't1' },
+            t2: { slug: 't2' }
+          }
         },
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't1'
-        },
-        tabs: {
-          t1: { slug: 't1' },
-          t2: { slug: 't2' }
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t2'))
       expect(api.deleteTab).toHaveBeenCalledWith('t2')
@@ -95,22 +109,25 @@ describe('Tabs.actions', () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0
+          },
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't1'
+          },
+          pendingTabs: {
+            t2: { slug: 't2' }
+          },
+          tabs: {
+            t1: { slug: 't1' }
+          }
         },
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't1'
-        },
-        pendingTabs: {
-          t2: { slug: 't2' }
-        },
-        tabs: {
-          t1: { slug: 't1' }
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t2'))
       // The client calls this before even _knowing_ that it's been created on
@@ -127,15 +144,18 @@ describe('Tabs.actions', () => {
       const api = {
         deleteTab: jest.fn()
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1'],
-          selected_tab_position: 0
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1'],
+            selected_tab_position: 0
+          },
+          tabs: {
+            t1: {}
+          }
         },
-        tabs: {
-          t1: {}
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t1'))
       expect(api.deleteTab).not.toHaveBeenCalled()
@@ -148,124 +168,154 @@ describe('Tabs.actions', () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't2'
+      const store = mockStore(
+        {
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't2'
+          },
+          workflow: {
+            tab_slugs: ['t1', 't2', 't3'],
+            selected_tab_position: 1 // tab t2
+          },
+          tabs: {
+            t1: {},
+            t2: {},
+            t3: {}
+          }
         },
-        workflow: {
-          tab_slugs: ['t1', 't2', 't3'],
-          selected_tab_position: 1 // tab t2
-        },
-        tabs: {
-          t1: {},
-          t2: {},
-          t3: {}
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t2'))
       expect(store.getState().workflow.selected_tab_position).toEqual(0)
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't1' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't1'
+      })
     })
 
     it('should move selected_tab_position if selected is _after_ deleted', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2', 't3'],
-          selected_tab_position: 2 // tab t3
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2', 't3'],
+            selected_tab_position: 2 // tab t3
+          },
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't3'
+          },
+          tabs: {
+            t1: {},
+            t2: {},
+            t3: {}
+          }
         },
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't3'
-        },
-        tabs: {
-          t1: {},
-          t2: {},
-          t3: {}
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t2'))
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't3' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't3'
+      })
     })
 
     it('should leave selected_tab_position and selectedPane if selected is _before_ deleted', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2', 't3'],
-          selected_tab_position: 1 // tab t2
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2', 't3'],
+            selected_tab_position: 1 // tab t2
+          },
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't2'
+          },
+          tabs: {
+            t1: {},
+            t2: {},
+            t3: {}
+          }
         },
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't2'
-        },
-        tabs: {
-          t1: {},
-          t2: {},
-          t3: {}
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t3'))
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't2'
+      })
     })
 
     it('should move selected_tab_position if we deleted the last, selected tab', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2', 't3'],
-          selected_tab_position: 2 // tab t3
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2', 't3'],
+            selected_tab_position: 2 // tab t3
+          },
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't3'
+          },
+          tabs: {
+            t1: {},
+            t2: {},
+            t3: {}
+          }
         },
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't3'
-        },
-        tabs: {
-          t1: {},
-          t2: {},
-          t3: {}
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t3'))
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't2'
+      })
     })
 
     it('should move selected_tab_position if we deleted the first, selected tab', async () => {
       const api = {
         deleteTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0 // tab 1
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0 // tab 1
+          },
+          selectedPane: {
+            pane: 'tab',
+            tabSlug: 't1'
+          },
+          tabs: {
+            t1: {},
+            t2: {}
+          }
         },
-        selectedPane: {
-          pane: 'tab',
-          tabSlug: 't1'
-        },
-        tabs: {
-          t1: {},
-          t2: {}
-        }
-      }, api)
+        api
+      )
 
       await store.dispatch(actions.destroy('t1'))
       expect(store.getState().workflow.selected_tab_position).toEqual(0) // tab t2
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't2'
+      })
     })
   })
 
@@ -274,16 +324,22 @@ describe('Tabs.actions', () => {
       const api = {
         setSelectedTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0
-        }
-      }, api)
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0
+          }
+        },
+        api
+      )
 
       await store.dispatch(actions.select('t2'))
       expect(api.setSelectedTab).toHaveBeenCalledWith('t2')
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't2'
+      })
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
     })
 
@@ -291,17 +347,23 @@ describe('Tabs.actions', () => {
       const api = {
         setSelectedTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0,
-          read_only: true
-        }
-      }, api)
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0,
+            read_only: true
+          }
+        },
+        api
+      )
 
       await store.dispatch(actions.select('t2'))
       expect(api.setSelectedTab).not.toHaveBeenCalled()
-      expect(store.getState().selectedPane).toEqual({ pane: 'tab', tabSlug: 't2' })
+      expect(store.getState().selectedPane).toEqual({
+        pane: 'tab',
+        tabSlug: 't2'
+      })
       expect(store.getState().workflow.selected_tab_position).toEqual(1)
     })
 
@@ -313,12 +375,15 @@ describe('Tabs.actions', () => {
       const api = {
         setSelectedTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'],
-          selected_tab_position: 0
-        }
-      }, api)
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'],
+            selected_tab_position: 0
+          }
+        },
+        api
+      )
 
       await store.dispatch(actions.select('t3'))
       expect(api.setSelectedTab).not.toHaveBeenCalled()
@@ -329,18 +394,23 @@ describe('Tabs.actions', () => {
   describe('create', () => {
     it('should update workflow.pendingTabs', async () => {
       let endDelay
-      const delay = new Promise((resolve, reject) => { endDelay = resolve })
+      const delay = new Promise((resolve, reject) => {
+        endDelay = resolve
+      })
       const api = {
         createTab: jest.fn(() => delay)
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1']
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1']
+          },
+          tabs: {
+            t1: { name: 'A' }
+          }
         },
-        tabs: {
-          t1: { name: 'A' }
-        }
-      }, api)
+        api
+      )
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       const done = store.dispatch(actions.create('Tab'))
@@ -373,16 +443,19 @@ describe('Tabs.actions', () => {
       const api = {
         createTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't3', 't4']
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't3', 't4']
+          },
+          tabs: {
+            t1: { name: 'Tab 1' },
+            t3: { name: 'A' },
+            t4: { name: 'Tab 3' }
+          }
         },
-        tabs: {
-          t1: { name: 'Tab 1' },
-          t3: { name: 'A' },
-          t4: { name: 'Tab 3' }
-        }
-      }, api)
+        api
+      )
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       await store.dispatch(actions.create('Tab'))
@@ -393,19 +466,22 @@ describe('Tabs.actions', () => {
       const api = {
         createTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't3', 't4']
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't3', 't4']
+          },
+          pendingTabs: {
+            t14: { name: 'Tab 14' }
+          },
+          tabs: {
+            t1: { name: 'Tab 1' },
+            t3: { name: 'A' },
+            t4: { name: 'Tab 3' }
+          }
         },
-        pendingTabs: {
-          t14: { name: 'Tab 14' }
-        },
-        tabs: {
-          t1: { name: 'Tab 1' },
-          t3: { name: 'A' },
-          t4: { name: 'Tab 3' }
-        }
-      }, api)
+        api
+      )
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       await store.dispatch(actions.create('Tab'))
@@ -416,19 +492,24 @@ describe('Tabs.actions', () => {
   describe('duplicate', () => {
     it('should update workflow.tab_slugs and workflow.pendingTabs', async () => {
       let endDelay
-      const delay = new Promise((resolve, reject) => { endDelay = resolve })
+      const delay = new Promise((resolve, reject) => {
+        endDelay = resolve
+      })
       const api = {
         duplicateTab: jest.fn(() => delay)
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't2'] // and we'll "duplicate" in between
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't2'] // and we'll "duplicate" in between
+          },
+          tabs: {
+            t1: { name: 'A' },
+            t2: { name: 'B' }
+          }
         },
-        tabs: {
-          t1: { name: 'A' },
-          t2: { name: 'B' }
-        }
-      }, api)
+        api
+      )
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       const done = store.dispatch(actions.duplicate('t1'))
@@ -461,15 +542,18 @@ describe('Tabs.actions', () => {
       const api = {
         duplicateTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't3', 't4']
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't3', 't4']
+          },
+          tabs: {
+            t1: { name: 'A' },
+            t2: { name: 'A (1)' }
+          }
         },
-        tabs: {
-          t1: { name: 'A' },
-          t2: { name: 'A (1)' }
-        }
-      }, api)
+        api
+      )
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       await store.dispatch(actions.duplicate('t2'))
@@ -480,19 +564,22 @@ describe('Tabs.actions', () => {
       const api = {
         duplicateTab: jest.fn(() => Promise.resolve(null))
       }
-      const store = mockStore({
-        workflow: {
-          tab_slugs: ['t1', 't3', 't4']
+      const store = mockStore(
+        {
+          workflow: {
+            tab_slugs: ['t1', 't3', 't4']
+          },
+          pendingTabs: {
+            t14: { name: 'A (14)' }
+          },
+          tabs: {
+            t1: { name: 'Tab 1' },
+            t3: { name: 'A' },
+            t4: { name: 'Tab 3' }
+          }
         },
-        pendingTabs: {
-          t14: { name: 'A (14)' }
-        },
-        tabs: {
-          t1: { name: 'Tab 1' },
-          t3: { name: 'A' },
-          t4: { name: 'Tab 3' }
-        }
-      }, api)
+        api
+      )
 
       generateSlug.mockImplementationOnce(prefix => prefix + 'X')
       await store.dispatch(actions.duplicate('t3'))
