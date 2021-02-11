@@ -1,10 +1,3 @@
-"""
-ASGI config for cjworkbench project.
-
-Used for websockets
-"""
-
-import asyncio
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cjworkbench.settings")
@@ -21,11 +14,10 @@ from channels.auth import AuthMiddlewareStack
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
-from server.websockets import WorkflowConsumer
-from cjwstate.models.module_registry import MODULE_REGISTRY
 import cjwstate.modules
 from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
-from cjworkbench.sync import database_sync_to_async
+from cjwstate.models.module_registry import MODULE_REGISTRY
+from server.websockets import WorkflowConsumer
 
 
 def create_url_router():  # used in unit tests
