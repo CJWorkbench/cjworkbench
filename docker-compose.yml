@@ -126,7 +126,7 @@ services:
       # connect directly. (They sometimes error when using httpprocessproxy
       # after a restart.) They don't commonly send requests during restart
       # anyway.
-      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "{intercom_secret,twitter_secret,client_secret}.json" "stripe.env" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "templates/**/*.html" "templates/**/*.txt" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" "assets/locale/*/messages.po" --exec python -m uvicorn --host 0.0.0.0 --port 8080 --use-colors --timeout-keep-alive 999999 cjworkbench.asgi:application'
+      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run python -m httpprocessproxy 0.0.0.0:8000 0.0.0.0:8080 --exclude "**/*.pyc" "**/tests/**/*" "--pattern" "{intercom_secret,twitter_secret,client_secret}.json" "stripe.env" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "templates/**/*.html" "templates/**/*.txt" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" "assets/locale/*/messages.po" --exec python -m uvicorn --host 0.0.0.0 --port 8080 --lifespan on --use-colors --timeout-keep-alive 999999 cjworkbench.asgi:application'
     ]
 
   renderer:

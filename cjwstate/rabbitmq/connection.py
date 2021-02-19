@@ -1,262 +1,208 @@
-import asyncio
-import functools
-import logging
-import types
-from typing import Any, Awaitable, Callable, Dict, NamedTuple, Optional, Tuple
+from __future__ import annotations
 
-import aiormq
+import asyncio
+import contextlib
+import logging
+from typing import AsyncContextManager, Awaitable, Callable, Optional
+
+import carehare
 import msgpack
-from aiormq.exceptions import AMQPConnectionError
 from django.conf import settings
 
-from .. import clientside
 
-
-_loop_to_connection = {}
 logger = logging.getLogger(__name__)
 
 
-class DeclaredQueueConsume(NamedTuple):
-    name: str
-    """RabbitMQ queue name."""
+async def connect_with_retry(
+    url: str,
+    *,
+    retries: int = 10,
+    backoff_delay: float = 2.0,
+    connect_timeout: float = 10.0,
+    stop_retrying: Optional[asyncio.Future[None]] = None,
+) -> carehare.Connection:
+    """Connect to RabbitMQ, retrying if needed and failing in case of disaster.
 
-    callback: Callable[[Any], Awaitable[None]]
-    """Function to run on every queue element."""
+    The caller should eventually await `retval.close()`.
 
+    Features [tested?]:
 
-class RetryingConnection:
-    """A connection that will retry connecting.
-
-    Usage:
-
-        connection = RetryingConnection(url, 10, 1.5)
-        connection.declare_consume('render', 2, handle_render)
-        connection.declare_consume('fetch', 2, handle_fetch)
-
-        await connection.connect_forever()
+    [ ] `retries` argument: if connecting raises `ConnectionError` or
+        `asyncio.TimeoutError` repeatedly, `await connecting` will raise the
+        error on the `retries`-th attempt.
+    [ ] `backoff_delay` argument: sleep 0s before the first retry; thereafter,
+        add `backoff_delay` to the sleep amount before sleeping.
+    [ ] `connect_timeout` argument: each attempt to connect to RabbitMQ will
+        raise `asyncio.TimeoutError` after this duration. (Otherwise, the only
+        error will be `ConnectionError` -- but beware: typical firewalls stall
+        connections for ages without causing `ConnectionError`.)
+    [ ] `stop_retrying` argument: the caller may set this to stop the retry
+        mechanism: the "current" attempt (at call time) will be the last one.
+        (Its error will be raised or its success will be returned.)
     """
-
-    def __init__(self, url: str, attempts: int = 10, delay_s: float = 2.0):
-        self.url = url
-        self.attempts = attempts
-        self.delay_s = delay_s
-        self.is_closed = asyncio.Event()
-        self._connected = asyncio.Event()
-        self._declared_queues = []
-        self._connection = None
-        self._channel = None
-        # _declared_exchanges: exchanges we have declared since our most recent
-        # successful connect.
-        #
-        # When we send to an exchange we haven't sent to before, we declare it
-        # first.
-        self._declared_exchanges = None
-
-    async def connect(self) -> None:
-        """Ensure we are connected, setting `self._connection` to a value.
-
-        Await this return value to test that the initial connection succeeds
-        (within `attempts` retries).
-
-        Sets self._connected when connected.
-        """
-        self._connected.clear()
-        self._connection, self._channel = await self._connect()
-        self._declared_exchanges = set()
-        self._connected.set()
-
-    async def connect_forever(self) -> None:
-        """Connect and then reconnect forever, until `self.close()`.
-
-        In the event that RabbitMQ closes the connection, we'll set
-        self._connected to unfinished and retry connecting. Any current
-        `publish` calls will raise `AmqpClosedConnection`; any _future_
-        `publish` calls will await the reconnect.
-
-        Intended calling convention is to run this once:
-
-            connection = RetryingConnection(url, 10, 3.0)
-            closed = asyncio.ensure_future(connection.connect_forever())
-            ...
-            # maybe somewhere, await connection.close()
-            await closed  # raises error if connect fails 10 times in a row.
-        """
-        while not self.is_closed.is_set():
-            await self.connect()  # raise if connect() fails over and over
-
-            try:
-                await self._connection.closing
-            except AMQPConnectionError:
-                # Once `.closing` completes, all futures have completed.
-                # Loop, for the next connect() call.
-                pass
-
-    async def _connect(self) -> Tuple[aiormq.Connection, aiormq.Channel]:
-        for attempt in range(self.attempts):
-            try:
-                return await self._attempt_connect()
-            except AMQPConnectionError as err:
-                if self.is_closed.is_set() or attempt >= self.attempts - 1:
-                    raise
-                else:
-                    logger.info(
-                        "Connection to RabbitMQ failed: %s; will retry in %fs",
-                        str(err),
-                        self.delay_s,
-                    )
-                    await asyncio.sleep(self.delay_s)
-
-    async def _attempt_connect(self) -> Tuple[aiormq.Connection, aiormq.Channel]:
-        """Set self._channel and self._connection, or raise.
-
-        Raise AMQPConnectionError on error.
-        """
-        logger.info("Connecting to RabbitMQ at %s", self.url)
-        connection = await aiormq.connect(self.url)
-        channel = await connection.channel()
-
-        logger.info("Negotiating with RabbitMQ")
-
-        # _declare_ all queues right off the bat, before calling any callbacks.
-        # (In theory, callbacks might depend on queues' existence).
-        for queue in self._declared_queues:
-            await channel.queue_declare(queue.name, durable=True)
-
-        for queue in self._declared_queues:
-            logger.info("Starting RabbitMQ consumer [%s]", queue.name)
-            try:
-                # RabbitMQ's 'basic_qos()' applies to "the next consumer", not the
-                # actual channel. https://www.rabbitmq.com/consumer-prefetch.html
-                #
-                # leave prefetch_size at its default, 0: "no octet-size limit"
-                await channel.basic_qos(prefetch_count=1)
-
-                # call `callback` for every message. It must ack.
-                await channel.basic_consume(queue.name, queue.callback)
-            except AMQPConnectionError:
-                logger.exception()
+    next_delay = 0.0
+    for retry in range(retries):
+        try:
+            connection = carehare.Connection(url, connect_timeout=connect_timeout)
+            await connection.connect()
+            return connection
+        except (ConnectionError, asyncio.TimeoutError) as err:
+            if retry >= retries - 1 or (
+                stop_retrying is not None and stop_retrying.done()
+            ):
                 raise
-
-        logger.info("Connected to RabbitMQ")
-        return connection, channel
-
-    async def _ensure_connected(self):
-        if not self._connected.is_set():
-            await self._connected.wait()
-
-    async def close(self) -> None:
-        """Close the connection.
-
-        Currently, closing a connection means waiting for it to open first.
-        """
-        self.is_closed.set()
-        try:
-            await self._ensure_connected()
-            await self._connection.close()
-        except AMQPConnectionError:
-            pass
-
-    async def wait_closed(self):
-        """Wait for the connection to be closed.
-
-        Currently, closing a connection means waiting for it to open first.
-        """
-        await self.is_closed.wait()
-        await self._ensure_connected()
-        try:
-            await self._connection.closing
-        except AMQPConnectionError:
-            pass
-
-    def declare_queue_consume(
-        self, queue: str, callback: Callable[[Any], Awaitable[None]]
-    ) -> None:
-        """Declare a queue to be consumed after connect.
-
-        Call this only during initialization. Do not call it after connect.
-
-        (This is used on fetcher/renderer.)
-        """
-        self._declared_queues.append(DeclaredQueueConsume(queue, callback))
-
-    async def publish(
-        self, queue: str, message: Dict[str, Any], *, exchange: str = ""
-    ) -> None:
-        """Publish `message` onto `queue`, reconnecting if needed.
-
-        (`queue` is really a "routing_key" in AMQP lingo. One can't publish
-        directly to a queue. See
-        https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchange-default)
-        """
-        packed_message = msgpack.packb(message)
-
-        await self._ensure_connected()
-        if exchange and exchange not in self._declared_exchanges:
-            await self._channel.exchange_declare(
-                exchange=exchange, exchange_type="direct"
-            )
-            self._declared_exchanges.add(exchange)
-
-        # Raise on error
-        await self._channel.basic_publish(
-            packed_message, exchange=exchange, routing_key=queue
-        )
+            else:
+                logger.warn(
+                    "Failed to connect to RabbitMQ (%s); retrying in %fs",
+                    str(err),
+                    next_delay,
+                )
+                await asyncio.sleep(next_delay)  # TODO stop_retrying short-circuit
+                next_delay += backoff_delay
 
 
-def get_connection(loop=None):
-    """Create or lookup a singleton connection to RabbitMQ.
+_global_stopping: Optional[asyncio.Future[None]] = None
+_global_awaitable_connection: Optional[asyncio.Future[carehare.Connection]] = None
 
-    Usage:
 
-        def start():
-            connection = get_connection()
-            connection.declare_consume('render', 2, handle_render)
-            connection.declare_consume('fetch', 2, handle_fetch)
+async def get_global_connection():
+    """Make a best effort to return an active RabbitMQ connection.
 
-    ... `connection.connect_forever()` will be scheduled to run on the event
-    loop. Do not call `connection.declare_consume()` after connect.
+    Raise `ConnectionError` or `asyncio.TimeoutError` if we fail. These errors
+    indicate catastrophic failure: the server should shut down.
 
-    This function returns a different connection per event loop. This is used
-    during unit tests, as each test starts up and destroys an event loop.
+    The returned connection might be unusable if an error occurs at just the
+    wrong time. If that's the case, subsequent calls will await a new
+    connection.
     """
-    if not loop:
-        loop = asyncio.get_event_loop()
+    if _global_awaitable_connection is None:
+        raise RuntimeError(
+            "Please call maintain_global_connection() before get_global_connection()"
+        )
+    return await _global_awaitable_connection
 
-    global _loop_to_connection
 
-    connection = _loop_to_connection.get(loop)
+@contextlib.asynccontextmanager
+async def open_global_connection() -> AsyncContextManager[carehare.Connection]:
+    """Yield a carehare.Connection that is _also_ stored as a global variable.
 
-    if not connection:
-        # This is all sync, and it sets _loop_to_connection[loop]. No need for
-        # locks.
+    The yielded connection will be used by `cjwstate.rabbitmq` methods.
 
-        host = settings.RABBITMQ_HOST
-        connection = RetryingConnection(host)
-        monitor = asyncio.ensure_future(connection.connect_forever(), loop=loop)
+    Raise before yield if the connection could not start.
 
-        def _wrap_event_loop(self, *args, **kwargs):  # self = loop
-            global _loop_to_connection
+    Raise during close if the connection could not be closed cleanly.
+    """
+    global _global_awaitable_connection
+    assert _global_awaitable_connection is None
 
-            # If the event loop was closed, there's nothing we can do
-            if not self.is_closed():
-                try:
-                    del _loop_to_connection[self]
-                except KeyError:
-                    pass
+    connection = await connect_with_retry(settings.RABBITMQ_HOST)
+    try:
+        _global_awaitable_connection = asyncio.Future()
+        _global_awaitable_connection.set_result(connection)
+        yield connection
+    finally:
+        await connection.close()
+        assert _global_awaitable_connection is not None
+        _global_awaitable_connection = None
 
-                # disconnect from RabbitMQ...
-                self.run_until_complete(connection.close())
 
-                # ...and wait for the reconnector to exit.
-                self.run_until_complete(monitor)
+async def maintain_global_connection(
+    on_connect: Optional[Callable[[carehare.Connection], Awaitable[None]]] = None
+) -> None:
+    """Try to keep `_global_awaitable_connection` as useful as possible.
 
-            # Restore and call the original close()
-            self.close = original_impl
-            return self.close(*args, **kwargs)
+    Connect repeatedly to the RabbitMQ server. Each time, call
+    `on_connect(connection)` and then set `_global_awaitable_connection`.
 
-        original_impl = loop.close
-        loop.close = types.MethodType(_wrap_event_loop, loop)
+    Raise `ConnectionError` or `asyncio.TimeoutError` if connection fails after
+    many retries. The `_global_awaitable_connection` will also resolve to
+    an exception. The caller is responsible for crashing the app if this
+    happens.
 
-        _loop_to_connection[loop] = connection
+    Raise any errors `on_connect(connection)` raises.
 
-    return connection
+    Raise `ConnectionError`, `carehare.ConnectionClosedByServer` or
+    `carehare.ConnectionClosedByHeartbeatMonitor` if the connection is closed
+    abnormally -- but these can only be raised _after_
+    calling `stop_global_connection()`. Before that call, instead of raising,
+    log the errors and restart connection.
+
+    Anything raised is catastrophic: the caller should ensure the process exits
+    with an error code.
+
+    Return if `_global_stopping` is set and we disconnected cleanly.
+    """
+    global _global_awaitable_connection
+    global _global_stopping
+
+    _global_stopping = asyncio.Future()
+    while not _global_stopping.done():
+        _global_awaitable_connection = asyncio.Future()
+
+        logger.info("Connecting to RabbitMQ")
+        try:
+            connection = await connect_with_retry(
+                settings.RABBITMQ_HOST, stop_retrying=_global_stopping
+            )
+            _global_awaitable_connection.set_result(connection)
+        except (ConnectionError, asyncio.TimeoutError) as err:
+            if _global_stopping.done():
+                logger.info(
+                    "Ignoring RabbitMQ connection error because we're closing: %s",
+                    str(err),
+                )
+                break
+            else:
+                _global_awaitable_connection.set_exception(err)
+                raise  # Somebody needs to shut us down
+
+        if on_connect is not None:
+            await on_connect(connection)  # or raise -- meaning catastrophe
+
+        try:
+            # Wait. Ideally, forever.
+            await asyncio.wait(
+                {connection.closed, _global_stopping},
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+            if not connection.closed.done():
+                await connection.close()
+        except (
+            ConnectionError,
+            carehare.ConnectionClosedByServer,
+            carehare.ConnectionClosedByHeartbeatMonitor,
+        ) as err:
+            logger.exception("Abnormal disconnect from RabbitMQ: %s", str(err))
+            # Now we'll loop and set a new _global_awaitable_connection.
+
+    _global_stopping = None
+    _global_awaitable_connection = None
+
+
+async def stop_global_connection():
+    """Ensure we're disconnected from RabbitMQ.
+
+    This should return cleanly and relatively promptly. The maximum delay is
+    roughly `max(connect_timeout, heartbeat*1.5)` seconds.
+
+    Does not raise (though it may log errors).
+    """
+    # Make maintain_global_connection() eventually exit
+    global _global_awaitable_connection
+    global _global_stopping
+
+    _global_stopping.set_result(None)
+
+    # Wait for maintain_global_connection() to exit
+    try:
+        connection = await _global_awaitable_connection  # or raise
+        # If it returned, `maintain_global_connection()` will close it
+        await connection.closed  # or raise
+    except Exception as err:
+        logger.exception("RabbitMQ error during close: %s", str(err))
+
+    # Hack: make sure `maintain_global_connection()` finishes before we do
+    await asyncio.sleep(0)
+
+    assert _global_awaitable_connection == None
+    assert _global_stopping == None

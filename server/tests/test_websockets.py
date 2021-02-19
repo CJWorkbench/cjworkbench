@@ -5,7 +5,7 @@ from unittest.mock import patch
 from channels.layers import get_channel_layer
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser, User
-from cjworkbench.asgi import create_url_router
+from cjworkbench.asgi import _url_router
 from server import handlers
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
@@ -86,7 +86,7 @@ class ChannelTests(DbTestCase):
         self.user = User.objects.create(username="usual", email="usual@example.org")
         self.workflow = Workflow.create_and_init(name="Workflow 1", owner=self.user)
         self.application = self.mock_i18n_middleware(
-            self.mock_auth_middleware(create_url_router())
+            self.mock_auth_middleware(_url_router)
         )
 
         self.communicators = []

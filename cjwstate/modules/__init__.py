@@ -1,4 +1,3 @@
-import cjwkernel.chroot
 import cjwkernel.kernel
 
 kernel = None
@@ -7,11 +6,8 @@ kernel = None
 def init_module_system():
     """Initialize the module system.
 
-    This must be called during startup. It will:
-
-        * Set `cjwstate.modules.kernel`, a handle on a subprocess spawner
-        * Initialize the static module registry,
-          `cjwstate.modules.staticregistry`.
+    This must be called during startup. It creates `kernel`, a subprocess
+    spawner.
     """
     global kernel
     # Ignore spurious init() calls. They happen in unit-testing: each unit test

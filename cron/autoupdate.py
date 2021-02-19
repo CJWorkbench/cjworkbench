@@ -35,8 +35,7 @@ def set_step_busy(step_id):
 
 
 async def queue_fetches(pg_render_locker: PgRenderLocker):
-    """
-    Queue all pending fetches in RabbitMQ.
+    """Queue all pending fetches in RabbitMQ.
 
     We'll set is_busy=True as we queue them, so we don't send double-fetches.
     """

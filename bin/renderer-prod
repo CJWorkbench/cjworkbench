@@ -6,4 +6,8 @@ set -e
 
 "$DIR"/bin/wait-for-database
 
-exec python ./manage.py renderer
+export PYTHONPATH="$DIR"
+export DJANGO_SETTINGS_MODULE="cjworkbench.settings"
+export CJW_SECRET_KEY="not-for-renderer"
+
+exec python -m renderer.main

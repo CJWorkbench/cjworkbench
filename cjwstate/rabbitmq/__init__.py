@@ -1,5 +1,4 @@
-"""
-Django-agnostic RabbitMQ connection.
+"""Django-agnostic RabbitMQ connection.
 
 Workbench services actually use two RabbitMQ connections:
 
@@ -15,24 +14,32 @@ to all HTTP connections listening on a workflow, they _send_ using
 `cjwstate.rabbitmq` ... and then the web server _receives_ those messages over
 its Django Channels channel layer.
 """
-import asyncio
 import functools
 import logging
 import pickle
-from typing import Callable, Dict
 
+import carehare
 import msgpack
-from aiormq.exceptions import DeliveryError
 
 from .. import clientside
-from .connection import RetryingConnection, get_connection
+from .connection import get_global_connection
 
 
 logger = logging.getLogger(__name__)
 
 
 Render = "render"
+"""Name of queue that 'renderer' listens to."""
+
 Fetch = "fetch"
+"""Name of queue that 'fetcher' listens to."""
+
+GroupsExchange = "groups"
+"""Name of exchange upon which we publish workflow updates.
+
+This magic string is described at
+https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.
+"""
 
 
 def _workflow_group_name(workflow_id: int) -> str:
@@ -88,41 +95,26 @@ def acking_callback(fn):
     return inner
 
 
-async def _get_connection_async():
-    """
-    Ensure rabbitmq is initialized.
-
-    This is pretty janky.
-    """
-    ret = get_connection()
-
-    # Now, ret is returned but ret.connect() hasn't been called -- meaning we
-    # can't call any other functions on it.
-    #
-    # Tell asyncio to start that `.connect()` (which has already been
-    # scheduled)  _before_ doing anything else. sleep(0) does the trick.
-    await asyncio.sleep(0)
-
-    return ret
-
-
 async def queue_render(workflow_id: int, delta_id: int) -> None:
-    """
-    Queue render in RabbitMQ.
+    """Queue render in RabbitMQ.
 
     Spurious renders are fine: these messages are tiny, and renderers ignore
     them gracefully.
 
-    Start and cache a RetryingConnection on the current event loop if there
-    isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
+    `maintain_global_connection()` must be running.
+
+    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
+    shut down our process in that case.)
     """
-    connection = await _get_connection_async()
-    await connection.publish("render", dict(workflow_id=workflow_id, delta_id=delta_id))
+    connection = await get_global_connection()
+    await connection.publish(
+        msgpack.packb(dict(workflow_id=workflow_id, delta_id=delta_id)),
+        routing_key=Render,
+    )
 
 
 async def queue_fetch(workflow_id: int, step_id: int) -> None:
-    """
-    Queue fetch in RabbitMQ.
+    """Queue fetch in RabbitMQ.
 
     The fetcher will set is_busy=False when fetch is complete. Spurious fetches
     may make the is_busy flag flicker, but if the user goes away we're
@@ -133,26 +125,29 @@ async def queue_fetch(workflow_id: int, step_id: int) -> None:
     solve race: can't set is_busy _before_ queue_fetch() or we could leak the
     message; can't set it _after_ or the fetcher could finish first.)
 
-    Start and cache a RetryingConnection on the current event loop if there
-    isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
+    `maintain_global_connection()` must be running.
+
+    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
+    shut down our process in that case.)
     """
-    connection = await _get_connection_async()
-    await connection.publish("fetch", dict(workflow_id=workflow_id, step_id=step_id))
+    connection = await get_global_connection()
+    await connection.publish(
+        msgpack.packb(dict(workflow_id=workflow_id, step_id=step_id)),
+        routing_key=Fetch,
+    )
 
 
 async def _queue_for_group(*, workflow_id: int, **kwargs) -> None:
-    connection = await _get_connection_async()
+    connection = await get_global_connection()
     group_name = _workflow_group_name(workflow_id)
     data = dict(__asgi_group__=group_name, workflow_id=workflow_id, **kwargs)
     try:
         await connection.publish(
-            group_name,
-            data,
-            # exchange="groups" magic string is defined here:
-            # https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange
-            exchange="groups",
+            msgpack.packb(data),
+            exchange_name=GroupsExchange,
+            routing_key=group_name,
         )
-    except DeliveryError:
+    except carehare.ServerSentNack:
         logger.warning(
             "Did not deliver to all queues on group %r: a queue is at capacity",
             group_name,
@@ -165,22 +160,19 @@ async def send_update_to_workflow_clients(
     """
     Send a message *from* any async service *to* a Django Channels group.
 
+    `maintain_global_connection()` must be running.
+
     Django Channels will call Websockets consumers' `send_pickled_update()`
     method.
-
-    Start and cache a RetryingConnection on the current event loop if there
-    isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
-
-    This sends on a RabbitMQ topic exchange called "groups". (That magic
-    string is described at
-    https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.)
-    RabbitMQ will deliver the message to each matching queue.
 
     If one of those queues is full, we may warn about a DeliveryError
     error. The message will still be delivered to other queues. (See
     https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
     "full queue" usually means "shaky HTTP connection" or "stalled web
     browser", the user probably won't notice that we drop the message.
+
+    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
+    shut down our process in that case.)
     """
     pickled_update = pickle.dumps(update)
     await _queue_for_group(
@@ -193,30 +185,26 @@ async def send_update_to_workflow_clients(
 async def queue_render_if_consumers_are_listening(
     workflow_id: int, delta_id: int
 ) -> None:
-    """
-    Tell workflow consumers to call `queue_render(workflow_id, delta_id)`.
+    """Tell workflow consumers to call `queue_render(workflow_id, delta_id)`.
 
     In other words: "queue a render, but only if somebody has this workflow
     open in a web browser."
 
     Django Channels will call Websockets consumers' `queue_render()` method.
     Each consumer will (presumably) call `cjwstate.rabbitmq.queue_render()`.
-    (Renderers will ignore spurious calls. And there are no consumers,
-    queue_render() won't be called.)
+    (Renderers will ignore spurious calls. If there are no consumers,
+    queue_render() won't be called -- saving us a render.)
 
-    Start and cache a RetryingConnection on the current event loop if there
-    isn't one already. (`loop.close()` will be monkey-patched to disconnect.)
-
-    This sends on a RabbitMQ topic exchange called "groups". (That magic
-    string is described at
-    https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.)
-    RabbitMQ will deliver the message to each matching queue.
+    `maintain_global_connection()` must be running.
 
     If one of those queues is full, we may warn about a DeliveryError
     error. The message will still be delivered to other queues. (See
     https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
     "full queue" usually means "shaky HTTP connection" or "stalled web
     browser", the user probably won't notice that we drop the message.
+
+    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
+    shut down our process in that case.)
     """
     await _queue_for_group(
         workflow_id=workflow_id, type="queue_render", delta_id=delta_id

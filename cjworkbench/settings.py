@@ -314,6 +314,7 @@ LOGGING = {
         "aiormq": {"level": "INFO"},
         "asyncio": {"level": "INFO"},
         "botocore": {"level": "INFO"},
+        "carehare": {"level": "DEBUG"},
         "channels_rabbitmq": {"level": "INFO"},
         "intercom": {"level": "INFO"},
         "oauthlib": {"level": "INFO"},

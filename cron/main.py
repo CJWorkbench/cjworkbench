@@ -1,9 +1,7 @@
 import asyncio
 import logging
 import math
-import os
 import time
-import warnings
 
 from cjworkbench.pg_render_locker import PgRenderLocker
 from cjworkbench.util import benchmark
@@ -15,11 +13,20 @@ logger = logging.getLogger(__name__)
 FetchInterval = 60  # seconds
 
 
-async def queue_fetches_forever():
-    from .autoupdate import queue_fetches  # AFTER django.setup() init
+async def main():
+    """Queue fetches for users' "automatic updates".
 
-    async with PgRenderLocker() as pg_render_locker:
-        while True:
+    Run this forever, as a singleton daemon.
+    """
+    from .autoupdate import queue_fetches  # AFTER django.setup()
+    from cjwstate import rabbitmq
+    from cjwstate.rabbitmq.connection import open_global_connection
+
+    async with PgRenderLocker() as pg_render_locker, open_global_connection() as rabbitmq_connection:
+        await rabbitmq_connection.exchange_declare(rabbitmq.GroupsExchange)
+        await rabbitmq_connection.queue_declare(rabbitmq.Fetch)
+
+        while not rabbitmq_connection.closed.done():
             t1 = time.time()
 
             await benchmark(logger, queue_fetches(pg_render_locker), "queue_fetches()")
@@ -30,29 +37,14 @@ async def queue_fetches_forever():
 
             next_t = (math.floor(t1 / FetchInterval) + 1) * FetchInterval
             delay = max(0, next_t - time.time())
-            await asyncio.sleep(delay)
+            # Sleep ... or die, if RabbitMQ dies.
+            await asyncio.wait({rabbitmq_connection.closed}, timeout=delay)  # raise
 
-
-def exit_on_exception(loop, context):
-    logger.error(
-        "Exiting because of unhandled error: %s\nContext: %r",
-        context["message"],
-        context,
-        exc_info=context.get("exception"),
-    )
-    logging.shutdown()
-    os._exit(1)
-
-
-async def main():
-    """
-    Run maintenance tasks in the background.
-
-    This should run forever, as a singleton daemon.
-    """
-    loop = asyncio.get_running_loop()
-    loop.set_exception_handler(exit_on_exception)
-    await queue_fetches_forever()
+        await rabbitmq_connection.closed  # raise on failure
+        # Now, raise on _success_! We should never get here
+        raise RuntimeError(
+            "RabbitMQ closed successfully. That's strange because cron never closes it."
+        )
 
 
 if __name__ == "__main__":
