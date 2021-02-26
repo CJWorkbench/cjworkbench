@@ -16,10 +16,10 @@ services:
       POSTGRES_DB: 'cjworkbench'
 
   rabbitmq:
-    image: rabbitmq:3.7.8
+    image: rabbitmq:3.8.11-alpine
     environment:
       # Use just one CPU
-      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1 +stbt ts +A 12'
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1'
 
   migrate:
     #image:
