@@ -15,18 +15,19 @@ jobs:
         uses: actions/checkout@master
 
       - name: Notify Slack we are about to start
-        uses: CJWorkbench/slack-postmessage@9a02891
+        uses: CJWorkbench/slack-postmessage@9a028913e74e93a19032da68a9b4def4106a46e3
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         with:
           message: '{"channel": "#staging-status", "text": "Deploying `${{ github.sha }}` to staging…"}'
 
       - name: Install GCloud API
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@master
         with:
-          version: '278.0.0'
+          version: '290.0.1'
           service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT }}
 
       - name: Run kubectl
         env:
@@ -42,7 +43,7 @@ jobs:
           deploy/advanced-deploy staging "$GITHUB_SHA"
 
       - name: Notify Slack we did it
-        uses: CJWorkbench/slack-postmessage@9a02891
+        uses: CJWorkbench/slack-postmessage@9a028913e74e93a19032da68a9b4def4106a46e3
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
         with:
