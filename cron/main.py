@@ -24,7 +24,7 @@ async def main():
 
     async with PgRenderLocker() as pg_render_locker, open_global_connection() as rabbitmq_connection:
         await rabbitmq_connection.exchange_declare(rabbitmq.GroupsExchange)
-        await rabbitmq_connection.queue_declare(rabbitmq.Fetch)
+        await rabbitmq_connection.queue_declare(rabbitmq.Fetch, durable=True)
 
         while not rabbitmq_connection.closed.done():
             t1 = time.time()

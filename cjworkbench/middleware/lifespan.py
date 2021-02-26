@@ -5,6 +5,7 @@ import signal
 
 import cjwstate.modules
 from cjworkbench.sync import database_sync_to_async
+from cjwstate import rabbitmq
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.rabbitmq.connection import (
     maintain_global_connection,
@@ -39,8 +40,8 @@ async def _create_rabbitmq_maintainer() -> asyncio.Task:
 
     async def on_connect(connection):
         await connection.exchange_declare("groups")
-        await connection.queue_declare("render")
-        await connection.queue_declare("fetch")
+        await connection.queue_declare(rabbitmq.Render, durable=True)
+        await connection.queue_declare(rabbitmq.Fetch, durable=True)
         connected_once.set_result(None)
 
     async def maintainer():

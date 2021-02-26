@@ -15,7 +15,7 @@ async def main():
     cjwstate.modules.init_module_system()
 
     async with PgRenderLocker() as pg_render_locker, open_global_connection() as rabbitmq_connection:
-        await rabbitmq_connection.queue_declare(rabbitmq.Render)
+        await rabbitmq_connection.queue_declare(rabbitmq.Render, durable=True)
         await rabbitmq_connection.exchange_declare(rabbitmq.GroupsExchange)
         # Render; ack; render; ack ... forever.
         async with rabbitmq_connection.acking_consumer(rabbitmq.Render) as consumer:
