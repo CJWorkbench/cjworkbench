@@ -156,6 +156,8 @@ async def maintain_global_connection(
                 _global_awaitable_connection.set_exception(err)
                 raise  # Somebody needs to shut us down
 
+        logger.info("Connected to RabbitMQ")
+
         if on_connect is not None:
             await on_connect(connection)  # or raise -- meaning catastrophe
 
