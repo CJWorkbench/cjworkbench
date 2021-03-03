@@ -30,7 +30,7 @@ jsonschema = "==3.0.1"
 rfc3987 = "*"  # for jsonschema 'uri' format
 pyyaml = "*"
 boto3 = "*"
-pyarrow = "~=2.0"
+pyarrow = "~=3.0"
 babel = "*"
 thrift = "~=0.13.0"
 pyroute2 = "==0.5.9"
