@@ -3,7 +3,7 @@
   <p>Συλλέξτε περιεχόμενο από μια ενότητα ενός ιστότοπου βάσει χρονοδιαγράμματος και λάβετε ειδοποιήσεις όταν το περιεχόμενό του αλλάζει</p><img src="./banner.svg" alt=""></header>
 <section>
   <h2>Επισκόπηση</h2>
-  <p>Σε αυτό το μάθημα θα χρησιμοποιήσουμε την ιστοσελίδα <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">City&apos;s auditor Office website of the City of Atlanta</a>. Ο στόχος μας είναι να παίρνουμε ειδοποίηση κάθε φορά που δημοσιεύεται νέα έκθεση ελέγχου.</p>
+  <p>Σε αυτό το μάθημα θα χρησιμοποιήσουμε την ιστοσελίδα <a href="http://www.atlaudit.org/audit--other-reports.html" class="highlight" target="_blank">City&apos;s auditor Office website of the City of Atlanta</a>. Ο στόχος μας είναι να παίρνουμε ειδοποίηση κάθε φορά που δημοσιεύεται νέα έκθεση ελέγχου.</p>
 </section>
 <section>
   <h2>Συλλογή περιεχομένου ιστοσελίδας με μορφή HTML</h2>
@@ -18,8 +18,8 @@
     >Αρχίστε με την πηγή δεδομένων για τον <kbd>Συλλέκτη HTML</kbd>.</li>
     <li
       data-highlight='[{"type":"Step","moduleIdName":"urlscraper"}]'
-      data-test="return workflow.tabs[0].steps[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
-      >Επικολλήστε το ακόλουθο URL της ιστοσελίδας όπου απαριθμούνται όλες οι δημόσιες εκθέσεις και πατήστε <kbd>Συλλογή</kbd><div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
+      data-test="return workflow.tabs[0].steps[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit--other-reports.html'"
+      >Επικολλήστε το ακόλουθο URL της ιστοσελίδας όπου απαριθμούνται όλες οι δημόσιες εκθέσεις και πατήστε <kbd>Συλλογή</kbd><div class="copy-txt">http://www.atlaudit.org/audit--other-reports.html</div>
       <p class="instruction-detail">Στη συνέχεια, ας κάνουμε εξαγωγή των δεδομένων μας.</p>
     </li>
   </ol>
@@ -45,7 +45,7 @@
     </ul>
     <p>Παρακολουθήστε το βίντεο διάρκειας 30 δευτερολέπτων για να μάθετε πώς να χρησιμοποιείτε το SelectorGadget. Τα ίδια βήματα αναφέρονται παρακάτω. <iframe src="https://player.vimeo.com/video/331870253" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></p>
     <ul>
-      <li>Μεταβείτε στην <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">ιστοσελίδα</a> και ενεργοποιήστε το SelectorGadget κάνοντας κλικ στο εικονίδιο μεγεθυντικού φακού επάνω δεξιά (στο Chrome) ή επιλέγοντας τον σελιδοδείκτη (σε άλλα προγράμματα περιήγησης).</li>
+      <li>Μεταβείτε στην <a href="http://www.atlaudit.org/audit--other-reports.html" class="highlight" target="_blank">ιστοσελίδα</a> και ενεργοποιήστε το SelectorGadget κάνοντας κλικ στο εικονίδιο μεγεθυντικού φακού επάνω δεξιά (στο Chrome) ή επιλέγοντας τον σελιδοδείκτη (σε άλλα προγράμματα περιήγησης).</li>
       <li>Κάντε κλικ στο πρώτο στοιχείο της λίστας δημοσιευμάτων. Θα δείτε ότι όλοι οι τίτλοι δημοσιευμάτων κιτρινίζουν για να φανεί ότι έχουν επιλεγεί, αλλά το ίδιο ισχύει και για κάποιους άλλους συνδέσμους στη σελίδα.</li>
       <li>Κάντε κλικ στο κόκκινο περιθώριο γύρω από τους συνδέσμους που δεν θέλετε, για να τους αφαιρέσετε από την επιλογή, ωσότου μείνουν κιτρινισμένοι μόνο οι τίτλοι δημοσιευμάτων.</li>
       <li>Κάντε κλικ στο κουμπί <kbd>XPath</kbd> στη γραμμή εργαλείων στο κάτω μέρος. Αυτό θα σας δώσει μια διαδρομή xpath για αντιγραφή.</li>
@@ -71,7 +71,7 @@
 <section class="fullscreen">
   <h2>Επεξεργασία του XPath</h2>
   <p>Τώρα που έχουμε μια λίστα όλων των εγγράφων, ας κάνουμε εξαγωγή των διευθύνσεων URL των εγγράφων. Πρώτα ας δούμε τη δομή της HTML της σελίδας μας για να καταλάβουμε πώς λειτουργούν όλα αυτά.</p>
-  <p>Επιστρέψτε στην <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">ιστοσελίδα</a> με το Google Chrome ή το Firefox.<p>Στην ιστοσελίδα, μετακινηθείτε προς τα κάτω στη λίστα με όλα τα δημοσιεύματα που έχει εκδώσει το City Auditor&apos;s Office. Κάντε δεξί κλικ στον πρώτο σύνδεσμο της λίστας και επιλέξτε <kbd>Έλεγχος (Inspect)</kbd> στο μενού για να ανοίξετε το πλαίσιο εξέτασης.</p>
+  <p>Επιστρέψτε στην <a href="http://www.atlaudit.org/audit--other-reports.html" class="highlight" target="_blank">ιστοσελίδα</a> με το Google Chrome ή το Firefox.<p>Στην ιστοσελίδα, μετακινηθείτε προς τα κάτω στη λίστα με όλα τα δημοσιεύματα που έχει εκδώσει το City Auditor&apos;s Office. Κάντε δεξί κλικ στον πρώτο σύνδεσμο της λίστας και επιλέξτε <kbd>Έλεγχος (Inspect)</kbd> στο μενού για να ανοίξετε το πλαίσιο εξέτασης.</p>
    <figure><img class="full-width" alt="Εξέταση στοιχείου" src="./inspect_list.png"><figcaption>Κάντε δεξί κλικ για να εξετάσετε έναν σύνδεσμο στο πλαίσιο εξέτασης.</figcaption>
    </figure>
    <p>Ας κοιτάξουμε από κοντά το στοιχείο HTML στο πλαίσιο εξέτασης του προγράμματος περιήγησης. Στο πλαίσιο εξέτασης, επισημαίνεται το στοιχείο <code>&lt;a&gt;</code> που αντιστοιχεί στον σύνδεσμο που εξετάζετε.</p>
