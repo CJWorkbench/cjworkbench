@@ -4,9 +4,11 @@ import unittest
 from datetime import datetime as dt
 from pathlib import Path
 
-import cjwkernel.types as atypes
 import numpy as np
 import pandas as pd
+from pandas.testing import assert_frame_equal, assert_series_equal
+
+import cjwkernel.types as atypes
 import pyarrow
 from cjwkernel.pandas.types import (
     Column,
@@ -25,16 +27,9 @@ from cjwkernel.tests.util import (
     override_settings,
 )
 from cjwkernel.util import create_tempfile
-from pandas.testing import assert_frame_equal, assert_series_equal
 
 
 class ColumnTypeTextTests(unittest.TestCase):
-    def test_text_type(self):
-        series = pd.Series(["x", np.nan, "z"])
-        column_type = ColumnType.TEXT()
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["x", np.nan, "z"]))
-
     def test_from_arrow(self):
         self.assertEqual(
             ColumnType.from_arrow(atypes.ColumnType.Text()), ColumnType.TEXT()
@@ -45,63 +40,6 @@ class ColumnTypeTextTests(unittest.TestCase):
 
 
 class ColumnTypeNumberTests(unittest.TestCase):
-    def test_default_format(self):
-        series = pd.Series([1.1, 2.231, np.nan])
-        column_type = ColumnType.NUMBER()
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["1.1", "2.231", np.nan]))
-
-    def test_format_whole_float_as_int(self):
-        """
-        Mimic d3-format, which cannot differentiate between float and int.
-        """
-        series = pd.Series([1.1, 2.0, 123456789.0])
-        column_type = ColumnType.NUMBER("{:,}")
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["1.1", "2", "123,456,789"]))
-
-    def test_custom_format(self):
-        series = pd.Series([1.1, 2231, np.nan, 0.123])
-        column_type = ColumnType.NUMBER(format="${:0,.2f}")
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["$1.10", "$2,231.00", np.nan, "$0.12"]))
-
-    def test_format_int_as_float(self):
-        series = pd.Series([1, 2, 3, 4], dtype=int)
-        column_type = ColumnType.NUMBER(format="{:.1f}")
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["1.0", "2.0", "3.0", "4.0"]))
-
-    def test_format_float_as_int(self):
-        series = pd.Series([1.1])
-        column_type = ColumnType.NUMBER(format="{:d}")
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["1"]))
-
-    def test_format_percent(self):
-        series = pd.Series([0.3, 11.111, 0.0001, np.nan])
-        column_type = ColumnType.NUMBER(format="{:,.1%}")
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["30.0%", "1,111.1%", "0.0%", np.nan]))
-
-    def test_format_int_as_percent(self):
-        series = pd.Series([1, 11])
-        column_type = ColumnType.NUMBER(format="{:,.1%}")
-        result = column_type.format_series(series)
-        assert_series_equal(result, pd.Series(["100.0%", "1,100.0%"]))
-
-    def test_format_zero_length_becomes_str(self):
-        # (even though there's no way for pandas to detect type of result)
-        # (luckily, pandas defaults to `object`)
-        series = pd.Series([], dtype=np.int64)
-        result = ColumnType.NUMBER().format_series(series)
-        assert_series_equal(result, pd.Series([], dtype=object))
-
-    def test_format_nulls_becomes_str(self):
-        series = pd.Series([np.nan, np.nan], dtype=np.float64)
-        result = ColumnType.NUMBER().format_series(series)
-        assert_series_equal(result, pd.Series([np.nan, np.nan], dtype=object))
-
     def test_format_too_many_arguments(self):
         with self.assertRaisesRegex(ValueError, "Can only format one number"):
             ColumnType.NUMBER("{:d}{:f}")
@@ -143,19 +81,6 @@ class ColumnTypeNumberTests(unittest.TestCase):
 
 
 class ColumnTypeTimestampTests(unittest.TestCase):
-    def test_format(self):
-        series = pd.Series(
-            [dt(1999, 2, 3, 4, 5, 6, 7), np.nan, dt(2000, 3, 4, 5, 6, 7, 8)]
-        )
-        column_type = ColumnType.TIMESTAMP()
-        result = column_type.format_series(series)
-        assert_series_equal(
-            result,
-            pd.Series(
-                ["1999-02-03T04:05:06.000007Z", np.nan, "2000-03-04T05:06:07.000008Z"]
-            ),
-        )
-
     def test_from_arrow(self):
         self.assertEqual(
             ColumnType.from_arrow(atypes.ColumnType.Timestamp()), ColumnType.TIMESTAMP()
@@ -1221,26 +1146,6 @@ class ProcessResultTests(unittest.TestCase):
     def test_coerce_invalid_value(self):
         with self.assertRaises(ValueError):
             ProcessResult.coerce([None, "foo"])
-
-    def test_status_ok(self):
-        result = ProcessResult(pd.DataFrame({"A": [1]}), [])
-        self.assertEqual(result.status, "ok")
-
-    def test_status_ok_with_warning(self):
-        result = ProcessResult(pd.DataFrame({"A": [1]}), "warning")
-        self.assertEqual(result.status, "ok")
-
-    def test_status_ok_with_no_rows(self):
-        result = ProcessResult(pd.DataFrame({"A": []}), [])
-        self.assertEqual(result.status, "ok")
-
-    def test_status_error(self):
-        result = ProcessResult(pd.DataFrame(), "error")
-        self.assertEqual(result.status, "error")
-
-    def test_status_unreachable(self):
-        result = ProcessResult(pd.DataFrame(), [])
-        self.assertEqual(result.status, "unreachable")
 
     @override_settings(MAX_ROWS_PER_TABLE=2)
     def test_truncate_too_big_no_error(self):

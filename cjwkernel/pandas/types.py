@@ -11,9 +11,11 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-import pyarrow
-from cjwpandasmodule.validate import validate_dataframe
 from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
+
+import pyarrow
+from cjwmodule.arrow.format import parse_number_format
+from cjwpandasmodule.validate import validate_dataframe
 
 from .. import settings
 from .. import types as atypes
@@ -27,12 +29,6 @@ class ColumnType(ABC):
     This describes how it is presented -- not how its bytes are arranged.
     """
 
-    @abstractmethod
-    def format_series(self, series: pd.Series) -> pd.Series:
-        """
-        Convert a Series to a str Series.
-        """
-
     @property
     @abstractmethod
     def name(self) -> str:
@@ -45,30 +41,6 @@ class ColumnType(ABC):
         """
         The lower-level type this type wraps.
         """
-
-    @staticmethod
-    def class_from_dtype(dtype) -> type:
-        """
-        Determine ColumnType class, based on pandas/numpy `dtype`.
-        """
-        if is_numeric_dtype(dtype):
-            return ColumnType.NUMBER
-        elif is_datetime64_dtype(dtype):
-            return ColumnType.TIMESTAMP
-        elif dtype == object or dtype == "category":
-            return ColumnType.TEXT
-        else:
-            raise ValueError(f"Unknown dtype: {dtype}")
-
-    @classmethod
-    def from_dtype(cls, dtype) -> ColumnType:
-        """
-        Build a ColumnType based on pandas/numpy `dtype`.
-
-        If the type is Number or Timestamp, it will have an "empty"
-        (auto-generated) format.
-        """
-        return cls.class_from_dtype(dtype)()
 
     @classmethod
     def from_arrow(cls, value: atypes.ColumnType) -> ColumnType:
@@ -88,10 +60,6 @@ class ColumnType(ABC):
 @dataclass(frozen=True)
 class ColumnTypeText(ColumnType):
     # override
-    def format_series(self, series: pd.Series) -> pd.Series:
-        return series
-
-    # override
     @property
     def name(self) -> str:
         return "text"
@@ -101,9 +69,10 @@ class ColumnTypeText(ColumnType):
         return atypes.ColumnType.Text()
 
 
-class NumberFormatter:
-    """
-    Utility to convert int and float to str.
+@dataclass(frozen=True)
+class ColumnTypeNumber(ColumnType):
+    format: str = "{:,}"  # Python format() string -- default adds commas
+    """Utility to convert int and float to str.
 
     Usage:
 
@@ -119,102 +88,14 @@ class NumberFormatter:
     * Its `.format()` method always succeeds
     """
 
-    _IntTypeSpecifiers = set("bcdoxXn")
-    """
-    Type names that operate on integer (as opposed to float).
-
-    Python `format()` auto-converts int to float, but it doesn't auto-convert
-    float to int. Workbench does auto-convert float to int: any format that
-    works for one Number must work for all Numbers.
-    """
-
-    def __init__(self, format_s: str):
-        if not isinstance(format_s, str):
-            raise ValueError("Format must be str")
-
-        # parts: a list of (literal_text, field_name, format_spec, conversion)
-        #
-        # The "literal_text" always comes _before_ the field. So we end up
-        # with three possibilities:
-        #
-        #    "prefix{}suffix": [(prefix, "", "", ""), (suffix, None...)]
-        #    "prefix{}": [(prefix, "", "", '")]
-        #    "{}suffix": [("", "", "", ""), (suffix, None...)]
-        parts = list(Formatter().parse(format_s))
-
-        if len(parts) > 2 or len(parts) == 2 and parts[1][1] is not None:
-            raise ValueError("Can only format one number")
-
-        if not parts or parts[0][1] is None:
-            raise ValueError('Format must look like "{:...}"')
-
-        if parts[0][1] != "":
-            raise ValueError("Field names or numbers are not allowed")
-
-        if parts[0][3] is not None:
-            raise ValueError("Field converters are not allowed")
-
-        self._prefix = parts[0][0]
-        self._format_spec = parts[0][2]
-        if len(parts) == 2:
-            self._suffix = parts[1][0]
-        else:
-            self._suffix = ""
-        self._need_int = (
-            self._format_spec and self._format_spec[-1] in self._IntTypeSpecifiers
-        )
-
-        # Test it!
-        #
-        # A reading of cpython 3.7 Python/formatter_unicode.c
-        # parse_internal_render_format_spec() suggests the following unobvious
-        # details:
-        #
-        # * Python won't parse a format spec unless you're formatting a number
-        # * _PyLong_FormatAdvancedWriter() accepts a superset of the formats
-        #   _PyFloat_FormatAdvancedWriter() accepts. (Workbench accepts that
-        #   superset.)
-        #
-        # Therefore, if we can format an int, the format is valid.
-        format(1, self._format_spec)
-
-    def format(self, value: Union[int, float]) -> str:
-        if self._need_int:
-            value = int(value)
-        else:
-            # Format float64 _integers_ as int. For instance, '3.0' should be
-            # formatted as though it were the int, '3'.
-            #
-            # Python would normally format '3.0' as '3.0' by default; that's
-            # not acceptable to us because we can't write a JavaScript
-            # formatter that would do the same thing. (Javascript doesn't
-            # distinguish between float and int.)
-            int_value = int(value)
-            if int_value == value:
-                value = int_value
-
-        return self._prefix + format(value, self._format_spec) + self._suffix
-
-
-@dataclass(frozen=True)
-class ColumnTypeNumber(ColumnType):
-    # https://docs.python.org/3/library/string.html#format-specification-mini-language
-    format: str = "{:,}"  # Python format() string -- default adds commas
     # TODO handle locale, too: format depends on it. Python will make this
     # difficult because it can't format a string in an arbitrary locale: it can
     # only do it using global variables, which we can't use.
 
     def __post_init__(self):
-        formatter = NumberFormatter(self.format)  # raises ValueError
-        object.__setattr__(self, "_formatter", formatter)
-
-    # override
-    def format_series(self, series: pd.Series) -> pd.Series:
-        ret = series.map(self._formatter.format, na_action="ignore")
-        # Pandas will still think all-NA is number.
-        if is_numeric_dtype(ret):
-            ret = ret.astype(object)
-        return ret
+        if not isinstance(self.format, str):
+            raise ValueError("Format must be str")
+        parse_number_format(self.format)  # raise ValueError
 
     # override
     @property
@@ -234,10 +115,6 @@ class ColumnTypeTimestamp(ColumnType):
     # # TODO handle locale, too: format depends on it. Python will make this
     # # difficult because it can't format a string in an arbitrary locale: it can
     # # only do it using global variables, which we can't use.
-
-    # override
-    def format_series(self, series: pd.Series) -> pd.Series:
-        return series.dt.strftime("%FT%T.%fZ").replace("NaT", np.nan)
 
     # override
     @property
@@ -310,23 +187,6 @@ class TableShape:
 
     def to_arrow(self) -> atypes.TableMetadata:
         return atypes.TableMetadata(self.nrows, [c.to_arrow() for c in self.columns])
-
-
-@dataclass(frozen=True)
-class StepResultShape:
-    """
-    Low-RAM metadata about a ProcessResult.
-    """
-
-    status: str
-    """Status: one of 'ok', 'error' or 'unreachable'."""
-
-    table_shape: TableShape
-    """
-    Columns and number of rows in the result.
-
-    If `status != 'ok'`, then `nrows == 0 && columns == []`.
-    """
 
 
 @dataclass(frozen=True)
@@ -589,7 +449,16 @@ def _infer_column(
 
     Otherwise, construct `Column` with default format.
     """
-    type_class = ColumnType.class_from_dtype(series.dtype)
+    # Determine ColumnType class, based on pandas/numpy `dtype`.
+    dtype = series.dtype
+    if is_numeric_dtype(dtype):
+        type_class = ColumnType.NUMBER
+    elif is_datetime64_dtype(dtype):
+        type_class = ColumnType.TIMESTAMP
+    elif dtype == object or dtype == "category":
+        type_class = ColumnType.TEXT
+    else:
+        raise ValueError(f"Unknown dtype: {dtype}")
 
     if type_class == ColumnType.NUMBER and given_format is not None:
         type = type_class(format=given_format)  # raises ValueError
@@ -874,36 +743,6 @@ class ProcessResult:
                 series = self.dataframe[column]
                 if hasattr(series, "cat"):
                     series.cat.remove_unused_categories(inplace=True)
-
-    @property
-    def status(self):
-        """
-        Whether this data means 'ok', 'error' or 'unreachable'.
-
-        'ok': there is a DataFrame. (If error is set, it's a warning.)
-        'error': there is no DataFrame, and error is set.
-        'unreachable': there is no DataFrame or error.
-        """
-        if self.dataframe.columns.empty:
-            if self.errors:
-                return "error"
-            else:
-                return "unreachable"
-        else:
-            return "ok"
-
-    @property
-    def error(self) -> str:
-        """
-        For backwards compatibility
-        """
-        if self.errors:
-            if self.errors[0].message.id == "TODO_i18n":
-                return self.errors[0].message.arguments["text"]
-            else:
-                raise RuntimeError("Not supported")
-        else:
-            return ""
 
     @property
     def column_names(self):
