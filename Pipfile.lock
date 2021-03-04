@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "08ab5ea35cb4296a0fb6b2379b79bef9de83aed4afddaa1dc0fbb90123f73b28"
+            "sha256": "6a45ef9b1ed26c44b3851477ea051d264207180d3c6cc180e0590beba38626c8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -101,6 +101,7 @@
                 "sha256:7979803c74610e11ef0c0d68a2942b152df52da55336e0c9d58daf1831cbdf33",
                 "sha256:b6feb6455337df834f6c9962d6ccf771515b7d939bca142b29c20c2376bc6111"
             ],
+            "markers": "os_name == 'disable-we-do-not-use-automat-how-did-it-even-get-here'",
             "version": "==20.2.0"
         },
         "babel": {
@@ -122,27 +123,27 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:c9513a9ea00f8d17ecdc02c391ae956bf0f990aa07deec11c421607c09b294e1",
-                "sha256:f84ca60e9605af69022f039c035b33d519531eeaac52724b9223a5465f4a8b6b"
+                "sha256:2219f1ebe88d266afa5516f993983eba8742b957fa4fd6854f3c73aa3030e931",
+                "sha256:c0d51f344b71656c2d395d2168600d91bea252a64fb5d503a955ea96426cde8b"
             ],
             "index": "pypi",
-            "version": "==1.17.19"
+            "version": "==1.17.20"
         },
         "botocore": {
             "hashes": [
-                "sha256:135b5f30e6662b46d804f993bf31d9c7769c6c0848321ed0aa0393f5b9c19a94",
-                "sha256:8e42c78d2eb888551635309158c04ef2648a96d8c2c70dbce7712c6ce8629759"
+                "sha256:80c32a81fb1ee8bdfa074a79bfb885bb2006e8a9782f2353c0c9f6392704e13a",
+                "sha256:e9e724b59278ebf5caf032be1e32bde0990d79e8052e3bbbb97b6c1d32feba28"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==1.20.19"
+            "version": "==1.20.20"
         },
         "carehare": {
             "hashes": [
-                "sha256:05092f6e120318bb29a12791cf6d1e00fb939cda8c88c4ea3998777a9c326a9a",
-                "sha256:dfe80def26711c618eace2e4656095a52e948d654bfd3c2dbe197e3e8524be2a"
+                "sha256:b31e9be833f1f35e216538cdc12b61ae6b820159b2fabdd6aa48e2760cd23caf",
+                "sha256:d30fe019a18ea1e89c6bf1ee70412fa3a2ecbcf6f3924bfc7fd32a91907b5b30"
             ],
             "index": "pypi",
-            "version": "==0.0.8"
+            "version": "==0.0.10"
         },
         "cchardet": {
             "hashes": [
@@ -310,7 +311,6 @@
                 "sha256:df186fcbf86dc1ce56305becb8434e4b6b7504bc724b71ad7a3239e0c9d14ef2",
                 "sha256:fec7fb46b10da10d9e1d078d1ff8ed9e05ae14f431fdbd11145edd0550b9a964"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==3.4.6"
         },
         "daphne": {
@@ -318,16 +318,16 @@
                 "sha256:0052c9887600c57054a5867d4b0240159fa009faa3bcf6a1627271d9cdcb005a",
                 "sha256:c22b692707f514de9013651ecb687f2abe4f35cf6fe292ece634e9f1737bc7e3"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "os_name == 'disable-we-do-not-use-daphne'",
             "version": "==3.0.1"
         },
         "defusedxml": {
             "hashes": [
-                "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93",
-                "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"
+                "sha256:86b15d9e3c639de79f4cb38aeffea3281f62aff78dde7d798e1352c63bfa6ea0",
+                "sha256:a290cad10346ed366c8a0133d868eaf6585ec6afdd0c511286cdb11f5fc3d285"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
-            "version": "==0.6.0"
+            "version": "==0.7.0"
         },
         "django": {
             "hashes": [
@@ -418,7 +418,6 @@
                 "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6",
                 "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.10"
         },
         "incremental": {
@@ -858,7 +857,6 @@
                 "sha256:4c231c759543ba02560fcd2480c48dcec4dae34c9da7d3747c508227e0624b51",
                 "sha256:818ae18e06922c066f777a33f1fca45786d85edfe71cd043de6379337a7f274b"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==20.0.1"
         },
         "pyroute2": {
@@ -1126,14 +1124,12 @@
             "version": "==4.58.0"
         },
         "twisted": {
-            "extras": [
-                "tls"
-            ],
+            "extras": [],
             "hashes": [
                 "sha256:77544a8945cf69b98d2946689bbe0c75de7d145cdf11f391dd487eae8fc95a12",
                 "sha256:aab38085ea6cda5b378b519a0ec99986874921ee8881318626b0a3414bb2631e"
             ],
-            "markers": "python_full_version >= '3.5.4'",
+            "markers": "os_name == 'disable-we-do-not-use-twisted-how-did-it-even-get-here'",
             "version": "==21.2.0"
         },
         "txaio": {

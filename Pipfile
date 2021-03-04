@@ -51,7 +51,10 @@ pytz = "*"
 pycmarkgfm = "*"
 iso8601 = "*"
 cjwpandasmodule = "~=0.0.2"
-carehare = "~=0.0.8"
+carehare = "~=0.0.10"
+daphne = { os_name = "== 'disable-we-do-not-use-daphne'" }
+Twisted = { os_name = "== 'disable-we-do-not-use-twisted-how-did-it-even-get-here'" }
+Automat = { os_name = "== 'disable-we-do-not-use-automat-how-did-it-even-get-here'" }
 
 [dev-packages]
 black = "==20.8b1"

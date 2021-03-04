@@ -62,7 +62,6 @@ FROM pybase AS pydev
 
 # Need build-essential for:
 # * regex (TODO nix the dep or make it support manylinux .whl)
-# * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * google-re2
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * PyICU
@@ -129,7 +128,6 @@ FROM pybase AS pybuild
 COPY Pipfile Pipfile.lock /app/
 
 # Need build-essential for:
-# * Twisted - https://twistedmatrix.com/trac/ticket/7945
 # * google-re2
 # * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
 # * PyICU

@@ -181,7 +181,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    "channels",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
