@@ -1,19 +1,24 @@
 import asyncio
+import contextlib
 import functools
 import json
 from unittest.mock import patch
-from channels.layers import get_channel_layer
+
+from channels.layers import channel_layers, get_channel_layer
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth.models import AnonymousUser, User
+
+import cjwstate.rabbitmq.connection
 from cjworkbench.asgi import _url_router
-from server import handlers
+from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.rabbitmq import (
-    send_update_to_workflow_clients,
     queue_render_if_consumers_are_listening,
+    send_update_to_workflow_clients,
 )
 from cjwstate.tests.utils import DbTestCase
+from server import handlers
 
 
 def async_test(f):
@@ -46,14 +51,12 @@ def async_test(f):
     def wrapper(self, *args, **kwargs):
         communicators = []
 
-        def communicate(*args, **kwargs):
-            ret = WebsocketCommunicator(*args, **kwargs)
+        def communicate(url, path):
+            ret = WebsocketCommunicator(url, path)
             communicators.append(ret)
             return ret
 
         async def inner():
-            # loop is created by run_with_async_db()
-            loop = asyncio.get_event_loop()
             try:
                 return await f(self, communicate, *args, **kwargs)
             finally:
@@ -62,10 +65,12 @@ def async_test(f):
                     await communicator.disconnect()
                 # Disconnect from RabbitMQ
                 layer = get_channel_layer()
-                connection = layer._get_connection_for_loop(loop)
-                await connection.close()
+                try:
+                    await layer.close()
+                finally:
+                    channel_layers.backends = {}
 
-            self.run_with_async_db(inner())
+        self.run_with_async_db(inner())
 
     return wrapper
 
@@ -91,20 +96,46 @@ class ChannelTests(DbTestCase):
 
         self.communicators = []
 
+        self._exit_stack = contextlib.ExitStack()
+        self._exit_stack.enter_context(
+            self.assertLogs("server.websockets", level="DEBUG")
+        )
+        self._exit_stack.enter_context(self.assertLogs("carehare", level="INFO"))
+        self._exit_stack.enter_context(
+            self.assertLogs("channels_rabbitmq", level="INFO")
+        )
+
+    def tearDown(self):
+        self._exit_stack.close()
+        super().tearDown()
+
     def mock_auth_middleware(self, application):
-        def inner(scope):
+        async def inner(scope, receive, send):
             scope["user"] = self.user
             scope["session"] = FakeSession("a-key")
-            return application(scope)
+            return await application(scope, receive, send)
 
         return inner
 
     def mock_i18n_middleware(self, application, locale_id="en"):
-        def inner(scope):
+        async def inner(scope, receive, send):
             scope["locale_id"] = locale_id
-            return application(scope)
+            return await application(scope, receive, send)
 
         return inner
+
+    @contextlib.asynccontextmanager
+    async def global_rabbitmq_connection(self):
+        future_connection = get_channel_layer().carehare_connection
+        try:
+            cjwstate.rabbitmq.connection._global_awaitable_connection = (
+                future_connection
+            )
+            connection = await future_connection
+            await connection.queue_declare(rabbitmq.Render, durable=True)
+            yield
+        finally:
+            cjwstate.rabbitmq.connection._global_awaitable_connection = None
 
     @async_test
     async def test_deny_missing_id(self, communicate):
@@ -114,19 +145,27 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_deny_other_users_workflow(self, communicate):
-        other_workflow = Workflow.create_and_init(
-            name="Workflow 2",
-            owner=User.objects.create(username="other", email="other@example.org"),
-        )
+        @database_sync_to_async
+        def init_db():
+            return Workflow.create_and_init(
+                name="Workflow 2",
+                owner=User.objects.create(username="other", email="other@example.org"),
+            )
+
+        other_workflow = await init_db()
         comm = communicate(self.application, f"/workflows/{other_workflow.id}/")
         connected, _ = await comm.connect()
         self.assertFalse(connected)
 
     @async_test
     async def test_allow_anonymous_workflow(self, communicate):
-        workflow = Workflow.create_and_init(
-            owner=None, anonymous_owner_session_key="a-key"
-        )
+        @database_sync_to_async
+        def init_db():
+            return Workflow.create_and_init(
+                owner=None, anonymous_owner_session_key="a-key"
+            )
+
+        workflow = await init_db()
         self.user = AnonymousUser()
         comm = communicate(self.application, f"/workflows/{workflow.id}/")
         connected, _ = await comm.connect()
@@ -135,9 +174,13 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_deny_other_users_anonymous_workflow(self, communicate):
-        workflow = Workflow.create_and_init(
-            anonymous_owner_session_key="some-other-key"
-        )
+        @database_sync_to_async
+        def init_db():
+            return Workflow.create_and_init(
+                anonymous_owner_session_key="some-other-key"
+            )
+
+        workflow = await init_db()
         comm = communicate(self.application, f"/workflows/{workflow.id}/")
         connected, _ = await comm.connect()
         self.assertFalse(connected)
@@ -158,7 +201,8 @@ class ChannelTests(DbTestCase):
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
-        await send_update_to_workflow_clients(self.workflow.id, clientside.Update())
+        async with self.global_rabbitmq_connection():
+            await send_update_to_workflow_clients(self.workflow.id, clientside.Update())
         response = await comm.receive_from()
         self.assertEqual(json.loads(response), {"type": "apply-delta", "data": {}})
 
@@ -172,7 +216,8 @@ class ChannelTests(DbTestCase):
         connected2, _ = await comm2.connect()
         self.assertTrue(connected2)
         await comm2.receive_from()  # ignore initial workflow delta
-        await send_update_to_workflow_clients(self.workflow.id, clientside.Update())
+        async with self.global_rabbitmq_connection():
+            await send_update_to_workflow_clients(self.workflow.id, clientside.Update())
         response1 = await comm1.receive_from()
         self.assertEqual(json.loads(response1), {"type": "apply-delta", "data": {}})
         response2 = await comm2.receive_from()
@@ -200,7 +245,8 @@ class ChannelTests(DbTestCase):
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
-        await queue_render_if_consumers_are_listening(self.workflow.id, 123)
+        async with self.global_rabbitmq_connection():
+            await queue_render_if_consumers_are_listening(self.workflow.id, 123)
         args = await asyncio.wait_for(future_args, 0.005)
         self.assertEqual(args, (self.workflow.id, 123))
 
@@ -223,12 +269,13 @@ class ChannelTests(DbTestCase):
             await asyncio.wait_for(future_args, 0.005)
         queue_render.assert_not_called()
 
-    @patch("server.handlers.handle")
+    @patch.object(handlers, "handle")
     @async_test
     async def test_invoke_handler(self, communicate, handler):
-        ret = asyncio.Future()
-        ret.set_result(handlers.HandlerResponse(123, data={"bar": "baz"}))
-        handler.return_value = ret
+        async def mock_handler(*args, **kwargs):
+            return handlers.HandlerResponse(123, data={"bar": "baz"})
+
+        handler.side_effect = mock_handler
 
         comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
         connected, _ = await comm.connect()
@@ -260,7 +307,11 @@ class ChannelTests(DbTestCase):
         connected, _ = await comm.connect()
         await comm.receive_from()  # ignore initial workflow delta
 
-        self.workflow.delete()
+        @database_sync_to_async
+        def break_db():
+            self.workflow.delete()
+
+        await break_db()
 
         await comm.send_to(
             """
@@ -324,9 +375,6 @@ class ChannelTests(DbTestCase):
     @patch.object(rabbitmq, "queue_render")
     @async_test
     async def test_connect_queues_render_if_needed(self, communicate, queue_render):
-        """
-        Queue a render if connecting to a stale workflow.
-        """
         future_args = asyncio.get_event_loop().create_future()
 
         async def do_queue(*args):
@@ -334,14 +382,18 @@ class ChannelTests(DbTestCase):
 
         queue_render.side_effect = do_queue
 
-        # Make it so the workflow needs a render
-        self.workflow.tabs.first().steps.create(
-            order=0,
-            slug="step-1",
-            module_id_name="whatever",
-            last_relevant_delta_id=self.workflow.last_delta_id,
-            cached_render_result_delta_id=None,
-        )
+        @database_sync_to_async
+        def require_render():
+            # Make it so the workflow needs a render
+            self.workflow.tabs.first().steps.create(
+                order=0,
+                slug="step-1",
+                module_id_name="whatever",
+                last_relevant_delta_id=self.workflow.last_delta_id,
+                cached_render_result_delta_id=None,
+            )
+
+        await require_render()
 
         comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()

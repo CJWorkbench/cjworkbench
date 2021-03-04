@@ -289,9 +289,6 @@ services:
   testrabbitmq:
     image: rabbitmq:3.8.11-management
     networks: [ 'test' ]
-    volumes:
-      - type: tmpfs
-        target: /var/lib/rabbitmq
     environment:
       # Use just one CPU
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: '+S 1:1'

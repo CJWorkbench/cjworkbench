@@ -2,13 +2,13 @@ import json
 import logging
 import pickle
 from collections import namedtuple
-from typing import Dict, Any
+from typing import Any, Dict
+
+from channels.exceptions import DenyConnection
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.layers import get_channel_layer
 
 import websockets
-
-from channels.layers import get_channel_layer
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from channels.exceptions import DenyConnection
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Step, Workflow

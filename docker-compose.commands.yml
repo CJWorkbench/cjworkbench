@@ -14,7 +14,7 @@ services:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
       CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       TUS_CREATE_UPLOAD_URL: http://tusd/files/
@@ -93,7 +93,7 @@ services:
       <<: *django-env
       TUS_CREATE_UPLOAD_URL: http://testtusd:8080/files
       CJW_DB_HOST: testdatabase
-      CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
+      CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq/
       AWS_S3_ENDPOINT: http://testminio:9000
       S3_BUCKET_NAME_PATTERN: "unittest-%s"
     networks: [ 'test' ]

@@ -24,7 +24,6 @@ import msgpack
 from .. import clientside
 from .connection import get_global_connection
 
-
 logger = logging.getLogger(__name__)
 
 
