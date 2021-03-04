@@ -241,6 +241,8 @@ CMD [ "bin/cron-prod" ]
 
 # 3.5. frontend: serves website
 FROM base AS frontend
+# Add fake daphne, for unit tests running on google-cloud-build
+COPY daphne/ /app/daphne/
 COPY assets/icons/ /app/assets/icons/
 COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 # 8080 is Kubernetes' conventional web-server port
