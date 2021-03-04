@@ -6,7 +6,7 @@
 <section>
   <h2>Overview</h2>
   <p>
-    In this tutorial we will use the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">City's auditor Office website of the City of Atlanta</a>. Our goal is to be notified every time a new audit report is published.
+    In this tutorial we will use the <a href="http://www.atlaudit.org/audit--other-reports.html" class="highlight" target="_blank">City's auditor Office website of the City of Atlanta</a>. Our goal is to be notified every time a new audit report is published.
   </p>
 </section>
 <section>
@@ -29,9 +29,9 @@
     </li>
     <li
       data-highlight='[{"type":"Step","moduleIdName":"urlscraper"}]'
-      data-test="return workflow.tabs[0].steps[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit-reports.html'"
+      data-test="return workflow.tabs[0].steps[0].params.pagedurl.trim() === 'http://www.atlaudit.org/audit--other-reports.html'"
       >Paste in the following URL, where all the public reports are listed, and press <kbd>Scrape</kbd>
-      <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
+      <div class="copy-txt">http://www.atlaudit.org/audit--other-reports.html</div>
       <p class="instruction-detail">Next, let's extract our data.</p>
     </li>
   </ol>
@@ -72,7 +72,7 @@
     </p>
     <ul>
       <li>
-        Navigate to <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">the webpage</a>
+        Navigate to <a href="http://www.atlaudit.org/audit--other-reports.html" class="highlight" target="_blank">the webpage</a>
         and activate SelectorGadget by clicking on the magnifying glass icon in the upper right (Chrome) or choosing the
         bookmark (other browsers).
       </li>
@@ -103,7 +103,7 @@
           && cols[0].colxpath === '//*[(@id = &quot;wsite-content&quot;)]//li//a'
           && cols[0].colname.toLowerCase() === 'document title'
         )
-      ">Paste the xpath selector you just copied into the <kbd>Column selector</kbd> field, and enter
+      ">Paste the XPath selector you just copied into the <kbd>XPath selector</kbd> field, and enter
       <code>Document title</code> as a column name. Apply your settings <img class="icon-insert" src="images/lesson-icons/play.svg">.
     </li>
   </ol>
@@ -113,7 +113,7 @@
   <p>
     Now that we have a list of all documents, let's extract their link URLs. First let's look at the structure of our page's HTML to understand how this all works.
   </p>
-  <p>Naviguate back to the <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">webpage</a> with Google Chrome or Firefox.
+  <p>Naviguate back to the <a href="http://www.atlaudit.org/audit--other-reports.html" class="highlight" target="_blank">webpage</a> with Google Chrome or Firefox.
    <p>
      On the webpage, scroll down to the list of all publications released by the City Auditor's Office. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
    </p>
