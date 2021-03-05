@@ -99,7 +99,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '5'
-      CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
+      CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: testdb
       CJW_DB_PASSWORD: cjworkbench
