@@ -11,6 +11,7 @@
     margin: -2rem -2.5rem 0 -2.5rem;
     padding: 0;
     list-style: none;
+    min-height: 10rem;
     max-height: 20rem;
     overflow-y: auto;
     overflow-x: hidden;
@@ -63,8 +64,6 @@
     form.notifications {
       display: flex;
       margin: 0;
-      margin-right: 2rem;
-      padding-right: 2rem;
       border-right: 1px solid $Vlight-gray;
 
       .text {

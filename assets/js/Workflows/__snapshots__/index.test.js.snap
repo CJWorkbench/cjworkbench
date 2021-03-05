@@ -50,7 +50,7 @@ exports[`Workflow list page renders Examples correctly 1`] = `
             class="open"
           >
             <a>
-              Example workflows
+              Community workflows
             </a>
           </li>
           <li
@@ -59,7 +59,7 @@ exports[`Workflow list page renders Examples correctly 1`] = `
             <a
               href="/lessons"
             >
-              Training
+              Tutorials
             </a>
           </li>
         </ul>
@@ -123,7 +123,7 @@ exports[`Workflow list page renders Examples correctly 1`] = `
     >
       <header>
         <h1>
-          Example workflows
+          Community workflows
         </h1>
       </header>
       <div
@@ -260,7 +260,7 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
             <a
               href="/workflows/examples"
             >
-              Example workflows
+              Community workflows
             </a>
           </li>
           <li
@@ -269,7 +269,7 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
             <a
               href="/lessons"
             >
-              Training
+              Tutorials
             </a>
           </li>
         </ul>
@@ -616,7 +616,7 @@ exports[`Workflow list page renders Shared correctly 1`] = `
             <a
               href="/workflows/examples"
             >
-              Example workflows
+              Community workflows
             </a>
           </li>
           <li
@@ -625,7 +625,7 @@ exports[`Workflow list page renders Shared correctly 1`] = `
             <a
               href="/lessons"
             >
-              Training
+              Tutorials
             </a>
           </li>
         </ul>

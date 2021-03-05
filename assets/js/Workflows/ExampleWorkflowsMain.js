@@ -8,7 +8,7 @@ export default function ExampleWorkflowsMain (props) {
       <header>
         <h1>
           <Trans id='js.Workflows.WorkflowLists.nav.recipes'>
-            Example workflows
+            Community workflows
           </Trans>
         </h1>
       </header>

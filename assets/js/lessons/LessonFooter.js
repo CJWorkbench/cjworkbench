@@ -35,7 +35,7 @@ export default class LessonFooter extends PureComponent {
         className={`lesson-footer ${isCurrent ? 'current' : 'not-current'}`}
       >
         <a href='/lessons/' className='backToLessons'>
-          <Trans id='js.lessons.LessonFooter.training.link'>Training</Trans>
+          <Trans id='js.lessons.LessonFooter.training.link'>Tutorials</Trans>
         </a>
         <h2>{title}</h2>
         <div

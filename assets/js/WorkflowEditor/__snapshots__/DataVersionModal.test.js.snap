@@ -121,6 +121,16 @@ exports[`DataVersionModal matches snapshot 1`] = `
                   <div
                     class="modal-footer"
                   >
+                    <div
+                      class="actions"
+                    >
+                      <button
+                        disabled=""
+                        name="load"
+                      >
+                        Load
+                      </button>
+                    </div>
                     <form
                       class="notifications notifications-disabled"
                     >
@@ -160,16 +170,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         </label>
                       </div>
                     </form>
-                    <div
-                      class="actions"
-                    >
-                      <button
-                        disabled=""
-                        name="load"
-                      >
-                        Load
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -299,6 +299,24 @@ exports[`DataVersionModal matches snapshot 1`] = `
                 <div
                   className="modal-footer"
                 >
+                  <div
+                    className="actions"
+                  >
+                    <button
+                      disabled={true}
+                      name="load"
+                      onClick={[Function]}
+                    >
+                      <Trans
+                        components={Object {}}
+                        id="js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
+                        message="Load"
+                        values={Object {}}
+                      >
+                        Load
+                      </Trans>
+                    </button>
+                  </div>
                   <NotificationsForm
                     notificationsEnabled={false}
                     onSubmit={[Function]}
@@ -374,24 +392,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       </div>
                     </form>
                   </NotificationsForm>
-                  <div
-                    className="actions"
-                  >
-                    <button
-                      disabled={true}
-                      name="load"
-                      onClick={[Function]}
-                    >
-                      <Trans
-                        components={Object {}}
-                        id="js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
-                        message="Load"
-                        values={Object {}}
-                      >
-                        Load
-                      </Trans>
-                    </button>
-                  </div>
                 </div>
               </ModalFooter>
             </div>

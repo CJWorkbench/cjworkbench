@@ -30,13 +30,13 @@ export default function TopPaths (props) {
         isOpen={currentPath === '/workflows/examples'}
         title={t({
           id: 'js.Page.MainNav.examples.title',
-          message: 'Example workflows'
+          message: 'Community workflows'
         })}
       />
       <LinkLi
         href='/lessons'
         isOpen={isLessonsOpen}
-        title={t({ id: 'js.Page.MainNav.training.title', message: 'Training' })}
+        title={t({ id: 'js.Page.MainNav.training.title', message: 'Tutorials' })}
       >
         <ul>
           <LinkLi
@@ -44,7 +44,7 @@ export default function TopPaths (props) {
             isOpen={/^\/lessons/.test(currentPath)}
             title={t({
               id: 'js.Page.MainNav.lessons.title',
-              message: 'Tutorials'
+              message: 'Workbench basics'
             })}
           />
           {courses.map(({ href, title }) => (

@@ -168,12 +168,12 @@ msgstr ""
 msgid "js.Page.MainNav.billing.title"
 msgstr ""
 
-#. default-message: Example workflows
+#. default-message: Community workflows
 #: assets/js/Page/MainNav/TopPaths.js:31
 msgid "js.Page.MainNav.examples.title"
 msgstr ""
 
-#. default-message: Tutorials
+#. default-message: Workbench basics
 #: assets/js/Page/MainNav/TopPaths.js:45
 msgid "js.Page.MainNav.lessons.title"
 msgstr ""
@@ -198,7 +198,7 @@ msgstr ""
 msgid "js.Page.MainNav.signIn.title"
 msgstr ""
 
-#. default-message: Training
+#. default-message: Tutorials
 #: assets/js/Page/MainNav/TopPaths.js:39
 msgid "js.Page.MainNav.training.title"
 msgstr ""
@@ -705,7 +705,7 @@ msgstr ""
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr ""
 
-#. default-message: Training
+#. default-message: Workbench basics
 #: assets/js/WorkflowNavBar.js:25
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
 msgstr ""
@@ -823,7 +823,7 @@ msgstr ""
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr ""
 
-#. default-message: Example workflows
+#. default-message: Community workflows
 #: assets/js/Workflows/ExampleWorkflowsMain.js:10
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr ""
@@ -895,7 +895,7 @@ msgstr ""
 msgid "js.i18n.LocaleSwitcher.header.title"
 msgstr ""
 
-#. default-message: Training
+#. default-message: Tutorials
 #: assets/js/lessons/LessonFooter.js:38
 msgid "js.lessons.LessonFooter.training.link"
 msgstr ""
@@ -912,7 +912,7 @@ msgstr ""
 msgid "js.lessons.LessonNav.previous.button"
 msgstr ""
 
-#. default-message: Training
+#. default-message: Tutorials
 #: assets/js/lessons/LessonSection.js:71
 msgid "js.lessons.LessonSection.training.link"
 msgstr ""
@@ -2568,7 +2568,7 @@ msgstr ""
 msgid "py.templates._base.signUp"
 msgstr ""
 
-#. default-message: Workbench Training
+#. default-message: Workbench Tutorials
 #: templates/course.html:6
 msgid "py.templates.course.workbenchTraining.title"
 msgstr ""

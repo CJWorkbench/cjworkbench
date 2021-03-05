@@ -243,14 +243,6 @@ export class DataVersionModal extends PureComponent {
           </form>
         </ModalBody>
         <ModalFooter>
-          {isAnonymous
-            ? null
-            : (
-              <NotificationsForm
-                notificationsEnabled={notificationsEnabled}
-                onSubmit={this.handleChangeNotificationsEnabled}
-              />
-              )}
           <div className='actions'>
             <button
               name='load'
@@ -265,6 +257,14 @@ export class DataVersionModal extends PureComponent {
               </Trans>
             </button>
           </div>
+          {isAnonymous
+            ? null
+            : (
+              <NotificationsForm
+                notificationsEnabled={notificationsEnabled}
+                onSubmit={this.handleChangeNotificationsEnabled}
+              />
+              )}
         </ModalFooter>
       </Modal>
     )

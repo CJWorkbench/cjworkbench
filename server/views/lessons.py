@@ -280,7 +280,7 @@ def render_lesson_list(request, locale_id):
     except KeyError:
         return redirect("/lessons/en")
     course = Course(
-        title="Lessons",
+        title="Workbench basics",
         locale_id=locale_id,
         lessons={lesson.slug: lesson for lesson in lessons},
     )

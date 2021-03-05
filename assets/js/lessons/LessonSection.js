@@ -68,7 +68,7 @@ export default class LessonSection extends PureComponent {
     return (
       <section className={isCurrent ? 'current' : 'not-current'}>
         <a href='/lessons/' className='backToLessons'>
-          <Trans id='js.lessons.LessonSection.training.link'>Training</Trans>
+          <Trans id='js.lessons.LessonSection.training.link'>Tutorials</Trans>
         </a>
         <h2>{title}</h2>
         <div
