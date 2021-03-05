@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import functools
 import json
+import logging
 from unittest.mock import patch
 
 from channels.layers import channel_layers, get_channel_layer
@@ -96,17 +97,20 @@ class ChannelTests(DbTestCase):
 
         self.communicators = []
 
-        self._exit_stack = contextlib.ExitStack()
-        self._exit_stack.enter_context(
-            self.assertLogs("server.websockets", level="DEBUG")
-        )
-        self._exit_stack.enter_context(self.assertLogs("carehare", level="INFO"))
-        self._exit_stack.enter_context(
-            self.assertLogs("channels_rabbitmq", level="INFO")
-        )
+        self._log_overrides = []
+        for logger_name, level in [
+            ("server.websockets", logging.WARN),
+            ("carehare", logging.WARN),
+            ("channels_rabbitmq", logging.WARN),
+        ]:
+            logger = logging.getLogger(logger_name)
+            self._log_overrides.append((logger_name, logger.level))
+            logger.setLevel(level)
 
     def tearDown(self):
-        self._exit_stack.close()
+        for (logger_name, level) in self._log_overrides:
+            logger = logging.getLogger(logger_name)
+            logger.setLevel(level)
         super().tearDown()
 
     def mock_auth_middleware(self, application):
