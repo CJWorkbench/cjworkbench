@@ -9,7 +9,7 @@ export default function MainNavHeader (props) {
     <header>
       <a href={href}>
         <img
-          src={`${window.STATIC_URL}images/workbench-logo-white.svg`}
+          src={`${window.STATIC_URL}images/workbench-logo-with-white-text.svg`}
           alt={t({
             id: 'js.Page.MainNav.Header.brandName',
             message: 'Workbench'

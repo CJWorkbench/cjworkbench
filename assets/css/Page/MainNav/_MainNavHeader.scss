@@ -3,7 +3,8 @@
   justify-content: space-between; // menu button on far right
   align-items: center; // center toggle button and logo
 
-  $logo-aspect-ratio: 739 / 105;
+  $logo-aspect-ratio: 1600 / 218;
+  $extra-logo-padding-on-right: rem(1);
   padding: $main-nav-padding;
 
   a {
@@ -13,7 +14,7 @@
   img {
     display: block;
     // Hard-code height, not width, so page doesn't flicker during load
-    height: ($main-nav-sidebar-width - 2 * $main-nav-padding) /
+    height: ($main-nav-sidebar-width - 2 * $main-nav-padding - $extra-logo-padding-on-right) /
       $logo-aspect-ratio;
   }
 

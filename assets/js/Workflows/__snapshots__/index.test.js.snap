@@ -14,7 +14,7 @@ exports[`Workflow list page renders Examples correctly 1`] = `
         >
           <img
             alt="Workbench"
-            src="undefinedimages/workbench-logo-white.svg"
+            src="undefinedimages/workbench-logo-with-white-text.svg"
           />
         </a>
         <button
@@ -224,7 +224,7 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
         <a>
           <img
             alt="Workbench"
-            src="undefinedimages/workbench-logo-white.svg"
+            src="undefinedimages/workbench-logo-with-white-text.svg"
           />
         </a>
         <button
@@ -580,7 +580,7 @@ exports[`Workflow list page renders Shared correctly 1`] = `
         >
           <img
             alt="Workbench"
-            src="undefinedimages/workbench-logo-white.svg"
+            src="undefinedimages/workbench-logo-with-white-text.svg"
           />
         </a>
         <button
