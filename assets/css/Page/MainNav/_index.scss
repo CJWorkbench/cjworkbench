@@ -28,7 +28,7 @@ nav.main-nav {
   div.user-paths {
     margin: rem(1) 0 0;
     padding-top: rem(0.75);
-    border-top: 1px solid $item-border;
+    border-top: 1px solid #597E94; // TODO:FIX THE PROBLEMATIC COLOR SCHEMA
   }
 
   h3.display-name {
@@ -50,17 +50,12 @@ nav.main-nav {
       text-decoration: none;
 
       &[href]:hover {
-        background: $main-nav-open-bg;
+        background: $main-nav-hover-bg;
       }
-    }
-
-    li.parent.open > a {
-      font-weight: bold;
     }
 
     li:not(.parent).open a {
       background: $main-nav-open-bg;
-      font-weight: bold;
     }
 
     li li a {

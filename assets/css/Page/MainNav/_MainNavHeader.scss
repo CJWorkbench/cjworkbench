@@ -13,7 +13,7 @@
   img {
     display: block;
     // Hard-code height, not width, so page doesn't flicker during load
-    height: ($main-nav-sidebar-width - 2 * $main-nav-padding) /
+    height: ($main-nav-sidebar-width - 3 * $main-nav-padding) /
       $logo-aspect-ratio;
   }
 
