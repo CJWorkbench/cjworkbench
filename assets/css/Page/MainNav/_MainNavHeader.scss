@@ -21,9 +21,9 @@
   button.toggle-open {
     @include icon-button(
       $color: white,
-      $focus-color: $main-nav-open-bg,
+      $focus-color: $sidebar-link-hover-bg,
       $focus-bg: white,
-      $active-color: $main-nav-bg
+      $active-color: $sidebar-bg
     );
 
     @include media-when-we-pin-main-nav-sidebar {

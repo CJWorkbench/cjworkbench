@@ -20,9 +20,14 @@ $table-row-background-hover: #dbebf3;
 $modal-color: $workspace-action;
 $document-blue: #466577;
 $hover-background: #f5f5f5;
+$heading-bg: #597e94;
 
 $item-border: #dee1e6;
 $table-border: #cbe2e7;
+
+$sidebar-bg: $document-blue;
+$sidebar-link-open-bg: $heading-bg;
+$sidebar-link-hover-bg: #4c6f83;
 
 // Secondary Colors (づ ￣ ³￣)づ
 
@@ -34,9 +39,7 @@ $Vlight-gray: lighten($dark-gray, 39%);
 
 $modal-footer: $WF-background;
 $dark-orange: #f88630;
-$document-blue--light: #5c88a1;
-$heading-bg: $document-blue--light;
-$header-hover: $document-blue;
+$header-hover: #5c88a1;
 $input-alt-bg: #96afc3;
 $input-alt: white;
 $input-alt-placeholder: $SuperLightGray;

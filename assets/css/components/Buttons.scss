@@ -351,20 +351,6 @@ button:focus {
   @include button-orange--fill;
 }
 
-.button-dark-blue {
-  color: $document-blue;
-  border-color: $document-blue;
-  background-color: transparent;
-  &:hover {
-    background-color: $document-blue--light;
-    color: darken($document-blue, 10%);
-  }
-  &:active {
-    background: $document-blue;
-    color: $white;
-  }
-}
-
 // Style for button with Icon within
 .button-icon {
   cursor: pointer;

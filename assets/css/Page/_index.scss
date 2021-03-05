@@ -4,8 +4,6 @@
   }
 }
 $main-nav-sidebar-width: rem(15);
-$main-nav-open-bg: $heading-bg;
-$main-nav-bg: $document-blue;
 $main-nav-padding: rem(1.5);
 $main-padding: rem(1);
 $main-padding-desktop: rem(2);
@@ -38,7 +36,7 @@ $main-padding-desktop: rem(2);
       h1 {
         margin: 0;
         font-weight: bold;
-        color: $main-nav-open-bg;
+        color: $sidebar-link-open-bg;
       }
     }
   }

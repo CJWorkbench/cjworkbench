@@ -1,5 +1,5 @@
 nav.main-nav {
-  background: $main-nav-bg;
+  background: $sidebar-bg;
   color: white;
   position: fixed;
   width: 100%;
@@ -50,7 +50,7 @@ nav.main-nav {
       text-decoration: none;
 
       &[href]:hover {
-        background: $main-nav-open-bg;
+        background: $sidebar-link-hover-bg;
       }
     }
 
@@ -59,8 +59,7 @@ nav.main-nav {
     }
 
     li:not(.parent).open a {
-      background: $main-nav-open-bg;
-      font-weight: bold;
+      background: $sidebar-link-open-bg;
     }
 
     li li a {
