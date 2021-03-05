@@ -21,133 +21,17 @@ from .. import settings
 from .. import types as atypes
 from . import moduletypes as mtypes
 
-
-class ColumnType(ABC):
-    """
-    Data type of a column.
-
-    This describes how it is presented -- not how its bytes are arranged.
-    """
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """
-        The name of the type: 'text', 'number' or 'timestamp'.
-        """
-
-    @abstractmethod
-    def to_arrow(self) -> atypes.ColumnType:
-        """
-        The lower-level type this type wraps.
-        """
-
-    @classmethod
-    def from_arrow(cls, value: atypes.ColumnType) -> ColumnType:
-        """
-        Wrap a lower-level ColumnType.
-        """
-        if isinstance(value, atypes.ColumnType.Text):
-            return ColumnType.TEXT()
-        elif isinstance(value, atypes.ColumnType.Number):
-            return ColumnType.NUMBER(value.format)
-        elif isinstance(value, atypes.ColumnType.Timestamp):
-            return ColumnType.TIMESTAMP()
-        else:
-            raise RuntimeError("Unhandled value %r" % value)
-
-
-@dataclass(frozen=True)
-class ColumnTypeText(ColumnType):
-    # override
-    @property
-    def name(self) -> str:
-        return "text"
-
-    # override
-    def to_arrow(self) -> atypes.ColumnType.Text:
-        return atypes.ColumnType.Text()
-
-
-@dataclass(frozen=True)
-class ColumnTypeNumber(ColumnType):
-    format: str = "{:,}"  # Python format() string -- default adds commas
-    """Utility to convert int and float to str.
-
-    Usage:
-
-        formatter = NumberFormatter('${:,.2f}')
-        formatter.format(1234.56)  # => "$1,234.56"
-
-    This is similar to Python `format()` but different:
-
-    * It allows formatting float as int: `NumberFormatter('{:d}').format(0.1)`
-    * It disallows "conversions" (e.g., `{!r:s}`)
-    * It disallows variable name/numbers (e.g., `{1:d}`, `{value:d}`)
-    * It raises ValueError on construction if format is imperfect
-    * Its `.format()` method always succeeds
-    """
-
-    # TODO handle locale, too: format depends on it. Python will make this
-    # difficult because it can't format a string in an arbitrary locale: it can
-    # only do it using global variables, which we can't use.
-
-    def __post_init__(self):
-        if not isinstance(self.format, str):
-            raise ValueError("Format must be str")
-        parse_number_format(self.format)  # raise ValueError
-
-    # override
-    @property
-    def name(self) -> str:
-        return "number"
-
-    # override
-    def to_arrow(self) -> atypes.ColumnType.Number:
-        return atypes.ColumnType.Number(self.format)
-
-
-@dataclass(frozen=True)
-class ColumnTypeTimestamp(ColumnType):
-    # # https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-    # format: str = '{}'  # Python format() string
-
-    # # TODO handle locale, too: format depends on it. Python will make this
-    # # difficult because it can't format a string in an arbitrary locale: it can
-    # # only do it using global variables, which we can't use.
-
-    # override
-    @property
-    def name(self) -> str:
-        return "timestamp"
-
-    # override
-    def to_arrow(self) -> atypes.ColumnType.Timestamp:
-        return atypes.ColumnType.Timestamp()
-
-
-# Aliases to help with import. e.g.:
-# from cjwkernel.pandas.types import Column, ColumnType
-# column = Column('A', ColumnType.NUMBER('{:,.2f}'))
-ColumnType.TEXT = ColumnTypeText
-ColumnType.NUMBER = ColumnTypeNumber
-ColumnType.TIMESTAMP = ColumnTypeTimestamp
-
-ColumnType.TypeLookup = {
-    "text": ColumnType.TEXT,
-    "number": ColumnType.NUMBER,
-    "timestamp": ColumnType.TIMESTAMP,
-}
+ColumnType = atypes.ColumnType
 
 
 @dataclass(frozen=True)
 class Column:
-    """
-    A column definition.
-    """
+    """A column definition."""
 
-    name: str  # Name of the column
-    type: ColumnType  # How it's displayed
+    name: str
+    """Name of the column."""
+    type: ColumnType
+    """How the column is stored and displayed."""
 
     def to_dict(self):
         return {"name": self.name, "type": self.type.name, **asdict(self.type)}
@@ -158,15 +42,19 @@ class Column:
 
     @classmethod
     def from_kwargs(cls, name: str, type: str, **column_type_kwargs) -> ColumnType:
-        type_cls = ColumnType.TypeLookup[type]
+        type_cls = {
+            "text": ColumnType.Text,
+            "number": ColumnType.Number,
+            "timestamp": ColumnType.Timestamp,
+        }[type]
         return Column(name, type_cls(**column_type_kwargs))
 
     @classmethod
     def from_arrow(cls, value: atypes.Column) -> Column:
-        return cls(value.name, ColumnType.from_arrow(value.type))
+        return cls(value.name, value.type)
 
     def to_arrow(self) -> atypes.Column:
-        return atypes.Column(self.name, self.type.to_arrow())
+        return atypes.Column(self.name, self.type)
 
 
 @dataclass(frozen=True)
@@ -440,7 +328,7 @@ def _infer_column(
     Build a valid `Column` for the given Series, or raise `ValueError`.
 
     The logic: determine the `ColumnType` class of `series` (e.g.,
-    `ColumnType.NUMBER`) and then try to initialize it with `given_format`. If
+    `ColumnType.Number`) and then try to initialize it with `given_format`. If
     the format is invalid, raise `ValueError` because the user tried to create
     something invalid.
 
@@ -452,15 +340,15 @@ def _infer_column(
     # Determine ColumnType class, based on pandas/numpy `dtype`.
     dtype = series.dtype
     if is_numeric_dtype(dtype):
-        type_class = ColumnType.NUMBER
+        type_class = ColumnType.Number
     elif is_datetime64_dtype(dtype):
-        type_class = ColumnType.TIMESTAMP
+        type_class = ColumnType.Timestamp
     elif dtype == object or dtype == "category":
-        type_class = ColumnType.TEXT
+        type_class = ColumnType.Text
     else:
         raise ValueError(f"Unknown dtype: {dtype}")
 
-    if type_class == ColumnType.NUMBER and given_format is not None:
+    if type_class == ColumnType.Number and given_format is not None:
         type = type_class(format=given_format)  # raises ValueError
     elif given_format is not None:
         raise ValueError(
@@ -484,7 +372,7 @@ def _infer_columns(
     Build valid `Column`s for the given DataFrame, or raise `ValueError`.
 
     The logic: determine the `ColumnType` class of `series` (e.g.,
-    `ColumnType.NUMBER`) and then try to initialize it with `format`. If the
+    `ColumnType.Number`) and then try to initialize it with `format`. If the
     format is invalid, raise `ValueError` because the user tried to create
     something invalid.
 

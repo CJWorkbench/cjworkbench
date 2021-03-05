@@ -29,80 +29,47 @@ from cjwkernel.tests.util import (
 from cjwkernel.util import create_tempfile
 
 
-class ColumnTypeTextTests(unittest.TestCase):
-    def test_from_arrow(self):
-        self.assertEqual(
-            ColumnType.from_arrow(atypes.ColumnType.Text()), ColumnType.TEXT()
-        )
-
-    def test_to_arrow(self):
-        self.assertEqual(ColumnType.TEXT().to_arrow(), atypes.ColumnType.Text())
-
-
 class ColumnTypeNumberTests(unittest.TestCase):
     def test_format_too_many_arguments(self):
         with self.assertRaisesRegex(ValueError, "Can only format one number"):
-            ColumnType.NUMBER("{:d}{:f}")
+            ColumnType.Number("{:d}{:f}")
 
     def test_format_disallow_non_format(self):
         with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            ColumnType.NUMBER("%d")
+            ColumnType.Number("%d")
 
     def test_format_disallow_field_number(self):
         with self.assertRaisesRegex(
             ValueError, "Field names or numbers are not allowed"
         ):
-            ColumnType.NUMBER("{0:f}")
+            ColumnType.Number("{0:f}")
 
     def test_format_disallow_field_name(self):
         with self.assertRaisesRegex(
             ValueError, "Field names or numbers are not allowed"
         ):
-            ColumnType.NUMBER("{value:f}")
+            ColumnType.Number("{value:f}")
 
     def test_format_disallow_field_converter(self):
         with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
-            ColumnType.NUMBER("{!r:f}")
+            ColumnType.Number("{!r:f}")
 
     def test_format_disallow_invalid_type(self):
         with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            ColumnType.NUMBER("{:T}")
-
-    def test_from_arrow(self):
-        self.assertEqual(
-            ColumnType.from_arrow(atypes.ColumnType.Number("{:,d}")),
-            ColumnType.NUMBER("{:,d}"),
-        )
-
-    def test_to_arrow(self):
-        self.assertEqual(
-            ColumnType.NUMBER("{:,d}").to_arrow(), atypes.ColumnType.Number("{:,d}")
-        )
-
-
-class ColumnTypeTimestampTests(unittest.TestCase):
-    def test_from_arrow(self):
-        self.assertEqual(
-            ColumnType.from_arrow(atypes.ColumnType.Timestamp()), ColumnType.TIMESTAMP()
-        )
-
-    def test_to_arrow(self):
-        self.assertEqual(
-            ColumnType.TIMESTAMP().to_arrow(), atypes.ColumnType.Timestamp()
-        )
+            ColumnType.Number("{:T}")
 
 
 class ColumnTests(unittest.TestCase):
     def test_from_arrow(self):
         self.assertEqual(
-            Column.from_arrow(atypes.Column("A", atypes.ColumnType.Number("{:,d}"))),
-            Column("A", ColumnType.NUMBER("{:,d}")),
+            Column.from_arrow(atypes.Column("A", ColumnType.Number("{:,d}"))),
+            Column("A", ColumnType.Number("{:,d}")),
         )
 
     def test_to_arrow(self):
         self.assertEqual(
-            Column("A", ColumnType.NUMBER("{:,d}")).to_arrow(),
-            atypes.Column("A", atypes.ColumnType.Number("{:,d}")),
+            Column("A", ColumnType.Number("{:,d}")).to_arrow(),
+            atypes.Column("A", ColumnType.Number("{:,d}")),
         )
 
 
@@ -113,16 +80,16 @@ class TableShapeTests(unittest.TestCase):
                 atypes.TableMetadata(
                     3,
                     [
-                        atypes.Column("A", atypes.ColumnType.Number("{:,d}")),
-                        atypes.Column("B", atypes.ColumnType.Text()),
+                        atypes.Column("A", ColumnType.Number("{:,d}")),
+                        atypes.Column("B", ColumnType.Text()),
                     ],
                 )
             ),
             TableShape(
                 3,
                 [
-                    Column("A", ColumnType.NUMBER("{:,d}")),
-                    Column("B", ColumnType.TEXT()),
+                    Column("A", ColumnType.Number("{:,d}")),
+                    Column("B", ColumnType.Text()),
                 ],
             ),
         )
@@ -132,15 +99,15 @@ class TableShapeTests(unittest.TestCase):
             TableShape(
                 3,
                 [
-                    Column("A", ColumnType.NUMBER("{:,d}")),
-                    Column("B", ColumnType.TEXT()),
+                    Column("A", ColumnType.Number("{:,d}")),
+                    Column("B", ColumnType.Text()),
                 ],
             ).to_arrow(),
             atypes.TableMetadata(
                 3,
                 [
-                    atypes.Column("A", atypes.ColumnType.Number("{:,d}")),
-                    atypes.Column("B", atypes.ColumnType.Text()),
+                    atypes.Column("A", ColumnType.Number("{:,d}")),
+                    atypes.Column("B", ColumnType.Text()),
                 ],
             ),
         )
@@ -534,9 +501,9 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(
             result.columns,
             [
-                Column("A", ColumnType.NUMBER()),
-                Column("B", ColumnType.TEXT()),
-                Column("C", ColumnType.TIMESTAMP()),
+                Column("A", ColumnType.Number()),
+                Column("B", ColumnType.Text()),
+                Column("C", ColumnType.Timestamp()),
             ],
         )
 
@@ -545,7 +512,7 @@ class ProcessResultTests(unittest.TestCase):
         result = ProcessResult.coerce(table)
         self.assertEqual(
             result.columns,
-            [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.TEXT())],
+            [Column("A", ColumnType.Number()), Column("B", ColumnType.Text())],
         )
 
     def test_coerce_infer_columns_with_format(self):
@@ -556,8 +523,8 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(
             result.columns,
             [
-                Column("A", ColumnType.NUMBER(format="{:,d}")),
-                Column("B", ColumnType.TEXT()),
+                Column("A", ColumnType.Number(format="{:,d}")),
+                Column("B", ColumnType.Text()),
             ],
         )
 
@@ -568,7 +535,7 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_coerce_infer_columns_wrong_type_format_is_error(self):
         table = pd.DataFrame({"A": [1, 2]})
-        with self.assertRaisesRegex(ValueError, "Format must be str"):
+        with self.assertRaisesRegex(TypeError, "Format must be str"):
             ProcessResult.coerce({"dataframe": table, "column_formats": {"A": {}}})
 
     def test_coerce_infer_columns_text_format_is_error(self):
@@ -584,13 +551,13 @@ class ProcessResultTests(unittest.TestCase):
         result = ProcessResult.coerce(
             table,
             try_fallback_columns=[
-                Column("A", ColumnType.NUMBER("{:,d}")),
-                Column("B", ColumnType.TEXT()),
+                Column("A", ColumnType.Number("{:,d}")),
+                Column("B", ColumnType.Text()),
             ],
         )
         self.assertEqual(
             result.columns,
-            [Column("A", ColumnType.NUMBER("{:,d}")), Column("B", ColumnType.TEXT())],
+            [Column("A", ColumnType.Number("{:,d}")), Column("B", ColumnType.Text())],
         )
 
     def test_coerce_infer_columns_try_fallback_columns_ignore_wrong_type(self):
@@ -598,22 +565,22 @@ class ProcessResultTests(unittest.TestCase):
         result = ProcessResult.coerce(
             table,
             try_fallback_columns=[
-                Column("A", ColumnType.TEXT()),
-                Column("B", ColumnType.NUMBER()),
+                Column("A", ColumnType.Text()),
+                Column("B", ColumnType.Number()),
             ],
         )
         self.assertEqual(
             result.columns,
-            [Column("A", ColumnType.NUMBER()), Column("B", ColumnType.TEXT())],
+            [Column("A", ColumnType.Number()), Column("B", ColumnType.Text())],
         )
 
     def test_coerce_infer_columns_format_supercedes_try_fallback_columns(self):
         table = pd.DataFrame({"A": [1, 2]})
         result = ProcessResult.coerce(
             {"dataframe": table, "column_formats": {"A": "{:,d}"}},
-            try_fallback_columns=[Column("A", ColumnType.NUMBER("{:,.2f}"))],
+            try_fallback_columns=[Column("A", ColumnType.Number("{:,.2f}"))],
         )
-        self.assertEqual(result.columns, [Column("A", ColumnType.NUMBER("{:,d}"))])
+        self.assertEqual(result.columns, [Column("A", ColumnType.Number("{:,d}"))])
 
     def test_coerce_validate_dataframe(self):
         # Just one test, to ensure validate_dataframe() is used
@@ -1223,10 +1190,10 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(
             result.columns,
             [
-                Column("A", ColumnType.NUMBER()),
-                Column("B", ColumnType.TEXT()),
-                Column("C", ColumnType.TIMESTAMP()),
-                Column("D", ColumnType.TEXT()),
+                Column("A", ColumnType.Number()),
+                Column("B", ColumnType.Text()),
+                Column("C", ColumnType.Timestamp()),
+                Column("D", ColumnType.Text()),
             ],
         )
 
@@ -1239,7 +1206,7 @@ class ProcessResultTests(unittest.TestCase):
         df = pd.DataFrame({"A": [1, 2, 3]})
         result = ProcessResult(df)
         self.assertEqual(
-            result.table_shape, TableShape(3, [Column("A", ColumnType.NUMBER())])
+            result.table_shape, TableShape(3, [Column("A", ColumnType.Number())])
         )
 
     def test_empty_table_shape(self):
@@ -1350,7 +1317,7 @@ class ProcessResultTests(unittest.TestCase):
                             [
                                 atypes.Column(
                                     "A",
-                                    atypes.ColumnType.Number(
+                                    ColumnType.Number(
                                         # Whatever .format
                                         # ProcessResult.coerce() gave
                                         process_result.columns[0].type.format
@@ -1380,7 +1347,7 @@ class ArrowConversionTests(unittest.TestCase):
         assert_arrow_table_equals(
             dataframe_to_arrow_table(
                 pd.DataFrame({"A": [None]}, dtype=str),
-                [Column("A", ColumnType.TEXT())],
+                [Column("A", ColumnType.Text())],
                 self.path,
             ),
             arrow_table({"A": pyarrow.array([None], pyarrow.string())}),
@@ -1390,17 +1357,17 @@ class ArrowConversionTests(unittest.TestCase):
         dataframe, columns = arrow_table_to_dataframe(
             arrow_table(
                 {"A": pyarrow.array(["a", "b", None, "c"])},
-                columns=[atypes.Column("A", atypes.ColumnType.Text())],
+                columns=[atypes.Column("A", ColumnType.Text())],
             )
         )
         assert_frame_equal(dataframe, pd.DataFrame({"A": ["a", "b", np.nan, "c"]}))
-        self.assertEqual(columns, [Column("A", ColumnType.TEXT())])
+        self.assertEqual(columns, [Column("A", ColumnType.Text())])
 
     def test_dataframe_category_column(self):
         assert_arrow_table_equals(
             dataframe_to_arrow_table(
                 pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category"),
-                [Column("A", ColumnType.TEXT())],
+                [Column("A", ColumnType.Text())],
                 self.path,
             ),
             arrow_table(
@@ -1423,7 +1390,7 @@ class ArrowConversionTests(unittest.TestCase):
             }
         )
         dataframe, columns = arrow_table_to_dataframe(atable)
-        self.assertEqual(columns, [Column("A", ColumnType.TEXT())])
+        self.assertEqual(columns, [Column("A", ColumnType.Text())])
         assert_frame_equal(
             dataframe, pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category")
         )
@@ -1432,7 +1399,7 @@ class ArrowConversionTests(unittest.TestCase):
         assert_arrow_table_equals(
             dataframe_to_arrow_table(
                 pd.DataFrame({"A": [None]}, dtype=str).astype("category"),
-                [Column("A", ColumnType.TEXT())],
+                [Column("A", ColumnType.Text())],
                 self.path,
             ),
             arrow_table(
@@ -1455,7 +1422,7 @@ class ArrowConversionTests(unittest.TestCase):
             }
         )
         dataframe, columns = arrow_table_to_dataframe(atable)
-        self.assertEqual(columns, [Column("A", ColumnType.TEXT())])
+        self.assertEqual(columns, [Column("A", ColumnType.Text())])
         assert_frame_equal(
             dataframe, pd.DataFrame({"A": [None]}, dtype=str).astype("category")
         )
@@ -1464,12 +1431,12 @@ class ArrowConversionTests(unittest.TestCase):
         assert_arrow_table_equals(
             dataframe_to_arrow_table(
                 pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8),
-                [Column("A", ColumnType.NUMBER("{:,d}"))],
+                [Column("A", ColumnType.Number("{:,d}"))],
                 self.path,
             ),
             arrow_table(
                 {"A": pyarrow.array([1, 2, 3, 253], type=pyarrow.uint8())},
-                [atypes.Column("A", atypes.ColumnType.Number("{:,d}"))],
+                [atypes.Column("A", ColumnType.Number("{:,d}"))],
             ),
         )
 
@@ -1477,13 +1444,13 @@ class ArrowConversionTests(unittest.TestCase):
         dataframe, columns = arrow_table_to_dataframe(
             arrow_table(
                 {"A": pyarrow.array([1, 2, 3, 253], type=pyarrow.uint8())},
-                columns=[atypes.Column("A", atypes.ColumnType.Number("{:,d}"))],
+                columns=[atypes.Column("A", ColumnType.Number("{:,d}"))],
             )
         )
         assert_frame_equal(
             dataframe, pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8)
         )
-        self.assertEqual(columns, [Column("A", ColumnType.NUMBER("{:,d}"))])
+        self.assertEqual(columns, [Column("A", ColumnType.Number("{:,d}"))])
 
     def test_dataframe_datetime_column(self):
         assert_arrow_table_equals(
@@ -1491,7 +1458,7 @@ class ArrowConversionTests(unittest.TestCase):
                 pd.DataFrame(
                     {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
                 ),
-                [Column("A", ColumnType.TIMESTAMP())],
+                [Column("A", ColumnType.Timestamp())],
                 self.path,
             ),
             arrow_table(
@@ -1501,7 +1468,7 @@ class ArrowConversionTests(unittest.TestCase):
                         type=pyarrow.timestamp(unit="ns", tz=None),
                     )
                 },
-                [atypes.Column("A", atypes.ColumnType.Timestamp())],
+                [atypes.Column("A", ColumnType.Timestamp())],
             ),
         )
 
@@ -1514,7 +1481,7 @@ class ArrowConversionTests(unittest.TestCase):
                         type=pyarrow.timestamp(unit="ns", tz=None),
                     )
                 },
-                [atypes.Column("A", atypes.ColumnType.Timestamp())],
+                [atypes.Column("A", ColumnType.Timestamp())],
             )
         )
         assert_frame_equal(
@@ -1523,7 +1490,7 @@ class ArrowConversionTests(unittest.TestCase):
                 {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
             ),
         )
-        self.assertEqual(columns, [Column("A", ColumnType.TIMESTAMP())])
+        self.assertEqual(columns, [Column("A", ColumnType.Timestamp())])
 
     def test_arrow_table_reuse_string_memory(self):
         dataframe, _ = arrow_table_to_dataframe(arrow_table({"A": ["x", "x"]}))
