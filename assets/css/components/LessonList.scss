@@ -1,18 +1,19 @@
 .page main.lessons-page {
-  max-width: 94rem;
+  max-width: 103rem;
   padding-bottom: 8rem;
   font-family: $font-family-sans-serif;
   color: $brand-text--dark;
   font-size: 1.6rem;
   line-height: 2.2rem;
+  margin: 0;
 
   div.course {
     .introduction {
-      background: white;
+      // background: white;
       &:empty {
         display: none;
       }
-      padding: 1rem 3rem; // p,h3 vertical margin is 2rem
+      padding: 0 3rem 0 0; // p,h3 vertical margin is 2rem
       border-radius: 10px;
 
       p {
@@ -29,11 +30,10 @@
       flex-wrap: wrap;
       list-style: none;
       padding: 0;
-      margin: 0 0 0 -2rem;
 
       // each lesson card
       li.lesson {
-        margin: 2rem 0 0 2rem;
+        margin: 2rem 2rem 0 0;
         display: inline-block;
         width: 30rem;
         padding: 0;
