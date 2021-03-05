@@ -1,5 +1,5 @@
 .page main.lessons-page {
-  max-width: 94rem;
+  max-width: 101rem;
   padding-bottom: 8rem;
   font-family: $font-family-sans-serif;
   color: $brand-text--dark;
@@ -8,19 +8,12 @@
 
   div.course {
     .introduction {
-      background: white;
       &:empty {
         display: none;
       }
-      padding: 1rem 3rem; // p,h3 vertical margin is 2rem
-      border-radius: 10px;
 
       p {
-        margin: 2rem 0;
-      }
-
-      h3 {
-        margin: 2rem 0 1.5rem 2rem;
+        margin: 0 0 2rem 0;
       }
     }
 
