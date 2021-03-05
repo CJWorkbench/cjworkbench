@@ -409,7 +409,7 @@ msgstr "Search…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ADD DATA"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:263
+#: assets/js/WorkflowEditor/DataVersionModal.js:255
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Load"
 
@@ -2162,7 +2162,7 @@ msgstr "Workbench Tutorials"
 
 #: templates/course.html:22
 msgid "py.templates.course.tutorials.link"
-msgstr "Tutorials"
+msgstr "Workbench basics"
 
 #: templates/embed_404.html:15
 msgid "py.templates.embed_404.notAvailable.header"

@@ -478,7 +478,7 @@ msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/WorkflowEditor/DataVersionModal.js:263
+#: assets/js/WorkflowEditor/DataVersionModal.js:255
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
@@ -2573,7 +2573,7 @@ msgstr ""
 msgid "py.templates.course.workbenchTraining.title"
 msgstr ""
 
-#. default-message: Tutorials
+#. default-message: Workbench basics
 #: templates/course.html:22
 msgid "py.templates.course.tutorials.link"
 msgstr ""
