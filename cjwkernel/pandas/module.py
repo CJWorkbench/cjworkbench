@@ -101,9 +101,8 @@ def __render_pandas(
     raw_result = render(pandas_table, pandas_params, **kwargs)
 
     # Coerce outputs
-    input_table_shape = ptypes.TableShape.from_arrow(table.metadata)
     result = ptypes.ProcessResult.coerce(
-        raw_result, try_fallback_columns=input_table_shape.columns
+        raw_result, try_fallback_columns=table.metadata.columns
     )  # raise ValueError if invalid
     result.truncate_in_place_if_too_big()
 

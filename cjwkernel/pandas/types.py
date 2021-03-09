@@ -22,59 +22,8 @@ from .. import types as atypes
 from . import moduletypes as mtypes
 
 ColumnType = atypes.ColumnType
-
-
-@dataclass(frozen=True)
-class Column:
-    """A column definition."""
-
-    name: str
-    """Name of the column."""
-    type: ColumnType
-    """How the column is stored and displayed."""
-
-    def to_dict(self):
-        return {"name": self.name, "type": self.type.name, **asdict(self.type)}
-
-    @classmethod
-    def from_dict(cls, d: Dict[str, str]) -> Column:
-        return cls.from_kwargs(**d)
-
-    @classmethod
-    def from_kwargs(cls, name: str, type: str, **column_type_kwargs) -> ColumnType:
-        type_cls = {
-            "text": ColumnType.Text,
-            "number": ColumnType.Number,
-            "timestamp": ColumnType.Timestamp,
-        }[type]
-        return Column(name, type_cls(**column_type_kwargs))
-
-    @classmethod
-    def from_arrow(cls, value: atypes.Column) -> Column:
-        return cls(value.name, value.type)
-
-    def to_arrow(self) -> atypes.Column:
-        return atypes.Column(self.name, self.type)
-
-
-@dataclass(frozen=True)
-class TableShape:
-    """
-    The rows and columns of a table -- devoid of data.
-    """
-
-    nrows: int
-    """Number of rows of data."""
-
-    columns: List[Column]
-    """Columns."""
-
-    @classmethod
-    def from_arrow(cls, value: atypes.TableMetadata) -> TableShape:
-        return cls(value.n_rows, [Column.from_arrow(c) for c in value.columns])
-
-    def to_arrow(self) -> atypes.TableMetadata:
-        return atypes.TableMetadata(self.nrows, [c.to_arrow() for c in self.columns])
+Column = atypes.Column
+TableMetadata = atypes.TableMetadata
 
 
 @dataclass(frozen=True)
@@ -449,9 +398,8 @@ def dataframe_to_arrow_table(
     arrow_columns = []
     if columns:
         arrays = []
-        for pandas_column in columns:
-            arrays.append(series_to_arrow_array(dataframe[pandas_column.name]))
-            arrow_columns.append(pandas_column.to_arrow())
+        for column in columns:
+            arrays.append(series_to_arrow_array(dataframe[column.name]))
 
         arrow_table = pyarrow.Table.from_arrays(arrays, names=[c.name for c in columns])
         with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
@@ -461,7 +409,7 @@ def dataframe_to_arrow_table(
         arrow_table = None
 
     return atypes.ArrowTable(
-        path, arrow_table, atypes.TableMetadata(len(dataframe), arrow_columns)
+        path, arrow_table, atypes.TableMetadata(len(dataframe), columns or [])
     )
 
 
@@ -475,9 +423,7 @@ def arrow_table_to_dataframe(
             date_as_object=False, deduplicate_objects=True, ignore_metadata=True
         )
 
-    columns = [Column.from_arrow(c) for c in table.metadata.columns]
-
-    return dataframe, columns
+    return dataframe, table.metadata.columns
 
 
 @dataclass(frozen=True)
@@ -637,8 +583,8 @@ class ProcessResult:
         return [c.name for c in self.columns]
 
     @property
-    def table_shape(self) -> TableShape:
-        return TableShape(len(self.dataframe), self.columns)
+    def table_metadata(self) -> TableMetadata:
+        return TableMetadata(len(self.dataframe), self.columns)
 
     @classmethod
     def coerce(

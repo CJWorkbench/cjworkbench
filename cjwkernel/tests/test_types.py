@@ -6,6 +6,36 @@ from cjwkernel import types
 from cjwkernel.thrift import ttypes
 
 
+class ColumnTypeNumberTests(unittest.TestCase):
+    def test_format_too_many_arguments(self):
+        with self.assertRaisesRegex(ValueError, "Can only format one number"):
+            types.ColumnType.Number("{:d}{:f}")
+
+    def test_format_disallow_non_format(self):
+        with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
+            types.ColumnType.Number("%d")
+
+    def test_format_disallow_field_number(self):
+        with self.assertRaisesRegex(
+            ValueError, "Field names or numbers are not allowed"
+        ):
+            types.ColumnType.Number("{0:f}")
+
+    def test_format_disallow_field_name(self):
+        with self.assertRaisesRegex(
+            ValueError, "Field names or numbers are not allowed"
+        ):
+            types.ColumnType.Number("{value:f}")
+
+    def test_format_disallow_field_converter(self):
+        with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
+            types.ColumnType.Number("{!r:f}")
+
+    def test_format_disallow_invalid_type(self):
+        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
+            types.ColumnType.Number("{:T}")
+
+
 class ThriftConvertersTest(unittest.TestCase):
     def setUp(self):
         super().setUp()

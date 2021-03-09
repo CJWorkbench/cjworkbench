@@ -17,7 +17,7 @@ from cjwkernel.pandas.types import (
     ProcessResult,
     ProcessResultError,
     QuickFix,
-    TableShape,
+    TableMetadata,
     arrow_table_to_dataframe,
     dataframe_to_arrow_table,
 )
@@ -27,90 +27,6 @@ from cjwkernel.tests.util import (
     override_settings,
 )
 from cjwkernel.util import create_tempfile
-
-
-class ColumnTypeNumberTests(unittest.TestCase):
-    def test_format_too_many_arguments(self):
-        with self.assertRaisesRegex(ValueError, "Can only format one number"):
-            ColumnType.Number("{:d}{:f}")
-
-    def test_format_disallow_non_format(self):
-        with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            ColumnType.Number("%d")
-
-    def test_format_disallow_field_number(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            ColumnType.Number("{0:f}")
-
-    def test_format_disallow_field_name(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            ColumnType.Number("{value:f}")
-
-    def test_format_disallow_field_converter(self):
-        with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
-            ColumnType.Number("{!r:f}")
-
-    def test_format_disallow_invalid_type(self):
-        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            ColumnType.Number("{:T}")
-
-
-class ColumnTests(unittest.TestCase):
-    def test_from_arrow(self):
-        self.assertEqual(
-            Column.from_arrow(atypes.Column("A", ColumnType.Number("{:,d}"))),
-            Column("A", ColumnType.Number("{:,d}")),
-        )
-
-    def test_to_arrow(self):
-        self.assertEqual(
-            Column("A", ColumnType.Number("{:,d}")).to_arrow(),
-            atypes.Column("A", ColumnType.Number("{:,d}")),
-        )
-
-
-class TableShapeTests(unittest.TestCase):
-    def test_from_arrow(self):
-        self.assertEqual(
-            TableShape.from_arrow(
-                atypes.TableMetadata(
-                    3,
-                    [
-                        atypes.Column("A", ColumnType.Number("{:,d}")),
-                        atypes.Column("B", ColumnType.Text()),
-                    ],
-                )
-            ),
-            TableShape(
-                3,
-                [
-                    Column("A", ColumnType.Number("{:,d}")),
-                    Column("B", ColumnType.Text()),
-                ],
-            ),
-        )
-
-    def test_to_arrow(self):
-        self.assertEqual(
-            TableShape(
-                3,
-                [
-                    Column("A", ColumnType.Number("{:,d}")),
-                    Column("B", ColumnType.Text()),
-                ],
-            ).to_arrow(),
-            atypes.TableMetadata(
-                3,
-                [
-                    atypes.Column("A", ColumnType.Number("{:,d}")),
-                    atypes.Column("B", ColumnType.Text()),
-                ],
-            ),
-        )
 
 
 class I18nMessageTests(unittest.TestCase):
@@ -1202,16 +1118,16 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result.column_names, [])
         self.assertEqual(result.columns, [])
 
-    def test_table_shape(self):
+    def test_table_metadata(self):
         df = pd.DataFrame({"A": [1, 2, 3]})
         result = ProcessResult(df)
         self.assertEqual(
-            result.table_shape, TableShape(3, [Column("A", ColumnType.Number())])
+            result.table_metadata, TableMetadata(3, [Column("A", ColumnType.Number())])
         )
 
-    def test_empty_table_shape(self):
+    def test_empty_table_metadata(self):
         result = ProcessResult()
-        self.assertEqual(result.table_shape, TableShape(0, []))
+        self.assertEqual(result.table_metadata, TableMetadata(0, []))
 
     def test_to_arrow_empty_dataframe(self):
         fd, filename = tempfile.mkstemp()
