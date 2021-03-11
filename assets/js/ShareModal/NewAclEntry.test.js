@@ -19,7 +19,7 @@ describe('NewAclEntry', () => {
 
     expect(w.prop('updateAclEntry')).toHaveBeenCalledWith(
       'a@example.com',
-      false
+      'viewer'
     )
     expect(w.find('input[name="email"]').instance().value).toEqual('')
   })

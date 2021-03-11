@@ -3,35 +3,7 @@ from enum import Enum
 
 from django.db import models
 
-
-class Role(Enum):
-    """Access level of an ACL entry's user to its workflow."""
-
-    EDITOR = "editor"
-    """User may add, remove or edit steps and edit the report.
-
-    User cannot view or edit secrets.
-    """
-
-    VIEWER = "viewer"
-    """User may view steps (including their parameters) and the report.
-
-    User cannot view secrets.
-    """
-
-    REPORT_VIEWER = "report-viewer"
-    """User may view the "report" -- including all its embeds and tables.
-
-    User cannot view any step parameters, or any embeds or tables that aren't
-    included in the report. (The workflow editor is not viewable: only the
-    report HTML and the data it links are viewable.)
-
-    By default, a workflow's report includes all its embeds. So by default,
-    report-viewer may view all those embeds and their tables.
-
-    Access to an embed means access to the table data that backs it. The
-    report-viewer may download all that table data.
-    """
+from .fields import Role, RoleField
 
 
 class AclEntry(models.Model):
@@ -54,8 +26,8 @@ class AclEntry(models.Model):
     signed up to Workbench.
     """
 
+    role = RoleField(default=Role.VIEWER)
+    """User's role."""
+
     created_at = models.DateTimeField(default=datetime.datetime.now, editable=False)
     """Timestamp of when the entry was created."""
-
-    can_edit = models.BooleanField(default=False)
-    """DEPRECATED. When true, role is "editor"."""

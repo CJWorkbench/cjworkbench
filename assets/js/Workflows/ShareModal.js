@@ -26,21 +26,21 @@ export default function ShareModal (props) {
     [api, workflow, onWorkflowChanging, onWorkflowChanged]
   )
   const updateAclEntry = useCallback(
-    (email, canEdit) => {
+    (email, role) => {
       onWorkflowChanging(workflow.id, {
         acl: [
           ...workflow.acl.filter(e => e.email !== email),
-          { email, canEdit }
+          { email, role }
         ]
       })
       api
-        .updateAclEntry(workflow.id, email, canEdit)
+        .updateAclEntry(workflow.id, email, role)
         .then(() => onWorkflowChanged(workflow.id))
     },
     [api, workflow, onWorkflowChanging, onWorkflowChanged]
   )
   const deleteAclEntry = useCallback(
-    (email, canEdit) => {
+    (email, role) => {
       onWorkflowChanging(workflow.id, {
         acl: workflow.acl.filter(e => e.email !== email)
       })
@@ -74,12 +74,12 @@ ShareModal.propTypes = {
     acl: PropTypes.arrayOf(
       PropTypes.shape({
         email: PropTypes.string.isRequired,
-        canEdit: PropTypes.bool.isRequired
+        role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
       }).isRequired
     ).isRequired
   }).isRequired,
   api: PropTypes.shape({
-    updateAclEntry: PropTypes.func.isRequired, // func(id, email, canEdit) => Promise[null]
+    updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
     setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
   }).isRequired, // or null if user is not allowed to change sharing settings

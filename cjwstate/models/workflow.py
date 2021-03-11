@@ -1,18 +1,22 @@
 from __future__ import annotations
+
+import datetime
 from contextlib import contextmanager
 from dataclasses import dataclass
-import datetime
-from typing import Callable, Dict, List, Optional, Set, Tuple, FrozenSet
+from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple
+
+from django.contrib.auth.models import User
 from django.db import connection, models, transaction
 from django.db.models import Exists, OuterRef, Q
-from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.urls import reverse
+
 from cjworkbench.models.db_object_cooperative_lock import (
     DbObjectCooperativeLock,
     lookup_and_cooperative_lock,
 )
 from cjwstate import clientside, s3
+from cjwstate.models.fields import Role
 from cjwstate.modules.param_spec import ParamDType
 
 
@@ -228,7 +232,9 @@ class Workflow(models.Model):
             or (
                 user
                 and not user.is_anonymous
-                and self.acl.filter(email=user.email).exists()
+                and self.acl.filter(
+                    email=user.email, role__in={Role.EDITOR, Role.VIEWER}
+                ).exists()
             )
         )
 
@@ -243,7 +249,7 @@ class Workflow(models.Model):
             or (
                 user
                 and not user.is_anonymous
-                and self.acl.filter(email=user.email, can_edit=True).exists()
+                and self.acl.filter(email=user.email, role=Role.EDITOR).exists()
             )
         )
 
@@ -505,7 +511,7 @@ class Workflow(models.Model):
             public=self.public,
             updated_at=self.updated_at,
             acl=[
-                clientside.AclEntry(email=e.email, can_edit=e.can_edit)
+                clientside.AclEntry(email=e.email, role=e.role.value)
                 for e in self.acl.all()
             ],
         )

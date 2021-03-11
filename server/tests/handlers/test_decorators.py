@@ -1,11 +1,15 @@
 import asyncio
 import logging
+
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
-from server import handlers
-from server.handlers import decorators, HandlerResponse, HandlerError
+
 from cjwstate.models import Workflow
+from cjwstate.models.fields import Role
+from server import handlers
+from server.handlers import HandlerError, HandlerResponse, decorators
+
 from .util import HandlerTestCase
 
 
@@ -149,8 +153,17 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
     def test_auth_read_viewer(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()
-        workflow.acl.create(email="a@example.org", can_edit=False)
+        workflow.acl.create(email="a@example.org", role=Role.VIEWER)
         ret = self.run_handler(handle_read, user=user, workflow=workflow)
+        self.assertHandlerResponse(ret, {"role": "read"})
+
+    def test_auth_read_deny_report_viewer(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.objects.create()
+        workflow.acl.create(email="a@example.org", role=Role.REPORT_VIEWER)
+        ret = self.run_handler(
+            handle_read, user=user, session=session, workflow=workflow
+        )
         self.assertHandlerResponse(ret, {"role": "read"})
 
     def test_auth_read_anonymous_owner(self):
@@ -174,7 +187,7 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
     def test_auth_write_deny_viewer(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()
-        workflow.acl.create(email="a@example.org", can_edit=False)
+        workflow.acl.create(email="a@example.org", role=Role.VIEWER)
         ret = self.run_handler(handle_write, user=user, workflow=workflow)
         self.assertHandlerResponse(
             ret, error=("AuthError: no write access to workflow")
@@ -191,7 +204,7 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
     def test_auth_write_editor(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()
-        workflow.acl.create(email="a@example.org", can_edit=True)
+        workflow.acl.create(email="a@example.org", role=Role.EDITOR)
         ret = self.run_handler(handle_write, user=user, workflow=workflow)
         self.assertHandlerResponse(ret, {"role": "write"})
 
@@ -226,7 +239,7 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
     def test_auth_owner_deny_viewer(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()
-        workflow.acl.create(email="a@example.org", can_edit=False)
+        workflow.acl.create(email="a@example.org", role=Role.VIEWER)
         ret = self.run_handler(handle_owner, user=user, workflow=workflow)
         self.assertHandlerResponse(
             ret, error=("AuthError: no owner access to workflow")
@@ -235,7 +248,7 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
     def test_auth_owner_deny_editor(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()
-        workflow.acl.create(email="a@example.org", can_edit=True)
+        workflow.acl.create(email="a@example.org", role=Role.EDITOR)
         ret = self.run_handler(handle_owner, user=user, workflow=workflow)
         self.assertHandlerResponse(
             ret, error=("AuthError: no owner access to workflow")

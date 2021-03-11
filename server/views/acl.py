@@ -1,9 +1,14 @@
 import json
+
 from django import forms
+from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
+
 from cjwstate.models import AclEntry, Workflow
+from cjwstate.models.fields import Role
+
 from .auth import loads_workflow_for_owner
 
 # access-control lists
@@ -11,8 +16,9 @@ from .auth import loads_workflow_for_owner
 
 class AclEntryForm(forms.Form):
     email = forms.EmailField()
-    # Django: where every bool needs required=False
-    canEdit = forms.BooleanField(required=False)
+    role = forms.TypedChoiceField(
+        choices=[(v.value, v.value) for v in Role], coerce=Role, empty_value=Role.VIEWER
+    )
 
 
 class Entry(View):
@@ -43,7 +49,7 @@ class Entry(View):
         AclEntry.objects.update_or_create(
             workflow=workflow,
             email=form.cleaned_data["email"],
-            defaults={"can_edit": form.cleaned_data["canEdit"]},
+            defaults={"role": Role(form.cleaned_data["role"])},
         )
 
         return HttpResponse(status=204)
@@ -54,8 +60,8 @@ class Entry(View):
         if workflow.is_anonymous:
             return JsonResponse({"error": "cannot-share-anonymous"}, status=404)
 
-        # validate email
-        form = self.form_class({"can_edit": False, "email": email})
+        # validate email (use dummy role)
+        form = self.form_class({"role": Role.VIEWER.value, "email": email})
         if not form.is_valid():
             return HttpResponse(
                 '{"errors":' + form.errors.as_json() + "}",

@@ -9,7 +9,7 @@ describe('AclEntry', () => {
       <AclEntry
         isReadOnly={false}
         email='user@example.org'
-        canEdit={false}
+        role='viewer'
         updateAclEntry={jest.fn()}
         deleteAclEntry={jest.fn()}
         {...props}
@@ -17,41 +17,41 @@ describe('AclEntry', () => {
     )
 
   it('should render the email and role', () => {
-    const w = wrapper({ email: 'a@example.com', canEdit: true })
+    const w = wrapper({ email: 'a@example.com', role: 'editor' })
     expect(w.find('.email').text()).toEqual('a@example.com')
     expect(
-      w.find('button.dropdown-toggle Trans[id="js.ShareModal.Role.canEdit"]')
+      w.find('button.dropdown-toggle Trans[id="js.ShareModal.Role.editor"]')
     ).toHaveLength(1)
   })
 
   it('should change editor to viewer', () => {
-    const w = wrapper({ email: 'a@example.com', canEdit: true })
+    const w = wrapper({ email: 'a@example.com', role: 'editor' })
     w.find('button.dropdown-toggle').simulate('click')
-    w.find('button.can-edit-false').simulate('click')
+    w.find('button[name="role"][value="viewer"]').simulate('click')
     expect(w.prop('updateAclEntry')).toHaveBeenCalledWith(
       'a@example.com',
-      false
+      'viewer'
     )
   })
 
   it('should change viewer to editor', () => {
-    const w = wrapper({ email: 'a@example.com', canEdit: false })
+    const w = wrapper({ email: 'a@example.com', role: 'viewer' })
     w.find('button.dropdown-toggle').simulate('click')
-    w.find('button.can-edit-true').simulate('click')
-    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith('a@example.com', true)
+    w.find('button[name="role"][value="editor"]').simulate('click')
+    expect(w.prop('updateAclEntry')).toHaveBeenCalledWith('a@example.com', 'editor')
   })
 
   it('should no-op when trying to change viewer to viewer', () => {
-    const w = wrapper({ email: 'a@example.com', canEdit: false })
+    const w = wrapper({ email: 'a@example.com', role: 'viewer' })
     w.find('button.dropdown-toggle').simulate('click')
-    w.find('button.can-edit-false').simulate('click')
+    w.find('button[name="role"][value="viewer"]').simulate('click')
     expect(w.prop('updateAclEntry')).not.toHaveBeenCalled()
   })
 
   it('should no-op when trying to change editor to editor', () => {
-    const w = wrapper({ email: 'a@example.com', canEdit: true })
+    const w = wrapper({ email: 'a@example.com', role: 'editor' })
     w.find('button.dropdown-toggle').simulate('click')
-    w.find('button.can-edit-true').simulate('click')
+    w.find('button[name="role"][value="editor"]').simulate('click')
     expect(w.prop('updateAclEntry')).not.toHaveBeenCalled()
   })
 
@@ -62,8 +62,8 @@ describe('AclEntry', () => {
   })
 
   it('should render read-only', () => {
-    const w = wrapper({ isReadOnly: true, canEdit: true })
-    expect(w.find('.role Trans[id="js.shareModal.Role.canEdit"]')).toHaveLength(
+    const w = wrapper({ isReadOnly: true, role: 'editor' })
+    expect(w.find('.role Trans[id="js.shareModal.Role.editor"]')).toHaveLength(
       0
     )
     expect(w.find('button')).toHaveLength(0)

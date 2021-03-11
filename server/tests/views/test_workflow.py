@@ -7,11 +7,11 @@ from django.contrib.auth.models import User
 from cjwkernel.tests.util import arrow_table
 from cjwkernel.types import RenderResult
 from cjwstate import rabbitmq
-from cjwstate.rendercache import cache_render_result
 from cjwstate.models import Workflow
+from cjwstate.models.fields import Role
+from cjwstate.rendercache import cache_render_result
 from cjwstate.tests.utils import DbTestCase
 from server.views.workflows import Index, render_workflow
-
 
 _original_workflow_duplicate_anonymous = Workflow.duplicate_anonymous
 
@@ -85,7 +85,7 @@ class WorkflowListTest(DbTestCase):
 
     def test_shared(self):
         workflow = Workflow.create_and_init(name="Hers", owner=self.other_user)
-        workflow.acl.create(email=self.user.email, can_edit=False)
+        workflow.acl.create(email=self.user.email, role=Role.VIEWER)
         self.client.force_login(self.user)
         response = self.client.get("/workflows/shared-with-me")
         self.assertEqual(
@@ -268,7 +268,7 @@ class WorkflowViewTests(DbTestCase):
         self.assertContains(response, "myHeapId")
 
     def test_workflow_acl_reader_reads_but_does_not_write(self):
-        self.workflow1.acl.create(email="user2@example.com", can_edit=False)
+        self.workflow1.acl.create(email="user2@example.com", role=Role.VIEWER)
         self.client.force_login(self.otheruser)
 
         # GET: works
@@ -284,7 +284,7 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_workflow_acl_writer_reads_and_writes(self):
-        self.workflow1.acl.create(email="user2@example.com", can_edit=True)
+        self.workflow1.acl.create(email="user2@example.com", role=Role.EDITOR)
         self.client.force_login(self.otheruser)
 
         # GET: works

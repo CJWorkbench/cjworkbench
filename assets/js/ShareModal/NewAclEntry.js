@@ -5,7 +5,7 @@ import { Trans } from '@lingui/macro'
 export default class NewAclEntry extends PureComponent {
   static propTypes = {
     ownerEmail: PropTypes.string.isRequired,
-    updateAclEntry: PropTypes.func.isRequired // func(email, canEdit) => undefined
+    updateAclEntry: PropTypes.func.isRequired // func(email, role) => undefined
   }
 
   emailRef = createRef()
@@ -21,7 +21,7 @@ export default class NewAclEntry extends PureComponent {
     const email = this.emailRef.current.value
 
     if (email !== this.props.ownerEmail) {
-      this.props.updateAclEntry(email, false)
+      this.props.updateAclEntry(email, 'viewer')
     }
 
     // Reset the input, so the user can enter another email. (It should retain

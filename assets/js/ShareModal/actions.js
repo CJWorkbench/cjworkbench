@@ -24,18 +24,18 @@ export function setWorkflowPublicAction (isPublic) {
 }
 
 /**
- * Create/edit an AclEntry, such that `email` has `canEdit` access.
+ * Create/edit an AclEntry, such that `email` has `role` access.
  *
  * The workflow being edited is the workflow in the Redux store.
  */
-export function updateAclEntryAction (email, canEdit) {
+export function updateAclEntryAction (email, role) {
   return (dispatch, getState, api) => {
     const { workflow } = getState()
     return dispatch({
       type: UPDATE_ACL_ENTRY,
       payload: {
-        promise: api.updateAclEntry(workflow.id, email, canEdit),
-        data: { email, canEdit }
+        promise: api.updateAclEntry(workflow.id, email, role),
+        data: { email, role }
       }
     })
   }
@@ -73,14 +73,14 @@ function reduceSetWorkflowPublicPending (state, action) {
 
 function reduceUpdateAclEntryPending (state, action) {
   const { workflow } = state
-  const { email, canEdit } = action.payload
+  const { email, role } = action.payload
   const acl = workflow.acl.slice() // shallow copy
 
   let index = acl.findIndex(entry => entry.email === email)
   if (index === -1) index = acl.length
 
   // overwrite or append the specified ACL entry
-  acl[index] = { email, canEdit }
+  acl[index] = { email, role }
 
   acl.sort((a, b) => a.email.localeCompare(b.email))
 

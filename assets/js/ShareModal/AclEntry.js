@@ -6,14 +6,14 @@ export default class AclEntry extends PureComponent {
   static propTypes = {
     isReadOnly: PropTypes.bool.isRequired,
     email: PropTypes.string.isRequired,
-    canEdit: PropTypes.bool.isRequired,
-    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired,
+    updateAclEntry: PropTypes.func.isRequired, // func(email, role) => undefined
     deleteAclEntry: PropTypes.func.isRequired // func(email) => undefined
   }
 
-  handleChangeCanEdit = canEdit => {
+  handleChangeRole = role => {
     const { updateAclEntry, email } = this.props
-    updateAclEntry(email, canEdit)
+    updateAclEntry(email, role)
   }
 
   handleClickDelete = () => {
@@ -22,15 +22,15 @@ export default class AclEntry extends PureComponent {
   }
 
   render () {
-    const { email, canEdit, isReadOnly } = this.props
+    const { email, role, isReadOnly } = this.props
 
     return (
       <div className='acl-entry'>
         <div className='email'>{email}</div>
         <Role
-          canEdit={canEdit}
+          role={role}
           isReadOnly={isReadOnly}
-          onChange={this.handleChangeCanEdit}
+          onChange={this.handleChangeRole}
         />
         {isReadOnly
           ? null

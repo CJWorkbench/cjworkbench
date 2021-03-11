@@ -69,6 +69,7 @@ print_usage() {
   echo '  python ARGS -- run "pipenv run python ARGS..." in a Python environment' >&2
   echo '  pybabel ARGS -- run "pipenv run pybabel ARGS..." in a Python environment' >&2
   echo '  extract-messages -- extract translation messages from js, python, and templates and merge them into one file per locale' >&2
+  echo '  migrate -- run database SQL in flyway/sql/*.sql' >&2
   echo '  reformat-code -- make code conform to (Black) styleguide' >&2
   echo '  refresh-suggested-modules -- refresh without a whole "start"' >&2
   echo '  stripe-setup pk_test_ABC... sk_test_ABC... -- prompt and fill in "stripe.json" file' >&2
@@ -121,6 +122,10 @@ case "$COMMAND" in
 
   "pipenv"|"thrift")
     docker_compose_with_commands run --rm pydev "$COMMAND" "$@"
+    ;;
+
+  "migrate")
+    docker_compose_with_commands run --rm migrate
     ;;
 
   "pybabel")

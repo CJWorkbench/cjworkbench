@@ -152,7 +152,7 @@ OwnedWorkflowsMain.propTypes = {
   api: PropTypes.shape({
     deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
     duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
-    updateAclEntry: PropTypes.func.isRequired, // func(id, email, canEdit) => Promise[null]
+    updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
     setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
   }).isRequired

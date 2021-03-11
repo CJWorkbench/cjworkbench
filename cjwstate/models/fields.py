@@ -1,7 +1,9 @@
-from dataclasses import asdict
+from enum import Enum
 from typing import Any, Dict
-from django.db.models import JSONField
+
 from django.core.exceptions import ValidationError
+from django.db.models import Field, JSONField
+
 from cjwkernel.types import (
     Column,
     ColumnType,
@@ -81,7 +83,7 @@ def _dict_to_render_error(value: Dict[str, Any]) -> RenderError:
 
 
 def _column_to_dict(value: Column) -> Dict[str, Any]:
-    return {"name": value.name, "type": value.type.name, **asdict(value.type)}
+    return {"name": value.name, "type": value.type.name, **dict(value.type)}
 
 
 def _dict_to_column(value: Dict[str, Any]) -> ColumnType:
@@ -173,3 +175,69 @@ class RenderErrorsField(JSONField):
 
         arr = [_render_error_to_dict(re) for re in value]
         return super().get_prep_value(arr)  # JSONField: arr->bytes
+
+
+class Role(Enum):
+    """Access level of an ACL entry's user to its workflow."""
+
+    EDITOR = "editor"
+    """User may add, remove or edit steps and edit the report.
+
+    User cannot view or edit secrets.
+    """
+
+    VIEWER = "viewer"
+    """User may view steps (including their parameters) and the report.
+
+    User cannot view secrets.
+    """
+
+    REPORT_VIEWER = "report-viewer"
+    """User may view the "report" -- including all its embeds and tables.
+
+    User cannot view any step parameters, or any embeds or tables that aren't
+    included in the report. (The workflow editor is not viewable: only the
+    report HTML and the data it links are viewable.)
+
+    By default, a workflow's report includes all its embeds. So by default,
+    report-viewer may view all those embeds and their tables.
+
+    Access to an embed means access to the table data that backs it. The
+    report-viewer may download all that table data.
+    """
+
+
+class RoleField(Field):
+    """Maps a Role to a database Role (ENUM) column."""
+
+    description = "ACL Role, in a Postgres 'acl_role' ENUM"
+
+    def db_type(self, connection):
+        return "acl_role"
+
+    def from_db_value(self, value, *args, **kwargs):
+        if value is None:
+            return None
+
+        return Role(value)
+
+    def to_python(self, value):
+        if value is None or isinstance(value, Role):
+            return value
+
+        try:
+            return Role(value)
+        except ValueError as err:
+            raise ValidationError(str(err))
+
+    def validate(self, value, model_instance):
+        super().validate(value, model_instance)
+
+        if not isinstance(value, Role):
+            raise ValidationError("not a Role", code="invalid", params={"value": value})
+
+    def get_prep_value(self, value):
+        if value is None:
+            return None
+
+        return value.value

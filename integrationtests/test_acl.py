@@ -25,7 +25,7 @@ class TestExampleWorkflow(WorkbenchBase):
         self.add_data_step("Paste data")
         b.fill_in("csv", "foo,bar,baz\n1,2,\n2,3,\n3,4,", wait=True)
 
-    def _share_workflow_with(self, email, can_edit):
+    def _share_workflow_with(self, email, role):
         b = self.browser
         b.click_button("Share")
 
@@ -36,9 +36,9 @@ class TestExampleWorkflow(WorkbenchBase):
             # This fires and forgets an AJAX request. Wait for it to finish.
             time.sleep(2)
 
-        if can_edit:
+        if role != "Can view":
             b.click_button("Can view")
-            b.click_button("Can edit")
+            b.click_button(role)
             # This fires and forgets a _second_ AJAX request. Again: wait
             # for it to finish.
             time.sleep(2)

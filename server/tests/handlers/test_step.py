@@ -1,35 +1,39 @@
 import asyncio
 import datetime
 import logging
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 from dateutil.parser import isoparse
 from django.contrib.auth.models import User
 from django.test import override_settings
+
+from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import SetStepParams, SetStepNote, DeleteStep
-from server.handlers.step import (
-    set_params,
-    delete,
-    set_stored_data_version,
-    set_notes,
-    set_collapsed,
-    set_notifications,
-    try_set_autofetch,
-    fetch,
-    generate_secret_access_token,
-    delete_secret,
-    set_secret,
-    get_file_upload_api_token,
-    reset_file_upload_api_token,
-    clear_file_upload_api_token,
-)
-from .util import HandlerTestCase
+from cjwstate.models.commands import DeleteStep, SetStepNote, SetStepParams
+from cjwstate.models.fields import Role
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
 )
-from cjworkbench.models.userprofile import UserProfile
+from server.handlers.step import (
+    clear_file_upload_api_token,
+    delete,
+    delete_secret,
+    fetch,
+    generate_secret_access_token,
+    get_file_upload_api_token,
+    reset_file_upload_api_token,
+    set_collapsed,
+    set_notes,
+    set_notifications,
+    set_params,
+    set_secret,
+    set_stored_data_version,
+    try_set_autofetch,
+)
+
+from .util import HandlerTestCase
 
 
 async def async_noop(*args, **kwargs):
@@ -597,10 +601,10 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         response = self.run_handler(fetch, workflow=workflow, stepId=step.id)
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
-    def test_generate_secret_access_token_writer_access_denied(self):
+    def test_generate_secret_access_token_editor_access_denied(self):
         user = User.objects.create(email="write@example.org")
         workflow = Workflow.create_and_init(public=True)
-        workflow.acl.create(email=user.email, can_edit=True)
+        workflow.acl.create(email=user.email, role=Role.EDITOR)
         create_module_zipfile(
             "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
@@ -764,10 +768,10 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertResponse(response, data={"token": "a-token"})
 
-    def test_delete_secret_writer_access_denied(self):
+    def test_delete_secret_editor_access_denied(self):
         user = User.objects.create(email="write@example.org")
         workflow = Workflow.create_and_init(public=True)
-        workflow.acl.create(email=user.email, can_edit=True)
+        workflow.acl.create(email=user.email, role=Role.EDITOR)
         create_module_zipfile(
             "googlesheets", spec_kwargs={"parameters": [TestGoogleSecret]}
         )
@@ -846,10 +850,10 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         delta = send_update.call_args[0][1]
         self.assertEqual(delta.steps[step.id].secrets, {})
 
-    def test_set_secret_writer_access_denied(self):
+    def test_set_secret_editor_access_denied(self):
         user = User.objects.create(email="write@example.org")
         workflow = Workflow.create_and_init(public=True)
-        workflow.acl.create(email=user.email, can_edit=True)
+        workflow.acl.create(email=user.email, role=Role.EDITOR)
         create_module_zipfile("g", spec_kwargs={"parameters": [TestStringSecret]})
         step = workflow.tabs.first().steps.create(
             module_id_name="g", order=0, slug="step-1"

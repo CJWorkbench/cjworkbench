@@ -16,11 +16,11 @@ export default class _Modal extends PureComponent {
     acl: PropTypes.arrayOf(
       PropTypes.shape({
         email: PropTypes.string.isRequired,
-        canEdit: PropTypes.bool.isRequired
+        role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
       }).isRequired
     ), // or null if loading
     setIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
-    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    updateAclEntry: PropTypes.func.isRequired, // func(email, role) => undefined
     deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
     onClickClose: PropTypes.func.isRequired // func() => undefined
   }

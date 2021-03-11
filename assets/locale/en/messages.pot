@@ -293,12 +293,12 @@ msgstr ""
 
 #. default-message: Can edit
 #: assets/js/ShareModal/Role.js:14 assets/js/ShareModal/Role.js:23 assets/js/ShareModal/Role.js:39
-msgid "js.ShareModal.Role.canEdit"
+msgid "js.ShareModal.Role.editor"
 msgstr ""
 
 #. default-message: Can view
 #: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:24 assets/js/ShareModal/Role.js:32
-msgid "js.ShareModal.Role.canView"
+msgid "js.ShareModal.Role.viewer"
 msgstr ""
 
 #. default-message: Change Workflow sharing

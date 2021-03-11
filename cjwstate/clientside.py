@@ -13,9 +13,11 @@ away from Django ORM; once we do, we can nix these models and use ORM objects
 instead.
 """
 from __future__ import annotations
-from dataclasses import dataclass, field, replace
+
 import datetime
+from dataclasses import dataclass, field, replace
 from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Optional, Union
+
 from cjwstate.modules.types import ModuleSpec
 
 
@@ -35,7 +37,7 @@ We don't use `None` for this purpose: `None` means there is no update.
 @dataclass(frozen=True)
 class AclEntry:
     email: str
-    can_edit: str
+    role: Literal["editor", "viewer", "report-viewer"]
 
 
 @dataclass(frozen=True)

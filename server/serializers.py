@@ -5,6 +5,8 @@ from dataclasses import asdict
 from functools import singledispatch
 from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
 
+from django.contrib.auth import get_user_model
+
 from allauth.account.utils import user_display
 from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
 from cjworkbench.i18n.trans import (
@@ -15,7 +17,6 @@ from cjworkbench.i18n.trans import (
 from cjworkbench.settings import KB_ROOT_URL
 from cjwstate import clientside
 from cjwstate.modules.param_spec import ParamSpec
-from django.contrib.auth import get_user_model
 from icu import ICUError
 from server.settingsutils import workbench_user_display
 
@@ -128,7 +129,7 @@ def _maybe_set(
 
 
 def jsonize_clientside_acl_entry(entry: clientside.AclEntry) -> Dict[str, Any]:
-    return {"email": entry.email, "canEdit": entry.can_edit}
+    return {"email": entry.email, "role": entry.role}
 
 
 @singledispatch
@@ -361,7 +362,7 @@ def _ctx_authorized_write(
         return workflow.public is False
 
     return _ctx_authorized_owner(workflow, ctx) or any(
-        entry.can_edit and entry.email == user.email for entry in workflow.acl
+        entry.role == "editor" and entry.email == user.email for entry in workflow.acl
     )
 
 

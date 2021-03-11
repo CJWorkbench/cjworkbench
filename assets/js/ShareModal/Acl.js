@@ -11,10 +11,10 @@ export default class Acl extends PureComponent {
     acl: PropTypes.arrayOf(
       PropTypes.shape({
         email: PropTypes.string.isRequired,
-        canEdit: PropTypes.bool.isRequired
+        role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
       }).isRequired
     ).isRequired,
-    updateAclEntry: PropTypes.func.isRequired, // func(email, canEdit) => undefined
+    updateAclEntry: PropTypes.func.isRequired, // func(email, role) => undefined
     deleteAclEntry: PropTypes.func.isRequired // func(email) => undefined
   }
 
