@@ -268,12 +268,12 @@ services:
     ]
 
   testdatabase:
-    image: postgres:10.4
+    image: postgres:12
     environment:
       POSTGRES_USER: cjworkbench
       POSTGRES_PASSWORD: cjworkbench
       POSTGRES_DB: cjworkbench
-      PGDATA: /var/lib/postgresql/data/10.4
+      PGDATA: /var/lib/postgresql/data/12
     networks: [ 'test' ]
     volumes:
     - type: tmpfs

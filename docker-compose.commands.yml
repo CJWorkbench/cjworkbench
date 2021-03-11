@@ -3,31 +3,29 @@ version: '3.4'
 # https://github.com/docker/compose/issues/1896 gives docker-compose's rationale
 # for keeping our 'migrate' and 'test' runners outside of docker-compose.yml.
 services:
-  migrate:
-    build:
-      context: .
-      target: pydev
+  migrate: &migrate
+    image: flyway/flyway:7.7.0-alpine
     volumes:
-      - ./:/app/:cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
-    environment: &django-env
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '3'
-      CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_SECRET_KEY: cjw-secret-key
-      TUS_CREATE_UPLOAD_URL: http://tusd/files/
-      AWS_ACCESS_KEY_ID: minio_access
-      AWS_SECRET_ACCESS_KEY: minio_secret
-      AWS_S3_ENDPOINT: http://minio:9000
-      S3_BUCKET_NAME_PATTERN: "dev-%s"
+      - ./flyway/conf:/flyway/conf
+      - ./flyway/sql:/flyway/sql
+    environment:
+      FLYWAY_USER: cjworkbench
+      FLYWAY_PASSWORD: cjworkbench
+      FLYWAY_URL: 'jdbc:postgresql://database/cjworkbench'
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'rabbitmq', 'minio' ]
-    command: [ 'sh', '-c', 'pipenv sync --dev && pipenv run bin/migrate-prod' ]
+    depends_on: [ 'database' ]
+    command: [ 'migrate' ]
+
+  testmigrate:
+    <<: *migrate
+    environment:
+      FLYWAY_USER: cjworkbench
+      FLYWAY_PASSWORD: cjworkbench
+      FLYWAY_URL: 'jdbc:postgresql://testdatabase/cjworkbench'
+    networks: [ 'test' ]
+    depends_on: [ 'testdatabase' ]
 
   develop-module:
-    # Basically a copy-paste of 'migrate' ... but with $MODULE mounted
     build:
       context: .
       target: pydev
@@ -45,8 +43,18 @@ services:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true
     cap_add: [ SYS_ADMIN ] # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
-    environment:
-      <<: *django-env
+    environment: &django-env
+      PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '3'
+      CJW_DB_HOST: database
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      TUS_CREATE_UPLOAD_URL: http://tusd/files/
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
+      AWS_S3_ENDPOINT: http://minio:9000
+      S3_BUCKET_NAME_PATTERN: "dev-%s"
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
 

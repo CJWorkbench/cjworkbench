@@ -89,7 +89,7 @@ try:
             "PASSWORD": os.environ["CJW_DB_PASSWORD"],
             "PORT": "5432",
             "CONN_MAX_AGE": 30,
-            "TEST": {"SERIALIZE": False},
+            "TEST": {"SERIALIZE": False, "NAME": "cjworkbench", "MIGRATE": False},
         }
     }
 except KeyError:
@@ -197,6 +197,9 @@ INSTALLED_APPS = [
     "renderer",
     "server",
 ]
+
+# Disable Django migrations (we use Flyway)
+MIGRATION_MODULES = {k: None for k in INSTALLED_APPS}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

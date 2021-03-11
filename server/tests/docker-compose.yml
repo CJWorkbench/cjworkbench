@@ -3,7 +3,7 @@ version: '3.4'
 
 services:
   testdb:
-    image: postgres:10
+    image: postgres:12
     volumes:
     - type: tmpfs
       target: /var/lib/postgresql/data
@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: 'cjworkbench'
       POSTGRES_PASSWORD: 'cjworkbench'
       POSTGRES_DB: 'cjworkbench'
-      PGDATA: /var/lib/postgresql/data/10.4
+      PGDATA: /var/lib/postgresql/data/12
     command: [
       '-c', 'wal_level=minimal',
       '-c', 'max_wal_senders=0',
@@ -81,9 +81,17 @@ services:
       '-s3-bucket=unittest-upload',
     ]
 
+  migrate:
+    image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
+    depends_on: [ 'testdb' ]
+    environment:
+      FLYWAY_URL: 'jdbc:postgresql://testdb/cjworkbench'
+      FLYWAY_USER: cjworkbench
+      FLYWAY_PASSWORD: cjworkbench
+
   unittest:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py test -v2' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py test --keepdb --noinput -v2' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'testtusd' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
@@ -98,7 +106,7 @@ services:
     privileged: true  # WHY?
     environment:
       PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '5'
+      ASGI_THREADS: '3'
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq/
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: testdb

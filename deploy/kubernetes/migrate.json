@@ -18,90 +18,49 @@
       {
         "name": "migrate",
         "image": "gcr.io/workbenchdata-ci/migrate:$SHA",
+        "entrypoint": null,
+        "command": [
+          "/bin/sh",
+          "-c",
+          "trap 'touch /gh-262-cloudsq1-proxy-terminate-sidecar/done' EXIT\nflyway migrate"
+        ],
         "volumeMounts": [
           {
             "mountPath": "/gh-262-cloudsq1-proxy-terminate-sidecar",
             "name": "gh-262-cloudsq1-proxy-terminate-sidecar"
           }
         ],
-        "command": [
-          "/bin/sh",
-          "-c",
-          "trap 'touch /gh-262-cloudsq1-proxy-terminate-sidecar/done' EXIT\nbin/migrate-prod"
-        ],
         "env": [
           {
-            "name": "CJW_PRODUCTION",
-            "value": "True"
+            "name": "DATABASE",
+            "valueFrom": {
+              "secretKeyRef": {
+                "name": "postgres-cjworkbench-credentials",
+                "key": "database"
+              }
+            }
           },
           {
-            "name": "PYTHONUNBUFFERED",
-            "value": "1"
+            "name": "FLYWAY_URL",
+            "value": "jdbc:postgresql://localhost/$(DATABASE)"
           },
           {
-            "name": "ASGI_THREADS",
-            "value": "5"
+            "name": "FLYWAY_USER",
+            "valueFrom": {
+              "secretKeyRef": {
+                "name": "postgres-cjworkbench-credentials",
+                "key": "username"
+              }
+            }
           },
           {
-            "name": "CJW_DB_HOST",
-            "value": "localhost"
-          },
-          {
-            "name": "CJW_DB_PASSWORD",
+            "name": "FLYWAY_PASSWORD",
             "valueFrom": {
               "secretKeyRef": {
                 "name": "postgres-cjworkbench-credentials",
                 "key": "password"
               }
             }
-          },
-          {
-            "name": "CJW_RABBITMQ_HOST",
-            "value": "amqp://guest:guest@rabbitmq-service/"
-          },
-          {
-            "name": "CJW_SECRET_KEY",
-            "value": "migrate-needs-no-secret-key"
-          },
-          {
-            "name": "CJW_MOCK_EMAIL",
-            "value": "True"
-          },
-          {
-            "name": "AWS_ACCESS_KEY_ID",
-            "valueFrom": {
-              "secretKeyRef": {
-                "name": "gcs-s3-migrate-sa-credentials",
-                "key": "AWS_ACCESS_KEY_ID"
-
-              }
-            }
-          },
-          {
-            "name": "AWS_SECRET_ACCESS_KEY",
-            "valueFrom": {
-              "secretKeyRef": {
-                "name": "gcs-s3-migrate-sa-credentials",
-                "key": "AWS_SECRET_ACCESS_KEY"
-              }
-            }
-          },
-          {
-            "name": "AWS_S3_ENDPOINT",
-            "value": "https://storage.googleapis.com"
-          },
-          {
-            "name": "_DOMAIN_NAME",
-            "valueFrom": {
-              "configMapKeyRef": {
-                "name": "workbench-config",
-                "key": "domainName"
-              }
-            }
-          },
-          {
-            "name": "S3_BUCKET_NAME_PATTERN",
-            "value": "%s.$(_DOMAIN_NAME)"
           }
         ]
       },

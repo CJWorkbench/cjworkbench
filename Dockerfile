@@ -189,7 +189,6 @@ RUN npm test
 RUN npm run lint
 RUN node_modules/.bin/webpack --mode=production
 
-
 # 3. Three prod servers will all be based on the same stuff:
 FROM pybuild AS base
 
@@ -217,29 +216,34 @@ COPY assets/locale/ /app/assets/locale/
 # pre-commit hook.
 RUN black --check /app
 
-# 3.1. migrate: runs ./manage.py migrate
-FROM base AS migrate
+# 3.1. assets: uploads assets to S3 (frontend will point end users there)
+FROM base AS upload-assets
 # assets/ is static files. migrate will upload them to s3.
 COPY assets/ /app/assets/
 COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
-CMD [ "bin/migrate-prod" ]
+CMD [ "bin/upload-assets-to-s3" ]
 
-# 3.2. fetcher: runs fetch
+# 3.2. migrate: modifies database schema
+FROM flyway/flyway:7.7.0-alpine AS migrate
+COPY flyway/ /flyway/
+CMD [ "migrate" ]
+
+# 3.3. fetcher: runs fetch
 FROM base AS fetcher
 STOPSIGNAL SIGKILL
 CMD [ "bin/fetcher-prod" ]
 
-# 3.3. fetcher: runs fetch
+# 3.4. fetcher: runs fetch
 FROM base AS renderer
 STOPSIGNAL SIGKILL
 CMD [ "bin/renderer-prod" ]
 
-# 3.4. cron: schedules fetches and runs cleanup SQL
+# 3.5. cron: schedules fetches and runs cleanup SQL
 FROM base AS cron
 STOPSIGNAL SIGKILL
 CMD [ "bin/cron-prod" ]
 
-# 3.5. frontend: serves website
+# 3.6. frontend: serves website
 FROM base AS frontend
 # Add fake daphne, for unit tests running on google-cloud-build
 COPY daphne/ /app/daphne/
@@ -247,6 +251,6 @@ COPY assets/icons/ /app/assets/icons/
 COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
-# Beware: uvicorn does not serve static files! Use migrate-prod to push them
+# Beware: uvicorn does not serve static files! Use upload-assets to push them
 # to GCS and publish them there.
 CMD [ "bin/frontend-prod", "8080" ]

@@ -64,6 +64,7 @@ echo 'Building…' >&2
 docker_compose build
 
 echo 'Migrating (and starting database and RabbitMQ)…' >&2
+docker_compose run upload-assets
 docker_compose run migrate
 
 echo 'Testing (and starting test environment)…' >&2

@@ -29,7 +29,7 @@ steps:
       # win because installing Firefox deps is particularly slow.)
 
       # Images for production -- build without cache
-      for target in migrate fetcher renderer cron frontend; do
+      for target in upload-assets migrate fetcher renderer cron frontend; do
         docker build \
           --target $$target \
           --tag gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA \
@@ -51,12 +51,29 @@ steps:
 - name: 'docker/compose:1.27.4'
   args: [ '-f', 'server/tests/docker-compose.yml',
           'run',
+          'migrate'
+        ]
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'COMMIT_SHA=$COMMIT_SHA'
+- name: 'docker/compose:1.27.4'
+  args: [ '-f', 'server/tests/docker-compose.yml',
+          'run',
           'unittest'
         ]
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-# Integration-test: migrate, then run the integration-test image
+# Integration-test: upload-assets+migrate, then run the integration-test image
+- name: 'docker/compose:1.27.4'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
+          'run',
+          'upload-assets'
+        ]
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'COMMIT_SHA=$COMMIT_SHA'
 - name: 'docker/compose:1.27.4'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
@@ -77,10 +94,9 @@ steps:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
 
-# Display images in Google Cloud Build status pages. (We pushed them
-# manually, so this doesn't actually do anything new.)
 images:
 - 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/upload-assets:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/fetcher:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/renderer:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA'

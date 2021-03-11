@@ -6,6 +6,9 @@ version: '3.4'
 # we're about to publish. And we can rely on $PROJECT_ID and $COMMIT_SHA,
 # because cloudbuild provides them.
 services:
+  upload-assets:
+    image: 'gcr.io/${PROJECT_ID}/upload-assets:${COMMIT_SHA}'
+
   migrate:
     image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
 

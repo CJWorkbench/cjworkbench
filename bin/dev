@@ -160,6 +160,7 @@ case "$COMMAND" in
 
   "unittest")
     # Overwrite the "command" so we can incorporate "$@".
+    docker_compose_with_commands run --rm testmigrate
     docker_compose_with_commands run --rm unittest "$@"
     ;;
 
@@ -197,8 +198,7 @@ case "$COMMAND" in
   "start")
     # Make sure every dev has the same versions of Python/Node by pulling
     docker_compose_with_commands build --pull
-
-    # Make sure Python deps are up to date; migrate database
+    docker_compose_with_commands run --rm pydev pipenv sync
     docker_compose_with_commands run --rm migrate
 
     refresh_suggested_modules
@@ -224,6 +224,7 @@ case "$COMMAND" in
 
   "quickstart")
     # Start Django and Webpack
+    docker_compose_with_commands run --rm migrate
     docker_compose up -t0 --abort-on-container-exit
     ;;
 

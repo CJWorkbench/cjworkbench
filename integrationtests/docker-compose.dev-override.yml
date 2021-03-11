@@ -2,6 +2,11 @@ version: '3.4'
 # These settings are specific to dev mode
 
 services:
+  upload-assets:
+    build:
+      context: ..
+      target: upload-assets
+
   migrate:
     build:
       context: ..
