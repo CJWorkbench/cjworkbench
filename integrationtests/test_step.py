@@ -29,8 +29,9 @@ class TestStep(LoggedInIntegrationTest):
 
         self.add_csv_data_module()
 
-        b.hover_over_element(".module-card-header", wait=True)
-        b.click_button("EXPORT", wait=True)  # Wait for data to load
+        # Wait for data to load
+        b.assert_no_element(".spinner-container-transparent", wait=True)
+        b.click_button("EXPORT")
 
         # Wait for modal to appear
         b.assert_element("a[download][href$=csv]", wait=True)
