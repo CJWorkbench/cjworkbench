@@ -30,7 +30,7 @@ class TestStep(LoggedInIntegrationTest):
         self.add_csv_data_module()
 
         # Wait for data to load
-        b.assert_element("EXPORT", wait=True)
+        b.assert_element("button.export-table", wait=True)
         b.assert_no_element(".spinner-container-transparent", wait=True)
         b.click_button("EXPORT")
 
