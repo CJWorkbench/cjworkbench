@@ -10,6 +10,7 @@ from django.conf import settings
 from django.db import DatabaseError, InterfaceError
 from cjwkernel.chroot import EDITABLE_CHROOT, ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
+from cjwkernel.i18n import trans
 from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
 from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import CachedRenderResult, StoredObject, Step, Workflow
@@ -175,7 +176,7 @@ def user_visible_bug_fetch_result(output_path: Path, message: str) -> FetchResul
         path=output_path,  # empty
         errors=[
             RenderError(
-                I18nMessage.trans(
+                trans(
                     "py.fetcher.fetch.user_visible_bug_during_fetch",
                     default="Something unexpected happened. We have been notified and are "
                     "working to fix it. If this persists, contact us. Error code: {message}",
@@ -269,7 +270,7 @@ def fetch_or_wrap_error(
             output_path,
             [
                 RenderError(
-                    I18nMessage.trans(
+                    trans(
                         "py.fetcher.fetch.no_loaded_module",
                         default="Cannot fetch: module was deleted",
                     )

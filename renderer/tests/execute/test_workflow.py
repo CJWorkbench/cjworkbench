@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import Mock, patch
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.kernel import Kernel
+from cjwkernel.i18n import TODO_i18n
 from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
 from cjwkernel.tests.util import (
     arrow_table,
@@ -136,7 +137,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step3 = tab.steps.create(order=2, slug="step-3", module_id_name="mod")
 
         error_result = RenderResult(
-            errors=[RenderError(I18nMessage.TODO_i18n("error, not warning"))]
+            errors=[RenderError(TODO_i18n("error, not warning"))]
         )
 
         self._execute(workflow)
@@ -192,7 +193,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step.refresh_from_db()
         self.assertEqual(
             step.cached_render_result_errors,
-            [RenderError(I18nMessage.TODO_i18n('params: {"x": "2"}'))],
+            [RenderError(TODO_i18n('params: {"x": "2"}'))],
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
@@ -222,7 +223,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step.refresh_from_db()
         self.assertEqual(
             step.cached_render_result_errors,
-            [RenderError(I18nMessage.TODO_i18n('params: {"x": "def"}'))],
+            [RenderError(TODO_i18n('params: {"x": "def"}'))],
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)

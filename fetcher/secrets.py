@@ -2,6 +2,7 @@ import asyncio
 from functools import singledispatch
 from typing import Any, Dict, List, Optional
 import aiohttp
+from cjwkernel.i18n import trans
 from cjwkernel.types import I18nMessage
 from cjwstate import oauth
 from cjwstate.modules.param_spec import ParamSpec, ParamSpecSecret
@@ -12,7 +13,7 @@ ModuleSecret = Optional[Dict[str, Any]]
 
 
 def _service_no_longer_configured_error(service: str):
-    return I18nMessage.trans(
+    return trans(
         "py.fetcher.secrets._service_no_longer_configured_error",
         default='Service "{service}" is no longer configured',
         arguments={"service": service},
@@ -164,7 +165,7 @@ async def _refresh_oauth2_token(
                     # TODO we can actually translate some of these error codes. ref:
                     # https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/#error
                     raise _RefreshOauth2TokenError(
-                        I18nMessage.trans(
+                        trans(
                             "py.fetcher.secrets._refresh_oauth2_token.error.general",
                             default="Token server responded with {status_code}: {error} ({description})",
                             arguments={
@@ -177,7 +178,7 @@ async def _refresh_oauth2_token(
                 if response.status != 200:
                     # Probably a server error. Servers don't usually break.
                     raise _RefreshOauth2TokenError(
-                        I18nMessage.trans(
+                        trans(
                             "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
                             default="{service_id} responded with HTTP {status_code} {reason}: {description}",
                             arguments={
@@ -194,14 +195,14 @@ async def _refresh_oauth2_token(
                 }
     except asyncio.TimeoutError:
         raise _RefreshOauth2TokenError(
-            I18nMessage.trans(
+            trans(
                 "py.fetcher.secrets._refresh_oauth2_token.timeout_error",
                 default="Timeout during OAuth2 token refresh",
             )
         )
     except aiohttp.ClientError as err:
         raise _RefreshOauth2TokenError(
-            I18nMessage.trans(
+            trans(
                 "py.fetcher.secrets._refresh_oauth2_token.client_error",
                 default="HTTP error during OAuth2 token refresh: {error}",
                 arguments={"error": str(err)},

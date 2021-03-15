@@ -8,12 +8,12 @@ from django.db.models import Field, JSONField
 from cjwkernel.types import (
     Column,
     ColumnType,
-    I18nMessage,
     PrependStepQuickFixAction,
     QuickFix,
     QuickFixAction,
     RenderError,
 )
+from cjwmodule.i18n import I18nMessage
 
 
 def _i18n_message_to_dict(value: I18nMessage) -> Dict[str, Any]:

@@ -12,6 +12,7 @@ from server.serializers import (
 from cjworkbench.tests.i18n.util import mock_app_catalogs, mock_cjwmodule_catalogs
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from babel.messages.catalog import Catalog
+from cjwkernel.i18n import TODO_i18n
 from cjwstate.modules.types import ModuleSpec
 from cjwstate.clientside import (
     Module,
@@ -1434,7 +1435,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
     def test_TODO_i18n(self):
         self.assertEqual(
             jsonize_i18n_message(
-                I18nMessage.TODO_i18n("hello"), mock_jsonize_context(locale_id="en")
+                TODO_i18n("hello"), mock_jsonize_context(locale_id="en")
             ),
             "hello",
         )
@@ -1447,7 +1448,8 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             self.assertEqual(
                 jsonize_i18n_message(
-                    I18nMessage("id"), JsonizeModuleContext("el", "testme", None)
+                    I18nMessage("id", {}, None),
+                    JsonizeModuleContext("el", "testme", None),
                 ),
                 "Hey",
             )
@@ -1465,7 +1467,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             self.assertEqual(
                 jsonize_i18n_message(
-                    I18nMessage("id"),
+                    I18nMessage("id", {}, None),
                     JsonizeModuleContext("el", "testme", None),
                 ),
                 "Hello",
@@ -1477,7 +1479,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
-                    I18nMessage("messageid"),
+                    I18nMessage("messageid", {}, None),
                     JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")
@@ -1489,7 +1491,8 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_app_catalogs({"el": el_catalog, "en": en_catalog}):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
-                    I18nMessage("messageid"), JsonizeModuleContext("el", "testme", None)
+                    I18nMessage("messageid", {}, None),
+                    JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")
 
@@ -1503,7 +1506,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         )
         self.assertEqual(
             jsonize_i18n_message(
-                I18nMessage("messageid", source="module"),
+                I18nMessage("messageid", {}, "module"),
                 JsonizeModuleContext("el", "testme", module_zipfile),
             ),
             "Translated",
@@ -1518,7 +1521,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         )
         self.assertEqual(
             jsonize_i18n_message(
-                I18nMessage("messageid", source="module"),
+                I18nMessage("messageid", {}, "module"),
                 JsonizeModuleContext("el", "testme", module_zipfile),
             ),
             "Default",
@@ -1532,7 +1535,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         )
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
-                I18nMessage("messageid", source="module"),
+                I18nMessage("messageid", {}, "module"),
                 JsonizeModuleContext("el", "testme", module_zipfile),
             )
             self.assertRegex(result, "messageid")
@@ -1546,7 +1549,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         )
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
-                I18nMessage("messageid", source="module"),
+                I18nMessage("messageid", {}, "module"),
                 JsonizeModuleContext("el", "testme", module_zipfile),
             )
             self.assertRegex(result, "messageid")
@@ -1555,7 +1558,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         module_zipfile = create_module_zipfile_with_catalogs("testme", {})
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
-                I18nMessage("messageid", source="module"),
+                I18nMessage("messageid", {}, "module"),
                 JsonizeModuleContext("el", "testme", module_zipfile),
             )
             self.assertRegex(result, "messageid")
@@ -1563,7 +1566,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
     def test_source_module_module_zipfile_not_in_context(self):
         with self.assertLogs(level=logging.ERROR):
             result = jsonize_i18n_message(
-                I18nMessage("messageid", source="module"),
+                I18nMessage("messageid", {}, "module"),
                 JsonizeModuleContext("el", "testme", None),
             )
             self.assertRegex(result, "messageid")
@@ -1576,7 +1579,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_cjwmodule_catalogs({"el": catalog, "en": default_catalog}):
             self.assertEqual(
                 jsonize_i18n_message(
-                    I18nMessage("messageid", source="cjwmodule"),
+                    I18nMessage("messageid", {}, "cjwmodule"),
                     JsonizeModuleContext("el", "testme", None),
                 ),
                 "Translated",
@@ -1589,7 +1592,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_cjwmodule_catalogs({"el": catalog, "en": default_catalog}):
             self.assertEqual(
                 jsonize_i18n_message(
-                    I18nMessage("messageid", source="cjwmodule"),
+                    I18nMessage("messageid", {}, "cjwmodule"),
                     JsonizeModuleContext("el", "testme", None),
                 ),
                 "Default",
@@ -1601,7 +1604,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_cjwmodule_catalogs({"el": catalog, "en": default_catalog}):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
-                    I18nMessage("messageid", source="cjwmodule"),
+                    I18nMessage("messageid", {}, "cjwmodule"),
                     JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")
@@ -1613,7 +1616,7 @@ class JsonizeI18nMessageTest(DbTestCaseWithModuleRegistry):
         with mock_cjwmodule_catalogs({"el": catalog, "en": default_catalog}):
             with self.assertLogs(level=logging.ERROR):
                 result = jsonize_i18n_message(
-                    I18nMessage("messageid", source="cjwmodule"),
+                    I18nMessage("messageid", {}, "cjwmodule"),
                     JsonizeModuleContext("el", "testme", None),
                 )
                 self.assertRegex(result, "messageid")

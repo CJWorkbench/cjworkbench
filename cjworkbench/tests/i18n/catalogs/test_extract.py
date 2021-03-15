@@ -179,7 +179,7 @@ def test():
         code = BytesIO(
             b"""
 def test():
-    return I18nMessage.trans('id', default='default')
+    return trans('id', default='default')
         """
         )
         expected = [_mock_python_extraction_tuple(3, "id", "default")]
@@ -189,7 +189,7 @@ def test():
         code = BytesIO(
             b"""
 def test():
-    return I18nMessage.trans('id', default='default {a}', parameters={'a': 'b'})
+    return trans('id', default='default {a}', parameters={'a': 'b'})
         """
         )
         expected = [_mock_python_extraction_tuple(3, "id", "default {a}")]
@@ -200,7 +200,7 @@ def test():
             b"""
 def test():
     # i18n: Some comment
-    return I18nMessage.trans('id', default='default {a}', parameters={'a': 'b'})
+    return trans('id', default='default {a}', parameters={'a': 'b'})
         """
         )
         expected = [

@@ -10,6 +10,7 @@ from typing import Any, Dict, NamedTuple, Optional
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
+from cjwkernel.i18n import trans
 from cjwkernel.types import (
     ArrowTable,
     FetchResult,
@@ -131,7 +132,7 @@ def _wrap_render_errors(render_call):
         return RenderResult(
             errors=[
                 RenderError(
-                    I18nMessage.trans(
+                    trans(
                         "py.renderer.execute.step.user_visible_bug_during_render",
                         default="Something unexpected happened. We have been notified and are "
                         "working to fix it. If this persists, contact us. Error code: {message}",
@@ -369,7 +370,7 @@ async def _render_step(
         return RenderResult(
             errors=[
                 RenderError(
-                    I18nMessage.trans(
+                    trans(
                         "py.renderer.execute.step.noModule",
                         default="Please delete this step: an administrator uninstalled its code.",
                     )
@@ -396,7 +397,7 @@ async def _render_step(
             return RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage.trans(
+                        trans(
                             "py.renderer.execute.step.NoLoadedDataError",
                             default="Please Add Data before this step.",
                         )
@@ -407,7 +408,7 @@ async def _render_step(
             return RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage.trans(
+                        trans(
                             "py.renderer.execute.step.TabCycleError",
                             default="The chosen tab depends on this one. Please choose another tab.",
                         )
@@ -418,7 +419,7 @@ async def _render_step(
             return RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage.trans(
+                        trans(
                             "py.renderer.execute.step.TabOutputUnreachableError",
                             default="The chosen tab has no output. Please select another one.",
                         )

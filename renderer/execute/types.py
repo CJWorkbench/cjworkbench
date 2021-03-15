@@ -2,6 +2,7 @@ from __future__ import annotations
 from functools import reduce
 from dataclasses import dataclass
 from typing import FrozenSet, List, Optional
+from cjwkernel.i18n import trans
 from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
 
 
@@ -47,7 +48,7 @@ class PromptingError(Exception):
             """Build a RenderError that describes this error."""
             return [
                 RenderError(
-                    I18nMessage.trans(
+                    trans(
                         "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber",
                         default="“{value}” is not a number. Please enter a number.",
                         arguments={"value": self.value},
@@ -65,7 +66,7 @@ class PromptingError(Exception):
             """Build a RenderError that describes this error."""
             return [
                 RenderError(
-                    I18nMessage.trans(
+                    trans(
                         "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp",
                         default="“{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.",
                         arguments={"value": self.value},
@@ -127,13 +128,13 @@ class PromptingError(Exception):
 
             Render errors will include a QuickFix that would resolve this error."""
             if self.should_be_text:
-                message = I18nMessage.trans(
+                message = trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText",
                     default="Convert to Text",
                 )
             else:
                 # i18n: The parameters {found_type} and {best_wanted_type} will have values among "text", "number", "timestamp"; however, including an (possibly empty) "other" case is mandatory.
-                message = I18nMessage.trans(
+                message = trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
                     default="Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}",
                     arguments={
@@ -176,7 +177,7 @@ class PromptingError(Exception):
             if self.should_be_text:
                 # Convert to Text
                 # i18n: The parameter {columns} will contain the total number of columns that need to be converted; you will also receive the column names as {0}, {1}, {2}, etc.
-                return I18nMessage.trans(
+                return trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText",
                     default="{ columns, plural, offset:2"
                     " =1 {The column “{0}” must be converted to Text.}"
@@ -189,7 +190,7 @@ class PromptingError(Exception):
                 icu_args["found_type"] = self.found_type
                 icu_args["best_wanted_type"] = self.best_wanted_type_id
                 # i18n: The parameter {columns} will contain the total number of columns that need to be converted; you will also receive the column names: {0}, {1}, {2}, etc. The parameters {found_type} and {best_wanted_type} will have values among "text", "number", "timestamp"; however, including a (possibly empty) "other" case is mandatory.
-                return I18nMessage.trans(
+                return trans(
                     "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general",
                     default="{ columns, plural, offset:2"
                     " =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.}"

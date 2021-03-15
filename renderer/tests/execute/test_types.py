@@ -26,12 +26,14 @@ class PromptingErrorTest(unittest.TestCase):
                             "found_type": "text",
                             "best_wanted_type": "number",
                         },
+                        None,
                     ),
                     [
                         QuickFix(
                             I18nMessage(
                                 "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
                                 {"found_type": "text", "best_wanted_type": "number"},
+                                None,
                             ),
                             QuickFixAction.PrependStep(
                                 "converttexttonumber", {"colnames": ["A"]}
@@ -49,6 +51,7 @@ class PromptingErrorTest(unittest.TestCase):
                             "found_type": "timestamp",
                             "best_wanted_type": "number",
                         },
+                        None,
                     ),
                     [
                         QuickFix(
@@ -58,6 +61,7 @@ class PromptingErrorTest(unittest.TestCase):
                                     "found_type": "timestamp",
                                     "best_wanted_type": "number",
                                 },
+                                None,
                             ),
                             QuickFixAction.PrependStep(
                                 "converttexttonumber", {"colnames": ["B", "C"]}
@@ -80,11 +84,14 @@ class PromptingErrorTest(unittest.TestCase):
                     I18nMessage(
                         "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText",
                         {"columns": 2, "0": "A", "1": "B"},
+                        None,
                     ),
                     [
                         QuickFix(
                             I18nMessage(
-                                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
+                                "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText",
+                                {},
+                                None,
                             ),
                             QuickFixAction.PrependStep(
                                 "converttotext", {"colnames": ["A", "B"]}

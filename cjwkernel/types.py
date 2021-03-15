@@ -12,6 +12,7 @@ import pyarrow.ipc
 import pyarrow.types
 from cjwkernel.util import json_encode
 from cjwmodule.arrow.format import parse_number_format
+from cjwmodule.i18n import I18nMessage
 
 # Some types we can import with no conversion
 from .thrift import ttypes
@@ -21,7 +22,6 @@ __all__ = [
     "Column",
     "ColumnType",
     "CompiledModule",
-    "I18nMessage",
     "Params",
     "QuickFix",
     "QuickFixAction",
@@ -403,52 +403,6 @@ def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgume
         return ttypes.I18nArgument(double_value=value)
     else:
         raise RuntimeError("Unhandled value for I18nArgument: %r" % value)
-
-
-class I18nMessage(NamedTuple):
-    """Translation key and arguments."""
-
-    id: str
-    """Message ID. For instance, `modules.renamecolumns.duplicateColname`"""
-
-    arguments: Dict[str, Union[int, float, str]] = {}
-    """Arguments (empty if message does not need any -- which is common)."""
-
-    source: Literal["module", "cjwmodule", None] = None
-    """Where the message comes from.
-
-    * "module": the module that raised it
-    * "cjwmodule": the cjwmodule library
-    * None: Workbench itself.
-    """
-
-    @classmethod
-    def TODO_i18n(cls, text: str) -> I18nMessage:
-        """
-        Build an I18nMessage that "translates" into English only.
-
-        The message has id "TODO_i18n" and one argument, "text", in English.
-        Long-term, all these messages should disappear; but this helps us
-        migrate by letting us code without worrying about translation.
-        """
-        return cls("TODO_i18n", {"text": text})
-
-    @classmethod
-    def trans(
-        cls,
-        message_id: str,
-        *,
-        default: str,
-        arguments: Dict[str, Union[int, float, str]] = {},
-    ) -> I18nMessage:
-        """
-        Build an I18nMessage, marking it for translation.
-
-        Use this method (instead of constructing `I18nMessage` directly) when you wish to mark a string for translation. Workbench's tooling will extract messages from all `I18nMessage.trans()` calls and send them to translators.
-
-        The `default` argument is ignored at runtime, it's only used when parsing code.
-        """
-        return cls(message_id, arguments)
 
 
 ParamValue = Union[

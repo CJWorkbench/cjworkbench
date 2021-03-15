@@ -4,6 +4,7 @@ from pathlib import Path
 
 from cjwkernel import types
 from cjwkernel.thrift import ttypes
+from cjwmodule.i18n import I18nMessage
 
 
 class ColumnTypeNumberTests(unittest.TestCase):
@@ -333,15 +334,13 @@ class ThriftConvertersTest(unittest.TestCase):
                     "module",
                 )
             ),
-            types.I18nMessage(
-                "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "module"
-            ),
+            I18nMessage("modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "module"),
         )
 
     def test_i18n_message_to_thrift_source_module(self):
         self.assertEqual(
             types.arrow_i18n_message_to_thrift(
-                types.I18nMessage(
+                I18nMessage(
                     "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "module"
                 )
             ),
@@ -369,7 +368,7 @@ class ThriftConvertersTest(unittest.TestCase):
                     "cjwmodule",
                 )
             ),
-            types.I18nMessage(
+            I18nMessage(
                 "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "cjwmodule"
             ),
         )
@@ -377,7 +376,7 @@ class ThriftConvertersTest(unittest.TestCase):
     def test_i18n_message_to_thrift_source_library(self):
         self.assertEqual(
             types.arrow_i18n_message_to_thrift(
-                types.I18nMessage(
+                I18nMessage(
                     "modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, "cjwmodule"
                 )
             ),
@@ -405,12 +404,12 @@ class ThriftConvertersTest(unittest.TestCase):
                     None,
                 )
             ),
-            types.I18nMessage("modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}),
+            I18nMessage("modules.x.y", {"a": "s", "b": 12345678, "c": 0.123}, None),
         )
 
     def test_i18n_message_to_thrift_source_none(self):
         self.assertEqual(
-            types.arrow_i18n_message_to_thrift(types.I18nMessage("modules.x.y")),
+            types.arrow_i18n_message_to_thrift(I18nMessage("modules.x.y", {}, None)),
             ttypes.I18nMessage("modules.x.y", {}, None),
         )
 
@@ -457,7 +456,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 )
             ),
             types.QuickFix(
-                types.I18nMessage("click"),
+                I18nMessage("click", {}, None),
                 types.QuickFixAction.PrependStep("filter", {"x": "y"}),
             ),
         )
@@ -466,7 +465,7 @@ class ThriftConvertersTest(unittest.TestCase):
         self.assertEqual(
             types.arrow_quick_fix_to_thrift(
                 types.QuickFix(
-                    types.I18nMessage("click"),
+                    I18nMessage("click", {}, None),
                     types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                 )
             ),
@@ -498,10 +497,10 @@ class ThriftConvertersTest(unittest.TestCase):
                 )
             ),
             types.RenderError(
-                types.I18nMessage("foo", {}),
+                I18nMessage("foo", {}, None),
                 [
                     types.QuickFix(
-                        types.I18nMessage("click"),
+                        I18nMessage("click", {}, None),
                         types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                     )
                 ],
@@ -512,10 +511,10 @@ class ThriftConvertersTest(unittest.TestCase):
         self.assertEqual(
             types.arrow_render_error_to_thrift(
                 types.RenderError(
-                    types.I18nMessage("foo", {}),
+                    I18nMessage("foo", {}, None),
                     [
                         types.QuickFix(
-                            types.I18nMessage("click"),
+                            I18nMessage("click", {}, None),
                             types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                         )
                     ],
@@ -573,11 +572,12 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.thrift_fetch_result_to_arrow(
                     ttypes.FetchResult(
                         Path(tf.name).name,
-                        [ttypes.RenderError(ttypes.I18nMessage("hi", {}), [])],
+                        [ttypes.RenderError(ttypes.I18nMessage("hi", {}, None), [])],
                     ),
                     self.basedir,
                 ),
                 types.FetchResult(
-                    Path(tf.name), [types.RenderError(types.I18nMessage("hi"))]
+                    Path(tf.name),
+                    [types.RenderError(types.I18nMessage("hi", {}, None))],
                 ),
             )

@@ -32,6 +32,7 @@ class DictConvertersTest(unittest.TestCase):
             types.I18nMessage(
                 "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
                 {"found_type": "timestamp", "best_wanted_type": "number"},
+                None,
             ),
         )
 
@@ -51,6 +52,7 @@ class DictConvertersTest(unittest.TestCase):
             types.I18nMessage(
                 "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general",
                 {"found_type": "text", "best_wanted_type": "timestamp"},
+                None,
             ),
         )
 
@@ -83,13 +85,13 @@ class DictConvertersTest(unittest.TestCase):
             fields._dict_to_i18n_message(
                 {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]}
             ),
-            types.I18nMessage("modules.x.y", ["s", 12345678, 0.123]),
+            types.I18nMessage("modules.x.y", ["s", 12345678, 0.123], None),
         )
 
     def test_i18n_message_to_dict_no_source(self):
         self.assertEqual(
             fields._i18n_message_to_dict(
-                types.I18nMessage("modules.x.y", ["s", 12345678, 0.123])
+                types.I18nMessage("modules.x.y", ["s", 12345678, 0.123], None)
             ),
             {"id": "modules.x.y", "arguments": ["s", 12345678, 0.123]},
         )
@@ -131,7 +133,7 @@ class DictConvertersTest(unittest.TestCase):
                 }
             ),
             types.QuickFix(
-                types.I18nMessage("click"),
+                types.I18nMessage("click", {}, None),
                 types.QuickFixAction.PrependStep("filter", {"x": "y"}),
             ),
         )
@@ -140,7 +142,7 @@ class DictConvertersTest(unittest.TestCase):
         self.assertEqual(
             fields._quick_fix_to_dict(
                 types.QuickFix(
-                    types.I18nMessage("click"),
+                    types.I18nMessage("click", {}, None),
                     types.QuickFixAction.PrependStep("filter", {"x": "y"}),
                 )
             ),
@@ -176,7 +178,7 @@ class DictConvertersTest(unittest.TestCase):
                 }
             ),
             types.RenderError(
-                types.I18nMessage("err", {}),
+                types.I18nMessage("err", {}, None),
                 [
                     types.QuickFix(
                         types.I18nMessage("click", {}, "cjwmodule"),
@@ -190,7 +192,7 @@ class DictConvertersTest(unittest.TestCase):
         self.assertEqual(
             fields._render_error_to_dict(
                 types.RenderError(
-                    types.I18nMessage("err", {}),
+                    types.I18nMessage("err", {}, None),
                     [
                         types.QuickFix(
                             types.I18nMessage("click", {}, "cjwmodule"),

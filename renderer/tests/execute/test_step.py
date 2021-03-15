@@ -59,7 +59,9 @@ class StepTests(DbTestCaseWithModuleRegistry):
             )
         )
         expected = RenderResult(
-            errors=[RenderError(I18nMessage("py.renderer.execute.step.noModule"))]
+            errors=[
+                RenderError(I18nMessage("py.renderer.execute.step.noModule", {}, None))
+            ]
         )
         assert_render_result_equals(result, expected)
         step.refresh_from_db()
@@ -182,7 +184,11 @@ class StepTests(DbTestCaseWithModuleRegistry):
             step,
             workflow.last_delta_id - 1,
             RenderResult(
-                errors=[RenderError(I18nMessage("py.renderer.execute.step.noModule"))]
+                errors=[
+                    RenderError(
+                        I18nMessage("py.renderer.execute.step.noModule", {}, None)
+                    )
+                ]
             ),
         )
         step.last_relevant_delta_id = workflow.last_delta_id
@@ -232,7 +238,11 @@ class StepTests(DbTestCaseWithModuleRegistry):
             step,
             workflow.last_delta_id - 1,
             RenderResult(
-                errors=[RenderError(I18nMessage("py.renderer.execute.step.noModule"))]
+                errors=[
+                    RenderError(
+                        I18nMessage("py.renderer.execute.step.noModule", {}, None)
+                    )
+                ]
             ),
         )
         step.last_relevant_delta_id = workflow.last_delta_id
@@ -615,7 +625,9 @@ class StepTests(DbTestCaseWithModuleRegistry):
             RenderResult(
                 errors=[
                     RenderError(
-                        I18nMessage("py.renderer.execute.step.NoLoadedDataError")
+                        I18nMessage(
+                            "py.renderer.execute.step.NoLoadedDataError", {}, None
+                        )
                     )
                 ]
             ),
@@ -662,6 +674,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                             {
                                 "message": "exit code 1: NameError: name 'undefined' is not defined"
                             },
+                            None,
                         )
                     )
                 ]

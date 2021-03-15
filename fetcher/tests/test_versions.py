@@ -20,8 +20,8 @@ class DiffTest(unittest.TestCase):
     def test_different_errors(self):
         self.assertFalse(
             are_fetch_results_equal(
-                FetchResult(self.old_path, [RenderError(I18nMessage("foo"))]),
-                FetchResult(self.old_path, [RenderError(I18nMessage("bar"))]),
+                FetchResult(self.old_path, [RenderError(I18nMessage("foo", {}, None))]),
+                FetchResult(self.old_path, [RenderError(I18nMessage("bar", {}, None))]),
             )
         )
 

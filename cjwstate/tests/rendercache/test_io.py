@@ -42,15 +42,15 @@ class RendercacheIoTests(DbTestCase):
             arrow_table({"A": [1]}),
             [
                 RenderError(
-                    I18nMessage("e1", [1, "x"]),
+                    I18nMessage("e1", {"text": "hi"}, None),
                     [
                         QuickFix(
-                            I18nMessage("q1", []),
+                            I18nMessage("q1", {"var": 2}, None),
                             QuickFixAction.PrependStep("filter", {"a": "x"}),
                         )
                     ],
                 ),
-                RenderError(I18nMessage("e2", []), []),
+                RenderError(I18nMessage("e2", {}, None), []),
             ],
             {"foo": "bar"},
         )

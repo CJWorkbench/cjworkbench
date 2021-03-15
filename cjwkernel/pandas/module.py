@@ -22,6 +22,7 @@ from cjwkernel.types import (
     thrift_raw_params_to_arrow,
 )
 from cjwkernel.util import tempfile_context
+from cjwmodule.i18n import I18nMessage
 
 
 def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
@@ -69,11 +70,7 @@ def __render_pandas(
             ):
                 fetched_table = __parquet_to_pandas(fetch_result.path)
                 pandas_fetch_result = ptypes.ProcessResult(
-                    fetched_table,
-                    [
-                        ptypes.ProcessResultError.from_arrow(error)
-                        for error in fetch_result.errors
-                    ],
+                    fetched_table, fetch_result.errors
                 )
             else:
                 pandas_fetch_result = fetch_result
@@ -217,7 +214,12 @@ def __render_arrow(
     if isinstance(raw_result, list):
         # List of I18nMessage errors
         errors = [
-            types.RenderError(types.I18nMessage(*message)) for message in raw_result
+            # TODO don't use coerce_I18nMessage? At least, don't use ptypes.
+            # Do any modules even require coerce? Or do they all correctly
+            # output tuples-or-text? Is it only unit tests that output
+            # non-I18nMessage tuples?
+            types.RenderError(ptypes.coerce_I18nMessage(message))
+            for message in raw_result
         ]
     elif raw_result is None:
         errors = []
@@ -360,17 +362,12 @@ def fetch_pandas(
     if asyncio.iscoroutine(result):
         result = asyncio.run(result)
     if isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], Path):
-        errors = [
-            e.to_arrow() for e in ptypes.ProcessResultError.coerce_list(result[1])
-        ]
+        errors = ptypes.coerce_RenderError_list(result[1])
         return types.FetchResult(result[0], errors)
     elif isinstance(result, Path):
         return types.FetchResult(result)
     elif isinstance(result, list):
-        return types.FetchResult(
-            output_path,
-            [e.to_arrow() for e in ptypes.ProcessResultError.coerce_list(result)],
-        )
+        return types.FetchResult(output_path, ptypes.coerce_RenderError_list(result))
     else:
         return ptypes.ProcessResult.coerce(result)
 

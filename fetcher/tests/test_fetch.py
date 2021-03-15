@@ -223,7 +223,9 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def _bug_err(self, message: str) -> FetchResult:
         return self._err(
             I18nMessage(
-                "py.fetcher.fetch.user_visible_bug_during_fetch", {"message": message}
+                "py.fetcher.fetch.user_visible_bug_during_fetch",
+                {"message": message},
+                None,
             )
         )
 
@@ -243,7 +245,8 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
             )
         self.assertEqual(self.output_path.stat().st_size, 0)
         self.assertEqual(
-            result, self._err(I18nMessage("py.fetcher.fetch.no_loaded_module"))
+            result,
+            self._err(I18nMessage("py.fetcher.fetch.no_loaded_module", {}, None)),
         )
 
     def test_simple(self):

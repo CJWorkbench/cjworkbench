@@ -5,9 +5,12 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-import cjwkernel.pandas.types as ptypes
 import pandas as pd
 import pyarrow as pa
+from pandas.testing import assert_frame_equal
+
+import cjwkernel.pandas.types as ptypes
+from cjwkernel.i18n import TODO_i18n
 from cjwkernel.pandas import module
 from cjwkernel.tests.util import (
     arrow_table,
@@ -39,7 +42,6 @@ from cjwkernel.types import (
     thrift_render_result_to_arrow,
 )
 from cjwkernel.util import create_tempdir, tempfile_context
-from pandas.testing import assert_frame_equal
 
 
 class MigrateParamsTests(unittest.TestCase):
@@ -147,6 +149,7 @@ class RenderTests(unittest.TestCase):
                                             string_value="A warning"
                                         )
                                     },
+                                    None,
                                 ),
                                 [],
                             )
@@ -160,7 +163,7 @@ class RenderTests(unittest.TestCase):
                 result,
                 RenderResult(
                     arrow_table({"A": [2]}),
-                    [RenderError(I18nMessage.TODO_i18n("A warning"))],
+                    [RenderError(TODO_i18n("A warning"))],
                 ),
             )
 
@@ -423,6 +426,7 @@ class RenderTests(unittest.TestCase):
                     I18nMessage(
                         "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
                         {"old_number": 3, "new_number": 2},
+                        None,
                     )
                 )
             ],
@@ -606,7 +610,7 @@ class FetchTests(unittest.TestCase):
                 return outfile, "foo"
 
             result = self._test_fetch(fetch, output_filename=outfile.name)
-            self.assertEqual(result.errors, [RenderError(I18nMessage.TODO_i18n("foo"))])
+            self.assertEqual(result.errors, [RenderError(TODO_i18n("foo"))])
 
     def test_fetch_return_tuple_path_and_errors(self):
         with tempfile_context(dir=self.basedir) as outfile:
@@ -656,6 +660,7 @@ class FetchTests(unittest.TestCase):
                         I18nMessage(
                             "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
                             {"old_number": 3, "new_number": 2},
+                            None,
                         )
                     )
                 ],
@@ -670,9 +675,7 @@ class FetchTests(unittest.TestCase):
         with tempfile_context(dir=self.basedir) as outfile:
             result = self._test_fetch(fetch, output_filename=outfile.name)
             self.assertEqual(result.path, outfile)
-            self.assertEqual(
-                result.errors, [RenderError(I18nMessage.TODO_i18n("bad things"))]
-            )
+            self.assertEqual(result.errors, [RenderError(TODO_i18n("bad things"))])
             self.assertEqual(outfile.read_bytes(), b"")
 
     def test_fetch_return_uncoerceable_dataframe_is_error(self):

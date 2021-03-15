@@ -28,7 +28,7 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_delete_step(self):
         result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
         )
         cache_render_result(self.workflow, self.step, 1, result)
 
@@ -46,7 +46,7 @@ class CachedRenderResultTests(DbTestCase):
 
     def test_double_clear(self):
         result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
         )
         cache_render_result(self.workflow, self.step, 1, result)
         clear_cached_render_result_for_step(self.step)
@@ -56,7 +56,7 @@ class CachedRenderResultTests(DbTestCase):
         # The cache's filename depends on workflow_id and step_id.
         # Duplicating it would need more complex code :).
         result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
         )
         cache_render_result(self.workflow, self.step, 1, result)
 
@@ -81,7 +81,7 @@ class CachedRenderResultTests(DbTestCase):
         # The cache's filename depends on workflow_id and step_id.
         # Duplicating it would need more complex code :).
         result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", []), [])], {}
+            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
         )
         cache_render_result(self.workflow, self.step, 1, result)
         # Now simulate a new delta that hasn't been rendered

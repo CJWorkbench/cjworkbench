@@ -8,7 +8,8 @@ from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
 from django.contrib.auth import get_user_model
 
 from allauth.account.utils import user_display
-from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
+from cjwkernel.types import Column, QuickFix, QuickFixAction, RenderError
+from cjwmodule.i18n import I18nMessage
 from cjworkbench.i18n.trans import (
     MESSAGE_LOCALIZER_REGISTRY,
     MessageLocalizer,

@@ -2046,7 +2046,7 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:566
+#: cjwkernel/pandas/types.py:441
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 
@@ -2058,75 +2058,75 @@ msgstr "Όνομα"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
-#: fetcher/fetch.py:178
+#: fetcher/fetch.py:179
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
 "προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
 "Κωδικός σφάλματος: {message}"
 
-#: fetcher/fetch.py:272
+#: fetcher/fetch.py:273
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) διαγράφηκε"
 
-#: fetcher/secrets.py:15
+#: fetcher/secrets.py:16
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr "Η υπηρεσία \"{service}\" έχει πάψει να είναι διαμορφωμένη"
 
-#: fetcher/secrets.py:173
+#: fetcher/secrets.py:174
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 "Ο διακομιστής διακριτικών (τεκμηρίων) απάντησε με {status_code}: {error} "
 "({description})"
 
-#: fetcher/secrets.py:180
+#: fetcher/secrets.py:181
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr "Η {service_id} απάντησε με HTTP {status_code} {reason}: {description}"
 
-#: fetcher/secrets.py:197
+#: fetcher/secrets.py:198
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr "Λήξη χρονικού ορίου κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2"
 
-#: fetcher/secrets.py:207
+#: fetcher/secrets.py:208
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
 
-#: renderer/execute/step.py:138
+#: renderer/execute/step.py:139
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
 "προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
 "Κωδικός σφάλματος: {message}"
 
-#: renderer/execute/step.py:372
+#: renderer/execute/step.py:373
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
 "Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
 "βήματος."
 
-#: renderer/execute/step.py:399
+#: renderer/execute/step.py:400
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr ""
 
-#: renderer/execute/step.py:410
+#: renderer/execute/step.py:411
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
 "Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
 "καρτέλα."
 
-#: renderer/execute/step.py:421
+#: renderer/execute/step.py:422
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
-#: renderer/execute/types.py:50
+#: renderer/execute/types.py:51
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr ""
 
-#: renderer/execute/types.py:68
+#: renderer/execute/types.py:69
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 
-#: renderer/execute/types.py:130
+#: renderer/execute/types.py:131
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr "Μετατροπή σε κείμενο."
@@ -2134,7 +2134,7 @@ msgstr "Μετατροπή σε κείμενο."
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:136
+#: renderer/execute/types.py:137
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
@@ -2145,7 +2145,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#: renderer/execute/types.py:179
+#: renderer/execute/types.py:180
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρεπει να μετατραπεί σε "
@@ -2159,7 +2159,7 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:192
+#: renderer/execute/types.py:193
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
