@@ -51,7 +51,7 @@ class TestExampleWorkflow(WorkbenchBase):
 
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        self._share_workflow_with("b@example.org", False)
+        self._share_workflow_with("b@example.org", "Can view")
         url = b.get_url()
 
         self.browser.clear_cookies()
@@ -77,7 +77,7 @@ class TestExampleWorkflow(WorkbenchBase):
 
         accounts.login(b, "a@example.org", "a@example.org")
         self._create_workflow()
-        self._share_workflow_with("b@example.org", True)
+        self._share_workflow_with("b@example.org", "Can edit")
         url = b.get_url()
 
         self.browser.clear_cookies()

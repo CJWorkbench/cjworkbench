@@ -8,139 +8,128 @@ from pathlib import Path
 from typing import Awaitable, ContextManager, Literal, Tuple
 
 import numpy as np
-import pyarrow as pa
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from django.http import FileResponse, HttpRequest, HttpResponse, Http404, JsonResponse
+from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.utils.cache import add_never_cache_headers, patch_response_headers
 from django.views.decorators.http import require_GET
 
+import pyarrow as pa
 from cjwkernel.types import ColumnType
 from cjworkbench.middleware.clickjacking import xframe_options_exempt
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import rabbitmq
+from cjwstate.models import Step, Tab, Workflow
+from cjwstate.models.fields import Role
+from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.rendercache import (
     CorruptCacheError,
     downloaded_parquet_file,
     open_cached_render_result,
     read_cached_render_result_slice_as_text,
 )
-from cjwstate.models import Tab, Step, Workflow
-from cjwstate.models.module_registry import MODULE_REGISTRY
 
+from ..serializers import (
+    JsonizeContext,
+    jsonize_clientside_step,
+    jsonize_clientside_workflow,
+)
 
 _MaxNRowsPerRequest = 300
 
 
-def _with_unlocked_step_for_read(fn):
-    """Decorate: `fn(request, workflow_id, step_slug, ...)` becomes `fn(request, step, ...)`
+def _load_workflow_and_step_sync(
+    request: HttpRequest, workflow_id: int, step_slug: str
+) -> Tuple[Workflow, Step]:
+    """Load (Workflow, Step) from database, or raise Http404 or PermissionDenied.
 
-    The inner function will raise Http404 if the step is not found in the database,
-    or PermissionDenied if the person requesting does not have read access.
+    `Step.tab` will be loaded. (`Step.tab.workflow_id` is needed to access the render
+    cache.)
+
+    To avoid PermissionDenied:
+
+    * The workflow must be public; OR
+    * The user must be workflow owner, editor or viewer; OR
+    * The user must be workflow report-viewer and the step must be a chart or
+      table in the report.
     """
-
-    def inner(request: HttpRequest, workflow_id: int, step_slug: str, *args, **kwargs):
-        try:
-            with Workflow.authorized_lookup_and_cooperative_lock(
-                "read", request.user, request.session, pk=workflow_id
-            ) as workflow_lock:
-                step = Step.live_in_workflow(workflow_lock.workflow.id).get(
-                    slug=step_slug
-                )
-        except Workflow.DoesNotExist as err:
-            if err.args[0].endswith("access denied"):
+    try:
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+            workflow = workflow_lock.workflow
+            if workflow.public or workflow.request_authorized_owner(request):
+                need_report_auth = False
+            elif request.user is None or request.user.is_anonymous:
                 raise PermissionDenied()
             else:
-                raise Http404("workflow not found or not authorized")
-        except Step.DoesNotExist:
-            raise Http404("step not found")
+                try:
+                    acl_entry = workflow.acl.filter(email=request.user.email).get()
+                except AclEntry.DoesNotExist:
+                    raise PermissionDenied()
+                if acl_entry.role in {Role.VIEWER, Role.EDITOR}:
+                    need_report_auth = False
+                elif acl_entry.role == Role.REPORT_VIEWER:
+                    need_report_auth = True
+                else:
+                    raise PermissionDenied()  # role we don't handle yet
 
-        return fn(request, step, *args, **kwargs)
+            step = (
+                Step.live_in_workflow(workflow_id)
+                .select_related("tab")
+                .get(slug=step_slug)
+            )  # or Step.DoesNotExist
 
-    return inner
+            if need_report_auth:  # user is report-viewer
+                if workflow.has_custom_report:
+                    if workflow.blocks.filter(step_id=step.id).count():
+                        pass  # the step is a chart
+                    elif workflow.blocks.filter(
+                        tab_id=step.tab_id
+                    ).count() and not step.tab.live_steps.filter(order__gt=step.order):
+                        pass  # step is a table (last step of a report-included tab)
+                    else:
+                        raise PermissionDenied()
+                else:
+                    # Auto-report: all Charts are allowed; everything else is not
+                    try:
+                        if (
+                            MODULE_REGISTRY.latest(step.module_id_name)
+                            .get_spec()
+                            .html_output
+                        ):
+                            pass
+                        else:
+                            raise PermissionDenied()
+                    except KeyError:  # not a module
+                        raise PermissionDenied()
+
+            return workflow, step
+    except (Workflow.DoesNotExist, Step.DoesNotExist):
+        raise Http404()
 
 
 @database_sync_to_async
 def _load_step_by_id_oops_where_is_workflow(
     request: HttpRequest, step_id: int
-) -> Tuple[Workflow, Tab, Step]:
-    """Load Step from database, or raise Http404 or PermissionDenied.
-
-    `step.tab` and `step.workflow` will be loaded from the database. The Step,
-    Tab and Workflow data will all be consistent.
+) -> Tuple[Workflow, Step]:
+    """Load (Workflow, Step) from database, or raise Http404 or PermissionDenied.
 
     Don't use this in new code. Put workflow ID in the URL instead.
     """
-    # TODO simplify this a ton by putting `workflow` in the URL. That way,
-    # we can lock it _before_ we query it, so we won't have to check any of
-    # the zillions of races herein.
-    step = get_object_or_404(Step, id=step_id, is_deleted=False)
-
     try:
-        workflow = step.tab.workflow  # raise Tab.DoesNotExist, Workflow.DoesNotExist
-        if workflow is None:
-            raise Workflow.DoesNotExist  # race: workflow is gone
+        workflow_id, step_slug = Step.objects.values_list(
+            "tab__workflow_id", "slug"
+        ).get(id=step_id)
+    except Step.DoesNotExist:
+        raise Http404("step not found")
 
-        # raise Workflow.DoesNotExist
-        # also, implies workflow.refresh_from_db()
-        with workflow.cooperative_lock() as workflow_lock:
-            if not workflow_lock.workflow.request_authorized_read(request):
-                raise PermissionDenied()
-
-            step.refresh_from_db()  # raise Step.DoesNotExist
-            if step.is_deleted:
-                raise Step.DoesNotExist
-            step.tab.refresh_from_db()
-            if step.tab.is_deleted:
-                raise Tab.DoesNotExist
-
-            return step.tab.workflow, step.tab, step
-    except (Workflow.DoesNotExist, Tab.DoesNotExist, Step.DoesNotExist):
-        raise Http404()  # race: tab/step was deleted
-
-
-def _with_step_for_read_by_id(fn):
-    """Decorate: `fn(request, step_id, ...)` becomes `fn(request, step, ...)`
-
-    The inner function will be wrapped in a cooperative lock.
-
-    The inner function will raise Http404 if pk is not found in the database,
-    or PermissionDenied if the person requesting does not have read access.
-    """
-
-    def inner(request: HttpRequest, step_id: int, *args, **kwargs):
-        # TODO simplify this a ton by putting `workflow` in the URL. That way,
-        # we can lock it _before_ we query it, so we won't have to check any of
-        # the zillions of races herein.
-        step = get_object_or_404(Step, id=step_id, is_deleted=False)
-        try:
-            # raise Tab.DoesNotExist, Workflow.DoesNotExist
-            workflow = step.workflow
-            if workflow is None:
-                raise Http404()  # race: workflow is gone
-
-            # raise Workflow.DoesNotExist
-            with workflow.cooperative_lock() as workflow_lock:
-                if not workflow_lock.workflow.request_authorized_read(request):
-                    raise PermissionDenied()
-
-                step.refresh_from_db()  # raise Step.DoesNotExist
-                if step.is_deleted or step.tab.is_deleted:
-                    raise Http404()  # race: Step/Tab deleted
-
-            return fn(request, step, *args, **kwargs)
-        except (Workflow.DoesNotExist, Tab.DoesNotExist, Step.DoesNotExist):
-            raise Http404()  # race: tab/step was deleted
-
-    return inner
+    return _load_workflow_and_step_sync(request, workflow_id, step_slug)
 
 
 # ---- render / input / livedata ----
 # These endpoints return actual table data
-
-
-TimestampUnits = {"us": 1000000, "s": 1, "ms": 1000, "ns": 1000000000}  # most common
 
 
 # Helper method that produces json output for a table + start/end row
@@ -191,7 +180,7 @@ async def step_render(request: HttpRequest, step_id: int):
         )
 
     # raise Http404, PermissionDenied
-    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
     cached_result = step.cached_render_result
     if cached_result is None:
         # assume we'll get another request after execute finishes
@@ -215,10 +204,15 @@ async def step_render(request: HttpRequest, step_id: int):
 
 # /tiles/:slug/v:delta_id/:tile_row,:tile_column.json: table data
 @require_GET
-@_with_unlocked_step_for_read
 def step_tile(
-    request: HttpRequest, step: Step, delta_id: int, tile_row: int, tile_column: int
+    request: HttpRequest,
+    workflow_id: int,
+    step_slug: str,
+    delta_id: int,
+    tile_row: int,
+    tile_column: int,
 ):
+    workflow, step = _load_workflow_and_step_sync(request, workflow_id, step_slug)
     # No need for cooperative lock: the cache may always be corrupt (lock or no), and
     # we don't read from the database
     row_begin = tile_row * settings.BIG_TABLE_ROWS_PER_TILE
@@ -265,7 +259,7 @@ def step_tile(
 @xframe_options_exempt
 async def step_output(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
-    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
     try:
         module_zipfile = await database_sync_to_async(MODULE_REGISTRY.latest)(
             step.module_id_name
@@ -278,7 +272,7 @@ async def step_output(request: HttpRequest, step_id: int):
 
 async def step_embeddata(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
-    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
     # Speedy bypassing of locks: we don't care if we get out-of-date data
     # because we assume the client will re-request when it gets a new
@@ -306,7 +300,7 @@ async def step_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
         return JsonResponse({"values": {}})
 
     # raise Http404, PermissionDenied
-    _, __, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
     cached_result = step.cached_render_result
     if cached_result is None:
         # assume we'll get another request after execute finishes
@@ -361,6 +355,47 @@ async def step_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
         value_counts = {v: c for v, c in zip(values, counts) if v is not None}
 
     return JsonResponse({"values": value_counts})
+
+
+@xframe_options_exempt
+async def step_embed(request: HttpRequest, step_id: int):
+    # raise Http404, PermissionDenied
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+
+    try:
+        module_zipfile = await database_sync_to_async(MODULE_REGISTRY.latest)(
+            step.module_id_name
+        )
+        if not module_zipfile.get_spec().html_output:
+            raise Http404("Module is not embeddable")
+    except KeyError:
+        raise Http404("Step has no module")
+
+    @database_sync_to_async
+    def build_init_state():
+        ctx = JsonizeContext(
+            user=AnonymousUser(),
+            user_profile=None,
+            session=None,
+            locale_id=request.locale_id,
+            module_zipfiles={module_zipfile.module_id: module_zipfile},
+        )
+        return {
+            "workflow": jsonize_clientside_workflow(
+                workflow.to_clientside(
+                    include_tab_slugs=False,
+                    include_block_slugs=False,
+                    include_acl=False,
+                ),
+                ctx,
+                is_init=True,
+            ),
+            "step": jsonize_clientside_step(step.to_clientside(), ctx),
+        }
+
+    return TemplateResponse(
+        request, "embed.html", {"initState": await build_init_state()}
+    )
 
 
 class SubprocessOutputFileLike(io.RawIOBase):
@@ -481,7 +516,7 @@ async def _step_to_text_stream(
 
 async def step_public_json(request: HttpRequest, step_id: int) -> FileResponse:
     # raise Http404, PermissionDenied
-    workflow, _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
     try:
         output = await _step_to_text_stream(step, "json")
@@ -511,7 +546,7 @@ async def step_public_json(request: HttpRequest, step_id: int) -> FileResponse:
 
 async def step_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
     # raise Http404, PermissionDenied
-    workflow, _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
     try:
         output = await _step_to_text_stream(step, "csv")

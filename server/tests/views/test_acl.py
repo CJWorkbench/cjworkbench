@@ -34,7 +34,7 @@ class AclTest(DbTestCase):
 
         entry = workflow.acl.first()
         self.assertEqual(entry.email, "a@example.org")
-        self.assertEqual(entry.role, "editor")
+        self.assertEqual(entry.role, Role.EDITOR)
 
     def test_put_entry_as_anonymous(self):
         workflow = Workflow.objects.create(

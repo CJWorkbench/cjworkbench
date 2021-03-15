@@ -204,6 +204,10 @@ class Workflow(models.Model):
         """True if the Django request may write workflow data."""
         return self.user_session_authorized_owner(request.user, request.session)
 
+    def request_authorized_report_viewer(self, request: HttpRequest) -> bool:
+        """True if the Django request may write workflow data."""
+        return self.user_session_authorized_report_viewer(request.user, request.session)
+
     @property
     def is_anonymous(self) -> bool:
         """True if the owner is an anonymous session, not a User.
@@ -223,12 +227,7 @@ class Workflow(models.Model):
     def user_session_authorized_read(self, user, session):
         return (
             self.public
-            or (user and user == self.owner)
-            or (
-                session
-                and session.session_key
-                and session.session_key == self.anonymous_owner_session_key
-            )
+            or self.user_session_authorized_owner(user, session)
             or (
                 user
                 and not user.is_anonymous
@@ -239,18 +238,10 @@ class Workflow(models.Model):
         )
 
     def user_session_authorized_write(self, user, session):
-        return (
-            (user and user == self.owner)
-            or (
-                session
-                and session.session_key
-                and session.session_key == self.anonymous_owner_session_key
-            )
-            or (
-                user
-                and not user.is_anonymous
-                and self.acl.filter(email=user.email, role=Role.EDITOR).exists()
-            )
+        return self.user_session_authorized_owner(user, session) or (
+            user
+            and not user.is_anonymous
+            and self.acl.filter(email=user.email, role=Role.EDITOR).exists()
         )
 
     def user_session_authorized_owner(self, user, session):
@@ -258,6 +249,20 @@ class Workflow(models.Model):
             session
             and session.session_key
             and session.session_key == self.anonymous_owner_session_key
+        )
+
+    def user_session_authorized_report_viewer(self, user, session):
+        return (
+            self.public
+            or self.user_session_authorized_owner(user, session)
+            or (
+                user
+                and not user.is_anonymous
+                and self.acl.filter(
+                    email=user.email,
+                    role__in={Role.EDITOR, Role.VIEWER, Role.REPORT_VIEWER},
+                )
+            )
         )
 
     @classmethod
@@ -486,7 +491,11 @@ class Workflow(models.Model):
         super().delete(*args, **kwargs)
 
     def to_clientside(
-        self, *, include_tab_slugs: bool = True, include_block_slugs: Bool = True
+        self,
+        *,
+        include_tab_slugs: bool = True,
+        include_block_slugs: Bool = True,
+        include_acl: Bool = True,
     ) -> clientside.WorkflowUpdate:
         if include_tab_slugs:
             tab_slugs = list(self.live_tabs.values_list("slug", flat=True))
@@ -497,6 +506,14 @@ class Workflow(models.Model):
             block_slugs = list(self.blocks.values_list("slug", flat=True))
         else:
             block_slugs = None  # faster (for index page)
+
+        if include_acl:
+            acl = [
+                clientside.AclEntry(email=e.email, role=e.role.value)
+                for e in self.acl.all()
+            ]
+        else:
+            acl = None  # more privacy (for report-viewer)
 
         return clientside.WorkflowUpdate(
             id=self.id,
@@ -510,10 +527,7 @@ class Workflow(models.Model):
             block_slugs=block_slugs,
             public=self.public,
             updated_at=self.updated_at,
-            acl=[
-                clientside.AclEntry(email=e.email, role=e.role.value)
-                for e in self.acl.all()
-            ],
+            acl=acl,
         )
 
 

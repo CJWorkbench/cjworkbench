@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.staticfiles import views as staticfiles_views
+from django.urls import path
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
-from django.urls import path
 
 import server.views.jsdata.timezones
+
 from . import views
 from .views import (
     acl,
@@ -113,14 +114,14 @@ urlpatterns = [
     path("api/wfmodules/<int:step_id>/value-counts", views.step_value_counts),
     path("public/moduledata/live/<int:step_id>.csv", views.step_public_csv),
     path("public/moduledata/live/<int:step_id>.json", views.step_public_json),
+    # Embeds
+    url(r"^embed/(?P<step_id>[0-9]+)/?$", views.step_embed),  # FIXME needs workflow ID
     # Parameters
     url(
         r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<step_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",
         oauth.start_authorize,
     ),
     url(r"^oauth/?$", oauth.finish_authorize),
-    # Embeds
-    url(r"^embed/(?P<step_id>[0-9]+)/?$", views.embed),  # FIXME needs workflow ID
     # 404, 403, status
     url(r"^404/$", TemplateView.as_view(template_name="404.html")),
     url(r"^403/$", TemplateView.as_view(template_name="403.html")),

@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from enum import Enum
 from typing import Any, Dict
 
@@ -83,7 +84,7 @@ def _dict_to_render_error(value: Dict[str, Any]) -> RenderError:
 
 
 def _column_to_dict(value: Column) -> Dict[str, Any]:
-    return {"name": value.name, "type": value.type.name, **dict(value.type)}
+    return {"name": value.name, "type": value.type.name, **asdict(value.type)}
 
 
 def _dict_to_column(value: Dict[str, Any]) -> ColumnType:

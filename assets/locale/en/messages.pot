@@ -292,12 +292,17 @@ msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
 msgstr ""
 
 #. default-message: Can edit
-#: assets/js/ShareModal/Role.js:14 assets/js/ShareModal/Role.js:23 assets/js/ShareModal/Role.js:39
+#: assets/js/ShareModal/Role.js:13 assets/js/ShareModal/Role.js:42
 msgid "js.ShareModal.Role.editor"
 msgstr ""
 
+#. default-message: Can only view report
+#: assets/js/ShareModal/Role.js:17 assets/js/ShareModal/Role.js:58
+msgid "js.ShareModal.Role.report-viewer"
+msgstr ""
+
 #. default-message: Can view
-#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:24 assets/js/ShareModal/Role.js:32
+#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:50
 msgid "js.ShareModal.Role.viewer"
 msgstr ""
 
@@ -2393,7 +2398,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:620
+#: cjwkernel/pandas/types.py:566
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 

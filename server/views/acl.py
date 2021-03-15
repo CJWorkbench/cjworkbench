@@ -1,17 +1,33 @@
 import json
+from typing import Callable
 
 from django import forms
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 
 from cjwstate.models import AclEntry, Workflow
 from cjwstate.models.fields import Role
 
-from .auth import loads_workflow_for_owner
-
 # access-control lists
+
+
+def lookup_workflow_and_auth(
+    auth: Callable[[Workflow, HttpRequest], None], pk: int, request: HttpRequest
+) -> Workflow:
+    """Find a Workflow based on its id.
+
+    Raise Http404 if the Workflow does not exist and PermissionDenied if the
+    workflow _does_ exist but the user does not have access.
+    """
+    workflow = get_object_or_404(Workflow, pk=pk)
+
+    if not auth(workflow, request):
+        raise PermissionDenied()
+
+    return workflow
 
 
 class AclEntryForm(forms.Form):
@@ -24,9 +40,11 @@ class AclEntryForm(forms.Form):
 class Entry(View):
     form_class = AclEntryForm
 
-    @method_decorator(loads_workflow_for_owner)
-    def put(self, request: HttpRequest, workflow: Workflow, *, email: str):
+    def put(self, request: HttpRequest, workflow_id: int, *, email: str):
         """Set a user's access to a Workflow."""
+        workflow = lookup_workflow_and_auth(
+            Workflow.request_authorized_owner, workflow_id, request
+        )
         if workflow.is_anonymous:
             return JsonResponse({"error": "cannot-share-anonymous"}, status=404)
 
@@ -54,9 +72,11 @@ class Entry(View):
 
         return HttpResponse(status=204)
 
-    @method_decorator(loads_workflow_for_owner)
-    def delete(self, request: HttpRequest, workflow: Workflow, *, email: str):
+    def delete(self, request: HttpRequest, workflow_id: int, *, email: str):
         """Remove a user's access to a Workflow."""
+        workflow = lookup_workflow_and_auth(
+            Workflow.request_authorized_owner, workflow_id, request
+        )
         if workflow.is_anonymous:
             return JsonResponse({"error": "cannot-share-anonymous"}, status=404)
 

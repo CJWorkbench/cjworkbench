@@ -161,10 +161,8 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()
         workflow.acl.create(email="a@example.org", role=Role.REPORT_VIEWER)
-        ret = self.run_handler(
-            handle_read, user=user, session=session, workflow=workflow
-        )
-        self.assertHandlerResponse(ret, {"role": "read"})
+        ret = self.run_handler(handle_read, user=user, workflow=workflow)
+        self.assertHandlerResponse(ret, error=("AuthError: no read access to workflow"))
 
     def test_auth_read_anonymous_owner(self):
         user = AnonymousUser()

@@ -4,37 +4,53 @@ import datetime
 import json
 from dataclasses import dataclass
 from http import HTTPStatus as status
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 
+import server.utils
+from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Workflow, Step, Tab
+from cjwstate.models import Step, Tab, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjwstate.modules.types import ModuleZipfile
 from cjwstate.models.reports import build_report_for_workflow
+from cjwstate.modules.types import ModuleZipfile
 from server.models.course import CourseLookup
 from server.models.lesson import LessonLookup
 from server.serializers import (
     JsonizeContext,
     jsonize_clientside_init,
-    jsonize_user,
     jsonize_clientside_workflow,
+    jsonize_user,
 )
-import server.utils
 from server.settingsutils import workbench_user_display
-from .auth import loads_workflow_for_read, loads_workflow_for_write
-from cjworkbench.i18n import default_locale
+
+
+def lookup_workflow_and_auth(
+    auth: Callable[[Workflow, HttpRequest], None], pk: int, request: HttpRequest
+) -> Workflow:
+    """Find a Workflow based on its id.
+
+    Raise Http404 if the Workflow does not exist and PermissionDenied if the
+    workflow _does_ exist but the user does not have access.
+    """
+    workflow = get_object_or_404(Workflow, pk=pk)
+
+    if not auth(workflow, request):
+        raise PermissionDenied()
+
+    return workflow
 
 
 def _get_request_jsonize_context(
@@ -225,8 +241,10 @@ def _lesson_redirect_url(slug) -> Optional[str]:
 
 
 # no login_required as logged out users can view example/public workflows
-@loads_workflow_for_read
-def render_workflow(request: HttpRequest, workflow: Workflow):
+def render_workflow(request: HttpRequest, workflow_id: int):
+    workflow = lookup_workflow_and_auth(
+        Workflow.request_authorized_read, workflow_id, request
+    )
     if (
         workflow.lesson_slug
         and _lesson_redirect_url(workflow.lesson_slug)
@@ -261,8 +279,10 @@ def render_workflow(request: HttpRequest, workflow: Workflow):
 
 
 class ApiDetail(View):
-    @method_decorator(loads_workflow_for_write)
-    def post(self, request: HttpRequest, workflow: Workflow):
+    def post(self, request: HttpRequest, workflow_id: int):
+        workflow = lookup_workflow_and_auth(
+            Workflow.request_authorized_write, workflow_id, request
+        )
         if request.content_type != "application/json":
             return HttpResponse(
                 "request must have type application/json",
@@ -315,8 +335,10 @@ class ApiDetail(View):
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
 class Duplicate(View):
-    @method_decorator(loads_workflow_for_read)
-    def post(self, request: HttpRequest, workflow: Workflow):
+    def post(self, request: HttpRequest, workflow_id: int):
+        workflow = lookup_workflow_and_auth(
+            Workflow.request_authorized_read, workflow_id, request
+        )
         workflow2 = workflow.duplicate(request.user)
         ctx = _get_request_jsonize_context(request, MODULE_REGISTRY.all_latest())
         json_dict = jsonize_clientside_workflow(
@@ -335,10 +357,11 @@ class Duplicate(View):
 class Report(View):
     """Render all the charts in a workflow."""
 
-    @method_decorator(loads_workflow_for_read)
-    def get(self, request: HttpRequest, workflow: Workflow):
-        modules = visible_modules(request)
-        init_state = make_init_state(request, workflow=workflow, modules=modules)
+    def get(self, request: HttpRequest, workflow_id: int):
+        workflow = lookup_workflow_and_auth(
+            Workflow.request_authorized_report_viewer, workflow_id, request
+        )
+        init_state = make_init_state(request, workflow=workflow, modules={})
         blocks = build_report_for_workflow(workflow)
         return TemplateResponse(
             request,

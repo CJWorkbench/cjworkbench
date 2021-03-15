@@ -6,18 +6,20 @@ from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.test import override_settings
-import pyarrow as pa
 
-from cjwkernel.types import Column, ColumnType, RenderResult
+import cjwstate.modules
+import pyarrow as pa
 from cjwkernel.tests.util import arrow_table
+from cjwkernel.types import Column, ColumnType, RenderResult
 from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.rendercache.io import (
-    cache_render_result,
-    delete_parquet_files_for_step,
+from cjwstate.models.fields import Role
+from cjwstate.rendercache.io import cache_render_result, delete_parquet_files_for_step
+from cjwstate.tests.utils import (
+    LoggedInTestCase,
+    create_module_zipfile,
+    create_test_user,
 )
-from cjwstate.tests.utils import LoggedInTestCase
-
 
 FakeSession = namedtuple("FakeSession", ["session_key"])
 FakeCachedRenderResult = namedtuple("FakeCachedRenderResult", ["result"])
@@ -36,6 +38,8 @@ class StepTests(LoggedInTestCase):
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
         super().setUp()  # log in
+
+        cjwstate.modules.init_module_system()  # create module tempdir
 
         self.workflow = Workflow.objects.create(name="test", owner=self.user)
         self.tab = self.workflow.tabs.create(position=0)
@@ -118,6 +122,80 @@ class StepTests(LoggedInTestCase):
                     {"Class": "economics", "F": 20, "M": 20.0},
                 ],
             },
+        )
+
+    def test_step_auth_report_viewer_denied(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.client.force_login(user)
+        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_step_auth_viewer_allowed(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.VIEWER)
+        self.client.force_login(user)
+        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_step_auth_editor_allowed(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.EDITOR)
+        self.client.force_login(user)
+        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_step_auth_report_viewer_allowed_custom_report_table(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.workflow.has_custom_report = True
+        self.workflow.save(update_fields=["has_custom_report"])
+        self.workflow.blocks.create(
+            position=0, slug="block-1", block_type="Table", tab_id=self.tab.id
+        )
+        self.client.force_login(user)
+        response = self.client.get("/api/wfmodules/%d/render" % self.step1.id)
+        self.assertEqual(
+            response.status_code, 403, "Should not have access to not-last step of tab"
+        )
+        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        self.assertEqual(
+            response.status_code, 200, "Should have access to last step of tab"
+        )
+
+    def test_step_auth_report_viewer_allowed_custom_report_chart(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.workflow.has_custom_report = True
+        self.workflow.save(update_fields=["has_custom_report"])
+        self.workflow.blocks.create(
+            position=0, slug="block-1", block_type="Chart", step_id=self.step1.id
+        )
+        self.client.force_login(user)
+        response = self.client.get("/api/wfmodules/%d/render" % self.step1.id)
+        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
+        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        self.assertEqual(
+            response.status_code,
+            200,
+            "Should not have access to non-reported Chart step",
+        )
+
+    def test_step_auth_report_viewer_allowed_custom_report_chart(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.client.force_login(user)
+        create_module_zipfile("chart", spec_kwargs={"html_output": True})
+        create_module_zipfile("notchart", spec_kwargs={"html_output": False})
+        self.step1.module_id_name = "chart"
+        self.step1.save(update_fields=["module_id_name"])
+        self.step2.module_id_name = "notchart"
+        self.step2.save(update_fields=["module_id_name"])
+        response = self.client.get("/api/wfmodules/%d/render" % self.step1.id)
+        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
+        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        self.assertEqual(
+            response.status_code, 403, "Should not have access to non-Chart step"
         )
 
     def test_step_render_null_timestamp(self):

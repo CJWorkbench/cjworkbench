@@ -274,13 +274,15 @@ msgstr ""
 "Οποιοσδήποτε μπορεί να δει και να αντιγράψει αυτή τη ροή εργασιών, και να"
 " δει το email σας."
 
-#: assets/js/ShareModal/Role.js:14 assets/js/ShareModal/Role.js:23
-#: assets/js/ShareModal/Role.js:39
+#: assets/js/ShareModal/Role.js:13 assets/js/ShareModal/Role.js:42
 msgid "js.ShareModal.Role.editor"
 msgstr "Μπορεί να επεξεργαστεί"
 
-#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:24
-#: assets/js/ShareModal/Role.js:32
+#: assets/js/ShareModal/Role.js:17 assets/js/ShareModal/Role.js:58
+msgid "js.ShareModal.Role.report-viewer"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:50
 msgid "js.ShareModal.Role.viewer"
 msgstr "Μπορεί να δει"
 
@@ -2044,7 +2046,7 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:620
+#: cjwkernel/pandas/types.py:566
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 
