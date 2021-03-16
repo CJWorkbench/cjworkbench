@@ -1,21 +1,22 @@
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.staticfiles import views as staticfiles_views
-from django.urls import path
+from django.urls import include, path
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
 import server.views.jsdata.timezones
 
-from . import views
 from .views import (
     acl,
     files,
     health,
+    importfromgithub,
     jsdata,
     lessons,
+    # modules,
     oauth,
-    settings,
+    steps,
     tusd_hooks,
     workflows,
 )
@@ -99,23 +100,48 @@ urlpatterns = [
         r"^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$",
         acl.Entry.as_view(),
     ),
-    url(r"^api/importfromgithub/?$", views.import_from_github),
+    url(r"^api/importfromgithub/?$", importfromgithub.import_from_github),
     # Decent URLs
-    url(r"^workflows/(?P<workflow_id>[0-9]+)/report$", workflows.Report.as_view()),
     path(
-        "workflows/<int:workflow_id>/tiles/<slug:step_slug>/delta-<int:delta_id>/<int:tile_row>,<int:tile_column>.json",
-        views.step_tile,
+        "workflows/<int:workflow_id>/",
+        include(
+            [
+                path("report", workflows.Report.as_view()),
+                # path("steps/<slug:step_slug>/", include([
+                #     path("delta-<int:delta_id>/", include([
+                #         path("result-json.json", steps.result_json),
+                #         path("result-table-slice.json", steps.result_table_slice),
+                #         path("result-table.csv", steps.result_table_csv),
+                #         path("result-table.json", steps.result_table_json),
+                #     ]))
+                # ])),
+                path(
+                    "tiles/<slug:step_slug>/delta-<int:delta_id>/<int:tile_row>,<int:tile_column>.json",
+                    steps.tile,
+                ),
+            ]
+        ),
     ),
-    # Steps
-    # TODO: "render" and "output" are bad names. Differentiate them.
-    path("api/wfmodules/<int:step_id>/render", views.step_render),
-    path("api/wfmodules/<int:step_id>/output", views.step_output),
-    path("api/wfmodules/<int:step_id>/embeddata", views.step_embeddata),
-    path("api/wfmodules/<int:step_id>/value-counts", views.step_value_counts),
-    path("public/moduledata/live/<int:step_id>.csv", views.step_public_csv),
-    path("public/moduledata/live/<int:step_id>.json", views.step_public_json),
-    # Embeds
-    url(r"^embed/(?P<step_id>[0-9]+)/?$", views.step_embed),  # FIXME needs workflow ID
+    # path(
+    #     "modules/<slug:module_slug>.html",
+    #     modules.module_html,
+    # ),
+    # Steps -- deprecated URLs
+    #
+    # The "output" and "public_csv"/"public_json" URLs are widely used online.
+    # We stopped publishing them [2021-03-17]. TODO migrate our users away from
+    # them.
+    path("api/wfmodules/<int:step_id>/render", steps.deprecated_render),  # DELETEME
+    path("api/wfmodules/<int:step_id>/output", steps.deprecated_output),
+    path(
+        "api/wfmodules/<int:step_id>/embeddata", steps.deprecated_embeddata
+    ),  # DELETEME
+    path(
+        "api/wfmodules/<int:step_id>/value-counts", steps.deprecated_value_counts
+    ),  # DELETEME
+    path("public/moduledata/live/<int:step_id>.csv", steps.deprecated_public_csv),
+    path("public/moduledata/live/<int:step_id>.json", steps.deprecated_public_json),
+    url(r"^embed/(?P<step_id>[0-9]+)/?$", steps.deprecated_embed),
     # Parameters
     url(
         r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<step_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",

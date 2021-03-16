@@ -167,7 +167,7 @@ def int_or_none(x):
 
 
 # /render: return output table of this module
-async def step_render(request: HttpRequest, step_id: int):
+async def deprecated_render(request: HttpRequest, step_id: int):
     # Get first and last row from query parameters, or default to all if not
     # specified
     try:
@@ -204,7 +204,7 @@ async def step_render(request: HttpRequest, step_id: int):
 
 # /tiles/:slug/v:delta_id/:tile_row,:tile_column.json: table data
 @require_GET
-def step_tile(
+def tile(
     request: HttpRequest,
     workflow_id: int,
     step_slug: str,
@@ -257,7 +257,7 @@ def step_tile(
 
 
 @xframe_options_exempt
-async def step_output(request: HttpRequest, step_id: int):
+async def deprecated_output(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
     _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
     try:
@@ -270,7 +270,7 @@ async def step_output(request: HttpRequest, step_id: int):
     return HttpResponse(content=html)
 
 
-async def step_embeddata(request: HttpRequest, step_id: int):
+async def deprecated_embeddata(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
     _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
@@ -287,7 +287,7 @@ async def step_embeddata(request: HttpRequest, step_id: int):
     return JsonResponse(result_json, safe=False)
 
 
-async def step_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
+async def deprecated_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
     try:
         colname = request.GET["column"]
     except KeyError:
@@ -358,7 +358,7 @@ async def step_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
 
 
 @xframe_options_exempt
-async def step_embed(request: HttpRequest, step_id: int):
+async def deprecated_embed(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
     workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
@@ -514,7 +514,7 @@ async def _step_to_text_stream(
         return output
 
 
-async def step_public_json(request: HttpRequest, step_id: int) -> FileResponse:
+async def deprecated_public_json(request: HttpRequest, step_id: int) -> FileResponse:
     # raise Http404, PermissionDenied
     workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
@@ -544,7 +544,7 @@ async def step_public_json(request: HttpRequest, step_id: int) -> FileResponse:
     )
 
 
-async def step_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
+async def deprecated_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
     # raise Http404, PermissionDenied
     workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
 
