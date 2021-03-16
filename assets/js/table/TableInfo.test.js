@@ -17,7 +17,9 @@ describe('TableInfo', () => {
           nRows={10}
           nColumns={3}
           isReadOnly={false}
-          selectedStepId={99}
+          workflowId={123}
+          stepId={99}
+          stepSlug='step-99'
           selectedRowIndexes={[]}
           onClickRowsAction={jest.fn()}
           {...extraProps}

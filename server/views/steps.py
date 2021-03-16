@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.cache import add_never_cache_headers, patch_response_headers
 from django.views.decorators.http import require_GET
@@ -108,6 +108,9 @@ def _load_workflow_and_step_sync(
             return workflow, step
     except (Workflow.DoesNotExist, Step.DoesNotExist):
         raise Http404()
+
+
+_load_workflow_and_step = database_sync_to_async(_load_workflow_and_step_sync)
 
 
 @database_sync_to_async
@@ -514,10 +517,7 @@ async def _step_to_text_stream(
         return output
 
 
-async def deprecated_public_json(request: HttpRequest, step_id: int) -> FileResponse:
-    # raise Http404, PermissionDenied
-    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
-
+async def _render_result_table_json(workflow: Workflow, step: Step) -> HttpResponse:
     try:
         output = await _step_to_text_stream(step, "json")
     except CorruptCacheError:
@@ -544,10 +544,23 @@ async def deprecated_public_json(request: HttpRequest, step_id: int) -> FileResp
     )
 
 
-async def deprecated_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
+async def current_result_table_json(
+    request: HttpRequest, workflow_id: int, step_slug: str
+) -> HttpResponse:
+    # raise Http404, PermissionDenied
+    workflow, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    return await _render_result_table_json(workflow, step)
+
+
+async def deprecated_public_json(request: HttpRequest, step_id: int) -> HttpResponse:
     # raise Http404, PermissionDenied
     workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    # TODO turn this into a redirect. This will break things for API users
+    # because their HTTP clients might not follow redirects.
+    return await _render_result_table_json(workflow, step)
 
+
+async def _render_result_table_csv(workflow: Workflow, step: Step) -> HttpResponse:
     try:
         output = await _step_to_text_stream(step, "csv")
     except CorruptCacheError:
@@ -574,3 +587,19 @@ async def deprecated_public_csv(request: HttpRequest, step_id: int) -> FileRespo
         ),
         content_type="text/csv; charset=utf-8; header=present",
     )
+
+
+async def current_result_table_csv(
+    request: HttpRequest, workflow_id: int, step_slug: str
+) -> HttpResponse:
+    # raise Http404, PermissionDenied
+    workflow, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    return await _render_result_table_csv(workflow, step)
+
+
+async def deprecated_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
+    # raise Http404, PermissionDenied
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    # TODO turn this into a redirect. This will break things for API users
+    # because their HTTP clients might not follow redirects.
+    return await _render_result_table_csv(workflow, step)

@@ -14,10 +14,12 @@ const NoStepTableColumns = [
 ]
 const NoStepLoadRows = () =>
   Promise.resolve([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
-const NoStepTable = () => (
+const NoStepTable = (props) => (
   <TableView
     loadRows={NoStepLoadRows}
     isReadOnly
+    workflowId={props.workflowId}
+    stepSlug={null}
     stepId={null}
     deltaId={null}
     columns={NoStepTableColumns}
@@ -29,9 +31,11 @@ const NoStepTable = () => (
 const BusyStepTable = () => <Spinner />
 
 // UnreachableStepTable: shown when selected Step comes after an error
-const UnreachableStepTable = () => (
+const UnreachableStepTable = (props) => (
   <TableView
     isReadOnly
+    workflowId={props.workflowId}
+    stepSlug={null}
     stepId={null}
     deltaId={null}
     columns={NoStepTableColumns}
@@ -43,6 +47,8 @@ const UnreachableStepTable = () => (
 const OkStepTable = memo(function OkStepTable ({
   isLoaded,
   isReadOnly,
+  workflowId,
+  stepSlug,
   stepId,
   deltaId,
   columns,
@@ -54,6 +60,8 @@ const OkStepTable = memo(function OkStepTable ({
       <TableView
         isReadOnly={isReadOnly}
         loadRows={loadRows}
+        workflowId={workflowId}
+        stepSlug={stepSlug}
         stepId={stepId}
         deltaId={deltaId}
         columns={columns}
@@ -70,11 +78,11 @@ const TableSwitcherContents = memo(function TableSwitcherContents ({
   ...props
 }) {
   if (status === null) {
-    return <NoStepTable />
+    return <NoStepTable workflowId={props.workflowId} />
   } else if (status === 'busy') {
-    return <BusyStepTable />
+    return <BusyStepTable workflowId={props.workflowId} />
   } else if (status === 'unreachable') {
-    return <UnreachableStepTable />
+    return <UnreachableStepTable workflowId={props.workflowId} />
   } else {
     return <OkStepTable nRows={nRows} {...props} />
   }
@@ -98,7 +106,9 @@ export default class TableSwitcher extends PureComponent {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
-    stepId: PropTypes.number, // or null, if no selection
+    workflowId: PropTypes.number.isRequired,
+    stepSlug: PropTypes.string, // or null, if no selection
+    stepId: PropTypes.number, // or null, if no selection; deprecated
     deltaId: PropTypes.number, // or null, if status!=ok
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
     columns: PropTypes.arrayOf(

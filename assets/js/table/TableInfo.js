@@ -11,9 +11,10 @@ export default class TableInfo extends PureComponent {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown
     isReadOnly: PropTypes.bool.isRequired,
+    workflowId: PropTypes.number.isRequired,
     stepId: PropTypes.number, // or null if none selected
-    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired)
-      .isRequired
+    stepSlug: PropTypes.string, // or null if none selected
+    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired
   }
 
   state = {
@@ -32,6 +33,8 @@ export default class TableInfo extends PureComponent {
     const {
       nRows,
       nColumns,
+      workflowId,
+      stepSlug,
       stepId,
       selectedRowIndexes,
       isReadOnly
@@ -80,7 +83,7 @@ export default class TableInfo extends PureComponent {
               )}
         </div>
 
-        {!stepId
+        {!stepSlug
           ? null
           : (
             <>
@@ -95,7 +98,8 @@ export default class TableInfo extends PureComponent {
               </button>
               <ExportModal
                 open={isExportModalOpen}
-                stepId={stepId}
+                workflowId={workflowId}
+                stepSlug={stepSlug}
                 toggle={this.closeExportModal}
               />
             </>

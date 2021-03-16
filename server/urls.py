@@ -107,14 +107,30 @@ urlpatterns = [
         include(
             [
                 path("report", workflows.Report.as_view()),
-                # path("steps/<slug:step_slug>/", include([
-                #     path("delta-<int:delta_id>/", include([
-                #         path("result-json.json", steps.result_json),
-                #         path("result-table-slice.json", steps.result_table_slice),
-                #         path("result-table.csv", steps.result_table_csv),
-                #         path("result-table.json", steps.result_table_json),
-                #     ]))
-                # ])),
+                path(
+                    "steps/<slug:step_slug>/",
+                    include(
+                        [
+                            path(
+                                "delta-<int:delta_id>/",
+                                include(
+                                    [
+                                        # path("result-json.json", steps.result_json),
+                                        # path("result-table-slice.json", steps.result_table_slice),
+                                    ]
+                                ),
+                            ),
+                            path(
+                                "current-result-table.csv",
+                                steps.current_result_table_csv,
+                            ),
+                            path(
+                                "current-result-table.json",
+                                steps.current_result_table_json,
+                            ),
+                        ],
+                    ),
+                ),
                 path(
                     "tiles/<slug:step_slug>/delta-<int:delta_id>/<int:tile_row>,<int:tile_column>.json",
                     steps.tile,

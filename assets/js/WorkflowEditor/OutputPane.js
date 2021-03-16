@@ -94,7 +94,7 @@ export class OutputPane extends Component {
   }
 
   render () {
-    const { isReadOnly, loadRows, step, stepBeforeError } = this.props
+    const { isReadOnly, loadRows, step, stepBeforeError, workflowId } = this.props
     const stepForTable = this.stepForTable
     const className =
       'outputpane module-' + (step ? step.status : 'unreachable')
@@ -114,6 +114,8 @@ export class OutputPane extends Component {
           : null}
         <DelayedTableSwitcher
           key='table'
+          workflowId={workflowId}
+          stepSlug={stepForTable ? stepForTable.slug : null}
           stepId={stepForTable ? stepForTable.id : null}
           status={stepForTable ? stepForTable.status : null}
           deltaId={stepForTable ? stepForTable.deltaId : null}
@@ -167,6 +169,7 @@ function mapStateToProps (state) {
     // to give TableSwitcher a "busy"-status Step).
     step = {
       id: -1,
+      slug: null,
       module_id_name: '',
       status: 'busy',
       cached_render_result_delta_id: null,
@@ -181,6 +184,7 @@ function mapStateToProps (state) {
     const lastGood = stepArray[stepIndex - 1]
     stepBeforeError = {
       id: lastGood.id,
+      slug: lastGood.slug,
       deltaId: lastGood.cached_render_result_delta_id,
       status: stepStatus(lastGood),
       columns: lastGood.output_columns,
@@ -193,6 +197,7 @@ function mapStateToProps (state) {
     step: step
       ? {
           id: step.id,
+          slug: step.slug,
           htmlOutput: modules[step.module]
             ? modules[step.module].has_html_output
             : false,

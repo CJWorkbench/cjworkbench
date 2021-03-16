@@ -48,6 +48,8 @@ describe('TableView', () => {
       <ConnectedTableView
         store={store}
         isReadOnly={false}
+        workflowId={123}
+        stepSlug='step-1'
         stepId={100}
         deltaId={1}
         status='ok'
@@ -88,7 +90,7 @@ describe('TableView', () => {
           'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
         },
         steps: {
-          2: { tab_slug: 'tab-1' },
+          2: { slug: 'step-2', tab_slug: 'tab-1' },
           3: {}
         },
         modules: {
@@ -98,7 +100,7 @@ describe('TableView', () => {
       api
     )
 
-    const tree = wrapper(store, { stepId: 2 })
+    const tree = wrapper(store, { stepSlug: 'step-2', stepId: 2 })
     tree
       .find('DataGrid')
       .instance()
@@ -135,7 +137,7 @@ describe('TableView', () => {
           'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
         },
         steps: {
-          2: { tab_slug: 'tab-1' },
+          2: { slug: 'step-2', tab_slug: 'tab-1' },
           3: {}
         },
         modules: {
@@ -145,7 +147,7 @@ describe('TableView', () => {
       api
     )
 
-    const tree = wrapper(store, { stepId: 2 })
+    const tree = wrapper(store, { stepSlug: 'step-2', stepId: 2 })
     await tick() // load data
     tree
       .find('DataGrid')
@@ -172,7 +174,7 @@ describe('TableView', () => {
   })
 
   it('blanks table when no module id', () => {
-    const tree = wrapper(null, {}, { stepId: undefined })
+    const tree = wrapper(null, {}, { stepSlug: null, stepId: undefined })
     expect(tree.find('.outputpane-header')).toHaveLength(1)
     expect(tree.find('.outputpane-data')).toHaveLength(1)
     // And we can see it did not call api.render, because that does not exist

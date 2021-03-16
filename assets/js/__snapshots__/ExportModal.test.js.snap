@@ -3,8 +3,9 @@
 exports[`ExportModal should match snapshot 1`] = `
 <ExportModal
   open={true}
-  stepId={415}
+  stepSlug="step-1"
   toggle={[MockFunction]}
+  workflowId={123}
 >
   <Modal
     className="export"
@@ -72,7 +73,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             <input
                               name="url"
                               readonly=""
-                              value="http://localhost/public/moduledata/live/415.csv"
+                              value="http://localhost/workflows/123/steps/step-1/current-result-table.csv"
                             />
                           </div>
                           <button
@@ -82,7 +83,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           </button>
                           <a
                             download=""
-                            href="http://localhost/public/moduledata/live/415.csv"
+                            href="http://localhost/workflows/123/steps/step-1/current-result-table.csv"
                           >
                             Download
                           </a>
@@ -101,7 +102,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             <input
                               name="url"
                               readonly=""
-                              value="http://localhost/public/moduledata/live/415.json"
+                              value="http://localhost/workflows/123/steps/step-1/current-result-table.json"
                             />
                           </div>
                           <button
@@ -111,7 +112,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           </button>
                           <a
                             download=""
-                            href="http://localhost/public/moduledata/live/415.json"
+                            href="http://localhost/workflows/123/steps/step-1/current-result-table.json"
                           >
                             Download
                           </a>
@@ -202,7 +203,7 @@ exports[`ExportModal should match snapshot 1`] = `
                     <dd>
                       <ShareUrl
                         download={true}
-                        url="http://localhost/public/moduledata/live/415.csv"
+                        url="http://localhost/workflows/123/steps/step-1/current-result-table.csv"
                       >
                         <div
                           className="share-url"
@@ -213,7 +214,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             <input
                               name="url"
                               readOnly={true}
-                              value="http://localhost/public/moduledata/live/415.csv"
+                              value="http://localhost/workflows/123/steps/step-1/current-result-table.csv"
                             />
                           </div>
                           <button
@@ -231,7 +232,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           </button>
                           <a
                             download={true}
-                            href="http://localhost/public/moduledata/live/415.csv"
+                            href="http://localhost/workflows/123/steps/step-1/current-result-table.csv"
                             onClick={[Function]}
                           >
                             <Trans
@@ -260,7 +261,7 @@ exports[`ExportModal should match snapshot 1`] = `
                     <dd>
                       <ShareUrl
                         download={true}
-                        url="http://localhost/public/moduledata/live/415.json"
+                        url="http://localhost/workflows/123/steps/step-1/current-result-table.json"
                       >
                         <div
                           className="share-url"
@@ -271,7 +272,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             <input
                               name="url"
                               readOnly={true}
-                              value="http://localhost/public/moduledata/live/415.json"
+                              value="http://localhost/workflows/123/steps/step-1/current-result-table.json"
                             />
                           </div>
                           <button
@@ -289,7 +290,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           </button>
                           <a
                             download={true}
-                            href="http://localhost/public/moduledata/live/415.json"
+                            href="http://localhost/workflows/123/steps/step-1/current-result-table.json"
                             onClick={[Function]}
                           >
                             <Trans
@@ -313,7 +314,7 @@ exports[`ExportModal should match snapshot 1`] = `
                 >
                   <button
                     className="button-blue action-button test-done-button"
-                    onClick={[Function]}
+                    onClick={[MockFunction]}
                     type="button"
                   >
                     <Trans

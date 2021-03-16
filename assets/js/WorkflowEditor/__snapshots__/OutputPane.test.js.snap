@@ -11,6 +11,8 @@ exports[`OutputPane matches snapshot 1`] = `
     loadRows={[MockFunction]}
     status="ok"
     stepId={987}
+    stepSlug="step-1"
+    workflowId={123}
   />
 </div>
 `;
@@ -28,6 +30,8 @@ exports[`OutputPane renders when no module id 1`] = `
     nRows={null}
     status={null}
     stepId={null}
+    stepSlug={null}
+    workflowId={123}
   />
 </div>
 `;

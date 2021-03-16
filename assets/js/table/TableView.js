@@ -15,7 +15,9 @@ export const NMaxColumns = 100
 export class TableView extends PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    stepId: PropTypes.number, // immutable; null for placeholder table
+    workflowId: PropTypes.number.isRequired,
+    stepSlug: PropTypes.string, // null for placeholder table
+    stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
     deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(
       PropTypes.shape({
@@ -54,7 +56,7 @@ export class TableView extends PureComponent {
   render () {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
-    const { loadRows, stepId, deltaId, isReadOnly, columns, nRows } = this.props
+    const { loadRows, workflowId, stepSlug, stepId, deltaId, isReadOnly, columns, nRows } = this.props
     const tooWide = columns.length > NMaxColumns
 
     let gridView
@@ -101,9 +103,11 @@ export class TableView extends PureComponent {
       <div className='outputpane-table'>
         <TableInfo
           isReadOnly={isReadOnly}
+          workflowId={workflowId}
           stepId={stepId}
-          nRows={stepId ? nRows : null}
-          nColumns={stepId && columns ? columns.length : null}
+          stepSlug={stepSlug}
+          nRows={stepSlug ? nRows : null}
+          nColumns={stepSlug && columns ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />
         <div className='outputpane-data'>{gridView}</div>

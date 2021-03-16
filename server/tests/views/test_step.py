@@ -484,3 +484,61 @@ class StepTests(LoggedInTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), {"rows": [["a"], ["b"]]})
+
+    def test_current_table_json(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            json.loads(b"".join(response.streaming_content)),
+            [{"A": "a"}, {"A": "b"}],
+        )
+
+    def test_deprecated_current_table_json(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+
+        response = self.client.get(f"/public/moduledata/live/{self.step2.id}.json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            json.loads(b"".join(response.streaming_content)),
+            [{"A": "a"}, {"A": "b"}],
+        )
+
+    def test_current_table_csv(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.csv"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
+
+    def test_deprecated_current_table_csv(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+
+        response = self.client.get(f"/public/moduledata/live/{self.step2.id}.csv")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")

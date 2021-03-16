@@ -7,7 +7,7 @@ function areSameTable (props1, props2) {
   if (props1 === null && props2 === null) return true // both null => true
   if ((props1 === null) !== (props2 === null)) return false // one null => false
 
-  return props1.stepId === props2.stepId && props1.deltaId === props2.deltaId
+  return props1.stepSlug === props2.stepSlug && props1.deltaId === props2.deltaId
 }
 
 /**
@@ -16,15 +16,15 @@ function areSameTable (props1, props2) {
  * This forces React to re-render new tables and saves React from re-rendering
  * when switching from "loading" to "loaded".
  */
-function tableKey ({ stepId, deltaId }) {
-  return `table-${stepId}-${deltaId}`
+function tableKey ({ stepSlug, deltaId }) {
+  return `table-${stepSlug}-${deltaId}`
 }
 
 /**
  * Given props, return the props we'll pass to <TableSwitcher>.
  */
-function tableProps ({ stepId, deltaId, columns, nRows, status }) {
-  return { stepId, deltaId, columns, nRows, status }
+function tableProps ({ workflowId, stepSlug, stepId, deltaId, columns, nRows, status }) {
+  return { workflowId, stepSlug, stepId, deltaId, columns, nRows, status }
 }
 
 /**
@@ -65,7 +65,9 @@ export default class DelayedTableSwitcher extends PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
-    stepId: PropTypes.number, // or null, if no selection
+    workflowId: PropTypes.number.isRequired,
+    stepSlug: PropTypes.string, // or null, if no selection
+    stepId: PropTypes.number, // or null, if no selection; deprecated
     deltaId: PropTypes.number, // or null, if status!=ok
     status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
     columns: PropTypes.arrayOf(
