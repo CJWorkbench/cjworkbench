@@ -137,7 +137,7 @@ exports[`Step, not read-only mode matches snapshot 1`] = `
             api={
               Object {
                 "createOauthAccessToken": [MockFunction],
-                "valueCounts": [MockFunction],
+                "stepResultColumnValueCounts": [MockFunction],
               }
             }
             applyQuickFix={[Function]}

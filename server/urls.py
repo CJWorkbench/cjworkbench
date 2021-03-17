@@ -119,6 +119,10 @@ urlpatterns = [
                                             "result-table-slice.json",
                                             steps.result_table_slice,
                                         ),
+                                        path(
+                                            "result-column-value-counts.json",
+                                            steps.result_column_value_counts,
+                                        ),
                                     ]
                                 ),
                             ),

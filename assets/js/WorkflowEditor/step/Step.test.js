@@ -21,7 +21,7 @@ describe('Step, not read-only mode', () => {
   beforeEach(() => {
     mockApi = {
       createOauthAccessToken: jest.fn(),
-      valueCounts: jest.fn()
+      stepResultColumnValueCounts: jest.fn()
     }
   })
 

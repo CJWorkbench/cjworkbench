@@ -17,7 +17,7 @@ export default class ParamsForm extends PureComponent {
     api: PropTypes.shape({
       // We should nix this. Try to remove its properties, one by one....:
       createOauthAccessToken: PropTypes.func.isRequired, // for secrets
-      valueCounts: PropTypes.func.isRequired // for ValueFilter/Refine
+      stepResultColumnValueCounts: PropTypes.func.isRequired // for ValueFilter/Refine
     }),
     fields: PropTypes.arrayOf(
       PropTypes.shape({
@@ -63,6 +63,7 @@ export default class ParamsForm extends PureComponent {
       }).isRequired
     ).isRequired, // may be empty
     isStepBusy: PropTypes.bool.isRequired,
+    inputStepSlug: PropTypes.string, // or `null`
     inputStepId: PropTypes.number, // or `null`
     inputDeltaId: PropTypes.number, // or `null` ... TODO nix by making 0 fields depend on it
     inputColumns: PropTypes.arrayOf(
@@ -236,6 +237,7 @@ export default class ParamsForm extends PureComponent {
       stepSlug,
       stepOutputErrors,
       isStepBusy,
+      inputStepSlug,
       inputStepId,
       inputDeltaId,
       inputColumns,
@@ -306,6 +308,7 @@ export default class ParamsForm extends PureComponent {
                 stepSlug={stepSlug}
                 stepOutputErrors={stepOutputErrors}
                 isStepBusy={isStepBusy}
+                inputStepSlug={inputStepSlug}
                 inputStepId={inputStepId}
                 inputDeltaId={inputDeltaId}
                 inputColumns={inputColumns}

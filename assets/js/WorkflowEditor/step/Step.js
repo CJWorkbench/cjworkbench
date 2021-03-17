@@ -585,6 +585,7 @@ export class Step extends PureComponent {
                       this.props.step ? this.props.step.output_errors : []
                     }
                       isStepBusy={this.stepStatus === 'busy'}
+                      inputStepSlug={inputStep ? inputStep.slug : null}
                       inputStepId={inputStep ? inputStep.id : null}
                       inputDeltaId={
                       inputStep

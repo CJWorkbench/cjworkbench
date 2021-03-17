@@ -344,6 +344,80 @@ async def deprecated_embeddata(request: HttpRequest, step_id: int):
     return JsonResponse(result_json, safe=False)
 
 
+async def result_column_value_counts(
+    request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
+) -> JsonResponse:
+    try:
+        colname = request.GET["column"]
+    except KeyError:
+        return JsonResponse(
+            {"error": 'Missing a "column" parameter'}, status=status.BAD_REQUEST
+        )
+
+    if not colname:
+        # User has not yet chosen a column. Empty response.
+        return JsonResponse({"values": {}})
+
+    # raise Http404, PermissionDenied
+    _, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    cached_result = step.cached_render_result
+    if cached_result is None or cached_result.delta_id != delta_id:
+        # assume we'll get another request after execute finishes
+        return JsonResponse({"values": {}})
+
+    try:
+        column_index, column = next(
+            (i, c)
+            for i, c in enumerate(cached_result.table_metadata.columns)
+            if c.name == colname
+        )
+    except StopIteration:
+        return JsonResponse(
+            {"error": f'column "{colname}" not found'}, status=status.NOT_FOUND
+        )
+
+    if not isinstance(column.type, ColumnType.Text):
+        # We only return text values.
+        #
+        # Rationale: this is only used in Refine and Filter by Value. Both
+        # force text. The user can query a column before it's converted to
+        # text; but if he/she does, we shouldn't format as text unless we have
+        # a viable workflow that needs it. (Better would be to force the user
+        # to convert to text before doing anything else, no?)
+        return JsonResponse({"values": {}})
+
+    try:
+        # raise CorruptCacheError
+        with open_cached_render_result(cached_result) as result:
+            arrow_table = result.table.table
+            chunked_array = arrow_table.column(column_index)
+    except CorruptCacheError:
+        # We _could_ return an empty result set; but our only goal here is
+        # "don't crash" and this 404 seems to be the simplest implementation.
+        # (We assume that if the data is deleted, the user has moved elsewhere
+        # and this response is going to be ignored.)
+        return JsonResponse(
+            {"error": f'column "{colname}" not found'}, status=status.NOT_FOUND
+        )
+
+    if chunked_array.num_chunks == 0:
+        value_counts = {}
+    else:
+        pyarrow_value_counts = chunked_array.value_counts()
+        # Assume type is text. (We checked column.type is ColumnType.Text above.)
+        #
+        # values can be either a StringArray or a DictionaryArray. In either case,
+        # .to_pylist() converts to a Python List[str].
+        values = pyarrow_value_counts.field("values").to_pylist()
+        counts = pyarrow_value_counts.field("counts").to_pylist()
+
+        value_counts = {v: c for v, c in zip(values, counts) if v is not None}
+
+    response = JsonResponse({"values": value_counts})
+    patch_response_headers(response, cache_timeout=600)
+    return response
+
+
 async def deprecated_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
     try:
         colname = request.GET["column"]

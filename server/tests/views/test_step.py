@@ -320,8 +320,7 @@ class RenderTableSliceTest(StepViewTestCase):
         self.assertEqual(json.loads(response.content), [])
 
 
-class StepTests(StepViewTestCase):
-    # Test workflow with modules that implement a simple pipeline on test data
+class ResultColumnValueCountsTest(StepViewTestCase):
     def setUp(self):
         super().setUp()  # log in
 
@@ -330,32 +329,38 @@ class StepTests(StepViewTestCase):
         self.step1 = self.tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=1
         )
-        self.step2 = self.tab.steps.create(
-            order=1, slug="step-2", last_relevant_delta_id=2
+
+    def _request(self, column: str):
+        return self.client.get(
+            "/workflows/%d/steps/%s/delta-%d/result-column-value-counts.json?column=%s"
+            % (
+                self.workflow.id,
+                self.step1.slug,
+                self.step1.last_relevant_delta_id,
+                column,
+            )
         )
 
-    def test_value_counts_str(self):
+    def test_str(self):
         cache_render_result(
             self.workflow,
-            self.step2,
-            self.step2.last_relevant_delta_id,
+            self.step1,
+            self.step1.last_relevant_delta_id,
             RenderResult(arrow_table({"A": ["a", "b", "b", "a", "c", None]})),
         )
 
-        response = self.client.get(
-            f"/api/wfmodules/{self.step2.id}/value-counts?column=A"
-        )
+        response = self._request("A")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
         )
 
-    def test_value_counts_dictionary(self):
+    def test_dictionary(self):
         cache_render_result(
             self.workflow,
-            self.step2,
-            self.step2.last_relevant_delta_id,
+            self.step1,
+            self.step1.last_relevant_delta_id,
             RenderResult(
                 arrow_table(
                     {"A": pa.array(["a", "b", "b", "a", "c", None]).dictionary_encode()}
@@ -363,30 +368,26 @@ class StepTests(StepViewTestCase):
             ),
         )
 
-        response = self.client.get(
-            f"/api/wfmodules/{self.step2.id}/value-counts?column=A"
-        )
+        response = self._request("A")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content), {"values": {"a": 2, "b": 2, "c": 1}}
         )
 
-    def test_value_counts_corrupt_cache(self):
+    def test_corrupt_cache(self):
         # https://www.pivotaltracker.com/story/show/161988744
         cache_render_result(
             self.workflow,
-            self.step2,
-            self.step2.last_relevant_delta_id,
+            self.step1,
+            self.step1.last_relevant_delta_id,
             RenderResult(arrow_table({"A": ["a"]})),
         )
         # Simulate a race: we're overwriting the cache or deleting the Step
         # or some-such.
-        delete_parquet_files_for_step(self.workflow.id, self.step2.id)
+        delete_parquet_files_for_step(self.workflow.id, self.step1.id)
 
-        response = self.client.get(
-            f"/api/wfmodules/{self.step2.id}/value-counts?column=A"
-        )
+        response = self._request("A")
 
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.
@@ -397,11 +398,11 @@ class StepTests(StepViewTestCase):
             json.loads(response.content), {"error": 'column "A" not found'}
         )
 
-    def test_value_counts_disallow_non_text(self):
+    def test_disallow_non_text(self):
         cache_render_result(
             self.workflow,
-            self.step2,
-            self.step2.last_relevant_delta_id,
+            self.step1,
+            self.step1.last_relevant_delta_id,
             RenderResult(
                 arrow_table(
                     {"A": [1, 2, 3, 2, 1]},
@@ -410,36 +411,49 @@ class StepTests(StepViewTestCase):
             ),
         )
 
-        response = self.client.get(
-            f"/api/wfmodules/{self.step2.id}/value-counts?column=A"
-        )
+        response = self._request("A")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), {"values": {}})
 
-    def test_value_counts_param_invalid(self):
-        response = self.client.get(f"/api/wfmodules/{self.step2.id}/value-counts")
+    def test_missing_column_param(self):
+        response = self.client.get(
+            "/workflows/%d/steps/%s/delta-%d/result-column-value-counts.json"
+            % (self.workflow.id, self.step1.slug, self.step1.last_relevant_delta_id),
+        )
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             json.loads(response.content), {"error": 'Missing a "column" parameter'}
         )
 
-    def test_value_counts_missing_column(self):
+    def test_wrong_column(self):
         cache_render_result(
             self.workflow,
-            self.step2,
-            self.step2.last_relevant_delta_id,
+            self.step1,
+            self.step1.last_relevant_delta_id,
             RenderResult(arrow_table({"A": ["a", "b"]})),
         )
 
-        response = self.client.get(
-            f"/api/wfmodules/{self.step2.id}/value-counts?column=B"
-        )
+        response = self._request("B")
 
         self.assertEqual(response.status_code, status.NOT_FOUND)
         self.assertEqual(
             json.loads(response.content), {"error": 'column "B" not found'}
+        )
+
+
+class StepTests(StepViewTestCase):
+    def setUp(self):
+        super().setUp()  # log in
+
+        self.workflow = Workflow.objects.create(name="test", owner=self.user)
+        self.tab = self.workflow.tabs.create(position=0)
+        self.step1 = self.tab.steps.create(
+            order=0, slug="step-1", last_relevant_delta_id=1
+        )
+        self.step2 = self.tab.steps.create(
+            order=1, slug="step-2", last_relevant_delta_id=2
         )
 
     def test_tile_no_cached_result(self):

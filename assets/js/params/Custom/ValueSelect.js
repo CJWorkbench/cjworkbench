@@ -408,10 +408,10 @@ export class ValueSelect extends PureComponent {
 export default withFetchedData(
   ValueSelect,
   'valueCounts',
-  ({ api, inputStepId, selectedColumn }) =>
+  ({ api, workflowId, inputStepSlug, inputDeltaId, selectedColumn }) =>
     selectedColumn === null
       ? Promise.resolve(null)
-      : api.valueCounts(inputStepId, selectedColumn),
-  ({ inputDeltaId, selectedColumn }) =>
-    selectedColumn === null ? null : `${inputDeltaId}-${selectedColumn}`
+      : api.stepResultColumnValueCounts(workflowId, inputStepSlug, inputDeltaId, selectedColumn),
+  ({ inputStepSlug, inputDeltaId, selectedColumn }) =>
+    selectedColumn === null ? null : `${inputStepSlug}-${inputDeltaId}-${selectedColumn}`
 )

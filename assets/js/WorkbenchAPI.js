@@ -221,11 +221,9 @@ export default class WorkbenchAPI {
     return this._fetch(url)
   }
 
-  valueCounts (stepId, column) {
+  stepResultColumnValueCounts (workflowId, stepSlug, deltaId, column) {
     return this._fetch(
-      `/api/wfmodules/${stepId}/value-counts?column=${encodeURIComponent(
-        column
-      )}`
+      `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-column-value-counts.json?column=${encodeURIComponent(column)}`
     )
       .catch(err => {
         if (err instanceof RangeError) {

@@ -18,7 +18,7 @@ describe('ParamsForm', () => {
         isOwner
         isReadOnly={false}
         isZenMode={false}
-        api={{ createOauthAccessToken: jest.fn(), valueCounts: jest.fn() }}
+        api={{ createOauthAccessToken: jest.fn(), stepResultColumnValueCounts: jest.fn() }}
         fields={[]}
         files={[]}
         value={{}}
