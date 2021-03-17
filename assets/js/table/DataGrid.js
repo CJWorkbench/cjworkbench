@@ -173,7 +173,7 @@ export default class DataGrid extends PureComponent {
 
   load () {
     const min = this.firstMissingRowIndex
-    const max = min + NRowsPerPage
+    const max = Math.min(min + NRowsPerPage, this.props.nRows || 10)
     const { loadRows } = this.props
     const { loadedRows } = this.state
 
@@ -194,15 +194,14 @@ export default class DataGrid extends PureComponent {
       }
     }
 
-    loadRows(min, max).then(json => {
+    loadRows(min, max).then(rows => {
       if (this.unmounted) return
 
       const loadedRows = this.state.loadedRows.slice()
 
-      // expand the Array (filling undefined for missing values in between)
-      loadedRows[json.start_row] = null
-      // add the new rows
-      loadedRows.splice(json.start_row, json.rows.length, ...json.rows)
+      for (let i = 0; i < max - min; i++) {
+        loadedRows[min + i] = rows[i] || {}
+      }
 
       this.setState(() => {
         this.firstMissingRowIndex = null

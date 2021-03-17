@@ -24,6 +24,10 @@ async def async_noop(*args, **kwargs):
     pass
 
 
+def read_streaming_json(response):
+    return json.loads(b"".join(response.streaming_content))
+
+
 @patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
 class StepViewTestCase(LoggedInTestCase):
@@ -102,7 +106,7 @@ class RenderTableSliceTest(StepViewTestCase):
         self.assertEqual(response.status_code, 200)
         # One column more than configured limit, so client knows to display
         # "too many columns".
-        self.assertEqual(len(json.loads(response.content)["rows"][0]), 3)
+        self.assertEqual(len(read_streaming_json(response)[0]), 3)
 
     def test_data(self):
         cache_render_result(
@@ -123,17 +127,13 @@ class RenderTableSliceTest(StepViewTestCase):
         response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            json.loads(response.content),
-            {
-                "start_row": 0,
-                "end_row": 4,
-                "rows": [
-                    {"Class": "math", "F": 12, "M": 10.0},
-                    {"Class": "english", "F": 7, "M": None},
-                    {"Class": "history", "F": 13, "M": 11.0},
-                    {"Class": "economics", "F": 20, "M": 20.0},
-                ],
-            },
+            read_streaming_json(response),
+            [
+                {"Class": "math", "F": 12, "M": 10.0},
+                {"Class": "english", "F": 7, "M": None},
+                {"Class": "history", "F": 13, "M": 11.0},
+                {"Class": "economics", "F": 20, "M": 20.0},
+            ],
         )
 
     def test_auth_report_viewer_denied(self):
@@ -148,14 +148,20 @@ class RenderTableSliceTest(StepViewTestCase):
         self.workflow.acl.create(email="alice@example.org", role=Role.VIEWER)
         self.client.force_login(user)
         response = self._request_step(self.step2)
-        self.assertNotEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
 
     def test_auth_editor_allowed(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.EDITOR)
         self.client.force_login(user)
         response = self._request_step(self.step2)
-        self.assertNotEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+
+    def test_auth_user_without_acl_entry_not_allowed(self):
+        user = create_test_user("alice", "alice@example.org")
+        self.client.force_login(user)
+        response = self._request_step(self.step2)
+        self.assertEqual(response.status_code, 403)
 
     def test_auth_report_viewer_allowed_custom_report_table(self):
         user = create_test_user("alice", "alice@example.org")
@@ -171,8 +177,8 @@ class RenderTableSliceTest(StepViewTestCase):
             response.status_code, 403, "Should not have access to not-last step of tab"
         )
         response = self._request_step(self.step2)
-        self.assertNotEqual(
-            response.status_code, 403, "Should have access to last step of tab"
+        self.assertEqual(
+            response.status_code, 200, "Should have access to last step of tab"
         )
 
     def test_auth_report_viewer_allowed_custom_report_chart(self):
@@ -185,9 +191,7 @@ class RenderTableSliceTest(StepViewTestCase):
         )
         self.client.force_login(user)
         response = self._request_step(self.step1)
-        self.assertNotEqual(
-            response.status_code, 403, "Should have access to Chart step"
-        )
+        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
         response = self._request_step(self.step2)
         self.assertEqual(
             response.status_code,
@@ -206,9 +210,7 @@ class RenderTableSliceTest(StepViewTestCase):
         self.step2.module_id_name = "notchart"
         self.step2.save(update_fields=["module_id_name"])
         response = self._request_step(self.step1)
-        self.assertNotEqual(
-            response.status_code, 403, "Should have access to Chart step"
-        )
+        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
         response = self._request_step(self.step2)
         self.assertEqual(
             response.status_code, 403, "Should not have access to non-Chart step"
@@ -235,7 +237,7 @@ class RenderTableSliceTest(StepViewTestCase):
         response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            json.loads(response.content)["rows"],
+            read_streaming_json(response),
             [{"A": "2019-01-02T03:04:05.006007Z"}, {"A": None}],
         )
 
@@ -254,9 +256,7 @@ class RenderTableSliceTest(StepViewTestCase):
 
         response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            json.loads(response.content), {"end_row": 0, "rows": [], "start_row": 0}
-        )
+        self.assertEqual(json.loads(response.content), [])
 
     def test_only_rows(self):
         cache_render_result(
@@ -268,10 +268,7 @@ class RenderTableSliceTest(StepViewTestCase):
 
         response = self._request_step(self.step2, "?startrow=1&endrow=3")
         self.assertEqual(response.status_code, status.OK)
-        body = json.loads(response.content)
-        self.assertEqual(body["rows"], [{"A": 1}, {"A": 2}])
-        self.assertEqual(body["start_row"], 1)
-        self.assertEqual(body["end_row"], 3)
+        self.assertEqual(read_streaming_json(response), [{"A": 1}, {"A": 2}])
 
     def test_clip_out_of_bounds(self):
         cache_render_result(
@@ -284,10 +281,7 @@ class RenderTableSliceTest(StepViewTestCase):
         # index out of bounds should clip
         response = self._request_step(self.step2, "?startrow=-1&endrow=500")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            json.loads(response.content),
-            {"start_row": 0, "end_row": 2, "rows": [{"A": 0}, {"A": 1}]},
-        )
+        self.assertEqual(read_streaming_json(response), [{"A": 0}, {"A": 1}])
 
     def test_start_row_after_end_row(self):
         cache_render_result(
@@ -299,10 +293,7 @@ class RenderTableSliceTest(StepViewTestCase):
 
         response = self._request_step(self.step2, "?startrow=3&endrow=1")
         self.assertEqual(response.status_code, status.OK)
-        body = json.loads(response.content)
-        self.assertEqual(body["rows"], [])
-        self.assertEqual(body["start_row"], 3)
-        self.assertEqual(body["end_row"], 3)
+        self.assertEqual(read_streaming_json(response), [])
 
     def test_invalid_endrow(self):
         # index not a number -> bad request
@@ -320,11 +311,13 @@ class RenderTableSliceTest(StepViewTestCase):
         self.step2.save(update_fields=["last_relevant_delta_id"])
 
         response = self._request_slug_delta(self.step2.slug, 99)
-        self.assertEqual(response.status_code, status.NOT_FOUND)
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(json.loads(response.content), [])
 
     def test_delta_not_cached(self):
         response = self._request_step(self.step2)
-        self.assertEqual(response.status_code, status.NOT_FOUND)
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(json.loads(response.content), [])
 
 
 class StepTests(StepViewTestCase):
@@ -537,10 +530,7 @@ class StepTests(StepViewTestCase):
             f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.json"
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            json.loads(b"".join(response.streaming_content)),
-            [{"A": "a"}, {"A": "b"}],
-        )
+        self.assertEqual(read_streaming_json(response), [{"A": "a"}, {"A": "b"}])
 
     def test_deprecated_current_table_json(self):
         cache_render_result(
@@ -552,10 +542,7 @@ class StepTests(StepViewTestCase):
 
         response = self.client.get(f"/public/moduledata/live/{self.step2.id}.json")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            json.loads(b"".join(response.streaming_content)),
-            [{"A": "a"}, {"A": "b"}],
-        )
+        self.assertEqual(read_streaming_json(response), [{"A": "a"}, {"A": "b"}])
 
     def test_current_table_csv(self):
         cache_render_result(

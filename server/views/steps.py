@@ -22,7 +22,7 @@ from cjwkernel.types import ColumnType
 from cjworkbench.middleware.clickjacking import xframe_options_exempt
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import rabbitmq
-from cjwstate.models import Step, Tab, Workflow
+from cjwstate.models import AclEntry, Step, Tab, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.rendercache import (
@@ -188,21 +188,36 @@ async def result_table_slice(
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
         # assume we'll get another request after execute finishes
-        return JsonResponse(
-            {"start_row": 0, "end_row": 0, "rows": []}, status=status.NOT_FOUND
-        )
+        return JsonResponse([], safe=False)
+
+    # startrow/endrow can be None, and these still work
+    startrow = max(0, startrow or 0)
+    endrow = max(
+        startrow,
+        min(
+            cached_result.table_metadata.n_rows,
+            endrow or 2 ** 64,
+            startrow + _MaxNRowsPerRequest,
+        ),
+    )
 
     try:
-        startrow, endrow, record_json = _make_render_tuple(
-            cached_result, startrow, endrow
+        # Return one more column than configured, so client can detect "too many
+        # columns"
+        output = await _step_to_text_stream(
+            step,
+            "json",
+            "--column-range",
+            "0-%d" % (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
+            "--row-range",
+            "%d-%d" % (startrow, endrow),
         )
     except CorruptCacheError:
         # assume we'll get another request after execute finishes
-        return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
+        return JsonResponse([], safe=False)
 
-    data = '{"start_row":%d,"end_row":%d,"rows":%s}' % (startrow, endrow, record_json)
-    response = HttpResponse(
-        data.encode("utf-8"), content_type="application/json", charset="utf-8"
+    response = FileResponse(
+        output, as_attachment=False, content_type="application/json"
     )
     patch_response_headers(response, cache_timeout=600)
     return response
@@ -533,7 +548,7 @@ class SubprocessOutputFileLike(io.RawIOBase):
 
 
 async def _step_to_text_stream(
-    step: Step, format: Literal["csv", "json"]
+    step: Step, format: Literal["csv", "json"], *args
 ) -> Awaitable[SubprocessOutputFileLike]:
     """Download the step's cached result and streaming it as CSV/JSON.
 
@@ -548,7 +563,7 @@ async def _step_to_text_stream(
     # raise CorruptCacheError
     with downloaded_parquet_file(cached_result) as parquet_path:
         output = SubprocessOutputFileLike(
-            ["/usr/bin/parquet-to-text-stream", str(parquet_path), format]
+            ["/usr/bin/parquet-to-text-stream", str(parquet_path), format, *args]
         )
         await output.stdout_ready()
         # It's okay to delete the file now (i.e., exit the context manager)

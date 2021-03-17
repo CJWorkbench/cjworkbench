@@ -12,8 +12,7 @@ const NoStepTableColumns = [
   { name: '   ', type: 'text' },
   { name: '    ', type: 'text' }
 ]
-const NoStepLoadRows = () =>
-  Promise.resolve([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}])
+const NoStepLoadRows = () => Promise.resolve([])
 const NoStepTable = (props) => (
   <TableView
     loadRows={NoStepLoadRows}
@@ -31,18 +30,7 @@ const NoStepTable = (props) => (
 const BusyStepTable = () => <Spinner />
 
 // UnreachableStepTable: shown when selected Step comes after an error
-const UnreachableStepTable = (props) => (
-  <TableView
-    isReadOnly
-    workflowId={props.workflowId}
-    stepSlug={null}
-    stepId={null}
-    deltaId={null}
-    columns={NoStepTableColumns}
-    loadRows={NoStepLoadRows}
-    nRows={10}
-  />
-)
+const UnreachableStepTable = NoStepTable
 
 const OkStepTable = React.memo(function OkStepTable ({
   isLoaded,

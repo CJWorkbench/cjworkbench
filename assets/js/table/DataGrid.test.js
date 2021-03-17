@@ -17,24 +17,20 @@ describe('DataGrid', () => {
     { name: 'select-row', type: 'text' }
   ]
 
-  const testRows = {
-    start_row: 0,
-    end_row: 2,
-    rows: [
-      {
-        aaa: 9,
-        bbbb: 'foo',
-        getCell: '9',
-        'select-row': 'someval'
-      },
-      {
-        aaa: 9,
-        bbbb: '',
-        getCell: 'baz',
-        'select-row': 'someotherval'
-      }
-    ]
-  }
+  const testRows = [
+    {
+      aaa: 9,
+      bbbb: 'foo',
+      getCell: '9',
+      'select-row': 'someval'
+    },
+    {
+      aaa: 9,
+      bbbb: '',
+      getCell: 'baz',
+      'select-row': 'someotherval'
+    }
+  ]
 
   // mount() so we get componentDidMount, componentWillUnmount()
   const wrapper = async (extraProps = {}, httpResponses = [testRows]) => {
@@ -46,7 +42,7 @@ describe('DataGrid', () => {
     // mock store for <ColumnHeader>, a descendent
     const store = mockStore({ modules: {} })
 
-    const nRows = httpResponses.reduce((s, j) => s + j.rows.length, 0)
+    const nRows = httpResponses.reduce((s, j) => s + j.length, 0)
 
     const ret = mountWithI18n(
       <Provider store={store}>
@@ -107,7 +103,7 @@ describe('DataGrid', () => {
     // No content except row numbers
     expect(tree.find('.react-grid-Viewport').text()).toMatch(/12/)
 
-    expect(loadRows).toHaveBeenCalledWith(0, 200)
+    expect(loadRows).toHaveBeenCalledWith(0, 2)
 
     resolveHttpRequest(testRows)
     await tick()
@@ -220,18 +216,14 @@ describe('DataGrid', () => {
 
   it('should display "null" for none types', async () => {
     const tree = await wrapper({}, [
-      {
-        start_row: 0,
-        end_row: 1,
-        rows: [
-          {
-            aaa: null,
-            bbbb: null,
-            getCell: null,
-            'select-row': null
-          }
-        ]
-      }
+      [
+        {
+          aaa: null,
+          bbbb: null,
+          getCell: null,
+          'select-row': null
+        }
+      ]
     ])
     await tick()
     tree.update() // load data
@@ -287,11 +279,7 @@ describe('DataGrid', () => {
           'select-row': null
         }
       }
-      return {
-        start_row: start,
-        end_row: start + 200,
-        rows: arr
-      }
+      return arr
     }
 
     const tree = await wrapper({ nRows: 801 }, [
