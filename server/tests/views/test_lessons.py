@@ -266,7 +266,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         step = next(iter(state["steps"].values()))
         self.assertEqual(
             step["params"],
-            {"url": "http://localhost:8000/static/lessons/en/a-lesson/foo.txt"},
+            {"url": "http://localhost:8003/lessons/en/a-lesson/foo.txt"},
         )
 
     @patch.object(rabbitmq, "queue_fetch")
