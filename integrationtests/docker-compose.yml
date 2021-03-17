@@ -26,19 +26,11 @@ services:
     #build:
     # Depends on db+rabbitmq so they start up before integration-test
     depends_on: [ 'db', 'minio', 'rabbitmq' ]
-    environment: &common_env
-      PYTHONUNBUFFERED: '1'
-      ASGI_THREADS: '2'
-      CJW_PRODUCTION: 'True'
-      CJW_DB_HOST: db
-      CJW_DB_PASSWORD: cjworkbench
-      CJW_RABBITMQ_HOST: 'amqp://guest:guest@rabbitmq/'
-      CJW_SECRET_KEY: a-secret-key
-      CJW_MOCK_EMAIL: 'True'
+    environment:
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_S3_ENDPOINT: http://minio:9000
-      S3_BUCKET_NAME_PATTERN: "integrationtest-%s"
+      BUCKET_NAME: "integrationtest-static"
 
   migrate:
     #image:
@@ -114,7 +106,19 @@ services:
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true  # for setup-sandboxes.sh
-    environment: *common_env
+    environment: &common_env
+      PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '2'
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_RABBITMQ_HOST: 'amqp://guest:guest@rabbitmq/'
+      CJW_SECRET_KEY: a-secret-key
+      CJW_MOCK_EMAIL: 'True'
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
+      AWS_S3_ENDPOINT: http://minio:9000
+      S3_BUCKET_NAME_PATTERN: "integrationtest-%s"
 
   renderer:
     #image:

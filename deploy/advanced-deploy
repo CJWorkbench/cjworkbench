@@ -42,7 +42,7 @@ echo -n "Setting frontend, fetcher, renderer and cron images to $SHA on $ENV..."
 repo="gcr.io/workbenchdata-ci"
 $KUBECTL set image deployment/fetcher-deployment fetcher=$repo/fetcher:$SHA setup-sandboxes=$repo/fetcher:$SHA teardown-sandboxes=$repo/fetcher:$SHA >/dev/null
 $KUBECTL set image deployment/renderer-deployment renderer=$repo/renderer:$SHA setup-sandboxes=$repo/renderer:$SHA teardown-sandboxes=$repo/renderer:$SHA >/dev/null
-$KUBECTL set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-sandboxes=$repo/renderer:$SHA teardown-sandboxes=$repo/renderer:$SHA >/dev/null
+$KUBECTL set image deployment/frontend-deployment frontend=$repo/frontend:$SHA setup-sandboxes=$repo/frontend:$SHA teardown-sandboxes=$repo/frontend:$SHA >/dev/null
 $KUBECTL set image deployment/cron-delta-deleter-deployment cron=$repo/cron:$SHA >/dev/null
 $KUBECTL set image deployment/cron-deployment cron=$repo/cron:$SHA >/dev/null
 $KUBECTL set image deployment/cron-expired-session-deleter-deployment cron=$repo/cron:$SHA >/dev/null

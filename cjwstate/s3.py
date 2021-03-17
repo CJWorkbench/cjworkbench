@@ -96,7 +96,6 @@ layer = Layer()
 
 
 UserFilesBucket = settings.S3_BUCKET_NAME_PATTERN % "user-files"
-StaticFilesBucket = settings.S3_BUCKET_NAME_PATTERN % "static"
 StoredObjectsBucket = settings.S3_BUCKET_NAME_PATTERN % "stored-objects"
 ExternalModulesBucket = settings.S3_BUCKET_NAME_PATTERN % "external-modules"
 CachedRenderResultsBucket = settings.S3_BUCKET_NAME_PATTERN % "cached-render-results"

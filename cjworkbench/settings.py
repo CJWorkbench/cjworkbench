@@ -268,30 +268,9 @@ LANGUAGES = [(locale, locale) for locale in supported_locales]
 
 LOCALE_PATHS = (os.path.join(BASE_DIR, "assets", "locale"),)
 
-# Static files. CSS, JavaScript are bundled by webpack, but fonts, test data,
-# images, etc. are not
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "server.staticfiles.LessonSupportDataFinder",
-    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
-]
-STATIC_ROOT = normpath(join(DJANGO_ROOT, "static"))
-STATICFILES_DIRS = (
-    ("bundles", os.path.join(BASE_DIR, "assets", "bundles")),
-    ("fonts", os.path.join(BASE_DIR, "assets", "fonts")),
-    ("images", os.path.join(BASE_DIR, "assets", "images")),
-)
-# Make `collectstatic` command upload to the right place
-STATICFILES_STORAGE = "server.storage.s3_storage_for_collectstatic.S3Storage"
-
-# In dev mode, we'll serve local files. But in prod we can overwrite STATIC_URL
-# to serve from S3
-#
-# We break with Django tradition here and give an absolute URL even when
-# in DEBUG mode. That's good! We need absolute URLs even in DEBUG mode,
-# because lessons include data files the fetcher must access.
-STATIC_URL = os.environ.get("STATIC_URL", "http://localhost:8000/static/")
+# We break with Django tradition here and serve files from a different URL
+# even in DEBUG mode. Anything else would be obfuscation.
+STATIC_URL = os.environ.get("STATIC_URL", "http://localhost:8003/")
 
 LOGGING = {
     "version": 1,
@@ -493,9 +472,6 @@ else:
     S3_BUCKET_NAME_PATTERN = "%s" + os.environ.get("MINIO_BUCKET_SUFFIX", "")
 if "MINIO_STATIC_URL_PATTERN" in os.environ:
     STATIC_URL = os.environ["MINIO_STATIC_URL_PATTERN"]
-
-if STATIC_URL != "http://localhost:8000/static/":
-    print(f"Serving static files from {STATIC_URL}")
 
 LESSON_FILES_URL = "https://static.workbenchdata.com"
 """URL where we publish data for users to fetch in lessons.

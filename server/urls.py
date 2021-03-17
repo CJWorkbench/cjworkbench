@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls import url
-from django.contrib.staticfiles import views as staticfiles_views
 from django.urls import include, path
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
@@ -171,6 +170,3 @@ urlpatterns = [
     # JavaScript support data
     path("jsdata/timezones.json", jsdata.timezones.index),
 ]
-
-if settings.DEBUG:
-    urlpatterns.append(url(r"^static/(?P<path>.*)$", staticfiles_views.serve))

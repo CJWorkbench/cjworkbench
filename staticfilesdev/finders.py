@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 class LessonSupportDataFinder(BaseFinder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.root = Path(__file__).parent
+        self.root = Path(__file__).parent.parent / "server"
         self.storage = FileSystemStorage(location=str(self.root.resolve()))
 
     # override

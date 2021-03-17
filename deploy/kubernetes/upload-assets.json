@@ -2,45 +2,16 @@
   "apiVersion": "v1",
   "kind": "Pod",
   "metadata": {
-    "name": "migrate-$SHA"
+    "name": "upload-assets-$SHA"
   },
   "spec": {
     "restartPolicy": "Never",
     "terminationGracePeriodSeconds": 0,
-    "serviceAccountName": "migrate-sa",
     "containers": [
       {
-        "name": "migrate",
+        "name": "upload-assets",
         "image": "gcr.io/workbenchdata-ci/upload-assets:$SHA",
         "env": [
-          {
-            "name": "CJW_PRODUCTION",
-            "value": "True"
-          },
-          {
-            "name": "PYTHONUNBUFFERED",
-            "value": "1"
-          },
-          {
-            "name": "CJW_DB_HOST",
-            "value": "upload-needs-no-database"
-          },
-          {
-            "name": "CJW_DB_PASSWORD",
-            "value": "upload-needs-no-database"
-          },
-          {
-            "name": "CJW_RABBITMQ_HOST",
-            "value": "upload-needs-no-rabbitmq"
-          },
-          {
-            "name": "CJW_SECRET_KEY",
-            "value": "upload-needs-no-secret-key"
-          },
-          {
-            "name": "CJW_MOCK_EMAIL",
-            "value": "True"
-          },
           {
             "name": "AWS_ACCESS_KEY_ID",
             "valueFrom": {
@@ -74,8 +45,8 @@
             }
           },
           {
-            "name": "S3_BUCKET_NAME_PATTERN",
-            "value": "%s.$(_DOMAIN_NAME)"
+            "name": "BUCKET_NAME",
+            "value": "static.$(_DOMAIN_NAME)"
           }
         ]
       }

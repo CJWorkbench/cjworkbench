@@ -1,7 +1,0 @@
-#!/bin/bash
-
-DIR="$(dirname "$0")"/..
-
-set -e
-
-exec python "$DIR"/manage.py collectstatic --no-input

@@ -217,11 +217,18 @@ COPY assets/locale/ /app/assets/locale/
 RUN black --check /app
 
 # 3.1. assets: uploads assets to S3 (frontend will point end users there)
-FROM base AS upload-assets
-# assets/ is static files. migrate will upload them to s3.
+FROM base AS compile-assets
+COPY staticfilesdev/ /app/staticfilesdev/
 COPY assets/ /app/assets/
 COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
-CMD [ "bin/upload-assets-to-s3" ]
+RUN DJANGO_SETTINGS_MODULE=staticfilesdev.settings python ./manage.py collectstatic
+RUN find /app/static -type f -printf "%s\t%P\n"
+
+FROM amazon/aws-cli:2.1.30 AS upload-assets
+COPY --from=compile-assets /app/static/ /app/static/
+ENTRYPOINT []
+# We use /bin/sh to substitute environment variables
+CMD [ "/bin/sh", "-c", "exec aws s3 cp --recursive \"--endpoint-url=${AWS_S3_ENDPOINT:-https://s3.us-east-1.amazonaws.com}\" /app/static/ \"s3://${BUCKET_NAME:?must set BUCKET_NAME environment variable}/\"" ]
 
 # 3.2. migrate: modifies database schema
 FROM flyway/flyway:7.7.0-alpine AS migrate
