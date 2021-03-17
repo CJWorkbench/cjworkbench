@@ -118,7 +118,6 @@ services:
       - stripe.env  # STRIPE_API_KEY
     command: [
       'listen',
-      # Forward to :8080 -- the Django app, not the wrapper.
-      '--forward-to', 'http://frontend:8080/stripe/webhook',
+      '--forward-to', 'http://frontend:8000/stripe/webhook',
       '--events', 'checkout.session.completed,customer.subscription.deleted,customer.subscription.updated'
     ]
