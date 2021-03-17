@@ -107,7 +107,7 @@ describe('DataGrid', () => {
     // No content except row numbers
     expect(tree.find('.react-grid-Viewport').text()).toMatch(/12/)
 
-    expect(loadRows).toHaveBeenCalledWith(1, 2, 0, 200)
+    expect(loadRows).toHaveBeenCalledWith(0, 200)
 
     resolveHttpRequest(testRows)
     await tick()
@@ -302,7 +302,7 @@ describe('DataGrid', () => {
     const loadRows = tree.find('DataGrid').prop('loadRows')
 
     // Should load 0..initialRows at first
-    expect(loadRows).toHaveBeenCalledWith(1, 2, 0, 200)
+    expect(loadRows).toHaveBeenCalledWith(0, 200)
     await tick()
     tree.update() // let rows load
 
@@ -317,8 +317,8 @@ describe('DataGrid', () => {
       .getRow(201) // spurious getRow() -- there are lots
     expect(missingRowForNow).not.toBe(null)
     await tick() // begin load
-    expect(loadRows).toHaveBeenCalledWith(1, 2, 200, 400)
-    expect(loadRows).not.toHaveBeenCalledWith(1, 2, 201, 401)
+    expect(loadRows).toHaveBeenCalledWith(200, 400)
+    expect(loadRows).not.toHaveBeenCalledWith(201, 401)
     await tick()
     tree.update() // let load finish
 
@@ -336,7 +336,7 @@ describe('DataGrid', () => {
       .instance()
       .getRow(600)
     await tick() // begin load
-    expect(loadRows).toHaveBeenCalledWith(1, 2, 600, 800)
+    expect(loadRows).toHaveBeenCalledWith(600, 800)
     await tick()
     tree.update() // let load finish
   })

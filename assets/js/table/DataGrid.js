@@ -103,10 +103,9 @@ class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
 
 export default class DataGrid extends PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
     stepId: PropTypes.number, // immutable; null for placeholder table
-    deltaId: PropTypes.number, // immutable; null for placeholder table
     columns: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -175,7 +174,7 @@ export default class DataGrid extends PureComponent {
   load () {
     const min = this.firstMissingRowIndex
     const max = min + NRowsPerPage
-    const { loadRows, deltaId, stepId } = this.props
+    const { loadRows } = this.props
     const { loadedRows } = this.state
 
     if (this.unmounted) return
@@ -195,7 +194,7 @@ export default class DataGrid extends PureComponent {
       }
     }
 
-    loadRows(stepId, deltaId, min, max).then(json => {
+    loadRows(min, max).then(json => {
       if (this.unmounted) return
 
       const loadedRows = this.state.loadedRows.slice()
@@ -218,7 +217,7 @@ export default class DataGrid extends PureComponent {
   }
 
   componentDidMount () {
-    if (this.props.stepId && this.props.nRows > 0) {
+    if (this.props.nRows > 0) {
       this.load()
     }
 

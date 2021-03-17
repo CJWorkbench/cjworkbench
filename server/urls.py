@@ -115,7 +115,10 @@ urlpatterns = [
                                 include(
                                     [
                                         # path("result-json.json", steps.result_json),
-                                        # path("result-table-slice.json", steps.result_table_slice),
+                                        path(
+                                            "result-table-slice.json",
+                                            steps.result_table_slice,
+                                        ),
                                     ]
                                 ),
                             ),

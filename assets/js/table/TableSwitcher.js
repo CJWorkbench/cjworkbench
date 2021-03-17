@@ -1,4 +1,4 @@
-import { memo, PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import Spinner from '../Spinner'
 import TableView from './TableView'
@@ -44,7 +44,7 @@ const UnreachableStepTable = (props) => (
   />
 )
 
-const OkStepTable = memo(function OkStepTable ({
+const OkStepTable = React.memo(function OkStepTable ({
   isLoaded,
   isReadOnly,
   workflowId,
@@ -55,11 +55,15 @@ const OkStepTable = memo(function OkStepTable ({
   nRows,
   loadRows
 }) {
+  const loadThisTableRows = React.useCallback(
+    (startRow, endRow) => loadRows(workflowId, stepSlug, deltaId, startRow, endRow),
+    [loadRows, workflowId, stepSlug, deltaId]
+  )
   return (
     <>
       <TableView
         isReadOnly={isReadOnly}
-        loadRows={loadRows}
+        loadRows={loadThisTableRows}
         workflowId={workflowId}
         stepSlug={stepSlug}
         stepId={stepId}
@@ -72,7 +76,7 @@ const OkStepTable = memo(function OkStepTable ({
   )
 })
 
-const TableSwitcherContents = memo(function TableSwitcherContents ({
+const TableSwitcherContents = React.memo(function TableSwitcherContents ({
   status,
   nRows,
   ...props
@@ -101,9 +105,9 @@ const TableSwitcherContents = memo(function TableSwitcherContents ({
  * There is no ErrorStepTable, because we never show an Error-status step. (We
  * show its input.)
  */
-export default class TableSwitcher extends PureComponent {
+export default class TableSwitcher extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired,

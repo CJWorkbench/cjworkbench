@@ -204,21 +204,19 @@ export default class WorkbenchAPI {
     })
   }
 
-  render (stepId, startrow, endrow) {
-    let url = '/api/wfmodules/' + stepId + '/render'
+  getStepResultTableSlice (workflowId, stepSlug, deltaId, startRow, endRow) {
+    const path = `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-table-slice.json`
 
-    if (startrow || endrow) {
-      url += '?'
-      if (startrow) {
-        url += 'startrow=' + startrow
-      }
-      if (endrow) {
-        if (startrow) {
-          url += '&'
-        }
-        url += 'endrow=' + endrow
-      }
+    const params = new URLSearchParams()
+    if (startRow) {
+      params.set('startrow', String(startRow))
     }
+    if (endRow) {
+      params.set('endrow', String(endRow))
+    }
+    const queryString = params.toString()
+
+    const url = path + (queryString ? ('?' + queryString) : '')
 
     return this._fetch(url)
   }

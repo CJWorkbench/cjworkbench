@@ -63,7 +63,7 @@ export default class DelayedTableSwitcher extends PureComponent {
   isUnmounted = false
 
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
     workflowId: PropTypes.number.isRequired,
     stepSlug: PropTypes.string, // or null, if no selection
@@ -126,12 +126,13 @@ export default class DelayedTableSwitcher extends PureComponent {
   /**
    * Call this.prop.loadRows() and ensure state.loaded is set after it returns.
    */
-  loadRows = (stepId, deltaId, startRow, endRow) => {
+  loadRows = (workflowId, stepSlug, deltaId, startRow, endRow) => {
     return this.props
-      .loadRows(stepId, deltaId, startRow, endRow)
+      .loadRows(workflowId, stepSlug, deltaId, startRow, endRow)
       .finally(() => {
         if (
-          stepId === this.props.stepId &&
+          workflowId === this.props.workflowId &&
+          stepSlug === this.props.stepSlug &&
           deltaId === this.props.deltaId &&
           !areSameTable(this.props, this.state.loaded) &&
           // TODO nix react-data-grid, so we don't have to do this deferred-render

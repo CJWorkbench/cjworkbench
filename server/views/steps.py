@@ -169,6 +169,45 @@ def int_or_none(x):
     return int(x) if x is not None else None
 
 
+async def result_table_slice(
+    request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
+) -> HttpResponse:
+    # Get first and last row from query parameters, or default to all if not
+    # specified
+    try:
+        startrow = int_or_none(request.GET.get("startrow"))
+        endrow = int_or_none(request.GET.get("endrow"))
+    except ValueError:
+        return JsonResponse(
+            {"message": "bad row number", "status_code": 400},
+            status=status.BAD_REQUEST,
+        )
+
+    # raise Http404, PermissionDenied
+    _, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    cached_result = step.cached_render_result
+    if cached_result is None or cached_result.delta_id != delta_id:
+        # assume we'll get another request after execute finishes
+        return JsonResponse(
+            {"start_row": 0, "end_row": 0, "rows": []}, status=status.NOT_FOUND
+        )
+
+    try:
+        startrow, endrow, record_json = _make_render_tuple(
+            cached_result, startrow, endrow
+        )
+    except CorruptCacheError:
+        # assume we'll get another request after execute finishes
+        return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
+
+    data = '{"start_row":%d,"end_row":%d,"rows":%s}' % (startrow, endrow, record_json)
+    response = HttpResponse(
+        data.encode("utf-8"), content_type="application/json", charset="utf-8"
+    )
+    patch_response_headers(response, cache_timeout=600)
+    return response
+
+
 # /render: return output table of this module
 async def deprecated_render(request: HttpRequest, step_id: int):
     # Get first and last row from query parameters, or default to all if not

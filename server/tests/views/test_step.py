@@ -1,10 +1,8 @@
 import json
-from collections import namedtuple
 from datetime import datetime as dt
 from http import HTTPStatus as status
 from unittest.mock import patch
 
-from django.contrib.auth.models import User
 from django.test import override_settings
 
 import cjwstate.modules
@@ -21,25 +19,35 @@ from cjwstate.tests.utils import (
     create_test_user,
 )
 
-FakeSession = namedtuple("FakeSession", ["session_key"])
-FakeCachedRenderResult = namedtuple("FakeCachedRenderResult", ["result"])
-
 
 async def async_noop(*args, **kwargs):
     pass
 
 
-empty_data_json = {"start_row": 0, "end_row": 0, "rows": []}
-
-
 @patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
-class StepTests(LoggedInTestCase):
+class StepViewTestCase(LoggedInTestCase):
+    """Logged in, logging disabled, rabbitmq/commands disabled."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cjwstate.modules.init_module_system()  # create module tempdir
+
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
         super().setUp()  # log in
+        self.log_patcher = patch("server.utils.log_user_event_from_request")
+        self.log_patch = self.log_patcher.start()
 
-        cjwstate.modules.init_module_system()  # create module tempdir
+    def tearDown(self):
+        self.log_patcher.stop()
+        super().tearDown()
+
+
+class RenderTableSliceTest(StepViewTestCase):
+    def setUp(self):
+        super().setUp()
 
         self.workflow = Workflow.objects.create(name="test", owner=self.user)
         self.tab = self.workflow.tabs.create(position=0)
@@ -50,12 +58,16 @@ class StepTests(LoggedInTestCase):
             order=1, slug="step-2", last_relevant_delta_id=2
         )
 
-        self.log_patcher = patch("server.utils.log_user_event_from_request")
-        self.log_patch = self.log_patcher.start()
+    def _request_slug_delta(self, step_slug, delta_id, query_string=""):
+        return self.client.get(
+            "/workflows/%d/steps/%s/delta-%d/result-table-slice.json%s"
+            % (self.workflow.id, step_slug, delta_id, query_string)
+        )
 
-    def tearDown(self):
-        self.log_patcher.stop()
-        super().tearDown()
+    def _request_step(self, step, query_string=""):
+        return self._request_slug_delta(
+            step.slug, step.last_relevant_delta_id, query_string
+        )
 
     # Test some json conversion gotchas we encountered during development
     def test_pandas_13258(self):
@@ -71,7 +83,7 @@ class StepTests(LoggedInTestCase):
         )
         self.step2.save()
 
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(MAX_COLUMNS_PER_CLIENT_REQUEST=2)
@@ -86,13 +98,13 @@ class StepTests(LoggedInTestCase):
             RenderResult(arrow_table({"A": [1], "B": [2], "C": [3], "D": [4]})),
         )
 
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
         # One column more than configured limit, so client knows to display
         # "too many columns".
         self.assertEqual(len(json.loads(response.content)["rows"][0]), 3)
 
-    def test_step_render(self):
+    def test_data(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -108,7 +120,7 @@ class StepTests(LoggedInTestCase):
             ),
         )
 
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content),
@@ -124,28 +136,28 @@ class StepTests(LoggedInTestCase):
             },
         )
 
-    def test_step_auth_report_viewer_denied(self):
+    def test_auth_report_viewer_denied(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
         self.client.force_login(user)
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 403)
 
-    def test_step_auth_viewer_allowed(self):
+    def test_auth_viewer_allowed(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.VIEWER)
         self.client.force_login(user)
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
-        self.assertEqual(response.status_code, 200)
+        response = self._request_step(self.step2)
+        self.assertNotEqual(response.status_code, 403)
 
-    def test_step_auth_editor_allowed(self):
+    def test_auth_editor_allowed(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.EDITOR)
         self.client.force_login(user)
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
-        self.assertEqual(response.status_code, 200)
+        response = self._request_step(self.step2)
+        self.assertNotEqual(response.status_code, 403)
 
-    def test_step_auth_report_viewer_allowed_custom_report_table(self):
+    def test_auth_report_viewer_allowed_custom_report_table(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
         self.workflow.has_custom_report = True
@@ -154,16 +166,16 @@ class StepTests(LoggedInTestCase):
             position=0, slug="block-1", block_type="Table", tab_id=self.tab.id
         )
         self.client.force_login(user)
-        response = self.client.get("/api/wfmodules/%d/render" % self.step1.id)
+        response = self._request_step(self.step1)
         self.assertEqual(
             response.status_code, 403, "Should not have access to not-last step of tab"
         )
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
-        self.assertEqual(
-            response.status_code, 200, "Should have access to last step of tab"
+        response = self._request_step(self.step2)
+        self.assertNotEqual(
+            response.status_code, 403, "Should have access to last step of tab"
         )
 
-    def test_step_auth_report_viewer_allowed_custom_report_chart(self):
+    def test_auth_report_viewer_allowed_custom_report_chart(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
         self.workflow.has_custom_report = True
@@ -172,16 +184,18 @@ class StepTests(LoggedInTestCase):
             position=0, slug="block-1", block_type="Chart", step_id=self.step1.id
         )
         self.client.force_login(user)
-        response = self.client.get("/api/wfmodules/%d/render" % self.step1.id)
-        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step1)
+        self.assertNotEqual(
+            response.status_code, 403, "Should have access to Chart step"
+        )
+        response = self._request_step(self.step2)
         self.assertEqual(
             response.status_code,
             200,
             "Should not have access to non-reported Chart step",
         )
 
-    def test_step_auth_report_viewer_allowed_custom_report_chart(self):
+    def test_auth_report_viewer_allowed_custom_report_chart(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
         self.client.force_login(user)
@@ -191,14 +205,16 @@ class StepTests(LoggedInTestCase):
         self.step1.save(update_fields=["module_id_name"])
         self.step2.module_id_name = "notchart"
         self.step2.save(update_fields=["module_id_name"])
-        response = self.client.get("/api/wfmodules/%d/render" % self.step1.id)
-        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step1)
+        self.assertNotEqual(
+            response.status_code, 403, "Should have access to Chart step"
+        )
+        response = self._request_step(self.step2)
         self.assertEqual(
             response.status_code, 403, "Should not have access to non-Chart step"
         )
 
-    def test_step_render_null_timestamp(self):
+    def test_null_timestamp(self):
         # Ran into problems 2019-09-06, when switching to Arrow
         cache_render_result(
             self.workflow,
@@ -216,14 +232,14 @@ class StepTests(LoggedInTestCase):
             ),
         )
 
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content)["rows"],
             [{"A": "2019-01-02T03:04:05.006007Z"}, {"A": None}],
         )
 
-    def test_step_render_missing_parquet_file(self):
+    def test_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
         cache_render_result(
             self.workflow,
@@ -236,13 +252,13 @@ class StepTests(LoggedInTestCase):
         # or some-such.
         delete_parquet_files_for_step(self.workflow.id, self.step2.id)
 
-        response = self.client.get("/api/wfmodules/%d/render" % self.step2.id)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content), {"end_row": 0, "rows": [], "start_row": 0}
         )
 
-    def test_step_render_only_rows(self):
+    def test_only_rows(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -250,16 +266,14 @@ class StepTests(LoggedInTestCase):
             RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
         )
 
-        response = self.client.get(
-            "/api/wfmodules/%d/render?startrow=1&endrow=3" % self.step2.id
-        )
+        response = self._request_step(self.step2, "?startrow=1&endrow=3")
         self.assertEqual(response.status_code, status.OK)
         body = json.loads(response.content)
         self.assertEqual(body["rows"], [{"A": 1}, {"A": 2}])
         self.assertEqual(body["start_row"], 1)
         self.assertEqual(body["end_row"], 3)
 
-    def test_step_render_clip_out_of_bounds(self):
+    def test_clip_out_of_bounds(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -268,16 +282,14 @@ class StepTests(LoggedInTestCase):
         )
 
         # index out of bounds should clip
-        response = self.client.get(
-            "/api/wfmodules/%d/render?startrow=-1&endrow=500" % self.step2.id
-        )
+        response = self._request_step(self.step2, "?startrow=-1&endrow=500")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content),
             {"start_row": 0, "end_row": 2, "rows": [{"A": 0}, {"A": 1}]},
         )
 
-    def test_step_render_start_row_after_end_row(self):
+    def test_start_row_after_end_row(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -285,21 +297,49 @@ class StepTests(LoggedInTestCase):
             RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
         )
 
-        response = self.client.get(
-            "/api/wfmodules/%d/render?startrow=3&endrow=1" % self.step2.id
-        )
+        response = self._request_step(self.step2, "?startrow=3&endrow=1")
         self.assertEqual(response.status_code, status.OK)
         body = json.loads(response.content)
         self.assertEqual(body["rows"], [])
         self.assertEqual(body["start_row"], 3)
         self.assertEqual(body["end_row"], 3)
 
-    def test_step_render_invalid_endrow(self):
+    def test_invalid_endrow(self):
         # index not a number -> bad request
-        response = self.client.get(
-            "/api/wfmodules/%d/render?startrow=0&endrow=frog" % self.step2.id
-        )
+        response = self._request_step(self.step2, "?startrow=0&endrow=frog")
         self.assertEqual(response.status_code, status.BAD_REQUEST)
+
+    def test_wrong_delta_id(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            self.step2.last_relevant_delta_id,
+            RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
+        )
+        self.step2.last_relevant_delta_id = 99
+        self.step2.save(update_fields=["last_relevant_delta_id"])
+
+        response = self._request_slug_delta(self.step2.slug, 99)
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+
+    def test_delta_not_cached(self):
+        response = self._request_step(self.step2)
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+
+
+class StepTests(StepViewTestCase):
+    # Test workflow with modules that implement a simple pipeline on test data
+    def setUp(self):
+        super().setUp()  # log in
+
+        self.workflow = Workflow.objects.create(name="test", owner=self.user)
+        self.tab = self.workflow.tabs.create(position=0)
+        self.step1 = self.tab.steps.create(
+            order=0, slug="step-1", last_relevant_delta_id=1
+        )
+        self.step2 = self.tab.steps.create(
+            order=1, slug="step-2", last_relevant_delta_id=2
+        )
 
     def test_value_counts_str(self):
         cache_render_result(

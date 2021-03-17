@@ -10,7 +10,7 @@ import OutputIframe from '../OutputIframe'
  */
 export class OutputPane extends Component {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowId: PropTypes.number.isRequired,
     stepBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -215,9 +215,9 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    loadRows: (stepId, deltaId, startRow, endRow) => {
+    loadRows: (workflowId, stepSlug, deltaId, startRow, endRow) => {
       return dispatch((_, __, api) => {
-        return api.render(stepId, startRow, endRow) // ignore deltaId -- for now
+        return api.getStepResultTableSlice(workflowId, stepSlug, deltaId, startRow, endRow)
       })
     }
   }

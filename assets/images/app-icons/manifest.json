@@ -1,6 +1,6 @@
 {
   "name": "Workbench",
-  "start_url": "/",
+  "start_url": "https://app.workbenchdata.com/",
   "icons": [
     {
       "src": "android-chrome-192x192.png",

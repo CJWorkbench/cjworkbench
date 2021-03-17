@@ -14,7 +14,7 @@ export const NMaxColumns = 100
 
 export class TableView extends PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepId, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowId: PropTypes.number.isRequired,
     stepSlug: PropTypes.string, // null for placeholder table
     stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
@@ -87,7 +87,6 @@ export class TableView extends PureComponent {
           loadRows={loadRows}
           isReadOnly={isReadOnly}
           stepId={stepId}
-          deltaId={deltaId}
           columns={columns}
           nRows={nRows}
           editCell={this.editCell}
