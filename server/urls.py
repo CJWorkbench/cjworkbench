@@ -114,7 +114,7 @@ urlpatterns = [
                                 "delta-<int:delta_id>/",
                                 include(
                                     [
-                                        # path("result-json.json", steps.result_json),
+                                        path("result-json.json", steps.result_json),
                                         path(
                                             "result-table-slice.json",
                                             steps.result_table_slice,
@@ -151,7 +151,7 @@ urlpatterns = [
     # Steps -- deprecated URLs
     #
     # The "output" and "public_csv"/"public_json" URLs are widely used online.
-    # We stopped publishing them [2021-03-17]. TODO migrate our users away from
+    # We stopped publishing them [2021-03-18]. TODO migrate our users away from
     # them.
     path("api/wfmodules/<int:step_id>/render", steps.deprecated_render),  # DELETEME
     path("api/wfmodules/<int:step_id>/output", steps.deprecated_output),

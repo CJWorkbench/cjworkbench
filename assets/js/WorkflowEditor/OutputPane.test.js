@@ -36,14 +36,14 @@ describe('OutputPane', () => {
 
   it('renders an iframe when htmlOutput', () => {
     const w = wrapper({
-      step: { id: 1, slug: 'step-1', deltaId: 2, htmlOutput: true, status: 'ok' }
+      step: { id: 1, module: 'chart', slug: 'step-1', deltaId: 2, htmlOutput: true, status: 'ok' }
     })
-    expect(w.find(OutputIframe)).toHaveLength(1)
+    expect(w.find(OutputIframe).prop('moduleSlug')).toEqual('chart')
 
     const w2 = wrapper({
-      step: { id: 1, slug: 'step-1', deltaId: 2, htmlOutput: false, status: 'ok' }
+      step: { id: 1, module: 'filter', slug: 'step-1', deltaId: 2, htmlOutput: false, status: 'ok' }
     })
-    expect(w2.find(OutputIframe)).toHaveLength(0)
+    expect(w2.find(OutputIframe).prop('moduleSlug')).toBe(null)
   })
 
   it('renders different table than iframe when desired', () => {

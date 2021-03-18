@@ -77,17 +77,6 @@ export function timeDifference (start, end, i18n) {
   }
 }
 
-export function escapeHtml (str) {
-  str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
-
-  return str
-}
-
 /**
  * Scroll `containerEl` vertically by the smallest amount possible to put
  * `el` in view.

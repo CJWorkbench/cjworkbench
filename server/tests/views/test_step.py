@@ -443,7 +443,66 @@ class ResultColumnValueCountsTest(StepViewTestCase):
         )
 
 
-class StepTests(StepViewTestCase):
+class ResultJsonTest(StepViewTestCase):
+    def setUp(self):
+        super().setUp()  # log in
+
+        self.workflow = Workflow.objects.create(name="test", owner=self.user)
+        self.tab = self.workflow.tabs.create(position=0)
+        self.step = self.tab.steps.create(
+            order=0, slug="step-1", last_relevant_delta_id=1
+        )
+
+    def _request(self):
+        return self.client.get(
+            "/workflows/%d/steps/%s/delta-%d/result-json.json"
+            % (self.workflow.id, self.step.slug, self.step.last_relevant_delta_id)
+        )
+
+    def test_cached_result_has_wrong_delta_id(self):
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+        )
+        self.step.last_relevant_delta_id = 3
+        self.step.save(update_fields=["last_relevant_delta_id"])
+
+        response = self._request()
+
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+        self.assertEqual(
+            json.loads(response.content), {"error": "render result not in cache"}
+        )
+
+    def test_json(self):
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+        )
+
+        response = self._request()
+
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(json.loads(response.content), {"hello": "world!"})
+
+    def test_empty_json(self):
+        cache_render_result(
+            self.workflow, self.step, 1, RenderResult(arrow_table({"A": ["a", "b"]}))
+        )
+
+        response = self._request()
+
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+        self.assertEqual(
+            json.loads(response.content), {"error": "render result has no JSON"}
+        )
+
+
+class TileTest(StepViewTestCase):
     def setUp(self):
         super().setUp()  # log in
 
@@ -456,7 +515,7 @@ class StepTests(StepViewTestCase):
             order=1, slug="step-2", last_relevant_delta_id=2
         )
 
-    def test_tile_no_cached_result(self):
+    def test_no_cached_result(self):
         response = self.client.get(
             f"/workflows/{self.workflow.id}/tiles/step-2/delta-2/0,0.json"
         )
@@ -465,7 +524,7 @@ class StepTests(StepViewTestCase):
             json.loads(response.content), {"error": "delta_id result not cached"}
         )
 
-    def test_tile_cached_result_has_wrong_delta_id(self):
+    def test_cached_result_has_wrong_delta_id(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -486,7 +545,7 @@ class StepTests(StepViewTestCase):
             json.loads(response.content), {"error": "delta_id result not cached"}
         )
 
-    def test_tile_tile_row_out_of_bounds(self):
+    def test_tile_row_out_of_bounds(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -500,7 +559,7 @@ class StepTests(StepViewTestCase):
         self.assertEqual(response.status_code, status.NOT_FOUND)
         self.assertEqual(json.loads(response.content), {"error": "tile out of bounds"})
 
-    def test_tile_corrupt_cache_error(self):
+    def test_corrupt_cache_error(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -518,7 +577,7 @@ class StepTests(StepViewTestCase):
             {"error": "result went away; please try again with another delta_id"},
         )
 
-    def test_tile_json(self):
+    def test_json(self):
         cache_render_result(
             self.workflow,
             self.step2,
@@ -531,6 +590,20 @@ class StepTests(StepViewTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), {"rows": [["a"], ["b"]]})
+
+
+class CurrentTableTest(StepViewTestCase):
+    def setUp(self):
+        super().setUp()  # log in
+
+        self.workflow = Workflow.objects.create(name="test", owner=self.user)
+        self.tab = self.workflow.tabs.create(position=0)
+        self.step1 = self.tab.steps.create(
+            order=0, slug="step-1", last_relevant_delta_id=1
+        )
+        self.step2 = self.tab.steps.create(
+            order=1, slug="step-2", last_relevant_delta_id=2
+        )
 
     def test_current_table_json(self):
         cache_render_result(

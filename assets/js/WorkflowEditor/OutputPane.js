@@ -74,20 +74,23 @@ export class OutputPane extends Component {
 
     const { step, workflowId, isPublic } = this.props
 
+    const moduleSlug = (step && step.htmlOutput) ? step.module : null
+    const stepSlug = step ? step.slug : null
     const stepId = step ? step.id : null
     const deltaId = step ? step.deltaId : null
 
     // This iframe holds the module HTML output, e.g. a visualization.
     // We leave the component around even when there is no HTML because of
     // our solution to https://www.pivotaltracker.com/story/show/159637930:
-    // DataGrid.js doesn't notice the resize that occurs when the iframe
-    // appears or disappears.
+    // <OutputIframe> fires resize events, even if it doesn't render
+    // any <iframe>.
     return (
       <OutputIframe
-        key='iframe'
         workflowId={workflowId}
         isPublic={isPublic}
         stepId={stepId}
+        stepSlug={stepSlug}
+        moduleSlug={moduleSlug}
         deltaId={deltaId}
       />
     )
@@ -101,7 +104,7 @@ export class OutputPane extends Component {
 
     return (
       <div className={className}>
-        {step && step.htmlOutput ? this.renderOutputIFrame() : null}
+        {this.renderOutputIFrame()}
         {stepBeforeError
           ? (
             <p key='error' className='showing-input-because-error'>
@@ -198,6 +201,7 @@ function mapStateToProps (state) {
       ? {
           id: step.id,
           slug: step.slug,
+          module: step.module,
           htmlOutput: modules[step.module]
             ? modules[step.module].has_html_output
             : false,

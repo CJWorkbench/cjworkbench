@@ -327,6 +327,26 @@ async def deprecated_output(request: HttpRequest, step_id: int):
     return HttpResponse(content=html)
 
 
+async def result_json(
+    request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
+) -> HttpResponse:
+    # raise Http404, PermissionDenied
+    _, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    cached_result = step.cached_render_result
+    if cached_result is None or cached_result.delta_id != delta_id:
+        return JsonResponse(
+            {"error": "render result not in cache"}, status=status.NOT_FOUND
+        )
+    if not cached_result.json:
+        return JsonResponse(
+            {"error": "render result has no JSON"}, status=status.NOT_FOUND
+        )
+
+    response = JsonResponse(cached_result.json, safe=False)
+    patch_response_headers(response, cache_timeout=600)
+    return response
+
+
 async def deprecated_embeddata(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
     _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)

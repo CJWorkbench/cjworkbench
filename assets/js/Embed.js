@@ -6,10 +6,13 @@ import { Trans } from '@lingui/macro'
 import EmbedIcon from '../icons/embed.svg'
 
 function IframeContainer (props) {
-  const { step } = props
+  const { workflowId, stepSlug, stepId, deltaId } = props
+  const dataUrl = `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-json.json`
+  const src = `/api/wfmodules/${stepId}/output?dataUrl=${encodeURIComponent(dataUrl)}`
+
   return (
     <div className='iframe-container'>
-      <iframe src={'/api/wfmodules/' + step.id + '/output'} />
+      <iframe src={src} />
     </div>
   )
 }
@@ -145,7 +148,12 @@ export default function Embed (props) {
 
   return (
     <>
-      <IframeContainer step={step} />
+      <IframeContainer
+        workflowId={workflow.id}
+        stepSlug={step.slug}
+        stepId={step.id}
+        deltaId={step.cached_render_result_delta_id}
+      />
       <Footer workflow={workflow} step={step} />
     </>
   )

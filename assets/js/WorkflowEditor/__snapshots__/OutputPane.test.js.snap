@@ -4,6 +4,14 @@ exports[`OutputPane matches snapshot 1`] = `
 <div
   className="outputpane module-ok"
 >
+  <Connect(OutputIframe)
+    deltaId={1}
+    isPublic={false}
+    moduleSlug={null}
+    stepId={987}
+    stepSlug="step-1"
+    workflowId={123}
+  />
   <DelayedTableSwitcher
     deltaId={1}
     isReadOnly={false}
@@ -21,6 +29,14 @@ exports[`OutputPane renders when no module id 1`] = `
 <div
   className="outputpane module-unreachable"
 >
+  <Connect(OutputIframe)
+    deltaId={null}
+    isPublic={false}
+    moduleSlug={null}
+    stepId={null}
+    stepSlug={null}
+    workflowId={123}
+  />
   <DelayedTableSwitcher
     columns={null}
     deltaId={null}

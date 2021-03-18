@@ -68,7 +68,7 @@ def process(table):
 
         b = self.browser
         # wait for iframe to appear
-        b.assert_element(".outputpane-iframe iframe", wait=True)
+        b.assert_element(".outputpane-iframe.has-height-from-iframe iframe", wait=True)
         with b.iframe(".outputpane-iframe iframe"):
             # wait for page load
             b.assert_element("pre", text="Hello, world!", wait=True)
