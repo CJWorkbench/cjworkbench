@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
-    <title>Python Console Output</title>
+    <title>Python Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono" rel="stylesheet">
     <style>
 html, body {
@@ -41,18 +41,18 @@ pre:not(:empty)::before {
     <pre></pre>
     <script>
 const pre = document.querySelector('pre')
-let inNotify = false
+let dataUrl = new URL(window.location).searchParams.get('dataUrl')
+const messageOrigin = new URL(window.location).searchParams.get('origin')
+let currentFetch = null
 
 function notifySize () {
-  if (inNotify) return // don't recurse!
-
-  inNotify = true
-
-  document.body.style.overflow = 'hidden scroll' // so scrollbar affects height calculation
+  // To be stable, make height always factor in scrollbar width
+  // Otherwise, making the scrollbar appear would change height,
+  // which would make the scrollbar disappear, which would change
+  // height, and we'd never be stable.
+  document.body.style.overflow = 'hidden scroll'
   const height = pre.clientHeight || 0
   document.body.style.overflow = 'hidden auto'
-
-  inNotify = false
 
   window.parent.postMessage({
     from: 'outputIframe',
@@ -68,21 +68,50 @@ function renderOutput (json) {
 }
 
 function startLoading () {
-  const url = String(window.location).replace(/\/output.*/, '/embeddata')
-  fetch(url, { credentials: 'same-origin' })
+  // hide text. Don't notifySize(), because the new size will equal the
+  // old size in many real-world use cases; avoiding resize will avoid
+  // flicker in those cases.
+  pre.textContent = ''
+
+  const thisFetch = currentFetch = fetch(dataUrl, { credentials: 'same-origin' })
+
+  thisFetch
     .then(function(response) {
+      if (response.status === 404) {
+        return { output: '' }
+      }
       if (!response.ok) {
         throw new Error('Invalid response code: ' + response.status)
       }
-
       return response.json()
     })
-    .then(renderOutput)
+    .then(data => {
+      if (thisFetch !== currentFetch) {
+        return // another fetch came after
+      }
+      renderOutput(data)
+    })
     .catch(console.error)
 }
 
+if (messageOrigin) {
+  function handleMessage (ev) {
+    if (ev.source !== window.parent || ev.origin !== messageOrigin) {
+      return
+    }
+
+    if (ev.data.type === 'set-data-url') {
+      if (dataUrl !== ev.data.dataUrl) {
+        dataUrl = ev.data.dataUrl
+        startLoading()
+      }
+    }
+  }
+  window.addEventListener('message', handleMessage)
+  window.parent.postMessage({ type: 'subscribe-to-data-url' }, messageOrigin)
+}
+
 window.addEventListener('resize', notifySize)
-window.addEventListener('hashchange', startLoading)
 
 startLoading()
     </script>

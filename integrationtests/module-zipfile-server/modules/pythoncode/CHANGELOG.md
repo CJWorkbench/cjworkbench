@@ -1,3 +1,8 @@
+2020-03-18.01
+-------------
+
+* (no user-visible change) Use Workbench's new `dataUrl` pattern
+
 2020-01-25.01
 -------------
 
