@@ -160,10 +160,6 @@ urlpatterns = [
         oauth.start_authorize,
     ),
     url(r"^oauth/?$", oauth.finish_authorize),
-    # 404, 403, status
-    url(r"^404/$", TemplateView.as_view(template_name="404.html")),
-    url(r"^403/$", TemplateView.as_view(template_name="403.html")),
-    url(r"^healthz$", health.healthz),
-    # JavaScript support data
-    path("jsdata/timezones.json", jsdata.timezones.index),
+    url(r"^healthz$", health.healthz),  # kubernetes
+    path("jsdata/timezones.json", jsdata.timezones.index),  # JavaScript support data
 ]
