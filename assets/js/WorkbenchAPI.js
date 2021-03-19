@@ -235,10 +235,6 @@ export default class WorkbenchAPI {
       .then(json => json.values)
   }
 
-  output (stepId) {
-    return this._fetch(`/api/wfmodules/${stepId}/output`)
-  }
-
   getTile (stepId, deltaId, tileRow, tileColumn) {
     return this._fetch(
       `/api/wfmodules/${stepId}/v${deltaId}/r${tileRow}/c${tileColumn}.json`

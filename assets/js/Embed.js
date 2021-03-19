@@ -3,16 +3,16 @@ import PropTypes from 'prop-types'
 import { timeDifference } from './utils'
 import { i18n } from '@lingui/core'
 import { Trans } from '@lingui/macro'
+import { useChartIframeSrc } from './ChartIframe'
 import EmbedIcon from '../icons/embed.svg'
 
 function IframeContainer (props) {
-  const { workflowId, stepSlug, stepId, deltaId } = props
-  const dataUrl = `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-json.json`
-  const src = `/api/wfmodules/${stepId}/output?dataUrl=${encodeURIComponent(dataUrl)}`
+  const { workflowId, moduleSlug, stepSlug, deltaId } = props
+  const src = useChartIframeSrc({ workflowId, moduleSlug, stepSlug, deltaId })
 
   return (
     <div className='iframe-container'>
-      <iframe src={src} />
+      {src ? <iframe src={src} /> : null}
     </div>
   )
 }
@@ -150,8 +150,8 @@ export default function Embed (props) {
     <>
       <IframeContainer
         workflowId={workflow.id}
+        moduleSlug={step.module}
         stepSlug={step.slug}
-        stepId={step.id}
         deltaId={step.cached_render_result_delta_id}
       />
       <Footer workflow={workflow} step={step} />

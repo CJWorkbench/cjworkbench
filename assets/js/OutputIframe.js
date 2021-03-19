@@ -5,6 +5,7 @@ import { Trans, t } from '@lingui/macro'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { setStepParamsAction } from './workflow-reducer'
 import { setWorkflowPublicAction } from './ShareModal/actions'
+import { useChartIframeSrcWithDataUrlSubscription } from './ChartIframe'
 import EmbedIcon from '../icons/embed.svg'
 
 function IframeWithEmbedButton (props) {
@@ -48,7 +49,7 @@ function IframeWithEmbedButton (props) {
 }
 IframeWithEmbedButton.propTypes = {
   src: PropTypes.string.isRequired,
-  iframeRef: PropTypes.shape({ current: PropTypes.instanceOf(global.HTMLElement) }).isRequired,
+  iframeRef: PropTypes.func.isRequired, // func(el) => undefined
   embedUrl: PropTypes.string.isRequired,
   isPublic: PropTypes.bool.isRequired,
   onClickSetWorkflowPublic: PropTypes.func.isRequired // func() => undefined
@@ -61,20 +62,17 @@ IframeWithEmbedButton.propTypes = {
  * "lock" the `src` and send new `dataUrl` via `postMessage()` instead.
  */
 function StickyResultJsonIframeWithEmbedButton (props) {
-  const { moduleUrl, dataUrl, onResize, onSetStepParams, isPublic, embedUrl, onClickSetWorkflowPublic } = props
-  const [lockedSrc, setLockedSrc] = React.useState(null)
+  const { workflowId, moduleSlug, stepSlug, deltaId, onResize, onSetStepParams, isPublic, embedUrl, onClickSetWorkflowPublic } = props
+  const [iframeEl, setIframeEl] = React.useState(null)
 
-  const iframeRef = React.useRef()
-  const src = moduleUrl === null
-    ? null
-    : (lockedSrc === null ? `${moduleUrl}?origin=${encodeURIComponent(window.location.origin)}&dataUrl=${encodeURIComponent(dataUrl)}` : lockedSrc)
+  const src = useChartIframeSrcWithDataUrlSubscription({ workflowId, moduleSlug, stepSlug, deltaId, iframeEl })
 
   const handleMessage = React.useCallback(ev => {
-    if (!iframeRef.current || ev.source !== iframeRef.current.contentWindow) {
+    if (!iframeEl || ev.source !== iframeEl.contentWindow) {
       return
     }
 
-    if (ev.origin !== new URL(moduleUrl).origin) {
+    if (ev.origin !== new URL(src).origin) {
       return
     }
 
@@ -86,17 +84,8 @@ function StickyResultJsonIframeWithEmbedButton (props) {
       case 'set-params':
         onSetStepParams(data.params)
         break
-      case 'subscribe-to-data-url':
-        // Use iframeRef.current.src. We know we aren't rendering _now_,
-        // and this guarantees that the *next* render has the same src
-        // as the current one. The next render's useEffect() will call
-        // postMessage with the latest dataUrl.
-        setLockedSrc(iframeRef.current.src)
-        break
-      default:
-        console.error('Unhandled message from iframe', data)
     }
-  }, [iframeRef, onResize, onSetStepParams, setLockedSrc, moduleUrl, src])
+  }, [iframeEl, onResize, onSetStepParams, src])
 
   // On first render, clear the height. It may have been set by a previous
   // <StickyResultJsonIframeWithEmbedButton> in this same position.
@@ -111,18 +100,6 @@ function StickyResultJsonIframeWithEmbedButton (props) {
     return () => window.removeEventListener('message', handleMessage)
   }, [handleMessage])
 
-  // Send a message to the iframe on every render, once we're locked
-  React.useEffect(() => {
-    if (!iframeRef.current || lockedSrc === null) {
-      return
-    }
-
-    iframeRef.current.contentWindow.postMessage(
-      { type: 'set-data-url', dataUrl },
-      new URL(moduleUrl).origin
-    )
-  }, [iframeRef, lockedSrc, dataUrl, moduleUrl])
-
   if (src === null) {
     return null
   }
@@ -131,7 +108,7 @@ function StickyResultJsonIframeWithEmbedButton (props) {
     <IframeWithEmbedButton
       key={src}
       src={src}
-      iframeRef={iframeRef}
+      iframeRef={setIframeEl}
       isPublic={isPublic}
       embedUrl={embedUrl}
       onClickSetWorkflowPublic={onClickSetWorkflowPublic}
@@ -156,8 +133,10 @@ function StepResultJsonIframeWithEmbedButton (props) {
   return (
     <StickyResultJsonIframeWithEmbedButton
       key={moduleSlug}
-      moduleUrl={moduleSlug === null ? null : `${window.location.origin}/api/wfmodules/${stepId}/output`}
-      dataUrl={stepSlug ? `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-json.json` : null}
+      moduleSlug={moduleSlug}
+      workflowId={workflowId}
+      stepSlug={stepSlug}
+      deltaId={deltaId}
       embedUrl={`${window.location.origin}/embed/${stepId}`}
       isPublic={isPublic}
       onResize={onResize}

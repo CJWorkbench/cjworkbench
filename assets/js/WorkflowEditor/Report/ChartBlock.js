@@ -1,5 +1,7 @@
+import React from 'react'
 import PropTypes from 'prop-types'
 import BlockFrame from './BlockFrame'
+import { useChartIframeSrcWithDataUrlSubscription } from '../../ChartIframe'
 
 export default function ChartBlock ({
   workflowId,
@@ -10,8 +12,14 @@ export default function ChartBlock ({
   onClickMoveUp
 }) {
   const { slug, step } = block
-  const dataUrl = `/workflows/${workflowId}/steps/${step.slug}/delta-${step.cached_render_result_delta_id}/result-json.json`
-  const src = `/api/wfmodules/${step.id}/output?dataUrl=${encodeURIComponent(dataUrl)}`
+  const [iframeEl, setIframeEl] = React.useState(null)
+  const src = useChartIframeSrcWithDataUrlSubscription({
+    workflowId,
+    moduleSlug: step.module,
+    stepSlug: step.slug,
+    deltaId: step.cached_render_result_delta_id,
+    iframeEl
+  })
 
   return (
     <BlockFrame
@@ -22,7 +30,7 @@ export default function ChartBlock ({
       onClickMoveDown={onClickMoveDown}
       onClickMoveUp={onClickMoveUp}
     >
-      {step.cached_render_result_delta_id ? <iframe src={src} /> : null}
+      <iframe src={src === null ? 'about:blank' : src} ref={setIframeEl} />
     </BlockFrame>
   )
 }
@@ -31,8 +39,9 @@ ChartBlock.propTypes = {
   block: PropTypes.shape({
     slug: PropTypes.string.isRequired,
     step: PropTypes.shape({
-      id: PropTypes.number.isRequired, // TODO make API use workflowId + stepSlug
-      cached_render_result_delta_id: PropTypes.number // null if never rendered
+      slug: PropTypes.string.isRequired,
+      cached_render_result_delta_id: PropTypes.number.isRequired,
+      module: PropTypes.string.isRequired
     }).isRequired
   }).isRequired,
   isReadOnly: PropTypes.bool.isRequired,
