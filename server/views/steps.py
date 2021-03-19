@@ -1,28 +1,23 @@
 import asyncio
-import contextlib
 import io
 import json
 import subprocess
 from http import HTTPStatus as status
-from pathlib import Path
-from typing import Awaitable, ContextManager, Literal, Tuple
+from typing import Awaitable, Literal, Tuple
 
-import numpy as np
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.utils.cache import add_never_cache_headers, patch_response_headers
+from django.utils.cache import patch_response_headers
 from django.views.decorators.http import require_GET
 
-import pyarrow as pa
 from cjwkernel.types import ColumnType
 from cjworkbench.middleware.clickjacking import xframe_options_exempt
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import rabbitmq
-from cjwstate.models import AclEntry, Step, Tab, Workflow
+from cjwstate.models import AclEntry, Step, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.rendercache import (
@@ -131,40 +126,6 @@ def _load_step_by_id_oops_where_is_workflow(
     return _load_workflow_and_step_sync(request, workflow_id, step_slug)
 
 
-# ---- render / input / livedata ----
-# These endpoints return actual table data
-
-
-# Helper method that produces json output for a table + start/end row
-# Also silently clips row indices
-# Now reading a maximum of 101 columns directly from cache parquet
-def _make_render_tuple(cached_result, startrow=None, endrow=None):
-    """Build (startrow, endrow, json_rows) data."""
-
-    if startrow is None:
-        startrow = 0
-    startrow = max(0, startrow)
-    if endrow is None:
-        endrow = startrow + _MaxNRowsPerRequest
-    endrow = max(
-        startrow,
-        min(
-            cached_result.table_metadata.n_rows, endrow, startrow + _MaxNRowsPerRequest
-        ),
-    )
-
-    # raise CorruptCacheError
-    record_json = read_cached_render_result_slice_as_text(
-        cached_result,
-        "json",
-        # Return one row more than configured, so the client knows there
-        # are "too many rows".
-        only_columns=range(settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
-        only_rows=range(startrow, endrow),
-    )
-    return (startrow, endrow, record_json)
-
-
 def int_or_none(x):
     return int(x) if x is not None else None
 
@@ -196,7 +157,7 @@ async def result_table_slice(
         startrow,
         min(
             cached_result.table_metadata.n_rows,
-            endrow or 2 ** 64,
+            endrow or 2 ** 60,
             startrow + _MaxNRowsPerRequest,
         ),
     )
@@ -220,42 +181,6 @@ async def result_table_slice(
         output, as_attachment=False, content_type="application/json"
     )
     patch_response_headers(response, cache_timeout=600)
-    return response
-
-
-# /render: return output table of this module
-async def deprecated_render(request: HttpRequest, step_id: int):
-    # Get first and last row from query parameters, or default to all if not
-    # specified
-    try:
-        startrow = int_or_none(request.GET.get("startrow"))
-        endrow = int_or_none(request.GET.get("endrow"))
-    except ValueError:
-        return JsonResponse(
-            {"message": "bad row number", "status_code": 400},
-            status=status.BAD_REQUEST,
-        )
-
-    # raise Http404, PermissionDenied
-    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
-    cached_result = step.cached_render_result
-    if cached_result is None:
-        # assume we'll get another request after execute finishes
-        return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
-
-    try:
-        startrow, endrow, record_json = _make_render_tuple(
-            cached_result, startrow, endrow
-        )
-    except CorruptCacheError:
-        # assume we'll get another request after execute finishes
-        return JsonResponse({"start_row": 0, "end_row": 0, "rows": []})
-
-    data = '{"start_row":%d,"end_row":%d,"rows":%s}' % (startrow, endrow, record_json)
-    response = HttpResponse(
-        data.encode("utf-8"), content_type="application/json", charset="utf-8"
-    )
-    add_never_cache_headers(response)
     return response
 
 
@@ -347,23 +272,6 @@ async def result_json(
     return response
 
 
-async def deprecated_embeddata(request: HttpRequest, step_id: int):
-    # raise Http404, PermissionDenied
-    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
-
-    # Speedy bypassing of locks: we don't care if we get out-of-date data
-    # because we assume the client will re-request when it gets a new
-    # cached_render_result_delta_id.
-    try:
-        result_json = json.loads(
-            bytes(step.cached_render_result_json), encoding="utf-8"
-        )
-    except ValueError:
-        result_json = None
-
-    return JsonResponse(result_json, safe=False)
-
-
 async def result_column_value_counts(
     request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
 ) -> JsonResponse:
@@ -436,76 +344,6 @@ async def result_column_value_counts(
     response = JsonResponse({"values": value_counts})
     patch_response_headers(response, cache_timeout=600)
     return response
-
-
-async def deprecated_value_counts(request: HttpRequest, step_id: int) -> JsonResponse:
-    try:
-        colname = request.GET["column"]
-    except KeyError:
-        return JsonResponse(
-            {"error": 'Missing a "column" parameter'}, status=status.BAD_REQUEST
-        )
-
-    if not colname:
-        # User has not yet chosen a column. Empty response.
-        return JsonResponse({"values": {}})
-
-    # raise Http404, PermissionDenied
-    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
-    cached_result = step.cached_render_result
-    if cached_result is None:
-        # assume we'll get another request after execute finishes
-        return JsonResponse({"values": {}})
-
-    try:
-        column_index, column = next(
-            (i, c)
-            for i, c in enumerate(cached_result.table_metadata.columns)
-            if c.name == colname
-        )
-    except StopIteration:
-        return JsonResponse(
-            {"error": f'column "{colname}" not found'}, status=status.NOT_FOUND
-        )
-
-    if not isinstance(column.type, ColumnType.Text):
-        # We only return text values.
-        #
-        # Rationale: this is only used in Refine and Filter by Value. Both
-        # force text. The user can query a column before it's converted to
-        # text; but if he/she does, we shouldn't format as text unless we have
-        # a viable workflow that needs it. (Better would be to force the user
-        # to convert to text before doing anything else, no?)
-        return JsonResponse({"values": {}})
-
-    try:
-        # raise CorruptCacheError
-        with open_cached_render_result(cached_result) as result:
-            arrow_table = result.table.table
-            chunked_array = arrow_table.column(column_index)
-    except CorruptCacheError:
-        # We _could_ return an empty result set; but our only goal here is
-        # "don't crash" and this 404 seems to be the simplest implementation.
-        # (We assume that if the data is deleted, the user has moved elsewhere
-        # and this response is going to be ignored.)
-        return JsonResponse(
-            {"error": f'column "{colname}" not found'}, status=status.NOT_FOUND
-        )
-
-    if chunked_array.num_chunks == 0:
-        value_counts = {}
-    else:
-        pyarrow_value_counts = chunked_array.value_counts()
-        # Assume type is text. (We checked column.type is ColumnType.Text above.)
-        #
-        # values can be either a StringArray or a DictionaryArray. In either case,
-        # .to_pylist() converts to a Python List[str].
-        values = pyarrow_value_counts.field("values").to_pylist()
-        counts = pyarrow_value_counts.field("counts").to_pylist()
-
-        value_counts = {v: c for v, c in zip(values, counts) if v is not None}
-
-    return JsonResponse({"values": value_counts})
 
 
 @xframe_options_exempt
