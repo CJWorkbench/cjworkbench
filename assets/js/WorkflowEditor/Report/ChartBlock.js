@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import BlockFrame from './BlockFrame'
 
 export default function ChartBlock ({
+  workflowId,
   block,
   isReadOnly,
   onClickDelete,
@@ -9,7 +10,8 @@ export default function ChartBlock ({
   onClickMoveUp
 }) {
   const { slug, step } = block
-  const deltaId = step.cached_render_result_delta_id || 'rendering'
+  const dataUrl = `/workflows/${workflowId}/steps/${step.slug}/delta-${step.cached_render_result_delta_id}/result-json.json`
+  const src = `/api/wfmodules/${step.id}/output?dataUrl=${encodeURIComponent(dataUrl)}`
 
   return (
     <BlockFrame
@@ -20,11 +22,12 @@ export default function ChartBlock ({
       onClickMoveDown={onClickMoveDown}
       onClickMoveUp={onClickMoveUp}
     >
-      <iframe src={`/api/wfmodules/${step.id}/output#revision=${deltaId}`} />
+      {step.cached_render_result_delta_id ? <iframe src={src} /> : null}
     </BlockFrame>
   )
 }
 ChartBlock.propTypes = {
+  workflowId: PropTypes.number.isRequired,
   block: PropTypes.shape({
     slug: PropTypes.string.isRequired,
     step: PropTypes.shape({

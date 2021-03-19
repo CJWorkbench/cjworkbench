@@ -40,7 +40,7 @@
         <div class="block-main">
           {% if block.block_type == "Chart" %}
             <iframe
-              src="/api/wfmodules/{{block.step.id}}/output#revision={{block.step.last_relevant_delta_id}}"
+              src="/api/wfmodules/{{block.step.id}}/output?dataUrl=%2Fworkflows%2F{{workflow.id}}%2Fsteps%2F{{block.step.slug}}%2Fdelta-{{block.step.cached_render_result_delta_id}}%2Fresult-json.json"
             ></iframe>
           {% elif block.block_type == "Text" %}
             <div class="markdown">
