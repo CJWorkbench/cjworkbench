@@ -1,10 +1,12 @@
 import asyncio
+import json
 import logging
-from typing import ContextManager
+import threading
 import unittest
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import ContextManager, List, NamedTuple, Tuple
 from unittest.mock import patch
-from aiohttp import web
-from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
+
 from yarl import URL
 from cjwstate import oauth
 from cjwstate.modules.param_spec import ParamSpec
@@ -26,7 +28,7 @@ FakeIntercom = oauth.OAuth2(
     client_secret="a-client-secret",
     auth_url="unused",
     token_url="unused",
-    refresh_url="AIOHTTP_ORIGIN/refresh",
+    refresh_url="HTTP_ORIGIN/refresh",
     scope="unused",
     redirect_url="unused",
 )
@@ -43,6 +45,17 @@ def FakeGoogle(base_url: str):
         scope="unused",
         redirect_url="unused",
     )
+
+
+class MockHttpResponse(NamedTuple):
+    status_code: int = 200
+    """HTTP status code"""
+
+    headers: List[Tuple[str, str]] = []
+    """List of headers -- including Content-Length, Transfer-Encoding, etc."""
+
+    body: bytes = b""
+    """HTTP response body."""
 
 
 class PrepareSecretStringTests(unittest.TestCase):
@@ -152,43 +165,58 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
         )
 
 
-class PrepareSecretOauth2(AioHTTPTestCase):
+class PrepareSecretOauth2(unittest.IsolatedAsyncioTestCase):
     GoogleLogic = ParamSpec.Secret.Logic.Oauth2("oauth2", "google")
     IntercomLogic = ParamSpec.Secret.Logic.Oauth2("oauth2", "intercom")
 
     def setUp(self):
         super().setUp()
 
-        # Tests will set `self.auth_response` to dictate what the server answers.
-        self.auth_response = web.Response(status=500, reason="unimplemented")
+        # Tests will set `self.mock_http_response` to dictate what the server answers.
+        self.mock_http_response = None
         self.last_request = None
 
-        self.logger = logging.getLogger("aiohttp.access")
-        self.old_log_level = self.logger.level
-        self.logger.setLevel(logging.WARN)
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self2):
+                self.last_request = (self2.command, self2.path, self2.rfile.read1())
+                r = self.mock_http_response
+                if hasattr(r, "__next__"):
+                    r = next(r)
+                if r is None:
+                    raise RuntimeError("Tests must overwrite self.mock_http_response")
 
-        # Hack because request_url changes every test. (Is there a more
-        # readable way to make FakeGoogle.refresh_url change each test?)
-        self.server.make_url = lambda path: self.server._root.join(
-            URL(path.replace("AIOHTTP_ORIGIN", ""))
+                self2.send_response_only(r.status_code)
+                for header, value in r.headers:
+                    self2.send_header(header, value)
+                self2.end_headers()
+                write = self2.wfile.write
+                if isinstance(r.body, list):
+                    # chunked encoding
+                    for chunk in r.body:
+                        write(("%x\r\n" % len(chunk)).encode("ascii"))
+                        write(chunk)
+                        write(b"\r\n")
+                    write(b"0\r\n\r\n")
+                else:
+                    # just write the bytes
+                    write(r.body)
+
+        self.server = HTTPServer(("127.0.0.1", 0), Handler)
+        self.server_root = "http://" + ":".join(
+            str(part) for part in self.server.server_address
         )
+        self.server_thread = threading.Thread(
+            target=self.server.serve_forever, kwargs={"poll_interval": 0.005}
+        )
+        self.server_thread.setDaemon(True)
+        self.server_thread.start()
 
     def tearDown(self):
-        self.logger.setLevel(self.old_log_level)
+        self.server.shutdown()
+        self.server_thread.join()
+
         super().tearDown()
 
-    async def get_application(self):  # AioHTTPTestCase requirement
-        app = web.Application()
-
-        async def handle(request):
-            self.last_request = request
-            self.last_request_post = await request.post()
-            return self.auth_response
-
-        app.router.add_post("/refresh", handle)
-        return app
-
-    @unittest_run_loop
     async def test_not_logged_in_gives_none(self):
         self.assertEqual(await prepare_secret(self.GoogleLogic, None), None)
 
@@ -196,11 +224,10 @@ class PrepareSecretOauth2(AioHTTPTestCase):
         return patch.object(
             oauth.OAuthService,
             "lookup_or_none",
-            lambda s: FakeGoogle(str(self.server._root)),
+            lambda s: FakeGoogle(str(self.server_root)),
         )
 
     @patch.object(oauth.OAuthService, "lookup_or_none", lambda s: None)
-    @unittest_run_loop
     async def test_no_service_gives_error(self):
         self.assertEqual(
             await prepare_secret(
@@ -225,7 +252,6 @@ class PrepareSecretOauth2(AioHTTPTestCase):
         )
 
     @patch.object(oauth.OAuthService, "lookup_or_none", lambda s: FakeIntercom)
-    @unittest_run_loop
     async def test_return_access_token_when_no_refresh_token(self):
         # Intercom gives tokens that last forever and doesn't have a refresh_url
         self.assertEqual(
@@ -248,75 +274,111 @@ class PrepareSecretOauth2(AioHTTPTestCase):
             },
         )
 
-    @unittest_run_loop
     async def test_refresh_token_happy_path(self):
         # Google gives access_tokens that only work for a little while. The
         # secret we store in the database has a "refresh_token" to make more.
-        self.auth_response = web.json_response(
-            {"token_type": "Bearer", "access_token": "an-access-token"}
+        self.mock_http_response = MockHttpResponse(
+            200,
+            [("Content-Type", "application/json")],
+            b'{"token_type":"Bearer","access_token":"an-access-token"}',
         )
         with self.fake_google():
-            self.assertEqual(
-                await prepare_secret(
-                    self.GoogleLogic,
+            with self.assertLogs("httpx._client", level="DEBUG"):
+                self.assertEqual(
+                    await prepare_secret(
+                        self.GoogleLogic,
+                        {
+                            "name": "a@example.com",
+                            "secret": {
+                                "token_type": "Bearer",
+                                "access_token": "worthless",
+                                "refresh_token": "a-refresh-token",
+                            },
+                        },
+                    ),
                     {
                         "name": "a@example.com",
                         "secret": {
                             "token_type": "Bearer",
-                            "access_token": "worthless",
-                            "refresh_token": "a-refresh-token",
+                            "access_token": "an-access-token",
                         },
                     },
-                ),
-                {
-                    "name": "a@example.com",
-                    "secret": {
-                        "token_type": "Bearer",
-                        "access_token": "an-access-token",
-                    },
-                },
-            )
+                )
         self.assertEqual(
-            self.last_request_post,
-            {
-                "grant_type": "refresh_token",
-                "refresh_token": "a-refresh-token",
-                "client_id": "a-client-id",
-                "client_secret": "a-client-secret",
-            },
+            self.last_request,
+            (
+                "POST",
+                "/refresh",
+                b"grant_type=refresh_token&refresh_token=a-refresh-token&client_id=a-client-id&client_secret=a-client-secret",
+            ),
         )
 
-    @unittest_run_loop
-    async def test_refresh_token_unexpected_http_response(self):
-        # Google gives access_tokens that only work for a little while. The
-        # secret we store in the database has a "refresh_token" to make more.
-        self.auth_response = web.json_response(
-            "tea time?", status=418, reason="I'm a teapot"
+    async def test_refresh_token_unexpected_non_json_response(self):
+        self.maxDiff = 99999
+        self.mock_http_response = MockHttpResponse(
+            200, [("Content-Type", "text/plain; charset=utf-8")], b"tea time?"
         )
         with self.fake_google():
-            self.assertEqual(
-                await prepare_secret(
-                    self.GoogleLogic,
+            with self.assertLogs("httpx._client", level="DEBUG"):
+                self.assertEqual(
+                    await prepare_secret(
+                        self.GoogleLogic,
+                        {
+                            "name": "a@example.com",
+                            "secret": {
+                                "token_type": "Bearer",
+                                "access_token": "worthless",
+                                "refresh_token": "a-refresh-token",
+                            },
+                        },
+                    ),
                     {
                         "name": "a@example.com",
-                        "secret": {
-                            "token_type": "Bearer",
-                            "access_token": "worthless",
-                            "refresh_token": "a-refresh-token",
+                        "error": {
+                            "id": "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
+                            "arguments": {
+                                "service_id": "google",
+                                "status_code": 200,
+                                "reason": "OK",
+                                "description": "tea time?",
+                            },
+                            "source": None,
                         },
                     },
-                ),
-                {
-                    "name": "a@example.com",
-                    "error": {
-                        "id": "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
-                        "arguments": {
-                            "service_id": "google",
-                            "status_code": 418,
-                            "reason": "I'm a teapot",
-                            "description": "tea time?",
+                )
+
+    async def test_refresh_token_unexpected_status_code(self):
+        self.maxDiff = 99999
+        self.mock_http_response = MockHttpResponse(
+            418,
+            [("Content-Type", "application/json")],
+            b'{"description":"Bearer","access_token":"an-access-token"}',
+        )
+        with self.fake_google():
+            with self.assertLogs("httpx._client", level="DEBUG"):
+                self.assertEqual(
+                    await prepare_secret(
+                        self.GoogleLogic,
+                        {
+                            "name": "a@example.com",
+                            "secret": {
+                                "token_type": "Bearer",
+                                "access_token": "worthless",
+                                "refresh_token": "a-refresh-token",
+                            },
                         },
-                        "source": None,
+                    ),
+                    {
+                        "name": "a@example.com",
+                        "error": {
+                            "id": "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
+                            "arguments": {
+                                "service_id": "google",
+                                "status_code": 418,
+                                "reason": "",
+                                "description": '{"description":"Bearer","access_token":"an-access-token"}',
+                            },
+                            "source": None,
+                        },
                     },
-                },
-            )
+                )
