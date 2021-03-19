@@ -46,6 +46,10 @@ const messageOrigin = new URL(window.location).searchParams.get('origin')
 let currentFetch = null
 
 function notifySize () {
+  if (!messageOrigin) {
+    return
+  }
+
   // To be stable, make height always factor in scrollbar width
   // Otherwise, making the scrollbar appear would change height,
   // which would make the scrollbar disappear, which would change
@@ -54,12 +58,7 @@ function notifySize () {
   const height = pre.clientHeight || 0
   document.body.style.overflow = 'hidden auto'
 
-  window.parent.postMessage({
-    from: 'outputIframe',
-    type: 'resize',
-    stepId: parseInt(/(\d+)\/output/.exec(String(window.location))[1], 10),
-    height
-  }, window.location.origin)
+  window.parent.postMessage({ type: 'resize', height }, messageOrigin)
 }
 
 function renderOutput (json) {
@@ -68,9 +67,9 @@ function renderOutput (json) {
 }
 
 function startLoading () {
-  // hide text. Don't notifySize(), because the new size will equal the
-  // old size in many real-world use cases; avoiding resize will avoid
-  // flicker in those cases.
+  // hide text. Don't notifySize(), because the post-fetch size will be the
+  // old size in many real-world use cases. Skipping resize avoids flicker in
+  // those cases.
   pre.textContent = ''
 
   const thisFetch = currentFetch = fetch(dataUrl, { credentials: 'same-origin' })

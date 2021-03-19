@@ -34,28 +34,28 @@ msgstr ""
 msgid "_spec.parameters.y_columns.name"
 msgstr ""
 
-#. default-message: Column chart can visualize a maximum of {MaxNBars} bars
-#: columnchart.py:361
-msgid "tooManyBarsError.message"
-msgstr ""
-
 #. default-message: Please choose an X-axis column
-#: columnchart.py:370
+#: columnchart.py:293
 msgid "noXAxisError.message"
 msgstr ""
 
 #. default-message: Please choose a Y-axis column
-#: columnchart.py:375
+#: columnchart.py:297
 msgid "noYAxisError.message"
 msgstr ""
 
-#. default-message: You cannot plot Y-axis column {column_name} because it is the X-axis column
-#: columnchart.py:385
-msgid "sameAxesError.message"
+#. default-message: Column chart can visualize a maximum of {MaxNBars} bars
+#: columnchart.py:308
+msgid "tooManyBarsError.message"
 msgstr ""
 
 #. default-message: no records to plot
-#: columnchart.py:395
+#: columnchart.py:317
 msgid "nothingToPlotError.message"
+msgstr ""
+
+#. default-message: You cannot plot Y-axis column {column_name} because it is the X-axis column
+#: _deprecated_i18n_messages.py:7
+msgid "sameAxesError.message"
 msgstr ""
 

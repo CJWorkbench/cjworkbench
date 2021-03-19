@@ -234,6 +234,7 @@ class Chart(NamedTuple):
         column-name conflicts, and they add no value.)
         """
         datasets = {"x": self.x_series.json_compatible_values}  # all str/number
+
         for i, y_series in enumerate(self.y_serieses):
             datasets[f"y{i}"] = y_series.series  # all number
         return [
@@ -275,6 +276,9 @@ class Chart(NamedTuple):
 
         return ret
 
+    def to_vega_y_encoding(self) -> Dict[str, Any]:
+        return {"title": self.y_axis_label}
+
     def to_vega_color_legend(self):
         if len(self.y_serieses) == 1:
             return None  # explicitly set "no legend"
@@ -308,7 +312,7 @@ class Chart(NamedTuple):
                 "font": "Roboto, Helvetica, sans-serif",
                 "title": {
                     "offset": 15,
-                    "color": "#383838",
+                    "color": LABEL_COLOR,
                     "fontSize": 20,
                     "fontWeight": "normal",
                 },
@@ -326,11 +330,7 @@ class Chart(NamedTuple):
                     "domain": False,  # no bold lines along left + bottom
                 },
                 "axisY": {
-                    "title": self.y_axis_label,
                     "format": self.y_axis_tick_format,
-                },
-                "axisX": {
-                    "title": self.x_axis_label or self.x_series.column.name,
                 },
             },
             "data": {
@@ -338,6 +338,7 @@ class Chart(NamedTuple):
             },
             "encoding": {
                 "x": self.to_vega_x_encoding(),  # for all layers
+                "y": self.to_vega_y_encoding(),  # for all layers
                 "tooltip": [
                     {
                         "field": "x",
@@ -393,7 +394,6 @@ class Chart(NamedTuple):
                             "y": {
                                 "field": f"y{i}",
                                 "type": "quantitative",
-                                "title": y_series.name,
                             },
                             "color": {
                                 # This would normally be a constant, but one
@@ -620,7 +620,10 @@ class Form(NamedTuple):
 
         title = self.title or "Line Chart"
         x_axis_label = self.x_axis_label or x_series.name
-        y_axis_label = self.y_axis_label or y_serieses[0].name
+        if len(y_serieses) == 1:
+            y_axis_label = self.y_axis_label or y_serieses[0].name
+        else:
+            y_axis_label = self.y_axis_label
 
         return Chart(
             title=title,

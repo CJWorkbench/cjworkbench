@@ -13,7 +13,7 @@ from .views import (
     importfromgithub,
     jsdata,
     lessons,
-    # modules,
+    modules,
     oauth,
     steps,
     tusd_hooks,
@@ -144,10 +144,7 @@ urlpatterns = [
             ]
         ),
     ),
-    # path(
-    #     "modules/<slug:module_slug>.html",
-    #     modules.module_html,
-    # ),
+    path("modules/<slug:module_slug>.html", modules.module_html),
     # Steps -- deprecated URLs
     #
     # The "output" and "public_csv"/"public_json" URLs are widely used online.

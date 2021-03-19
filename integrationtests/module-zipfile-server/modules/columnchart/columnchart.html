@@ -2,8 +2,9 @@
 <html lang="en-US">
   <head>
     <meta charset="utf-8">
-    <title>Column Chart output</title>
-    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,700" rel="stylesheet">
+    <title>Column Chart</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <style>
       html, body {
         box-sizing: border-box;
@@ -40,7 +41,7 @@
   <body>
     <main><div id="vega"></div></main>
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
     <script>
       const loadingSpec = {
@@ -68,6 +69,10 @@
           }
         }
       }
+
+      const messageOrigin = new URL(document.location).searchParams.get('origin')
+      let dataUrl = new URL(document.location).searchParams.get('dataUrl')
+      let currentFetch = null
 
       const el = document.querySelector('#vega')
       let lastSpec = loadingSpec
@@ -135,17 +140,19 @@
 
       function slantXAxisLabelsIfNeeded ({ spec, view }) {
         if (areXAxisLabelsOverlapping()) {
-          const newSpec = JSON.parse(JSON.stringify(spec))
-          const xAxis = newSpec.axes[0]
-          Object.assign(xAxis, {
-            labelAlign: 'right',
-            labelBaseline: 'middle',
-            labelAngle: -45,
-            tickSize: 3,
-            labelFontWeight: 400,
-            labelFontSize: 12,
-            labelColor: '#383838'
-          })
+          const newSpec = {
+            ...spec,
+            config: {
+              ...spec.config,
+              axisX: {
+                ...spec.config.axisX,
+                labelAlign: 'right',
+                labelBaseline: 'middle',
+                labelAngle: -45,
+                tickSize: 3
+              }
+            }
+          }
           renderSpec(newSpec)
         }
       }
@@ -178,20 +185,44 @@
       function startLoading () {
         renderData(loadingSpec)
 
-        const url = String(window.location).replace(/\/output.*/, '/embeddata')
-        fetch(url, { credentials: 'same-origin' })
+        const thisFetch = currentFetch = fetch(dataUrl, { credentials: 'same-origin' })
+
+        thisFetch
           .then(function(response) {
+            if (response.status === 404) {
+              return errorSpec('no data')
+            }
             if (!response.ok) {
               throw new Error('Invalid response code: ' + response.status)
             }
-
             return response.json()
           })
-          .then(renderData)
+          .then(data => {
+            if (thisFetch !== currentFetch) {
+              return // another fetch came after
+            }
+            renderData(data)
+          })
           .catch(console.error)
       }
 
-      window.addEventListener('hashchange', startLoading)
+      if (messageOrigin) {
+        function handleMessage (ev) {
+          if (ev.source !== window.parent || ev.origin !== messageOrigin) {
+            return
+          }
+
+          if (ev.data.type === 'set-data-url') {
+            if (dataUrl !== ev.data.dataUrl) {
+              dataUrl = ev.data.dataUrl
+              startLoading()
+            }
+          }
+        }
+        window.addEventListener('message', handleMessage)
+        window.parent.postMessage({ type: 'subscribe-to-data-url' }, messageOrigin)
+      }
+
       window.addEventListener('resize', onResize)
 
       startLoading()

@@ -1,14 +1,14 @@
 # Greek translations for PROJECT.
-# Copyright (C) 2020 ORGANIZATION
+# Copyright (C) 2021 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-02-18 18:25+0000\n"
+"POT-Creation-Date: 2021-03-04 17:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.0\n"
 
 msgid "_spec.name"
 msgstr "Γράφημα στηλών"
@@ -48,26 +48,25 @@ msgstr "Ετικέτα"
 msgid "_spec.parameters.y_columns.name"
 msgstr "Στήλες"
 
-#: columnchart.py:361
-msgid "tooManyBarsError.message"
-msgstr ""
-"Το γράφημα στηλών μπορεί να οπτικοποιήσει έως {MaxNBars} ράβδους το πολύ."
-
-#: columnchart.py:370
+#: columnchart.py:293
 msgid "noXAxisError.message"
 msgstr "Διαλέξτε μια στήλη του άξονα X."
 
-#: columnchart.py:375
+#: columnchart.py:297
 msgid "noYAxisError.message"
 msgstr "Διαλέξτε μια στήλη του άξονα Y."
 
-#: columnchart.py:385
+#: columnchart.py:308
+msgid "tooManyBarsError.message"
+msgstr "Το γράφημα στηλών μπορεί να οπτικοποιήσει έως {MaxNBars} ράβδους το πολύ."
+
+#: columnchart.py:317
+msgid "nothingToPlotError.message"
+msgstr "δεν υπάρχουν εγγραφές για σχεδίαση"
+
+#: _deprecated_i18n_messages.py:7
 msgid "sameAxesError.message"
 msgstr ""
 "Δεν μπορείτε να σχεδιάσετε την {column_name} ως στήλη του άξονα Y καθότι "
 "είναι η στήλη του άξονα X."
-
-#: columnchart.py:395
-msgid "nothingToPlotError.message"
-msgstr "δεν υπάρχουν εγγραφές για σχεδίαση"
 

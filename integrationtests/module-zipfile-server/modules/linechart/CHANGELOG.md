@@ -1,3 +1,19 @@
+2020-03-18.01
+-------------
+
+* (no user-visible change) Use Workbench's new `dataUrl` pattern
+
+2021-03-15.01
+-------------
+
+* On multi-series chart, hide Y-axis label by default. (Previously, the first
+  series name was used as Y-axis label.)
+
+2021-02-11.01
+-------------
+
+* Fix: show custom Y-axis label instead of default
+
 2021-01-20.01
 -------------
 
