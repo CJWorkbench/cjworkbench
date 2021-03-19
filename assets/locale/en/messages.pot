@@ -1,33 +1,33 @@
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/Embed.js:66
+#: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/Embed.js:58
+#: assets/js/Embed.js:60
 msgid "js.Embed.embedThisChart"
 msgstr ""
 
 #. default-message: by {0}
-#: assets/js/Embed.js:98
+#: assets/js/Embed.js:100
 msgid "js.Embed.metadata.author"
 msgstr ""
 
 #. `<0>{timeAgo}</0>` will show a time difference (i.e. something like '4h
 #. ago')
 #. default-message: Updated <0>{timeAgo}</0>
-#: assets/js/Embed.js:103
+#: assets/js/Embed.js:105
 msgid "js.Embed.metadata.updated"
 msgstr ""
 
 #. default-message: Workbench
-#: assets/js/Embed.js:129
+#: assets/js/Embed.js:131
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr ""
 
 #. default-message: This workflow is not available
-#: assets/js/Embed.js:121
+#: assets/js/Embed.js:123
 msgid "js.Embed.workflowNotAvailable.title"
 msgstr ""
 
@@ -43,25 +43,25 @@ msgstr ""
 
 #. Acts as closing button
 #. default-message: Done
-#: assets/js/ExportModal.js:81
+#: assets/js/ExportModal.js:69
 msgid "js.ExportModal.footer.doneButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT DATA
-#: assets/js/ExportModal.js:42
+#: assets/js/ExportModal.js:30
 msgid "js.ExportModal.header.title"
 msgstr ""
 
 #. "CSV" (all-caps) is a kind of file
 #. default-message: CSV
-#: assets/js/ExportModal.js:52
+#: assets/js/ExportModal.js:40
 msgid "js.ExportModal.type.CSV"
 msgstr ""
 
 #. "JSON" (all-caps) is a kind of file
 #. default-message: JSON
-#: assets/js/ExportModal.js:63
+#: assets/js/ExportModal.js:51
 msgid "js.ExportModal.type.JSON"
 msgstr ""
 
@@ -107,49 +107,49 @@ msgid "js.ImportModuleFromGithub.status.processing"
 msgstr ""
 
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/OutputIframe.js:173
+#: assets/js/OutputIframe.js:229
 msgid "js.OutputIframe.embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/OutputIframe.js:163
+#: assets/js/OutputIframe.js:219
 msgid "js.OutputIframe.embed.header.title"
 msgstr ""
 
 #. default-message: OK
-#: assets/js/OutputIframe.js:186
+#: assets/js/OutputIframe.js:242
 msgid "js.OutputIframe.footer.OKButton"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/OutputIframe.js:133
+#: assets/js/OutputIframe.js:192
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr ""
 
 #. default-message: Set public
-#: assets/js/OutputIframe.js:139
+#: assets/js/OutputIframe.js:199
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr ""
 
 #. default-message: Get an embeddable URL
-#: assets/js/OutputIframe.js:215
+#: assets/js/OutputIframe.js:23
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: SHARE THIS WORKFLOW
-#: assets/js/OutputIframe.js:107
+#: assets/js/OutputIframe.js:165
 msgid "js.OutputIframe.private.header.title"
 msgstr ""
 
 #. default-message: Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
-#: assets/js/OutputIframe.js:122
+#: assets/js/OutputIframe.js:180
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 
 #. default-message: This workflow is currently private
-#: assets/js/OutputIframe.js:117
+#: assets/js/OutputIframe.js:175
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
@@ -541,7 +541,7 @@ msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr ""
 
 #. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:108
+#: assets/js/WorkflowEditor/OutputPane.js:111
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
@@ -2301,29 +2301,29 @@ msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: COLUMNS
-#: assets/js/table/TableInfo.js:64
+#: assets/js/table/TableInfo.js:67
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT
-#: assets/js/table/TableInfo.js:89
+#: assets/js/table/TableInfo.js:92
 msgid "js.table.TableInfo.export"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: ROWS
-#: assets/js/table/TableInfo.js:53
+#: assets/js/table/TableInfo.js:56
 msgid "js.table.TableInfo.rows"
 msgstr ""
 
 #. default-message: A maximum of 100 columns can be displayed
-#: assets/js/table/TableView.js:67
+#: assets/js/table/TableView.js:69
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr ""
 
 #. default-message: Select columns
-#: assets/js/table/TableView.js:75
+#: assets/js/table/TableView.js:77
 msgid "js.table.TableView.selectColumns.button"
 msgstr ""
 
@@ -2581,6 +2581,11 @@ msgstr ""
 #. default-message: Workbench basics
 #: templates/course.html:22
 msgid "py.templates.course.tutorials.link"
+msgstr ""
+
+#. default-message: Waiting for data…
+#: templates/embed-rendering.html:12
+msgid "py.templates.embed-rendering.description"
 msgstr ""
 
 #. default-message: This workflow is not available :(

@@ -14,30 +14,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: assets/js/Embed.js:66
+#: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
 
 #. This should be all-caps for styling reasons
-#: assets/js/Embed.js:58
+#: assets/js/Embed.js:60
 msgid "js.Embed.embedThisChart"
 msgstr "EMBED THIS CHART"
 
-#: assets/js/Embed.js:98
+#: assets/js/Embed.js:100
 msgid "js.Embed.metadata.author"
 msgstr "by {0}"
 
 #. `<0>{timeAgo}</0>` will show a time difference (i.e. something like '4h
 #. ago')
-#: assets/js/Embed.js:103
+#: assets/js/Embed.js:105
 msgid "js.Embed.metadata.updated"
 msgstr "Updated <0>{timeAgo}</0>"
 
-#: assets/js/Embed.js:129
+#: assets/js/Embed.js:131
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr "Workbench"
 
-#: assets/js/Embed.js:121
+#: assets/js/Embed.js:123
 msgid "js.Embed.workflowNotAvailable.title"
 msgstr "This workflow is not available"
 
@@ -50,22 +50,22 @@ msgid "js.ErrorBoundary.somethingIsWrong"
 msgstr "Something is wrong."
 
 #. Acts as closing button
-#: assets/js/ExportModal.js:81
+#: assets/js/ExportModal.js:69
 msgid "js.ExportModal.footer.doneButton"
 msgstr "Done"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:42
+#: assets/js/ExportModal.js:30
 msgid "js.ExportModal.header.title"
 msgstr "EXPORT DATA"
 
 #. "CSV" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:52
+#: assets/js/ExportModal.js:40
 msgid "js.ExportModal.type.CSV"
 msgstr "CSV"
 
 #. "JSON" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:63
+#: assets/js/ExportModal.js:51
 msgid "js.ExportModal.type.JSON"
 msgstr "JSON"
 
@@ -102,43 +102,43 @@ msgstr "Imported module {module}"
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Processing…"
 
-#: assets/js/OutputIframe.js:173
+#: assets/js/OutputIframe.js:229
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:163
+#: assets/js/OutputIframe.js:219
 msgid "js.OutputIframe.embed.header.title"
 msgstr "EMBED THIS CHART"
 
-#: assets/js/OutputIframe.js:186
+#: assets/js/OutputIframe.js:242
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:133
+#: assets/js/OutputIframe.js:192
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Cancel"
 
-#: assets/js/OutputIframe.js:139
+#: assets/js/OutputIframe.js:199
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Set public"
 
-#: assets/js/OutputIframe.js:215
+#: assets/js/OutputIframe.js:23
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Get an embeddable URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:107
+#: assets/js/OutputIframe.js:165
 msgid "js.OutputIframe.private.header.title"
 msgstr "SHARE THIS WORKFLOW"
 
-#: assets/js/OutputIframe.js:122
+#: assets/js/OutputIframe.js:180
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Set this workflow to Public in order to share it? Anyone with the URL "
 "will be able to access and duplicate it."
 
-#: assets/js/OutputIframe.js:117
+#: assets/js/OutputIframe.js:175
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "This workflow is currently private"
 
@@ -458,7 +458,7 @@ msgstr "Close Search"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:108
+#: assets/js/WorkflowEditor/OutputPane.js:111
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
@@ -1910,25 +1910,25 @@ msgstr ""
 "selected}}"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:64
+#: assets/js/table/TableInfo.js:67
 msgid "js.table.TableInfo.columns"
 msgstr "COLUMNS"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:89
+#: assets/js/table/TableInfo.js:92
 msgid "js.table.TableInfo.export"
 msgstr "EXPORT"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:53
+#: assets/js/table/TableInfo.js:56
 msgid "js.table.TableInfo.rows"
 msgstr "ROWS"
 
-#: assets/js/table/TableView.js:67
+#: assets/js/table/TableView.js:69
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr "A maximum of 100 columns can be displayed"
 
-#: assets/js/table/TableView.js:75
+#: assets/js/table/TableView.js:77
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Select columns"
 
@@ -2165,6 +2165,10 @@ msgstr "Workbench Tutorials"
 #: templates/course.html:22
 msgid "py.templates.course.tutorials.link"
 msgstr "Workbench basics"
+
+#: templates/embed-rendering.html:12
+msgid "py.templates.embed-rendering.description"
+msgstr "Waiting for data…"
 
 #: templates/embed_404.html:15
 msgid "py.templates.embed_404.notAvailable.header"

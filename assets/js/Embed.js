@@ -35,10 +35,9 @@ function Logo (props) {
 }
 
 function EmbedButton (props) {
-  const { step } = props
   const [isOpen, setOpen] = useState(false)
 
-  const iframeCode = `<iframe src="${window.location.origin}/embed/${step.id} width="560" height="315" frameborder="0"></iframe>`
+  const iframeCode = `<iframe src="${window.location}" width="560" height="315" frameborder="0"></iframe>`
   const handleClickOpen = useCallback(() => setOpen(true), [setOpen])
   const handleClickClose = useCallback(() => setOpen(false), [setOpen])
 

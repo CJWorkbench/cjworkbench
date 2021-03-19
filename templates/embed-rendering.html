@@ -1,0 +1,14 @@
+{% extends 'minimum.html' %}
+{% load i18n_icu %}
+
+{% block headscripts_globals %}
+  <script>
+    window.setTimeout(() => window.location.reload(), 1000)
+  </script>
+{% endblock %}
+
+{% block body %}
+  <div id="reloading">
+    {% trans_html "py.templates.embed-rendering.description" default="Waiting for data…" %}
+  </div>
+{% endblock %}

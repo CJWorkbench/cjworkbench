@@ -27,7 +27,7 @@ class TestEmbed(LoggedInIntegrationTest):
         b.click_whatever(".action-button", text="Set public", wait=True)
         embed_text = b.text(".modal-body code", wait=True)
 
-        url = re.search('<iframe src="(http://.*/embed/\d+)" .*>', embed_text).group(1)
+        url = re.search(r'<iframe\s*src="(http[^"]+embed)"', embed_text).group(1)
 
         # Vist URL and ensure it loads the embedded content correctly
         b.visit(url)

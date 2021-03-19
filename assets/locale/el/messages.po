@@ -14,32 +14,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: assets/js/Embed.js:66
+#: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/Embed.js:58
+#: assets/js/Embed.js:60
 msgid "js.Embed.embedThisChart"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/Embed.js:98
+#: assets/js/Embed.js:100
 msgid "js.Embed.metadata.author"
 msgstr "από τον/την {0}"
 
 #. `<0>{timeAgo}</0>` will show a time difference (i.e. something like '4h
 #. ago')
-#: assets/js/Embed.js:103
+#: assets/js/Embed.js:105
 #, fuzzy
 msgid "js.Embed.metadata.updated"
 msgstr "Ενημερώθηκε {timeAgo}"
 
-#: assets/js/Embed.js:129
+#: assets/js/Embed.js:131
 #, fuzzy
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr "WORKBENCH"
 
-#: assets/js/Embed.js:121
+#: assets/js/Embed.js:123
 msgid "js.Embed.workflowNotAvailable.title"
 msgstr "Αυτή η ροή εργασιών δεν είναι διαθέσιμη"
 
@@ -52,22 +52,22 @@ msgid "js.ErrorBoundary.somethingIsWrong"
 msgstr "Υπάρχει κάποιο πρόβλημα."
 
 #. Acts as closing button
-#: assets/js/ExportModal.js:81
+#: assets/js/ExportModal.js:69
 msgid "js.ExportModal.footer.doneButton"
 msgstr "Ολοκληρώθηκε"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:42
+#: assets/js/ExportModal.js:30
 msgid "js.ExportModal.header.title"
 msgstr "ΕΞΑΓΩΓΗ ΔΕΔΟΜΕΝΩΝ"
 
 #. "CSV" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:52
+#: assets/js/ExportModal.js:40
 msgid "js.ExportModal.type.CSV"
 msgstr "CSV"
 
 #. "JSON" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:63
+#: assets/js/ExportModal.js:51
 #, fuzzy
 msgid "js.ExportModal.type.JSON"
 msgstr "ΡΟΗ JSON"
@@ -113,44 +113,44 @@ msgstr "Έγινε εισαγωγή της μονάδας {module} στην κα
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
 
-#: assets/js/OutputIframe.js:173
+#: assets/js/OutputIframe.js:229
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:163
+#: assets/js/OutputIframe.js:219
 msgid "js.OutputIframe.embed.header.title"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/OutputIframe.js:186
+#: assets/js/OutputIframe.js:242
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:133
+#: assets/js/OutputIframe.js:192
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Ακύρωση"
 
-#: assets/js/OutputIframe.js:139
+#: assets/js/OutputIframe.js:199
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Ορισμός ως δημόσιας"
 
-#: assets/js/OutputIframe.js:215
+#: assets/js/OutputIframe.js:23
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Απόκτηση ενσωματώσιμης διεύθυνσης URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:107
+#: assets/js/OutputIframe.js:165
 msgid "js.OutputIframe.private.header.title"
 msgstr "ΚΟΙΝΟΠΟΙΗΣΗ ΑΥΤΗΣ ΤΗΣ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/OutputIframe.js:122
+#: assets/js/OutputIframe.js:180
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Θα ρυθμίσετε αυτή τη ροή εργασιών ως Δημόσια για να την κοινοποιήσετε; "
 "Όποιος διαθέτει αυτή τη διεύθυνση URL θα μπορεί να έχει πρόσβαση και να "
 "την αντιγράψει."
 
-#: assets/js/OutputIframe.js:117
+#: assets/js/OutputIframe.js:175
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
@@ -490,7 +490,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:108
+#: assets/js/WorkflowEditor/OutputPane.js:111
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -1968,25 +1968,25 @@ msgstr ""
 "{Επιλέχτηκαν # σειρές}}"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:64
+#: assets/js/table/TableInfo.js:67
 msgid "js.table.TableInfo.columns"
 msgstr "ΣΤΗΛΕΣ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:89
+#: assets/js/table/TableInfo.js:92
 msgid "js.table.TableInfo.export"
 msgstr "ΕΞΑΓΩΓΗ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:53
+#: assets/js/table/TableInfo.js:56
 msgid "js.table.TableInfo.rows"
 msgstr "ΣΕΙΡΕΣ"
 
-#: assets/js/table/TableView.js:67
+#: assets/js/table/TableView.js:69
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr "Μπορούν να εμφανιστούν 100 στήλες το πολύ"
 
-#: assets/js/table/TableView.js:75
+#: assets/js/table/TableView.js:77
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Επιλογή στηλών"
 
@@ -2239,6 +2239,10 @@ msgstr "Εκπαίδευση στο Workbench"
 #, fuzzy
 msgid "py.templates.course.tutorials.link"
 msgstr "ΜΑΘΗΜΑΤΑ"
+
+#: templates/embed-rendering.html:12
+msgid "py.templates.embed-rendering.description"
+msgstr ""
 
 #: templates/embed_404.html:15
 msgid "py.templates.embed_404.notAvailable.header"
