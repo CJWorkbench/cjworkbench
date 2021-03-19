@@ -113,6 +113,9 @@ if (messageOrigin) {
 window.addEventListener('resize', notifySize)
 
 startLoading()
+// hide during page load (after a flicker), because usually pythoncode produces
+// no output. (Default for charts is to hide the table during load.)
+notifySize()
     </script>
   </body>
 </html>
