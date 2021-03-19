@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime as dt
 from http import HTTPStatus as status
 from unittest.mock import patch
@@ -14,7 +15,7 @@ from cjwstate.models import Workflow
 from cjwstate.models.fields import Role
 from cjwstate.rendercache.io import cache_render_result, delete_parquet_files_for_step
 from cjwstate.tests.utils import (
-    LoggedInTestCase,
+    DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
     create_test_user,
 )
@@ -30,7 +31,7 @@ def read_streaming_json(response):
 
 @patch.object(rabbitmq, "queue_render", async_noop)
 @patch.object(commands, "websockets_notify", async_noop)
-class StepViewTestCase(LoggedInTestCase):
+class StepViewTestCase(DbTestCaseWithModuleRegistryAndMockKernel):
     """Logged in, logging disabled, rabbitmq/commands disabled."""
 
     @classmethod
@@ -40,7 +41,11 @@ class StepViewTestCase(LoggedInTestCase):
 
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
-        super().setUp()  # log in
+        super().setUp()
+
+        self.user = create_test_user()
+        self.client.force_login(self.user)
+
         self.log_patcher = patch("server.utils.log_user_event_from_request")
         self.log_patch = self.log_patcher.start()
 
@@ -318,6 +323,80 @@ class RenderTableSliceTest(StepViewTestCase):
         response = self._request_step(self.step2)
         self.assertEqual(response.status_code, status.OK)
         self.assertEqual(json.loads(response.content), [])
+
+
+class EmbedTest(StepViewTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.workflow = Workflow.objects.create(
+            name="test", owner=self.user, last_delta_id=1
+        )
+        self.tab = self.workflow.tabs.create(position=0)
+        self.step = self.tab.steps.create(
+            order=0, module_id_name="chart", slug="step-1", last_relevant_delta_id=1
+        )
+
+    def _request(self):
+        return self.client.get("/workflows/%d/steps/step-1/embed" % self.workflow.id)
+
+    def test_missing_module_is_404(self):
+        response = self._request()
+
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+
+    def test_missing_module_html_is_404(self):
+        create_module_zipfile("chart", spec_kwargs={"html_output": False})
+
+        response = self._request()
+
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+
+    def test_init_state(self):
+        create_module_zipfile("chart", spec_kwargs={"html_output": True}, html="hi")
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": [1]}), json={}),
+        )
+
+        with self.assertLogs("cjwstate.params", level="INFO"):
+            response = self._request()
+
+        self.assertEqual(response.status_code, status.OK)
+        init_state_match = re.search(br"window.initState =([^\n]*)", response.content)
+        init_state = json.loads(init_state_match.group(1))
+        self.assertEqual(init_state["workflow"]["id"], self.workflow.id)
+        self.assertEqual(init_state["step"]["module"], "chart")
+        self.assertEqual(init_state["step"]["slug"], "step-1")
+
+    @patch.object(rabbitmq, "queue_render")
+    def test_missing_cached_response_sends_503(self, queue_render):
+        queue_render.side_effect = async_noop
+        create_module_zipfile(
+            "chart", spec_kwargs={"html_output": True}, html="hi", version="develop"
+        )
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": [1]}), json={}),
+        )
+        self.step.last_relevant_delta_id = 2
+        self.step.save(update_fields=["last_relevant_delta_id"])
+        self.workflow.last_delta_id = 3
+        self.workflow.save(update_fields=["last_delta_id"])
+
+        with self.assertLogs(
+            "cjwstate.params", level="INFO"
+        ):  # migrate_params() from jsonize
+            with self.assertLogs("django.request", level="ERROR"):  # 503
+                response = self._request()
+
+        self.assertEqual(response.status_code, status.SERVICE_UNAVAILABLE)
+        self.assertIn(b"window.location.reload()", response.content)
+        queue_render.assert_called_with(self.workflow.id, 3)
 
 
 class ResultColumnValueCountsTest(StepViewTestCase):

@@ -134,6 +134,7 @@ urlpatterns = [
                                 "current-result-table.json",
                                 steps.current_result_table_json,
                             ),
+                            path("embed", steps.embed),
                         ],
                     ),
                 ),
@@ -150,7 +151,6 @@ urlpatterns = [
     # The "embed" and "public_csv"/"public_json" URLs are widely used online.
     # We stopped publishing them [2021-03-18]. TODO migrate our users away from
     # them.
-    path("api/wfmodules/<int:step_id>/output", steps.deprecated_output),
     path("public/moduledata/live/<int:step_id>.csv", steps.deprecated_public_csv),
     path("public/moduledata/live/<int:step_id>.json", steps.deprecated_public_json),
     url(r"^embed/(?P<step_id>[0-9]+)/?$", steps.deprecated_embed),
@@ -160,10 +160,6 @@ urlpatterns = [
         oauth.start_authorize,
     ),
     url(r"^oauth/?$", oauth.finish_authorize),
-    # 404, 403, status
-    url(r"^404/$", TemplateView.as_view(template_name="404.html")),
-    url(r"^403/$", TemplateView.as_view(template_name="403.html")),
-    url(r"^healthz$", health.healthz),
-    # JavaScript support data
-    path("jsdata/timezones.json", jsdata.timezones.index),
+    url(r"^healthz$", health.healthz),  # kubernetes
+    path("jsdata/timezones.json", jsdata.timezones.index),  # JavaScript support data
 ]

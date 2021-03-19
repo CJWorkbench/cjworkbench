@@ -67,8 +67,14 @@ def process(table):
         )
 
         b = self.browser
-        # wait for iframe to appear
-        b.assert_element(".outputpane-iframe.has-height-from-iframe iframe", wait=True)
+        # wait for iframe to appear and load data
+        #
+        # pythoncode will start with no .has-height-from-iframe; then it will
+        # have .has-height-from-iframe.height-0; and then when it receives
+        # text it will resize to ".has-height-from-iframe:not(.height-0)".
+        b.assert_element(
+            ".outputpane-iframe.has-height-from-iframe:not(.height-0) iframe", wait=True
+        )
         with b.iframe(".outputpane-iframe iframe"):
             # wait for page load
             b.assert_element("pre", text="Hello, world!", wait=True)

@@ -137,7 +137,7 @@ function StepResultJsonIframeWithEmbedButton (props) {
       workflowId={workflowId}
       stepSlug={stepSlug}
       deltaId={deltaId}
-      embedUrl={`${window.location.origin}/embed/${stepId}`}
+      embedUrl={`${window.location.origin}/workflows/${workflowId}/steps/${stepSlug}/embed`}
       isPublic={isPublic}
       onResize={onResize}
       onSetStepParams={handleSetStepParams}

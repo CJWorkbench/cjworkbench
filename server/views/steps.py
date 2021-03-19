@@ -238,20 +238,6 @@ def tile(
     return response
 
 
-@xframe_options_exempt
-async def deprecated_output(request: HttpRequest, step_id: int):
-    # raise Http404, PermissionDenied
-    _, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
-    try:
-        module_zipfile = await database_sync_to_async(MODULE_REGISTRY.latest)(
-            step.module_id_name
-        )
-        html = module_zipfile.get_optional_html()
-    except KeyError:
-        html = None
-    return HttpResponse(content=html)
-
-
 async def result_json(
     request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
 ) -> HttpResponse:
@@ -344,6 +330,78 @@ async def result_column_value_counts(
     response = JsonResponse({"values": value_counts})
     patch_response_headers(response, cache_timeout=600)
     return response
+
+
+@xframe_options_exempt
+async def embed(request: HttpRequest, workflow_id: int, step_slug: str):
+    # raise Http404, PermissionDenied
+    workflow, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+
+    @database_sync_to_async
+    def build_init_state():
+        try:
+            module_zipfile = MODULE_REGISTRY.latest(step.module_id_name)
+        except KeyError:
+            raise Http404("Module is not embeddable")
+        try:
+            has_html = module_zipfile.get_optional_html() is not None
+        except (UnicodeDecodeError, FileNotFoundError, zipfile.BadZipFile):
+            has_html = False
+        if not has_html:
+            raise Http404("Module has no HTML")
+
+        ctx = JsonizeContext(
+            user=AnonymousUser(),
+            user_profile=None,
+            session=None,
+            locale_id=request.locale_id,
+            module_zipfiles={module_zipfile.module_id: module_zipfile},
+        )
+        return {
+            "workflow": jsonize_clientside_workflow(
+                workflow.to_clientside(
+                    include_tab_slugs=False,
+                    include_block_slugs=False,
+                    include_acl=False,
+                ),
+                ctx,
+                is_init=True,
+            ),
+            "step": jsonize_clientside_step(step.to_clientside(), ctx),
+        }
+
+    init_state = await build_init_state()
+
+    if (
+        init_state["step"]["last_relevant_delta_id"]
+        != init_state["step"]["cached_render_result_delta_id"]
+    ):
+        # The Workflow needs a render. Until render is finished, the embedded
+        # module HTML will load `dataUrl=null`. Since embed.html doesn't listen
+        # for updates, it will never load a correct data.
+        #
+        # Simple hack, for now: ensure a render is queued, and render a page
+        # that will refresh soon.
+        #
+        # There are still races:
+        #
+        # * A render may become required after we render the page but before the
+        #   module HTML requests `dataUrl`. In that case, the chart will show
+        #   "no data" (404).
+        # * The render may already have completed by the time we reach this line
+        #   of code. In that case, we're showing an error message and reloading
+        #   when we really don't need to.
+        #
+        # These races aren't as important as the problem this logic addresses.
+        await rabbitmq.queue_render(workflow.id, workflow.last_delta_id)
+        return TemplateResponse(
+            # embed-rendering.html has JavaScript that will reload.
+            request,
+            "embed-rendering.html",
+            status=status.SERVICE_UNAVAILABLE,
+        )
+
+    return TemplateResponse(request, "embed.html", {"initState": init_state})
 
 
 @xframe_options_exempt
