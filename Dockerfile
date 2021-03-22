@@ -93,31 +93,6 @@ COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
 # see cjwkernel/setup-sandboxes.sh
 VOLUME /var/lib/cjwkernel/chroot
 
-# Add a Python wrapper that will help PyCharm cooperate with pipenv
-# See https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/ for
-# PyCharm's expectations. Just set "Python interpreter path" to
-# "pipenv-run-python" to ensure:
-#
-# * `cd /app`: PyCharm mounts the source tree to `/opt/project` and overwrites
-#              the current working directory. We force `cd /app` to restore
-#              what the Dockerfile already specifies. That's important because
-#              `pipenv` looks for packages in a virtualenv named after the
-#              current working directory.
-#
-# * `exec pipenv run python "$@"`: PyCharm does not let us specify a command
-#                                  for Docker to run. It only lets us specify
-#                                  "Python interpreter path." This wrapper will
-#                                  provide the interface PyCharm expects, with
-#                                  the environment variables Python needs to
-#                                  find our virtualenv.
-#
-# Why do we create the file with RUN instead of COPY? Because even in 2018,
-# COPY does not copy the executable bit on Windows, so we need a RUN anyway
-# to make it executable.
-RUN true \
-    && echo '#!/bin/sh\ncd /app\nexec pipenv run python "$@"' >/usr/bin/pipenv-run-python \
-    && chmod +x /usr/bin/pipenv-run-python
-
 # 1. Python deps -- which rarely change, so this part of the Dockerfile will be
 # cached (when building locally)
 FROM pybase AS pybuild
