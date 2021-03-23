@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from './propTypes'
 import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
@@ -146,7 +147,7 @@ function StepResultJsonIframeWithEmbedButton (props) {
   )
 }
 StepResultJsonIframeWithEmbedButton.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   moduleSlug: PropTypes.string, // null for "don't render iframe"
   stepSlug: PropTypes.string, // null if no step
   stepId: PropTypes.number, // null if no step
@@ -302,7 +303,7 @@ OutputIframe.propTypes = {
   stepSlug: PropTypes.string, // null if no step
   moduleSlug: PropTypes.string, // null to disable iframe, even if there's a step
   isPublic: PropTypes.bool.isRequired,
-  workflowId: PropTypes.number.isRequired
+  workflowId: propTypes.workflowId.isRequired
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

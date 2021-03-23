@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../../propTypes'
 import {
   Modal,
   ModalHeader,
@@ -246,7 +247,7 @@ export function UploadApiModal ({
   )
 }
 UploadApiModal.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   stepSlug: PropTypes.string.isRequired,
   onClickClose: PropTypes.func.isRequired // () => undefined
 }

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import propTypes from '../../propTypes'
 import ShareButton from '../../ShareModal/ShareButton'
 import { Trans } from '@lingui/macro'
 import ShareUrl from '../../components/ShareUrl'
@@ -46,6 +47,6 @@ export default function ShareCard ({ workflowId, isPublic }) {
   )
 }
 ShareCard.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   isPublic: PropTypes.bool.isRequired
 }

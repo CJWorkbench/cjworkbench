@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import Spinner from '../Spinner'
 import TableView from './TableView'
 
@@ -98,7 +99,7 @@ export default class TableSwitcher extends React.PureComponent {
     loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     stepSlug: PropTypes.string, // or null, if no selection
     stepId: PropTypes.number, // or null, if no selection; deprecated
     deltaId: PropTypes.number, // or null, if status!=ok

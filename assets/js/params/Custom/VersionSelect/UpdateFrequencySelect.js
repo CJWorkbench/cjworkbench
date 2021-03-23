@@ -1,5 +1,6 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../../../propTypes'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import {
@@ -10,9 +11,9 @@ import { connect } from 'react-redux'
 import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
 
-export const UpdateFrequencySelect = class UpdateFrequencySelect extends PureComponent {
+export class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,

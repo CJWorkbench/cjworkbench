@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import { connect } from 'react-redux'
 import BigTable from '../BigTable'
 import useTiles from '../BigTable/useTiles'
@@ -64,7 +65,7 @@ function Table ({
   )
 }
 Table.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   stepSlug: PropTypes.string.isRequired,
   deltaId: PropTypes.number.isRequired,
   nRows: PropTypes.number.isRequired,

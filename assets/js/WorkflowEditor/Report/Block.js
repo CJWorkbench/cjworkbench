@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import propTypes from '../../propTypes'
 import ChartBlock from './ChartBlock'
 import TableBlock from './TableBlock'
 import TextBlock from './TextBlock'
@@ -36,7 +37,7 @@ export default function Block (props) {
   )
 }
 Block.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   block: PropTypes.oneOfType([
     PropTypes.exact({
       slug: PropTypes.string.isRequired,

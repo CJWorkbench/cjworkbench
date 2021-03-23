@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from './propTypes'
 import ShareUrl from './components/ShareUrl'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { Trans } from '@lingui/macro'
@@ -79,7 +80,7 @@ export default function ExportModal (props) {
 }
 ExportModal.propTypes = {
   open: PropTypes.bool.isRequired,
-  workflowId: PropTypes.number.isRequired, // to build download URLs
+  workflowId: propTypes.workflowId.isRequired, // to build download URLs
   stepSlug: PropTypes.string.isRequired, // to build download URLs
   toggle: PropTypes.func.isRequired
 }

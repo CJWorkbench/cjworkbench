@@ -1,5 +1,6 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import Param from './Param'
 import ParamsFormFooter from './ParamsFormFooter'
 import deepEqual from 'fast-deep-equal'
@@ -9,7 +10,7 @@ import { QuickFixPropTypes } from '../WorkflowEditor/step/QuickFix'
 /**
  * Displays Params and user's "edits".
  */
-export default class ParamsForm extends PureComponent {
+export default class ParamsForm extends React.PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
@@ -52,7 +53,7 @@ export default class ParamsForm extends PureComponent {
     value: PropTypes.object, // upstream value. `null` if the server hasn't been contacted; otherwise, there's a key per field
     secrets: PropTypes.object, // upstream secrets. `null` if the server hasn't been contacted; otherwise, keys set only when params are filled in
     edits: PropTypes.object.isRequired, // local edits, same keys as `value`
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number, // `null` if the server hasn't been contacted; otherwise, ID
     stepSlug: PropTypes.string, // should be .isRequired but Step.js does not handle placeholders yet
     stepOutputErrors: PropTypes.arrayOf(
