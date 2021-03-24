@@ -94,13 +94,13 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true
     cap_add: [ SYS_ADMIN ] # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
     environment: &django-env
       PYTHONUNBUFFERED: '1'
+      PYTHONPYCACHEPREFIX: /tmp/pycache
       ASGI_THREADS: '3'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
@@ -112,13 +112,13 @@ services:
       AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_S3_ENDPOINT: http://minio:9000
       S3_BUCKET_NAME_PATTERN: "dev-%s"
-    ports: [ '8000:8000', '35729:35729' ]
+    ports: [ '8000:8080' ]
     networks: [ 'dev' ]
     depends_on: [ 'database', 'rabbitmq', 'minio', 'tusd' ]
     command: [
       'sh',
       '-c',
-      'cjwkernel/setup-sandboxes.sh only-readonly && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "stripe.env" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "templates/**/*.html" "templates/**/*.txt" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" "assets/locale/*/messages.po" --exec python -m uvicorn --host 0.0.0.0 --port 8000 --lifespan on --use-colors cjworkbench.asgi:application'
+      'cjwkernel/setup-sandboxes.sh only-readonly && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "stripe.env" "cjwkernel/**/*.py" "cjwstate/**/*.py" "cjwstate/**/*.yaml" "server/**/*.py" "templates/**/*.html" "templates/**/*.txt" "server/**/*.yaml" "server/lessons/**/*.html" "server/courses/**/*.html" "cjworkbench/**/*.py" "assets/locale/*/messages.po" --exec bin/frontend-prod'
     ]
 
   staticfiles:
@@ -130,15 +130,12 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     ports: [ '8003:8003' ]
     networks: [ 'dev' ]
     environment:
       DJANGO_SETTINGS_MODULE: staticfilesdev.settings
     command: [
-      'pipenv',
-      'run',
-      'python',
+      '/opt/venv/django/bin/python',
       '-m',
       'uvicorn',
       '--host',
@@ -160,7 +157,6 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true
@@ -174,9 +170,9 @@ services:
     command: [
       'sh',
       '-c',
-      # Use watchman, not Django autoreload. autoreload crashes when there's a
+      # Use watch-and-restart, not Django autoreload. autoreload crashes when there's a
       # syntax error.
-      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" --exec bin/renderer-prod'
+      'cjwkernel/setup-sandboxes.sh all && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/tests/**/*" --pattern "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "renderer/**/*.py" --exec bin/renderer-prod'
     ]
 
   fetcher:
@@ -190,7 +186,6 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true
@@ -203,9 +198,7 @@ services:
     networks: [ 'dev' ]
     command: [
       'sh', '-c',
-      # Use watchman, not Django autoreload. autoreload crashes when there's a
-      # syntax error.
-      'cjwkernel/setup-sandboxes.sh all && pipenv run bin/watchman-monitor --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" --exec bin/fetcher-prod'
+      'cjwkernel/setup-sandboxes.sh all && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/*.pyc" "**/tests/**/*" --pattern "{intercom_secret,twitter_secret,client_secret}.json" "cjworkbench/**/*.py" "cjwkernel/**/*.py" "cjwstate/**/*.py" "fetcher/**/*.py" --exec bin/fetcher-prod'
     ]
 
   cron: &cron
@@ -217,15 +210,13 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     environment:
       <<: *django-env
     depends_on: [ 'database', 'rabbitmq', 'minio' ]
     networks: [ 'dev' ]
     command: [
-      # Use watchman, not Django autoreload. autoreload crashes when there's a
-      # syntax error.
-      'pipenv', 'run', 'bin/watchman-monitor',
+      '/opt/venv/django/bin/python',
+      'bin/watch-and-restart',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
       '--exec', 'bin/cron-prod'
@@ -235,9 +226,8 @@ services:
     <<: *cron
     depends_on: [ 'database', 'minio' ]
     command: [
-      # Use watchman, not Django autoreload. autoreload crashes when there's a
-      # syntax error.
-      'pipenv', 'run', 'bin/watchman-monitor',
+      '/opt/venv/django/bin/python',
+      'bin/watch-and-restart',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
       '--exec', 'bin/cron-expired-session-deleter'
@@ -247,9 +237,8 @@ services:
     <<: *cron
     depends_on: [ 'database' ]
     command: [
-      # Use watchman, not Django autoreload. autoreload crashes when there's a
-      # syntax error.
-      'pipenv', 'run', 'bin/watchman-monitor',
+      '/opt/venv/django/bin/python',
+      'bin/watch-and-restart',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
       '--exec', 'bin/cron-lesson-autoupdate-disabler'
@@ -259,9 +248,8 @@ services:
     <<: *cron
     depends_on: [ 'database' ]
     command: [
-      # Use watchman, not Django autoreload. autoreload crashes when there's a
-      # syntax error.
-      'pipenv', 'run', 'bin/watchman-monitor',
+      '/opt/venv/django/bin/python',
+      'bin/watch-and-restart',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
       '--exec', 'bin/cron-delta-deleter'
@@ -378,7 +366,6 @@ networks:
 volumes:
   dbdata: {}
   minio_data: {}
-  virtualenvs: {}
   # Let's not make node_modules a bind mount: Windows bind mounts seem
   # to behave a bit differently from Linux bind mounts. Use a Docker volume
   # instead.

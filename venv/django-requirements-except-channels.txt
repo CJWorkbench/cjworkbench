@@ -1,0 +1,34 @@
+asyncpg
+babel
+beautifulsoup4~=4.7.1  # TODO nix, use html5lib
+boto3  # TODO replace with something async
+carehare~=0.0.10
+cjwmodule~=3.3.1
+cjwparquet~=2.2.0
+Django~=3.1
+django-allauth~=0.44.0
+django-user-accounts==2.1.0
+google-re2==0.0.5  # 0.0.5 is the latest to work on libre2-5 (newer ones use deprecated symbols). TODO unpin version when we upgrade to Debian Bullseye
+html5lib==1.0.1
+iso8601
+jsonschema~=3.0.1
+natsort
+oauthlib
+pathspec
+psycopg2~=2.8.2
+pyarrow~=3.0
+pycmarkgfm
+pyicu
+pyjwt
+pyroute2==0.5.9  # ??? - ought to be only transitive, related to pyspawner
+pyspawner~=0.9.0
+python-dotenv
+python-intercom~=3.1.0
+pytz
+pyyaml
+requests
+requests-oauthlib
+rfc3987  # for jsonschema 'uri' format
+stripe~=2.54
+thrift~=0.13.0
+uvicorn~=0.13

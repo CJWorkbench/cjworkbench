@@ -47,7 +47,7 @@ OUTPUT_BUFFER_MAX_BYTES = (
 # Import all encodings. Some modules (e.g., loadurl) encounter weird stuff
 ENCODING_IMPORTS = [
     "encodings." + p.stem
-    for p in Path("/usr/local/lib/python3.7/encodings").glob("*.py")
+    for p in Path("/usr/local/lib/python3.8/encodings").glob("*.py")
     if p.stem not in {"cp65001", "mbcs", "oem"}  # un-importable
 ]
 
@@ -145,10 +145,12 @@ class Kernel:
         self.render_timeout = render_timeout
         self._pyspawner = pyspawner.Client(
             child_main="cjwkernel.pandas.main.main",
+            executable="/opt/venv/cjwkernel/bin/python",
             environment={
                 # SECURITY: children inherit these values
                 "LANG": "C.UTF-8",
                 "HOME": "/",
+                "VIRTUAL_ENV": "/opt/venv/cjwkernel",
                 # [adamhooper, 2019-10-19] rrrgh, OpenBLAS....
                 #
                 # If we preload numpy, we're in trouble. Numpy loads OpenBLAS,
@@ -184,10 +186,10 @@ class Kernel:
                 "sqlite3",
                 "ssl",
                 "string",
+                "tarfile",
                 "typing",
                 "urllib.parse",
                 "warnings",
-                "aiohttp",
                 "bs4",
                 "formulas",
                 "formulas.functions.operators",
@@ -221,7 +223,6 @@ class Kernel:
                 "pyarrow.parquet",
                 "pytz",
                 "re2",
-                "requests",
                 "schedula.dispatcher",
                 "schedula.utils.blue",
                 "schedula.utils.sol",

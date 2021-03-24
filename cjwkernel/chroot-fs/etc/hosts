@@ -1,0 +1,3 @@
+# Ignore Kubernetes/Docker/whatever's config; lookup each address with external DNS
+127.0.0.1   localhost
+::1         localhost

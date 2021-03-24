@@ -90,8 +90,8 @@ services:
       FLYWAY_PASSWORD: cjworkbench
 
   unittest:
-    image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec ./manage.py test --keepdb --noinput -v2' ]
+    image: 'gcr.io/${PROJECT_ID}/unittest:${COMMIT_SHA}'
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh all && exec /opt/venv/django/bin/python manage.py test --keepdb --noinput -v2' ]
     depends_on: [ 'testdb', 'testrabbitmq', 'testminio', 'testtusd' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json

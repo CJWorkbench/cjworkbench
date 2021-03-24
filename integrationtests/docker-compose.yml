@@ -164,7 +164,7 @@ services:
     #image:
     #build:
     #no ports: on cloudbuild
-    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec bin/frontend-prod 8080' ]
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec bin/frontend-prod' ]
     depends_on: [ 'db', 'rabbitmq', 'minio', 'tusd' ]
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json

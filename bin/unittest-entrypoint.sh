@@ -46,4 +46,4 @@ fi
 # bit you ... sorry!)
 cjwkernel/setup-sandboxes.sh all 2>/dev/null
 
-exec pipenv run python ./manage.py test --keepdb --noinput "$@"
+exec /opt/venv/django/bin/python manage.py test --keepdb --noinput "$@"

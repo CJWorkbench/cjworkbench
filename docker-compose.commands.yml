@@ -38,7 +38,6 @@ services:
         source: ../${MODULE:-x}/
         target: /${MODULE:-x}/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true
@@ -68,7 +67,6 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true
@@ -90,7 +88,6 @@ services:
         source: ./
         target: /app/
         consistency: cached
-      - virtualenvs:/root/.local/share/virtualenvs/:rw
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true

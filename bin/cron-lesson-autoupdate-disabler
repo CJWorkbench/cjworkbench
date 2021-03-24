@@ -17,4 +17,4 @@ export AWS_S3_ENDPOINT="not-for-cron-lessons"
 export AWS_SECRET_ACCESS_KEY="not-for-cron-lessons"
 export S3_BUCKET_NAME_PATTERN="not-for-cron-lessons:%s"
 
-exec python -m cron.lessonautoupdatedisabler
+exec /opt/venv/django/bin/python -m cron.lessonautoupdatedisabler

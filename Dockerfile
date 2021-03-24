@@ -1,35 +1,38 @@
-# 0.1 parquet-to-arrow: executables we use in Workbench
+# 0 parquet-to-arrow: executables we use in Workbench
 FROM workbenchdata/parquet-to-arrow:v2.1.0 AS parquet-to-arrow
 FROM workbenchdata/arrow-tools:v1.0.0 AS arrow-tools
 
-# 0.2 pybase: Python and tools we use in dev and production
-FROM python:3.8.5-slim-buster AS pybase
+# 1 pybase: Python and tools we use in dev and production
+FROM python:3.8.8-slim-buster AS pybase0
 
-# We probably don't want these, long-term.
+RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# We probably don't want these, long-term:
 # curl: handy for testing, NLTK download; not worth uninstalling each time
 # unzip: [adamhooper, 2019-02-21] I'm afraid to uninstall it, in case one
 #        of our Python deps shells to it
 #
 # We do want:
-# postgresql-client: for pg_isready in startup scripts:
-# * on prod, in bin/*-prod
-# * on unittest before ./manage.py test
+# postgresql-client: for pg_isready in bin/wait-for-database (used in production)
 # libcap2: used by pyspawner (via ctypes) to drop capabilities
 # iproute2: used by setup-sandboxes.sh to find our IP for NAT
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
 # libicu63: used by PyICU
 # libre2-5: used by google-re2 (in modules)
-RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
+RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
-        curl \
-        iproute2 \
-        iptables \
-        libcap2 \
-        libicu63 \
-        libre2-5 \
-        postgresql-client \
-        unzip \
+      curl \
+      iproute2 \
+      iptables \
+      libcap2 \
+      libicu63 \
+      libre2-5 \
+      postgresql-client \
+      unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Download NLTK stuff
@@ -41,8 +44,6 @@ RUN mkdir -p /usr/share/nltk_data \
     && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/stopwords.zip > corpora/stopwords.zip \
     && curl https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/sentiment/vader_lexicon.zip > sentiment/vader_lexicon.zip
 
-RUN pip install pipenv==2020.8.13
-
 COPY --from=arrow-tools /usr/bin/arrow-validate /usr/bin/arrow-validate
 COPY --from=arrow-tools /usr/bin/csv-to-arrow /usr/bin/csv-to-arrow
 COPY --from=arrow-tools /usr/bin/json-to-arrow /usr/bin/json-to-arrow
@@ -52,65 +53,17 @@ COPY --from=parquet-to-arrow /usr/bin/parquet-diff /usr/bin/parquet-diff
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-arrow /usr/bin/parquet-to-arrow
 COPY --from=parquet-to-arrow /usr/bin/parquet-to-text-stream /usr/bin/parquet-to-text-stream
 
-# Set up /app
 RUN mkdir /app
 WORKDIR /app
 
-# 0.2 Pydev: just for the development environment
-FROM workbenchdata/watchman-bin:v0.0.1-buster-slim AS watchman-bin
-FROM pybase AS pydev
+FROM python:3.8.8-slim-buster AS pybase-venv
+RUN mkdir -p /opt/venv
+WORKDIR /app
 
-# Need build-essential for:
-# * regex (TODO nix the dep or make it support manylinux .whl)
-# * google-re2
-# * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
-# * PyICU
-#
-# Need libre2-dev to build google-re2
-# Need pkg-config to build PyICU
-# Need pybind11-dev to build google-re2
-RUN mkdir -p /root/.local/share/virtualenvs \
-    && apt-get update \
-    && apt-get install --no-install-recommends -y \
-      build-essential \
-      libicu-dev \
-      libpq-dev \
-      libre2-dev \
-      pkg-config \
-      pybind11-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Add "watchman" command -- we use it in dev mode to monitor for source code changes
-COPY --from=watchman-bin /usr/bin/watchman /usr/bin/watchman
-COPY --from=watchman-bin /usr/var/run/watchman /usr/var/run/watchman
-
-COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
-RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
-
-COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
-
-# Let chroots overlay the root FS -- meaning they must be on another FS.
-# see cjwkernel/setup-sandboxes.sh
-VOLUME /var/lib/cjwkernel/chroot
-
-# 1. Python deps -- which rarely change, so this part of the Dockerfile will be
-# cached (when building locally)
-FROM pybase AS pybuild
-
-# Install Python dependencies. They rarely change.
-# For Docker images we install them to the local system, not to a virtualenv.
-# Containers don't use pipenv.
-COPY Pipfile Pipfile.lock /app/
-
-# Need build-essential for:
+# Need build-essential (and everything below it) for:
 # * google-re2
 # * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
 # * PyICU
-#
-# Clean up after pipenv, because it leaves garbage in /root/.cache and
-# /root/.local/share/virtualenvs, even when --deploy is used. (We test for
-# presence of /root/.local/share/virtualenvs to decide whether we need a
-# bind-mount in dev mode; so it can't exist in production.)
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -119,27 +72,82 @@ RUN true \
       libpq-dev \
       libre2-dev \
       pkg-config \
-      pybind11-dev \
-    && pipenv install --dev --system --deploy \
-    && rm -rf /root/.cache/pipenv /root/.local/share/virtualenvs \
-    && apt-get remove --purge -y \
-      build-essential \
-      libicu-dev \
-      libpq-dev \
-      libre2-dev \
-      pkg-config \
-      pybind11-dev \
-    && apt-get autoremove --purge -y \
-    && rm -rf /var/lib/apt/lists/*
+      pybind11-dev
+
+COPY venv/django-requirements-frozen.txt /app/venv/
+# Clean up after pip, to save disk space. We nix the pycache from venv/django/,
+# which is only invoked once per container.
+RUN python -m venv --copies /opt/venv/django \
+    && /opt/venv/django/bin/python -m pip install --no-deps --no-cache-dir -r /app/venv/django-requirements-frozen.txt \
+    && find /opt/venv/django -name __pycache__ -depth -exec rm -r {} +
+
+COPY venv/cjwkernel-requirements-frozen.txt /app/venv/
+RUN python -m venv --copies /opt/venv/cjwkernel \
+    && /opt/venv/cjwkernel/bin/python -m pip install --no-deps --no-cache-dir -r /app/venv/cjwkernel-requirements-frozen.txt
+
+FROM pybase0 AS pybase
 
 # Set up chroot-layers ASAP, so they're cached in a rarely-changing
 # Docker layer.
-COPY cjwkernel/setup-chroot-layers.sh /tmp/setup-chroot-layers.sh
-RUN /tmp/setup-chroot-layers.sh && rm /tmp/setup-chroot-layers.sh
+#
+# (We can't bind-mount to create the chroot layer, because overlayfs will
+# only show the mountpoints, not the files mounted within them. So let's
+# hard-link every file under the sun.)
+#
+# cp arguments:
+# -d: copy symlinks as-is
+# -r: recurse (copying directory tree)
+# -l: hard-link instead of copying data (saves space)
+ARG CHROOT=/var/lib/cjwkernel/chroot-layers/base
+RUN for dir in \
+        /bin \
+        /lib \
+        /lib64 \
+        /usr/share/nltk_data \
+        /usr/bin \
+        /usr/lib \
+        /usr/local \
+        /etc/ld.so.cache \
+        /etc/ssl \
+        /usr/share/ca-certificates \
+    ; do \
+        echo "chrooting $dir..."; \
+        mkdir -p $CHROOT$(dirname $dir); \
+        cp -drl $dir $CHROOT$dir; \
+    done
+COPY cjwkernel/chroot-fs/etc/* $CHROOT/etc/
+# Create empty tempdirs. If callers or modules write files, these directories
+# will be mirrored in the upper layer.
+RUN for dir in /tmp /var/tmp; do \
+        mkdir -p $CHROOT$dir; \
+        chmod 1777 $CHROOT$dir; \
+    done
+# Copy in the venvs
+COPY --from=pybase-venv /opt/venv /opt/venv
+# Copy the cjwkernel venv, for within the chroot. Again, use hardlinks
+RUN mkdir -p $CHROOT/opt/venv && cp -drl /opt/venv/cjwkernel $CHROOT/opt/venv/
+RUN mkdir -p $CHROOT/app
+COPY cjwkernel/ $CHROOT/app/cjwkernel/
+
+
 # Let chroots overlay the root FS -- meaning they must be on another FS.
 # see cjwkernel/setup-sandboxes.sh
 VOLUME /var/lib/cjwkernel/chroot
 
+# 2.1 Pydev: just for the development environment
+FROM pybase AS pydev
+
+# Add dev libraries to the Django venv, so we can run unit tests
+#
+# None of these libraries require build-essential
+COPY venv/django-dev-requirements.txt /app/venv/
+RUN /opt/venv/django/bin/python -m pip install --no-cache -r /app/venv/django-dev-requirements.txt
+
+COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
+
+# Let chroots overlay the root FS -- meaning they must be on another FS.
+# see cjwkernel/setup-sandboxes.sh
+VOLUME /var/lib/cjwkernel/chroot
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
@@ -164,8 +172,8 @@ RUN npm test
 RUN npm run lint
 RUN node_modules/.bin/webpack --mode=production
 
-# 3. Three prod servers will all be based on the same stuff:
-FROM pybuild AS base
+# 3. Prod images will all be based on the same stuff:
+FROM pybase AS base
 
 # Configure Black
 COPY pyproject.toml pyproject.toml
@@ -186,17 +194,29 @@ COPY manage.py /app/
 # views. TODO move renderer templates elsewhere.
 COPY templates/ /app/templates/
 COPY assets/locale/ /app/assets/locale/
+
 # Inject code-style tests into our continuous integration.
 # This catches style errors that accidentally got past somebody's
 # pre-commit hook.
+FROM python:3.8.8-slim-buster AS pylint
+RUN python -m pip install black==20.8b1
+COPY --from=base /app /app
 RUN black --check /app
+
+# Like pydev, plus code
+FROM base AS unittest
+COPY venv/django-dev-requirements.txt /app/venv/
+RUN /opt/venv/django/bin/python -m pip install --no-cache -r /app/venv/django-dev-requirements.txt
+COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
+COPY daphne/ /app/daphne/
+COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 
 # 3.1. assets: uploads assets to S3 (frontend will point end users there)
 FROM base AS compile-assets
 COPY staticfilesdev/ /app/staticfilesdev/
 COPY assets/ /app/assets/
 COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
-RUN DJANGO_SETTINGS_MODULE=staticfilesdev.settings python ./manage.py collectstatic
+RUN DJANGO_SETTINGS_MODULE=staticfilesdev.settings /opt/venv/django/bin/python ./manage.py collectstatic
 RUN find /app/static -type f -printf "%s\t%P\n"
 
 FROM amazon/aws-cli:2.1.30 AS upload-assets
@@ -227,12 +247,10 @@ CMD [ "bin/cron-prod" ]
 
 # 3.6. frontend: serves website
 FROM base AS frontend
-# Add fake daphne, for unit tests running on google-cloud-build
-COPY daphne/ /app/daphne/
 COPY assets/icons/ /app/assets/icons/
 COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080
 # Beware: uvicorn does not serve static files! Use upload-assets to push them
 # to GCS and publish them there.
-CMD [ "bin/frontend-prod", "8080" ]
+CMD [ "bin/frontend-prod" ]

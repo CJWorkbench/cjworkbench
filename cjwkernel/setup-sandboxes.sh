@@ -53,9 +53,6 @@
 #   dev mode, Docker points this directory to the host. "cp -a" may not be
 #   ideal, but it's fast enough (the directory is tiny); and the benefit is,
 #   we get the same logic on dev and production.
-# * /root/.local/share/virtualenvs: this only exists in dev. We bind-mount
-#   it into each chroot. (We can't bind-mount before overlay-mount: overlayfs
-#   would only display the mountpoint, not the mounted filesystem.)
 #
 # DEVELOPING
 #
@@ -73,7 +70,6 @@ fi
 CHROOT=/var/lib/cjwkernel/chroot
 LAYERS=/var/lib/cjwkernel/chroot-layers
 EDITABLE_CHROOT_SIZE=20G  # max size of user edits in EDITABLE_CHROOT
-VENV_PATH="/root/.local/share/virtualenvs" # only exits in dev
 
 # NetworkConfig mimics pyspawner/pyspawner/sandbox.py
 KERNEL_VETH=veth-pyspawn
@@ -90,17 +86,6 @@ cp -a /app/cjwkernel $LAYERS/base/app/cjwkernel
 # READONLY_CHROOT
 mkdir -p $CHROOT/readonly/{upper,work,root}
 mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/readonly/upper,workdir=$CHROOT/readonly/work $CHROOT/readonly/root
-# Bind-mount /root/.local/share/virtualenvs in dev mode. (On production, the
-# Python environment is different and packages are installed in
-# /usr/local/lib/python3.7/site-packages, baked into the Docker image, so this
-# step isn't needed.)
-#
-# We set up a mount per chroot.
-if test -d "$VENV_PATH"; then
-  mountpoint="$CHROOT/readonly/root$VENV_PATH"
-  mkdir -p "$mountpoint"
-  mount --bind -o ro "$VENV_PATH" "$mountpoint"
-fi
 # Make readonly readonly (now that we don't need to mount on it any more)
 mount -o remount,ro "$CHROOT/readonly/root"
 
@@ -134,17 +119,6 @@ fi
 mkdir -p $CHROOT/editable/upperfs/{upper,work}
 mkdir -p $CHROOT/editable/root
 mount -t overlay overlay -o dirsync,lowerdir=$LAYERS/base,upperdir=$CHROOT/editable/upperfs/upper,workdir=$CHROOT/editable/upperfs/work $CHROOT/editable/root
-# Bind-mount /root/.local/share/virtualenvs in dev mode. (On production, the
-# Python environment is different and packages are installed in
-# /usr/local/lib/python3.7/site-packages, baked into the Docker image, so this
-# step isn't needed.)
-#
-# We set up a mount per chroot.
-if test -d "$VENV_PATH"; then
-  mountpoint="$CHROOT/editable/root$VENV_PATH"
-  mkdir -p "$mountpoint"
-  mount --bind -o ro "$VENV_PATH" "$mountpoint"
-fi
 
 
 # iptables

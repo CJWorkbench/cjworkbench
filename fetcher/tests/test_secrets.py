@@ -7,7 +7,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import ContextManager, List, NamedTuple, Tuple
 from unittest.mock import patch
 
-from yarl import URL
 from cjwstate import oauth
 from cjwstate.modules.param_spec import ParamSpec
 from fetcher.secrets import prepare_secret
