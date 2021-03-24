@@ -1,3 +1,5 @@
+import selenium.common.exceptions
+
 from integrationtests.utils import LoggedInIntegrationTest
 
 
@@ -75,7 +77,17 @@ def process(table):
         b.assert_element(
             ".outputpane-iframe.has-height-from-iframe:not(.height-0) iframe", wait=True
         )
-        with b.iframe(".outputpane-iframe iframe"):
-            # wait for page load
-            b.assert_element("pre", text="Hello, world!", wait=True)
-            b.assert_element("pre", text="NameError: name 'p' is not defined")
+        def try_assert_iframe_contents():
+            with b.iframe(".outputpane-iframe iframe"):
+                # wait for page load
+                b.assert_element("pre", text="Hello, world!", wait=True)
+                b.assert_element("pre", text="NameError: name 'p' is not defined")
+
+        try:
+            try_assert_iframe_contents()
+        except selenium.common.exceptions.NoSuchWindowException:
+            # There's a race involving a reloading iframe. TODO figure out how
+            # this happens. It's only on Google Cloud Build, never on dev
+            #
+            # ... try again
+            try_assert_iframe_contents()
