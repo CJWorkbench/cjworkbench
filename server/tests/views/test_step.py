@@ -340,6 +340,17 @@ class EmbedTest(StepViewTestCase):
     def _request(self):
         return self.client.get("/workflows/%d/steps/step-1/embed" % self.workflow.id)
 
+    def test_deny_secret_link(self):
+        self.workflow.public = False
+        self.workflow.secret_id = "wsecret"
+        self.workflow.save(update_fields=["public", "secret_id"])
+        self.client.logout()
+
+        response = self.client.get("/workflows/wsecret/steps/step-1/embed")
+
+        # NOT_FOUND because secret URLs aren't even routed
+        self.assertEqual(response.status_code, status.NOT_FOUND)
+
     def test_missing_module_is_404(self):
         response = self._request()
 
@@ -733,5 +744,29 @@ class CurrentTableTest(StepViewTestCase):
         )
 
         response = self.client.get(f"/public/moduledata/live/{self.step2.id}.csv")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
+
+    def test_secret_link(self):
+        cache_render_result(
+            self.workflow,
+            self.step2,
+            2,
+            RenderResult(arrow_table({"A": ["a", "b"]})),
+        )
+        self.workflow.secret_id = "wsecret"
+        self.workflow.public = False
+        self.workflow.save(update_fields=["public", "secret_id"])
+        self.client.logout()
+        # Regular link doesn't work...
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.csv"
+        )
+        self.assertEqual(response.status_code, 403)
+
+        # ... but secret link does!
+        response = self.client.get(
+            f"/workflows/wsecret/steps/step-2/current-result-table.csv"
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")

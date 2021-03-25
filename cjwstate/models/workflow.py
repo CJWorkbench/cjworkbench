@@ -92,6 +92,12 @@ class Workflow(models.Model):
         * `url_id` != `pk`
     """
 
+    secret_id = models.CharField(blank=True, max_length=100)
+    """URL-friendly string that functions as "ID+password".
+
+    Blank string means, only the real ID may be used.
+    """
+
     original_workflow_id = models.IntegerField(null=True, blank=True)
     """If this is a duplicate, the Workflow it is based on."""
 

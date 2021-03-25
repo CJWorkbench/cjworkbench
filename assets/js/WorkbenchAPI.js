@@ -308,7 +308,7 @@ export default class WorkbenchAPI {
   }
 
   duplicateWorkflow (workflowId) {
-    return this._post(`/api/workflows/${workflowId}/duplicate`, null)
+    return this._post(`/workflows/${workflowId}/duplicate`, null)
   }
 
   clearStepUnseenNotifications (stepId) {

@@ -20,16 +20,16 @@ async def async_noop(*args, **kwargs):
     pass
 
 
+def create_user(username: str, email: str):
+    return User.objects.create(username=username, email=email)
+
+
 class WorkflowListTest(DbTestCase):
     def setUp(self):
         super().setUp()
 
-        self.user = User.objects.create(
-            username="user", email="user@example.com", password="password"
-        )
-        self.other_user = User.objects.create(
-            username="other_user", email="other_user@example.com", password="password"
-        )
+        self.user = create_user("user", "user@example.com")
+        self.other_user = create_user("other_user", "other_user@example.com")
 
     def test_index_get(self):
         # set dates to test reverse chron ordering
@@ -133,17 +133,13 @@ class WorkflowViewTests(DbTestCase):
         self.log_patcher = patch("server.utils.log_user_event_from_request")
         self.log_patch = self.log_patcher.start()
 
-        self.user = User.objects.create(
-            username="user", email="user@example.com", password="password"
-        )
+        self.user = create_user("user", "user@example.com")
 
         self.workflow1 = Workflow.create_and_init(name="Workflow 1", owner=self.user)
         self.tab1 = self.workflow1.tabs.first()
 
         # Add another user, with one public and one private workflow
-        self.otheruser = User.objects.create(
-            username="user2", email="user2@example.com", password="password"
-        )
+        self.otheruser = create_user("user2", "user2@example.com")
 
     def tearDown(self):
         self.log_patcher.stop()
@@ -361,7 +357,7 @@ class WorkflowViewTests(DbTestCase):
             w.id for w in Workflow.objects.all()
         ]  # list of all current workflow ids
         self.client.force_login(self.user)
-        response = self.client.post("/api/workflows/%d/duplicate" % self.workflow1.id)
+        response = self.client.post("/workflows/%d/duplicate" % self.workflow1.id)
         self.assertEqual(response.status_code, status.CREATED)
         data = json.loads(response.content)
         self.assertFalse(data["id"] in old_ids)  # created at entirely new id
@@ -371,22 +367,30 @@ class WorkflowViewTests(DbTestCase):
     def test_workflow_duplicate_missing_gives_404(self):
         # Ensure 404 with bad id
         self.client.force_login(self.user)
-        response = self.client.post("/api/workflows/99999/duplicate")
+        response = self.client.post("/workflows/99999/duplicate")
         self.assertEqual(response.status_code, status.NOT_FOUND)
+
+    def test_workflow_duplicate_secret(self):
+        self.workflow1.public = False
+        self.workflow1.secret_id = "wsecret"
+        self.workflow1.save(update_fields=["public", "secret_id"])
+        self.client.force_login(self.otheruser)
+        response = self.client.post("/workflows/wsecret/duplicate")
+        self.assertEqual(response.status_code, status.CREATED)
 
     def test_workflow_duplicate_restricted_gives_403(self):
         # Ensure 403 when another user tries to clone private workflow
         self.client.force_login(self.user)
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
-        response = self.client.post("/api/workflows/%d/duplicate" % self.workflow1.id)
+        response = self.client.post("/workflows/%d/duplicate" % self.workflow1.id)
         self.assertEqual(response.status_code, status.FORBIDDEN)
 
     def test_workflow_duplicate_public(self):
         self.workflow1.public = True
         self.workflow1.save()
         self.client.force_login(self.otheruser)
-        response = self.client.post("/api/workflows/%d/duplicate" % self.workflow1.id)
+        response = self.client.post("/workflows/%d/duplicate" % self.workflow1.id)
         self.assertEqual(response.status_code, status.CREATED)
 
     def test_workflow_delete(self):
@@ -435,3 +439,163 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(response.status_code, status.FORBIDDEN)
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.public, False)
+
+
+class SecretLinkTests(DbTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.queue_render_patcher = patch.object(rabbitmq, "queue_render")
+        self.queue_render = self.queue_render_patcher.start()
+        self.queue_render.side_effect = async_noop
+
+        self.log_patcher = patch("server.utils.log_user_event_from_request")
+        self.log_patch = self.log_patcher.start()
+
+        self.owner = create_user("owner", "owner@example.com")
+        self.viewer = create_user("viewer", "viewer@example.com")
+        self.report_viewer = create_user("report_viewer", "report_viewer@example.com")
+        self.other_user = create_user("other_user", "other_user@example.com")
+
+        self.workflow = Workflow.create_and_init(name="Workflow", owner=self.owner)
+        self.workflow.acl.create(email="viewer@example.com", role=Role.VIEWER)
+        self.workflow.acl.create(
+            email="report_viewer@example.com", role=Role.REPORT_VIEWER
+        )
+
+    def tearDown(self):
+        self.log_patcher.stop()
+        self.queue_render_patcher.stop()
+        super().tearDown()
+
+    def _set_public_and_secret_id(self, public: bool, secret_id: str) -> None:
+        self.workflow.public = public
+        self.workflow.secret_id = secret_id
+        self.workflow.save(update_fields=["public", "secret_id"])
+
+    def _assert_responses(
+        self,
+        path: str,
+        expected_owner_response: int,
+        expected_viewer_response: int,
+        expected_report_viewer_response: int,
+        expected_other_user_response: int,
+        expected_anonymous_response: int,
+    ) -> None:
+        test_name = "public=%r secret_id=%s path=%s" % (
+            self.workflow.public,
+            self.workflow.secret_id,
+            path,
+        )
+
+        with self.subTest(test_name + " anonymous"):
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, expected_other_user_response)
+
+        with self.subTest(test_name + " owner"):
+            self.client.force_login(self.owner)
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, expected_owner_response)
+
+        with self.subTest(test_name + " viewer"):
+            self.client.force_login(self.viewer)
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, expected_viewer_response)
+
+        with self.subTest(test_name + " report_viewer"):
+            self.client.force_login(self.report_viewer)
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, expected_report_viewer_response)
+
+        with self.subTest(test_name + " other_user"):
+            self.client.force_login(self.other_user)
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, expected_other_user_response)
+
+    def test_id_link_private_workflow(self):
+        self._set_public_and_secret_id(False, "")
+        self._assert_responses(
+            f"/workflows/{self.workflow.id}/",
+            expected_owner_response=200,
+            expected_viewer_response=200,
+            expected_report_viewer_response=403,
+            expected_other_user_response=403,
+            expected_anonymous_response=403,
+        )
+
+    def test_id_link_private_workflow_with_secret_id(self):
+        self._set_public_and_secret_id(False, "anyoldsecret")
+        self._assert_responses(
+            f"/workflows/{self.workflow.id}/",
+            expected_owner_response=200,
+            expected_viewer_response=200,
+            expected_report_viewer_response=403,
+            expected_other_user_response=403,
+            expected_anonymous_response=403,
+        )
+
+    def test_id_link_public_workflow(self):
+        self._set_public_and_secret_id(True, "")
+        self._assert_responses(
+            f"/workflows/{self.workflow.id}/",
+            expected_owner_response=200,
+            expected_viewer_response=200,
+            expected_report_viewer_response=200,
+            expected_other_user_response=200,
+            expected_anonymous_response=200,
+        )
+
+    def test_id_link_public_workflow_with_secret_id(self):
+        self._set_public_and_secret_id(True, "anyoldsecret")
+        self._assert_responses(
+            f"/workflows/{self.workflow.id}/",
+            expected_owner_response=200,
+            expected_viewer_response=200,
+            expected_report_viewer_response=200,
+            expected_other_user_response=200,
+            expected_anonymous_response=200,
+        )
+
+    def test_secret_link_private_workflow(self):
+        self._set_public_and_secret_id(False, "wanyoldsecret")
+        self._assert_responses(
+            f"/workflows/wanyoldsecret/",
+            expected_owner_response=302,
+            expected_viewer_response=302,
+            expected_report_viewer_response=200,
+            expected_other_user_response=200,
+            expected_anonymous_response=200,
+        )
+
+    def test_secret_report_link_private_workflow(self):
+        self._set_public_and_secret_id(False, "wanyoldsecret")
+        self._assert_responses(
+            f"/workflows/wanyoldsecret/report",
+            expected_owner_response=302,
+            expected_viewer_response=302,
+            expected_report_viewer_response=302,
+            expected_other_user_response=200,
+            expected_anonymous_response=200,
+        )
+
+    def test_secret_link_public_workflow(self):
+        self._set_public_and_secret_id(True, "wanyoldsecret")
+        self._assert_responses(
+            f"/workflows/wanyoldsecret/",
+            expected_owner_response=302,
+            expected_viewer_response=302,
+            expected_report_viewer_response=302,
+            expected_other_user_response=302,
+            expected_anonymous_response=302,
+        )
+
+    def test_empty_string_is_not_secret_link(self):
+        self._set_public_and_secret_id(False, "")
+        self._assert_responses(
+            f"/workflows//",
+            expected_owner_response=404,
+            expected_viewer_response=404,
+            expected_report_viewer_response=404,
+            expected_other_user_response=404,
+            expected_anonymous_response=404,
+        )
