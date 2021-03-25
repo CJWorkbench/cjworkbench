@@ -77,6 +77,7 @@ def process(table):
         b.assert_element(
             ".outputpane-iframe.has-height-from-iframe:not(.height-0) iframe", wait=True
         )
+
         def try_assert_iframe_contents():
             with b.iframe(".outputpane-iframe iframe"):
                 # wait for page load

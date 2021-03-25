@@ -25,9 +25,9 @@ def register_websockets_handler(func):
 
 
 @database_sync_to_async
-def _authorize(user, session, workflow, role):
+def _authorize(user, session, has_secret, workflow, role):
     if role == "read":
-        if not workflow.user_session_authorized_read(user, session):
+        if not (has_secret or workflow.user_session_authorized_read(user, session)):
             raise AuthError("no read access to workflow")
     elif role == "write":
         if not workflow.user_session_authorized_write(user, session):
@@ -38,8 +38,7 @@ def _authorize(user, session, workflow, role):
 
 
 def websockets_handler(role: str = "read"):
-    """
-    Augment a function with auth, logging and error handling.
+    """Augment a function with auth, logging and error handling.
 
     Usage:
 
@@ -88,6 +87,12 @@ def websockets_handler(role: str = "read"):
                 await _authorize(
                     request.scope["user"],
                     request.scope["session"],
+                    isinstance(
+                        request.scope["url_route"]["kwargs"][
+                            "workflow_id_or_secret_id"
+                        ],
+                        str,
+                    ),
                     request.workflow,
                     role,
                 )
@@ -109,8 +114,6 @@ def websockets_handler(role: str = "read"):
                 data = await task
             except HandlerError as err:
                 return HandlerResponse(request.request_id, error=str(err))
-            except asyncio.CancelledError:
-                raise  # and don't log
             except Exception as err:
                 logger.exception(f"Error in handler")
                 message = f"{type(err).__name__}: {str(err)}"

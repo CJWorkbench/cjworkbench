@@ -11,21 +11,23 @@ if not settings.I_AM_TESTING:
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from django.conf.urls import url
 from django.core.asgi import get_asgi_application
+from django.urls import path, register_converter
 
 from cjworkbench.middleware.i18n import SetCurrentLocaleAsgiMiddleware
 from cjworkbench.middleware.lifespan import LifespanMiddleware
+from server.converters import WorkflowIdOrSecretIdConverter
 from server.websockets import WorkflowConsumer
 
+register_converter(WorkflowIdOrSecretIdConverter, "workflow_id_or_secret_id")
 
 # used in unit tests
 _url_router = AuthMiddlewareStack(
     SetCurrentLocaleAsgiMiddleware(
         URLRouter(
             [
-                url(
-                    r"workflows/(?P<workflow_id>\d+)",
+                path(
+                    "workflows/<workflow_id_or_secret_id:workflow_id_or_secret_id>",
                     WorkflowConsumer.as_asgi(),
                 )
             ]

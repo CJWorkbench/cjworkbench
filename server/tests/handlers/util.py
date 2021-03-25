@@ -17,6 +17,13 @@ class HandlerTestCase(DbTestCase):
                     "user": kwargs.get("user", AnonymousUser()),
                     "session": kwargs.get("session", Session()),
                     "headers": kwargs.get("headers", ()),
+                    "url_route": {
+                        "kwargs": {
+                            "workflow_id_or_secret_id": kwargs.get(
+                                "workflow_id_or_secret_id", 1
+                            )
+                        }
+                    },
                 },
             ),
             "workflow": kwargs.get("workflow", Workflow()),
