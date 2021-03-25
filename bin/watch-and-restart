@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+
+import argparse
+import contextlib
+import logging
+import os
+import os.path
+import subprocess
+import sys
+from typing import Callable, Iterable, List, Optional
+
+import re2
+from inotify_simple import Event, INotify, flags
+
+SETTLE_DELAY_MS = 200  # milliseconds of inactivity that mean, "ok, restart now"
+
+
+logger = logging.getLogger(__name__)
+
+
+def compile_gitignore_regexes(root_path: str):
+    """return (dir_regex, all_regex) of things to ignore."""
+    dir_patterns = [".git"]
+    all_patterns = [".git", ".gitignore"]
+    with open(os.path.join(root_path, ".gitignore")) as f:
+        for line in f.readlines():
+            # https://git-scm.com/docs/gitignore#_pattern_format
+            #
+            # We translate to our intermediate representation and then call
+            # compile_match_regex().
+            #
+            # We're not fully compliant, but we're okay.
+            s = line
+            s = re2.sub(r"#.*", "", s)  # Nix comments
+            s = re2.sub(r"\s*", "", s)  # Nix end-of-line whitespace
+
+            if not s:
+                continue
+
+            # If there is a separator at the beginning or middle of the pattern,
+            # then the pattern is relative to the directory level of the particular
+            # .gitignore level
+            if s.startswith("/"):
+                s = s[1:]
+            elif "/" not in s[:-1]:
+                s = "**/" + s
+
+            # A trailing "/**" matches everything inside.
+            if s.endswith("/**"):
+                s += "/*"
+
+            # Separator at the end means, "only match directories"
+            if s.endswith("/"):
+                s = s[:-1]  # remove the '/'
+                dir_patterns.append(s)
+            else:
+                dir_patterns.append(s)
+                all_patterns.append(s)
+
+    return compile_match_regex(dir_patterns), compile_match_regex(all_patterns)
+
+
+def compile_match_regex(patterns: List[str]):
+    def escape(s):
+        # * => any piece of filename (1+ chars)
+        # **/ => any number of directories (0+ levels deep)
+        s = re2.sub(
+            r"\*(?:\*/)?", lambda m: "[^/]+" if m.group(0) == "*" else "(?:[^/]+/)*", s
+        )
+
+        # {a,b,c} => (?:a|b|c)
+        s = s.replace("{", "(?:").replace("}", ")").replace(",", "|")
+
+        # . => \.
+        s = s.replace(".", r"\.")
+
+        return s
+
+    return re2.compile("|".join(escape(pattern) for pattern in patterns))
+
+
+def watch(
+    root_path: str,
+    watch_patterns: List[str],  # empty means '**/*'
+    watch_exclude_patterns: List[str],  # empty means '**/*'
+    callback: Callable[[], None],
+):
+    """Call `callback` when files change."""
+    inotify = INotify()
+    mask = (
+        flags.MODIFY
+        | flags.ATTRIB
+        | flags.CLOSE_WRITE
+        | flags.MOVED_FROM
+        | flags.MOVED_TO
+        | flags.CREATE
+        | flags.DELETE
+        | flags.DELETE_SELF
+        | flags.ONLYDIR
+        | flags.DONT_FOLLOW
+    )
+
+    watches = {}  # wd => path/relative/to/root_path.ext
+
+    include_re = compile_match_regex(watch_patterns or "**/*")
+    exclude_re = compile_match_regex(watch_exclude_patterns or "")
+    gitignore_dirs_re, gitignore_files_re = compile_gitignore_regexes(root_path)
+
+    logger.debug("Include: %s", str(include_re.pattern))
+    logger.debug("Exclude: %s", str(exclude_re.pattern))
+    logger.debug("Exclude gitignore dirs: %s", str(gitignore_dirs_re.pattern))
+    logger.debug("Exclude gitignore files: %s", str(gitignore_files_re.pattern))
+
+    def add_dir(path: Optional[str]) -> None:
+        """Watch a subdirectory of root_path.
+
+        No-op if the path does not exist or is not a directory. (This covers
+        the most common races.)
+
+        No-op if the path matches `gitignore_dirs_re`.
+
+        Watch sub-paths, too. In the event of races while watching sub-paths
+        or failures to watch, carry on without crashing. (The behavior is mostly
+        undefined: we can leak watches, for instance.)
+
+        All this means: we never fail, and this may all be one big no-op.
+        """
+        if path is not None and gitignore_dirs_re.fullmatch(path):
+            logger.debug("Skipping %s because of .gitignore", path)
+            return
+
+        full_path = root_path if path is None else os.path.join(root_path, path)
+        try:
+            wd = inotify.add_watch(full_path, mask)
+            logger.debug("Watching %s (%d)", full_path, wd)
+        except (FileNotFoundError, NotADirectoryError):
+            return
+        except OSError:
+            logger.warn("Failed to watch %r", full_path)
+            return
+
+        watches[wd] = path
+
+        try:
+            it = os.scandir(full_path)
+        except (FileNotFoundError, NotADirectoryError):
+            logger.warn("Race listing directory")
+            return
+        with it:
+            for entry in it:
+                subpath = entry.name if path is None else os.path.join(path, entry.name)
+                add_dir(subpath)
+
+    def handle_event(event: Event) -> Iterable[str]:
+        parent_path = watches[event.wd]
+        path = (
+            event.name if parent_path is None else os.path.join(parent_path, event.name)
+        )
+
+        logger.debug(
+            "Event on watch %d (%s) %d",
+            event.wd,
+            path,
+            event.mask,
+        )
+
+        if event.mask & flags.IGNORED:
+            # The kernel removed this watch -- e.g., because the directory went
+            # away
+            del watches[event.wd]
+
+        if event.mask & flags.CREATE:
+            add_dir(path)  # handles NotADirectoryError
+
+        if (
+            include_re.fullmatch(path)
+            and not exclude_re.fullmatch(path)
+            and not gitignore_files_re.fullmatch(path)
+        ):
+            return [path]
+        else:
+            return []
+
+    add_dir(None)
+    callback()
+
+    while True:
+        changed_paths = set()
+        events = inotify.read()
+        for event in events:
+            changed_paths.update(handle_event(event))
+
+        # Wait for all the events to settle before calling callback()
+        while events:
+            events = inotify.read(timeout=SETTLE_DELAY_MS)
+            for event in events:
+                changed_paths.update(handle_event(event))
+
+        if changed_paths:
+            logger.info("Files changed: %r", changed_paths)
+            callback()
+
+
+@contextlib.contextmanager
+def monitor_command(command: List[str]) -> None:
+    """Start/restart `command` as callback is called.
+
+    stdout and stderr are inherited.
+
+    If the command dies, this process stays running; the callback will still
+    restart the command.
+
+    Usage:
+
+        with monitor_command(['tail', '-f', '/dev/null']) as restart:
+            restart()  # start the process for the first time
+            restart()  # kill and restart
+            # when we exit, the process will be killed
+    """
+    process = None
+
+    def start():
+        nonlocal process
+        process = subprocess.Popen(
+            command, stdin=subprocess.DEVNULL, stdout=sys.stdout, stderr=sys.stderr
+        )
+
+    def stop():
+        nonlocal process
+        if process is not None:
+            process.kill()
+            process.wait()
+            process = None
+
+    def restart():
+        stop()
+        start()
+
+    try:
+        yield restart
+    finally:
+        stop()
+
+
+def monitor(
+    watch_path: str,
+    command: List[str],
+    watch_patterns: List[str],  # empty means '**/*'
+    watch_exclude_patterns: List[str],  # empty means '**/*'
+) -> None:
+    with monitor_command(command) as restart:
+        watch(watch_path, watch_patterns, watch_exclude_patterns, restart)
+
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+    parser = argparse.ArgumentParser(
+        description="Run the given command and restart it when files change"
+    )
+    parser.add_argument(
+        "-p",
+        "--pattern",
+        type=str,
+        nargs="+",
+        help="pattern(s) to watch, e.g. 'src/**/*.html' (default '**/*')",
+    )
+    parser.add_argument(
+        "-x",
+        "--exclude",
+        type=str,
+        nargs="+",
+        help="pattern(s) to NOT watch, e.g. 'src/**/test_*' (overrides -p)",
+    )
+    parser.add_argument(
+        "--exec",
+        required=True,
+        metavar="BACKENDCOMMAND",
+        dest="command",
+        nargs=argparse.REMAINDER,
+        help="Backend server command (must listen at BACKEND:PORT)",
+    )
+
+    args = parser.parse_args()
+
+    monitor(os.getcwd(), args.command, args.pattern, args.exclude)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,8 @@
+# django-channels installs and activates Twisted asyncio by default.
+# This breaks the universe. Our workaround: install django-channels
+# with --no-deps.
+#
+# A longer-term solution: nix django-channels entirely. (Historically, we
+# have constantly fought with its every supposed feature.)
+channels-rabbitmq~=3.0
+channels~=3.0

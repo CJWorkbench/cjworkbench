@@ -13,4 +13,4 @@ export CJW_MOCK_EMAIL="not-for-cron"
 export CJW_RABBITMQ_HOST="not-for-cron"
 export CJW_SECRET_KEY="not-for-cron"
 
-exec python -m cron.expiredsessiondeleter
+exec /opt/venv/django/bin/python -m cron.expiredsessiondeleter

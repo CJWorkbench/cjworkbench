@@ -28,7 +28,9 @@ steps:
       # don't use multi-stage build so they play nice with cache. (That's a great
       # win because installing Firefox deps is particularly slow.)
 
-      # Images for production -- build without cache
+      docker build . # build everything, _and_ run npm test and black
+
+      # Tag images for production
       for target in upload-assets migrate fetcher renderer cron frontend; do
         docker build \
           --target $$target \
@@ -37,6 +39,8 @@ steps:
           --tag gcr.io/$PROJECT_ID/$$target:latest \
           .
       done
+
+      docker build --target unittest --tag gcr.io/$PROJECT_ID/unittest:$COMMIT_SHA .
 
       # Build integration-test image -- first pulling from cache if it can be used
       docker pull gcr.io/$PROJECT_ID/integration-test:latest || true
@@ -48,7 +52,7 @@ steps:
         .
 
 # Unit-test
-- name: 'docker/compose:1.27.4'
+- name: 'docker/compose:1.28.6'
   args: [ '-f', 'server/tests/docker-compose.yml',
           'run',
           'migrate'
@@ -56,7 +60,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-- name: 'docker/compose:1.27.4'
+- name: 'docker/compose:1.28.6'
   args: [ '-f', 'server/tests/docker-compose.yml',
           'run',
           'unittest'
@@ -65,7 +69,7 @@ steps:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
 # Integration-test: upload-assets+migrate, then run the integration-test image
-- name: 'docker/compose:1.27.4'
+- name: 'docker/compose:1.28.6'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
@@ -74,7 +78,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-- name: 'docker/compose:1.27.4'
+- name: 'docker/compose:1.28.6'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',
@@ -83,7 +87,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
-- name: 'docker/compose:1.27.4'
+- name: 'docker/compose:1.28.6'
   args: [ '-f', 'integrationtests/docker-compose.yml',
           '-f', 'integrationtests/docker-compose.cloudbuild-override.yml',
           'run',

@@ -1,7 +1,9 @@
 import asyncio
+import json
 from functools import singledispatch
 from typing import Any, Dict, List, Optional
-import aiohttp
+
+import httpx
 from cjwkernel.i18n import trans
 from cjwkernel.types import I18nMessage
 from cjwstate import oauth
@@ -140,10 +142,10 @@ async def _refresh_oauth2_token(
 
     ref: https://www.oauth.com/oauth2-servers/access-tokens/refreshing-access-tokens/
     """
-    timeout = aiohttp.ClientTimeout(total=60)
+    timeout = httpx.Timeout(30)
     try:
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.post(
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
                 service.refresh_url,
                 data={
                     "grant_type": "refresh_token",
@@ -151,56 +153,63 @@ async def _refresh_oauth2_token(
                     "client_id": service.client_id,
                     "client_secret": service.client_secret,
                 },
-            ) as response:
-                # Most of these error cases are _very_ unlikely -- to the point
-                # that we should write error messages only after experiencing
-                # most in production....
+            )
+            # Most of these error cases are _very_ unlikely -- to the point
+            # that we should write error messages only after experiencing
+            # most in production....
 
-                # raises ClientPayloadError, ClientResponseError (ContentTypeError),
-                # asyncio.TimeoutError
-                body = await response.json(encoding="utf-8")
+            # raises ClientPayloadError, ClientResponseError (ContentTypeError),
+            # asyncio.TimeoutError
+            try:
+                maybe_json = response.json()
+            except ValueError:
+                maybe_json = None
 
-                if (response.status // 400) == 1 and "error" in body:
-                    # Includes errors that are part of the OAuth2 spec.
-                    # TODO we can actually translate some of these error codes. ref:
-                    # https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/#error
-                    raise _RefreshOauth2TokenError(
-                        trans(
-                            "py.fetcher.secrets._refresh_oauth2_token.error.general",
-                            default="Token server responded with {status_code}: {error} ({description})",
-                            arguments={
-                                "status_code": response.status,
-                                "error": str(body["error"]),
-                                "description": body.get("error_description"),
-                            },
-                        )
+            if (
+                (response.status_code // 400) == 1
+                and maybe_json
+                and "error" in maybe_json
+            ):
+                # Includes errors that are part of the OAuth2 spec.
+                # TODO we can actually translate some of these error codes. ref:
+                # https://www.oauth.com/oauth2-servers/access-tokens/access-token-response/#error
+                raise _RefreshOauth2TokenError(
+                    trans(
+                        "py.fetcher.secrets._refresh_oauth2_token.error.general",
+                        default="Token server responded with {status_code}: {error} ({description})",
+                        arguments={
+                            "status_code": response.status_code,
+                            "error": str(maybe_json.get("error", "")),
+                            "description": str(maybe_json.get("error_description", "")),
+                        },
                     )
-                if response.status != 200:
-                    # Probably a server error. Servers don't usually break.
-                    raise _RefreshOauth2TokenError(
-                        trans(
-                            "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
-                            default="{service_id} responded with HTTP {status_code} {reason}: {description}",
-                            arguments={
-                                "service_id": service.service_id,
-                                "status_code": response.status,
-                                "reason": response.reason,
-                                "description": body,
-                            },
-                        )
+                )
+            if response.status_code != 200 or maybe_json is None:
+                # Probably a server error. Servers don't usually break.
+                raise _RefreshOauth2TokenError(
+                    trans(
+                        "py.fetcher.secrets._refresh_oauth2_token.server_error.general",
+                        default="{service_id} responded with HTTP {status_code} {reason}: {description}",
+                        arguments={
+                            "service_id": service.service_id,
+                            "status_code": response.status_code,
+                            "reason": response.reason_phrase,
+                            "description": response.content.decode("latin-1"),
+                        },
                     )
-                return {
-                    "token_type": body.get("token_type"),
-                    "access_token": body.get("access_token"),
-                }
-    except asyncio.TimeoutError:
+                )
+            return {
+                "token_type": maybe_json.get("token_type"),
+                "access_token": maybe_json.get("access_token"),
+            }
+    except httpx.TimeoutException:
         raise _RefreshOauth2TokenError(
             trans(
                 "py.fetcher.secrets._refresh_oauth2_token.timeout_error",
                 default="Timeout during OAuth2 token refresh",
             )
         )
-    except aiohttp.ClientError as err:
+    except httpx.RequestError as err:
         raise _RefreshOauth2TokenError(
             trans(
                 "py.fetcher.secrets._refresh_oauth2_token.client_error",
