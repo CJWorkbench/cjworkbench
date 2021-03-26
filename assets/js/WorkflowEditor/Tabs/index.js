@@ -1,6 +1,7 @@
 import Tabs from './Tabs'
 import { connect } from 'react-redux'
 import * as mapDispatchToProps from './actions'
+import selectIsReadOnly from '../../selectors/selectIsReadOnly'
 
 function getTab (slug, tabs, pendingTabs) {
   if (slug in tabs) {
@@ -25,7 +26,7 @@ function mapStateToProps (state) {
   return {
     tabs: workflow.tab_slugs.map(slug => getTab(slug, tabs, pendingTabs)),
     selectedPane,
-    isReadOnly: workflow.read_only
+    isReadOnly: selectIsReadOnly(state)
   }
 }
 

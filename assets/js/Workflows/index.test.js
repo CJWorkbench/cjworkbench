@@ -11,7 +11,6 @@ describe('Workflow list page', () => {
       name: 'Cleaning',
       owner_name: 'Fred Frederson',
       public: true,
-      is_owner: true,
       last_update: '2010-10-18T00:30:00'
     },
     {
@@ -19,7 +18,6 @@ describe('Workflow list page', () => {
       name: 'Charting',
       owner_name: 'Fred Frederson',
       public: false,
-      is_owner: true,
       last_update: '2010-10-18T00:20:00'
     },
     {
@@ -27,7 +25,6 @@ describe('Workflow list page', () => {
       name: 'Analysis',
       owner_name: 'Fred Frederson',
       public: false,
-      is_owner: true,
       last_update: '2010-10-18T07:45:00'
     }
   ]
@@ -38,7 +35,6 @@ describe('Workflow list page', () => {
       name: 'Messy data cleanup',
       owner_name: 'John Johnson',
       public: false,
-      is_owner: false,
       last_update: '2010-10-18T00:30:00'
     },
     {
@@ -46,7 +42,6 @@ describe('Workflow list page', () => {
       name: 'Document search',
       owner_name: 'Sally Sallerson',
       public: true,
-      is_owner: false,
       last_update: '2010-10-18T00:45:00'
     }
   ]
@@ -57,7 +52,6 @@ describe('Workflow list page', () => {
       name: 'Demo 1',
       owner_name: 'Workbench',
       public: false,
-      is_owner: false,
       last_update: '2010-10-18T00:30:00'
     }
   ]
@@ -180,7 +174,6 @@ describe('Workflow list page', () => {
       name: 'Copied!',
       owner_name: 'Fred Frederson',
       public: false,
-      is_owner: true,
       last_update: '2021-02-08T15:56.000Z'
     })
     await waitFor(() =>

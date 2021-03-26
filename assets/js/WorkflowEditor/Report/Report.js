@@ -11,9 +11,9 @@ export default function Report ({
   addBlock,
   deleteBlock,
   reorderBlocks,
-  setBlockMarkdown
+  setBlockMarkdown,
+  isReadOnly
 }) {
-  const isReadOnly = workflow.read_only
   const handleClickDelete = deleteBlock
   const handleClickMoveUp = useCallback(
     slug => {
@@ -82,10 +82,10 @@ export default function Report ({
   )
 }
 Report.propTypes = {
+  isReadOnly: PropTypes.bool.isRequired,
   workflow: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    read_only: PropTypes.bool.isRequired
+    name: PropTypes.string.isRequired
   }).isRequired,
   blocks: PropTypes.array.isRequired,
   reportableTabs: PropTypes.array.isRequired,

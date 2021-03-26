@@ -10,6 +10,7 @@ import {
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { Trans } from '@lingui/macro'
+import selectIsAnonymous from '../selectors/selectIsAnonymous'
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -332,7 +333,7 @@ function mapStateToProps (state, { stepId }) {
       ? getFetchVersions(fetchStep.versions.versions || [])
       : null,
     selectedFetchVersionId: fetchStep ? fetchStep.versions.selected : null,
-    isAnonymous: state.workflow.is_anonymous,
+    isAnonymous: selectIsAnonymous(state),
     notificationsEnabled
   }
 }

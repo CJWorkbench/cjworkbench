@@ -13,8 +13,6 @@ from cjwstate.rendercache import cache_render_result
 from cjwstate.tests.utils import DbTestCase
 from server.views.workflows import Index, render_workflow
 
-_original_workflow_duplicate_anonymous = Workflow.duplicate_anonymous
-
 
 async def async_noop(*args, **kwargs):
     pass
@@ -51,8 +49,6 @@ class WorkflowListTest(DbTestCase):
         self.assertEqual(workflows[0]["name"], "Workflow 2")
         self.assertEqual(workflows[0]["id"], workflow2.id)
         self.assertEqual(workflows[0]["public"], workflow1.public)
-        self.assertEqual(workflows[0]["read_only"], False)  # user is owner
-        self.assertEqual(workflows[0]["is_owner"], True)  # user is owner
         self.assertIsNotNone(workflows[0]["last_update"])
         self.assertEqual(workflows[0]["owner_name"], "user@example.com")
 
@@ -61,18 +57,6 @@ class WorkflowListTest(DbTestCase):
 
     def test_index_ignore_other_user_workflows(self):
         Workflow.create_and_init(name="Hers", owner=self.other_user)
-        self.client.force_login(self.user)
-        response = self.client.get("/workflows")
-        self.assertEqual(response.context_data["initState"]["workflows"], [])
-
-    def test_index_ignore_example(self):
-        Workflow.create_and_init(
-            name="Example",
-            owner=self.other_user,
-            public=True,
-            example=True,
-            in_all_users_workflow_lists=True,
-        )
         self.client.force_login(self.user)
         response = self.client.get("/workflows")
         self.assertEqual(response.context_data["initState"]["workflows"], [])
@@ -93,12 +77,11 @@ class WorkflowListTest(DbTestCase):
             ["Hers"],
         )
 
-    def test_examples(self):
+    def test_example_workflows(self):
         Workflow.create_and_init(
             name="Example",
             owner=self.other_user,
             public=True,
-            example=True,
             in_all_users_workflow_lists=True,
         )
         self.client.force_login(self.user)
@@ -107,18 +90,6 @@ class WorkflowListTest(DbTestCase):
             [w["name"] for w in response.context_data["initState"]["workflows"]],
             ["Example"],
         )
-
-    def test_examples_ignore_when_not_in_all_users_workflow_lists(self):
-        Workflow.create_and_init(
-            name="Example",
-            owner=self.other_user,
-            public=True,
-            example=True,
-            in_all_users_workflow_lists=False,
-        )
-        self.client.force_login(self.user)
-        response = self.client.get("/workflows/examples")
-        self.assertEqual(response.context_data["initState"]["workflows"], [])
 
 
 @patch("cjwstate.commands.websockets_notify", async_noop)
@@ -294,63 +265,6 @@ class WorkflowViewTests(DbTestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 204)
-
-    def test_workflow_anonymous_user(self):
-        # Looking at example workflow as anonymous should create a new workflow
-        public_workflow = Workflow.create_and_init(
-            name="Other workflow public",
-            owner=self.otheruser,
-            public=True,
-            example=True,
-        )
-
-        # don't log in
-        response = self.client.get("/workflows/%d/" % public_workflow.id)
-        self.assertEqual(response.status_code, status.OK)
-
-        self.assertEqual(
-            Workflow.objects.filter(owner=None).count(), 1
-        )  # should have duplicated the  wf with this API call
-
-    @patch.object(Workflow, "duplicate_anonymous")
-    def test_workflow_prevent_race_creating_two_demos_per_user(
-        self, duplicate_anonymous
-    ):
-        public_workflow = Workflow.create_and_init(
-            name="Other workflow public",
-            owner=self.otheruser,
-            public=True,
-            example=True,
-        )
-
-        dup_result: Workflow = None
-
-        def racing_duplicate_anonymous(session_key):
-            # Let's pretend two requests are doing this simultaneously...
-            #
-            # The _other_ thread "won": its duplication will proceed as
-            # planned.
-            nonlocal dup_result
-            dup_result = _original_workflow_duplicate_anonymous(
-                public_workflow, session_key
-            )
-
-            # Now, _our_ thread should run into a problem because we're trying
-            # to duplicate onto a session key that's already duplicated.
-            return _original_workflow_duplicate_anonymous(public_workflow, session_key)
-
-        duplicate_anonymous.side_effect = racing_duplicate_anonymous
-
-        self.client.session._session_key = "session-b"
-        response = self.client.get("/workflows/%d/" % public_workflow.id)
-        self.assertEqual(response.status_code, status.OK)
-        # Assert there is only _one_ extra workflow.
-        self.assertEqual(Workflow.objects.filter(owner=None).count(), 1)
-        # This request "lost" the race; assert it has the same workflow as the
-        # request that "won" the race.
-        self.assertEqual(
-            response.context_data["initState"]["workflow"]["id"], dup_result.id
-        )
 
     def test_workflow_duplicate_view(self):
         old_ids = [

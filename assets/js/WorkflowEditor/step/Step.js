@@ -25,6 +25,9 @@ import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/macro'
+import selectIsAnonymous from '../../selectors/selectIsAnonymous'
+import selectIsReadOnly from '../../selectors/selectIsReadOnly'
+import selectLoggedInUserRole from '../../selectors/selectLoggedInUserRole'
 
 /**
  * A single step within a tab
@@ -163,22 +166,12 @@ export class Step extends React.PureComponent {
     this.props.deleteStep(this.props.step.id)
   }
 
-  // Optimistically updates the state, and then sends the new state to the server,
-  // where it's persisted across sessions and through time.
-  setCollapsed (isCollapsed) {
-    this.props.setStepCollapsed(
-      this.props.step.id,
-      isCollapsed,
-      this.props.isReadOnly
-    )
-  }
-
   handleClickCollapse = () => {
-    this.setCollapsed(true)
+    this.props.setStepCollapsed(this.props.step.id, true)
   }
 
   handleClickExpand = () => {
-    this.setCollapsed(false)
+    this.props.setStepCollapsed(this.props.step.id, false)
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
@@ -732,9 +725,9 @@ function mapStateToProps (state, ownProps) {
       index,
       moduleIdName
     }),
-    isOwner: state.workflow.is_owner,
-    isReadOnly: state.workflow.read_only,
-    isAnonymous: state.workflow.is_anonymous,
+    isOwner: selectLoggedInUserRole(state) === 'owner',
+    isReadOnly: selectIsReadOnly(state),
+    isAnonymous: selectIsAnonymous(state),
     workflowId: state.workflow.id,
     fetchModuleExists: fetchIndex !== null && fetchIndex <= index
   }

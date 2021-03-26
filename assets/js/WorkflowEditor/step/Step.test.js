@@ -363,12 +363,11 @@ describe('Step, not read-only mode', () => {
           pane: 'tab',
           tabSlug: 'tab-11'
         },
+        loggedInUser: { email: 'alice@example.com' },
         workflow: {
           id: 99,
           tab_slugs: ['tab-11', 'tab-12'],
-          read_only: false,
-          is_owner: true,
-          is_anonymous: false
+          owner_email: 'alice@example.com'
         },
         tabs: {
           'tab-11': { slug: 'tab-11', name: 'Tab 1', step_ids: [10, 20] },
@@ -459,11 +458,11 @@ describe('Step, not read-only mode', () => {
           pane: 'tab',
           tabSlug: 'tab-11'
         },
+        loggedInUser: { email: 'alice@example.com' },
         workflow: {
           id: 99,
-          read_only: false,
-          is_anonymous: false,
-          is_owner: false,
+          owner_email: 'alice@example.com',
+          public: false,
           tab_slugs: ['tab-11']
         },
         tabs: {

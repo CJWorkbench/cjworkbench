@@ -1,5 +1,6 @@
 import * as util from './util'
 import { generateSlug } from '../../utils'
+import selectIsReadOnly from '../../selectors/selectIsReadOnly'
 
 const TAB_SET_NAME = 'TAB_SET_NAME'
 const TAB_DESTROY = 'TAB_DESTROY'
@@ -50,9 +51,9 @@ export function destroy (slug) {
 
 export function select (slug) {
   return (dispatch, getState, api) => {
-    const { workflow } = getState()
+    const state = getState()
 
-    if (!workflow.tab_slugs.includes(slug)) {
+    if (!state.workflow.tab_slugs.includes(slug)) {
       // This happens if the user clicks a "delete" button on the module:
       // 2. Browser dispatches "delete", which removes the tab
       // 1. Browser dispatches "click", which tries to select it
@@ -61,7 +62,7 @@ export function select (slug) {
     }
 
     // Only send API request if we're read-write
-    const promise = workflow.read_only
+    const promise = selectIsReadOnly(state)
       ? Promise.resolve(null)
       : api.setSelectedTab(slug)
     return dispatch({

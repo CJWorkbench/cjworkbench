@@ -88,10 +88,12 @@ class WorkflowUpdate:
     Required for init, and must be None afterwards.
     """
 
-    url_id: Optional[int] = None
-    """ID of the workflow in URLs.
+    secret_id: Optional[str] = None
+    """Secret, used for secret links.
 
-    Required for init, and must be None afterwards.
+    Anybody with this secret ID can view a workflow at this URL (and see its
+    real ID). Only collaborators may read a workflow using its actual ID. So
+    knowing the real ID doesn't give access; but knowing the secret ID does.
     """
 
     owner: Optional["User"] = None
@@ -103,9 +105,6 @@ class WorkflowUpdate:
     useful during `Init` and it must be `None` during `Update`. (An anonymous
     workflow may have `owner is None`.)
     """
-
-    is_example: Optional[bool] = None
-    """True if this is an 'example' workflow."""
 
     selected_tab_position: Optional[int] = None
     """Position of initial tab for the user to display.

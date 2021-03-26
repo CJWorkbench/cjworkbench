@@ -10,7 +10,7 @@ class BlockTest(DbTestCase):
             position=0, slug="block-1", block_type="Chart", step=step1
         )
 
-        workflow2 = workflow.duplicate_anonymous("session-key")
+        workflow2 = workflow.duplicate(None)
         block2 = workflow2.blocks.first()
         self.assertEqual(block2.position, 0)
         self.assertEqual(block2.block_type, "Chart")
@@ -23,7 +23,7 @@ class BlockTest(DbTestCase):
             position=0, slug="block-1", block_type="Table", tab=tab1
         )
 
-        workflow2 = workflow.duplicate_anonymous("session-key")
+        workflow2 = workflow.duplicate(None)
         block2 = workflow2.blocks.first()
         self.assertEqual(block2.position, 0)
         self.assertEqual(block2.block_type, "Table")
@@ -35,7 +35,7 @@ class BlockTest(DbTestCase):
             position=0, slug="block-1", block_type="Text", text_markdown="hi"
         )
 
-        workflow2 = workflow.duplicate_anonymous("session-key")
+        workflow2 = workflow.duplicate(None)
         block2 = workflow2.blocks.first()
         self.assertEqual(block2.position, 0)
         self.assertEqual(block2.block_type, "Text")
@@ -92,7 +92,7 @@ class BlockTest(DbTestCase):
             position=4, slug="block-5", block_type="Table", tab_id=bad_tab2.id
         )
 
-        workflow2 = workflow.duplicate_anonymous("session-key")
+        workflow2 = workflow.duplicate(None)
         self.assertEqual(
             list(
                 workflow2.blocks.values_list(

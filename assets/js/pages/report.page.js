@@ -7,9 +7,9 @@ import Table from '../Report/Table'
 import WorkflowWebsocket from '../WorkflowWebsocket'
 import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
-import { pathToWorkflowIdOrSecretId } from '../utils'
+import selectWorkflowIdOrSecretId from '../selectors/selectWorkflowIdOrSecretId'
 
-const workflowIdOrSecretId = pathToWorkflowIdOrSecretId(window.location.pathname)
+const workflowIdOrSecretId = selectWorkflowIdOrSecretId(window.initState) // TODO select dynamically in WorkbenchAPI?
 const websocket = new WorkflowWebsocket(
   workflowIdOrSecretId,
   delta => store.dispatch(applyDeltaAction(delta))

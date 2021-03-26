@@ -228,47 +228,9 @@ def shared_with_me(request: HttpRequest):
     return _render_workflows(request, acl__email=request.user.email)
 
 
-# Not login_required: even guests can view recipes
+# Not login_required: even guests can view examples
 def examples(request: HttpRequest):
     return _render_workflows(request, in_all_users_workflow_lists=True)
-
-
-def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Workflow:
-    """If not owner, return a cached duplicate of `workflow`.
-
-    The duplicate will be married to `request.session.session_key`, and its
-    `.is_anonymous` will return `True`.
-    """
-    if not request.session.session_key:
-        request.session.create()
-    session_key = request.session.session_key
-
-    try:
-        return Workflow.objects.get(
-            original_workflow_id=workflow.id, anonymous_owner_session_key=session_key
-        )
-    except Workflow.DoesNotExist:
-        try:
-            new_workflow = workflow.duplicate_anonymous(session_key)
-        except IntegrityError:
-            # Race: the same user just requested a duplicate at the same time,
-            # and both decided to duplicate simultaneously. A database
-            # constraint means one will get an IntegrityError ... so at this
-            # point we can assume our original query will succeed.
-            return Workflow.objects.get(
-                original_workflow_id=workflow.id,
-                anonymous_owner_session_key=session_key,
-            )
-
-        async_to_sync(rabbitmq.queue_render)(
-            new_workflow.id, new_workflow.last_delta_id
-        )
-        if workflow.example:
-            server.utils.log_user_event_from_request(
-                request, "Opened Demo Workflow", {"name": workflow.name}
-            )
-
-        return new_workflow
 
 
 def visible_modules(request) -> Dict[str, ModuleZipfile]:
@@ -322,9 +284,6 @@ def render_workflow(request: HttpRequest, workflow_id_or_secret_id: Union[int, s
     ):
         return redirect(_lesson_redirect_url(workflow.lesson_slug))
     else:
-        if workflow.example and workflow.owner != request.user:
-            workflow = _get_anonymous_workflow_for(workflow, request)
-
         modules = visible_modules(request)
         init_state = make_init_state(request, workflow=workflow, modules=modules)
 

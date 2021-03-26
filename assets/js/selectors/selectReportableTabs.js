@@ -59,7 +59,8 @@ const selectOrderedTabsWithReportableSteps = createSelector(
  *
  * Within this, chartSteps is an Array of { slug, moduleName }.
  */
-export default function selectReportableTabs (state) {
-  const optimisticState = selectOptimisticState(state)
-  return selectOrderedTabsWithReportableSteps(optimisticState)
-}
+const selectReportableTabs = createSelector(
+  selectOptimisticState,
+  selectOrderedTabsWithReportableSteps
+)
+export default selectReportableTabs

@@ -7,13 +7,6 @@ export function goToUrl (url) {
   window.location.href = url
 }
 
-export function pathToWorkflowIdOrSecretId (path) {
-  if (!path.startsWith('/workflows/')) {
-    throw new Error('Expected path of /workflows/<workflow_id_or_secret_id>')
-  }
-  return path.split('/')[2]
-}
-
 // Current CSRF token
 export const csrfToken = Cookies.get('csrftoken')
 

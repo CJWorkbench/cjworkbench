@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { Trans } from '@lingui/macro'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
+import selectIsReadOnly from '../selectors/selectIsReadOnly'
 
 /**
  * Output of currently-selected module.
@@ -214,7 +215,7 @@ function mapStateToProps (state) {
       : null,
     stepBeforeError,
     isPublic: workflow.public,
-    isReadOnly: workflow.read_only
+    isReadOnly: selectIsReadOnly(state)
   }
 }
 

@@ -80,16 +80,11 @@ class Workflow(models.Model):
     anonymous_owner_session_key = models.CharField(
         "anonymous_owner_session_key", max_length=40, null=True, blank=True
     )
-    """Non-NULL when this is a copy of a of an example workflow.
+    """Non-NULL when a non-user is editing a lesson workflow.
 
-    Anybody who is not the owner can open an "anonymous" _duplicate_ of the
-    workflow, whether that person is logged in or not. An anonymous workflow
-    behaves like a private one, except:
-
-        * The browser URL points to the original workflow (so when the end user
-          shares, other people can open the URL -- albeit without the user's
-          edits being visible to others)
-        * `url_id` != `pk`
+    An anonymous workflow behaves like a private one, except the browser URL
+    points to the lesson (so when the end user shares, other people can open
+    the URL -- albeit without the user's edits).
     """
 
     secret_id = models.CharField(blank=True, max_length=100)
@@ -103,11 +98,8 @@ class Workflow(models.Model):
 
     public = models.BooleanField(default=False)
 
-    example = models.BooleanField(default=False)
-    """If true, users opening this Workflow will just see a duplicate of it."""
-
     in_all_users_workflow_lists = models.BooleanField(default=False)
-    """If true, all users will see this (you may also want example=True)."""
+    """If true, all users will see this."""
 
     lesson_slug = models.CharField("lesson_slug", max_length=100, null=True, blank=True)
     """A string like 'a-lesson' or 'a-course/a-lesson', or NULL.
@@ -185,18 +177,6 @@ class Workflow(models.Model):
     @property
     def live_tabs(self):
         return self.tabs.filter(is_deleted=False)
-
-    @property
-    def url_id(self) -> int:
-        """ID we display in the URL when presenting this Workflow.
-
-        When this is a duplicate of a demo Workflow, the ID we present is the
-        _demo_ Workflow ID, not this Workflow's ID.
-        """
-        if self.is_anonymous:
-            return self.original_workflow_id
-        else:
-            return self.pk
 
     def request_authorized_read(self, request: HttpRequest) -> bool:
         """True if the Django request may read workflow data."""
@@ -343,15 +323,19 @@ class Workflow(models.Model):
             workflow.tabs.create(position=0, slug="tab-1", name="Tab 1")
             return workflow
 
-    def _duplicate(
-        self, name: str, owner: Optional[User], session_key: Optional[str]
-    ) -> "Workflow":
+    def duplicate(self, owner: User) -> "Workflow":
+        """
+        Save and return a duplicate Workflow owned by `user`.
+
+        The duplicate will have no undo history.
+        """
+        new_name = f"Copy of {self.name}"  # TODO i18n
+
         with self.cooperative_lock():
             wf = Workflow.objects.create(
-                name=name,
+                name=new_name,
                 owner=owner,
                 original_workflow_id=self.pk,
-                anonymous_owner_session_key=session_key,
                 selected_tab_position=self.selected_tab_position,
                 has_custom_report=self.has_custom_report,
                 public=False,
@@ -412,22 +396,6 @@ class Workflow(models.Model):
                 )
 
         return wf
-
-    def duplicate(self, owner: User) -> "Workflow":
-        """
-        Save and return a duplicate Workflow owned by `user`.
-
-        The duplicate will have no undo history.
-        """
-        new_name = f"Copy of {self.name}"
-        return self._duplicate(new_name, owner=owner, session_key=None)
-
-    def duplicate_anonymous(self, session_key: str) -> "Workflow":
-        """Save and return a new Workflow with the same contents as this one.
-
-        The duplicate will have no undo history.
-        """
-        return self._duplicate(self.name, owner=None, session_key=session_key)
 
     def get_absolute_url(self):
         return reverse("workflow", args=[str(self.pk)])
@@ -523,9 +491,8 @@ class Workflow(models.Model):
 
         return clientside.WorkflowUpdate(
             id=self.id,
-            url_id=self.url_id,
+            secret_id=self.secret_id,  # if you can read it, you can link to it
             owner=self.owner,
-            is_example=self.example,
             selected_tab_position=self.selected_tab_position,
             name=self.name,
             tab_slugs=tab_slugs,

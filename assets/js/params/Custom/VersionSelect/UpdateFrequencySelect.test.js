@@ -12,7 +12,7 @@ describe('UpdateFrequencySelect', () => {
       workflowId: 123,
       stepId: 212,
       isReadOnly: false,
-      isAnonymous: false,
+      isAnonymous: false, // DELETEME
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
       isAutofetch: false, // start in Manual mode
       isEmailUpdates: false,
@@ -46,12 +46,6 @@ describe('UpdateFrequencySelect', () => {
       w.find('a[title="change auto-update settings"]').simulate('click')
       expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
     })
-
-    it('does not open modal when anonymous', () => {
-      const w = wrapper({ isAnonymous: true })
-      w.find('a[title="change auto-update settings"]').simulate('click')
-      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
-    })
   })
 
   describe('connected to state', () => {
@@ -64,10 +58,10 @@ describe('UpdateFrequencySelect', () => {
     })
 
     const sampleState = {
+      loggedInUser: { email: 'alice@example.com' },
       workflow: {
         id: 123,
-        read_only: false,
-        is_anonymous: false,
+        owner_email: 'alice@example.com',
         tab_slugs: ['tab-11', 'tab-12']
       },
       tabs: {
@@ -114,10 +108,10 @@ describe('UpdateFrequencySelect', () => {
       // can this even happen?
       const store = {
         getState: () => ({
+          loggedInUser: { email: 'alice@example.com' },
           workflow: {
             id: 123,
-            read_only: false,
-            is_anonymous: false,
+            owner_email: 'alice@example.com',
             steps: ['nonce_212']
           },
           steps: {}
