@@ -11,7 +11,7 @@ import OutputIframe from '../OutputIframe'
  */
 export class OutputPane extends React.Component {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowId: propTypes.workflowId.isRequired,
     stepBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -220,9 +220,9 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    loadRows: (workflowId, stepSlug, deltaId, startRow, endRow) => {
+    loadRows: (stepSlug, deltaId, startRow, endRow) => {
       return dispatch((_, __, api) => {
-        return api.getStepResultTableSlice(workflowId, stepSlug, deltaId, startRow, endRow)
+        return api.getStepResultTableSlice(stepSlug, deltaId, startRow, endRow)
       })
     }
   }

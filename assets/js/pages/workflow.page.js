@@ -10,10 +10,12 @@ import WorkflowWebsocket from '../WorkflowWebsocket'
 import WorkbenchAPI from '../WorkbenchAPI'
 import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
+import { pathToWorkflowIdOrSecretId } from '../utils'
 
-// --- Main ----
-const websocket = new WorkflowWebsocket(window.initState.workflow.id, delta =>
-  store.dispatch(applyDeltaAction(delta))
+const workflowIdOrSecretId = pathToWorkflowIdOrSecretId(window.location.pathname)
+const websocket = new WorkflowWebsocket(
+  workflowIdOrSecretId,
+  delta => store.dispatch(applyDeltaAction(delta))
 )
 websocket.connect()
 

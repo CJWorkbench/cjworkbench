@@ -1,4 +1,3 @@
-// ---- Utilities ---
 import { useMemo, useCallback } from 'react'
 import { t } from '@lingui/macro'
 import * as Cookies from 'js-cookie'
@@ -6,6 +5,13 @@ import { fromByteArray as base64Encode } from 'base64-js'
 
 export function goToUrl (url) {
   window.location.href = url
+}
+
+export function pathToWorkflowIdOrSecretId (path) {
+  if (!path.startsWith('/workflows/')) {
+    throw new Error('Expected path of /workflows/<workflow_id_or_secret_id>')
+  }
+  return path.split('/')[2]
 }
 
 // Current CSRF token

@@ -45,8 +45,8 @@ const OkStepTable = React.memo(function OkStepTable ({
   loadRows
 }) {
   const loadThisTableRows = React.useCallback(
-    (startRow, endRow) => loadRows(workflowId, stepSlug, deltaId, startRow, endRow),
-    [loadRows, workflowId, stepSlug, deltaId]
+    (startRow, endRow) => loadRows(stepSlug, deltaId, startRow, endRow),
+    [loadRows, stepSlug, deltaId]
   )
   return (
     <>
@@ -96,7 +96,7 @@ const TableSwitcherContents = React.memo(function TableSwitcherContents ({
  */
 export default class TableSwitcher extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
     workflowId: propTypes.workflowId.isRequired,

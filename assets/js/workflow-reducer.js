@@ -744,8 +744,7 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
 
 export function startCreateSecretAction (stepId, param) {
   return (dispatch, getState, api) => {
-    const workflowId = getState().workflow.id
-    api.startCreateSecret(workflowId, stepId, param)
+    api.startCreateSecret(stepId, param)
   }
 }
 

@@ -1,7 +1,3 @@
-// ---- TableView ----
-// Displays a module's rendered output, if any
-// Handles paged loading of data, which also means it decides when to turn the OutputPane spinner on
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import propTypes from '../propTypes'

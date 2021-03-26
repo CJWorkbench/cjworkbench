@@ -12,7 +12,10 @@ const ResetSerializer = () => null
 // All API calls which fetch data return a promise which returns JSON
 export default class WorkbenchAPI {
   constructor (websocket) {
-    this.websocket = websocket
+    if (websocket !== null) {
+      this.websocket = websocket
+      this.workflowIdOrSecretId = websocket.workflowIdOrSecretId
+    }
   }
 
   // We send at most one data-modification request at a time, to avoid races.
@@ -204,8 +207,8 @@ export default class WorkbenchAPI {
     })
   }
 
-  getStepResultTableSlice (workflowId, stepSlug, deltaId, startRow, endRow) {
-    const path = `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-table-slice.json`
+  getStepResultTableSlice (stepSlug, deltaId, startRow, endRow) {
+    const path = `/workflows/${this.workflowIdOrSecretId}/steps/${stepSlug}/delta-${deltaId}/result-table-slice.json`
 
     const params = new URLSearchParams()
     if (startRow) {
@@ -221,9 +224,9 @@ export default class WorkbenchAPI {
     return this._fetch(url)
   }
 
-  stepResultColumnValueCounts (workflowId, stepSlug, deltaId, column) {
+  stepResultColumnValueCounts (stepSlug, deltaId, column) {
     return this._fetch(
-      `/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-column-value-counts.json?column=${encodeURIComponent(column)}`
+      `/workflows/${this.workflowIdOrSecretId}/steps/${stepSlug}/delta-${deltaId}/result-column-value-counts.json?column=${encodeURIComponent(column)}`
     )
       .catch(err => {
         if (err instanceof RangeError) {
@@ -299,16 +302,16 @@ export default class WorkbenchAPI {
     })
   }
 
-  undo (workflowId) {
+  undo () {
     return this._callExpectingNull('workflow.undo', {})
   }
 
-  redo (workflowId) {
+  redo () {
     return this._callExpectingNull('workflow.redo', {})
   }
 
-  duplicateWorkflow (workflowId) {
-    return this._post(`/workflows/${workflowId}/duplicate`, null)
+  duplicateWorkflow (workflowIdOrSecretId) {
+    return this._post(`/workflows/${workflowIdOrSecretId}/duplicate`, null)
   }
 
   clearStepUnseenNotifications (stepId) {
@@ -357,7 +360,7 @@ export default class WorkbenchAPI {
    * Yup, this is really strange. There's no return value here; watch the
    * state to see success/failure.
    */
-  startCreateSecret (workflowId, stepId, param) {
+  startCreateSecret (stepId, param) {
     /**
      * Return true if popup is pointed at an oauth-success page.
      */
@@ -382,7 +385,7 @@ export default class WorkbenchAPI {
     }
 
     const popup = window.open(
-      `/oauth/create-secret/${workflowId}/${stepId}/${param}/`,
+      `/oauth/create-secret/${this.workflowIdOrSecretId}/${stepId}/${param}/`,
       'workbench-oauth',
       'height=500,width=400'
     )

@@ -64,7 +64,7 @@ export default class DelayedTableSwitcher extends React.PureComponent {
   isUnmounted = false
 
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
     workflowId: propTypes.workflowId.isRequired,
     stepSlug: PropTypes.string, // or null, if no selection
@@ -127,12 +127,11 @@ export default class DelayedTableSwitcher extends React.PureComponent {
   /**
    * Call this.prop.loadRows() and ensure state.loaded is set after it returns.
    */
-  loadRows = (workflowId, stepSlug, deltaId, startRow, endRow) => {
+  loadRows = (stepSlug, deltaId, startRow, endRow) => {
     return this.props
-      .loadRows(workflowId, stepSlug, deltaId, startRow, endRow)
+      .loadRows(stepSlug, deltaId, startRow, endRow)
       .finally(() => {
         if (
-          workflowId === this.props.workflowId &&
           stepSlug === this.props.stepSlug &&
           deltaId === this.props.deltaId &&
           !areSameTable(this.props, this.state.loaded) &&
