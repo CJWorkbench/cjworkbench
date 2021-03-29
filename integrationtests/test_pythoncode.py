@@ -86,7 +86,10 @@ def process(table):
 
         try:
             try_assert_iframe_contents()
-        except selenium.common.exceptions.NoSuchWindowException:
+        except (
+            selenium.common.exceptions.NoSuchWindowException,
+            selenium.common.exceptions.StaleElementReferenceException,
+        ):
             # There's a race involving a reloading iframe. TODO figure out how
             # this happens. It's only on Google Cloud Build, never on dev
             #
