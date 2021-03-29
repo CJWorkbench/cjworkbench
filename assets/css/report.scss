@@ -38,7 +38,7 @@ header {
     color: $brand-text--medium;
     margin: 0;
 
-    span::after {
+    &>*:not(:last-child)::after { // sometimes <span/><span/><a/>, sometimes <span/><span/>
       content: '-';
       padding: 0 0.15rem 0 0.3rem;
       color: $brand-text--medium;

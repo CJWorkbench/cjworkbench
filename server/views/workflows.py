@@ -29,6 +29,7 @@ from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Step, Tab, Workflow
+from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.reports import build_report_for_workflow
 from cjwstate.modules.types import ModuleZipfile
@@ -419,6 +420,16 @@ class Report(View):
         )
         init_state = make_init_state(request, workflow=workflow, modules={})
         blocks = build_report_for_workflow(workflow)
+        if (
+            not workflow.public
+            and not request.user.is_anonymous
+            and workflow.acl.filter(
+                email=request.user.email, role=Role.REPORT_VIEWER
+            ).exists()
+        ):
+            can_view_workflow = False
+        else:
+            can_view_workflow = True
         return TemplateResponse(
             request,
             "report.html",
@@ -427,5 +438,6 @@ class Report(View):
                 "workflow": workflow,
                 "blocks": blocks,
                 "owner_name": workbench_user_display(workflow.owner),
+                "can_view_workflow": can_view_workflow,
             },
         )

@@ -363,6 +363,13 @@ class WorkflowViewTests(DbTestCase):
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.public, False)
 
+    def test_403_link_to_report_when_report_viewer(self):
+        self.workflow1.acl.create(email="user2@example.com", role=Role.REPORT_VIEWER)
+        self.client.force_login(self.otheruser)
+        response = self.client.get("/workflows/%d" % self.workflow1.id)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
+        self.assertIn(b"report</a>", report.content)
+
 
 class SecretLinkTests(DbTestCase):
     def setUp(self):
@@ -522,3 +529,53 @@ class SecretLinkTests(DbTestCase):
             expected_other_user_response=404,
             expected_anonymous_response=404,
         )
+
+
+@patch("cjwstate.commands.websockets_notify", async_noop)
+class ReportViewTests(DbTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.queue_render_patcher = patch.object(rabbitmq, "queue_render")
+        self.queue_render = self.queue_render_patcher.start()
+        self.queue_render.side_effect = async_noop
+
+        self.log_patcher = patch("server.utils.log_user_event_from_request")
+        self.log_patch = self.log_patcher.start()
+
+        self.user = create_user("user", "user@example.com")
+
+        self.workflow1 = Workflow.create_and_init(name="Workflow 1", owner=self.user)
+        self.tab1 = self.workflow1.tabs.first()
+
+        # Add another user, with one public and one private workflow
+        self.otheruser = create_user("user2", "user2@example.com")
+
+    def tearDown(self):
+        self.log_patcher.stop()
+        self.queue_render_patcher.stop()
+        super().tearDown()
+
+    def test_owned_200(self):
+        self.client.force_login(self.user)
+        response = self.client.get("/workflows/%d/report" % self.workflow1.id)
+        self.assertEqual(response.status_code, status.OK)
+        self.assertIn(b"Source data</a>", response.content)
+
+    def test_viewer_200(self):
+        self.workflow1.acl.create(email="user2@example.com", role=Role.VIEWER)
+        self.client.force_login(self.otheruser)
+        response = self.client.get("/workflows/%d/report" % self.workflow1.id)
+        self.assertEqual(response.status_code, status.OK)
+        self.assertIn(b"Source data</a>", response.content)
+
+    def test_report_viewer_200(self):
+        self.workflow1.acl.create(email="user2@example.com", role=Role.REPORT_VIEWER)
+        self.client.force_login(self.otheruser)
+        response = self.client.get("/workflows/%d/report" % self.workflow1.id)
+        self.assertEqual(response.status_code, status.OK)
+        self.assertNotIn(b"Source data</a>", response.content)
+
+    def test_403(self):
+        response = self.client.get("/workflows/%d/report" % self.workflow1.id)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
