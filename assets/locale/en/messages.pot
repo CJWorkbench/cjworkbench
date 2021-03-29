@@ -799,22 +799,22 @@ msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
 #. default-message: Owner
-#: assets/js/Workflows/WorkflowList.js:91
+#: assets/js/Workflows/WorkflowList.js:92
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
 #. default-message: Privacy
-#: assets/js/Workflows/WorkflowList.js:104
+#: assets/js/Workflows/WorkflowList.js:105
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
 #. default-message: Title
-#: assets/js/Workflows/WorkflowList.js:87
+#: assets/js/Workflows/WorkflowList.js:88
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
 #. default-message: Updated
-#: assets/js/Workflows/WorkflowList.js:100
+#: assets/js/Workflows/WorkflowList.js:101
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -829,32 +829,37 @@ msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr ""
 
 #. default-message: Community workflows
-#: assets/js/Workflows/ExampleWorkflowsMain.js:10
+#: assets/js/Workflows/ExampleWorkflowsMain.js:11
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr ""
 
 #. default-message: Workflows shared with me
-#: assets/js/Workflows/WorkflowsSharedWithMeMain.js:10
+#: assets/js/Workflows/WorkflowsSharedWithMeMain.js:11
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr ""
 
 #. default-message: Publish workflows as examples using Django admin
-#: assets/js/Workflows/ExampleWorkflowsMain.js:18
+#: assets/js/Workflows/ExampleWorkflowsMain.js:19
 msgid "js.Workflows.WorkflowLists.publishNewRecipes"
 msgstr ""
 
 #. default-message: Workflows shared with you as collaborator will appear here
-#: assets/js/Workflows/WorkflowsSharedWithMeMain.js:18
+#: assets/js/Workflows/WorkflowsSharedWithMeMain.js:19
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
 #. default-message: private
-#: assets/js/Workflows/Workflow.js:37
+#: assets/js/Workflows/Workflow.js:33
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
+#. default-message: private report
+#: assets/js/Workflows/Workflow.js:30
+msgid "js.Workflows.WorkflowMetadata.visibility.privateReport"
+msgstr ""
+
 #. default-message: public
-#: assets/js/Workflows/Workflow.js:36
+#: assets/js/Workflows/Workflow.js:26
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 
@@ -2640,7 +2645,7 @@ msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
 
 #. default-message: Download data as CSV
-#: templates/report.html:54
+#: templates/report.html:55
 msgid "py.templates.report.table.download"
 msgstr ""
 
@@ -2664,28 +2669,33 @@ msgstr ""
 msgid "py.templates.workflow-403.suggestions.header"
 msgstr ""
 
-#. default-message: Sign in
+#. default-message: Go to the <a0>report</a0>
 #: templates/workflow-403.html:28
+msgid "py.templates.workflow-403.suggestion.goToReport"
+msgstr ""
+
+#. default-message: Sign in
+#: templates/workflow-403.html:31
 msgid "py.templates.workflow-403.suggestion.logIn"
 msgstr ""
 
 #. default-message: Sign in as a different user
-#: templates/workflow-403.html:34
+#: templates/workflow-403.html:37
 msgid "py.templates.workflow-403.suggestion.logOut"
 msgstr ""
 
 #. default-message: (You are {0})
-#: templates/workflow-403.html:36
+#: templates/workflow-403.html:39
 msgid "py.templates.workflow-403.suggestion.logOut.currentUser"
 msgstr ""
 
 #. default-message: Ask the owner to share the workflow with you or make it public
-#: templates/workflow-403.html:39
+#: templates/workflow-403.html:42
 msgid "py.templates.workflow-403.suggestion.ask"
 msgstr ""
 
 #. default-message: Go back to <a0>your workflows</a0>
-#: templates/workflow-403.html:41
+#: templates/workflow-403.html:44
 msgid "py.templates.workflow-403.suggestion.backToWorkflows"
 msgstr ""
 

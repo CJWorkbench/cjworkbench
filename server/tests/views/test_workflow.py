@@ -206,16 +206,23 @@ class WorkflowViewTests(DbTestCase):
         # them public, and we need to help them debug that case)
         self.client.force_login(self.otheruser)
         response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertContains(
-            response,
-            "Sign in as a different user</button>",
-            status_code=status.FORBIDDEN,
+        self.assertEqual(response.status_code, status.FORBIDDEN)
+        self.assertIn(b"Sign in as a different user</button>", response.content)
+
+    def test_workflow_view_report_viewer_403(self):
+        self.workflow1.acl.create(email="user2@example.com", role=Role.REPORT_VIEWER)
+        self.client.force_login(self.otheruser)
+        response = self.client.get("/workflows/%d/" % self.workflow1.id)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
+        self.assertIn(
+            b'<a href="/workflows/%d/report">' % self.workflow1.id, response.content
         )
 
     def test_workflow_view_unauthorized_anonymous_user_403(self):
         self.client.logout()
         response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertContains(response, "Sign in</a>", status_code=status.FORBIDDEN)
+        self.assertEqual(response.status_code, status.FORBIDDEN)
+        self.assertIn(b"Sign in</a>", response.content)
 
     @patch.dict(
         "os.environ",
@@ -362,13 +369,6 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(response.status_code, status.FORBIDDEN)
         self.workflow1.refresh_from_db()
         self.assertEqual(self.workflow1.public, False)
-
-    def test_403_link_to_report_when_report_viewer(self):
-        self.workflow1.acl.create(email="user2@example.com", role=Role.REPORT_VIEWER)
-        self.client.force_login(self.otheruser)
-        response = self.client.get("/workflows/%d" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.FORBIDDEN)
-        self.assertIn(b"report</a>", report.content)
 
 
 class SecretLinkTests(DbTestCase):

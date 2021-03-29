@@ -71,14 +71,26 @@ def redirect_on_http302(status: int = status.OK):
 
 def render_template_on_workflow_permission_denied(func):
     @functools.wraps(func)
-    def inner(request, *args, **kwargs):
+    def inner(request, workflow_id_or_secret_id: Union[int, str], *args, **kwargs):
         try:
-            return func(request, *args, **kwargs)
+            return func(request, workflow_id_or_secret_id, *args, **kwargs)
         except WorkflowPermissionDenied as err:
+            # report_path: set when the user has permission to access the report
+            try:
+                lookup_workflow_and_auth(
+                    authorized_report_viewer, workflow_id_or_secret_id, request
+                )
+                report_path = err.workflow_path + "report"
+            except WorkflowPermissionDenied:
+                report_path = None
             return TemplateResponse(
                 request,
                 "workflow-403.html",
-                dict(user=request.user, workflow_path=err.workflow_path),
+                dict(
+                    user=request.user,
+                    workflow_path=err.workflow_path,
+                    report_path=report_path,
+                ),
                 status=status.FORBIDDEN,
             )
 

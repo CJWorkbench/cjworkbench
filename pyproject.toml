@@ -1,3 +1,16 @@
 [tool.black]
 target_version = ['py38']
 exclude = 'cjwkernel/thrift/|integrationtests/module-zipfile-server/modules/'
+
+[tool.isort]
+# Black compatibility
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 88
+
+[flake8]
+exclude = "venv/*,tox/*,specs/*,build/*"
+ignore = "E123,E128,E266,E402,W503,E731,W601"
+max-line-length = 88
