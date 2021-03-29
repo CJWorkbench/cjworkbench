@@ -103,6 +103,29 @@ describe('ParamsForm', () => {
       expect(w.instance().props.onChange).not.toHaveBeenCalled()
     })
 
+    it('should call onSubmit', () => {
+      const w = wrapper({
+        fields: [field('a', 'string')],
+        value: { a: 'A' },
+        edits: { a: 'x' }
+      })
+      w.find('form').simulate('keyDown', { key: 'Enter', ctrlKey: true, preventDefault: () => {} })
+
+      expect(w.instance().props.onSubmit).toHaveBeenCalled()
+    })
+
+    it('should not call onSubmit when isReadOnly', () => {
+      const w = wrapper({
+        fields: [field('a', 'string')],
+        value: { a: 'A' },
+        edits: { a: 'x' },
+        isReadOnly: true
+      })
+      w.find('form').simulate('keyDown', { key: 'Enter', ctrlKey: true, preventDefault: () => {} })
+
+      expect(w.instance().props.onSubmit).not.toHaveBeenCalled()
+    })
+
     it('should set secretMetadata when the field is of type secret', () => {
       const w = wrapper({
         fields: [

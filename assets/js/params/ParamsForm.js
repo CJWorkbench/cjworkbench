@@ -107,7 +107,10 @@ export default class ParamsForm extends React.PureComponent {
       maybeEv.preventDefault()
     }
 
-    this.props.onSubmit()
+    const { isReadOnly, onSubmit } = this.props
+    if (!isReadOnly) {
+      onSubmit()
+    }
   }
 
   handleChange = (fieldName, fieldValue) => {
