@@ -11,6 +11,7 @@ describe('Workflow list page', () => {
       name: 'Cleaning',
       owner_name: 'Fred Frederson',
       public: true,
+      acl: [],
       last_update: '2010-10-18T00:30:00'
     },
     {
@@ -18,6 +19,7 @@ describe('Workflow list page', () => {
       name: 'Charting',
       owner_name: 'Fred Frederson',
       public: false,
+      acl: [],
       last_update: '2010-10-18T00:20:00'
     },
     {
@@ -25,6 +27,7 @@ describe('Workflow list page', () => {
       name: 'Analysis',
       owner_name: 'Fred Frederson',
       public: false,
+      acl: [],
       last_update: '2010-10-18T07:45:00'
     }
   ]
@@ -35,6 +38,7 @@ describe('Workflow list page', () => {
       name: 'Messy data cleanup',
       owner_name: 'John Johnson',
       public: false,
+      acl: [],
       last_update: '2010-10-18T00:30:00'
     },
     {
@@ -42,6 +46,7 @@ describe('Workflow list page', () => {
       name: 'Document search',
       owner_name: 'Sally Sallerson',
       public: true,
+      acl: [],
       last_update: '2010-10-18T00:45:00'
     }
   ]
@@ -52,6 +57,7 @@ describe('Workflow list page', () => {
       name: 'Demo 1',
       owner_name: 'Workbench',
       public: false,
+      acl: [],
       last_update: '2010-10-18T00:30:00'
     }
   ]
@@ -81,7 +87,7 @@ describe('Workflow list page', () => {
     renderWithI18n(
       <Workflows
         api={api}
-        user={{ id: 1, stripeCustomerId: null, display_name: 'Example User' }}
+        user={{ id: 1, stripeCustomerId: null, email: 'user@example.org', display_name: 'Example User' }}
         {...props}
       />
     )
@@ -174,6 +180,7 @@ describe('Workflow list page', () => {
       name: 'Copied!',
       owner_name: 'Fred Frederson',
       public: false,
+      acl: [],
       last_update: '2021-02-08T15:56.000Z'
     })
     await waitFor(() =>

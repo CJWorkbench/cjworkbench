@@ -4,9 +4,53 @@ import { Trans } from '@lingui/macro'
 import { timeDifference } from '../utils'
 import WorkflowContextMenu from './WorkflowContextMenu'
 
+function canOnlyViewReport (user, workflow) {
+  if (workflow.public) {
+    return false
+  }
+
+  if (user) {
+    const aclEntry = workflow.acl.find(({ email }) => email === user.email)
+    if (aclEntry && aclEntry.role === 'report-viewer') {
+      return true
+    }
+  }
+
+  return false
+}
+
+function WorkflowPrivacy (props) {
+  const { workflow, user = null } = props
+
+  if (workflow.public) {
+    return <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
+  }
+
+  if (canOnlyViewReport(user, workflow)) {
+    return <Trans id='js.Workflows.WorkflowMetadata.visibility.privateReport'>private report</Trans>
+  }
+
+  return <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>
+}
+WorkflowPrivacy.propTypes = {
+  workflow: PropTypes.shape({
+    public: PropTypes.bool.isRequired,
+    acl: PropTypes.arrayOf(
+      PropTypes.shape({
+        email: PropTypes.string.isRequired,
+        role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
+      }).isRequired
+    ).isRequired
+  }),
+  user: PropTypes.shape({
+    email: PropTypes.string.isRequired
+  }) // or null
+}
+
 export default function Workflow (props) {
   const {
     workflow,
+    user,
     api = null,
     onWorkflowChanging = null,
     onWorkflowChanged = null,
@@ -17,24 +61,26 @@ export default function Workflow (props) {
   const timeAgo = timeDifference(workflow.last_update, now, i18n)
   const showActions = Boolean(api)
 
+  const href = canOnlyViewReport(user, workflow)
+    ? `/workflows/${workflow.id}/report`
+    : `/workflows/${workflow.id}`
+
   return (
     <tr className={workflow.nPendingChanges ? 'changing' : null}>
       <td className='title'>
-        <a href={`/workflows/${workflow.id}`}>{workflow.name}</a>
+        <a href={href}>{workflow.name}</a>
       </td>
       <td className='owner'>
-        <a href={`/workflows/${workflow.id}`}>{workflow.owner_name}</a>
+        <a href={href}>{workflow.owner_name}</a>
       </td>
       <td className='updated'>
-        <a href={`/workflows/${workflow.id}`}>
+        <a href={href}>
           <time dateTime={workflow.last_updated}>{timeAgo}</time>
         </a>
       </td>
       <td className='privacy'>
-        <a href={`/workflows/${workflow.id}`}>
-          {workflow.public
-            ? <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
-            : <Trans id='js.Workflows.WorkflowMetadata.visibility.private'>private</Trans>}
+        <a href={href}>
+          <WorkflowPrivacy workflow={workflow} user={user} />
         </a>
       </td>
       {showActions
@@ -60,6 +106,7 @@ Workflow.propTypes = {
     name: PropTypes.string.isRequired,
     nPendingChanges: PropTypes.number // or undefined for 0
   }).isRequired,
+  user: PropTypes.object, // or null
   now: PropTypes.string, // or null for current ISO8601 date (prop is useful for testing snapshots)
   onClickDeleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   onClickDuplicateWorkflow: PropTypes.func, // func(id) => undefined, or null if user must _open_ to duplicate

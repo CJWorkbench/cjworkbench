@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import WorkflowList, { WorkflowListPropType } from './WorkflowList'
 
 export default function ExampleWorkflowsMain (props) {
-  const { workflows } = props
+  const { workflows, user } = props
   return (
     <main className='workflows'>
       <header>
@@ -20,10 +21,11 @@ export default function ExampleWorkflowsMain (props) {
             </Trans>
           </div>
           )
-        : <WorkflowList className='example' workflows={workflows} />}
+        : <WorkflowList className='example' workflows={workflows} user={user} />}
     </main>
   )
 }
 ExampleWorkflowsMain.propTypes = {
-  workflows: WorkflowListPropType.isRequired
+  workflows: WorkflowListPropType.isRequired,
+  user: PropTypes.object // or null
 }
