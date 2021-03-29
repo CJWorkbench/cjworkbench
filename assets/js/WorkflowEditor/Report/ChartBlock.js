@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../../propTypes'
 import BlockFrame from './BlockFrame'
 import { useChartIframeSrcWithDataUrlSubscription } from '../../ChartIframe'
 
@@ -35,7 +36,7 @@ export default function ChartBlock ({
   )
 }
 ChartBlock.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   block: PropTypes.shape({
     slug: PropTypes.string.isRequired,
     step: PropTypes.shape({

@@ -1,17 +1,13 @@
 /* globals describe, expect, it, jest */
-import { shallow, mount } from 'enzyme'
-import { mockStore, tick } from './test-utils'
-import { Provider } from 'react-redux'
-import ConnectedEditableWorkflowName, {
-  EditableWorkflowName
-} from './EditableWorkflowName'
+import { shallow } from 'enzyme'
+import EditableWorkflowName from './EditableWorkflowName'
 
 describe('EditableWorkflowName', () => {
   const wrapper = (extraProps = {}) => {
     return shallow(
       <EditableWorkflowName
         value='A'
-        setWorkflowName={jest.fn()}
+        onSubmit={jest.fn()}
         isReadOnly={false}
         {...extraProps}
       />
@@ -24,28 +20,10 @@ describe('EditableWorkflowName', () => {
   })
 
   it('lets the user edit the title', () => {
-    const setWorkflowName = jest.fn()
-    const w = wrapper({ setWorkflowName })
+    const onSubmit = jest.fn()
+    const w = wrapper({ onSubmit })
     w.find('input').simulate('change', { target: { value: 'B' } })
     w.find('input').simulate('blur')
-    expect(setWorkflowName).toHaveBeenCalledWith('B')
-  })
-
-  it('connects to the store', async () => {
-    const api = {
-      setWorkflowName: jest.fn().mockImplementation(() => Promise.resolve(null))
-    }
-    const store = mockStore({ workflow: { name: 'A' } }, api)
-    const w = mount(
-      <Provider store={store}>
-        <ConnectedEditableWorkflowName isReadOnly={false} />
-      </Provider>
-    )
-    expect(w.find('input').prop('value')).toEqual('A')
-    w.find('input').simulate('change', { target: { value: 'B' } })
-    w.find('input').simulate('blur')
-    expect(api.setWorkflowName).toHaveBeenCalledWith('B')
-    await tick()
-    expect(store.getState().workflow.name).toEqual('B')
+    expect(onSubmit).toHaveBeenCalledWith('B')
   })
 })

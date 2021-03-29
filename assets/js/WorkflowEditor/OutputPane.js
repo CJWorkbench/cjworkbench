@@ -1,17 +1,19 @@
-import { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import { connect } from 'react-redux'
 import { Trans } from '@lingui/macro'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
+import selectIsReadOnly from '../selectors/selectIsReadOnly'
 
 /**
  * Output of currently-selected module.
  */
-export class OutputPane extends Component {
+export class OutputPane extends React.Component {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(workflowId, stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    workflowId: PropTypes.number.isRequired,
+    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
+    workflowId: propTypes.workflowId.isRequired,
     stepBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
       deltaId: PropTypes.number, // or null -- it may not be rendered
@@ -213,15 +215,15 @@ function mapStateToProps (state) {
       : null,
     stepBeforeError,
     isPublic: workflow.public,
-    isReadOnly: workflow.read_only
+    isReadOnly: selectIsReadOnly(state)
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    loadRows: (workflowId, stepSlug, deltaId, startRow, endRow) => {
+    loadRows: (stepSlug, deltaId, startRow, endRow) => {
       return dispatch((_, __, api) => {
-        return api.getStepResultTableSlice(workflowId, stepSlug, deltaId, startRow, endRow)
+        return api.getStepResultTableSlice(stepSlug, deltaId, startRow, endRow)
       })
     }
   }

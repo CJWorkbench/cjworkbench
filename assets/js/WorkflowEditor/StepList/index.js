@@ -2,6 +2,7 @@ import StepList from './StepList'
 import { reorderStep } from './actions'
 import { deleteStepAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
+import selectIsReadOnly from '../../selectors/selectIsReadOnly'
 import lessonSelector from '../../lessons/lessonSelector'
 
 const mapStateToProps = state => {
@@ -16,7 +17,7 @@ const mapStateToProps = state => {
     tabSlug,
     steps: tabSteps,
     modules,
-    isReadOnly: state.workflow.read_only,
+    isReadOnly: selectIsReadOnly(state),
     testLessonHighlightIndex: index =>
       testHighlight({ type: 'Module', id_name: null, index: index })
   }

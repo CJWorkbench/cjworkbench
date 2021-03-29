@@ -75,8 +75,13 @@ describe('DataVersionSelect', () => {
 
   describe('mapStateToProps', () => {
     const IdealState = {
+      loggedInUser: {
+        email: 'alice@example.com'
+      },
       workflow: {
-        read_only: false,
+        public: false,
+        secret_id: '',
+        owner_email: 'alice@example.com',
         steps: [123, 124]
       },
       steps: {
@@ -128,9 +133,11 @@ describe('DataVersionSelect', () => {
     it('finds isReadOnly', () => {
       const w = connectedWrapper({
         ...IdealState,
+        loggedInUser: { email: 'alice@example.com' },
         workflow: {
           ...IdealState.workflow,
-          read_only: true
+          owner_email: 'bob@example.com',
+          public: true
         }
       })
       expect(

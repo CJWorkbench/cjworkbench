@@ -344,57 +344,20 @@ def _(spec: ParamSpec.List, ctx: JsonizeModuleContext, prefix: str) -> Dict[str,
     return ret
 
 
-def _ctx_authorized_write(
-    workflow: clientside.WorkflowUpdate, ctx: JsonizeContext
-) -> bool:
-    user = ctx.user
-
-    if user.is_anonymous:
-        # We got this far, so an anonymous user has read access. How? We'll
-        # reverse-engineer.
-        #
-        # * It's a public, non-example workflow => then the user does not have
-        #   write access.
-        # * It's a private, non-example workflow => then it's an anonymous
-        #   workflow _owned by this anonymous user_. The user has write access.
-        # * It's an example workflow => this can't happen! We never serialize
-        #   example workflows. We duplicate them and serialize the duplicates
-        #   ... which are private, non-example workfows.
-        return workflow.public is False
-
-    return _ctx_authorized_owner(workflow, ctx) or any(
-        entry.role == "editor" and entry.email == user.email for entry in workflow.acl
-    )
-
-
-def _ctx_authorized_owner(
-    workflow: clientside.WorkflowUpdate, ctx: JsonizeContext
-) -> bool:
-    # mimics models.Workflow.user_session_authorized_owner
-    owner = workflow.owner
-    user = ctx.user
-    return (
-        user and user == owner
-    ) or not owner  # in an anonymous workflow, (s)he who sees it owns it
-
-
 def jsonize_clientside_workflow(
     workflow: clientside.WorkflowUpdate, ctx: JsonizeContext, *, is_init: bool
 ) -> Dict[str, Any]:
     """Build a JSON-ready dict representation of `workflow`.
 
-    If `is_init`, we add some extra properties:
+    If `is_init`, we add some extra properties (MAY COST A SYNC DB ACCESS):
 
-    * `read_only` -- TODO derive client-side (so it changes when ACL changes)
-    * `is_owner`
     * `owner_email`
     * `owner_name`
-    * `is_anonymous` -- TODO derive client-side
     """
     d = {}
     for k, v in (
         ("id", workflow.id),
-        ("url_id", workflow.url_id),
+        ("secret_id", workflow.secret_id),
         ("name", workflow.name),
         ("tab_slugs", workflow.tab_slugs),
         ("public", workflow.public),
@@ -410,23 +373,8 @@ def jsonize_clientside_workflow(
     if is_init:
         d.update(
             {
-                # assume if we're passing the workflow here the user is allowed
-                # to read it.
-                "read_only": not _ctx_authorized_write(workflow, ctx),
-                "is_owner": _ctx_authorized_owner(workflow, ctx),
-                "owner_email": (
-                    workflow.owner.email
-                    # TODO simplify -- why is workflow.owner sometimes set,
-                    # sometimes not? Choose one and follow through with it.
-                    if (workflow.owner and not workflow.owner.is_anonymous)
-                    else None
-                ),
-                "owner_name": (
-                    "Workbench"
-                    if workflow.is_example
-                    else workbench_user_display(workflow.owner)
-                ),
-                "is_anonymous": workflow.url_id != workflow.id,
+                "owner_email": workflow.owner.email if workflow.owner else None,
+                "owner_name": workbench_user_display(workflow.owner),
                 "selected_tab_position": workflow.selected_tab_position,
             }
         )

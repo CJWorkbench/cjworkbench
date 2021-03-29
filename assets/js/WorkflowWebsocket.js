@@ -19,10 +19,10 @@ export class ErrorResponse extends Error {
 }
 
 export default class WorkflowWebsocket {
-  constructor (workflowId, onDelta, createSocket = null) {
+  constructor (workflowIdOrSecretId, onDelta, createSocket = null) {
     if (!createSocket) {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const url = `${protocol}//${window.location.host}/workflows/${workflowId}`
+      const url = `${protocol}//${window.location.host}/workflows/${workflowIdOrSecretId}`
       createSocket = () => {
         return new window.WebSocket(url)
       }
@@ -30,7 +30,7 @@ export default class WorkflowWebsocket {
 
     this.queuedMessages = []
 
-    this.workflowId = workflowId
+    this.workflowIdOrSecretId = workflowIdOrSecretId
     this.onDelta = onDelta
     this.createSocket = createSocket
     this.hasConnectedBefore = false

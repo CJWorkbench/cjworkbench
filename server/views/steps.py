@@ -3,7 +3,7 @@ import io
 import json
 import subprocess
 from http import HTTPStatus as status
-from typing import Awaitable, Literal, Tuple
+from typing import Awaitable, Literal, Tuple, Union
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -37,7 +37,7 @@ _MaxNRowsPerRequest = 300
 
 
 def _load_workflow_and_step_sync(
-    request: HttpRequest, workflow_id: int, step_slug: str
+    request: HttpRequest, workflow_id_or_secret_id: Union[int, str], step_slug: str
 ) -> Tuple[Workflow, Step]:
     """Load (Workflow, Step) from database, or raise Http404 or PermissionDenied.
 
@@ -52,9 +52,20 @@ def _load_workflow_and_step_sync(
       table in the report.
     """
     try:
-        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+        if isinstance(workflow_id_or_secret_id, int):
+            search = {"id": workflow_id_or_secret_id}
+            has_secret = False
+        else:
+            search = {"secret_id": workflow_id_or_secret_id}
+            has_secret = True
+
+        with Workflow.lookup_and_cooperative_lock(**search) as workflow_lock:
             workflow = workflow_lock.workflow
-            if workflow.public or workflow.request_authorized_owner(request):
+            if (
+                has_secret
+                or workflow.public
+                or workflow.request_authorized_owner(request)
+            ):
                 need_report_auth = False
             elif request.user is None or request.user.is_anonymous:
                 raise PermissionDenied()
@@ -71,7 +82,7 @@ def _load_workflow_and_step_sync(
                     raise PermissionDenied()  # role we don't handle yet
 
             step = (
-                Step.live_in_workflow(workflow_id)
+                Step.live_in_workflow(workflow.id)
                 .select_related("tab")
                 .get(slug=step_slug)
             )  # or Step.DoesNotExist
@@ -131,7 +142,7 @@ def int_or_none(x):
 
 
 async def result_table_slice(
-    request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
+    request: HttpRequest, workflow_id_or_secret_id: int, step_slug: str, delta_id: int
 ) -> HttpResponse:
     # Get first and last row from query parameters, or default to all if not
     # specified
@@ -145,7 +156,9 @@ async def result_table_slice(
         )
 
     # raise Http404, PermissionDenied
-    _, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    _, step = await _load_workflow_and_step(
+        request, workflow_id_or_secret_id, step_slug
+    )
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
         # assume we'll get another request after execute finishes
@@ -188,13 +201,15 @@ async def result_table_slice(
 @require_GET
 def tile(
     request: HttpRequest,
-    workflow_id: int,
+    workflow_id_or_secret_id: Union[int, str],
     step_slug: str,
     delta_id: int,
     tile_row: int,
     tile_column: int,
 ):
-    workflow, step = _load_workflow_and_step_sync(request, workflow_id, step_slug)
+    workflow, step = _load_workflow_and_step_sync(
+        request, workflow_id_or_secret_id, step_slug
+    )
     # No need for cooperative lock: the cache may always be corrupt (lock or no), and
     # we don't read from the database
     row_begin = tile_row * settings.BIG_TABLE_ROWS_PER_TILE
@@ -239,10 +254,15 @@ def tile(
 
 
 async def result_json(
-    request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
+    request: HttpRequest,
+    workflow_id_or_secret_id: Union[int, str],
+    step_slug: str,
+    delta_id: int,
 ) -> HttpResponse:
     # raise Http404, PermissionDenied
-    _, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    _, step = await _load_workflow_and_step(
+        request, workflow_id_or_secret_id, step_slug
+    )
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
         return JsonResponse(
@@ -259,7 +279,10 @@ async def result_json(
 
 
 async def result_column_value_counts(
-    request: HttpRequest, workflow_id: int, step_slug: str, delta_id: int
+    request: HttpRequest,
+    workflow_id: int,
+    step_slug: str,
+    delta_id: int,
 ) -> JsonResponse:
     try:
         colname = request.GET["column"]
@@ -589,10 +612,12 @@ async def _render_result_table_json(workflow: Workflow, step: Step) -> HttpRespo
 
 
 async def current_result_table_json(
-    request: HttpRequest, workflow_id: int, step_slug: str
+    request: HttpRequest, workflow_id_or_secret_id: Union[int, str], step_slug: str
 ) -> HttpResponse:
     # raise Http404, PermissionDenied
-    workflow, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    workflow, step = await _load_workflow_and_step(
+        request, workflow_id_or_secret_id, step_slug
+    )
     return await _render_result_table_json(workflow, step)
 
 
@@ -634,10 +659,12 @@ async def _render_result_table_csv(workflow: Workflow, step: Step) -> HttpRespon
 
 
 async def current_result_table_csv(
-    request: HttpRequest, workflow_id: int, step_slug: str
+    request: HttpRequest, workflow_id_or_secret_id: Union[int, str], step_slug: str
 ) -> HttpResponse:
     # raise Http404, PermissionDenied
-    workflow, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    workflow, step = await _load_workflow_and_step(
+        request, workflow_id_or_secret_id, step_slug
+    )
     return await _render_result_table_csv(workflow, step)
 
 

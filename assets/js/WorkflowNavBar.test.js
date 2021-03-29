@@ -37,6 +37,7 @@ describe('WorkflowNavBar', () => {
         lesson={lesson}
         isReadOnly={false}
         loggedInUser={null}
+        setWorkflowName={jest.fn()}
       />
     )
 
@@ -71,6 +72,7 @@ describe('WorkflowNavBar', () => {
         lesson={lesson}
         isReadOnly={false}
         loggedInUser={null}
+        setWorkflowName={jest.fn()}
       />
     )
 
@@ -104,6 +106,7 @@ describe('WorkflowNavBar', () => {
         api={api}
         isReadOnly={false}
         loggedInUser={{ id: 1 }}
+        setWorkflowName={jest.fn()}
       />
     )
 
@@ -140,6 +143,7 @@ describe('WorkflowNavBar', () => {
         api={api}
         isReadOnly={false}
         loggedInUser={null}
+        setWorkflowName={jest.fn()}
       />
     )
 

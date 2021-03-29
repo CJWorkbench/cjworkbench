@@ -349,10 +349,13 @@ describe('Tabs.actions', () => {
       }
       const store = mockStore(
         {
+          loggedInUser: null,
           workflow: {
             tab_slugs: ['t1', 't2'],
             selected_tab_position: 0,
-            read_only: true
+            public: false,
+            owner_email: 'alice@example.com',
+            acl: []
           }
         },
         api

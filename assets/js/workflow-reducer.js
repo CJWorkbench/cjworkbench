@@ -8,6 +8,7 @@ import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/a
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
 import { reducerFunctions as FileReducerFunctions } from './params/File/actions'
+import selectIsReadOnly from './selectors/selectIsReadOnly'
 
 // Workflow
 const SET_WORKFLOW_NAME = 'SET_WORKFLOW_NAME'
@@ -348,7 +349,8 @@ registerReducerFunc(DELETE_STEP + '_PENDING', (state, action) => {
 // Set the selected module in the workflow
 export function setSelectedStepAction (stepId) {
   return (dispatch, getState, api) => {
-    const { workflow, tabs, steps } = getState()
+    const state = getState()
+    const { workflow, tabs, steps } = state
 
     const step = steps[String(stepId)]
     if (!step) return
@@ -369,7 +371,7 @@ export function setSelectedStepAction (stepId) {
 
     // Fire-and-forget: tell the server about this new selection
     // so next time we load the page it will pass it in initState.
-    const promise = workflow.read_only
+    const promise = selectIsReadOnly(state)
       ? Promise.resolve(null)
       : api.setSelectedStep(stepId)
     return dispatch({
@@ -588,10 +590,10 @@ registerReducerFunc(SET_STEP_NOTES + '_PENDING', (state, action) => {
   }
 })
 
-export function setStepCollapsedAction (stepId, isCollapsed, isReadOnly) {
+export function setStepCollapsedAction (stepId, isCollapsed) {
   return (dispatch, getState, api) => {
     let promise
-    if (isReadOnly) {
+    if (selectIsReadOnly(getState())) {
       promise = Promise.resolve(null)
     } else {
       promise = api.setStepCollapsed(stepId, isCollapsed)
@@ -744,8 +746,7 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
 
 export function startCreateSecretAction (stepId, param) {
   return (dispatch, getState, api) => {
-    const workflowId = getState().workflow.id
-    api.startCreateSecret(workflowId, stepId, param)
+    api.startCreateSecret(stepId, param)
   }
 }
 

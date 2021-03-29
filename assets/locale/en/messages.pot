@@ -43,25 +43,25 @@ msgstr ""
 
 #. Acts as closing button
 #. default-message: Done
-#: assets/js/ExportModal.js:69
+#: assets/js/ExportModal.js:70
 msgid "js.ExportModal.footer.doneButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT DATA
-#: assets/js/ExportModal.js:30
+#: assets/js/ExportModal.js:31
 msgid "js.ExportModal.header.title"
 msgstr ""
 
 #. "CSV" (all-caps) is a kind of file
 #. default-message: CSV
-#: assets/js/ExportModal.js:40
+#: assets/js/ExportModal.js:41
 msgid "js.ExportModal.type.CSV"
 msgstr ""
 
 #. "JSON" (all-caps) is a kind of file
 #. default-message: JSON
-#: assets/js/ExportModal.js:51
+#: assets/js/ExportModal.js:52
 msgid "js.ExportModal.type.JSON"
 msgstr ""
 
@@ -107,49 +107,49 @@ msgid "js.ImportModuleFromGithub.status.processing"
 msgstr ""
 
 #. default-message: Paste this code into any webpage HTML
-#: assets/js/OutputIframe.js:229
+#: assets/js/OutputIframe.js:230
 msgid "js.OutputIframe.embed.embedCode"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EMBED THIS CHART
-#: assets/js/OutputIframe.js:219
+#: assets/js/OutputIframe.js:220
 msgid "js.OutputIframe.embed.header.title"
 msgstr ""
 
 #. default-message: OK
-#: assets/js/OutputIframe.js:242
+#: assets/js/OutputIframe.js:243
 msgid "js.OutputIframe.footer.OKButton"
 msgstr ""
 
 #. default-message: Cancel
-#: assets/js/OutputIframe.js:192
+#: assets/js/OutputIframe.js:193
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr ""
 
 #. default-message: Set public
-#: assets/js/OutputIframe.js:199
+#: assets/js/OutputIframe.js:200
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr ""
 
 #. default-message: Get an embeddable URL
-#: assets/js/OutputIframe.js:23
+#: assets/js/OutputIframe.js:24
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: SHARE THIS WORKFLOW
-#: assets/js/OutputIframe.js:165
+#: assets/js/OutputIframe.js:166
 msgid "js.OutputIframe.private.header.title"
 msgstr ""
 
 #. default-message: Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
-#: assets/js/OutputIframe.js:180
+#: assets/js/OutputIframe.js:181
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 
 #. default-message: This workflow is currently private
-#: assets/js/OutputIframe.js:175
+#: assets/js/OutputIframe.js:176
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr ""
 
@@ -214,34 +214,34 @@ msgid "js.Page.MainNav.workflows.title"
 msgstr ""
 
 #. default-message: Only collaborators can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr ""
 
 #. default-message: Anyone can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:18
+#: assets/js/WorkflowEditor/Report/ShareCard.js:19
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr ""
 
 #. As in 'Edit privacy settings'
 #. default-message: Edit privacy
-#: assets/js/WorkflowEditor/Report/ShareCard.js:22
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
 #. As in 'URL of report'
 #. default-message: Report Sharing URL
-#: assets/js/WorkflowEditor/Report/ShareCard.js:33
+#: assets/js/WorkflowEditor/Report/ShareCard.js:34
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
 
 #. default-message: This workflow is private
-#: assets/js/WorkflowEditor/Report/ShareCard.js:13
+#: assets/js/WorkflowEditor/Report/ShareCard.js:14
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr ""
 
 #. default-message: This workflow is public
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr ""
 
@@ -390,63 +390,63 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Billing
-#: assets/js/WfHamburgerMenu.js:90
+#: assets/js/WfHamburgerMenu.js:91
 msgid "js.WfHamburgerMenu.menu.billing"
 msgstr ""
 
 #. default-message: Home
-#: assets/js/WfHamburgerMenu.js:82
+#: assets/js/WfHamburgerMenu.js:83
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr ""
 
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:104
+#: assets/js/WfHamburgerMenu.js:105
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:67
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:117
+#: assets/js/WfHamburgerMenu.js:118
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:74
+#: assets/js/WfHamburgerMenu.js:75
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: Upgrade
-#: assets/js/WfHamburgerMenu.js:93
+#: assets/js/WfHamburgerMenu.js:94
 msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:55
+#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
 #. default-message: Demo workflow
-#: assets/js/Workflow.js:50
+#: assets/js/Workflow.js:24
 msgid "js.Workflow.isAnonymous"
 msgstr ""
 
 #. default-message: You are viewing a shared workflow
-#: assets/js/Workflow.js:61
+#: assets/js/Workflow.js:25
 msgid "js.Workflow.isShared"
 msgstr ""
 
 #. default-message: Duplicate it to save your changes
-#: assets/js/Workflow.js:20
+#: assets/js/Workflow.js:31
 msgid "js.Workflow.suggestion.duplicateToSaveChanges"
 msgstr ""
 
 #. The tag is a link to the login page
 #. default-message: <0>Sign in</0> to save your changes
-#: assets/js/Workflow.js:28
+#: assets/js/Workflow.js:36
 msgid "js.Workflow.suggestion.signInToSaveChanges"
 msgstr ""
 
@@ -483,44 +483,44 @@ msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/WorkflowEditor/DataVersionModal.js:255
+#: assets/js/WorkflowEditor/DataVersionModal.js:256
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
 #. default-message: Data Versions
-#: assets/js/WorkflowEditor/DataVersionModal.js:226
+#: assets/js/WorkflowEditor/DataVersionModal.js:227
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr ""
 
 #. default-message: You will receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:127
+#: assets/js/WorkflowEditor/DataVersionModal.js:128
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr ""
 
 #. default-message: Turn alerts ON to receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:133
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
 
 #. default-message: Turn off
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:151
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr ""
 
 #. default-message: Turn on
-#: assets/js/WorkflowEditor/DataVersionModal.js:155
+#: assets/js/WorkflowEditor/DataVersionModal.js:156
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: Alerts are <0>off</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:116
+#: assets/js/WorkflowEditor/DataVersionModal.js:117
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: Alerts are <0>on</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:108
+#: assets/js/WorkflowEditor/DataVersionModal.js:109
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 
@@ -541,7 +541,7 @@ msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr ""
 
 #. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:111
+#: assets/js/WorkflowEditor/OutputPane.js:113
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
@@ -671,83 +671,83 @@ msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note…
-#: assets/js/WorkflowEditor/step/Step.js:377
+#: assets/js/WorkflowEditor/step/Step.js:371
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:247
+#: assets/js/WorkflowEditor/step/Step.js:241
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/step/Step.js:410
+#: assets/js/WorkflowEditor/step/Step.js:404
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/step/Step.js:406
+#: assets/js/WorkflowEditor/step/Step.js:400
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/step/Step.js:471
+#: assets/js/WorkflowEditor/step/Step.js:465
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/step/Step.js:434
+#: assets/js/WorkflowEditor/step/Step.js:428
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/step/Step.js:452
+#: assets/js/WorkflowEditor/step/Step.js:446
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr ""
 
 #. default-message: Workbench basics
-#: assets/js/WorkflowNavBar.js:25
+#: assets/js/WorkflowNavBar.js:23
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
 msgstr ""
 
 #. {timeAgo} will contain something like '4h ago'
 #. default-message: Updated {timeAgo}
-#: assets/js/WorkflowNavBar.js:69
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
 msgstr ""
 
 #. default-message: by {owner}
-#: assets/js/WorkflowNavBar.js:60
+#: assets/js/WorkflowNavBar.js:59
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
 msgstr ""
 
 #. default-message: Private
-#: assets/js/WorkflowNavBar.js:83
+#: assets/js/WorkflowNavBar.js:81
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
 msgstr ""
 
 #. default-message: Public
-#: assets/js/WorkflowNavBar.js:82
+#: assets/js/WorkflowNavBar.js:80
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/WorkflowNavBar.js:223
+#: assets/js/WorkflowNavBar.js:225
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/WorkflowNavBar.js:227
+#: assets/js/WorkflowNavBar.js:229
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr ""
 
 #. default-message: Sign in
-#: assets/js/WorkflowNavBar.js:185
+#: assets/js/WorkflowNavBar.js:186
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
@@ -1234,12 +1234,12 @@ msgid "js.params.Custom.File.replace"
 msgstr ""
 
 #. default-message: API
-#: assets/js/params/ParamsFormFooter.js:76
+#: assets/js/params/ParamsFormFooter.js:77
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
 #. default-message: Open upload API instructions
-#: assets/js/params/ParamsFormFooter.js:71
+#: assets/js/params/ParamsFormFooter.js:72
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
@@ -1484,49 +1484,49 @@ msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr ""
 
 #. default-message: Disable API
-#: assets/js/params/File/UploadApiModal.js:81
+#: assets/js/params/File/UploadApiModal.js:82
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr ""
 
 #. default-message: Enable API
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:125
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr ""
 
 #. default-message: Reset API Token
-#: assets/js/params/File/UploadApiModal.js:108
+#: assets/js/params/File/UploadApiModal.js:109
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr ""
 
 #. default-message: The file-upload API is disabled. Enable it to upload from a program.
-#: assets/js/params/File/UploadApiModal.js:204
+#: assets/js/params/File/UploadApiModal.js:205
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 
 #. The tag adds emphasis
 #. default-message: The file-upload API is enabled.
-#: assets/js/params/File/UploadApiModal.js:196
+#: assets/js/params/File/UploadApiModal.js:197
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/File/UploadApiModal.js:239
+#: assets/js/params/File/UploadApiModal.js:240
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: UPLOAD BY API
-#: assets/js/params/File/UploadApiModal.js:175
+#: assets/js/params/File/UploadApiModal.js:176
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr ""
 
 #. default-message: These instructions are for programmers.
-#: assets/js/params/File/UploadApiModal.js:184
+#: assets/js/params/File/UploadApiModal.js:185
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr ""
 
 #. default-message: You can upload files to Workbench from any cronjob, script or app.
-#: assets/js/params/File/UploadApiModal.js:189
+#: assets/js/params/File/UploadApiModal.js:190
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 
@@ -1551,31 +1551,31 @@ msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
 msgstr ""
 
 #. default-message: Version
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:32
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:33
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
 msgstr ""
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #. default-message: Version {0} of {nVersions}
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:42
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:43
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
 msgstr ""
 
 #. default-message: Select version
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:60
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:61
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
 msgstr ""
 
 #. default-message: Version
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:54
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:55
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
 msgstr ""
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
 #. default-message: {0} of {nVersions}
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:67
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:68
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr ""
 
@@ -1635,111 +1635,111 @@ msgstr ""
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
 #. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:89
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:92
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr ""
 
 #. default-message: change auto-update settings
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:79
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:82
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr ""
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
 #. default-message: Checked <0>{0}</0>
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:109
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:112
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr ""
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
 #. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:97
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:100
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr ""
 
 #. default-message: Update
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr ""
 
 #. default-message: Apply
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:277
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:278
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
 msgstr ""
 
 #. default-message: Automatically update this workflow with the newest data (old versions will be saved).
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:202
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:203
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:193
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr ""
 
 #. default-message: days
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
 msgstr ""
 
 #. default-message: hours
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:249
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:250
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
 msgstr ""
 
 #. default-message: Check for update every
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:208
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:209
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr ""
 
 #. default-message: minutes
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:256
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:257
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
 msgstr ""
 
 #. default-message: weeks
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:235
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:236
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
 msgstr ""
 
 #. default-message: Email me when data changes
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:343
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:344
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:360
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:353
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:354
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: WORKFLOW UPDATE
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:162
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr ""
 
 #. default-message: Check for new data manually.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:325
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:326
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
 #. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:315
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:316
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr ""
 
 #. default-message: Retry
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:272
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:273
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr ""
 
@@ -1749,22 +1749,22 @@ msgid "js.params.Custom.code.loadingEditor"
 msgstr ""
 
 #. default-message: Loading
-#: assets/js/params/File/UploadApiModal.js:51
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr ""
 
 #. default-message: API Token
-#: assets/js/params/File/UploadApiModal.js:96
+#: assets/js/params/File/UploadApiModal.js:97
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr ""
 
 #. default-message: Create-file URL
-#: assets/js/params/File/UploadApiModal.js:88
+#: assets/js/params/File/UploadApiModal.js:89
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
 #. default-message: Follow our <0>File-Upload API instructions</0> to upload files to this Step.
-#: assets/js/params/File/UploadApiModal.js:218
+#: assets/js/params/File/UploadApiModal.js:219
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 
@@ -2301,29 +2301,29 @@ msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: COLUMNS
-#: assets/js/table/TableInfo.js:67
+#: assets/js/table/TableInfo.js:68
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT
-#: assets/js/table/TableInfo.js:92
+#: assets/js/table/TableInfo.js:93
 msgid "js.table.TableInfo.export"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: ROWS
-#: assets/js/table/TableInfo.js:56
+#: assets/js/table/TableInfo.js:57
 msgid "js.table.TableInfo.rows"
 msgstr ""
 
 #. default-message: A maximum of 100 columns can be displayed
-#: assets/js/table/TableView.js:69
+#: assets/js/table/TableView.js:66
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr ""
 
 #. default-message: Select columns
-#: assets/js/table/TableView.js:77
+#: assets/js/table/TableView.js:74
 msgid "js.table.TableView.selectColumns.button"
 msgstr ""
 
@@ -2368,32 +2368,32 @@ msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr ""
 
 #. default-message: {days}d ago
-#: assets/js/utils.js:52
+#: assets/js/utils.js:51
 msgid "js.util.timeDifference.ago.days"
 msgstr ""
 
 #. default-message: {hours}h ago
-#: assets/js/utils.js:58
+#: assets/js/utils.js:57
 msgid "js.util.timeDifference.ago.hours"
 msgstr ""
 
 #. default-message: {minutes}m ago
-#: assets/js/utils.js:64
+#: assets/js/utils.js:63
 msgid "js.util.timeDifference.ago.minutes"
 msgstr ""
 
 #. default-message: {seconds}s ago
-#: assets/js/utils.js:70
+#: assets/js/utils.js:69
 msgid "js.util.timeDifference.ago.seconds"
 msgstr ""
 
 #. default-message: {years}y ago
-#: assets/js/utils.js:46
+#: assets/js/utils.js:45
 msgid "js.util.timeDifference.ago.years"
 msgstr ""
 
 #. default-message: just now
-#: assets/js/utils.js:76
+#: assets/js/utils.js:75
 msgid "js.util.timeDifference.now"
 msgstr ""
 
@@ -2423,27 +2423,27 @@ msgid "py.fetcher.fetch.no_loaded_module"
 msgstr ""
 
 #. default-message: Service "{service}" is no longer configured
-#: fetcher/secrets.py:16
+#: fetcher/secrets.py:18
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr ""
 
 #. default-message: Token server responded with {status_code}: {error} ({description})
-#: fetcher/secrets.py:174
+#: fetcher/secrets.py:183
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 
 #. default-message: {service_id} responded with HTTP {status_code} {reason}: {description}
-#: fetcher/secrets.py:181
+#: fetcher/secrets.py:197
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr ""
 
 #. default-message: Timeout during OAuth2 token refresh
-#: fetcher/secrets.py:198
+#: fetcher/secrets.py:207
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr ""
 
 #. default-message: HTTP error during OAuth2 token refresh: {error}
-#: fetcher/secrets.py:208
+#: fetcher/secrets.py:217
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
@@ -2642,6 +2642,51 @@ msgstr ""
 #. default-message: Download data as CSV
 #: templates/report.html:54
 msgid "py.templates.report.table.download"
+msgstr ""
+
+#. default-message: Private workflow
+#: templates/workflow-403.html:7
+msgid "py.templates.workflow-403.title"
+msgstr ""
+
+#. default-message: Private workflow
+#: templates/workflow-403.html:23
+msgid "py.templates.workflow-403.h1"
+msgstr ""
+
+#. default-message: You can’t see this workflow.
+#: templates/workflow-403.html:24
+msgid "py.templates.workflow-403.description"
+msgstr ""
+
+#. default-message: Maybe try these ideas:
+#: templates/workflow-403.html:25
+msgid "py.templates.workflow-403.suggestions.header"
+msgstr ""
+
+#. default-message: Sign in
+#: templates/workflow-403.html:28
+msgid "py.templates.workflow-403.suggestion.logIn"
+msgstr ""
+
+#. default-message: Sign in as a different user
+#: templates/workflow-403.html:34
+msgid "py.templates.workflow-403.suggestion.logOut"
+msgstr ""
+
+#. default-message: (You are {0})
+#: templates/workflow-403.html:36
+msgid "py.templates.workflow-403.suggestion.logOut.currentUser"
+msgstr ""
+
+#. default-message: Ask the owner to share the workflow with you or make it public
+#: templates/workflow-403.html:39
+msgid "py.templates.workflow-403.suggestion.ask"
+msgstr ""
+
+#. default-message: Go back to <a0>your workflows</a0>
+#: templates/workflow-403.html:41
+msgid "py.templates.workflow-403.suggestion.backToWorkflows"
 msgstr ""
 
 #. default-message: Workbench

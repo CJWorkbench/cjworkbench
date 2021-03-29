@@ -14,7 +14,7 @@ class TestExampleWorkflow(WorkbenchBase):
     def _create_workflow(self):
         b = self.browser
 
-        b.visit("/workflows/")
+        b.visit("/workflows")
         b.click_button("Create your first workflow", wait=True)  # wait for React render
         # Wait for page to load
         b.assert_element('input[name="name"][value="Untitled Workflow"]', wait=True)

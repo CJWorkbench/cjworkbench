@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, register_converter
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
 import server.views.jsdata.timezones
 
+from .converters import WorkflowIdOrSecretIdConverter
 from .views import (
     acl,
     files,
@@ -19,6 +20,8 @@ from .views import (
     tusd_hooks,
     workflows,
 )
+
+register_converter(WorkflowIdOrSecretIdConverter, "workflow_id_or_secret_id")
 
 
 def redirect(url: str):
@@ -76,8 +79,8 @@ urlpatterns = [
         r"^lessons/(?P<lesson_slug>[-\w]+)/?$", redirect("/lessons/en/%(lesson_slug)s")
     ),
     # workflows
-    url(
-        r"^workflows/(?P<workflow_id>[0-9]+)/$",
+    path(
+        "workflows/<workflow_id_or_secret_id:workflow_id_or_secret_id>/",
         workflows.render_workflow,
         name="workflow",
     ),
@@ -90,21 +93,16 @@ urlpatterns = [
     # Not-really-an-API API endpoints
     # TODO rename all these so they don't start with `/api`. (The only way to
     # use them is as a logged-in user.)
-    url(r"^api/workflows/(?P<workflow_id>[0-9]+)/?$", workflows.ApiDetail.as_view()),
-    url(
-        r"^api/workflows/(?P<workflow_id>[0-9]+)/duplicate/?$",
-        workflows.Duplicate.as_view(),
-    ),
-    url(
-        r"^api/workflows/(?P<workflow_id>[0-9]+)/acl/(?P<email>[0-9a-zA-Z-_@+.]+)$",
-        acl.Entry.as_view(),
-    ),
+    path("api/workflows/<int:workflow_id>", workflows.ApiDetail.as_view()),
+    path("api/workflows/<int:workflow_id>/", workflows.ApiDetail.as_view()),  # TODO nix
+    path("api/workflows/<int:workflow_id>/acl/<str:email>", acl.Entry.as_view()),
     url(r"^api/importfromgithub/?$", importfromgithub.import_from_github),
     # Decent URLs
     path(
-        "workflows/<int:workflow_id>/",
+        "workflows/<workflow_id_or_secret_id:workflow_id_or_secret_id>/",
         include(
             [
+                path("duplicate", workflows.Duplicate.as_view()),
                 path("report", workflows.Report.as_view()),
                 path(
                     "steps/<slug:step_slug>/",
@@ -119,10 +117,6 @@ urlpatterns = [
                                             "result-table-slice.json",
                                             steps.result_table_slice,
                                         ),
-                                        path(
-                                            "result-column-value-counts.json",
-                                            steps.result_column_value_counts,
-                                        ),
                                     ]
                                 ),
                             ),
@@ -134,7 +128,6 @@ urlpatterns = [
                                 "current-result-table.json",
                                 steps.current_result_table_json,
                             ),
-                            path("embed", steps.embed),
                         ],
                     ),
                 ),
@@ -143,6 +136,22 @@ urlpatterns = [
                     steps.tile,
                 ),
             ]
+        ),
+    ),
+    path(
+        # URLs you can't access by workflow secret_id (comments explain why)
+        "workflows/<int:workflow_id>/steps/<slug:step_slug>/",
+        include(
+            [
+                path(
+                    # Only editors can request value counts
+                    "delta-<int:delta_id>/result-column-value-counts.json",
+                    steps.result_column_value_counts,
+                ),
+                # Security: for our users' protection, we don't allow embedding
+                # a "secret link" -- it would be too insecure.
+                path("embed", steps.embed),
+            ],
         ),
     ),
     path("modules/<slug:module_slug>.html", modules.module_html),
@@ -155,8 +164,8 @@ urlpatterns = [
     path("public/moduledata/live/<int:step_id>.json", steps.deprecated_public_json),
     url(r"^embed/(?P<step_id>[0-9]+)/?$", steps.deprecated_embed),
     # Parameters
-    url(
-        r"^oauth/create-secret/(?P<workflow_id>[0-9]+)/(?P<step_id>[0-9]+)/(?P<param>[-_a-zA-Z0-9]+)/",
+    path(
+        "oauth/create-secret/<int:workflow_id>/<int:step_id>/<slug:param>/",
         oauth.start_authorize,
     ),
     url(r"^oauth/?$", oauth.finish_authorize),

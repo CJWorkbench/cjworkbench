@@ -206,7 +206,7 @@ button:focus {
   @include button-white;
 }
 
-.button-white--fill {
+@mixin button-white--fill {
   color: $brand-workspace;
   border-color: $white;
   &,
@@ -223,6 +223,9 @@ button:focus {
     background-color: $light-accent--Vstrong;
     border: 1px solid white;
   }
+}
+.button-white--fill {
+  @include button-white--fill;
 }
 
 @mixin button-gray {

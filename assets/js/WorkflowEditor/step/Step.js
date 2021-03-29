@@ -1,4 +1,6 @@
-import { createRef, PureComponent } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
+import propTypes from '../../propTypes'
 import DataVersionModal from '../DataVersionModal'
 import ErrorBoundary from '../../ErrorBoundary'
 import ParamsForm from '../../params/ParamsForm'
@@ -17,18 +19,20 @@ import {
   setStepCollapsedAction,
   setStepNotesAction
 } from '../../workflow-reducer'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import deepEqual from 'fast-deep-equal'
 import lessonSelector from '../../lessons/lessonSelector'
 import { createSelector } from 'reselect'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/macro'
+import selectIsAnonymous from '../../selectors/selectIsAnonymous'
+import selectIsReadOnly from '../../selectors/selectIsReadOnly'
+import selectLoggedInUserRole from '../../selectors/selectLoggedInUserRole'
 
 /**
  * A single step within a tab
  */
-export class Step extends PureComponent {
+export class Step extends React.PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if true, !isReadOnly and user may edit secrets
     isReadOnly: PropTypes.bool.isRequired,
@@ -56,7 +60,7 @@ export class Step extends PureComponent {
       ).isRequired
     }), // or null for no module
     index: PropTypes.number.isRequired,
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     step: PropTypes.shape({
       id: PropTypes.number.isRequired,
       params: PropTypes.object.isRequired,
@@ -97,7 +101,7 @@ export class Step extends PureComponent {
     setStepNotes: PropTypes.func.isRequired // func(stepId, notes) => undefined
   }
 
-  notesInputRef = createRef()
+  notesInputRef = React.createRef()
 
   state = {
     editedNotes: null, // when non-null, input is focused
@@ -162,22 +166,12 @@ export class Step extends PureComponent {
     this.props.deleteStep(this.props.step.id)
   }
 
-  // Optimistically updates the state, and then sends the new state to the server,
-  // where it's persisted across sessions and through time.
-  setCollapsed (isCollapsed) {
-    this.props.setStepCollapsed(
-      this.props.step.id,
-      isCollapsed,
-      this.props.isReadOnly
-    )
-  }
-
   handleClickCollapse = () => {
-    this.setCollapsed(true)
+    this.props.setStepCollapsed(this.props.step.id, true)
   }
 
   handleClickExpand = () => {
-    this.setCollapsed(false)
+    this.props.setStepCollapsed(this.props.step.id, false)
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
@@ -614,7 +608,7 @@ export class Step extends PureComponent {
   }
 }
 
-class StepCollapseButton extends PureComponent {
+class StepCollapseButton extends React.PureComponent {
   static propTypes = {
     isCollapsed: PropTypes.bool.isRequired,
     isLessonHighlight: PropTypes.bool.isRequired,
@@ -731,9 +725,9 @@ function mapStateToProps (state, ownProps) {
       index,
       moduleIdName
     }),
-    isOwner: state.workflow.is_owner,
-    isReadOnly: state.workflow.read_only,
-    isAnonymous: state.workflow.is_anonymous,
+    isOwner: selectLoggedInUserRole(state) === 'owner',
+    isReadOnly: selectIsReadOnly(state),
+    isAnonymous: selectIsAnonymous(state),
     workflowId: state.workflow.id,
     fetchModuleExists: fetchIndex !== null && fetchIndex <= index
   }

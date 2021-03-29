@@ -17,7 +17,6 @@ class WorkflowAdmin(admin.ModelAdmin):
     )
     list_filter = (
         "public",
-        "example",
         "in_all_users_workflow_lists",
     )
 

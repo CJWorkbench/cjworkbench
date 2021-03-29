@@ -1,17 +1,18 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import ExportModal from '../ExportModal'
 import SelectedRowsActions from './SelectedRowsActions'
 import { Trans } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat('en-US')
 
-export default class TableInfo extends PureComponent {
+export default class TableInfo extends React.PureComponent {
   static propTypes = {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown
     isReadOnly: PropTypes.bool.isRequired,
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number, // or null if none selected
     stepSlug: PropTypes.string, // or null if none selected
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired

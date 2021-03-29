@@ -55,11 +55,15 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const testWorkflow = {
     id: 999,
-    tab_slugs: ['tab-91']
+    tab_slugs: ['tab-91'],
+    owner_email: 'alice@example.com',
+    public: false,
+    acl: []
   }
 
   // test state has second module selected
   const testState = {
+    loggedInUser: { email: 'alice@example.com' },
     workflow: testWorkflow,
     tabs: testTabs,
     steps: testSteps,
@@ -239,7 +243,7 @@ describe('Reducer actions', () => {
         ...testState,
         workflow: {
           ...testState.workflow,
-          read_only: true
+          owner_email: 'bob@example.org'
         }
       },
       api

@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from './propTypes'
 import {
   UncontrolledDropdown,
   DropdownDivider,
@@ -20,26 +21,26 @@ const DisplayNoneStyle = { display: 'none' }
 export default function WfHamburgerMenu (props) {
   const { api = null, workflowId = null, user = null } = props
 
-  const [isImportModalOpen, setImportModalOpen] = useState(false)
-  const [isLocaleSwitcherOpen, setLocaleSwitcherOpen] = useState(false)
-  const logoutFormRef = useRef(null)
+  const [isImportModalOpen, setImportModalOpen] = React.useState(false)
+  const [isLocaleSwitcherOpen, setLocaleSwitcherOpen] = React.useState(false)
+  const logoutFormRef = React.useRef(null)
 
-  const handleClickOpenImportModal = useCallback(
+  const handleClickOpenImportModal = React.useCallback(
     () => setImportModalOpen(true),
     [setImportModalOpen]
   )
-  const handleCloseImportModal = useCallback(() => setImportModalOpen(false), [
+  const handleCloseImportModal = React.useCallback(() => setImportModalOpen(false), [
     setImportModalOpen
   ])
-  const handleClickOpenLocaleSwitcher = useCallback(
+  const handleClickOpenLocaleSwitcher = React.useCallback(
     () => setLocaleSwitcherOpen(true),
     [setLocaleSwitcherOpen]
   )
-  const handleCloseLocaleSwitcher = useCallback(
+  const handleCloseLocaleSwitcher = React.useCallback(
     () => setLocaleSwitcherOpen(false),
     [setLocaleSwitcherOpen]
   )
-  const handleClickLogOut = useCallback(() => {
+  const handleClickLogOut = React.useCallback(() => {
     const logoutForm = logoutFormRef.current
     if (logoutForm) {
       logoutForm.submit()
@@ -145,6 +146,6 @@ export default function WfHamburgerMenu (props) {
 }
 WfHamburgerMenu.propTypes = {
   api: PropTypes.object, // not required: WorkflowListNavBar doesn't allow import from github
-  workflowId: PropTypes.number, // not required: WorkflowListNavBar has no workflow
+  workflowId: propTypes.workflowId, // not required: WorkflowListNavBar has no workflow
   user: PropTypes.object // if null/undefined, user is not logged in
 }

@@ -411,7 +411,7 @@ export default withFetchedData(
   ({ api, workflowId, inputStepSlug, inputDeltaId, selectedColumn }) =>
     selectedColumn === null
       ? Promise.resolve(null)
-      : api.stepResultColumnValueCounts(workflowId, inputStepSlug, inputDeltaId, selectedColumn),
+      : api.stepResultColumnValueCounts(inputStepSlug, inputDeltaId, selectedColumn),
   ({ inputStepSlug, inputDeltaId, selectedColumn }) =>
     selectedColumn === null ? null : `${inputStepSlug}-${inputDeltaId}-${selectedColumn}`
 )

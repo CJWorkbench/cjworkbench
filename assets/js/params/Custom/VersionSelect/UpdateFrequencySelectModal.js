@@ -1,5 +1,6 @@
 import { PureComponent } from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../../../propTypes'
 import {
   Modal,
   ModalHeader,
@@ -36,7 +37,7 @@ function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
 
 export default class UpdateFrequencySelectModal extends PureComponent {
   static propTypes = {
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number.isRequired,
     isAutofetch: PropTypes.bool.isRequired,
     fetchInterval: PropTypes.number.isRequired,

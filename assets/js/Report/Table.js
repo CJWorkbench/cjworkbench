@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import { connect } from 'react-redux'
 import BigTable from '../BigTable'
 import useTiles from '../BigTable/useTiles'
@@ -19,7 +20,7 @@ function buildColumnHeaderComponent ({ name, type }) {
 }
 
 function Table ({
-  workflowId,
+  workflowIdOrSecretId,
   stepSlug,
   deltaId,
   nRows,
@@ -31,10 +32,10 @@ function Table ({
   const nTileColumns = Math.ceil(columns.length / nColumnsPerTile)
   const fetchTile = useCallback(
     (tileRow, tileColumn, fetchOptions) => {
-      const url = `/workflows/${workflowId}/tiles/${stepSlug}/delta-${deltaId}/${tileRow},${tileColumn}.json`
+      const url = `/workflows/${workflowIdOrSecretId}/tiles/${stepSlug}/delta-${deltaId}/${tileRow},${tileColumn}.json`
       return global.fetch(url, fetchOptions)
     },
-    [workflowId, stepSlug, deltaId]
+    [workflowIdOrSecretId, stepSlug, deltaId]
   )
   const { sparseTileGrid, setWantedTileRange } = useTiles({
     fetchTile,
@@ -64,7 +65,7 @@ function Table ({
   )
 }
 Table.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   stepSlug: PropTypes.string.isRequired,
   deltaId: PropTypes.number.isRequired,
   nRows: PropTypes.number.isRequired,
@@ -78,7 +79,6 @@ function mapStateToProps (state, { stepSlug }) {
     step => step.slug === stepSlug
   )[0]
   return {
-    workflowId: state.workflow.id,
     deltaId: step.cached_render_result_delta_id,
     nRows: step.output_n_rows,
     columns: step.output_columns,

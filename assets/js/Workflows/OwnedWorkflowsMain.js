@@ -108,7 +108,7 @@ function useWorkflowEdits (workflows) {
 }
 
 export default function OwnedWorkflowsMain (props) {
-  const { api, workflows } = props
+  const { api, workflows, user } = props
 
   const {
     editedWorkflows,
@@ -136,6 +136,7 @@ export default function OwnedWorkflowsMain (props) {
         ? (<WorkflowList
             className='owned'
             workflows={editedWorkflows}
+            user={user}
             api={api}
             onWorkflowDuplicating={handleWorkflowDuplicating}
             onWorkflowDuplicated={handleWorkflowDuplicated}
@@ -149,6 +150,7 @@ export default function OwnedWorkflowsMain (props) {
 }
 OwnedWorkflowsMain.propTypes = {
   workflows: WorkflowListPropType.isRequired,
+  user: PropTypes.object, // or null
   api: PropTypes.shape({
     deleteWorkflow: PropTypes.func.isRequired, // func(id) => Promise[null]
     duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]

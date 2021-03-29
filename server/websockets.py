@@ -2,7 +2,7 @@ import json
 import logging
 import pickle
 from collections import namedtuple
-from typing import Any, Dict
+from typing import Any, ContextManager, Dict
 
 from channels.exceptions import DenyConnection
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -13,6 +13,7 @@ from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
+from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
 
@@ -25,35 +26,6 @@ def _load_latest_modules():
     return dict(MODULE_REGISTRY.all_latest())
 
 
-@database_sync_to_async
-def _get_workflow_as_clientside_update(
-    user, session, workflow_id: int
-) -> WorkflowUpdateData:
-    """
-    Return (clientside.Update, delta_id).
-
-    Raise Workflow.DoesNotExist if a race deletes the Workflow.
-
-    The purpose of this method is to hide races from users who disconnect
-    and reconnect while changes are being made. It's okay for things to be
-    slightly off, as long as users don't notice. (Long-term, we can build
-    better a more-correct synchronization strategy.)
-    """
-    with Workflow.authorized_lookup_and_cooperative_lock(
-        "read", user, session, pk=workflow_id
-    ) as workflow_lock:
-        workflow = workflow_lock.workflow
-        update = clientside.Update(
-            workflow=workflow.to_clientside(),
-            tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
-            steps={
-                step.id: step.to_clientside()
-                for step in Step.live_in_workflow(workflow)
-            },
-        )
-        return WorkflowUpdateData(update, workflow.last_delta_id)
-
-
 class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     """Receive and send websockets messages.
 
@@ -61,54 +33,59 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     workflow are a "group".
     """
 
-    @property
-    def workflow_id(self):
-        return int(self.scope["url_route"]["kwargs"]["workflow_id"])
+    def _lookup_requested_workflow_with_auth_and_cooperative_lock(
+        self,
+    ) -> ContextManager[DbObjectCooperativeLock]:
+        """Either yield the requested workflow, or raise Workflow.DoesNotExist
 
-    @property
-    def workflow_channel_name(self):
-        """A channel_layer group name, given a workflow ID.
-
-        Messages sent to this group will be sent to all clients connected to
-        this workflow.
+        Workflow.DoesNotExist means "permission denied" or "workflow does not exist".
         """
-        return "workflow-%d" % self.workflow_id
-
-    def get_workflow_sync(self):
-        """The current user's Workflow, if exists and authorized; else None"""
-        try:
-            ret = Workflow.objects.get(pk=self.workflow_id)
-        except Workflow.DoesNotExist:
-            return None
-
-        if not ret.user_session_authorized_read(
-            self.scope["user"], self.scope["session"]
-        ):
-            # failed auth. Don't leak any info: behave exactly as we would if
-            # the workflow didn't exist
-            return None
-
-        return ret
+        workflow_id_or_secret_id = self.scope["url_route"]["kwargs"][
+            "workflow_id_or_secret_id"
+        ]
+        if isinstance(workflow_id_or_secret_id, int):
+            return Workflow.authorized_lookup_and_cooperative_lock(
+                "read",
+                self.scope["user"],
+                self.scope["session"],
+                id=workflow_id_or_secret_id,
+            )  # raise Workflow.DoesNotExist
+        else:
+            return Workflow.lookup_and_cooperative_lock(
+                secret_id=workflow_id_or_secret_id
+            )  # raise Workflow.DoesNotExist
 
     @database_sync_to_async
-    def get_workflow(self):
-        """The current user's Workflow, if exists and authorized; else None"""
-        return self.get_workflow_sync()
+    def _read_requested_workflow_with_auth(self):
+        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow_lock:
+            return workflow_lock.workflow
 
     @database_sync_to_async
-    def authorize(self, level):
-        try:
-            with Workflow.authorized_lookup_and_cooperative_lock(
-                level, self.scope["user"], self.scope["session"], pk=self.workflow_id
-            ):
-                return True
-        except Workflow.DoesNotExist:
-            return False
+    def _get_workflow_as_clientside_update(self) -> WorkflowUpdateData:
+        """Return (clientside.Update, delta_id).
+
+        Raise Workflow.DoesNotExist if a race deletes the Workflow.
+        """
+        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow_lock:
+            workflow = workflow_lock.workflow
+            update = clientside.Update(
+                workflow=workflow.to_clientside(),
+                tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
+                steps={
+                    step.id: step.to_clientside()
+                    for step in Step.live_in_workflow(workflow)
+                },
+            )
+            return WorkflowUpdateData(update, workflow.last_delta_id)
 
     async def connect(self):
-        if not await self.authorize("read"):
-            raise DenyConnection()
+        try:
+            workflow = await self._read_requested_workflow_with_auth()
+            self.workflow_id = workflow.id
+        except Workflow.DoesNotExist:
+            raise DenyConnection()  # not found, or not authorized
 
+        self.workflow_channel_name = "workflow-%d" % self.workflow_id
         await self.channel_layer.group_add(
             self.workflow_channel_name, self.channel_name
         )
@@ -126,26 +103,15 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         await self.send_whole_workflow_to_client()
 
     async def disconnect(self, code):
-        # Double up log messages: one before, one after.
-        # [2019-06-13] there's an error on production when a user has a flaky
-        # Internet connection: "... took too long to shut down and was killed".
-        # According to https://github.com/django/channels/issues/1119, this
-        # method is to blame.
-        #
-        # Our problem is: a frontend server simply stops sending anything over
-        # Websockets. And if we see one message without the other in the logs,
-        # that suggests there's a problem in the channel layer.
-        logger.debug("Starting discard from channel %s", self.workflow_channel_name)
-        await self.channel_layer.group_discard(
-            self.workflow_channel_name, self.channel_name
-        )
-        logger.debug("Discarded from channel %s", self.workflow_channel_name)
+        if hasattr(self, "workflow_channel_name"):
+            await self.channel_layer.group_discard(
+                self.workflow_channel_name, self.channel_name
+            )
+            logger.debug("Discarded from channel %s", self.workflow_channel_name)
 
     async def send_whole_workflow_to_client(self):
         try:
-            update, delta_id = await _get_workflow_as_clientside_update(
-                self.scope["user"], self.scope["session"], self.workflow_id
-            )
+            update, delta_id = await self._get_workflow_as_clientside_update()
         except Workflow.DoesNotExist:
             return
 
@@ -163,9 +129,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             # Workbench that doesn't use the same cache format -- making
             # every workflow's cache invalid. In those cases, we should
             # cause a render just by dint of a user reconnecting.
-            workflow_id = update.workflow.id
-            logger.debug("Queue render of Workflow %d v%d", workflow_id, delta_id)
-            await rabbitmq.queue_render(workflow_id, delta_id)
+            logger.debug("Queue render of Workflow %d v%d", self.workflow_id, delta_id)
+            await rabbitmq.queue_render(self.workflow_id, delta_id)
 
     async def send_pickled_update(self, message: Dict[str, Any]) -> None:
         # It's a bit of a security concern that we use pickle to send
@@ -248,8 +213,17 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 {"response": {"requestId": request_id, "error": message}}
             )
 
-        workflow = await self.get_workflow()  # and release lock
-        if workflow is None:
+        try:
+            # TODO nix this check (and adjust every handler to match). This
+            # code only turns a race into a smaller race. Handlers still need
+            # to handle the possibility that the workflow was deleted. (They
+            # skip the auth as of [2021-03-25], though.)
+            #
+            # Maybe we should pass
+            # `self._lookup_requested_workflow_with_auth_and_cooperative_lock`
+            # as a callback?
+            workflow = await self._read_requested_workflow_with_auth()
+        except Workflow.DoesNotExist:
             return await send_early_error("Workflow was deleted")
 
         try:

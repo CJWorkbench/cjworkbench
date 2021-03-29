@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../propTypes'
 import VersionSelect from './Custom/VersionSelect'
 import UploadApiModal from './File/UploadApiModal'
 import { Trans, t } from '@lingui/macro'
@@ -93,7 +94,7 @@ export default function ParamsFormFooter ({
   )
 }
 ParamsFormFooter.propTypes = {
-  workflowId: PropTypes.number.isRequired,
+  workflowId: propTypes.workflowId.isRequired,
   stepId: PropTypes.number.isRequired,
   stepSlug: PropTypes.string.isRequired,
   isStepBusy: PropTypes.bool.isRequired,

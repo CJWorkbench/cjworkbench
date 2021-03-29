@@ -1,5 +1,6 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../../../propTypes'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
 import {
@@ -9,10 +10,12 @@ import {
 import { connect } from 'react-redux'
 import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
+import selectIsAnonymous from '../../../selectors/selectIsAnonymous'
+import selectIsReadOnly from '../../../selectors/selectIsReadOnly'
 
-export const UpdateFrequencySelect = class UpdateFrequencySelect extends PureComponent {
+export class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
-    workflowId: PropTypes.number.isRequired,
+    workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
@@ -150,8 +153,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     lastCheckDate,
     workflowId: workflow.id,
-    isReadOnly: workflow.read_only,
-    isAnonymous: workflow.is_anonymous,
+    isReadOnly: selectIsReadOnly(state),
+    isAnonymous: selectIsAnonymous(state),
     isEmailUpdates: step.notifications || false,
     isAutofetch: step.auto_update_data || false,
     fetchInterval: step.update_interval || 86400

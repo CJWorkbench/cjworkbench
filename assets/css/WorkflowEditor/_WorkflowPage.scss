@@ -56,42 +56,24 @@
     align-items: center;
     flex-wrap: wrap;
     background: $brand-learn;
+    font-size: 1.8rem;
+    text-transform: uppercase;
     color: white;
     font-weight: bold;
     height: 5rem;
     z-index: 1;
 
-    & > * {
-      line-height: 2rem;
-      margin: 0;
+    &>span {
+      display: contents;
     }
 
-    h3 {
-      font-size: 1.8rem;
-      text-transform: uppercase;
-    }
-
-    p {
-      text-transform: uppercase;
-      font-size: 1.3rem;
-
-      a {
-        color: $white;
-        text-decoration: underline;
-      }
-    }
-    .suggestion {
-      display: flex;
-      align-items: center;
-      margin-left: 1rem;
-
-      .action-button {
-        @extend .button-white--fill;
-        color: $brand-learn;
-        margin: 0 3rem 0 2rem;
-        @extend .content-1;
-        line-height: 3.3rem;
-      }
+    .action-button {
+      display: inline-block;
+      @include button-white--fill;
+      @include content-1;
+      color: $brand-learn;
+      margin: 0 1rem 0 2rem;
+      line-height: 3.3rem;
     }
   }
 

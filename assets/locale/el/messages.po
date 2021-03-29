@@ -52,22 +52,22 @@ msgid "js.ErrorBoundary.somethingIsWrong"
 msgstr "Υπάρχει κάποιο πρόβλημα."
 
 #. Acts as closing button
-#: assets/js/ExportModal.js:69
+#: assets/js/ExportModal.js:70
 msgid "js.ExportModal.footer.doneButton"
 msgstr "Ολοκληρώθηκε"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:30
+#: assets/js/ExportModal.js:31
 msgid "js.ExportModal.header.title"
 msgstr "ΕΞΑΓΩΓΗ ΔΕΔΟΜΕΝΩΝ"
 
 #. "CSV" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:40
+#: assets/js/ExportModal.js:41
 msgid "js.ExportModal.type.CSV"
 msgstr "CSV"
 
 #. "JSON" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:51
+#: assets/js/ExportModal.js:52
 #, fuzzy
 msgid "js.ExportModal.type.JSON"
 msgstr "ΡΟΗ JSON"
@@ -113,44 +113,44 @@ msgstr "Έγινε εισαγωγή της μονάδας {module} στην κα
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
 
-#: assets/js/OutputIframe.js:229
+#: assets/js/OutputIframe.js:230
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:219
+#: assets/js/OutputIframe.js:220
 msgid "js.OutputIframe.embed.header.title"
 msgstr "ΕΝΣΩΜΑΤΩΣΗ ΑΥΤΟΥ ΤΟΥ ΓΡΑΦΗΜΑΤΟΣ"
 
-#: assets/js/OutputIframe.js:242
+#: assets/js/OutputIframe.js:243
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:192
+#: assets/js/OutputIframe.js:193
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Ακύρωση"
 
-#: assets/js/OutputIframe.js:199
+#: assets/js/OutputIframe.js:200
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Ορισμός ως δημόσιας"
 
-#: assets/js/OutputIframe.js:23
+#: assets/js/OutputIframe.js:24
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Απόκτηση ενσωματώσιμης διεύθυνσης URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:165
+#: assets/js/OutputIframe.js:166
 msgid "js.OutputIframe.private.header.title"
 msgstr "ΚΟΙΝΟΠΟΙΗΣΗ ΑΥΤΗΣ ΤΗΣ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/OutputIframe.js:180
+#: assets/js/OutputIframe.js:181
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Θα ρυθμίσετε αυτή τη ροή εργασιών ως Δημόσια για να την κοινοποιήσετε; "
 "Όποιος διαθέτει αυτή τη διεύθυνση URL θα μπορεί να έχει πρόσβαση και να "
 "την αντιγράψει."
 
-#: assets/js/OutputIframe.js:175
+#: assets/js/OutputIframe.js:176
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "Αυτή η ροή εργασιών είναι αυτή τη στιγμή ιδιωτική"
 
@@ -205,30 +205,30 @@ msgstr ""
 msgid "js.Page.MainNav.workflows.title"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:18
+#: assets/js/WorkflowEditor/Report/ShareCard.js:19
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:22
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Επεξεργασία απορρήτου"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:33
+#: assets/js/WorkflowEditor/Report/ShareCard.js:34
 #, fuzzy
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Διεύθυνση URL αναφοράς"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:13
+#: assets/js/WorkflowEditor/Report/ShareCard.js:14
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "Αυτή η ροή εργασιών είναι ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "Αυτή η ροή εργασιών είναι δημόσια"
 
@@ -366,52 +366,52 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:90
+#: assets/js/WfHamburgerMenu.js:91
 msgid "js.WfHamburgerMenu.menu.billing"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:82
+#: assets/js/WfHamburgerMenu.js:83
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Αρχική"
 
-#: assets/js/WfHamburgerMenu.js:104
+#: assets/js/WfHamburgerMenu.js:105
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
-#: assets/js/WfHamburgerMenu.js:67
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Γλώσσα"
 
-#: assets/js/WfHamburgerMenu.js:117
+#: assets/js/WfHamburgerMenu.js:118
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
-#: assets/js/WfHamburgerMenu.js:74
+#: assets/js/WfHamburgerMenu.js:75
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WfHamburgerMenu.js:93
+#: assets/js/WfHamburgerMenu.js:94
 msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
-#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:55
+#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "μενού"
 
-#: assets/js/Workflow.js:50
+#: assets/js/Workflow.js:24
 msgid "js.Workflow.isAnonymous"
 msgstr "Δοκιμαστική ροή εργασιών"
 
-#: assets/js/Workflow.js:61
+#: assets/js/Workflow.js:25
 msgid "js.Workflow.isShared"
 msgstr "Παρακολουθείτε μια ροή εργασιών σε κοινή χρήση με άλλους"
 
-#: assets/js/Workflow.js:20
+#: assets/js/Workflow.js:31
 msgid "js.Workflow.suggestion.duplicateToSaveChanges"
 msgstr "Δημιουργία αντιγράφου για αποθήκευση των αλλαγών"
 
 #. The tag is a link to the login page
-#: assets/js/Workflow.js:28
+#: assets/js/Workflow.js:36
 msgid "js.Workflow.suggestion.signInToSaveChanges"
 msgstr "<0>Συνδεθείτε</0> για να αποθηκεύσετε τις αλλαγές σας"
 
@@ -441,39 +441,39 @@ msgstr "Αναζήτηση…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ΠΡΟΣΘΗΚΗ ΔΕΔΟΜΕΝΩΝ"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:255
+#: assets/js/WorkflowEditor/DataVersionModal.js:256
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Φόρτωση"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:226
+#: assets/js/WorkflowEditor/DataVersionModal.js:227
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Εκδόσεις δεδομένων"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:127
+#: assets/js/WorkflowEditor/DataVersionModal.js:128
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr "Θα πάρετε μήνυμα ηλ. ταχυδρομείου εάν αλλάξει η έξοδος αυτής της μονάδας"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:133
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr ""
 "Ενεργοποιήστε τις ειδοποιήσεις για να παίρνετε μήνυμα ηλ. ταχυδρομείου "
 "όταν αλλάζει η έξοδος αυτής της μονάδας"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:151
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr "Απενεργοποίηση"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:155
+#: assets/js/WorkflowEditor/DataVersionModal.js:156
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr "Ενεργοποίηση"
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:116
+#: assets/js/WorkflowEditor/DataVersionModal.js:117
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr "Οι ειδοποιήσεις είναι <0>απενεργοποιημένες</0>"
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:108
+#: assets/js/WorkflowEditor/DataVersionModal.js:109
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr "Οι ειδοποιήσεις είναι <0>ενεργοποιημένες</0>"
 
@@ -490,7 +490,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:111
+#: assets/js/WorkflowEditor/OutputPane.js:113
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -597,70 +597,70 @@ msgstr "Καρτέλα"
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
-#: assets/js/WorkflowEditor/step/Step.js:377
+#: assets/js/WorkflowEditor/step/Step.js:371
 #, fuzzy
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
-#: assets/js/WorkflowEditor/step/Step.js:247
+#: assets/js/WorkflowEditor/step/Step.js:241
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "είσοδος σε λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "έξοδος από λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:410
+#: assets/js/WorkflowEditor/step/Step.js:404
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
-#: assets/js/WorkflowEditor/step/Step.js:406
+#: assets/js/WorkflowEditor/step/Step.js:400
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
-#: assets/js/WorkflowEditor/step/Step.js:471
+#: assets/js/WorkflowEditor/step/Step.js:465
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr "Διαγραφή"
 
-#: assets/js/WorkflowEditor/step/Step.js:434
+#: assets/js/WorkflowEditor/step/Step.js:428
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
-#: assets/js/WorkflowEditor/step/Step.js:452
+#: assets/js/WorkflowEditor/step/Step.js:446
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
 
-#: assets/js/WorkflowNavBar.js:25
+#: assets/js/WorkflowNavBar.js:23
 #, fuzzy
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
 msgstr "Εκπαίδευση"
 
 #. {timeAgo} will contain something like '4h ago'
-#: assets/js/WorkflowNavBar.js:69
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
 msgstr "Ενημερώθηκε {timeAgo}"
 
-#: assets/js/WorkflowNavBar.js:60
+#: assets/js/WorkflowNavBar.js:59
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
 msgstr "από {owner}"
 
-#: assets/js/WorkflowNavBar.js:83
+#: assets/js/WorkflowNavBar.js:81
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
 msgstr "Ιδιωτική"
 
-#: assets/js/WorkflowNavBar.js:82
+#: assets/js/WorkflowNavBar.js:80
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr "Δημόσια"
 
-#: assets/js/WorkflowNavBar.js:223
+#: assets/js/WorkflowNavBar.js:225
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr "Δημιουργία αντιγράφου"
 
-#: assets/js/WorkflowNavBar.js:227
+#: assets/js/WorkflowNavBar.js:229
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr "Κοινοποίηση"
 
-#: assets/js/WorkflowNavBar.js:185
+#: assets/js/WorkflowNavBar.js:186
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Σύνδεση"
 
@@ -1065,12 +1065,12 @@ msgstr "ή"
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
-#: assets/js/params/ParamsFormFooter.js:76
+#: assets/js/params/ParamsFormFooter.js:77
 #, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:71
+#: assets/js/params/ParamsFormFooter.js:72
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
@@ -1282,20 +1282,20 @@ msgstr "Κατά"
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr "Κατόπιν, κατά"
 
-#: assets/js/params/File/UploadApiModal.js:81
+#: assets/js/params/File/UploadApiModal.js:82
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr "Απενεργοποίηση του API"
 
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:125
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Ενεργοποίηση API"
 
-#: assets/js/params/File/UploadApiModal.js:108
+#: assets/js/params/File/UploadApiModal.js:109
 #, fuzzy
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Δημιουργία νέου αναγνωριστικού API"
 
-#: assets/js/params/File/UploadApiModal.js:204
+#: assets/js/params/File/UploadApiModal.js:205
 #, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
@@ -1303,25 +1303,25 @@ msgstr ""
 "να επιτραπεί το ανέβασμα."
 
 #. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:196
+#: assets/js/params/File/UploadApiModal.js:197
 #, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "Το API ανεβάσματος αρχείων είναι <0>ενεργοποιημένο</0>."
 
-#: assets/js/params/File/UploadApiModal.js:239
+#: assets/js/params/File/UploadApiModal.js:240
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/File/UploadApiModal.js:175
+#: assets/js/params/File/UploadApiModal.js:176
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr "ΑΝΕΒΑΣΜΑ ΜΕΣΩ API"
 
-#: assets/js/params/File/UploadApiModal.js:184
+#: assets/js/params/File/UploadApiModal.js:185
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "Αυτές οι οδηγίες απευθύνονται σε προγραμματιστές."
 
-#: assets/js/params/File/UploadApiModal.js:189
+#: assets/js/params/File/UploadApiModal.js:190
 #, fuzzy
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
@@ -1345,27 +1345,27 @@ msgstr "Η στήλη δεν έχει τιμές"
 msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
 msgstr "Δεν υπάρχουν τιμές που να αντιστοιχούν στην αναζήτησή σας"
 
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:32
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:33
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
 msgstr "Έκδοση"
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:42
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:43
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
 msgstr "Έκδοση {0} από {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:60
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:61
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
 msgstr "Επιλογή έκδοσης"
 
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:54
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:55
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
 msgstr "Έκδοση"
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:67
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:68
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} από {nVersions}"
 
@@ -1421,35 +1421,35 @@ msgstr "Ροή εργασιών"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:89
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:92
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr "Αυτόματη"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:79
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:82
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr "αλλαγή ρυθμίσεων αυτόματης ενημέρωσης"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:109
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:112
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr "Ελέγχθηκε <0>{0}</0>"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:97
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:100
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr "Μη αυτόματο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr "Ενημέρωση"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:277
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:278
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
 msgstr "Εφαρμογή"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:202
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:203
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 "Αυτόματη ενημέρωση αυτής της ροής εργασιών με τα πιο πρόσφατα δεδομένα "
@@ -1457,58 +1457,58 @@ msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:193
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr "Αυτόματη"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
 msgstr "ημέρες"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:249
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:250
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
 msgstr "ώρες"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:208
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:209
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr "Ελέγξτε για ενημέρωση κάθε"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:256
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:257
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
 msgstr "λεπτά"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:235
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:236
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
 msgstr "εβδομάδες"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:343
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:344
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
 msgstr "Να μου στέλνετε ηλ. μήνυμα κάθε φορά που αλλάζουν τα δεδομένα"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:360
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr "Κλείσιμο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:353
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:354
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:162
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr "ΕΝΗΜΕΡΩΣΗ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:325
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:326
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr "Ελέγξτε τα νέα δεδομένα με μη αυτόματο τρόπο."
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:315
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:316
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr "Μη αυτόματο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:272
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:273
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr "Προσπαθήστε ξανά"
 
@@ -1516,19 +1516,19 @@ msgstr "Προσπαθήστε ξανά"
 msgid "js.params.Custom.code.loadingEditor"
 msgstr "Φόρτωση επεξεργαστή..."
 
-#: assets/js/params/File/UploadApiModal.js:51
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr "Φορτώνω"
 
-#: assets/js/params/File/UploadApiModal.js:96
+#: assets/js/params/File/UploadApiModal.js:97
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr "Διακριτικό API"
 
-#: assets/js/params/File/UploadApiModal.js:88
+#: assets/js/params/File/UploadApiModal.js:89
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr ""
 
-#: assets/js/params/File/UploadApiModal.js:218
+#: assets/js/params/File/UploadApiModal.js:219
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 
@@ -1968,25 +1968,25 @@ msgstr ""
 "{Επιλέχτηκαν # σειρές}}"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:67
+#: assets/js/table/TableInfo.js:68
 msgid "js.table.TableInfo.columns"
 msgstr "ΣΤΗΛΕΣ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:92
+#: assets/js/table/TableInfo.js:93
 msgid "js.table.TableInfo.export"
 msgstr "ΕΞΑΓΩΓΗ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:56
+#: assets/js/table/TableInfo.js:57
 msgid "js.table.TableInfo.rows"
 msgstr "ΣΕΙΡΕΣ"
 
-#: assets/js/table/TableView.js:69
+#: assets/js/table/TableView.js:66
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr "Μπορούν να εμφανιστούν 100 στήλες το πολύ"
 
-#: assets/js/table/TableView.js:77
+#: assets/js/table/TableView.js:74
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Επιλογή στηλών"
 
@@ -2022,27 +2022,27 @@ msgstr "Συλλογή (Scrape)"
 msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr "Οπτικοποίηση"
 
-#: assets/js/utils.js:52
+#: assets/js/utils.js:51
 msgid "js.util.timeDifference.ago.days"
 msgstr "{days}ημ πριν"
 
-#: assets/js/utils.js:58
+#: assets/js/utils.js:57
 msgid "js.util.timeDifference.ago.hours"
 msgstr "{hours}ώρ πριν"
 
-#: assets/js/utils.js:64
+#: assets/js/utils.js:63
 msgid "js.util.timeDifference.ago.minutes"
 msgstr "{minutes}λε πριν"
 
-#: assets/js/utils.js:70
+#: assets/js/utils.js:69
 msgid "js.util.timeDifference.ago.seconds"
 msgstr "{seconds}δευτ πριν"
 
-#: assets/js/utils.js:46
+#: assets/js/utils.js:45
 msgid "js.util.timeDifference.ago.years"
 msgstr "{years}έτη πριν"
 
-#: assets/js/utils.js:76
+#: assets/js/utils.js:75
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
@@ -2069,25 +2069,25 @@ msgstr ""
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) διαγράφηκε"
 
-#: fetcher/secrets.py:16
+#: fetcher/secrets.py:18
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr "Η υπηρεσία \"{service}\" έχει πάψει να είναι διαμορφωμένη"
 
-#: fetcher/secrets.py:174
+#: fetcher/secrets.py:183
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
 "Ο διακομιστής διακριτικών (τεκμηρίων) απάντησε με {status_code}: {error} "
 "({description})"
 
-#: fetcher/secrets.py:181
+#: fetcher/secrets.py:197
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr "Η {service_id} απάντησε με HTTP {status_code} {reason}: {description}"
 
-#: fetcher/secrets.py:198
+#: fetcher/secrets.py:207
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr "Λήξη χρονικού ορίου κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2"
 
-#: fetcher/secrets.py:208
+#: fetcher/secrets.py:217
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
 
@@ -2289,6 +2289,42 @@ msgstr "Δεδομένα προέλευσης"
 
 #: templates/report.html:54
 msgid "py.templates.report.table.download"
+msgstr ""
+
+#: templates/workflow-403.html:7
+msgid "py.templates.workflow-403.title"
+msgstr ""
+
+#: templates/workflow-403.html:23
+msgid "py.templates.workflow-403.h1"
+msgstr ""
+
+#: templates/workflow-403.html:24
+msgid "py.templates.workflow-403.description"
+msgstr ""
+
+#: templates/workflow-403.html:25
+msgid "py.templates.workflow-403.suggestions.header"
+msgstr ""
+
+#: templates/workflow-403.html:28
+msgid "py.templates.workflow-403.suggestion.logIn"
+msgstr ""
+
+#: templates/workflow-403.html:34
+msgid "py.templates.workflow-403.suggestion.logOut"
+msgstr ""
+
+#: templates/workflow-403.html:36
+msgid "py.templates.workflow-403.suggestion.logOut.currentUser"
+msgstr ""
+
+#: templates/workflow-403.html:39
+msgid "py.templates.workflow-403.suggestion.ask"
+msgstr ""
+
+#: templates/workflow-403.html:41
+msgid "py.templates.workflow-403.suggestion.backToWorkflows"
 msgstr ""
 
 #: templates/workflow.html:5

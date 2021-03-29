@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import datetime
+import functools
 import json
-from dataclasses import dataclass
 from http import HTTPStatus as status
 from typing import Any, Callable, Dict, List, Optional
 
@@ -12,7 +12,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Q
-from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
@@ -37,20 +43,107 @@ from server.serializers import (
 from server.settingsutils import workbench_user_display
 
 
+class Http302(Exception):
+    def __init__(self, location: str):
+        self.location = location
+
+
+class WorkflowPermissionDenied(PermissionDenied):
+    def __init__(self, workflow_path: str):
+        super().__init__()
+        self.workflow_path = workflow_path
+
+
+def redirect_on_http302(status: int = status.OK):
+    def decorator(func):
+        @functools.wraps(func)
+        def inner(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Http302 as err:
+                return HttpResponseRedirect(err.location)
+
+        return inner
+
+    return decorator
+
+
+def render_template_on_workflow_permission_denied(func):
+    @functools.wraps(func)
+    def inner(request, *args, **kwargs):
+        try:
+            return func(request, *args, **kwargs)
+        except WorkflowPermissionDenied as err:
+            return TemplateResponse(
+                request,
+                "workflow-403.html",
+                dict(user=request.user, workflow_path=err.workflow_path),
+                status=status.FORBIDDEN,
+            )
+
+    return inner
+
+
 def lookup_workflow_and_auth(
-    auth: Callable[[Workflow, HttpRequest], None], pk: int, request: HttpRequest
+    auth: Callable[[Workflow, HttpRequest, bool], Tuple[bool, bool]],
+    workflow_id_or_secret_id: Union[int, str],
+    request: HttpRequest,
 ) -> Workflow:
-    """Find a Workflow based on its id.
+    """Find a Workflow based on its id or secret_id.
 
-    Raise Http404 if the Workflow does not exist and PermissionDenied if the
-    workflow _does_ exist but the user does not have access.
+    If workflow_id_or_secret_id is an int, search by id. Otherwise, search
+    by secret_id.
+
+    `auth(workflow, request, using_secret)` must return
+    `(is_allowed, should_redirect_to_id)`.
+
+    Raise Http404 if the Workflow does not exist.
+
+    Raise WorkflowPermissionDenied if the workflow _does_ exist but the user
+    does not have access.
+
+    Raise Http302 if the user should send a near-identical request to the
+    workflow's ID-based URL. (This implies callers must be wrapped in
+    `@redirect_on_http302()`.)
     """
-    workflow = get_object_or_404(Workflow, pk=pk)
+    if isinstance(workflow_id_or_secret_id, int):
+        search = {"id": workflow_id_or_secret_id}
+        using_secret = False
+    else:
+        search = {"secret_id": workflow_id_or_secret_id}
+        using_secret = True
 
-    if not auth(workflow, request):
-        raise PermissionDenied()
+    workflow = get_object_or_404(Workflow, **search)
+
+    allowed, want_redirect = auth(workflow, request, using_secret)
+
+    if not allowed:
+        raise WorkflowPermissionDenied(f"/workflows/{workflow_id_or_secret_id}/")
+
+    if want_redirect:
+        raise Http302("/workflows/%d/" % workflow.id)
 
     return workflow
+
+
+def authorized_write(
+    workflow: Workflow, request: HttpRequest, using_secret: bool
+) -> bool:
+    return Workflow.request_authorized_write(workflow, request), False
+
+
+def authorized_read(
+    workflow: Workflow, request: HttpRequest, using_secret: bool
+) -> bool:
+    user_allowed = Workflow.request_authorized_read(workflow, request)
+    return (user_allowed or using_secret, user_allowed and using_secret)
+
+
+def authorized_report_viewer(
+    workflow: Workflow, request: HttpRequest, using_secret: bool
+) -> bool:
+    user_allowed = Workflow.request_authorized_report_viewer(workflow, request)
+    return (user_allowed or using_secret, user_allowed and using_secret)
 
 
 def _get_request_jsonize_context(
@@ -159,47 +252,9 @@ def shared_with_me(request: HttpRequest):
     return _render_workflows(request, acl__email=request.user.email)
 
 
-# Not login_required: even guests can view recipes
+# Not login_required: even guests can view examples
 def examples(request: HttpRequest):
     return _render_workflows(request, in_all_users_workflow_lists=True)
-
-
-def _get_anonymous_workflow_for(workflow: Workflow, request: HttpRequest) -> Workflow:
-    """If not owner, return a cached duplicate of `workflow`.
-
-    The duplicate will be married to `request.session.session_key`, and its
-    `.is_anonymous` will return `True`.
-    """
-    if not request.session.session_key:
-        request.session.create()
-    session_key = request.session.session_key
-
-    try:
-        return Workflow.objects.get(
-            original_workflow_id=workflow.id, anonymous_owner_session_key=session_key
-        )
-    except Workflow.DoesNotExist:
-        try:
-            new_workflow = workflow.duplicate_anonymous(session_key)
-        except IntegrityError:
-            # Race: the same user just requested a duplicate at the same time,
-            # and both decided to duplicate simultaneously. A database
-            # constraint means one will get an IntegrityError ... so at this
-            # point we can assume our original query will succeed.
-            return Workflow.objects.get(
-                original_workflow_id=workflow.id,
-                anonymous_owner_session_key=session_key,
-            )
-
-        async_to_sync(rabbitmq.queue_render)(
-            new_workflow.id, new_workflow.last_delta_id
-        )
-        if workflow.example:
-            server.utils.log_user_event_from_request(
-                request, "Opened Demo Workflow", {"name": workflow.name}
-            )
-
-        return new_workflow
 
 
 def visible_modules(request) -> Dict[str, ModuleZipfile]:
@@ -241,9 +296,11 @@ def _lesson_redirect_url(slug) -> Optional[str]:
 
 
 # no login_required as logged out users can view example/public workflows
-def render_workflow(request: HttpRequest, workflow_id: int):
+@redirect_on_http302()
+@render_template_on_workflow_permission_denied
+def render_workflow(request: HttpRequest, workflow_id_or_secret_id: Union[int, str]):
     workflow = lookup_workflow_and_auth(
-        Workflow.request_authorized_read, workflow_id, request
+        authorized_read, workflow_id_or_secret_id, request
     )
     if (
         workflow.lesson_slug
@@ -252,9 +309,6 @@ def render_workflow(request: HttpRequest, workflow_id: int):
     ):
         return redirect(_lesson_redirect_url(workflow.lesson_slug))
     else:
-        if workflow.example and workflow.owner != request.user:
-            workflow = _get_anonymous_workflow_for(workflow, request)
-
         modules = visible_modules(request)
         init_state = make_init_state(request, workflow=workflow, modules=modules)
 
@@ -279,10 +333,9 @@ def render_workflow(request: HttpRequest, workflow_id: int):
 
 
 class ApiDetail(View):
+    @method_decorator(redirect_on_http302(status=status.TEMPORARY_REDIRECT))
     def post(self, request: HttpRequest, workflow_id: int):
-        workflow = lookup_workflow_and_auth(
-            Workflow.request_authorized_write, workflow_id, request
-        )
+        workflow = lookup_workflow_and_auth(authorized_write, workflow_id, request)
         if request.content_type != "application/json":
             return HttpResponse(
                 "request must have type application/json",
@@ -312,6 +365,7 @@ class ApiDetail(View):
         return HttpResponse(status=status.NO_CONTENT)
 
     @method_decorator(login_required)
+    @method_decorator(redirect_on_http302(status=status.TEMPORARY_REDIRECT))
     def delete(self, request: HttpRequest, workflow_id: int):
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
@@ -335,9 +389,10 @@ class ApiDetail(View):
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
 class Duplicate(View):
-    def post(self, request: HttpRequest, workflow_id: int):
+    @method_decorator(redirect_on_http302(status=status.TEMPORARY_REDIRECT))
+    def post(self, request: HttpRequest, workflow_id_or_secret_id: Union[int, str]):
         workflow = lookup_workflow_and_auth(
-            Workflow.request_authorized_read, workflow_id, request
+            authorized_read, workflow_id_or_secret_id, request
         )
         workflow2 = workflow.duplicate(request.user)
         ctx = _get_request_jsonize_context(request, MODULE_REGISTRY.all_latest())
@@ -357,9 +412,10 @@ class Duplicate(View):
 class Report(View):
     """Render all the charts in a workflow."""
 
-    def get(self, request: HttpRequest, workflow_id: int):
+    @method_decorator(redirect_on_http302(status=status.TEMPORARY_REDIRECT))
+    def get(self, request: HttpRequest, workflow_id_or_secret_id: Union[int, str]):
         workflow = lookup_workflow_and_auth(
-            Workflow.request_authorized_report_viewer, workflow_id, request
+            authorized_report_viewer, workflow_id_or_secret_id, request
         )
         init_state = make_init_state(request, workflow=workflow, modules={})
         blocks = build_report_for_workflow(workflow)

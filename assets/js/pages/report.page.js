@@ -7,10 +7,12 @@ import Table from '../Report/Table'
 import WorkflowWebsocket from '../WorkflowWebsocket'
 import { Provider } from 'react-redux'
 import InternationalizedPage from '../i18n/InternationalizedPage'
+import selectWorkflowIdOrSecretId from '../selectors/selectWorkflowIdOrSecretId'
 
-// --- Main ----
-const websocket = new WorkflowWebsocket(window.initState.workflow.id, delta =>
-  store.dispatch(applyDeltaAction(delta))
+const workflowIdOrSecretId = selectWorkflowIdOrSecretId(window.initState) // TODO select dynamically in WorkbenchAPI?
+const websocket = new WorkflowWebsocket(
+  workflowIdOrSecretId,
+  delta => store.dispatch(applyDeltaAction(delta))
 )
 websocket.connect()
 
@@ -26,7 +28,7 @@ Array.prototype.forEach.call(tables, el => {
   ReactDOM.render(
     <InternationalizedPage>
       <Provider store={store}>
-        <Table stepSlug={el.getAttribute('data-step-slug')} />
+        <Table workflowIdOrSecretId={workflowIdOrSecretId} stepSlug={el.getAttribute('data-step-slug')} />
         <UnhandledErrorReport />
       </Provider>
     </InternationalizedPage>,

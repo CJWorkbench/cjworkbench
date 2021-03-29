@@ -143,7 +143,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_deny_missing_id(self, communicate):
-        comm = communicate(self.application, "/workflows/98913123/")
+        comm = communicate(self.application, "/workflows/98913123")
         connected, _ = await comm.connect()
         self.assertFalse(connected)
 
@@ -157,7 +157,7 @@ class ChannelTests(DbTestCase):
             )
 
         other_workflow = await init_db()
-        comm = communicate(self.application, f"/workflows/{other_workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{other_workflow.id}")
         connected, _ = await comm.connect()
         self.assertFalse(connected)
 
@@ -171,7 +171,7 @@ class ChannelTests(DbTestCase):
 
         workflow = await init_db()
         self.user = AnonymousUser()
-        comm = communicate(self.application, f"/workflows/{workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{workflow.id}")
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
@@ -185,13 +185,24 @@ class ChannelTests(DbTestCase):
             )
 
         workflow = await init_db()
-        comm = communicate(self.application, f"/workflows/{workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{workflow.id}")
         connected, _ = await comm.connect()
         self.assertFalse(connected)
 
     @async_test
+    async def test_allow_secret_id(self, communicate):
+        @database_sync_to_async
+        def init_db():
+            return Workflow.create_and_init(secret_id="wsecret")
+
+        workflow = await init_db()
+        comm = communicate(self.application, "/workflows/wsecret")
+        connected, _ = await comm.connect()
+        self.assertTrue(connected)
+
+    @async_test
     async def test_initial_workflow_data(self, communicate):
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         response = await comm.receive_from()
@@ -201,7 +212,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_message(self, communicate):
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
@@ -212,8 +223,8 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_two_clients_get_messages_on_same_workflow(self, communicate):
-        comm1 = communicate(self.application, f"/workflows/{self.workflow.id}/")
-        comm2 = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm1 = communicate(self.application, f"/workflows/{self.workflow.id}")
+        comm2 = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected1, _ = await comm1.connect()
         self.assertTrue(connected1)
         await comm1.receive_from()  # ignore initial workflow delta
@@ -229,7 +240,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_after_disconnect_client_gets_no_message(self, communicate):
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
@@ -245,7 +256,7 @@ class ChannelTests(DbTestCase):
 
         queue_render.side_effect = do_queue
 
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
@@ -264,7 +275,7 @@ class ChannelTests(DbTestCase):
 
         queue_render.side_effect = do_queue
 
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         self.assertTrue(connected)
         await comm.receive_from()  # ignore initial workflow delta
@@ -281,7 +292,7 @@ class ChannelTests(DbTestCase):
 
         handler.side_effect = mock_handler
 
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         await comm.receive_from()  # ignore initial workflow delta
 
@@ -292,7 +303,7 @@ class ChannelTests(DbTestCase):
                 "path": "foo.bar",
                 "arguments": { "foo": "bar" }
             }
-        """
+            """
         )
         response = json.loads(await comm.receive_from())
         self.assertEqual(
@@ -307,7 +318,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_handler_workflow_deleted(self, communicate):
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         await comm.receive_from()  # ignore initial workflow delta
 
@@ -324,7 +335,7 @@ class ChannelTests(DbTestCase):
                 "path": "foo.bar",
                 "arguments": { "foo": "bar" }
             }
-        """
+            """
         )
         response = json.loads(await comm.receive_from())
         self.assertEqual(
@@ -333,7 +344,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_handler_request_invalid_but_req_id_ok(self, communicate):
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         await comm.receive_from()  # ignore initial workflow delta
 
@@ -343,7 +354,7 @@ class ChannelTests(DbTestCase):
                 "requestId": 123,
                 "arguments": { "foo": "bar" }
             }
-        """
+            """
         )
         response = json.loads(await comm.receive_from())
         self.assertEqual(
@@ -353,7 +364,7 @@ class ChannelTests(DbTestCase):
 
     @async_test
     async def test_handler_request_without_request_id(self, communicate):
-        comm = communicate(self.application, f"/workflows/{self.workflow.id}/")
+        comm = communicate(self.application, f"/workflows/{self.workflow.id}")
         connected, _ = await comm.connect()
         await comm.receive_from()  # ignore initial workflow delta
 
@@ -363,7 +374,7 @@ class ChannelTests(DbTestCase):
                 "requestId": "ceci n'est pas un requestId",
                 "arguments": { "foo": "bar" }
             }
-        """
+            """
         )
         response = json.loads(await comm.receive_from())
         self.assertEqual(

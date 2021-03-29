@@ -1,16 +1,14 @@
-import { createRef, Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { setWorkflowNameAction } from './workflow-reducer'
 
-export class EditableWorkflowName extends Component {
+export default class EditableWorkflowName extends React.PureComponent {
   static propTypes = {
     value: PropTypes.string,
-    setWorkflowName: PropTypes.func.isRequired, // func(newName) => undefined
+    onSubmit: PropTypes.func.isRequired, // func(newName) => undefined
     isReadOnly: PropTypes.bool.isRequired
   }
 
-  inputRef = createRef()
+  inputRef = React.createRef()
 
   state = {
     value: null // non-null only when editing
@@ -39,7 +37,7 @@ export class EditableWorkflowName extends Component {
     // Other way value could be null: if we focused but didn't edit
     this.setState((state, props) => {
       if (state.value !== null) {
-        props.setWorkflowName(state.value)
+        props.onSubmit(state.value)
       }
       return { value: null } // stop editing
     })
@@ -66,18 +64,3 @@ export class EditableWorkflowName extends Component {
     )
   }
 }
-
-const mapStateToProps = state => {
-  return {
-    value: state.workflow.name
-  }
-}
-
-const mapDispatchToProps = {
-  setWorkflowName: setWorkflowNameAction
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EditableWorkflowName)

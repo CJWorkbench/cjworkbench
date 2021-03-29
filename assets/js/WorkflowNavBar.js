@@ -2,9 +2,7 @@ import { Component } from 'react'
 import PropTypes from 'prop-types'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import UndoRedoButtons from './UndoRedoButtons'
-import ConnectedEditableWorkflowName, {
-  EditableWorkflowName
-} from './EditableWorkflowName'
+import EditableWorkflowName from './EditableWorkflowName'
 import { goToUrl, timeDifference } from './utils'
 import ShareButton from './ShareModal/ShareButton'
 import { i18n } from '@lingui/core'
@@ -39,22 +37,23 @@ function LessonWorkflowTitle ({ lesson }) {
       <LessonCourse localeId={lesson.localeId} course={lesson.course} />
       <EditableWorkflowName
         value={lesson.header.title}
-        setWorkflowName={NoOp}
+        onSubmit={NoOp}
         isReadOnly
       />
     </div>
   )
 }
 
-function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
+function OwnedWorkflowTitleAndMetadata ({ isReadOnly, isAnonymous, workflow, setWorkflowName }) {
   const owner = workflow.owner_name.trim()
   const timeAgo = timeDifference(workflow.last_update, new Date(), i18n)
   return (
     <div className='title-metadata-stack'>
-      <ConnectedEditableWorkflowName isReadOnly={isReadOnly} />
+      <EditableWorkflowName value={workflow.name} isReadOnly={isReadOnly} onSubmit={setWorkflowName} />
       <ul className='metadata-container'>
-        {!workflow.is_anonymous
-          ? (
+        {isAnonymous
+          ? null
+          : (
             <li className='attribution'>
               <span className='metadata'>
                 <Trans id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner'>
@@ -63,8 +62,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
               </span>
               <span className='separator'>-</span>
             </li>
-            )
-          : null}
+            )}
         <li>
           <Trans
             id='js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated'
@@ -73,7 +71,7 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
             Updated {timeAgo}
           </Trans>
         </li>
-        {!isReadOnly && !workflow.is_anonymous
+        {!isReadOnly && !isAnonymous
           ? (
             <li>
               <span className='separator'>-</span>
@@ -90,14 +88,16 @@ function OwnedWorkflowTitleAndMetadata ({ isReadOnly, workflow }) {
   )
 }
 
-function WorkflowTitleAndMetadata ({ lesson, isReadOnly, workflow }) {
+function WorkflowTitleAndMetadata ({ lesson, isReadOnly, isAnonymous, workflow, setWorkflowName }) {
   if (lesson) {
     return <LessonWorkflowTitle lesson={lesson} />
   } else {
     return (
       <OwnedWorkflowTitleAndMetadata
+        isAnonymous={isAnonymous}
         isReadOnly={isReadOnly}
         workflow={workflow}
+        setWorkflowName={setWorkflowName}
       />
     )
   }
@@ -117,7 +117,8 @@ export default class WorkflowNavBar extends Component {
       }).isRequired
     }), // optional -- no lesson means we're not in the "lessons" interface
     isReadOnly: PropTypes.bool.isRequired,
-    loggedInUser: PropTypes.object // null if no user logged in
+    loggedInUser: PropTypes.object, // null if no user logged in
+    setWorkflowName: PropTypes.func.isRequired // func(newName) => undefined
   }
 
   state = {
@@ -166,7 +167,7 @@ export default class WorkflowNavBar extends Component {
   }
 
   render () {
-    const { api, isReadOnly, loggedInUser, lesson, workflow } = this.props
+    const { api, isReadOnly, loggedInUser, lesson, workflow, setWorkflowName } = this.props
 
     // menu only if there is a logged-in user
     let contextMenu
@@ -214,6 +215,7 @@ export default class WorkflowNavBar extends Component {
               lesson={lesson}
               isReadOnly={isReadOnly}
               workflow={workflow}
+              setWorkflowName={setWorkflowName}
             />
             <div className='nav-buttons'>
               {isReadOnly

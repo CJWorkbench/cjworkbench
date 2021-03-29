@@ -1,4 +1,3 @@
-// ---- Utilities ---
 import { useMemo, useCallback } from 'react'
 import { t } from '@lingui/macro'
 import * as Cookies from 'js-cookie'

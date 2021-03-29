@@ -51,6 +51,7 @@ export default function WorkflowList (props) {
   const {
     className,
     workflows,
+    user = null,
     api = null,
     onWorkflowChanging = null,
     onWorkflowChanged = null,
@@ -111,6 +112,7 @@ export default function WorkflowList (props) {
             <Workflow
               key={workflow.id}
               workflow={workflow}
+              user={user}
               api={api}
               onWorkflowChanging={onWorkflowChanging}
               onWorkflowChanged={onWorkflowChanged}
@@ -125,6 +127,7 @@ export default function WorkflowList (props) {
 }
 WorkflowList.propTypes = {
   workflows: WorkflowListPropType.isRequired,
+  user: PropTypes.object, // or null
   className: PropTypes.string.isRequired,
   onClickDeleteWorkflow: PropTypes.func, // func(id) => undefined, or null if not allowed to delete
   onClickDuplicateWorkflow: PropTypes.func, // func(id) => undefined, or null if user must _open_ to duplicate

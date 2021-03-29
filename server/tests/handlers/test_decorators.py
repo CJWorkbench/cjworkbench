@@ -150,6 +150,14 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
         )
         self.assertHandlerResponse(ret, {"role": "read"})
 
+    def test_auth_read_secret(self):
+        ret = self.run_handler(
+            handle_read,
+            workflow=Workflow(secret_id="wsecret", public=False),
+            workflow_id_or_secret_id="wsecret",
+        )
+        self.assertHandlerResponse(ret, {"role": "read"})
+
     def test_auth_read_viewer(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.objects.create()

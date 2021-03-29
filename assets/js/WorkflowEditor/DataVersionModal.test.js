@@ -124,7 +124,6 @@ describe('DataVersionModal', () => {
         tabSlug: 'tab-11'
       },
       workflow: {
-        is_anonymous: false
       },
       tabs: {
         'tab-11': { step_ids: [123, 124] }
