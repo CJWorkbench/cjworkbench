@@ -50,22 +50,22 @@ msgid "js.ErrorBoundary.somethingIsWrong"
 msgstr "Something is wrong."
 
 #. Acts as closing button
-#: assets/js/ExportModal.js:69
+#: assets/js/ExportModal.js:70
 msgid "js.ExportModal.footer.doneButton"
 msgstr "Done"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ExportModal.js:30
+#: assets/js/ExportModal.js:31
 msgid "js.ExportModal.header.title"
 msgstr "EXPORT DATA"
 
 #. "CSV" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:40
+#: assets/js/ExportModal.js:41
 msgid "js.ExportModal.type.CSV"
 msgstr "CSV"
 
 #. "JSON" (all-caps) is a kind of file
-#: assets/js/ExportModal.js:51
+#: assets/js/ExportModal.js:52
 msgid "js.ExportModal.type.JSON"
 msgstr "JSON"
 
@@ -102,43 +102,43 @@ msgstr "Imported module {module}"
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Processing…"
 
-#: assets/js/OutputIframe.js:229
+#: assets/js/OutputIframe.js:230
 msgid "js.OutputIframe.embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:219
+#: assets/js/OutputIframe.js:220
 msgid "js.OutputIframe.embed.header.title"
 msgstr "EMBED THIS CHART"
 
-#: assets/js/OutputIframe.js:242
+#: assets/js/OutputIframe.js:243
 msgid "js.OutputIframe.footer.OKButton"
 msgstr "OK"
 
-#: assets/js/OutputIframe.js:192
+#: assets/js/OutputIframe.js:193
 msgid "js.OutputIframe.footer.cancelButton"
 msgstr "Cancel"
 
-#: assets/js/OutputIframe.js:199
+#: assets/js/OutputIframe.js:200
 msgid "js.OutputIframe.footer.setPublicButton"
 msgstr "Set public"
 
-#: assets/js/OutputIframe.js:23
+#: assets/js/OutputIframe.js:24
 msgid "js.OutputIframe.getEmbeddableUrl.hoverText"
 msgstr "Get an embeddable URL"
 
 #. This should be all-caps for styling reasons
-#: assets/js/OutputIframe.js:165
+#: assets/js/OutputIframe.js:166
 msgid "js.OutputIframe.private.header.title"
 msgstr "SHARE THIS WORKFLOW"
 
-#: assets/js/OutputIframe.js:180
+#: assets/js/OutputIframe.js:181
 msgid "js.OutputIframe.private.setToPublic"
 msgstr ""
 "Set this workflow to Public in order to share it? Anyone with the URL "
 "will be able to access and duplicate it."
 
-#: assets/js/OutputIframe.js:175
+#: assets/js/OutputIframe.js:176
 msgid "js.OutputIframe.private.workflowIsPrivate"
 msgstr "This workflow is currently private"
 
@@ -190,29 +190,29 @@ msgstr "Shared with me"
 msgid "js.Page.MainNav.workflows.title"
 msgstr "My workflows"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:20
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Only collaborators can view this report"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:18
+#: assets/js/WorkflowEditor/Report/ShareCard.js:19
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Anyone can view this report"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:22
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Edit privacy"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:33
+#: assets/js/WorkflowEditor/Report/ShareCard.js:34
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Report Sharing URL"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:13
+#: assets/js/WorkflowEditor/Report/ShareCard.js:14
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "This workflow is private"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:12
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "This workflow is public"
 
@@ -336,52 +336,52 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:90
+#: assets/js/WfHamburgerMenu.js:91
 msgid "js.WfHamburgerMenu.menu.billing"
 msgstr "Billing"
 
-#: assets/js/WfHamburgerMenu.js:82
+#: assets/js/WfHamburgerMenu.js:83
 msgid "js.WfHamburgerMenu.menu.home"
 msgstr "Home"
 
-#: assets/js/WfHamburgerMenu.js:104
+#: assets/js/WfHamburgerMenu.js:105
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:67
+#: assets/js/WfHamburgerMenu.js:68
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:117
+#: assets/js/WfHamburgerMenu.js:118
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:74
+#: assets/js/WfHamburgerMenu.js:75
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 
-#: assets/js/WfHamburgerMenu.js:93
+#: assets/js/WfHamburgerMenu.js:94
 msgid "js.WfHamburgerMenu.menu.plan"
 msgstr "Upgrade"
 
-#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:55
+#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:56
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "menu"
 
-#: assets/js/Workflow.js:50
+#: assets/js/Workflow.js:24
 msgid "js.Workflow.isAnonymous"
 msgstr "Demo workflow"
 
-#: assets/js/Workflow.js:61
+#: assets/js/Workflow.js:25
 msgid "js.Workflow.isShared"
 msgstr "You are viewing a shared workflow"
 
-#: assets/js/Workflow.js:20
+#: assets/js/Workflow.js:31
 msgid "js.Workflow.suggestion.duplicateToSaveChanges"
 msgstr "Duplicate it to save your changes"
 
 #. The tag is a link to the login page
-#: assets/js/Workflow.js:28
+#: assets/js/Workflow.js:36
 msgid "js.Workflow.suggestion.signInToSaveChanges"
 msgstr "<0>Sign in</0> to save your changes"
 
@@ -411,37 +411,37 @@ msgstr "Search…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ADD DATA"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:255
+#: assets/js/WorkflowEditor/DataVersionModal.js:256
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Load"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:226
+#: assets/js/WorkflowEditor/DataVersionModal.js:227
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Data Versions"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:127
+#: assets/js/WorkflowEditor/DataVersionModal.js:128
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
 msgstr "You will receive an email if the output of this module changes"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:132
+#: assets/js/WorkflowEditor/DataVersionModal.js:133
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
 msgstr "Turn alerts ON to receive an email if the output of this module changes"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:150
+#: assets/js/WorkflowEditor/DataVersionModal.js:151
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
 msgstr "Turn off"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:155
+#: assets/js/WorkflowEditor/DataVersionModal.js:156
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
 msgstr "Turn on"
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:116
+#: assets/js/WorkflowEditor/DataVersionModal.js:117
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
 msgstr "Alerts are <0>off</0>"
 
 #. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:108
+#: assets/js/WorkflowEditor/DataVersionModal.js:109
 msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr "Alerts are <0>on</0>"
 
@@ -458,7 +458,7 @@ msgstr "Close Search"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:111
+#: assets/js/WorkflowEditor/OutputPane.js:113
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
@@ -565,68 +565,68 @@ msgstr "Tab"
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Learn how to replace this step"
 
-#: assets/js/WorkflowEditor/step/Step.js:377
+#: assets/js/WorkflowEditor/step/Step.js:371
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Type a note…"
 
-#: assets/js/WorkflowEditor/step/Step.js:247
+#: assets/js/WorkflowEditor/step/Step.js:241
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "enter Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:243
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "exit Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:410
+#: assets/js/WorkflowEditor/step/Step.js:404
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Email alerts disabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:406
+#: assets/js/WorkflowEditor/step/Step.js:400
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Email alerts enabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:471
+#: assets/js/WorkflowEditor/step/Step.js:465
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr "Delete"
 
-#: assets/js/WorkflowEditor/step/Step.js:434
+#: assets/js/WorkflowEditor/step/Step.js:428
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Help for this module"
 
-#: assets/js/WorkflowEditor/step/Step.js:452
+#: assets/js/WorkflowEditor/step/Step.js:446
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Edit Note"
 
-#: assets/js/WorkflowNavBar.js:25
+#: assets/js/WorkflowNavBar.js:23
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
 msgstr "Workbench basics"
 
 #. {timeAgo} will contain something like '4h ago'
-#: assets/js/WorkflowNavBar.js:69
+#: assets/js/WorkflowNavBar.js:67
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.lastUpdated"
 msgstr "Updated {timeAgo}"
 
-#: assets/js/WorkflowNavBar.js:60
+#: assets/js/WorkflowNavBar.js:59
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.owner"
 msgstr "by {owner}"
 
-#: assets/js/WorkflowNavBar.js:83
+#: assets/js/WorkflowNavBar.js:81
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.private"
 msgstr "Private"
 
-#: assets/js/WorkflowNavBar.js:82
+#: assets/js/WorkflowNavBar.js:80
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr "Public"
 
-#: assets/js/WorkflowNavBar.js:223
+#: assets/js/WorkflowNavBar.js:225
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr "Duplicate"
 
-#: assets/js/WorkflowNavBar.js:227
+#: assets/js/WorkflowNavBar.js:229
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr "Share"
 
-#: assets/js/WorkflowNavBar.js:185
+#: assets/js/WorkflowNavBar.js:186
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
@@ -1025,11 +1025,11 @@ msgstr "or"
 msgid "js.params.Custom.File.replace"
 msgstr "Replace"
 
-#: assets/js/params/ParamsFormFooter.js:76
+#: assets/js/params/ParamsFormFooter.js:77
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:71
+#: assets/js/params/ParamsFormFooter.js:72
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Open upload API instructions"
 
@@ -1236,41 +1236,41 @@ msgstr "By"
 msgid "js.params.Custom.SortColumn.thenBy.label"
 msgstr "Then by"
 
-#: assets/js/params/File/UploadApiModal.js:81
+#: assets/js/params/File/UploadApiModal.js:82
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.disableApi"
 msgstr "Disable API"
 
-#: assets/js/params/File/UploadApiModal.js:124
+#: assets/js/params/File/UploadApiModal.js:125
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Enable API"
 
-#: assets/js/params/File/UploadApiModal.js:108
+#: assets/js/params/File/UploadApiModal.js:109
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Reset API Token"
 
-#: assets/js/params/File/UploadApiModal.js:204
+#: assets/js/params/File/UploadApiModal.js:205
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr "The file-upload API is disabled. Enable it to upload from a program."
 
 #. The tag adds emphasis
-#: assets/js/params/File/UploadApiModal.js:196
+#: assets/js/params/File/UploadApiModal.js:197
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "The file-upload API is enabled."
 
-#: assets/js/params/File/UploadApiModal.js:239
+#: assets/js/params/File/UploadApiModal.js:240
 msgid "js.params.Custom.UploadApiModal.footer.closeButton"
 msgstr "Close"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/File/UploadApiModal.js:175
+#: assets/js/params/File/UploadApiModal.js:176
 msgid "js.params.Custom.UploadApiModal.header.title"
 msgstr "UPLOAD BY API"
 
-#: assets/js/params/File/UploadApiModal.js:184
+#: assets/js/params/File/UploadApiModal.js:185
 msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "These instructions are for programmers."
 
-#: assets/js/params/File/UploadApiModal.js:189
+#: assets/js/params/File/UploadApiModal.js:190
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr "You can upload files to Workbench from any cronjob, script or app."
 
@@ -1290,27 +1290,27 @@ msgstr "Column does not have any values"
 msgid "js.params.Custom.ValueSelect.ValueList.noValuesMatchSearch"
 msgstr "No values match your search"
 
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:32
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:33
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.noVersions.label"
 msgstr "Version"
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:42
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:43
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.readOnly.label"
 msgstr "Version {0} of {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:60
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:61
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.hoverText"
 msgstr "Select version"
 
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:54
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:55
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.selectVersion.label"
 msgstr "Version"
 
 #. The parameter {0} will be the current version and {nVersions} will be the
 #. number of versions
-#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:67
+#: assets/js/params/Custom/VersionSelect/DataVersionSelect.js:68
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} of {nVersions}"
 
@@ -1363,35 +1363,35 @@ msgstr "Workflow"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:89
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:92
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr "Auto"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:79
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:82
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr "change auto-update settings"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:109
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:112
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr "Checked <0>{0}</0>"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:97
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:100
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr "Manual"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:73
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr "Update"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:277
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:278
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
 msgstr "Apply"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:202
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:203
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
 msgstr ""
 "Automatically update this workflow with the newest data (old versions "
@@ -1399,58 +1399,58 @@ msgstr ""
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:192
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:193
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
 msgstr "Auto"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:242
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
 msgstr "days"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:249
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:250
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
 msgstr "hours"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:208
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:209
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr "Check for update every"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:256
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:257
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
 msgstr "minutes"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:235
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:236
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
 msgstr "weeks"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:343
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:344
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
 msgstr "Email me when data changes"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:360
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr "Close"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:353
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:354
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr "Close"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:162
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr "WORKFLOW UPDATE"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:325
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:326
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
 msgstr "Check for new data manually."
 
 #. Refers to
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:315
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:316
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
 msgstr "Manual"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:272
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:273
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
 msgstr "Retry"
 
@@ -1458,19 +1458,19 @@ msgstr "Retry"
 msgid "js.params.Custom.code.loadingEditor"
 msgstr "Loading editor..."
 
-#: assets/js/params/File/UploadApiModal.js:51
+#: assets/js/params/File/UploadApiModal.js:52
 msgid "js.params.File.UploadApiModal.ApiTokenLoading"
 msgstr "Loading"
 
-#: assets/js/params/File/UploadApiModal.js:96
+#: assets/js/params/File/UploadApiModal.js:97
 msgid "js.params.File.UploadApiModal.ApiTokenOk.apiToken"
 msgstr "API Token"
 
-#: assets/js/params/File/UploadApiModal.js:88
+#: assets/js/params/File/UploadApiModal.js:89
 msgid "js.params.File.UploadApiModal.ApiTokenOk.createFileUrl"
 msgstr "Create-file URL"
 
-#: assets/js/params/File/UploadApiModal.js:218
+#: assets/js/params/File/UploadApiModal.js:219
 msgid "js.params.File.UploadApiModal.ApiTokenOk.instructions"
 msgstr ""
 "Follow our <0>File-Upload API instructions</0> to upload files to this "
@@ -1910,25 +1910,25 @@ msgstr ""
 "selected}}"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:67
+#: assets/js/table/TableInfo.js:68
 msgid "js.table.TableInfo.columns"
 msgstr "COLUMNS"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:92
+#: assets/js/table/TableInfo.js:93
 msgid "js.table.TableInfo.export"
 msgstr "EXPORT"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:56
+#: assets/js/table/TableInfo.js:57
 msgid "js.table.TableInfo.rows"
 msgstr "ROWS"
 
-#: assets/js/table/TableView.js:69
+#: assets/js/table/TableView.js:66
 msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
 msgstr "A maximum of 100 columns can be displayed"
 
-#: assets/js/table/TableView.js:77
+#: assets/js/table/TableView.js:74
 msgid "js.table.TableView.selectColumns.button"
 msgstr "Select columns"
 
@@ -1964,27 +1964,27 @@ msgstr "Scrape"
 msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr "Visualize"
 
-#: assets/js/utils.js:52
+#: assets/js/utils.js:51
 msgid "js.util.timeDifference.ago.days"
 msgstr "{days}d ago"
 
-#: assets/js/utils.js:58
+#: assets/js/utils.js:57
 msgid "js.util.timeDifference.ago.hours"
 msgstr "{hours}h ago"
 
-#: assets/js/utils.js:64
+#: assets/js/utils.js:63
 msgid "js.util.timeDifference.ago.minutes"
 msgstr "{minutes}m ago"
 
-#: assets/js/utils.js:70
+#: assets/js/utils.js:69
 msgid "js.util.timeDifference.ago.seconds"
 msgstr "{seconds}s ago"
 
-#: assets/js/utils.js:46
+#: assets/js/utils.js:45
 msgid "js.util.timeDifference.ago.years"
 msgstr "{years}y ago"
 
-#: assets/js/utils.js:76
+#: assets/js/utils.js:75
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
@@ -2010,23 +2010,23 @@ msgstr ""
 msgid "py.fetcher.fetch.no_loaded_module"
 msgstr "Cannot fetch: module was deleted"
 
-#: fetcher/secrets.py:16
+#: fetcher/secrets.py:18
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
 msgstr "Service \"{service}\" is no longer configured"
 
-#: fetcher/secrets.py:174
+#: fetcher/secrets.py:183
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr "Token server responded with {status_code}: {error} ({description})"
 
-#: fetcher/secrets.py:181
+#: fetcher/secrets.py:197
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
 msgstr "{service_id} responded with HTTP {status_code} {reason}: {description}"
 
-#: fetcher/secrets.py:198
+#: fetcher/secrets.py:207
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
 msgstr "Timeout during OAuth2 token refresh"
 
-#: fetcher/secrets.py:208
+#: fetcher/secrets.py:217
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "HTTP error during OAuth2 token refresh: {error}"
 
@@ -2216,6 +2216,42 @@ msgstr "Source data"
 #: templates/report.html:54
 msgid "py.templates.report.table.download"
 msgstr "Download data as CSV"
+
+#: templates/workflow-403.html:7
+msgid "py.templates.workflow-403.title"
+msgstr "Private workflow"
+
+#: templates/workflow-403.html:23
+msgid "py.templates.workflow-403.h1"
+msgstr "Private workflow"
+
+#: templates/workflow-403.html:24
+msgid "py.templates.workflow-403.description"
+msgstr "You can’t see this workflow."
+
+#: templates/workflow-403.html:25
+msgid "py.templates.workflow-403.suggestions.header"
+msgstr "Maybe try these ideas:"
+
+#: templates/workflow-403.html:28
+msgid "py.templates.workflow-403.suggestion.logIn"
+msgstr "Sign in"
+
+#: templates/workflow-403.html:34
+msgid "py.templates.workflow-403.suggestion.logOut"
+msgstr "Sign in as a different user"
+
+#: templates/workflow-403.html:36
+msgid "py.templates.workflow-403.suggestion.logOut.currentUser"
+msgstr "(You are {0})"
+
+#: templates/workflow-403.html:39
+msgid "py.templates.workflow-403.suggestion.ask"
+msgstr "Ask the owner to share the workflow with you or make it public"
+
+#: templates/workflow-403.html:41
+msgid "py.templates.workflow-403.suggestion.backToWorkflows"
+msgstr "Go back to <a0>your workflows</a0>"
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"

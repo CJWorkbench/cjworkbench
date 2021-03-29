@@ -9,6 +9,7 @@ export default function Dashboard ({
   addBlock,
   deleteBlock,
   reorderBlocks,
+  isReadOnly,
   setBlockMarkdown
 }) {
   return (
@@ -16,6 +17,7 @@ export default function Dashboard ({
       <ShareCard workflowId={workflow.id} isPublic={workflow.public} />
       <Report
         workflow={workflow}
+        isReadOnly={isReadOnly}
         blocks={blocks}
         reportableTabs={reportableTabs}
         addBlock={addBlock}
@@ -31,6 +33,7 @@ Dashboard.propTypes = {
     id: PropTypes.number.isRequired,
     public: PropTypes.bool.isRequired
   }).isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
   blocks: PropTypes.array.isRequired,
   reportableTabs: PropTypes.array.isRequired,
   addBlock: PropTypes.func.isRequired, // func(position, { type, ... }) => undefined

@@ -48,6 +48,12 @@ class Http302(Exception):
         self.location = location
 
 
+class WorkflowPermissionDenied(PermissionDenied):
+    def __init__(self, workflow_path: str):
+        super().__init__()
+        self.workflow_path = workflow_path
+
+
 def redirect_on_http302(status: int = status.OK):
     def decorator(func):
         @functools.wraps(func)
@@ -60,6 +66,22 @@ def redirect_on_http302(status: int = status.OK):
         return inner
 
     return decorator
+
+
+def render_template_on_workflow_permission_denied(func):
+    @functools.wraps(func)
+    def inner(request, *args, **kwargs):
+        try:
+            return func(request, *args, **kwargs)
+        except WorkflowPermissionDenied as err:
+            return TemplateResponse(
+                request,
+                "workflow-403.html",
+                dict(user=request.user, workflow_path=err.workflow_path),
+                status=status.FORBIDDEN,
+            )
+
+    return inner
 
 
 def lookup_workflow_and_auth(
@@ -75,8 +97,10 @@ def lookup_workflow_and_auth(
     `auth(workflow, request, using_secret)` must return
     `(is_allowed, should_redirect_to_id)`.
 
-    Raise Http404 if the Workflow does not exist and PermissionDenied if the
-    workflow _does_ exist but the user does not have access.
+    Raise Http404 if the Workflow does not exist.
+
+    Raise WorkflowPermissionDenied if the workflow _does_ exist but the user
+    does not have access.
 
     Raise Http302 if the user should send a near-identical request to the
     workflow's ID-based URL. (This implies callers must be wrapped in
@@ -94,7 +118,7 @@ def lookup_workflow_and_auth(
     allowed, want_redirect = auth(workflow, request, using_secret)
 
     if not allowed:
-        raise PermissionDenied()
+        raise WorkflowPermissionDenied(f"/workflows/{workflow_id_or_secret_id}/")
 
     if want_redirect:
         raise Http302("/workflows/%d/" % workflow.id)
@@ -273,6 +297,7 @@ def _lesson_redirect_url(slug) -> Optional[str]:
 
 # no login_required as logged out users can view example/public workflows
 @redirect_on_http302()
+@render_template_on_workflow_permission_denied
 def render_workflow(request: HttpRequest, workflow_id_or_secret_id: Union[int, str]):
     workflow = lookup_workflow_and_auth(
         authorized_read, workflow_id_or_secret_id, request

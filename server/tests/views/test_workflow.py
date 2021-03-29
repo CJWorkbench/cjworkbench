@@ -200,13 +200,22 @@ class WorkflowViewTests(DbTestCase):
         response = self.client.get("/workflows/%d/" % public_workflow.id)
         self.assertEqual(response.status_code, status.OK)
 
-    def test_workflow_view_unauthorized_403(self):
+    def test_workflow_view_unauthorized_wrong_user_403(self):
         # 403 viewing someone else' private workflow (don't 404 as sometimes
         # users try to share workflows by sharing the URL without first making
         # them public, and we need to help them debug that case)
         self.client.force_login(self.otheruser)
         response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.FORBIDDEN)
+        self.assertContains(
+            response,
+            "Sign in as a different user</button>",
+            status_code=status.FORBIDDEN,
+        )
+
+    def test_workflow_view_unauthorized_anonymous_user_403(self):
+        self.client.logout()
+        response = self.client.get("/workflows/%d/" % self.workflow1.id)
+        self.assertContains(response, "Sign in</a>", status_code=status.FORBIDDEN)
 
     @patch.dict(
         "os.environ",

@@ -8,17 +8,18 @@ module.exports = {
 
   // Each page gets its own bundle
   entry: {
-    style: './assets/css/style.scss',
-    'report-styles': './assets/css/report.scss',
-    'embed-styles': './assets/css/embed.scss',
     billing: './assets/js/pages/billing.page',
-    plan: './assets/js/pages/plan.page',
+    embed: './assets/js/pages/embed.page',
+    'embed-styles': './assets/css/embed.scss',
     lessons: './assets/js/pages/lessons.page',
     login: './assets/js/pages/login',
-    workflows: './assets/js/pages/workflows.page',
-    workflow: './assets/js/pages/workflow.page',
+    plan: './assets/js/pages/plan.page',
     report: './assets/js/pages/report.page',
-    embed: './assets/js/pages/embed.page'
+    'report-styles': './assets/css/report.scss',
+    style: './assets/css/style.scss',
+    'workflow-403-styles': './assets/css/workflow-403.scss',
+    workflow: './assets/js/pages/workflow.page',
+    workflows: './assets/js/pages/workflows.page'
   },
 
   watchOptions: {

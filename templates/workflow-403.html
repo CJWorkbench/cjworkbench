@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load bundle_path from webpack %}
+{% load i18n_icu %}
+{% load static %}
+
+{% block title %}
+  {% trans_html "py.templates.workflow-403.title"  default="Private workflow" %}
+{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{% bundle_path 'workflow-403-styles.css' %}" />
+{% endblock %}
+
+{% block headscripts %}
+  <script src="{% bundle_path 'login.js' %}" defer></script>
+{% endblock %}
+
+{% block body %}
+  <div class="logo-container">
+    <img src="{% static 'images/workbench-logo-with-white-text.svg' %}" class="logo"/>
+  </div>
+  <div class="card">
+    <h1>{% trans_html "py.templates.workflow-403.h1" default="Private workflow" %}</h1>
+    <p>{% trans_html "py.templates.workflow-403.description" default="You can’t see this workflow." %}</p>
+    <p>{% trans_html "py.templates.workflow-403.suggestions.header" default="Maybe try these ideas:" %}</p>
+    <ul>
+      {% if user.is_anonymous %}
+        <li><a href="/account/login/?next={{workflow_path|urlencode}}">{% trans_html "py.templates.workflow-403.suggestion.logIn" default="Sign in" %}</a></li>
+      {% else %}
+        <li>
+          <form name="logout" method="POST" action="/account/logout/">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="/account/login?next={{workflow_path|urlencode}}" />
+            <button type="submit" class="btn btn-link">{% trans_html "py.templates.workflow-403.suggestion.logOut" default="Sign in as a different user" %}</button>
+          </form>
+          <small>{% trans_html "py.templates.workflow-403.suggestion.logOut.currentUser" default="(You are {0})" arg_0=user.email %}</small>
+        </li>
+      {% endif %}
+      <li>{% trans_html "py.templates.workflow-403.suggestion.ask" default="Ask the owner to share the workflow with you or make it public" %}</li>
+      {% if not user.is_anonymous %}
+      <li>{% trans_html "py.templates.workflow-403.suggestion.backToWorkflows" default="Go back to <a0>your workflows</a0>" tag_a0_href="/workflows" %}</li>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+  {% include "locale_switcher.html" %}
+{% endblock body %}

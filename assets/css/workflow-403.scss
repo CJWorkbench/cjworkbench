@@ -1,0 +1,120 @@
+@import './variables';
+@import './fonts';
+@import 'components/Fonts.scss';
+@import './functions';
+@import './mixins';
+@import './Icons.scss';
+
+// Bootstrap
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/forms';
+@import '~bootstrap/scss/buttons';
+@import '~bootstrap/scss/dropdown';
+
+@import 'i18n/LocaleSwitcher';
+
+body {
+  min-height: 100vh;
+  background-image: radial-gradient(#31d9ed 25%, #068cb9);
+  background-size: cover;
+  display: flex; // center contents vertically
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/account-icons-bgd.png');
+    background-size: 100% auto;
+    pointer-events: none;
+  }
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.2);
+  max-width: rem(25);
+  padding: rem(2) rem(3);
+  border-radius: 5px;
+  margin: 0 auto;
+}
+
+h1 {
+  @include title-1;
+  color: $brand-text--dark;
+}
+
+.logo-container {
+  margin-bottom: rem(1);
+  max-width: rem(20);
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+form[name="logout"] {
+  display: contents;
+
+  button.btn.btn-link {
+    display: inline;
+    padding: 0;
+  }
+}
+
+li small {
+  display: block;
+}
+
+form.locale-switcher {
+  margin-top: rem(1);
+  text-align: center;
+
+  .dropdown {
+    display: inline-block;
+    text-align: left;
+
+    .btn {
+      font-size: rem(.75);
+      color: white;
+    }
+  }
+
+  .dropdown-item {
+    font-size: rem(.75);
+  }
+
+  .dropdown-toggle {
+    background: transparent;
+    border-color: white;
+
+    &:active {
+      color: white;
+      background: rgba(255, 255, 255, 0.2);
+      border-color: white;
+    }
+
+    i.icon {
+      vertical-align: - 2px;
+      margin-right: rem(.75);
+    }
+  }
+
+  &.show .dropdown-toggle {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &:not(.show) .dropdown-toggle:focus {
+    outline: 1px dotted white;
+  }
+}

@@ -72,8 +72,6 @@ class WorkflowUpdate:
 
     The following fields cannot be represented here:
 
-    * `read_only`: has a different value for different users
-    * `is_owner`: has a different value for different users
     * `selected_tab_position`: has a different value for different users
 
     Every field of an Update is Optional, default `None`. `None` means there
