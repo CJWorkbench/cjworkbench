@@ -111,14 +111,14 @@ export default class WorkbenchAPI {
 
   updateAclEntry (workflowId, email, role) {
     return this._put(
-      `/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`,
+      `/workflows/${workflowId}/acl/${encodeURIComponent(email)}`,
       { role }
     )
   }
 
   deleteAclEntry (workflowId, email) {
     return this._delete(
-      `/api/workflows/${workflowId}/acl/${encodeURIComponent(email)}`
+      `/workflows/${workflowId}/acl/${encodeURIComponent(email)}`
     )
   }
 

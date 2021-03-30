@@ -1,5 +1,5 @@
-from django.db import models
 import stripe
+from django.db import models
 
 
 class Product(models.Model):
@@ -35,3 +35,9 @@ class Product(models.Model):
         ),
     )
     """Quota for undo history."""
+
+    can_create_secret_link = models.BooleanField(
+        null=False,
+        default=True,
+        help_text="When True, user may create secret links to workflows",
+    )

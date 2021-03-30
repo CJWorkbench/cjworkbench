@@ -197,7 +197,7 @@ case "$COMMAND" in
     ;;
 
   "reformat-code")
-    docker_compose_with_commands run --rm black .
+    docker_compose_with_commands run --rm pydev /opt/venv/django/bin/black .
     docker_compose run --rm webpack npm run reformat-code
     ;;
 

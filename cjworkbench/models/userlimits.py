@@ -19,3 +19,6 @@ class UserLimits(NamedTuple):
     Checked in a cronjob. Workflows are joined with their owners' UserProfiles
     to determine max_delta_age_in_days.
     """
+
+    can_create_secret_link: bool = False
+    """When True, user may create a secret link."""

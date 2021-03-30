@@ -1,24 +1,24 @@
 import datetime
 import logging
 import re
-from dataclasses import asdict
 from functools import singledispatch
 from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
 
-from django.contrib.auth import get_user_model
-
 from allauth.account.utils import user_display
-from cjwkernel.types import Column, QuickFix, QuickFixAction, RenderError
 from cjwmodule.i18n import I18nMessage
+from django.contrib.auth import get_user_model
+from icu import ICUError
+
+from cjwkernel.types import Column, QuickFix, QuickFixAction, RenderError
 from cjworkbench.i18n.trans import (
     MESSAGE_LOCALIZER_REGISTRY,
     MessageLocalizer,
     NotInternationalizedError,
 )
+from cjworkbench.models.userlimits import UserLimits
 from cjworkbench.settings import KB_ROOT_URL
 from cjwstate import clientside
 from cjwstate.modules.param_spec import ParamSpec
-from icu import ICUError
 from server.settingsutils import workbench_user_display
 
 User = get_user_model()
@@ -102,6 +102,9 @@ def jsonize_user(user: User, user_profile: Optional["UserProfile"]) -> Dict[str,
         "stripeCustomerId": (
             None if user_profile is None else user_profile.stripe_customer_id
         ),
+        "limits": (
+            UserLimits() if user_profile is None else user_profile.effective_limits
+        )._asdict(),
     }
 
 

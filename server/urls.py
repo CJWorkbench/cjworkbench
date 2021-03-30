@@ -1,7 +1,5 @@
-from django.conf import settings
 from django.conf.urls import url
 from django.urls import include, path, register_converter
-from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
 import server.views.jsdata.timezones
@@ -140,18 +138,27 @@ urlpatterns = [
     ),
     path(
         # URLs you can't access by workflow secret_id (comments explain why)
-        "workflows/<int:workflow_id>/steps/<slug:step_slug>/",
+        "workflows/<int:workflow_id>/",
         include(
             [
+                path("acl", acl.Index.as_view()),
+                path("acl/<str:email>", acl.Entry.as_view()),
                 path(
-                    # Only editors can request value counts
-                    "delta-<int:delta_id>/result-column-value-counts.json",
-                    steps.result_column_value_counts,
+                    "steps/<slug:step_slug>/",
+                    include(
+                        [
+                            path(
+                                # Only editors can request value counts
+                                "delta-<int:delta_id>/result-column-value-counts.json",
+                                steps.result_column_value_counts,
+                            ),
+                            # Security: for our users' protection, we don't allow embedding
+                            # a "secret link" -- it would be too insecure.
+                            path("embed", steps.embed),
+                        ],
+                    ),
                 ),
-                # Security: for our users' protection, we don't allow embedding
-                # a "secret link" -- it would be too insecure.
-                path("embed", steps.embed),
-            ],
+            ]
         ),
     ),
     path("modules/<slug:module_slug>.html", modules.module_html),

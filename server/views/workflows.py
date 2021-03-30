@@ -4,13 +4,12 @@ import datetime
 import functools
 import json
 from http import HTTPStatus as status
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db import IntegrityError
 from django.db.models import Q
 from django.http import (
     Http404,
@@ -28,7 +27,7 @@ import server.utils
 from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Step, Tab, Workflow
+from cjwstate.models import Step, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.reports import build_report_for_workflow

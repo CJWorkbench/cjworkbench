@@ -1,8 +1,8 @@
 from typing import Tuple
 
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
 import stripe
+from django.conf import settings
+from django.core.management.base import BaseCommand
 
 from cjworkbench.models.price import Price
 from cjworkbench.models.product import Product

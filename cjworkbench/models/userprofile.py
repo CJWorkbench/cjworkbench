@@ -1,17 +1,17 @@
-from typing import ContextManager, NamedTuple
+from typing import ContextManager
 
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from django.db import models
 
 from cjworkbench import i18n
+
 from .db_object_cooperative_lock import (
     DbObjectCooperativeLock,
     lookup_and_cooperative_lock,
 )
-from .subscription import Subscription
+from .product import Product
 from .userlimits import UserLimits
-
 
 User = get_user_model()
 
@@ -35,7 +35,6 @@ class UserProfile(models.Model):
             "One fetch every 5min = 288 fetches per day."
         ),
     )
-    """Quota for cronjobs."""
 
     locale_id = models.CharField(
         max_length=5,
@@ -57,18 +56,28 @@ class UserProfile(models.Model):
 
     @property
     def effective_limits(self):
+        products = Product.objects.filter(prices__subscriptions__user_id=self.user_id)
+
         max_fetches_per_day = max(
             [
                 self.max_fetches_per_day,
-                *[
-                    subscription.price.product.max_fetches_per_day
-                    for subscription in self.user.subscriptions.select_related(
-                        "price", "price__product"
-                    )
-                ],
+                *(product.max_fetches_per_day for product in products),
             ]
         )
-        return UserLimits(max_fetches_per_day=max_fetches_per_day)
+        max_delta_age_in_days = max(
+            [
+                UserLimits().max_delta_age_in_days,
+                *(product.max_delta_age_in_days for product in products),
+            ]
+        )
+        can_create_secret_link = any(
+            product.can_create_secret_link for product in products
+        )
+        return UserLimits(
+            max_fetches_per_day=max_fetches_per_day,
+            max_delta_age_in_days=max_delta_age_in_days,
+            can_create_secret_link=can_create_secret_link,
+        )
 
     def __str__(self):
         return user_display(self.user) + " (" + self.user.email + ")"

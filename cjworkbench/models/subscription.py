@@ -5,7 +5,6 @@ from django.db import models
 
 from .price import Price
 
-
 User = get_user_model()
 
 
@@ -40,7 +39,9 @@ class Subscription(models.Model):
     )
     """User who is subscribed."""
 
-    price = models.ForeignKey(Price, on_delete=models.PROTECT)
+    price = models.ForeignKey(
+        Price, related_name="subscriptions", on_delete=models.PROTECT
+    )
     """Price the subscription is for."""
 
     stripe_subscription_id = models.SlugField(
