@@ -9,7 +9,7 @@ describe('OutputPane', () => {
     return shallowWithI18n(
       <OutputPane
         loadRows={jest.fn()}
-        workflowId={123}
+        workflowIdOrSecretId={123}
         step={{ id: 987, slug: 'step-1', deltaId: 1, status: 'ok', htmlOutput: false }}
         isPublic={false}
         isReadOnly={false}

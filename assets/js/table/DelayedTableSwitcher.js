@@ -24,8 +24,8 @@ function tableKey ({ stepSlug, deltaId }) {
 /**
  * Given props, return the props we'll pass to <TableSwitcher>.
  */
-function tableProps ({ workflowId, stepSlug, stepId, deltaId, columns, nRows, status }) {
-  return { workflowId, stepSlug, stepId, deltaId, columns, nRows, status }
+function tableProps ({ workflowIdOrSecretId, stepSlug, stepId, deltaId, columns, nRows, status }) {
+  return { workflowIdOrSecretId, stepSlug, stepId, deltaId, columns, nRows, status }
 }
 
 /**
@@ -66,7 +66,7 @@ export default class DelayedTableSwitcher extends React.PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isReadOnly: PropTypes.bool.isRequired,
-    workflowId: propTypes.workflowId.isRequired,
+    workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepSlug: PropTypes.string, // or null, if no selection
     stepId: PropTypes.number, // or null, if no selection; deprecated
     deltaId: PropTypes.number, // or null, if status!=ok

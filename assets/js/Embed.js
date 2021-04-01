@@ -8,7 +8,7 @@ import EmbedIcon from '../icons/embed.svg'
 
 function IframeContainer (props) {
   const { workflowId, moduleSlug, stepSlug, deltaId } = props
-  const src = useChartIframeSrc({ workflowId, moduleSlug, stepSlug, deltaId })
+  const src = useChartIframeSrc({ workflowIdOrSecretId: workflowId, moduleSlug, stepSlug, deltaId })
 
   return (
     <div className='iframe-container'>

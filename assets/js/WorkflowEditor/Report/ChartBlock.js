@@ -5,7 +5,7 @@ import BlockFrame from './BlockFrame'
 import { useChartIframeSrcWithDataUrlSubscription } from '../../ChartIframe'
 
 export default function ChartBlock ({
-  workflowId,
+  workflowIdOrSecretId,
   block,
   isReadOnly,
   onClickDelete,
@@ -15,7 +15,7 @@ export default function ChartBlock ({
   const { slug, step } = block
   const [iframeEl, setIframeEl] = React.useState(null)
   const src = useChartIframeSrcWithDataUrlSubscription({
-    workflowId,
+    workflowIdOrSecretId,
     moduleSlug: step.module,
     stepSlug: step.slug,
     deltaId: step.cached_render_result_delta_id,
@@ -36,7 +36,7 @@ export default function ChartBlock ({
   )
 }
 ChartBlock.propTypes = {
-  workflowId: propTypes.workflowId.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   block: PropTypes.shape({
     slug: PropTypes.string.isRequired,
     step: PropTypes.shape({

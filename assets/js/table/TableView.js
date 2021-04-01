@@ -12,7 +12,7 @@ export const NMaxColumns = 100
 export class TableView extends React.PureComponent {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    workflowId: propTypes.workflowId.isRequired,
+    workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepSlug: PropTypes.string, // null for placeholder table
     stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
     deltaId: PropTypes.number, // immutable; null for placeholder table
@@ -53,7 +53,7 @@ export class TableView extends React.PureComponent {
   render () {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
-    const { loadRows, workflowId, stepSlug, stepId, deltaId, isReadOnly, columns, nRows } = this.props
+    const { loadRows, workflowIdOrSecretId, stepSlug, stepId, deltaId, isReadOnly, columns, nRows } = this.props
     const tooWide = columns.length > NMaxColumns
 
     let gridView
@@ -99,7 +99,7 @@ export class TableView extends React.PureComponent {
       <div className='outputpane-table'>
         <TableInfo
           isReadOnly={isReadOnly}
-          workflowId={workflowId}
+          workflowIdOrSecretId={workflowIdOrSecretId}
           stepId={stepId}
           stepSlug={stepSlug}
           nRows={stepSlug ? nRows : null}

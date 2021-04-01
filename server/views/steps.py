@@ -10,7 +10,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.template.response import TemplateResponse
-from django.utils.cache import patch_response_headers
+from django.utils.cache import add_never_cache_headers, patch_response_headers
 from django.views.decorators.http import require_GET
 
 from cjwkernel.types import ColumnType
@@ -424,7 +424,9 @@ async def embed(request: HttpRequest, workflow_id: int, step_slug: str):
             status=status.SERVICE_UNAVAILABLE,
         )
 
-    return TemplateResponse(request, "embed.html", {"initState": init_state})
+    response = TemplateResponse(request, "embed.html", {"initState": init_state})
+    add_never_cache_headers(response)
+    return response
 
 
 @xframe_options_exempt

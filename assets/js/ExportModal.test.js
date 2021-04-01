@@ -4,7 +4,7 @@ import { mountWithI18n } from './i18n/test-utils'
 
 describe('ExportModal', () => {
   const wrapper = () =>
-    mountWithI18n(<ExportModal workflowId={123} stepSlug='step-1' open toggle={jest.fn()} />)
+    mountWithI18n(<ExportModal workflowIdOrSecretId={123} stepSlug='step-1' open toggle={jest.fn()} />)
 
   it('should match snapshot', () => {
     const w = wrapper()

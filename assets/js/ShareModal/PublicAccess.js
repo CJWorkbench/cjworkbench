@@ -180,6 +180,6 @@ PublicAccess.propTypes = {
   isPublic: PropTypes.bool.isRequired,
   secretId: PropTypes.string.isRequired, // "" for no-secret
   canCreateSecretLink: PropTypes.bool.isRequired,
-  setWorkflowPublicAccess: PropTypes.func.isRequired, // func(isPublic, hasSecret) => undefined
+  setWorkflowPublicAccess: PropTypes.func.isRequired, // func(isPublic, hasSecret) => Promise[undefined]
   logShare: PropTypes.func.isRequired // func('Facebook'|'Twitter'|'URL copied') => undefined
 }

@@ -5,8 +5,8 @@ import ShareUrl from './components/ShareUrl'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { Trans } from '@lingui/macro'
 
-function buildUrlString (workflowId, stepSlug, ext) {
-  const path = `/workflows/${workflowId}/steps/${stepSlug}/current-result-table.${ext}`
+function buildUrlString (workflowIdOrSecretId, stepSlug, ext) {
+  const path = `/workflows/${workflowIdOrSecretId}/steps/${stepSlug}/current-result-table.${ext}`
   if (window.location.href === 'about:blank') {
     // allowing an out for testing (there is no window.location.href during test)
     return path
@@ -16,10 +16,10 @@ function buildUrlString (workflowId, stepSlug, ext) {
 }
 
 export default function ExportModal (props) {
-  const { open, workflowId, stepSlug, toggle } = props
+  const { open, workflowIdOrSecretId, stepSlug, toggle } = props
 
-  const csvUrlString = buildUrlString(workflowId, stepSlug, 'csv')
-  const jsonUrlString = buildUrlString(workflowId, stepSlug, 'json')
+  const csvUrlString = buildUrlString(workflowIdOrSecretId, stepSlug, 'csv')
+  const jsonUrlString = buildUrlString(workflowIdOrSecretId, stepSlug, 'json')
 
   return (
     <Modal
@@ -80,7 +80,7 @@ export default function ExportModal (props) {
 }
 ExportModal.propTypes = {
   open: PropTypes.bool.isRequired,
-  workflowId: propTypes.workflowId.isRequired, // to build download URLs
+  workflowIdOrSecretId: propTypes.workflowId.isRequired, // to build download URLs
   stepSlug: PropTypes.string.isRequired, // to build download URLs
   toggle: PropTypes.func.isRequired
 }

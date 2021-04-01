@@ -80,7 +80,7 @@ _Modal.propTypes = {
       role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
     }).isRequired
   ), // or null if loading
-  setWorkflowPublicAccess: PropTypes.func.isRequired, // func(isPublic, hasSecret) => undefined
+  setWorkflowPublicAccess: PropTypes.func.isRequired, // func(isPublic, hasSecret) => Promise[undefined]
   updateAclEntry: PropTypes.func.isRequired, // func(email, role) => undefined
   deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
   onClickClose: PropTypes.func.isRequired // func() => undefined

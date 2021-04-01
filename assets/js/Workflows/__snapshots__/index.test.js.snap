@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Workflow list page renders Examples correctly 1`] = `
+exports[`render Examples correctly 1`] = `
 <div>
   <div
     class="page"
@@ -212,7 +212,7 @@ exports[`Workflow list page renders Examples correctly 1`] = `
 </div>
 `;
 
-exports[`Workflow list page renders My workflows correctly 1`] = `
+exports[`render My workflows correctly 1`] = `
 <div>
   <div
     class="page"
@@ -566,7 +566,7 @@ exports[`Workflow list page renders My workflows correctly 1`] = `
 </div>
 `;
 
-exports[`Workflow list page renders Shared correctly 1`] = `
+exports[`render Shared correctly 1`] = `
 <div>
   <div
     class="page"

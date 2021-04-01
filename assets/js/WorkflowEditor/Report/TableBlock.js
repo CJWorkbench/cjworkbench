@@ -2,9 +2,11 @@ import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import BlockFrame from './BlockFrame'
 import Table from '../../Report/Table'
+import propTypes from '../../propTypes'
 
 export default function TableBlock ({
   block,
+  workflowIdOrSecretId,
   isReadOnly,
   onClickDelete,
   onClickMoveDown,
@@ -30,7 +32,7 @@ export default function TableBlock ({
               <a
                 key='download'
                 download
-                href={`/public/moduledata/live/${outputStep.id}.csv`}
+                href={`/workflows/${workflowIdOrSecretId}/steps/${outputStep.slug}/current-result-table.csv`}
               >
                 <i className='icon-download' />
                 <Trans id='js.WorkflowEditor.Report.TableBlock.downloadCsv'>
@@ -63,6 +65,7 @@ TableBlock.propTypes = {
     }).isRequired
   }).isRequired,
   isReadOnly: PropTypes.bool.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   onClickDelete: PropTypes.func.isRequired, // func(slug) => undefined
   onClickMoveDown: PropTypes.func, // or null, if this is the bottom block
   onClickMoveUp: PropTypes.func // or null, if this is the top block

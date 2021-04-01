@@ -6,6 +6,7 @@ import { Trans } from '@lingui/macro'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
 import selectIsReadOnly from '../selectors/selectIsReadOnly'
+import selectWorkflowIdOrSecretId from '../selectors/selectWorkflowIdOrSecretId'
 
 /**
  * Output of currently-selected module.
@@ -13,7 +14,7 @@ import selectIsReadOnly from '../selectors/selectIsReadOnly'
 export class OutputPane extends React.Component {
   static propTypes = {
     loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    workflowId: propTypes.workflowId.isRequired,
+    workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
       deltaId: PropTypes.number, // or null -- it may not be rendered
@@ -74,7 +75,7 @@ export class OutputPane extends React.Component {
     // we showed the _input_ module's iframe we wouldn't render the stack
     // trace.
 
-    const { step, workflowId, isPublic } = this.props
+    const { step, workflowIdOrSecretId, isPublic } = this.props
 
     const moduleSlug = (step && step.htmlOutput) ? step.module : null
     const stepSlug = step ? step.slug : null
@@ -88,7 +89,7 @@ export class OutputPane extends React.Component {
     // any <iframe>.
     return (
       <OutputIframe
-        workflowId={workflowId}
+        workflowIdOrSecretId={workflowIdOrSecretId}
         isPublic={isPublic}
         stepId={stepId}
         stepSlug={stepSlug}
@@ -99,7 +100,7 @@ export class OutputPane extends React.Component {
   }
 
   render () {
-    const { isReadOnly, loadRows, step, stepBeforeError, workflowId } = this.props
+    const { isReadOnly, loadRows, step, stepBeforeError, workflowIdOrSecretId } = this.props
     const stepForTable = this.stepForTable
     const className =
       'outputpane module-' + (step ? step.status : 'unreachable')
@@ -119,7 +120,7 @@ export class OutputPane extends React.Component {
           : null}
         <DelayedTableSwitcher
           key='table'
-          workflowId={workflowId}
+          workflowIdOrSecretId={workflowIdOrSecretId}
           stepSlug={stepForTable ? stepForTable.slug : null}
           stepId={stepForTable ? stepForTable.id : null}
           status={stepForTable ? stepForTable.status : null}
@@ -198,7 +199,7 @@ function mapStateToProps (state) {
   }
 
   return {
-    workflowId: workflow.id,
+    workflowIdOrSecretId: selectWorkflowIdOrSecretId(state),
     step: step
       ? {
           id: step.id,

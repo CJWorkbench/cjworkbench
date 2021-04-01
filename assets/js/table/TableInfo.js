@@ -12,7 +12,7 @@ export default class TableInfo extends React.PureComponent {
     nRows: PropTypes.number, // or null if unknown
     nColumns: PropTypes.number, // or null if unknown
     isReadOnly: PropTypes.bool.isRequired,
-    workflowId: propTypes.workflowId.isRequired,
+    workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number, // or null if none selected
     stepSlug: PropTypes.string, // or null if none selected
     selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired
@@ -34,7 +34,7 @@ export default class TableInfo extends React.PureComponent {
     const {
       nRows,
       nColumns,
-      workflowId,
+      workflowIdOrSecretId,
       stepSlug,
       stepId,
       selectedRowIndexes,
@@ -99,7 +99,7 @@ export default class TableInfo extends React.PureComponent {
               </button>
               <ExportModal
                 open={isExportModalOpen}
-                workflowId={workflowId}
+                workflowIdOrSecretId={workflowIdOrSecretId}
                 stepSlug={stepSlug}
                 toggle={this.closeExportModal}
               />

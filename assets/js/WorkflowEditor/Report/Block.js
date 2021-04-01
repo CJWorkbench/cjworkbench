@@ -15,7 +15,7 @@ const Components = {
  * */
 export default function Block (props) {
   const {
-    workflowId,
+    workflowIdOrSecretId,
     block,
     isReadOnly,
     onClickDelete,
@@ -26,7 +26,7 @@ export default function Block (props) {
   const Component = Components[block.type]
   return (
     <Component
-      workflowId={workflowId}
+      workflowIdOrSecretId={workflowIdOrSecretId}
       block={block}
       isReadOnly={isReadOnly}
       onClickDelete={onClickDelete}
@@ -37,7 +37,7 @@ export default function Block (props) {
   )
 }
 Block.propTypes = {
-  workflowId: propTypes.workflowId.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   block: PropTypes.oneOfType([
     PropTypes.exact({
       slug: PropTypes.string.isRequired,

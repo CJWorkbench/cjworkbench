@@ -15,6 +15,7 @@ export default function WorkflowContextMenu (props) {
   const {
     workflow,
     api,
+    user = null,
     onWorkflowChanging,
     onWorkflowChanged,
     onWorkflowDuplicating,
@@ -88,8 +89,9 @@ export default function WorkflowContextMenu (props) {
       {isShareModalOpen
         ? (
           <ShareModal
-            workflow={workflow}
             api={api}
+            workflow={workflow}
+            canCreateSecretLink={user.limits.can_create_secret_link}
             onWorkflowChanging={onWorkflowChanging}
             onWorkflowChanged={onWorkflowChanged}
             onClose={handleCloseShareModal}
@@ -108,10 +110,15 @@ WorkflowContextMenu.propTypes = {
     duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
-    setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
+    setWorkflowPublicAccess: PropTypes.func.isRequired // func(id, isPublic, hasSecret) => Promise[{workflow}]
   }).isRequired,
   onWorkflowChanging: PropTypes.func.isRequired, // func(id, {k: v, ...}) => undefined
   onWorkflowChanged: PropTypes.func.isRequired, // func(id) => undefined
   onWorkflowDuplicating: PropTypes.func.isRequired, // func(id, {k: v, ...}) => undefined
-  onWorkflowDuplicated: PropTypes.func.isRequired // func(id) => undefined
+  onWorkflowDuplicated: PropTypes.func.isRequired, // func(id) => undefined
+  user: PropTypes.shape({
+    limits: PropTypes.shape({
+      can_create_secret_link: PropTypes.bool.isRequired
+    }).isRequired
+  }).isRequired // context menu appears on owned-workflows page, so user is logged in
 }

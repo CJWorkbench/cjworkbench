@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import selectReport from '../../selectors/selectReport'
 import selectReportableTabs from '../../selectors/selectReportableTabs'
 import selectIsReadOnly from '../../selectors/selectIsReadOnly'
+import selectWorkflowIdOrSecretId from '../../selectors/selectWorkflowIdOrSecretId'
 import {
   addBlock,
   deleteBlock,
@@ -13,6 +14,7 @@ import {
 function mapStateToProps (state) {
   return {
     workflow: state.workflow,
+    workflowIdOrSecretId: selectWorkflowIdOrSecretId(state),
     blocks: selectReport(state),
     reportableTabs: selectReportableTabs(state),
     isReadOnly: selectIsReadOnly(state)
