@@ -1,31 +1,84 @@
 .share-modal {
-  h6 {
+  .modal-dialog {
+    max-width: 60rem;
+  }
+
+  legend {
     @include font-sans-regular;
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     margin-bottom: 1rem;
   }
 
   .share-public-options {
-    $radio-width: 2.5rem;
+    .share-level-option {
+      margin-top: 1rem;
+      height: 4rem;
+      position: relative;
+
+      &.prompting {
+        &::before {
+          // Highlight with a background
+          content: '';
+          display: block;
+          position: absolute;
+          top: -.5rem;
+          left: -.5rem;
+          bottom: -.5rem;
+          right: -.5rem;
+          background: $brand-orange--light;
+          border-radius: 3px;
+        }
+
+        &>* {
+          position: relative; // show up above background
+        }
+      }
+    }
 
     label {
-      margin-top: 1rem;
-      display: grid;
-      grid-template-columns: $radio-width 1fr;
+      display: flex;
+      align-items: center;
+      font-size: 1.6rem;
+      line-height: 1.8rem;
+      margin: 0;
 
       small {
         color: $text-muted;
-      }
-
-      &>* {
-        grid-column: 2;
+        font-size: 1.4rem;
+        vertical-align: -1px;
       }
 
       input {
-        grid-column: 1;
-        grid-row: 1;
-        align-self: center;
+        width: 1.8rem;
+        height: 1.8rem;
+        margin: 0 1.2rem 0 0;
+        display: block;
+        appearance: none;
+        position: relative;
+
+        &::before {
+          content: '';
+          display: block;
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          border: 3px solid $light-gray;
+          cursor: pointer;
+        }
+
+        &:disabled::before {
+          opacity: .7;
+        }
+
+        &:checked::before {
+          border-color: $brand-orange;
+        }
+      }
+
+      strong {
+        padding-right: 2.5rem;
       }
 
       input:disabled + strong {
@@ -33,17 +86,36 @@
       }
     }
 
-    label + * {
-      margin-left: $radio-width;
-    }
+    .prompt {
+      margin: 0 0 0 3rem; // radio width + its margin-right
 
-    strong {
-      font-size: 1.6rem;
-      font-weight: bold;
-    }
-
-    small {
       font-size: 1.4rem;
+
+      strong {
+        color: $brand-red;
+      }
+
+      small {
+        font-size: 1.2rem;
+      }
+
+      button[name="delete-secret-link"] {
+        @include action-button;
+        @include button-red;
+        height: 2rem;
+        padding: 0 .8rem;
+        display: inline-block;
+        margin-left: 1rem;
+      }
+
+      button[name="cancel"] {
+        @include _texty-button;
+        margin-left: 1rem;
+        color: $brand-text--medium;
+        &:hover {
+          color: $brand-text--dark;
+        }
+      }
     }
   }
 

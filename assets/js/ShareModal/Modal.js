@@ -32,6 +32,15 @@ export default function _Modal (props) {
         </Trans>
       </ModalHeader>
       <ModalBody>
+        <CollaboratorAccess
+          isReadOnly={isReadOnly}
+          ownerEmail={ownerEmail}
+          isPublic={isPublic}
+          acl={acl}
+          updateAclEntry={updateAclEntry}
+          deleteAclEntry={deleteAclEntry}
+        />
+        <hr />
         <PublicAccess
           workflowId={workflowId}
           isPublic={isPublic}
@@ -40,16 +49,6 @@ export default function _Modal (props) {
           canCreateSecretLink={canCreateSecretLink}
           setWorkflowPublicAccess={setWorkflowPublicAccess}
           logShare={logShare}
-        />
-        <hr />
-        <CollaboratorAccess
-          isReadOnly={isReadOnly}
-          ownerEmail={ownerEmail}
-          isPublic={isPublic}
-          workflowId={workflowId}
-          acl={acl}
-          updateAclEntry={updateAclEntry}
-          deleteAclEntry={deleteAclEntry}
         />
       </ModalBody>
       <ModalFooter>

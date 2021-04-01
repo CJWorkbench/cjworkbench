@@ -2,11 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Trans } from '@lingui/macro'
 import Acl from './Acl'
-import ShareUrl from '../components/ShareUrl'
 
 export default function CollaboratorAccess (props) {
-  const { isReadOnly, workflowId, ownerEmail, acl, updateAclEntry, deleteAclEntry } = props
-  const url = `${window.origin}/workflows/${workflowId}`
+  const { isReadOnly, ownerEmail, acl, updateAclEntry, deleteAclEntry } = props
 
   return (
     <>
@@ -25,12 +23,9 @@ export default function CollaboratorAccess (props) {
 
       {acl.length
         ? (
-          <div className='shareable-link'>
-            <h6>
-              <Trans id='js.ShareModal.Modal.shareWithCollaborators'>Link for collaborators</Trans>
-            </h6>
-            <ShareUrl url={url} />
-          </div>
+          <p className='description'>
+            <Trans id='js.ShareModal.CollaboratorAccess.description'>Collaborators can log in and open “Shared with me” to find this workflow.</Trans>
+          </p>
           )
         : null}
     </>
@@ -38,7 +33,6 @@ export default function CollaboratorAccess (props) {
 }
 CollaboratorAccess.propTypes = {
   isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
-  workflowId: PropTypes.number.isRequired,
   ownerEmail: PropTypes.string.isRequired,
   isPublic: PropTypes.bool.isRequired,
   acl: PropTypes.array.isRequired,

@@ -55,7 +55,7 @@ export default function PublicAccess (props) {
   // { isPublic, hasSecret, submitting } bools
   const [submitState, setSubmitState] = React.useState(null)
 
-  const [showIsPublic, showHasSecret] = submitState
+  const [showIsPublic, showHasSecret] = (submitState && submitState.submitting)
     ? [submitState.isPublic, submitState.hasSecret]
     : [isPublic, Boolean(secretId)]
   const selectedMenuOption = showIsPublic
@@ -88,13 +88,19 @@ export default function PublicAccess (props) {
     submit({ isPublic: false, hasSecret: false })
   }, [submit])
 
+  const handleClickCancelSubmitting = React.useCallback(() => {
+    setSubmitState(null)
+  }, [setSubmitState])
+
+  const promptingToDeleteSecretId = Boolean(submitState && Boolean(secretId) && !submitState.hasSecret)
+
   return (
     <>
       <fieldset className='share-public-options' disabled={submitState ? submitState.submitting : false}>
         <legend>
-          <Trans id='js.ShareModal.PublicAccess.title'>Who can see this workflow</Trans>
+          <Trans id='js.ShareModal.PublicAccess.title'>Public Access</Trans>
         </legend>
-        <div className='share-level-option'>
+        <div className={`share-level-option${promptingToDeleteSecretId ? ' prompting' : ''}`}>
           <label className='share-level-private'>
             <input
               type='radio'
@@ -103,24 +109,35 @@ export default function PublicAccess (props) {
               readOnly={isReadOnly}
               checked={selectedMenuOption === 'private'}
               onChange={handleChange}
+              disabled={promptingToDeleteSecretId}
             />
             <strong><Trans id='js.ShareModal.PublicAccess.private.title'>Private</Trans></strong>
             <small><Trans id='js.ShareModal.PublicAccess.private.description'>Only collaborators can see this workflow</Trans></small>
           </label>
-          {submitState && Boolean(secretId) && !submitState.hasSecret
+          {promptingToDeleteSecretId
             ? (
-              <p className='prompt'>
+              <p className='prompt confirm-delete-secret-links'>
                 <Trans id='js.ShareModal.PublicAccess.confirmDeleteSecretLink.prompt'>
-                  <strong>Delete secret link?</strong> Everyone who uses it will lose access.
+                  <strong>Delete secret link?</strong> <small>It will never work again.</small>
                 </Trans>
                 <button
-                  type='submit'
-                  className='btn btn-orange'
+                  type='button'
+                  name='delete-secret-link'
                   onClick={handleClickDeleteSecretId}
                   disabled={submitState.submitting}
                 >
-                  <Trans id='js.ShareModal.publicAccess.confirmDeleteSecretLink.button'>
-                    Delete secret link
+                  <Trans id='js.ShareModal.publicAccess.confirmDeleteSecretLink.confirm'>
+                    Delete
+                  </Trans>
+                </button>
+                <button
+                  type='button'
+                  name='cancel'
+                  onClick={handleClickCancelSubmitting}
+                  disabled={submitState.submitting}
+                >
+                  <Trans id='js.ShareModal.publicAccess.confirmDeleteSecretLink.cancel'>
+                    Cancel
                   </Trans>
                 </button>
               </p>
@@ -133,18 +150,25 @@ export default function PublicAccess (props) {
               type='radio'
               name='share-level'
               value='secret'
-              disabled={!secretId && !canCreateSecretLink}
+              disabled={(!secretId && !canCreateSecretLink) || promptingToDeleteSecretId}
               readOnly={isReadOnly}
               checked={selectedMenuOption === 'secret'}
               onChange={handleChange}
             />
             <strong><Trans id='js.ShareModal.PublicAccess.secret.title'>Secret Link</Trans></strong>
-            <small><Trans id='js.ShareModal.PublicAccess.secret.description'>Anyone with the link can see this workflow and its collaborators.</Trans></small>
+            <small><Trans id='js.ShareModal.PublicAccess.secret.description'>Anyone with the link can see this workflow and its collaborators</Trans></small>
           </label>
           {!secretId && !canCreateSecretLink
             ? (
-              <p className='requires-paid-plan'>
-                <Trans id='js.ShareModal.PublicAccess.secret.requiresPaidPlan'>Requires paid plan. <a href='/settings/plan' target='_blank' rel='noopener noreferrer'>Upgrade</a></Trans>
+              <p className='prompt'>
+                <a href='/settings/plan' target='_blank' rel='noopener noreferrer'>
+                  <Trans
+                    id='js.ShareModal.PublicAccess.secret.upgrade'
+                    comment='A prompt to upgrade; clicking the link goes to the Plans page'
+                  >
+                    Upgrade
+                  </Trans>
+                </a>
               </p>
               )
             : null}
@@ -155,12 +179,13 @@ export default function PublicAccess (props) {
               type='radio'
               name='share-level'
               value='public'
+              disabled={promptingToDeleteSecretId}
               readOnly={isReadOnly}
               checked={selectedMenuOption === 'public'}
               onChange={handleChange}
             />
             <strong><Trans id='js.ShareModal.PublicAccess.public.title'>Public</Trans></strong>
-            <small><Trans id='js.ShareModal.PublicAccess.secret.description'>Anyone on the Internet can see this workflow and its collaborators.</Trans></small>
+            <small><Trans id='js.ShareModal.PublicAccess.secret.description'>Anyone on the Internet can see this workflow and its collaborators</Trans></small>
           </label>
         </div>
       </fieldset>
