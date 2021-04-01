@@ -9,21 +9,22 @@ function logShare (type) {
 }
 
 function mapStateToProps (state) {
-  const url = `${window.origin}/workflows/${state.workflow.id}`
+  const { loggedInUser, workflow } = state
 
   return {
-    url,
-    acl: state.workflow.acl,
-    workflowId: state.workflow.id,
-    isPublic: state.workflow.public,
+    acl: workflow.acl,
+    workflowId: workflow.id,
+    isPublic: workflow.public,
+    secretId: workflow.secret_id,
     isReadOnly: selectLoggedInUserRole(state) !== 'owner',
-    ownerEmail: state.workflow.owner_email,
+    ownerEmail: workflow.owner_email,
+    canCreateSecretLink: loggedInUser.limits.can_create_secret_link,
     logShare
   }
 }
 
 const mapDispatchToProps = {
-  setIsPublic: actions.setWorkflowPublicAction,
+  setWorkflowPublicAccess: actions.setWorkflowPublicAccessAction,
   updateAclEntry: actions.updateAclEntryAction,
   deleteAclEntry: actions.deleteAclEntryAction
 }

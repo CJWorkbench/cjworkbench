@@ -1,88 +1,175 @@
 .share-modal {
   h6 {
     @include font-sans-regular;
-    font-weight: normal;
-    font-size: 1.6rem;
+    font-weight: bold;
+    font-size: 1.2rem;
     margin-bottom: 1rem;
-
-    &:not(:first-child) {
-      margin-top: 2.5rem;
-    }
   }
 
-  p {
-    // We use <p> for "read-only" replacements of components. For instance,
-    // non-owners see <p class="role"> instead of a <div class="dropdown role">
-    margin: 0;
-    padding: 0;
-    font: inherit;
-  }
-
-  .public-private {
-    span {
-      @include content-1;
-    }
+  .share-public-options {
+    $radio-width: 2.5rem;
 
     label {
-      margin-bottom: 0;
-      margin-left: 2rem;
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: $radio-width 1fr;
+
+      small {
+        color: $text-muted;
+      }
+
+      &>* {
+        grid-column: 2;
+      }
+
+      input {
+        grid-column: 1;
+        grid-row: 1;
+        align-self: center;
+      }
+
+      input:disabled + strong {
+        color: $text-muted;
+      }
     }
 
-    label input {
-      top: 3px; // align checkbox with text
+    label + * {
+      margin-left: $radio-width;
+    }
+
+    strong {
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    small {
+      font-size: 1.4rem;
     }
   }
 
-  ul.acl {
-    display: block;
-    list-style: none;
-    margin: 0;
-    padding: 0 0 0 2rem;
-    font-size: 1.3rem;
+  .shareable-links {
+    font-size: 1.4rem;
+    margin-top: 1rem;
 
-    & > li {
-      display: block;
+    h6 {
+      font-size: 1.6rem;
     }
 
-    // email shared with
-    .acl-entry {
-      display: flex;
+    ul {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-auto-flow: row;
+      grid-template-columns: auto 1fr auto auto;
       align-items: center;
-      margin: 1rem 0;
 
-      .dropdown-toggle {
-        background-color: $dark-accent--soft;
-        height: 2.6rem;
-        color: $brand-text--dark;
-        border: 2px solid transparent;
-        @include info-1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 14rem;
-        border-radius: 3px 0 0 3px;
-        &:hover {
-          border-color: $dark-accent--medium;
+      li {
+        display: contents;
+
+        &:first-child>* {
+          grid-row: 1;
+        }
+        &:nth-child(2)>* {
+          grid-row: 2;
         }
       }
+    }
+  }
 
-      .dropdown-item.active {
-        background-color: $dark-accent--medium;
-        color: $brand-text--darker;
+  .shareable-link {
+    strong {
+      margin-right: .8rem;
+    }
+
+    .share-url {
+      flex: 1 1 auto;
+    }
+
+    a.twitter-share, a.facebook-share {
+      margin-left: .8rem;
+      border-radius: 4px;
+      font-size: 1.3rem;
+      height: 2.8rem;
+      line-height: 2.8rem;
+      padding: 0 .8rem;
+      color: white;
+      text-decoration: none;
+
+      svg {
+        width: rem(1.6);
+        height: rem(1.6);
+      }
+    }
+
+    a.twitter-share {
+      background: #1da1f2;
+    }
+
+    a.facebook-share {
+      background: #1877f2;
+    }
+  }
+
+  fieldset.share-collaborators {
+    p {
+      // We use <p> for "read-only" replacements of components. For instance,
+      // non-owners see <p class="role"> instead of a <div class="dropdown role">
+      margin: 0;
+      padding: 0;
+      font: inherit;
+    }
+
+    ul.acl {
+      display: block;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 1.3rem;
+
+      & > li {
+        display: block;
       }
 
-      .btn-danger {
-        background-color: $brand-orange;
-        border: 0;
-        height: 2.6rem;
-        width: 2.6rem;
-        @include content-1;
-        font-size: 1.3rem;
-        border-radius: 0 3px 3px 0;
-        margin: 0;
+      // email shared with
+      .acl-entry {
+        display: flex;
+        align-items: center;
+        margin: 1rem 0;
 
-        &:hover {
-          background-color: $brand-red;
+        .dropdown-toggle {
+          background-color: $dark-accent--soft;
+          height: 2.6rem;
+          color: $brand-text--dark;
+          border: 2px solid transparent;
+          @include info-1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 14rem;
+          border-radius: 3px 0 0 3px;
+          &:hover {
+            border-color: $dark-accent--medium;
+          }
+        }
+
+        .dropdown-item.active {
+          background-color: $dark-accent--medium;
+          color: $brand-text--darker;
+        }
+
+        .btn-danger {
+          background-color: $brand-orange;
+          border: 0;
+          height: 2.6rem;
+          width: 2.6rem;
+          @include content-1;
+          font-size: 1.3rem;
+          border-radius: 0 3px 3px 0;
+          margin: 0;
+
+          &:hover {
+            background-color: $brand-red;
+          }
         }
       }
     }
@@ -113,25 +200,21 @@
         position: absolute;
 
         button {
-          @extend .button-icon;
+          background-color: white;
+          color: $medium-gray;
+          border-radius: 0 3px 3px 0;
+          font-size: 1.5rem;
           border: 0;
           width: 10.5rem;
           height: 3rem;
           top: 2px;
+          &:hover {
+            background: $SuperLightGray;
+            color: $brand-text--dark;
+          }
         }
       }
     }
-
-    button.delete {
-      margin-left: 1rem;
-    }
-  }
-
-  .share-url {
-    margin-left: 2rem;
-  }
-  .share-links {
-    margin-left: 2rem;
   }
 }
 

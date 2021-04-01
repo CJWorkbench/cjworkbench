@@ -48,6 +48,7 @@ export default function errorMiddleware (errorActionFactory) {
       done = next(action)
     } catch (err) {
       // Synchronous error
+      console.error(err)
       return next(errorActionFactory(err, action))
     }
     if (done instanceof Promise) {

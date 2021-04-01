@@ -181,8 +181,11 @@ export default class WorkbenchAPI {
     return this._callExpectingNull('report.set_block_markdown', args)
   }
 
-  setWorkflowPublic (workflowId, isPublic) {
-    return this._post(`/api/workflows/${workflowId}`, { public: isPublic })
+  setWorkflowPublicAccess (workflowId, isPublic, hasSecret) {
+    return this._put(
+      `/workflows/${workflowId}/acl`,
+      { public: isPublic, has_secret: hasSecret }
+    )
   }
 
   trySetStepAutofetch (stepId, isAutofetch, fetchInterval) {

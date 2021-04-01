@@ -1,89 +1,87 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
-import PublicPrivate from './PublicPrivate'
-import Acl from './Acl'
-import Url from './Url'
 import { Trans } from '@lingui/macro'
+import PublicAccess from './PublicAccess'
+import CollaboratorAccess from './CollaboratorAccess'
 
-export default class _Modal extends PureComponent {
-  static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
-    url: PropTypes.string.isRequired,
-    isPublic: PropTypes.bool.isRequired,
-    logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
-    ownerEmail: PropTypes.string.isRequired,
-    acl: PropTypes.arrayOf(
-      PropTypes.shape({
-        email: PropTypes.string.isRequired,
-        role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
-      }).isRequired
-    ), // or null if loading
-    setIsPublic: PropTypes.func.isRequired, // func(isPublic) => undefined
-    updateAclEntry: PropTypes.func.isRequired, // func(email, role) => undefined
-    deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
-    onClickClose: PropTypes.func.isRequired // func() => undefined
-  }
+export default function _Modal (props) {
+  const {
+    isReadOnly,
+    canCreateSecretLink,
+    isPublic,
+    secretId,
+    setWorkflowPublicAccess,
+    logShare,
+    ownerEmail,
+    acl,
+    updateAclEntry,
+    deleteAclEntry,
+    onClickClose,
+    workflowId
+  } = props
 
-  render () {
-    const {
-      url,
-      isReadOnly,
-      isPublic,
-      setIsPublic,
-      logShare,
-      ownerEmail,
-      acl,
-      updateAclEntry,
-      deleteAclEntry,
-      onClickClose
-    } = this.props
-
-    return (
-      <Modal className='share-modal' isOpen toggle={onClickClose}>
-        <ModalHeader>
-          <Trans
-            id='js.ShareModal.Modal.header.title'
-            comment='This should be all-caps for styling reasons'
+  return (
+    <Modal className='share-modal' isOpen toggle={onClickClose}>
+      <ModalHeader>
+        <Trans
+          id='js.ShareModal.Modal.header.title'
+          comment='This should be all-caps for styling reasons'
+        >
+          SHARE WORKFLOW
+        </Trans>
+      </ModalHeader>
+      <ModalBody>
+        <PublicAccess
+          workflowId={workflowId}
+          isPublic={isPublic}
+          isReadOnly={isReadOnly}
+          secretId={secretId}
+          canCreateSecretLink={canCreateSecretLink}
+          setWorkflowPublicAccess={setWorkflowPublicAccess}
+          logShare={logShare}
+        />
+        <hr />
+        <CollaboratorAccess
+          isReadOnly={isReadOnly}
+          ownerEmail={ownerEmail}
+          isPublic={isPublic}
+          workflowId={workflowId}
+          acl={acl}
+          updateAclEntry={updateAclEntry}
+          deleteAclEntry={deleteAclEntry}
+        />
+      </ModalBody>
+      <ModalFooter>
+        <div className='actions'>
+          <button
+            name='close'
+            className='action-button button-gray'
+            onClick={onClickClose}
           >
-            SHARE WORKFLOW
-          </Trans>
-        </ModalHeader>
-        <ModalBody>
-          <h6>
-            <Trans id='js.ShareModal.Modal.shareWithTheWorld'>
-              Share with the world
-            </Trans>
-          </h6>
-          <PublicPrivate
-            isReadOnly={isReadOnly}
-            isPublic={isPublic}
-            setIsPublic={setIsPublic}
-          />
-          <h6>
-            <Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans>
-          </h6>
-          <Acl
-            isReadOnly={isReadOnly}
-            ownerEmail={ownerEmail}
-            acl={acl}
-            updateAclEntry={updateAclEntry}
-            deleteAclEntry={deleteAclEntry}
-          />
-          <Url url={url} isPublic={isPublic} logShare={logShare} />
-        </ModalBody>
-        <ModalFooter>
-          <div className='actions'>
-            <button
-              name='close'
-              className='action-button button-gray'
-              onClick={onClickClose}
-            >
-              <Trans id='js.ShareModal.Modal.footer.closeButton'>Close</Trans>
-            </button>
-          </div>
-        </ModalFooter>
-      </Modal>
-    )
-  }
+            <Trans id='js.ShareModal.Modal.footer.closeButton'>Close</Trans>
+          </button>
+        </div>
+      </ModalFooter>
+    </Modal>
+  )
+}
+_Modal.propTypes = {
+  isReadOnly: PropTypes.bool.isRequired, // are we owner? Otherwise, we can't edit the ACL
+  workflowId: PropTypes.number.isRequired,
+  isPublic: PropTypes.bool.isRequired,
+  secretId: PropTypes.string.isRequired, // "" for no secret ID
+  logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
+  canCreateSecretLink: PropTypes.bool.isRequired,
+  ownerEmail: PropTypes.string.isRequired,
+  acl: PropTypes.arrayOf(
+    PropTypes.shape({
+      email: PropTypes.string.isRequired,
+      role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired
+    }).isRequired
+  ), // or null if loading
+  setWorkflowPublicAccess: PropTypes.func.isRequired, // func(isPublic, hasSecret) => undefined
+  updateAclEntry: PropTypes.func.isRequired, // func(email, role) => undefined
+  deleteAclEntry: PropTypes.func.isRequired, // func(email) => undefined
+  onClickClose: PropTypes.func.isRequired // func() => undefined
 }
