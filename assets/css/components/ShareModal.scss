@@ -7,7 +7,7 @@
     @include font-sans-regular;
     font-weight: bold;
     font-size: 1.6rem;
-    margin-bottom: 1rem;
+    margin: 0;
   }
 
   hr {
@@ -16,7 +16,7 @@
 
   .share-public-options {
     .share-level-option {
-      margin-top: 1rem;
+      margin-top: 2rem;
       height: 4rem;
       position: relative;
 
@@ -26,10 +26,10 @@
           content: '';
           display: block;
           position: absolute;
-          top: -.5rem;
-          left: -.5rem;
-          bottom: -.5rem;
-          right: -.5rem;
+          top: -1rem;
+          left: -1rem;
+          bottom: -1rem;
+          right: -1rem;
           background: $brand-orange--light;
           border-radius: 3px;
         }
@@ -108,7 +108,7 @@
       }
 
       small {
-        font-size: 1.2rem;
+        font-size: inherit;
       }
 
       button[name="delete-secret-link"] {
@@ -116,9 +116,10 @@
         border: 1px solid $brand-red;
         border-radius: 999rem; // circle
         color: red;
+        padding: 0 1rem;
         background: transparent;
         margin-left: 1rem;
-        font-size: 1.4rem;
+        font: inherit;
 
         &:hover {
           background: $error-prompt--light;
@@ -209,6 +210,12 @@
   }
 
   fieldset.share-collaborators {
+    p.description {
+      font-size: 1.4rem;
+      margin: .5rem 0 0;
+      color: $text-muted;
+    }
+
     ul.acl {
       display: block;
       list-style: none;
@@ -303,11 +310,6 @@
           color: $brand-text--dark;
         }
       }
-    }
-
-    p.description {
-      font-size: 1.4rem;
-      margin: 1rem 0 0;
     }
   }
 }

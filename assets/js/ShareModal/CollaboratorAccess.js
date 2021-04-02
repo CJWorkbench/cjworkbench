@@ -12,6 +12,9 @@ export default function CollaboratorAccess (props) {
         <legend>
           <Trans id='js.ShareModal.Modal.collaborators'>Collaborators</Trans>
         </legend>
+        <p className='description'>
+          <Trans id='js.ShareModal.CollaboratorAccess.description'>Collaborators can log in and open “Shared with me” to find this workflow.</Trans>
+        </p>
         <Acl
           isReadOnly={isReadOnly}
           ownerEmail={ownerEmail}
@@ -19,14 +22,6 @@ export default function CollaboratorAccess (props) {
           updateAclEntry={updateAclEntry}
           deleteAclEntry={deleteAclEntry}
         />
-
-        {acl.length
-          ? (
-            <p className='description'>
-              <Trans id='js.ShareModal.CollaboratorAccess.description'>Collaborators can log in and open “Shared with me” to find this workflow.</Trans>
-            </p>
-            )
-          : null}
       </fieldset>
     </>
   )

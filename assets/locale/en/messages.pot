@@ -214,60 +214,70 @@ msgid "js.Page.MainNav.workflows.title"
 msgstr ""
 
 #. default-message: Only collaborators can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:20
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr ""
 
-#. default-message: Anyone can view this report
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#. default-message: Anyone on the Internet can view this report
+#: assets/js/WorkflowEditor/Report/ShareCard.js:18
 msgid "js.Report.ShareCard.accessibilityDescription.public"
+msgstr ""
+
+#. default-message: Anyone with the link can view this report
+#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+msgid "js.Report.ShareCard.accessibilityDescription.secret"
 msgstr ""
 
 #. As in 'Edit privacy settings'
 #. default-message: Edit privacy
-#: assets/js/WorkflowEditor/Report/ShareCard.js:23
+#: assets/js/WorkflowEditor/Report/ShareCard.js:42
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
 #. As in 'URL of report'
 #. default-message: Report Sharing URL
-#: assets/js/WorkflowEditor/Report/ShareCard.js:34
+#: assets/js/WorkflowEditor/Report/ShareCard.js:53
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
 
+#. default-message: This workflow has a secret link
+#: assets/js/WorkflowEditor/Report/ShareCard.js:11
+msgid "js.Report.ShareCard.sharingSTatus.secret"
+msgstr ""
+
 #. default-message: This workflow is private
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr ""
 
 #. default-message: This workflow is public
-#: assets/js/WorkflowEditor/Report/ShareCard.js:13
+#: assets/js/WorkflowEditor/Report/ShareCard.js:8
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr ""
 
+#. default-message: Collaborators can log in and open “Shared with me” to find this workflow.
+#: assets/js/ShareModal/CollaboratorAccess.js:16
+msgid "js.ShareModal.CollaboratorAccess.description"
+msgstr ""
+
 #. default-message: Collaborators
-#: assets/js/ShareModal/Modal.js:64
+#: assets/js/ShareModal/CollaboratorAccess.js:13
 msgid "js.ShareModal.Modal.collaborators"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/ShareModal/Modal.js:82
+#: assets/js/ShareModal/Modal.js:61
 msgid "js.ShareModal.Modal.footer.closeButton"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: SHARE WORKFLOW
-#: assets/js/ShareModal/Modal.js:45
+#: assets/js/ShareModal/Modal.js:27
 msgid "js.ShareModal.Modal.header.title"
 msgstr ""
 
-#. default-message: Share with the world
-#: assets/js/ShareModal/Modal.js:54
-msgid "js.ShareModal.Modal.shareWithTheWorld"
-msgstr ""
-
 #. default-message: Grant access
-#: assets/js/ShareModal/NewAclEntry.js:50
+#: assets/js/ShareModal/NewAclEntry.js:48
 msgid "js.ShareModal.NewAclEntry.grantAccess"
 msgstr ""
 
@@ -276,33 +286,69 @@ msgstr ""
 msgid "js.ShareModal.OwnerAclEntry.owner"
 msgstr ""
 
-#. default-message: Only collaborators can view this Workflow.
-#: assets/js/ShareModal/PublicPrivate.js:15
-msgid "js.ShareModal.PublicPrivate.description.private"
+#. default-message: <0>Delete secret link?</0> <1>It will be gone forever.</1>
+#: assets/js/ShareModal/PublicAccess.js:117
+msgid "js.ShareModal.PublicAccess.confirmDeleteSecretLink.prompt"
 msgstr ""
 
-#. default-message: Anyone on the Internet may view and duplicate this Workflow.
-#: assets/js/ShareModal/PublicPrivate.js:10
-msgid "js.ShareModal.PublicPrivate.description.public"
+#. default-message: Only collaborators can see this workflow
+#: assets/js/ShareModal/PublicAccess.js:112
+msgid "js.ShareModal.PublicAccess.private.description"
 msgstr ""
 
-#. default-message: Anyone can view and duplicate this workflow, and see your email.
-#: assets/js/ShareModal/PublicPrivate.js:27
-msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
+#. default-message: Private
+#: assets/js/ShareModal/PublicAccess.js:111
+msgid "js.ShareModal.PublicAccess.private.title"
+msgstr ""
+
+#. default-message: Anyone on the Internet can see this workflow and its collaborators
+#: assets/js/ShareModal/PublicAccess.js:185
+msgid "js.ShareModal.PublicAccess.public.description"
+msgstr ""
+
+#. default-message: Public
+#: assets/js/ShareModal/PublicAccess.js:184
+msgid "js.ShareModal.PublicAccess.public.title"
+msgstr ""
+
+#. default-message: Anyone with the link can see this workflow and its collaborators
+#: assets/js/ShareModal/PublicAccess.js:156
+msgid "js.ShareModal.PublicAccess.secret.description"
+msgstr ""
+
+#. default-message: Secret link
+#: assets/js/ShareModal/PublicAccess.js:155
+msgid "js.ShareModal.PublicAccess.secret.title"
+msgstr ""
+
+#. A prompt to upgrade; clicking the link goes to the Plans page
+#. default-message: Upgrade
+#: assets/js/ShareModal/PublicAccess.js:162
+msgid "js.ShareModal.PublicAccess.secret.upgrade"
+msgstr ""
+
+#. default-message: Public Access
+#: assets/js/ShareModal/PublicAccess.js:98
+msgid "js.ShareModal.PublicAccess.title"
 msgstr ""
 
 #. default-message: Can edit
-#: assets/js/ShareModal/Role.js:13 assets/js/ShareModal/Role.js:42
+#: assets/js/ShareModal/Role.js:14 assets/js/ShareModal/Role.js:43
 msgid "js.ShareModal.Role.editor"
 msgstr ""
 
+#. default-message: Remove
+#: assets/js/ShareModal/Role.js:66
+msgid "js.ShareModal.Role.remove"
+msgstr ""
+
 #. default-message: Can only view report
-#: assets/js/ShareModal/Role.js:17 assets/js/ShareModal/Role.js:58
+#: assets/js/ShareModal/Role.js:18 assets/js/ShareModal/Role.js:59
 msgid "js.ShareModal.Role.report-viewer"
 msgstr ""
 
 #. default-message: Can view
-#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:50
+#: assets/js/ShareModal/Role.js:16 assets/js/ShareModal/Role.js:51
 msgid "js.ShareModal.Role.viewer"
 msgstr ""
 
@@ -311,30 +357,35 @@ msgstr ""
 msgid "js.ShareModal.ShareButton.button.hoverText"
 msgstr ""
 
-#. default-message: Private link (only accessible to collaborators)
-#: assets/js/ShareModal/Url.js:73
-msgid "js.ShareModal.Url.heading.private"
+#. default-message: Report link
+#: assets/js/ShareModal/PublicAccess.js:21
+msgid "js.ShareModal.ShareableLinks.report.title"
 msgstr ""
 
-#. default-message: Public link (accessible to anyone)
-#: assets/js/ShareModal/Url.js:72
-msgid "js.ShareModal.Url.heading.public"
+#. default-message: Workflow link
+#: assets/js/ShareModal/PublicAccess.js:13
+msgid "js.ShareModal.ShareableLinks.workflow.title"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/ShareModal/Url.js:59
-msgid "js.ShareModal.Url.socialLinks.facebook"
+#: assets/js/ShareModal/ShareableLink.js:32
+msgid "js.ShareModal.Url.socialLinks.shareHeader"
 msgstr ""
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
 #. default-message: Check out this chart I made using {workbenchMention}:
-#: assets/js/ShareModal/Url.js:24
+#: assets/js/ShareModal/ShareableLink.js:10
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr ""
 
-#. default-message: Share
-#: assets/js/ShareModal/Url.js:48
-msgid "js.ShareModal.Url.socialLinks.twitter"
+#. default-message: Cancel
+#: assets/js/ShareModal/PublicAccess.js:136
+msgid "js.ShareModal.publicAccess.confirmDeleteSecretLink.cancel"
+msgstr ""
+
+#. default-message: Delete
+#: assets/js/ShareModal/PublicAccess.js:126
+msgid "js.ShareModal.publicAccess.confirmDeleteSecretLink.confirm"
 msgstr ""
 
 #. default-message: Redo
@@ -541,7 +592,7 @@ msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr ""
 
 #. default-message: This was the data that led to an error. Please correct the error in the left pane.
-#: assets/js/WorkflowEditor/OutputPane.js:113
+#: assets/js/WorkflowEditor/OutputPane.js:114
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
@@ -618,12 +669,12 @@ msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr ""
 
 #. default-message: Download data as CSV
-#: assets/js/WorkflowEditor/Report/TableBlock.js:36
+#: assets/js/WorkflowEditor/Report/TableBlock.js:38
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
 #. default-message: No table data
-#: assets/js/WorkflowEditor/Report/TableBlock.js:44
+#: assets/js/WorkflowEditor/Report/TableBlock.js:46
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 
@@ -779,22 +830,22 @@ msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/Workflows/WorkflowContextMenu.js:83
+#: assets/js/Workflows/WorkflowContextMenu.js:84
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/Workflows/WorkflowContextMenu.js:75
+#: assets/js/Workflows/WorkflowContextMenu.js:76
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/Workflows/WorkflowContextMenu.js:58
+#: assets/js/Workflows/WorkflowContextMenu.js:59
 msgid "js.Workflows.WorkflowContextMenu.hoverText"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/Workflows/WorkflowContextMenu.js:69
+#: assets/js/Workflows/WorkflowContextMenu.js:70
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
@@ -819,12 +870,12 @@ msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
 #. default-message: Create your first workflow
-#: assets/js/Workflows/OwnedWorkflowsMain.js:133
+#: assets/js/Workflows/OwnedWorkflowsMain.js:136
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr ""
 
 #. default-message: My workflows
-#: assets/js/Workflows/OwnedWorkflowsMain.js:125
+#: assets/js/Workflows/OwnedWorkflowsMain.js:128
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr ""
 
@@ -849,12 +900,12 @@ msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
 #. default-message: private
-#: assets/js/Workflows/Workflow.js:33
+#: assets/js/Workflows/Workflow.js:37
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr ""
 
 #. default-message: private report
-#: assets/js/Workflows/Workflow.js:30
+#: assets/js/Workflows/Workflow.js:34
 msgid "js.Workflows.WorkflowMetadata.visibility.privateReport"
 msgstr ""
 
@@ -863,13 +914,18 @@ msgstr ""
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr ""
 
+#. default-message: secret link
+#: assets/js/Workflows/Workflow.js:30
+msgid "js.Workflows.WorkflowMetadata.visibility.secret"
+msgstr ""
+
 #. default-message: Create Workflow
-#: assets/js/Workflows/OwnedWorkflowsMain.js:132
+#: assets/js/Workflows/OwnedWorkflowsMain.js:135
 msgid "js.Workflows.createWorkflowButton"
 msgstr ""
 
 #. default-message: Permanently delete this workflow?
-#: assets/js/Workflows/WorkflowContextMenu.js:28
+#: assets/js/Workflows/WorkflowContextMenu.js:29
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr ""
 
@@ -2162,6 +2218,16 @@ msgstr ""
 msgid "js.settings.Plan.PlanTable.amount.perYear"
 msgstr ""
 
+#. default-message: For sharing with non-Workbench users
+#: assets/js/settings/Plan/PlanTable.js:184
+msgid "js.settings.Plan.PlanTable.canCreateSecretLink.description"
+msgstr ""
+
+#. default-message: Secret links
+#: assets/js/settings/Plan/PlanTable.js:179
+msgid "js.settings.Plan.PlanTable.canCreateSecretLink.title"
+msgstr ""
+
 #. default-message: Current plan
 #: assets/js/settings/Plan/PlanTable.js:81
 msgid "js.settings.Plan.PlanTable.current"
@@ -2178,7 +2244,7 @@ msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr ""
 
 #. default-message: Undo history
-#: assets/js/settings/Plan/PlanTable.js:179
+#: assets/js/settings/Plan/PlanTable.js:200
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr ""
 

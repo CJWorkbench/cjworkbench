@@ -205,52 +205,61 @@ msgstr ""
 msgid "js.Page.MainNav.workflows.title"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:20
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:18
+#, fuzzy
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
+#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+msgid "js.Report.ShareCard.accessibilityDescription.secret"
+msgstr ""
+
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:23
+#: assets/js/WorkflowEditor/Report/ShareCard.js:42
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Επεξεργασία απορρήτου"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:34
+#: assets/js/WorkflowEditor/Report/ShareCard.js:53
 #, fuzzy
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Διεύθυνση URL αναφοράς"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:11
+msgid "js.Report.ShareCard.sharingSTatus.secret"
+msgstr ""
+
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "Αυτή η ροή εργασιών είναι ιδιωτική"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:13
+#: assets/js/WorkflowEditor/Report/ShareCard.js:8
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "Αυτή η ροή εργασιών είναι δημόσια"
 
-#: assets/js/ShareModal/Modal.js:64
+#: assets/js/ShareModal/CollaboratorAccess.js:16
+msgid "js.ShareModal.CollaboratorAccess.description"
+msgstr ""
+
+#: assets/js/ShareModal/CollaboratorAccess.js:13
 msgid "js.ShareModal.Modal.collaborators"
 msgstr "Συνεργάτες"
 
-#: assets/js/ShareModal/Modal.js:82
+#: assets/js/ShareModal/Modal.js:61
 msgid "js.ShareModal.Modal.footer.closeButton"
 msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ShareModal/Modal.js:45
+#: assets/js/ShareModal/Modal.js:27
 #, fuzzy
 msgid "js.ShareModal.Modal.header.title"
 msgstr "ΡΥΘΜΙΣΕΙΣ ΚΟΙΝΟΠΟΙΗΣΗΣ"
 
-#: assets/js/ShareModal/Modal.js:54
-msgid "js.ShareModal.Modal.shareWithTheWorld"
-msgstr "Κοινοποίηση σε όλους"
-
-#: assets/js/ShareModal/NewAclEntry.js:50
+#: assets/js/ShareModal/NewAclEntry.js:48
 msgid "js.ShareModal.NewAclEntry.grantAccess"
 msgstr "Επιτρέψτε πρόσβαση"
 
@@ -258,31 +267,56 @@ msgstr "Επιτρέψτε πρόσβαση"
 msgid "js.ShareModal.OwnerAclEntry.owner"
 msgstr "Ιδιοκτήτης"
 
-#: assets/js/ShareModal/PublicPrivate.js:15
-msgid "js.ShareModal.PublicPrivate.description.private"
-msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή τη ροή εργασιών."
-
-#: assets/js/ShareModal/PublicPrivate.js:10
-msgid "js.ShareModal.PublicPrivate.description.public"
+#: assets/js/ShareModal/PublicAccess.js:117
+msgid "js.ShareModal.PublicAccess.confirmDeleteSecretLink.prompt"
 msgstr ""
-"Οποιοσδήποτε στο διαδίκτυο μπορεί να δει και να αντιγράψει αυτή τη ροή "
-"εργασιών."
 
-#: assets/js/ShareModal/PublicPrivate.js:27
-msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
+#: assets/js/ShareModal/PublicAccess.js:112
+msgid "js.ShareModal.PublicAccess.private.description"
 msgstr ""
-"Οποιοσδήποτε μπορεί να δει και να αντιγράψει αυτή τη ροή εργασιών, και να"
-" δει το email σας."
 
-#: assets/js/ShareModal/Role.js:13 assets/js/ShareModal/Role.js:42
+#: assets/js/ShareModal/PublicAccess.js:111
+msgid "js.ShareModal.PublicAccess.private.title"
+msgstr ""
+
+#: assets/js/ShareModal/PublicAccess.js:185
+msgid "js.ShareModal.PublicAccess.public.description"
+msgstr ""
+
+#: assets/js/ShareModal/PublicAccess.js:184
+msgid "js.ShareModal.PublicAccess.public.title"
+msgstr ""
+
+#: assets/js/ShareModal/PublicAccess.js:156
+msgid "js.ShareModal.PublicAccess.secret.description"
+msgstr ""
+
+#: assets/js/ShareModal/PublicAccess.js:155
+msgid "js.ShareModal.PublicAccess.secret.title"
+msgstr ""
+
+#. A prompt to upgrade; clicking the link goes to the Plans page
+#: assets/js/ShareModal/PublicAccess.js:162
+msgid "js.ShareModal.PublicAccess.secret.upgrade"
+msgstr ""
+
+#: assets/js/ShareModal/PublicAccess.js:98
+msgid "js.ShareModal.PublicAccess.title"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:14 assets/js/ShareModal/Role.js:43
 msgid "js.ShareModal.Role.editor"
 msgstr "Μπορεί να επεξεργαστεί"
 
-#: assets/js/ShareModal/Role.js:17 assets/js/ShareModal/Role.js:58
+#: assets/js/ShareModal/Role.js:66
+msgid "js.ShareModal.Role.remove"
+msgstr ""
+
+#: assets/js/ShareModal/Role.js:18 assets/js/ShareModal/Role.js:59
 msgid "js.ShareModal.Role.report-viewer"
 msgstr ""
 
-#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:50
+#: assets/js/ShareModal/Role.js:16 assets/js/ShareModal/Role.js:51
 msgid "js.ShareModal.Role.viewer"
 msgstr "Μπορεί να δει"
 
@@ -290,28 +324,32 @@ msgstr "Μπορεί να δει"
 msgid "js.ShareModal.ShareButton.button.hoverText"
 msgstr "Αλλαγή κοινής χρήσης ροής εργασιών"
 
-#: assets/js/ShareModal/Url.js:73
-msgid "js.ShareModal.Url.heading.private"
-msgstr "Ιδιωτικός σύνδεσμος (μόνο για συνεργάτες)"
+#: assets/js/ShareModal/PublicAccess.js:21
+msgid "js.ShareModal.ShareableLinks.report.title"
+msgstr ""
 
-#: assets/js/ShareModal/Url.js:72
-msgid "js.ShareModal.Url.heading.public"
-msgstr "Δημόσιος σύνδεσμος (προσβάσιμος σε όλους)"
+#: assets/js/ShareModal/PublicAccess.js:13
+msgid "js.ShareModal.ShareableLinks.workflow.title"
+msgstr ""
 
-#: assets/js/ShareModal/Url.js:59
-msgid "js.ShareModal.Url.socialLinks.facebook"
-msgstr "Κοινοποίηση"
+#: assets/js/ShareModal/ShareableLink.js:32
+msgid "js.ShareModal.Url.socialLinks.shareHeader"
+msgstr ""
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
-#: assets/js/ShareModal/Url.js:24
+#: assets/js/ShareModal/ShareableLink.js:10
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr ""
 "Δείτε αυτό το γράφημα που δημιούργησα χρησιμοποιώντας το "
 "{workbenchMention}:"
 
-#: assets/js/ShareModal/Url.js:48
-msgid "js.ShareModal.Url.socialLinks.twitter"
-msgstr "Κοινοποίηση"
+#: assets/js/ShareModal/PublicAccess.js:136
+msgid "js.ShareModal.publicAccess.confirmDeleteSecretLink.cancel"
+msgstr ""
+
+#: assets/js/ShareModal/PublicAccess.js:126
+msgid "js.ShareModal.publicAccess.confirmDeleteSecretLink.confirm"
+msgstr ""
 
 #: assets/js/UndoRedoButtons.js:73
 msgid "js.UndoRedoButtons.redo.hoverText"
@@ -490,7 +528,7 @@ msgstr "Κλείσιμο αναζήτησης"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Αναζήτηση…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:113
+#: assets/js/WorkflowEditor/OutputPane.js:114
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
@@ -554,11 +592,11 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:36
+#: assets/js/WorkflowEditor/Report/TableBlock.js:38
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:44
+#: assets/js/WorkflowEditor/Report/TableBlock.js:46
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr ""
 
@@ -686,19 +724,19 @@ msgstr "Αντίστροφη αλφαβητική"
 msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr "Ταξινόμηση"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:83
+#: assets/js/Workflows/WorkflowContextMenu.js:84
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr "Διαγραφή"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:75
+#: assets/js/Workflows/WorkflowContextMenu.js:76
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr "Δημιουργία αντιγράφου"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:58
+#: assets/js/Workflows/WorkflowContextMenu.js:59
 msgid "js.Workflows.WorkflowContextMenu.hoverText"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowContextMenu.js:69
+#: assets/js/Workflows/WorkflowContextMenu.js:70
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
@@ -718,11 +756,11 @@ msgstr ""
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:133
+#: assets/js/Workflows/OwnedWorkflowsMain.js:136
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr "Δημιουργήστε την πρώτη σας ροή εργασιών"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:125
+#: assets/js/Workflows/OwnedWorkflowsMain.js:128
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
@@ -745,11 +783,11 @@ msgstr "Δημοσίευση νέων συνταγών μέσω του διαχ�
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr "Οι ροές εργασιών στις οποίες έχετε συνεργαστεί θα εμφανίζονται εδώ"
 
-#: assets/js/Workflows/Workflow.js:33
+#: assets/js/Workflows/Workflow.js:37
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr "ιδιωτική"
 
-#: assets/js/Workflows/Workflow.js:30
+#: assets/js/Workflows/Workflow.js:34
 msgid "js.Workflows.WorkflowMetadata.visibility.privateReport"
 msgstr ""
 
@@ -757,11 +795,15 @@ msgstr ""
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr "δημόσια"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:132
+#: assets/js/Workflows/Workflow.js:30
+msgid "js.Workflows.WorkflowMetadata.visibility.secret"
+msgstr ""
+
+#: assets/js/Workflows/OwnedWorkflowsMain.js:135
 msgid "js.Workflows.createWorkflowButton"
 msgstr "Δημιουργία ροής εργασιών"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:28
+#: assets/js/Workflows/WorkflowContextMenu.js:29
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Να διαγραφεί μόνιμα αυτή η ροή εργασιών;"
 
@@ -1853,6 +1895,14 @@ msgstr ""
 msgid "js.settings.Plan.PlanTable.amount.perYear"
 msgstr ""
 
+#: assets/js/settings/Plan/PlanTable.js:184
+msgid "js.settings.Plan.PlanTable.canCreateSecretLink.description"
+msgstr ""
+
+#: assets/js/settings/Plan/PlanTable.js:179
+msgid "js.settings.Plan.PlanTable.canCreateSecretLink.title"
+msgstr ""
+
 #: assets/js/settings/Plan/PlanTable.js:81
 msgid "js.settings.Plan.PlanTable.current"
 msgstr ""
@@ -1865,7 +1915,7 @@ msgstr ""
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr ""
 
-#: assets/js/settings/Plan/PlanTable.js:179
+#: assets/js/settings/Plan/PlanTable.js:200
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr ""
 

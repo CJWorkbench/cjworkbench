@@ -115,7 +115,7 @@ export default function PublicAccess (props) {
             ? (
               <p className='prompt confirm-delete-secret-links'>
                 <Trans id='js.ShareModal.PublicAccess.confirmDeleteSecretLink.prompt'>
-                  <strong>Delete secret link?</strong> <small>It will never work again.</small>
+                  <strong>Delete secret link?</strong> <small>It will be gone forever.</small>
                 </Trans>
                 <button
                   type='button'
@@ -182,7 +182,7 @@ export default function PublicAccess (props) {
               onChange={handleChange}
             />
             <strong><Trans id='js.ShareModal.PublicAccess.public.title'>Public</Trans></strong>
-            <small><Trans id='js.ShareModal.PublicAccess.secret.description'>Anyone on the Internet can see this workflow and its collaborators</Trans></small>
+            <small><Trans id='js.ShareModal.PublicAccess.public.description'>Anyone on the Internet can see this workflow and its collaborators</Trans></small>
           </label>
         </div>
       </fieldset>
