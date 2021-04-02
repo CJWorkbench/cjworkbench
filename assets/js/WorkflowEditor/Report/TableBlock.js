@@ -28,7 +28,11 @@ export default function TableBlock ({
       {outputStep && outputStep.outputStatus === 'ok'
         ? (
             [
-              <Table key='table' stepSlug={outputStep.slug} />,
+              <Table
+                key='table'
+                workflowIdOrSecretId={workflowIdOrSecretId}
+                stepSlug={outputStep.slug}
+              />,
               <a
                 key='download'
                 download
