@@ -584,8 +584,14 @@ async def _step_to_text_stream(
     Raise OSError if `/usr/bin/parquet-to-text-stream` cannot start.
     """
     cached_result = step.cached_render_result
-    if not cached_result:
+    if cached_result is None:
         raise CorruptCacheError
+
+    if not cached_result.table_metadata.columns:
+        if format == "csv":
+            return io.BytesIO(b"")
+        else:
+            return io.BytesIO(b"[]")
 
     # raise CorruptCacheError
     with downloaded_parquet_file(cached_result) as parquet_path:

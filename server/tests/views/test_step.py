@@ -753,6 +753,23 @@ class CurrentTableTest(StepViewTestCase):
             order=1, slug="step-2", last_relevant_delta_id=2
         )
 
+    def test_current_table_zero_columns(self):
+        cache_render_result(self.workflow, self.step2, 2, RenderResult(arrow_table({})))
+
+        # CSV
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.csv"
+        )
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(list(response.streaming_content), [])
+
+        # JSON
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.json"
+        )
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(read_streaming_json(response), [])
+
     def test_current_table_json(self):
         cache_render_result(
             self.workflow,
