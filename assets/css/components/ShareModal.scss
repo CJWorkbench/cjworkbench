@@ -1,6 +1,6 @@
 .share-modal {
   .modal-dialog {
-    max-width: 60rem;
+    max-width: 58rem;
   }
 
   legend {
@@ -8,6 +8,10 @@
     font-weight: bold;
     font-size: 1.6rem;
     margin-bottom: 1rem;
+  }
+
+  hr {
+    margin: 3rem 0;
   }
 
   .share-public-options {
@@ -50,9 +54,12 @@
       }
 
       input {
-        width: 1.8rem;
-        height: 1.8rem;
-        margin: 0 1.2rem 0 0;
+        $circle-radius: 1.8rem;
+
+        width: $circle-radius + .8rem;
+        height: $circle-radius;
+        margin: 0;
+        padding: 0;
         display: block;
         appearance: none;
         position: relative;
@@ -61,33 +68,38 @@
           content: '';
           display: block;
           position: absolute;
-          width: 100%;
-          height: 100%;
+          width: $circle-radius;
+          height: $circle-radius;
           border-radius: 50%;
           border: 3px solid $light-gray;
-          cursor: pointer;
-        }
-
-        &:disabled::before {
-          opacity: .7;
         }
 
         &:checked::before {
           border-color: $brand-orange;
         }
+
+        &:not([readonly]):not(:disabled) {
+          &, & + strong, & + strong + small {
+            cursor: pointer;
+          }
+        }
+
+        &:disabled:not([readonly]), &[readonly]:not(:checked) {
+          opacity: .7;
+
+          & + strong {
+            color: $text-muted;
+          }
+        }
       }
 
       strong {
-        padding-right: 2.5rem;
-      }
-
-      input:disabled + strong {
-        color: $text-muted;
+        padding-right: 1rem;
       }
     }
 
     .prompt {
-      margin: 0 0 0 3rem; // radio width + its margin-right
+      margin: 0 0 0 2.6rem; // radio width
 
       font-size: 1.4rem;
 
@@ -100,12 +112,21 @@
       }
 
       button[name="delete-secret-link"] {
-        @include action-button;
-        @include button-red;
-        height: 2rem;
-        padding: 0 .8rem;
-        display: inline-block;
+        cursor: pointer;
+        border: 1px solid $brand-red;
+        border-radius: 999rem; // circle
+        color: red;
+        background: transparent;
         margin-left: 1rem;
+        font-size: 1.4rem;
+
+        &:hover {
+          background: $error-prompt--light;
+        }
+
+        &:active, &:disabled { // disabled = "submitting..."
+          background: $error-prompt;
+        }
       }
 
       button[name="cancel"] {
@@ -119,78 +140,75 @@
     }
   }
 
-  .shareable-links {
+  ul.shareable-links {
     font-size: 1.4rem;
+    line-height: 2rem;
     margin-top: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-    h6 {
-      font-size: 1.6rem;
-    }
-
-    ul {
-      margin: 0;
-      padding: 0;
+    li {
+      margin-top: 2rem;
       display: grid;
-      grid-auto-flow: row;
-      grid-template-columns: auto 1fr auto auto;
-      align-items: center;
+      grid-template-areas:
+        "h6        share   share"
+        "url       twitter facebook";
+      grid-template-columns: 1fr auto auto;
 
-      li {
-        display: contents;
+      h6 {
+        grid-area: h6;
+      }
 
-        &:first-child>* {
-          grid-row: 1;
-        }
-        &:nth-child(2)>* {
-          grid-row: 2;
+      .share-header {
+        grid-area: share;
+        text-align: center;
+      }
+
+      .share-url {
+        grid-area: url;
+      }
+
+      .twitter-share {
+        grid-area: twitter;
+      }
+
+      .facebook-share {
+        grid-area: facebook;
+      }
+
+      h6, .share-header {
+        font-size: inherit;
+        line-height: 2rem;
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+      }
+
+      .twitter-share, .facebook-share {
+        padding: 0 0 0 badrem(0.5);
+      }
+
+      .share-header, a.twitter-share, a.facebook-share {
+        display: inline-block;
+
+        svg {
+          width: rem(2);
+          height: rem(2);
         }
       }
-    }
-  }
 
-  .shareable-link {
-    strong {
-      margin-right: .8rem;
-    }
-
-    .share-url {
-      flex: 1 1 auto;
-    }
-
-    a.twitter-share, a.facebook-share {
-      margin-left: .8rem;
-      border-radius: 4px;
-      font-size: 1.3rem;
-      height: 2.8rem;
-      line-height: 2.8rem;
-      padding: 0 .8rem;
-      color: white;
-      text-decoration: none;
-
-      svg {
-        width: rem(1.6);
-        height: rem(1.6);
+      a.twitter-share svg path {
+        fill: #1da1f2;
       }
-    }
 
-    a.twitter-share {
-      background: #1da1f2;
-    }
-
-    a.facebook-share {
-      background: #1877f2;
+      a.facebook-share svg path {
+        fill: #1877f2;
+      }
     }
   }
 
   fieldset.share-collaborators {
-    p {
-      // We use <p> for "read-only" replacements of components. For instance,
-      // non-owners see <p class="role"> instead of a <div class="dropdown role">
-      margin: 0;
-      padding: 0;
-      font: inherit;
-    }
-
     ul.acl {
       display: block;
       list-style: none;
@@ -200,6 +218,14 @@
 
       & > li {
         display: block;
+      }
+
+      p {
+        // We use <p> for "read-only" replacements of components. For instance,
+        // non-owners see <p class="role"> instead of a <div class="dropdown role">
+        margin: 0;
+        padding: 0;
+        font: inherit;
       }
 
       // email shared with
@@ -250,42 +276,53 @@
     .email {
       flex: 1 1 auto;
     }
-    .input-group {
+
+    form.new-acl-entry {
+      margin: 0;
+      position: relative;
       display: flex;
+      border: 2px solid $Vlight-gray;
+      border-radius: 3px;
+      outline: none;
+
+      &:hover {
+        border-color: $dark-accent--medium;
+      }
+
+      &:focus-within {
+        border-color: $brand-orange;
+      }
 
       input {
-        @include module-parameter;
-        z-index: 1;
+        display: block;
+        flex: 1 1 auto;
+        // inspired by module-parameter; but here, the <input> has no border
+        @include content-1;
+        padding: $module-parameter-padding;
+        background: $Vlight-gray;
+        color: $brand-text--darker;
+        border: 0; // the <form> has the border
+        border-radius: 3px 0 0 3px;
+      }
 
-        &.form-control:hover {
-          border-color: $dark-accent--medium !important;
-        }
-
-        &.form-control:focus {
-          box-shadow: none;
-          border-color: $brand-orange !important;
+      button {
+        display: block;
+        flex: 0 0 auto;
+        background: white;
+        color: $medium-gray;
+        border: 0;
+        border-radius: 0 3px 3px 0;
+        @include content-1;
+        &:hover, &:focus, &:active {
+          background: $SuperLightGray;
+          color: $brand-text--dark;
         }
       }
-      .input-group-append {
-        z-index: 2;
-        right: 2px;
-        position: absolute;
+    }
 
-        button {
-          background-color: white;
-          color: $medium-gray;
-          border-radius: 0 3px 3px 0;
-          font-size: 1.5rem;
-          border: 0;
-          width: 10.5rem;
-          height: 3rem;
-          top: 2px;
-          &:hover {
-            background: $SuperLightGray;
-            color: $brand-text--dark;
-          }
-        }
-      }
+    p.description {
+      font-size: 1.4rem;
+      margin: 1rem 0 0;
     }
   }
 }

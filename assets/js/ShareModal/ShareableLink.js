@@ -6,7 +6,7 @@ import FacebookIcon from '../../icons/facebook.svg'
 import TwitterIcon from '../../icons/twitter.svg'
 
 export default function ShareableLink (props) {
-  const { title, url, isPublic, logShare, component: Component = 'div' } = props
+  const { title, url, isPublic, logShare, showShareHeader, component: Component = 'div' } = props
   const shareText = t({
     id: 'js.ShareModal.Url.socialLinks.shareText',
     comment:
@@ -22,10 +22,17 @@ export default function ShareableLink (props) {
 
   return (
     <Component className='shareable-link'>
-      <strong>{title}</strong>
+      <h6>{title}</h6>
       <ShareUrl url={url} />
       {isPublic
         ? [
+            showShareHeader
+              ? (
+                <strong key='header' className='share-header'>
+                  <Trans id='js.ShareModal.Url.socialLinks.shareHeader'>Share</Trans>
+                </strong>
+                )
+              : null,
           <a
             key='twitter'
             href={twitterUrl}
@@ -35,7 +42,6 @@ export default function ShareableLink (props) {
             rel='noopener noreferrer'
           >
             <TwitterIcon />
-            <Trans id='js.ShareModal.Url.socialLinks.twitter'>Share</Trans>
           </a>,
           <a
             key='facebook'
@@ -46,7 +52,6 @@ export default function ShareableLink (props) {
             rel='noopener noreferrer'
           >
             <FacebookIcon />
-            <Trans id='js.ShareModal.Url.socialLinks.facebook'>Share</Trans>
           </a>
           ]
         : null}
@@ -58,5 +63,6 @@ ShareableLink.propTypes = {
   url: PropTypes.string.isRequired, // e.g., `/workflows/1`
   isPublic: PropTypes.bool.isRequired,
   logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
+  showShareHeader: PropTypes.bool.isRequired,
   component: PropTypes.any
 }

@@ -36,22 +36,19 @@ export default class NewAclEntry extends PureComponent {
     // Uncontrolled form -- we'll use HTML5 validation, with its :valid and
     // :invalid classes.
     return (
-      <form className='new-acl-entry input-group' onSubmit={this.handleSubmit}>
+      <form className='new-acl-entry' onSubmit={this.handleSubmit}>
         <input
-          className='form-control'
           type='email'
           name='email'
           ref={this.emailRef}
           required
           placeholder='user@example.org'
         />
-        <div className='input-group-append'>
-          <button type='submit' className='btn btn-outline-secondary'>
-            <Trans id='js.ShareModal.NewAclEntry.grantAccess'>
-              Grant access
-            </Trans>
-          </button>
-        </div>
+        <button type='submit' className='btn btn-outline-secondary'>
+          <Trans id='js.ShareModal.NewAclEntry.grantAccess'>
+            Grant access
+          </Trans>
+        </button>
       </form>
     )
   }

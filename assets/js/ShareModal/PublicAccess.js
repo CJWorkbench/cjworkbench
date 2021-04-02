@@ -7,27 +7,24 @@ function ShareableLinks (props) {
   const { url, isPublic, logShare } = props
 
   return (
-    <div className='shareable-links'>
-      <h6>
-        <Trans id='js.ShareModal.ShareableLinks.title'>Links for anybody on the Internet</Trans>
-      </h6>
-      <ul>
-        <ShareableLink
-          component='li'
-          title={t({ id: 'js.ShareModal.ShareableLinks.workflow.title', message: 'Workflow' })}
-          url={url}
-          isPublic={isPublic}
-          logShare={logShare}
-        />
-        <ShareableLink
-          component='li'
-          title={t({ id: 'js.ShareModal.ShareableLinks.report.title', message: 'Report' })}
-          url={`${url}/report`}
-          isPublic={isPublic}
-          logShare={logShare}
-        />
-      </ul>
-    </div>
+    <ul className='shareable-links'>
+      <ShareableLink
+        component='li'
+        title={t({ id: 'js.ShareModal.ShareableLinks.workflow.title', message: 'Workflow link' })}
+        url={url}
+        showShareHeader
+        isPublic={isPublic}
+        logShare={logShare}
+      />
+      <ShareableLink
+        component='li'
+        title={t({ id: 'js.ShareModal.ShareableLinks.report.title', message: 'Report link' })}
+        url={`${url}/report`}
+        showShareHeader={false}
+        isPublic={isPublic}
+        logShare={logShare}
+      />
+    </ul>
   )
 }
 ShareableLinks.propTypes = {
@@ -109,7 +106,7 @@ export default function PublicAccess (props) {
               readOnly={isReadOnly}
               checked={selectedMenuOption === 'private'}
               onChange={handleChange}
-              disabled={promptingToDeleteSecretId}
+              disabled={isReadOnly || promptingToDeleteSecretId}
             />
             <strong><Trans id='js.ShareModal.PublicAccess.private.title'>Private</Trans></strong>
             <small><Trans id='js.ShareModal.PublicAccess.private.description'>Only collaborators can see this workflow</Trans></small>
@@ -150,15 +147,15 @@ export default function PublicAccess (props) {
               type='radio'
               name='share-level'
               value='secret'
-              disabled={(!secretId && !canCreateSecretLink) || promptingToDeleteSecretId}
               readOnly={isReadOnly}
+              disabled={isReadOnly || (!secretId && !canCreateSecretLink) || promptingToDeleteSecretId}
               checked={selectedMenuOption === 'secret'}
               onChange={handleChange}
             />
-            <strong><Trans id='js.ShareModal.PublicAccess.secret.title'>Secret Link</Trans></strong>
+            <strong><Trans id='js.ShareModal.PublicAccess.secret.title'>Secret link</Trans></strong>
             <small><Trans id='js.ShareModal.PublicAccess.secret.description'>Anyone with the link can see this workflow and its collaborators</Trans></small>
           </label>
-          {!secretId && !canCreateSecretLink
+          {!isReadOnly && !secretId && !canCreateSecretLink
             ? (
               <p className='prompt'>
                 <a href='/settings/plan' target='_blank' rel='noopener noreferrer'>
@@ -179,8 +176,8 @@ export default function PublicAccess (props) {
               type='radio'
               name='share-level'
               value='public'
-              disabled={promptingToDeleteSecretId}
               readOnly={isReadOnly}
+              disabled={isReadOnly || promptingToDeleteSecretId}
               checked={selectedMenuOption === 'public'}
               onChange={handleChange}
             />

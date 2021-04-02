@@ -75,3 +75,21 @@ export function mockStore (initialState, api = {}) {
   )
   return store
 }
+
+/**
+ * Holds a Promise and resolve/reject methods.
+ *
+ * Usage:
+ *
+ *     const future = new Future()
+ *     doSomethingExpectingPromise(future.promise)
+ *     future.resolve(value)
+ */
+export class Future {
+  constructor () {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve
+      this.reject = reject
+    })
+  }
+}

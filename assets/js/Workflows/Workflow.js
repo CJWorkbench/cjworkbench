@@ -26,6 +26,10 @@ function WorkflowPrivacy (props) {
     return <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
   }
 
+  if (workflow.secret_id) {
+    return <Trans id='js.Workflows.WorkflowMetadata.visibility.secret'>secret link</Trans>
+  }
+
   if (canOnlyViewReport(user, workflow)) {
     return <Trans id='js.Workflows.WorkflowMetadata.visibility.privateReport'>private report</Trans>
   }

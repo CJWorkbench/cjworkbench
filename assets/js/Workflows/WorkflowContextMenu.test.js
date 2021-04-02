@@ -133,7 +133,7 @@ describe('WorkflowContextMenu', () => {
     fireEvent.click(getByTitle('menu'))
     fireEvent.click(getByText('Share'))
     fireEvent.click(
-      getByText('Anyone on the Internet can see this workflow and its collaborators.')
+      getByText('Anyone on the Internet can see this workflow and its collaborators')
     )
 
     expect(onWorkflowChanging).toHaveBeenCalledWith(123, { public: true })

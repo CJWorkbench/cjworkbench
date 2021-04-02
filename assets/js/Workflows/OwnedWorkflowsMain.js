@@ -16,8 +16,7 @@ function beginEdit (edits, id, changes) {
 
 function endEdit (edits, id, changes) {
   const edit = {
-    ...edits[id],
-    ...changes,
+    changes: { ...edits[id].changes, ...changes },
     nPendingChanges: edits[id].nPendingChanges - 1
   }
   return { ...edits, [id]: edit }
