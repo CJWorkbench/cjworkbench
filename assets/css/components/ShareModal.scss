@@ -254,21 +254,6 @@
           background-color: $dark-accent--medium;
           color: $brand-text--darker;
         }
-
-        .btn-danger {
-          background-color: $brand-orange;
-          border: 0;
-          height: 2.6rem;
-          width: 2.6rem;
-          @include content-1;
-          font-size: 1.3rem;
-          border-radius: 0 3px 3px 0;
-          margin: 0;
-
-          &:hover {
-            background-color: $brand-red;
-          }
-        }
       }
     }
 

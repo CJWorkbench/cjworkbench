@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   UncontrolledDropdown,
+  DropdownDivider,
   DropdownToggle,
   DropdownMenu,
   DropdownItem
@@ -20,7 +21,7 @@ const RoleLabel = ({ role }) => {
   }
 }
 
-const EditableRole = ({ role, onChange }) => {
+const EditableRole = ({ role, onChange, onClickDelete }) => {
   const handleClickRole = React.useCallback(ev => {
     if (ev.target.value !== role) {
       onChange(ev.target.value)
@@ -57,22 +58,30 @@ const EditableRole = ({ role, onChange }) => {
         >
           <Trans id='js.ShareModal.Role.report-viewer'>Can only view report</Trans>
         </DropdownItem>
+        <DropdownDivider />
+        <DropdownItem
+          onClick={onClickDelete}
+          name='delete'
+        >
+          <Trans id='js.ShareModal.Role.remove'>Remove</Trans>
+        </DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown>
   )
 }
 
 export default function Role (props) {
-  const { isReadOnly, role, onChange } = props
+  const { isReadOnly, role, onChange, onClickDelete } = props
 
   if (isReadOnly) {
     return <p className='role'><RoleLabel role={role} /></p>
   } else {
-    return <EditableRole role={role} onChange={onChange} />
+    return <EditableRole role={role} onChange={onChange} onClickDelete={onClickDelete} />
   }
 }
 Role.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   role: PropTypes.oneOf(['editor', 'viewer', 'report-viewer']).isRequired,
-  onChange: PropTypes.func.isRequired // func(role) => undefined
+  onChange: PropTypes.func.isRequired, // func(role) => undefined
+  onClickDelete: PropTypes.func.isRequired // func() => undefined
 }
