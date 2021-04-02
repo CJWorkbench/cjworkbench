@@ -134,7 +134,8 @@ def lookup_workflow_and_auth(
         raise WorkflowPermissionDenied(f"/workflows/{workflow_id_or_secret_id}/")
 
     if want_redirect:
-        raise Http302("/workflows/%d/" % workflow.id)
+        path = request.path.replace("%s" % workflow_id_or_secret_id, str(workflow.id))
+        raise Http302(path)
 
     return workflow
 
