@@ -309,9 +309,9 @@ OutputIframe.propTypes = {
 const mapDispatchToProps = dispatch => {
   return {
     setWorkflowPublic: () => {
-      return (dispatch, getState, api) => {
+      dispatch((dispatch, getState, api) => {
         return dispatch(setWorkflowPublicAccessAction(true, Boolean(getState().workflow.secret_id)))
-      }
+      })
     },
     setStepParams: (stepId, params) => {
       dispatch(setStepParamsAction(stepId, params))
