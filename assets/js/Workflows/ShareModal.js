@@ -11,17 +11,18 @@ export default function ShareModal (props) {
   const {
     api,
     workflow,
+    canCreateSecretLink,
     onWorkflowChanging,
     onWorkflowChanged,
     onClose
   } = props
 
-  const setIsPublic = useCallback(
-    isPublic => {
+  const setPublicAccess = useCallback(
+    (isPublic, hasSecret) => {
       onWorkflowChanging(workflow.id, { public: isPublic })
-      api
-        .setWorkflowPublic(workflow.id, isPublic)
-        .then(() => onWorkflowChanged(workflow.id))
+      return api
+        .setWorkflowPublicAccess(workflow.id, isPublic, hasSecret)
+        .then(json => onWorkflowChanged(workflow.id, json.workflow))
     },
     [api, workflow, onWorkflowChanging, onWorkflowChanged]
   )
@@ -54,12 +55,15 @@ export default function ShareModal (props) {
   return (
     <Modal
       isReadOnly={false}
+      canCreateSecretLink={canCreateSecretLink}
       url={`${window.location.origin}/workflows/${workflow.id}`}
+      workflowId={workflow.id}
       isPublic={workflow.public}
+      secretId={workflow.secret_id}
       logShare={logShare}
       ownerEmail={workflow.owner_email}
       acl={workflow.acl}
-      setIsPublic={setIsPublic}
+      setWorkflowPublicAccess={setPublicAccess}
       updateAclEntry={updateAclEntry}
       deleteAclEntry={deleteAclEntry}
       onClickClose={onClose}
@@ -71,6 +75,7 @@ ShareModal.propTypes = {
     id: PropTypes.number.isRequired,
     owner_email: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
+    secret_id: PropTypes.string.isRequired,
     acl: PropTypes.arrayOf(
       PropTypes.shape({
         email: PropTypes.string.isRequired,
@@ -78,10 +83,11 @@ ShareModal.propTypes = {
       }).isRequired
     ).isRequired
   }).isRequired,
+  canCreateSecretLink: PropTypes.bool.isRequired,
   api: PropTypes.shape({
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
-    setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
+    setWorkflowPublicAccess: PropTypes.func.isRequired // func(id, isPublic, hasSecret) => Promise[{workflow}]
   }).isRequired, // or null if user is not allowed to change sharing settings
   onWorkflowChanged: PropTypes.func, // func(id, isPublic) => undefined, or null if we don't care
   onClose: PropTypes.func.isRequired

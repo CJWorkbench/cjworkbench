@@ -190,50 +190,58 @@ msgstr "Shared with me"
 msgid "js.Page.MainNav.workflows.title"
 msgstr "My workflows"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:20
+#: assets/js/WorkflowEditor/Report/ShareCard.js:23
 msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Only collaborators can view this report"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:19
+#: assets/js/WorkflowEditor/Report/ShareCard.js:18
 msgid "js.Report.ShareCard.accessibilityDescription.public"
-msgstr "Anyone can view this report"
+msgstr "Anyone on the Internet can view this report"
+
+#: assets/js/WorkflowEditor/Report/ShareCard.js:21
+msgid "js.Report.ShareCard.accessibilityDescription.secret"
+msgstr "Anyone with the link can view this report"
 
 #. As in 'Edit privacy settings'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:23
+#: assets/js/WorkflowEditor/Report/ShareCard.js:42
 msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr "Edit privacy"
 
 #. As in 'URL of report'
-#: assets/js/WorkflowEditor/Report/ShareCard.js:34
+#: assets/js/WorkflowEditor/Report/ShareCard.js:53
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Report Sharing URL"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:14
+#: assets/js/WorkflowEditor/Report/ShareCard.js:11
+msgid "js.Report.ShareCard.sharingSTatus.secret"
+msgstr "This workflow has a secret link"
+
+#: assets/js/WorkflowEditor/Report/ShareCard.js:13
 msgid "js.Report.ShareCard.sharingStatus.private"
 msgstr "This workflow is private"
 
-#: assets/js/WorkflowEditor/Report/ShareCard.js:13
+#: assets/js/WorkflowEditor/Report/ShareCard.js:8
 msgid "js.Report.ShareCard.sharingStatus.public"
 msgstr "This workflow is public"
 
-#: assets/js/ShareModal/Modal.js:64
+#: assets/js/ShareModal/CollaboratorAccess.js:16
+msgid "js.ShareModal.CollaboratorAccess.description"
+msgstr "Collaborators can log in and open “Shared with me” to find this workflow."
+
+#: assets/js/ShareModal/CollaboratorAccess.js:13
 msgid "js.ShareModal.Modal.collaborators"
 msgstr "Collaborators"
 
-#: assets/js/ShareModal/Modal.js:82
+#: assets/js/ShareModal/Modal.js:61
 msgid "js.ShareModal.Modal.footer.closeButton"
 msgstr "Close"
 
 #. This should be all-caps for styling reasons
-#: assets/js/ShareModal/Modal.js:45
+#: assets/js/ShareModal/Modal.js:27
 msgid "js.ShareModal.Modal.header.title"
 msgstr "SHARE WORKFLOW"
 
-#: assets/js/ShareModal/Modal.js:54
-msgid "js.ShareModal.Modal.shareWithTheWorld"
-msgstr "Share with the world"
-
-#: assets/js/ShareModal/NewAclEntry.js:50
+#: assets/js/ShareModal/NewAclEntry.js:48
 msgid "js.ShareModal.NewAclEntry.grantAccess"
 msgstr "Grant access"
 
@@ -241,27 +249,56 @@ msgstr "Grant access"
 msgid "js.ShareModal.OwnerAclEntry.owner"
 msgstr "Owner"
 
-#: assets/js/ShareModal/PublicPrivate.js:15
-msgid "js.ShareModal.PublicPrivate.description.private"
-msgstr "Only collaborators can view this Workflow."
+#: assets/js/ShareModal/PublicAccess.js:117
+msgid "js.ShareModal.PublicAccess.confirmDeleteSecretLink.prompt"
+msgstr "<0>Delete secret link?</0> <1>It will be gone forever.</1>"
 
-#: assets/js/ShareModal/PublicPrivate.js:10
-msgid "js.ShareModal.PublicPrivate.description.public"
-msgstr "Anyone on the Internet may view and duplicate this Workflow."
+#: assets/js/ShareModal/PublicAccess.js:112
+msgid "js.ShareModal.PublicAccess.private.description"
+msgstr "Only collaborators can see this workflow"
 
-#: assets/js/ShareModal/PublicPrivate.js:27
-msgid "js.ShareModal.PublicPrivate.descriptionWithToggle"
-msgstr "Anyone can view and duplicate this workflow, and see your email."
+#: assets/js/ShareModal/PublicAccess.js:111
+msgid "js.ShareModal.PublicAccess.private.title"
+msgstr "Private"
 
-#: assets/js/ShareModal/Role.js:13 assets/js/ShareModal/Role.js:42
+#: assets/js/ShareModal/PublicAccess.js:185
+msgid "js.ShareModal.PublicAccess.public.description"
+msgstr "Anyone on the Internet can see this workflow and its collaborators"
+
+#: assets/js/ShareModal/PublicAccess.js:184
+msgid "js.ShareModal.PublicAccess.public.title"
+msgstr "Public"
+
+#: assets/js/ShareModal/PublicAccess.js:156
+msgid "js.ShareModal.PublicAccess.secret.description"
+msgstr "Anyone with the link can see this workflow and its collaborators"
+
+#: assets/js/ShareModal/PublicAccess.js:155
+msgid "js.ShareModal.PublicAccess.secret.title"
+msgstr "Secret link"
+
+#. A prompt to upgrade; clicking the link goes to the Plans page
+#: assets/js/ShareModal/PublicAccess.js:162
+msgid "js.ShareModal.PublicAccess.secret.upgrade"
+msgstr "Upgrade"
+
+#: assets/js/ShareModal/PublicAccess.js:98
+msgid "js.ShareModal.PublicAccess.title"
+msgstr "Public Access"
+
+#: assets/js/ShareModal/Role.js:14 assets/js/ShareModal/Role.js:43
 msgid "js.ShareModal.Role.editor"
 msgstr "Can edit"
 
-#: assets/js/ShareModal/Role.js:17 assets/js/ShareModal/Role.js:58
+#: assets/js/ShareModal/Role.js:66
+msgid "js.ShareModal.Role.remove"
+msgstr "Remove"
+
+#: assets/js/ShareModal/Role.js:18 assets/js/ShareModal/Role.js:59
 msgid "js.ShareModal.Role.report-viewer"
 msgstr "Can only view report"
 
-#: assets/js/ShareModal/Role.js:15 assets/js/ShareModal/Role.js:50
+#: assets/js/ShareModal/Role.js:16 assets/js/ShareModal/Role.js:51
 msgid "js.ShareModal.Role.viewer"
 msgstr "Can view"
 
@@ -269,26 +306,30 @@ msgstr "Can view"
 msgid "js.ShareModal.ShareButton.button.hoverText"
 msgstr "Change Workflow sharing"
 
-#: assets/js/ShareModal/Url.js:73
-msgid "js.ShareModal.Url.heading.private"
-msgstr "Private link (only accessible to collaborators)"
+#: assets/js/ShareModal/PublicAccess.js:21
+msgid "js.ShareModal.ShareableLinks.report.title"
+msgstr "Report link"
 
-#: assets/js/ShareModal/Url.js:72
-msgid "js.ShareModal.Url.heading.public"
-msgstr "Public link (accessible to anyone)"
+#: assets/js/ShareModal/PublicAccess.js:13
+msgid "js.ShareModal.ShareableLinks.workflow.title"
+msgstr "Workflow link"
 
-#: assets/js/ShareModal/Url.js:59
-msgid "js.ShareModal.Url.socialLinks.facebook"
+#: assets/js/ShareModal/ShareableLink.js:32
+msgid "js.ShareModal.Url.socialLinks.shareHeader"
 msgstr "Share"
 
 #. The parameter will be a mention to workbench account (i.e. "@cjworkbench")
-#: assets/js/ShareModal/Url.js:24
+#: assets/js/ShareModal/ShareableLink.js:10
 msgid "js.ShareModal.Url.socialLinks.shareText"
 msgstr "Check out this chart I made using {workbenchMention}:"
 
-#: assets/js/ShareModal/Url.js:48
-msgid "js.ShareModal.Url.socialLinks.twitter"
-msgstr "Share"
+#: assets/js/ShareModal/PublicAccess.js:136
+msgid "js.ShareModal.publicAccess.confirmDeleteSecretLink.cancel"
+msgstr "Cancel"
+
+#: assets/js/ShareModal/PublicAccess.js:126
+msgid "js.ShareModal.publicAccess.confirmDeleteSecretLink.confirm"
+msgstr "Delete"
 
 #: assets/js/UndoRedoButtons.js:73
 msgid "js.UndoRedoButtons.redo.hoverText"
@@ -458,7 +499,7 @@ msgstr "Close Search"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:113
+#: assets/js/WorkflowEditor/OutputPane.js:114
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
@@ -522,11 +563,11 @@ msgstr "Enter MarkDown text here"
 msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr "Save"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:36
+#: assets/js/WorkflowEditor/Report/TableBlock.js:38
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr "Download data as CSV"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:44
+#: assets/js/WorkflowEditor/Report/TableBlock.js:46
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr "No table data"
 
@@ -652,19 +693,19 @@ msgstr "Reverse alphabetical"
 msgid "js.Workflows.SortMenu.sort.DropdownTitle"
 msgstr "Sort"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:83
+#: assets/js/Workflows/WorkflowContextMenu.js:84
 msgid "js.Workflows.WorkflowContextMenu.delete"
 msgstr "Delete"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:75
+#: assets/js/Workflows/WorkflowContextMenu.js:76
 msgid "js.Workflows.WorkflowContextMenu.duplicate"
 msgstr "Duplicate"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:58
+#: assets/js/Workflows/WorkflowContextMenu.js:59
 msgid "js.Workflows.WorkflowContextMenu.hoverText"
 msgstr "menu"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:69
+#: assets/js/Workflows/WorkflowContextMenu.js:70
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr "Share"
 
@@ -684,11 +725,11 @@ msgstr "Title"
 msgid "js.Workflows.WorkflowList.updated"
 msgstr "Updated"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:133
+#: assets/js/Workflows/OwnedWorkflowsMain.js:136
 msgid "js.Workflows.WorkflowLists.createYourFirtsWorkflow.button"
 msgstr "Create your first workflow"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:125
+#: assets/js/Workflows/OwnedWorkflowsMain.js:128
 msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr "My workflows"
 
@@ -708,11 +749,11 @@ msgstr "Publish workflows as examples using Django admin"
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr "Workflows shared with you as collaborator will appear here"
 
-#: assets/js/Workflows/Workflow.js:33
+#: assets/js/Workflows/Workflow.js:37
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
 msgstr "private"
 
-#: assets/js/Workflows/Workflow.js:30
+#: assets/js/Workflows/Workflow.js:34
 msgid "js.Workflows.WorkflowMetadata.visibility.privateReport"
 msgstr "private report"
 
@@ -720,11 +761,15 @@ msgstr "private report"
 msgid "js.Workflows.WorkflowMetadata.visibility.public"
 msgstr "public"
 
-#: assets/js/Workflows/OwnedWorkflowsMain.js:132
+#: assets/js/Workflows/Workflow.js:30
+msgid "js.Workflows.WorkflowMetadata.visibility.secret"
+msgstr "secret link"
+
+#: assets/js/Workflows/OwnedWorkflowsMain.js:135
 msgid "js.Workflows.createWorkflowButton"
 msgstr "Create Workflow"
 
-#: assets/js/Workflows/WorkflowContextMenu.js:28
+#: assets/js/Workflows/WorkflowContextMenu.js:29
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Permanently delete this workflow?"
 
@@ -1797,6 +1842,14 @@ msgstr "<0>{price}</0>/year"
 msgid "js.settings.Plan.PlanTable.amount.perYear"
 msgstr "<0>{price}</0>/month"
 
+#: assets/js/settings/Plan/PlanTable.js:184
+msgid "js.settings.Plan.PlanTable.canCreateSecretLink.description"
+msgstr "For sharing with non-Workbench users"
+
+#: assets/js/settings/Plan/PlanTable.js:179
+msgid "js.settings.Plan.PlanTable.canCreateSecretLink.title"
+msgstr "Secret links"
+
 #: assets/js/settings/Plan/PlanTable.js:81
 msgid "js.settings.Plan.PlanTable.current"
 msgstr "Current plan"
@@ -1809,7 +1862,7 @@ msgstr "{nDays, plural, one {# day} other {# days}}"
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.nMonths"
 msgstr "{nMonths, plural, one {# month} other {# months}}"
 
-#: assets/js/settings/Plan/PlanTable.js:179
+#: assets/js/settings/Plan/PlanTable.js:200
 msgid "js.settings.Plan.PlanTable.maxDeltaAgeInDays.title"
 msgstr "Undo history"
 

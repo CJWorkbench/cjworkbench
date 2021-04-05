@@ -163,6 +163,15 @@ class Browser:
         self._capybarize_kwargs(kwargs)
         self.page.uncheck(locator, **kwargs)
 
+    def choose(self, locator: str, **kwargs) -> None:
+        """Check the radio with name/label/id 'locator'.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self._capybarize_kwargs(kwargs)
+        self.page.choose(locator, **kwargs)
+
     def select(self, locator: str, text: str, **kwargs) -> None:
         """Select 'text' in the select box with name/label/id 'locator'.
 

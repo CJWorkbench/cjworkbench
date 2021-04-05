@@ -176,6 +176,27 @@ export default function PlanTable (props) {
           <tr>
             <th>
               <h3>
+                <Trans id='js.settings.Plan.PlanTable.canCreateSecretLink.title'>
+                  Secret links
+                </Trans>
+              </h3>
+              <p>
+                <Trans id='js.settings.Plan.PlanTable.canCreateSecretLink.description'>
+                  For sharing with non-Workbench users
+                </Trans>
+              </p>
+            </th>
+            {products.map(product => (
+              <td key={product.stripeProductId}>
+                <div>
+                  {product.canCreateSecretLink ? '✔' : ''}
+                </div>
+              </td>
+            ))}
+          </tr>
+          <tr>
+            <th>
+              <h3>
                 <Trans id='js.settings.Plan.PlanTable.maxDeltaAgeInDays.title'>
                   Undo history
                 </Trans>
@@ -183,7 +204,7 @@ export default function PlanTable (props) {
             </th>
             {products.map(product => (
               <td key={product.stripeProductId}>
-                <div>{formatMaxDeltaAge(product.maxDeltaAgeInDays)}</div>
+                <div className='bool'>{formatMaxDeltaAge(product.maxDeltaAgeInDays)}</div>
               </td>
             ))}
           </tr>
@@ -198,6 +219,9 @@ PlanTable.propTypes = {
     PropTypes.shape({
       stripeProductId: PropTypes.string, // or null for free plan
       name: PropTypes.string.isRequired,
+      maxFetchesPerDay: PropTypes.number.isRequired,
+      maxDeltaAgeInDays: PropTypes.number.isRequired,
+      canCreateSecretLink: PropTypes.bool.isRequired,
       prices: PropTypes.arrayOf(
         PropTypes.shape({
           stripePriceId: PropTypes.string.isRequired,

@@ -136,10 +136,10 @@ WorkflowList.propTypes = {
     duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
-    setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
+    setWorkflowPublicAccess: PropTypes.func.isRequired // func(id, isPublic, hasSecret) => Promise[{workflow}]
   }), // null if editing is not allowed
   onWorkflowChanging: PropTypes.func, // func(id, {k: v, ...}) => undefined, or null if no api
-  onWorkflowChanged: PropTypes.func, // func(id) => undefined, or null if no api
+  onWorkflowChanged: PropTypes.func, // func(id, {k: v, ...}?) => undefined, or null if no api
   onWorkflowDuplicating: PropTypes.func, // func(id, {k: v, ...}) => undefined, or null if no api
   onWorkflowDuplicated: PropTypes.func // func(id) => undefined, or null if no api
 }

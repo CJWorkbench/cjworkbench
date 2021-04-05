@@ -26,6 +26,10 @@ function WorkflowPrivacy (props) {
     return <Trans id='js.Workflows.WorkflowMetadata.visibility.public'>public</Trans>
   }
 
+  if (workflow.secret_id) {
+    return <Trans id='js.Workflows.WorkflowMetadata.visibility.secret'>secret link</Trans>
+  }
+
   if (canOnlyViewReport(user, workflow)) {
     return <Trans id='js.Workflows.WorkflowMetadata.visibility.privateReport'>private report</Trans>
   }
@@ -88,6 +92,7 @@ export default function Workflow (props) {
           <td className='actions'>
             <WorkflowContextMenu
               workflow={workflow}
+              user={user}
               api={api}
               onWorkflowChanging={onWorkflowChanging}
               onWorkflowChanged={onWorkflowChanged}
@@ -115,7 +120,7 @@ Workflow.propTypes = {
     duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
-    setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
+    setWorkflowPublicAccess: PropTypes.func.isRequired // func(id, isPublic, hasSecret) => Promise[{workflow}]
   }), // or null if user is not allowed to change sharing settings
   onWorkflowChanging: PropTypes.func, // func(id, {k:v,...}) => undefined, or null if caller doesn't care
   onWorkflowChanged: PropTypes.func // func(id) => undefined, or null if caller doesn't care

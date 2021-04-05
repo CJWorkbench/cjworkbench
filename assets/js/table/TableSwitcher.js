@@ -18,7 +18,7 @@ const NoStepTable = (props) => (
   <TableView
     loadRows={NoStepLoadRows}
     isReadOnly
-    workflowId={props.workflowId}
+    workflowIdOrSecretId={props.workflowIdOrSecretId}
     stepSlug={null}
     stepId={null}
     deltaId={null}
@@ -36,7 +36,7 @@ const UnreachableStepTable = NoStepTable
 const OkStepTable = React.memo(function OkStepTable ({
   isLoaded,
   isReadOnly,
-  workflowId,
+  workflowIdOrSecretId,
   stepSlug,
   stepId,
   deltaId,
@@ -53,7 +53,7 @@ const OkStepTable = React.memo(function OkStepTable ({
       <TableView
         isReadOnly={isReadOnly}
         loadRows={loadThisTableRows}
-        workflowId={workflowId}
+        workflowIdOrSecretId={workflowIdOrSecretId}
         stepSlug={stepSlug}
         stepId={stepId}
         deltaId={deltaId}
@@ -71,11 +71,11 @@ const TableSwitcherContents = React.memo(function TableSwitcherContents ({
   ...props
 }) {
   if (status === null) {
-    return <NoStepTable workflowId={props.workflowId} />
+    return <NoStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
   } else if (status === 'busy') {
-    return <BusyStepTable workflowId={props.workflowId} />
+    return <BusyStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
   } else if (status === 'unreachable') {
-    return <UnreachableStepTable workflowId={props.workflowId} />
+    return <UnreachableStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
   } else {
     return <OkStepTable nRows={nRows} {...props} />
   }
@@ -99,7 +99,7 @@ export default class TableSwitcher extends React.PureComponent {
     loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
-    workflowId: propTypes.workflowId.isRequired,
+    workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepSlug: PropTypes.string, // or null, if no selection
     stepId: PropTypes.number, // or null, if no selection; deprecated
     deltaId: PropTypes.number, // or null, if status!=ok

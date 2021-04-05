@@ -186,7 +186,7 @@ class RenderTableSliceTest(StepViewTestCase):
             response.status_code, 200, "Should have access to last step of tab"
         )
 
-    def test_auth_report_viewer_allowed_custom_report_chart(self):
+    def test_auth_report_viewer_denied_custom_report_chart(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
         self.workflow.has_custom_report = True
@@ -196,15 +196,17 @@ class RenderTableSliceTest(StepViewTestCase):
         )
         self.client.force_login(user)
         response = self._request_step(self.step1)
-        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
+        self.assertEqual(
+            response.status_code, 403, "Should not have access to table data"
+        )
         response = self._request_step(self.step2)
         self.assertEqual(
             response.status_code,
-            200,
+            403,
             "Should not have access to non-reported Chart step",
         )
 
-    def test_auth_report_viewer_allowed_custom_report_chart(self):
+    def test_auth_report_viewer_denied_auto_report_chart(self):
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
         self.client.force_login(user)
@@ -215,7 +217,9 @@ class RenderTableSliceTest(StepViewTestCase):
         self.step2.module_id_name = "notchart"
         self.step2.save(update_fields=["module_id_name"])
         response = self._request_step(self.step1)
-        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
+        self.assertEqual(
+            response.status_code, 403, "Should not have access to table data"
+        )
         response = self._request_step(self.step2)
         self.assertEqual(
             response.status_code, 403, "Should not have access to non-Chart step"
@@ -591,6 +595,60 @@ class ResultJsonTest(StepViewTestCase):
             json.loads(response.content), {"error": "render result has no JSON"}
         )
 
+    def test_auth_report_viewer_denied_custom_report_table(self):
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+        )
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.workflow.has_custom_report = True
+        self.workflow.save(update_fields=["has_custom_report"])
+        self.workflow.blocks.create(
+            position=0, slug="block-1", block_type="Table", tab_id=self.tab.id
+        )
+        self.client.force_login(user)
+        response = self._request()
+        self.assertEqual(
+            response.status_code, 403, "Table access does not imply Chart access"
+        )
+
+    def test_auth_report_viewer_allowed_custom_report_chart(self):
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+        )
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.workflow.has_custom_report = True
+        self.workflow.save(update_fields=["has_custom_report"])
+        self.workflow.blocks.create(
+            position=0, slug="block-1", block_type="Chart", step_id=self.step.id
+        )
+        self.client.force_login(user)
+        response = self._request()
+        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
+
+    def test_auth_report_viewer_allowed_auto_report_chart(self):
+        cache_render_result(
+            self.workflow,
+            self.step,
+            1,
+            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+        )
+        user = create_test_user("alice", "alice@example.org")
+        self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
+        self.client.force_login(user)
+        create_module_zipfile("chart", spec_kwargs={"html_output": True})
+        self.step.module_id_name = "chart"
+        self.step.save(update_fields=["module_id_name"])
+        response = self._request()
+        self.assertEqual(response.status_code, 200, "Should have access to Chart step")
+
 
 class TileTest(StepViewTestCase):
     def setUp(self):
@@ -694,6 +752,23 @@ class CurrentTableTest(StepViewTestCase):
         self.step2 = self.tab.steps.create(
             order=1, slug="step-2", last_relevant_delta_id=2
         )
+
+    def test_current_table_zero_columns(self):
+        cache_render_result(self.workflow, self.step2, 2, RenderResult(arrow_table({})))
+
+        # CSV
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.csv"
+        )
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(list(response.streaming_content), [])
+
+        # JSON
+        response = self.client.get(
+            f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.json"
+        )
+        self.assertEqual(response.status_code, status.OK)
+        self.assertEqual(read_streaming_json(response), [])
 
     def test_current_table_json(self):
         cache_render_result(

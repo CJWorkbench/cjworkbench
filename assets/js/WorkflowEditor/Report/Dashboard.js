@@ -1,8 +1,11 @@
+import React from 'react'
 import PropTypes from 'prop-types'
+import propTypes from '../../propTypes'
 import Report from './Report'
 import ShareCard from './ShareCard'
 
 export default function Dashboard ({
+  workflowIdOrSecretId,
   workflow,
   blocks,
   reportableTabs,
@@ -14,8 +17,13 @@ export default function Dashboard ({
 }) {
   return (
     <article className='report'>
-      <ShareCard workflowId={workflow.id} isPublic={workflow.public} />
+      <ShareCard
+        workflowId={workflow.id}
+        secretId={workflow.secret_id}
+        isPublic={workflow.public}
+      />
       <Report
+        workflowIdOrSecretId={workflowIdOrSecretId}
         workflow={workflow}
         isReadOnly={isReadOnly}
         blocks={blocks}
@@ -29,9 +37,11 @@ export default function Dashboard ({
   )
 }
 Dashboard.propTypes = {
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   workflow: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    public: PropTypes.bool.isRequired
+    public: PropTypes.bool.isRequired,
+    secret_id: PropTypes.string.isRequired // "" for no secret
   }).isRequired,
   isReadOnly: PropTypes.bool.isRequired,
   blocks: PropTypes.array.isRequired,

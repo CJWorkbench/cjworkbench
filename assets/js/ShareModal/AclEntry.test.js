@@ -57,7 +57,8 @@ describe('AclEntry', () => {
 
   it('should delete', () => {
     const w = wrapper({ email: 'a@example.com' })
-    w.find('button.delete').simulate('click')
+    w.find('button.dropdown-toggle').simulate('click')
+    w.find('button[name="delete"]').simulate('click')
     expect(w.prop('deleteAclEntry')).toHaveBeenCalledWith('a@example.com')
   })
 

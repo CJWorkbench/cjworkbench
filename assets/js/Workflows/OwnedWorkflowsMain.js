@@ -14,8 +14,11 @@ function beginEdit (edits, id, changes) {
   return { ...edits, [id]: edit }
 }
 
-function endEdit (edits, id) {
-  const edit = { ...edits[id], nPendingChanges: edits[id].nPendingChanges - 1 }
+function endEdit (edits, id, changes) {
+  const edit = {
+    changes: { ...edits[id].changes, ...changes },
+    nPendingChanges: edits[id].nPendingChanges - 1
+  }
   return { ...edits, [id]: edit }
 }
 
@@ -27,8 +30,8 @@ function reduceWorkflowEdit (state, action) {
       return { adds, edits: beginEdit(edits, id, changes) }
     }
     case 'end-edit': {
-      const { id } = action.payload
-      return { adds, edits: endEdit(edits, id) }
+      const { id, changes = {} } = action.payload
+      return { adds, edits: endEdit(edits, id, changes) }
     }
     case 'begin-duplicate': {
       const { id } = action.payload
@@ -65,8 +68,8 @@ function useWorkflowEdits (workflows) {
     [dispatch]
   )
   const handleWorkflowChanged = useCallback(
-    id => {
-      dispatch({ type: 'end-edit', payload: { id } })
+    (id, changes = {}) => {
+      dispatch({ type: 'end-edit', payload: { id, changes } })
     },
     [dispatch]
   )
@@ -156,6 +159,6 @@ OwnedWorkflowsMain.propTypes = {
     duplicateWorkflow: PropTypes.func.isRequired, // func(id) => Promise[{ id, name }]
     updateAclEntry: PropTypes.func.isRequired, // func(id, email, role) => Promise[null]
     deleteAclEntry: PropTypes.func.isRequired, // func(id, email) => Promise[null]
-    setWorkflowPublic: PropTypes.func.isRequired // func(id, isPublic) => Promise[null]
+    setWorkflowPublicAccess: PropTypes.func.isRequired // func(id, isPublic, hasSecret) => Promise[{workflow}]
   }).isRequired
 }

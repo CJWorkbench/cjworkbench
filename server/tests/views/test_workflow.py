@@ -579,3 +579,15 @@ class ReportViewTests(DbTestCase):
     def test_403(self):
         response = self.client.get("/workflows/%d/report" % self.workflow1.id)
         self.assertEqual(response.status_code, status.FORBIDDEN)
+
+    def test_secret_link_redirect(self):
+        self.workflow1.public = True
+        self.workflow1.secret_id = "wsecret"
+        self.workflow1.save(update_fields=["public", "secret_id"])
+
+        response = self.client.get("/workflows/wsecret/report")
+
+        self.assertEqual(response.status_code, status.FOUND)
+        self.assertEqual(
+            response["Location"], "/workflows/%d/report" % self.workflow1.id
+        )

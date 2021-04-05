@@ -129,11 +129,10 @@ class TestReport(LoggedInIntegrationTest):
         with b.scope(".share-card"):
             b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
-            b.check("Anyone can view")
-            # This fires and forgets an AJAX request. Wait for it to finish.
-            time.sleep(2)
+            b.choose("Public")
+            # Wait for server response
+            b.assert_element("fieldset.share-public-options:not(:disabled)", wait=True)
             b.click_button("Close")
-        b.assert_element(".share-card .accessible-to", text="Anyone can view")
         url = b.value(".share-url input", wait=True)
 
         # user1 can view the report
@@ -159,9 +158,9 @@ class TestReport(LoggedInIntegrationTest):
 
         b.click_button("Share")
         with b.scope(".share-modal", wait=True):  # wait for dialog
-            b.check("Anyone can view")
-            # This fires and forgets an AJAX request. Wait for it to finish.
-            time.sleep(2)
+            b.choose("Public")
+            # Wait for server response
+            b.assert_element("fieldset.share-public-options:not(:disabled)", wait=True)
             b.click_button("Close")
 
         # anonymous user can view the report UI
@@ -189,11 +188,10 @@ class TestReport(LoggedInIntegrationTest):
         with b.scope(".share-card"):
             b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
-            b.check("Anyone can view")
-            # This fires and forgets an AJAX request. Wait for it to finish.
-            time.sleep(2)
+            b.choose("Public")
+            # Wait for server response
+            b.assert_element("fieldset.share-public-options:not(:disabled)", wait=True)
             b.click_button("Close")
-        b.assert_element(".share-card .accessible-to", text="Anyone can view")
         url = b.get_url()
         report_url = url + "report"
 

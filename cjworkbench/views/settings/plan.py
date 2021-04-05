@@ -56,6 +56,7 @@ def jsonize_product(product: Product, prices: Iterable[Price]) -> Dict[str, Any]
         "name": product.stripe_product_name,
         "maxFetchesPerDay": product.max_fetches_per_day,
         "maxDeltaAgeInDays": product.max_delta_age_in_days,
+        "canCreateSecretLink": product.can_create_secret_link,
         "prices": [jsonize_price(price) for price in prices],
     }
 

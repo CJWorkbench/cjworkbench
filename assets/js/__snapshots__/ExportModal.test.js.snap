@@ -5,7 +5,7 @@ exports[`ExportModal should match snapshot 1`] = `
   open={true}
   stepSlug="step-1"
   toggle={[MockFunction]}
-  workflowId={123}
+  workflowIdOrSecretId={123}
 >
   <Modal
     className="export"

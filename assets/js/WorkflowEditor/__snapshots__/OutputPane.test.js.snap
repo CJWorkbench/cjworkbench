@@ -10,7 +10,7 @@ exports[`OutputPane matches snapshot 1`] = `
     moduleSlug={null}
     stepId={987}
     stepSlug="step-1"
-    workflowId={123}
+    workflowIdOrSecretId={123}
   />
   <DelayedTableSwitcher
     deltaId={1}
@@ -20,7 +20,7 @@ exports[`OutputPane matches snapshot 1`] = `
     status="ok"
     stepId={987}
     stepSlug="step-1"
-    workflowId={123}
+    workflowIdOrSecretId={123}
   />
 </div>
 `;
@@ -35,7 +35,7 @@ exports[`OutputPane renders when no module id 1`] = `
     moduleSlug={null}
     stepId={null}
     stepSlug={null}
-    workflowId={123}
+    workflowIdOrSecretId={123}
   />
   <DelayedTableSwitcher
     columns={null}
@@ -47,7 +47,7 @@ exports[`OutputPane renders when no module id 1`] = `
     status={null}
     stepId={null}
     stepSlug={null}
-    workflowId={123}
+    workflowIdOrSecretId={123}
   />
 </div>
 `;

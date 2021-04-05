@@ -21,6 +21,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
+from django.utils.cache import add_never_cache_headers
 from django.views import View
 
 import server.utils
@@ -133,7 +134,8 @@ def lookup_workflow_and_auth(
         raise WorkflowPermissionDenied(f"/workflows/{workflow_id_or_secret_id}/")
 
     if want_redirect:
-        raise Http302("/workflows/%d/" % workflow.id)
+        path = request.path.replace("%s" % workflow_id_or_secret_id, str(workflow.id))
+        raise Http302(path)
 
     return workflow
 
@@ -429,6 +431,8 @@ class Report(View):
         workflow = lookup_workflow_and_auth(
             authorized_report_viewer, workflow_id_or_secret_id, request
         )
+        assert request.path_info.endswith("/report")
+        workflow_path = request.path_info[: -len("/report")]
         init_state = make_init_state(request, workflow=workflow, modules={})
         blocks = build_report_for_workflow(workflow)
         if (
@@ -441,14 +445,17 @@ class Report(View):
             can_view_workflow = False
         else:
             can_view_workflow = True
-        return TemplateResponse(
+        response = TemplateResponse(
             request,
             "report.html",
             {
                 "initState": init_state,
                 "workflow": workflow,
+                "workflow_path": workflow_path,
                 "blocks": blocks,
                 "owner_name": workbench_user_display(workflow.owner),
                 "can_view_workflow": can_view_workflow,
             },
         )
+        add_never_cache_headers(response)
+        return response

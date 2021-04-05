@@ -48,7 +48,7 @@ describe('TableView', () => {
       <ConnectedTableView
         store={store}
         isReadOnly={false}
-        workflowId={123}
+        workflowIdOrSecretId={123}
         stepSlug='step-1'
         stepId={100}
         deltaId={1}

@@ -10,7 +10,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
 from django.template.response import TemplateResponse
-from django.utils.cache import patch_response_headers
+from django.utils.cache import add_never_cache_headers, patch_response_headers
 from django.views.decorators.http import require_GET
 
 from cjwkernel.types import ColumnType
@@ -37,7 +37,10 @@ _MaxNRowsPerRequest = 300
 
 
 def _load_workflow_and_step_sync(
-    request: HttpRequest, workflow_id_or_secret_id: Union[int, str], step_slug: str
+    request: HttpRequest,
+    workflow_id_or_secret_id: Union[int, str],
+    step_slug: str,
+    accessing: Literal["all", "chart", "table"],
 ) -> Tuple[Workflow, Step]:
     """Load (Workflow, Step) from database, or raise Http404 or PermissionDenied.
 
@@ -89,18 +92,23 @@ def _load_workflow_and_step_sync(
 
             if need_report_auth:  # user is report-viewer
                 if workflow.has_custom_report:
-                    if workflow.blocks.filter(step_id=step.id).count():
+                    if (
+                        accessing == "chart"
+                        and workflow.blocks.filter(step_id=step.id).exists()
+                    ):
                         pass  # the step is a chart
-                    elif workflow.blocks.filter(
-                        tab_id=step.tab_id
-                    ).count() and not step.tab.live_steps.filter(order__gt=step.order):
+                    elif (
+                        accessing == "table"
+                        and workflow.blocks.filter(tab_id=step.tab_id).exists()
+                        and not step.tab.live_steps.filter(order__gt=step.order)
+                    ):
                         pass  # step is a table (last step of a report-included tab)
                     else:
                         raise PermissionDenied()
                 else:
                     # Auto-report: all Charts are allowed; everything else is not
                     try:
-                        if (
+                        if accessing == "chart" and (
                             MODULE_REGISTRY.latest(step.module_id_name)
                             .get_spec()
                             .html_output
@@ -121,7 +129,7 @@ _load_workflow_and_step = database_sync_to_async(_load_workflow_and_step_sync)
 
 @database_sync_to_async
 def _load_step_by_id_oops_where_is_workflow(
-    request: HttpRequest, step_id: int
+    request: HttpRequest, step_id: int, accessing: Literal["all", "chart", "table"]
 ) -> Tuple[Workflow, Step]:
     """Load (Workflow, Step) from database, or raise Http404 or PermissionDenied.
 
@@ -134,7 +142,7 @@ def _load_step_by_id_oops_where_is_workflow(
     except Step.DoesNotExist:
         raise Http404("step not found")
 
-    return _load_workflow_and_step_sync(request, workflow_id, step_slug)
+    return _load_workflow_and_step_sync(request, workflow_id, step_slug, accessing)
 
 
 def int_or_none(x):
@@ -157,7 +165,7 @@ async def result_table_slice(
 
     # raise Http404, PermissionDenied
     _, step = await _load_workflow_and_step(
-        request, workflow_id_or_secret_id, step_slug
+        request, workflow_id_or_secret_id, step_slug, "table"
     )
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
@@ -208,7 +216,7 @@ def tile(
     tile_column: int,
 ):
     workflow, step = _load_workflow_and_step_sync(
-        request, workflow_id_or_secret_id, step_slug
+        request, workflow_id_or_secret_id, step_slug, "table"
     )
     # No need for cooperative lock: the cache may always be corrupt (lock or no), and
     # we don't read from the database
@@ -261,7 +269,7 @@ async def result_json(
 ) -> HttpResponse:
     # raise Http404, PermissionDenied
     _, step = await _load_workflow_and_step(
-        request, workflow_id_or_secret_id, step_slug
+        request, workflow_id_or_secret_id, step_slug, "chart"
     )
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
@@ -296,7 +304,7 @@ async def result_column_value_counts(
         return JsonResponse({"values": {}})
 
     # raise Http404, PermissionDenied
-    _, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    _, step = await _load_workflow_and_step(request, workflow_id, step_slug, "all")
     cached_result = step.cached_render_result
     if cached_result is None or cached_result.delta_id != delta_id:
         # assume we'll get another request after execute finishes
@@ -358,7 +366,9 @@ async def result_column_value_counts(
 @xframe_options_exempt
 async def embed(request: HttpRequest, workflow_id: int, step_slug: str):
     # raise Http404, PermissionDenied
-    workflow, step = await _load_workflow_and_step(request, workflow_id, step_slug)
+    workflow, step = await _load_workflow_and_step(
+        request, workflow_id, step_slug, "chart"
+    )
 
     @database_sync_to_async
     def build_init_state():
@@ -424,13 +434,17 @@ async def embed(request: HttpRequest, workflow_id: int, step_slug: str):
             status=status.SERVICE_UNAVAILABLE,
         )
 
-    return TemplateResponse(request, "embed.html", {"initState": init_state})
+    response = TemplateResponse(request, "embed.html", {"initState": init_state})
+    add_never_cache_headers(response)
+    return response
 
 
 @xframe_options_exempt
 async def deprecated_embed(request: HttpRequest, step_id: int):
     # raise Http404, PermissionDenied
-    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(
+        request, step_id, "chart"
+    )
 
     try:
         module_zipfile = await database_sync_to_async(MODULE_REGISTRY.latest)(
@@ -570,8 +584,14 @@ async def _step_to_text_stream(
     Raise OSError if `/usr/bin/parquet-to-text-stream` cannot start.
     """
     cached_result = step.cached_render_result
-    if not cached_result:
+    if cached_result is None:
         raise CorruptCacheError
+
+    if not cached_result.table_metadata.columns:
+        if format == "csv":
+            return io.BytesIO(b"")
+        else:
+            return io.BytesIO(b"[]")
 
     # raise CorruptCacheError
     with downloaded_parquet_file(cached_result) as parquet_path:
@@ -616,14 +636,16 @@ async def current_result_table_json(
 ) -> HttpResponse:
     # raise Http404, PermissionDenied
     workflow, step = await _load_workflow_and_step(
-        request, workflow_id_or_secret_id, step_slug
+        request, workflow_id_or_secret_id, step_slug, "table"
     )
     return await _render_result_table_json(workflow, step)
 
 
 async def deprecated_public_json(request: HttpRequest, step_id: int) -> HttpResponse:
     # raise Http404, PermissionDenied
-    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(
+        request, step_id, "table"
+    )
     # TODO turn this into a redirect. This will break things for API users
     # because their HTTP clients might not follow redirects.
     return await _render_result_table_json(workflow, step)
@@ -663,14 +685,16 @@ async def current_result_table_csv(
 ) -> HttpResponse:
     # raise Http404, PermissionDenied
     workflow, step = await _load_workflow_and_step(
-        request, workflow_id_or_secret_id, step_slug
+        request, workflow_id_or_secret_id, step_slug, "table"
     )
     return await _render_result_table_csv(workflow, step)
 
 
 async def deprecated_public_csv(request: HttpRequest, step_id: int) -> FileResponse:
     # raise Http404, PermissionDenied
-    workflow, step = await _load_step_by_id_oops_where_is_workflow(request, step_id)
+    workflow, step = await _load_step_by_id_oops_where_is_workflow(
+        request, step_id, "table"
+    )
     # TODO turn this into a redirect. This will break things for API users
     # because their HTTP clients might not follow redirects.
     return await _render_result_table_csv(workflow, step)

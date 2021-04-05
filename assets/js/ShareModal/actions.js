@@ -6,17 +6,18 @@ const UPDATE_ACL_ENTRY = 'UPDATE_ACL_ENTRY'
 const DELETE_ACL_ENTRY = 'DELETE_ACL_ENTRY'
 
 /**
- * Set workflow to public (isPublic=true) or private (isPublic=false).
+ * Set workflow to public (isPublic=true) or private (isPublic=false),
+ * with secretId (hasSecret=true) or not (hasSecret=false).
  *
  * The workflow being edited is the workflow in the Redux store.
  */
-export function setWorkflowPublicAction (isPublic) {
+export function setWorkflowPublicAccessAction (isPublic, hasSecret) {
   return (dispatch, getState, api) => {
     const { workflow } = getState()
     return dispatch({
       type: SET_WORKFLOW_PUBLIC,
       payload: {
-        promise: api.setWorkflowPublic(workflow.id, isPublic),
+        promise: api.setWorkflowPublicAccess(workflow.id, isPublic, hasSecret),
         data: { isPublic }
       }
     })
@@ -71,6 +72,18 @@ function reduceSetWorkflowPublicPending (state, action) {
   }
 }
 
+function reduceSetWorkflowPublicFulfilled (state, action) {
+  const { workflow } = action.payload
+  return {
+    ...state,
+    workflow: {
+      ...state.workflow,
+      public: workflow.public,
+      secret_id: workflow.secret_id
+    }
+  }
+}
+
 function reduceUpdateAclEntryPending (state, action) {
   const { workflow } = state
   const { email, role } = action.payload
@@ -109,6 +122,7 @@ function reduceDeleteAclEntryPending (state, action) {
 
 export const reducerFunctions = {
   [SET_WORKFLOW_PUBLIC + '_PENDING']: reduceSetWorkflowPublicPending,
+  [SET_WORKFLOW_PUBLIC + '_FULFILLED']: reduceSetWorkflowPublicFulfilled,
   [UPDATE_ACL_ENTRY + '_PENDING']: reduceUpdateAclEntryPending,
   [DELETE_ACL_ENTRY + '_PENDING']: reduceDeleteAclEntryPending
 }

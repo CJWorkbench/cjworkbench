@@ -4,6 +4,8 @@ import { fireEvent } from '@testing-library/react'
 import { renderWithI18n } from '../i18n/test-utils'
 import WorkflowContextMenu from './WorkflowContextMenu'
 
+const DefaultUser = { limits: { can_create_secret_link: false } }
+
 describe('WorkflowContextMenu', () => {
   let globalConfirm
   beforeEach(() => {
@@ -25,7 +27,7 @@ describe('WorkflowContextMenu', () => {
       duplicateWorkflow: jest.fn(),
       updateAclEntry: jest.fn(),
       deleteAclEntry: jest.fn(),
-      setWorkflowPublic: jest.fn()
+      setWorkflowPublicAccess: jest.fn()
     }
     const onWorkflowChanging = jest.fn()
     const onWorkflowChanged = jest.fn()
@@ -33,6 +35,7 @@ describe('WorkflowContextMenu', () => {
     const { getByText, getByTitle } = renderWithI18n(
       <WorkflowContextMenu
         workflow={workflow}
+        user={DefaultUser}
         api={api}
         onWorkflowDuplicating={jest.fn()}
         onWorkflowDuplicated={jest.fn()}
@@ -65,7 +68,7 @@ describe('WorkflowContextMenu', () => {
       duplicateWorkflow: jest.fn(() => promise),
       updateAclEntry: jest.fn(),
       deleteAclEntry: jest.fn(),
-      setWorkflowPublic: jest.fn()
+      setWorkflowPublicAccess: jest.fn()
     }
     const onWorkflowDuplicating = jest.fn()
     const onWorkflowDuplicated = jest.fn()
@@ -73,6 +76,7 @@ describe('WorkflowContextMenu', () => {
     const { getByText, getByTitle } = renderWithI18n(
       <WorkflowContextMenu
         workflow={workflow}
+        user={DefaultUser}
         api={api}
         onWorkflowDuplicating={onWorkflowDuplicating}
         onWorkflowDuplicated={onWorkflowDuplicated}
@@ -96,6 +100,7 @@ describe('WorkflowContextMenu', () => {
     const workflow = {
       id: 123,
       public: false,
+      secret_id: '',
       owner_email: 'foo@example.org',
       acl: []
     }
@@ -108,7 +113,7 @@ describe('WorkflowContextMenu', () => {
       duplicateWorkflow: jest.fn(),
       updateAclEntry: jest.fn(),
       deleteAclEntry: jest.fn(),
-      setWorkflowPublic: jest.fn(() => promise)
+      setWorkflowPublicAccess: jest.fn(() => promise)
     }
     const onWorkflowChanging = jest.fn()
     const onWorkflowChanged = jest.fn()
@@ -116,6 +121,7 @@ describe('WorkflowContextMenu', () => {
     const { getByText, getByTitle } = renderWithI18n(
       <WorkflowContextMenu
         workflow={workflow}
+        user={DefaultUser}
         api={api}
         onWorkflowDuplicating={jest.fn()}
         onWorkflowDuplicated={jest.fn()}
@@ -127,16 +133,14 @@ describe('WorkflowContextMenu', () => {
     fireEvent.click(getByTitle('menu'))
     fireEvent.click(getByText('Share'))
     fireEvent.click(
-      getByText(
-        'Anyone can view and duplicate this workflow, and see your email.'
-      )
+      getByText('Anyone on the Internet can see this workflow and its collaborators')
     )
 
     expect(onWorkflowChanging).toHaveBeenCalledWith(123, { public: true })
-    expect(api.setWorkflowPublic).toHaveBeenCalledWith(123, true)
+    expect(api.setWorkflowPublicAccess).toHaveBeenCalledWith(123, true, false)
     expect(onWorkflowChanged).not.toHaveBeenCalled()
-    resolvePromise(null)
+    resolvePromise({ workflow: { public: true, secret_id: '' } })
     await act(async () => await null) // respond to resolvePromise()
-    expect(onWorkflowChanged).toHaveBeenCalledWith(123)
+    expect(onWorkflowChanged).toHaveBeenCalledWith(123, { public: true, secret_id: '' })
   })
 })

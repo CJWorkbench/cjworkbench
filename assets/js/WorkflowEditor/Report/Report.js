@@ -3,9 +3,11 @@ import PropTypes from 'prop-types'
 import ReportHeader from './ReportHeader'
 import Block from './Block'
 import AddBlockPrompt from './AddBlockPrompt'
+import propTypes from '../../propTypes'
 
 export default function Report ({
   workflow,
+  workflowIdOrSecretId,
   blocks,
   reportableTabs,
   addBlock,
@@ -57,7 +59,7 @@ export default function Report ({
       {blocks.map((block, position) => (
         <Fragment key={block.slug}>
           <Block
-            workflowId={workflow.id}
+            workflowIdOrSecretId={workflowIdOrSecretId}
             block={block}
             isReadOnly={isReadOnly}
             onClickDelete={handleClickDelete}
@@ -83,8 +85,8 @@ export default function Report ({
 }
 Report.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   workflow: PropTypes.shape({
-    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired
   }).isRequired,
   blocks: PropTypes.array.isRequired,

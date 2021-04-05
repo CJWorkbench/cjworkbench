@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { Trans, t } from '@lingui/macro'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from './components/Modal'
 import { setStepParamsAction } from './workflow-reducer'
-import { setWorkflowPublicAction } from './ShareModal/actions'
+import { setWorkflowPublicAccessAction } from './ShareModal/actions'
 import { useChartIframeSrcWithDataUrlSubscription } from './ChartIframe'
 import EmbedIcon from '../icons/embed.svg'
 
@@ -63,10 +63,10 @@ IframeWithEmbedButton.propTypes = {
  * "lock" the `src` and send new `dataUrl` via `postMessage()` instead.
  */
 function StickyResultJsonIframeWithEmbedButton (props) {
-  const { workflowId, moduleSlug, stepSlug, deltaId, onResize, onSetStepParams, isPublic, embedUrl, onClickSetWorkflowPublic } = props
+  const { workflowIdOrSecretId, moduleSlug, stepSlug, deltaId, onResize, onSetStepParams, isPublic, embedUrl, onClickSetWorkflowPublic } = props
   const [iframeEl, setIframeEl] = React.useState(null)
 
-  const src = useChartIframeSrcWithDataUrlSubscription({ workflowId, moduleSlug, stepSlug, deltaId, iframeEl })
+  const src = useChartIframeSrcWithDataUrlSubscription({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId, iframeEl })
 
   const handleMessage = React.useCallback(ev => {
     if (!iframeEl || ev.source !== iframeEl.contentWindow) {
@@ -126,7 +126,7 @@ function StickyResultJsonIframeWithEmbedButton (props) {
  * navigate from a "Python Code" step to a "Column Chart" step.
  */
 function StepResultJsonIframeWithEmbedButton (props) {
-  const { workflowId, stepId, stepSlug, deltaId, isPublic, moduleSlug, onResize, onSetStepParams, onClickSetWorkflowPublic } = props
+  const { workflowIdOrSecretId, stepId, stepSlug, deltaId, isPublic, moduleSlug, onResize, onSetStepParams, onClickSetWorkflowPublic } = props
   const handleSetStepParams = React.useCallback(params => {
     onSetStepParams(stepId, params)
   }, [stepId, onSetStepParams])
@@ -135,10 +135,10 @@ function StepResultJsonIframeWithEmbedButton (props) {
     <StickyResultJsonIframeWithEmbedButton
       key={moduleSlug}
       moduleSlug={moduleSlug}
-      workflowId={workflowId}
+      workflowIdOrSecretId={workflowIdOrSecretId}
       stepSlug={stepSlug}
       deltaId={deltaId}
-      embedUrl={`${window.location.origin}/workflows/${workflowId}/steps/${stepSlug}/embed`}
+      embedUrl={`${window.origin}/workflows/${workflowIdOrSecretId}/steps/${stepSlug}/embed`}
       isPublic={isPublic}
       onResize={onResize}
       onSetStepParams={handleSetStepParams}
@@ -147,7 +147,7 @@ function StepResultJsonIframeWithEmbedButton (props) {
   )
 }
 StepResultJsonIframeWithEmbedButton.propTypes = {
-  workflowId: propTypes.workflowId.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
   moduleSlug: PropTypes.string, // null for "don't render iframe"
   stepSlug: PropTypes.string, // null if no step
   stepId: PropTypes.number, // null if no step
@@ -252,7 +252,7 @@ EmbedModal.propTypes = {
 }
 
 export function OutputIframe (props) {
-  const { isPublic, workflowId, moduleSlug, stepSlug, stepId, deltaId, setStepParams, setWorkflowPublic } = props
+  const { isPublic, workflowIdOrSecretId, moduleSlug, stepSlug, stepId, deltaId, setStepParams, setWorkflowPublic } = props
   const [heightFromIframe, setHeightFromIframe] = React.useState(null)
 
   const handleResize = React.useCallback(size => {
@@ -284,7 +284,7 @@ export function OutputIframe (props) {
   return (
     <div className={classNames.join(' ')} style={style}>
       <StepResultJsonIframeWithEmbedButton
-        workflowId={workflowId}
+        workflowIdOrSecretId={workflowIdOrSecretId}
         moduleSlug={moduleSlug}
         stepSlug={stepSlug}
         stepId={stepId}
@@ -303,13 +303,15 @@ OutputIframe.propTypes = {
   stepSlug: PropTypes.string, // null if no step
   moduleSlug: PropTypes.string, // null to disable iframe, even if there's a step
   isPublic: PropTypes.bool.isRequired,
-  workflowId: propTypes.workflowId.isRequired
+  workflowIdOrSecretId: propTypes.workflowId.isRequired
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = dispatch => {
   return {
     setWorkflowPublic: () => {
-      dispatch(setWorkflowPublicAction(true))
+      dispatch((dispatch, getState, api) => {
+        return dispatch(setWorkflowPublicAccessAction(true, Boolean(getState().workflow.secret_id)))
+      })
     },
     setStepParams: (stepId, params) => {
       dispatch(setStepParamsAction(stepId, params))

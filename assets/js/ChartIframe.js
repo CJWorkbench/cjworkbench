@@ -1,16 +1,16 @@
 import React from 'react'
 
-function buildDataUrl ({ workflowId, moduleSlug, stepSlug, deltaId }) {
+function buildDataUrl ({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId }) {
   return (moduleSlug === null || deltaId === null)
     ? null
-    : `${new URL(window.location).origin}/workflows/${workflowId}/steps/${stepSlug}/delta-${deltaId}/result-json.json`
+    : `${window.origin}/workflows/${workflowIdOrSecretId}/steps/${stepSlug}/delta-${deltaId}/result-json.json`
 }
 
-function buildSrc ({ workflowId, moduleSlug, stepSlug, deltaId, wantOrigin }) {
+function buildSrc ({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId, wantOrigin }) {
   if (moduleSlug === null) {
     return null
   }
-  const dataUrl = buildDataUrl({ workflowId, moduleSlug, stepSlug, deltaId })
+  const dataUrl = buildDataUrl({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId })
   const origin = new URL(window.location).origin
   const moduleUrl = `${origin}/modules/${moduleSlug}.html`
   return wantOrigin
@@ -18,8 +18,8 @@ function buildSrc ({ workflowId, moduleSlug, stepSlug, deltaId, wantOrigin }) {
     : `${moduleUrl}?dataUrl=${encodeURIComponent(dataUrl || '')}`
 }
 
-export function useChartIframeSrc ({ workflowId, moduleSlug, stepSlug, deltaId }) {
-  return buildSrc({ workflowId, moduleSlug, stepSlug, deltaId, wantOrigin: false })
+export function useChartIframeSrc ({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId }) {
+  return buildSrc({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId, wantOrigin: false })
 }
 
 /**
@@ -28,8 +28,8 @@ export function useChartIframeSrc ({ workflowId, moduleSlug, stepSlug, deltaId }
  * It's complicated:
  *
  * * When `deltaId` is null, `dataUrl` is null.
- * * When called with a new `moduleSlug`, `workflowId`, `stepSlug` or `deltaId`,
- *   we build a new `src` with the `dataUrl` embedded.
+ * * When called with a new `moduleSlug`, `workflowIdOrSecretId`, `stepSlug` or
+ *   `deltaId`, we build a new `src` with the `dataUrl` embedded.
  * * When called with a new `iframeEl`, we attach an event listener, waiting
  *   for a `subscribe-to-data-url` event.
  * * Before `subscribe-to-data-url`, we generate a new `src` every time new
@@ -40,17 +40,17 @@ export function useChartIframeSrc ({ workflowId, moduleSlug, stepSlug, deltaId }
  *
  * Special case: if `moduleSlug` is null, return null.
  */
-export function useChartIframeSrcWithDataUrlSubscription ({ workflowId, moduleSlug, stepSlug, deltaId, iframeEl }) {
+export function useChartIframeSrcWithDataUrlSubscription ({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId, iframeEl }) {
   const lockedSrcRef = React.useRef(null) // { key: key, src: ... }
-  const srcKey = [moduleSlug || '', workflowId, stepSlug || ''].join('|')
+  const srcKey = [moduleSlug || '', workflowIdOrSecretId, stepSlug || ''].join('|')
 
-  const dataUrl = buildDataUrl({ workflowId, moduleSlug, stepSlug, deltaId })
+  const dataUrl = buildDataUrl({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId })
   let src
   if (lockedSrcRef.current && lockedSrcRef.current.key === srcKey) {
     src = lockedSrcRef.current.src
   } else {
     lockedSrcRef.current = null // in case we moved to a new `moduleSlug`
-    src = buildSrc({ workflowId, moduleSlug, stepSlug, deltaId, wantOrigin: true })
+    src = buildSrc({ workflowIdOrSecretId, moduleSlug, stepSlug, deltaId, wantOrigin: true })
   }
 
   const handleMessage = React.useCallback(ev => {

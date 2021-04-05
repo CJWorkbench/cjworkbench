@@ -1,88 +1,265 @@
 .share-modal {
-  h6 {
+  .modal-dialog {
+    max-width: 58rem;
+  }
+
+  legend {
     @include font-sans-regular;
-    font-weight: normal;
+    font-weight: bold;
     font-size: 1.6rem;
-    margin-bottom: 1rem;
-
-    &:not(:first-child) {
-      margin-top: 2.5rem;
-    }
-  }
-
-  p {
-    // We use <p> for "read-only" replacements of components. For instance,
-    // non-owners see <p class="role"> instead of a <div class="dropdown role">
     margin: 0;
-    padding: 0;
-    font: inherit;
   }
 
-  .public-private {
-    span {
-      @include content-1;
+  hr {
+    margin: 3rem 0;
+  }
+
+  .share-public-options {
+    .share-level-option {
+      margin-top: 2rem;
+      height: 4rem;
+      position: relative;
+
+      &.prompting {
+        &::before {
+          // Highlight with a background
+          content: '';
+          display: block;
+          position: absolute;
+          top: -1rem;
+          left: -1rem;
+          bottom: -1rem;
+          right: -1rem;
+          background: $brand-orange--light;
+          border-radius: 3px;
+        }
+
+        &>* {
+          position: relative; // show up above background
+        }
+      }
     }
 
     label {
-      margin-bottom: 0;
-      margin-left: 2rem;
-    }
-
-    label input {
-      top: 3px; // align checkbox with text
-    }
-  }
-
-  ul.acl {
-    display: block;
-    list-style: none;
-    margin: 0;
-    padding: 0 0 0 2rem;
-    font-size: 1.3rem;
-
-    & > li {
-      display: block;
-    }
-
-    // email shared with
-    .acl-entry {
       display: flex;
       align-items: center;
-      margin: 1rem 0;
+      font-size: 1.6rem;
+      line-height: 1.8rem;
+      margin: 0;
 
-      .dropdown-toggle {
-        background-color: $dark-accent--soft;
-        height: 2.6rem;
-        color: $brand-text--dark;
-        border: 2px solid transparent;
-        @include info-1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 14rem;
-        border-radius: 3px 0 0 3px;
-        &:hover {
-          border-color: $dark-accent--medium;
+      small {
+        color: $text-muted;
+        font-size: 1.4rem;
+        vertical-align: -1px;
+      }
+
+      input {
+        $circle-radius: 1.8rem;
+
+        width: $circle-radius + .8rem;
+        height: $circle-radius;
+        margin: 0;
+        padding: 0;
+        display: block;
+        appearance: none;
+        position: relative;
+
+        &::before {
+          content: '';
+          display: block;
+          position: absolute;
+          width: $circle-radius;
+          height: $circle-radius;
+          border-radius: 50%;
+          border: 3px solid $light-gray;
+        }
+
+        &:checked::before {
+          border-color: $brand-orange;
+        }
+
+        &:not([readonly]):not(:disabled) {
+          &, & + strong, & + strong + small {
+            cursor: pointer;
+          }
+        }
+
+        &:disabled:not([readonly]), &[readonly]:not(:checked) {
+          opacity: .7;
+
+          & + strong {
+            color: $text-muted;
+          }
         }
       }
 
-      .dropdown-item.active {
-        background-color: $dark-accent--medium;
-        color: $brand-text--darker;
+      strong {
+        padding-right: 1rem;
+      }
+    }
+
+    .prompt {
+      margin: 0 0 0 2.6rem; // radio width
+
+      font-size: 1.4rem;
+
+      strong {
+        color: $brand-red;
       }
 
-      .btn-danger {
-        background-color: $brand-orange;
-        border: 0;
-        height: 2.6rem;
-        width: 2.6rem;
-        @include content-1;
-        font-size: 1.3rem;
-        border-radius: 0 3px 3px 0;
-        margin: 0;
+      small {
+        font-size: inherit;
+      }
+
+      button[name="delete-secret-link"] {
+        cursor: pointer;
+        border: 1px solid $brand-red;
+        border-radius: 999rem; // circle
+        color: red;
+        padding: 0 1rem;
+        background: transparent;
+        margin-left: 1rem;
+        font: inherit;
 
         &:hover {
-          background-color: $brand-red;
+          background: $error-prompt--light;
+        }
+
+        &:active, &:disabled { // disabled = "submitting..."
+          background: $error-prompt;
+        }
+      }
+
+      button[name="cancel"] {
+        @include _texty-button;
+        margin-left: 1rem;
+        color: $brand-text--medium;
+        &:hover {
+          color: $brand-text--dark;
+        }
+      }
+    }
+  }
+
+  ul.shareable-links {
+    font-size: 1.4rem;
+    line-height: 2rem;
+    margin-top: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-areas:
+        "h6        share   share"
+        "url       twitter facebook";
+      grid-template-columns: 1fr auto auto;
+
+      h6 {
+        grid-area: h6;
+      }
+
+      .share-header {
+        grid-area: share;
+        text-align: center;
+      }
+
+      .share-url {
+        grid-area: url;
+      }
+
+      .twitter-share {
+        grid-area: twitter;
+      }
+
+      .facebook-share {
+        grid-area: facebook;
+      }
+
+      h6, .share-header {
+        font-size: inherit;
+        line-height: 2rem;
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+      }
+
+      .twitter-share, .facebook-share {
+        padding: 0 0 0 badrem(0.5);
+      }
+
+      .share-header, a.twitter-share, a.facebook-share {
+        display: inline-block;
+
+        svg {
+          width: rem(2);
+          height: rem(2);
+        }
+      }
+
+      a.twitter-share svg path {
+        fill: #1da1f2;
+      }
+
+      a.facebook-share svg path {
+        fill: #1877f2;
+      }
+    }
+  }
+
+  fieldset.share-collaborators {
+    p.description {
+      font-size: 1.4rem;
+      margin: .5rem 0 0;
+      color: $text-muted;
+    }
+
+    ul.acl {
+      display: block;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 1.3rem;
+
+      & > li {
+        display: block;
+      }
+
+      p {
+        // We use <p> for "read-only" replacements of components. For instance,
+        // non-owners see <p class="role"> instead of a <div class="dropdown role">
+        margin: 0;
+        padding: 0;
+        font: inherit;
+      }
+
+      // email shared with
+      .acl-entry {
+        display: flex;
+        align-items: center;
+        margin: 1rem 0;
+
+        .dropdown-toggle {
+          background-color: $dark-accent--soft;
+          height: 2.6rem;
+          color: $brand-text--dark;
+          border: 2px solid transparent;
+          @include info-1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 14rem;
+          border-radius: 3px 0 0 3px;
+          &:hover {
+            border-color: $dark-accent--medium;
+          }
+        }
+
+        .dropdown-item.active {
+          background-color: $dark-accent--medium;
+          color: $brand-text--darker;
         }
       }
     }
@@ -91,47 +268,49 @@
     .email {
       flex: 1 1 auto;
     }
-    .input-group {
+
+    form.new-acl-entry {
+      margin: 0;
+      position: relative;
       display: flex;
+      border: 2px solid $Vlight-gray;
+      border-radius: 3px;
+      outline: none;
+
+      &:hover {
+        border-color: $dark-accent--medium;
+      }
+
+      &:focus-within {
+        border-color: $brand-orange;
+      }
 
       input {
-        @include module-parameter;
-        z-index: 1;
-
-        &.form-control:hover {
-          border-color: $dark-accent--medium !important;
-        }
-
-        &.form-control:focus {
-          box-shadow: none;
-          border-color: $brand-orange !important;
-        }
+        display: block;
+        flex: 1 1 auto;
+        // inspired by module-parameter; but here, the <input> has no border
+        @include content-1;
+        padding: $module-parameter-padding;
+        background: $Vlight-gray;
+        color: $brand-text--darker;
+        border: 0; // the <form> has the border
+        border-radius: 3px 0 0 3px;
       }
-      .input-group-append {
-        z-index: 2;
-        right: 2px;
-        position: absolute;
 
-        button {
-          @extend .button-icon;
-          border: 0;
-          width: 10.5rem;
-          height: 3rem;
-          top: 2px;
+      button {
+        display: block;
+        flex: 0 0 auto;
+        background: white;
+        color: $medium-gray;
+        border: 0;
+        border-radius: 0 3px 3px 0;
+        @include content-1;
+        &:hover, &:focus, &:active {
+          background: $SuperLightGray;
+          color: $brand-text--dark;
         }
       }
     }
-
-    button.delete {
-      margin-left: 1rem;
-    }
-  }
-
-  .share-url {
-    margin-left: 2rem;
-  }
-  .share-links {
-    margin-left: 2rem;
   }
 }
 
