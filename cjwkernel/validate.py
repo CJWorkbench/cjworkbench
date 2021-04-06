@@ -1,20 +1,22 @@
-from pathlib import Path
+import datetime
 import subprocess
+import time
+from pathlib import Path
 from typing import Optional
-import pyarrow
+
+import pyarrow as pa
+import pyarrow.compute
+
 from .types import ColumnType, TableMetadata
 from . import settings
 
 
 class ValidateError(ValueError):
-    """
-    Arrow table and metadata do not meet Workbench's requirements.
-    """
+    """Arrow table and metadata do not meet Workbench's requirements."""
 
 
 class InvalidArrowFile(ValidateError):
-    """
-    arrow-validate of a path failed.
+    """arrow-validate of a path failed.
 
     Run arrow-validate before opening an Arrow file in Python, for SECURITY.
     """
@@ -52,7 +54,7 @@ class DuplicateColumnName(ValidateError):
 
 
 class WrongColumnType(ValidateError):
-    def __init__(self, name: str, expected: ColumnType, actual: pyarrow.DataType):
+    def __init__(self, name: str, expected: ColumnType, actual: pa.DataType):
         super().__init__(
             "Table column '%s' has wrong type: expected %r, got %r"
             % (name, expected, actual)
@@ -60,7 +62,7 @@ class WrongColumnType(ValidateError):
 
 
 class TimestampTimezoneNotAllowed(ValidateError):
-    def __init__(self, name: str, dtype: pyarrow.TimestampType):
+    def __init__(self, name: str, dtype: pa.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has a time zone, but Workbench does not support time zones"
             % (name, dtype)
@@ -68,10 +70,26 @@ class TimestampTimezoneNotAllowed(ValidateError):
 
 
 class TimestampUnitNotAllowed(ValidateError):
-    def __init__(self, name: str, dtype: pyarrow.TimestampType):
+    def __init__(self, name: str, dtype: pa.TimestampType):
         super().__init__(
             "Table column '%s' (%r) has unit '%s', but Workbench only supports 'ns'"
             % (name, dtype, dtype.unit)
+        )
+
+
+class DateOutOfRange(ValidateError):
+    def __init__(self, name: str):
+        super().__init__(
+            "Table column %r has invalid value(s): the valid range is 0001-01-01 - 9999-12-31."
+            % (name,)
+        )
+
+
+class DateValueHasWrongUnit(ValidateError):
+    def __init__(self, name: str, unit: str):
+        super().__init__(
+            "Table column %r has invalid value: every date must be the first day of a %r"
+            % (name, unit)
         )
 
 
@@ -92,8 +110,7 @@ class WrongRowCount(ValidateError):
 
 
 def validate_arrow_file(path: Path) -> None:
-    """
-    Validate that `table` can be loaded at all.
+    """Validate that `table` can be loaded at all.
 
     Raise InvalidArrowFile if:
 
@@ -129,11 +146,8 @@ def validate_arrow_file(path: Path) -> None:
         raise InvalidArrowFile(message) from None
 
 
-def validate_table_metadata(
-    table: Optional[pyarrow.Table], metadata: TableMetadata
-) -> None:
-    """
-    Validate that `table` matches `metadata` and Workbench's assumptions.
+def validate_table_metadata(table: Optional[pa.Table], metadata: TableMetadata) -> None:
+    """Validate that `table` matches `metadata` and Workbench's assumptions.
 
     Raise ValidateError if:
 
@@ -145,6 +159,8 @@ def validate_table_metadata(
     * table column names have duplicates
     * table column types are not compatible with metadata column types
       (e.g., Numbers column in metadata, Timestamp table type)
+    * table values do not agree with metadata column types
+      (e.g., Date32 5th of the month with metadata-type "Date:month")
 
     Be sure the Arrow file backing the table was validated with
     `validate_arrow_file()` first. Otherwise, you may experience a
@@ -177,25 +193,68 @@ def validate_table_metadata(
 
             if isinstance(expected.type, ColumnType.Text):
                 if not (
-                    pyarrow.types.is_string(actual.type)
+                    pa.types.is_string(actual.type)
                     or (
-                        pyarrow.types.is_dictionary(actual.type)
-                        and pyarrow.types.is_string(actual.type.value_type)
+                        pa.types.is_dictionary(actual.type)
+                        and pa.types.is_string(actual.type.value_type)
                     )
                 ):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
             elif isinstance(expected.type, ColumnType.Number):
                 if not (
-                    pyarrow.types.is_floating(actual.type)
-                    or pyarrow.types.is_integer(actual.type)
+                    pa.types.is_floating(actual.type)
+                    or pa.types.is_integer(actual.type)
                 ):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
             elif isinstance(expected.type, ColumnType.Timestamp):
-                if not pyarrow.types.is_timestamp(actual.type):
+                if not pa.types.is_timestamp(actual.type):
                     raise WrongColumnType(actual_name, expected.type, actual.type)
                 if actual.type.tz is not None:
                     raise TimestampTimezoneNotAllowed(actual_name, actual.type)
                 if actual.type.unit != "ns":
                     raise TimestampUnitNotAllowed(actual_name, actual.type)
+            elif isinstance(expected.type, ColumnType.Date):
+                if not pa.types.is_date32(actual.type):
+                    raise WrongColumnType(actual_name, expected.type, actual.type)
+
+                if expected.type.unit == "day":
+                    pass  # all int32 are valid
+                elif expected.type.unit == "week":
+                    # Only Mondays (ISO weekday = 0) are valid
+                    for chunk in actual.chunks:
+                        # 1970-01-01 (date32=0) was Thursday. Shift such that
+                        # date32=0 is Monday. If chunk == -3, monday0_i64 == 0.
+                        #
+                        # We use i64 to avoid overflow
+                        monday0_i64 = pa.compute.add(
+                            chunk.view(pa.int32()).cast(pa.int64()), 3
+                        )
+                        # divide+multiply. For each date in monday0_i64,
+                        # all_mondays will be the monday of that week
+                        all_mondays = pa.compute.multiply(
+                            pa.compute.divide(monday0_i64, 7), 7
+                        )
+                        if pa.compute.any(
+                            pa.compute.not_equal(monday0_i64, all_mondays)
+                        ).as_py():
+                            raise DateValueHasWrongUnit(actual_name, "week")
+                else:
+                    is_valid = {
+                        "month": lambda st: st.tm_mday == 1,
+                        "quarter": lambda st: st.tm_mday == 1 and st.tm_mon % 3 == 1,
+                        "year": lambda st: st.tm_mon == 1 and st.tm_mday == 1,
+                    }[expected.type.unit]
+                    for chunk in actual.chunks:
+                        unix_timestamps = pa.compute.multiply(
+                            chunk.view(pa.int32()).cast(pa.int64()), 86400
+                        )
+                        for unix_timestamp in unix_timestamps:
+                            if unix_timestamp.is_valid:
+                                struct_time = time.gmtime(unix_timestamp.as_py())
+                                if not is_valid(struct_time):
+                                    raise DateValueHasWrongUnit(
+                                        actual_name, expected.type.unit
+                                    )
+
             else:
                 raise NotImplementedError

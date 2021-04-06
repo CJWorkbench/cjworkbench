@@ -14,6 +14,8 @@ if sys.version_info[0] < 3:
 
 SITE_ID = 1
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 # How many columns can the client side display?
 # Current, we limit how many the client will display because react-data-grid
 # is terribly slow at >10 columns.

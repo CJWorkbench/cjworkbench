@@ -89,6 +89,7 @@ class RendercacheIoTests(DbTestCase):
             Column("A", ColumnType.Number(format="{:,.2f}")),
             Column("B", ColumnType.Timestamp()),
             Column("C", ColumnType.Text()),
+            Column("D", ColumnType.Date("month")),
         ]
         result = RenderResult(
             arrow_table(
@@ -96,6 +97,7 @@ class RendercacheIoTests(DbTestCase):
                     "A": [1],
                     "B": pa.array([datetime.datetime.now()], pa.timestamp("ns")),
                     "C": ["x"],
+                    "D": pa.array([datetime.date(2021, 4, 1)], pa.date32()),
                 },
                 columns=columns,
             )

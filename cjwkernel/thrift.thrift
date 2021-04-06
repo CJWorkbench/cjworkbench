@@ -26,6 +26,21 @@ struct ColumnTypeNumber {
   1: string format = "{:,}"
 }
 
+
+enum ColumnTypeDateUnit {
+  DAY = 0,
+  WEEK = 1,
+  MONTH = 2,
+  QUARTER = 3,
+  YEAR = 4
+}
+
+/** A "date"-typed column. */
+struct ColumnTypeDate {
+  /** Which dates are valid. For instance, only the 1st of a MONTH is valid. */
+  1: ColumnTypeDateUnit unit = ColumnTypeDateUnit.DAY
+}
+
 /** A "timestamp"-typed column. */
 struct ColumnTypeTimestamp {
   /* TODO add a `format` */
@@ -40,7 +55,8 @@ struct ColumnTypeTimestamp {
 union ColumnType {
   1: ColumnTypeText text_type,
   2: ColumnTypeNumber number_type,
-  3: ColumnTypeTimestamp timestamp_type
+  3: ColumnTypeTimestamp timestamp_type,
+  4: ColumnTypeDate date_type
 }
 
 /** Description of a column in a table. */

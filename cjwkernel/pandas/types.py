@@ -16,6 +16,7 @@ from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
 import pyarrow
 from cjwmodule.i18n import I18nMessage
 from cjwmodule.arrow.format import parse_number_format
+from cjwpandasmodule.convert import pandas_dataframe_to_arrow_table
 from cjwpandasmodule.validate import validate_dataframe
 
 from .. import settings
@@ -44,11 +45,11 @@ class RenderColumn:
     """Column name in the DataFrame."""
 
     type: str
-    """'number', 'text' or 'timestamp'."""
+    """'number', 'date', 'text' or 'timestamp'."""
 
     format: Optional[str]
     """
-    Format string for converting the given column to string.
+    Format string (for 'number') or date unit (for 'date').
 
     >>> column = RenderColumn('A', 'number', '{:,d} bottles of beer')
     >>> column.format.format(1234)
@@ -191,27 +192,45 @@ def _infer_column(
     # Determine ColumnType class, based on pandas/numpy `dtype`.
     dtype = series.dtype
     if is_numeric_dtype(dtype):
-        type_class = ColumnType.Number
+        if given_format is not None:
+            atypes.parse_number_format(given_format)
+            return Column(series.name, ColumnType.Number(format=given_format))
+        elif try_fallback is not None and isinstance(
+            try_fallback.type, ColumnType.Number
+        ):
+            return try_fallback
+        else:
+            return Column(series.name, ColumnType.Number(format="{:,}"))
     elif is_datetime64_dtype(dtype):
-        type_class = ColumnType.Timestamp
+        if given_format is not None:
+            raise ValueError(
+                '"format" not allowed for column "%s" because it is of type "timestamp"'
+                % (series.name,)
+            )
+        return Column(series.name, ColumnType.Timestamp())
+    elif pd.PeriodDtype(freq="D") == dtype:
+        if given_format is not None:
+            if given_format not in {"day", "week", "month", "quarter", "year"}:
+                raise ValueError(
+                    'Unit must be "day", "week", "month", "quarter" or "year"; got %r for column "%s"'
+                    % (given_format, series.name)
+                )
+            return Column(series.name, ColumnType.Date(unit=given_format))
+        elif try_fallback is not None and isinstance(
+            try_fallback.type, ColumnType.Date
+        ):
+            return try_fallback
+        else:
+            return Column(series.name, ColumnType.Date(unit="day"))
     elif dtype == object or dtype == "category":
-        type_class = ColumnType.Text
+        if given_format is not None:
+            raise ValueError(
+                '"format" not allowed for column "%s" because it is of type "text"'
+                % (series.name,)
+            )
+        return Column(series.name, ColumnType.Text())
     else:
         raise ValueError(f"Unknown dtype: {dtype}")
-
-    if type_class == ColumnType.Number and given_format is not None:
-        type = type_class(format=given_format)  # raises ValueError
-    elif given_format is not None:
-        raise ValueError(
-            '"format" not allowed for column "%s" because it is of type "%s"'
-            % (series.name, type_class().name)
-        )
-    elif try_fallback is not None and isinstance(try_fallback.type, type_class):
-        return try_fallback
-    else:
-        type = type_class()
-
-    return Column(series.name, type)
 
 
 def _infer_columns(
@@ -429,7 +448,6 @@ class ProcessResult:
         """
         Truncate dataframe in-place and add to self.errors if truncated.
         """
-        # import after app startup. [2019-08-21, adamhooper] may not be needed
         old_len = len(self.dataframe)
         new_len = min(old_len, settings.MAX_ROWS_PER_TABLE)
         if new_len != old_len:

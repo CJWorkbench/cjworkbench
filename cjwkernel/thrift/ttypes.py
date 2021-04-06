@@ -16,6 +16,30 @@ from thrift.transport import TTransport
 all_structs = []
 
 
+class ColumnTypeDateUnit(object):
+    DAY = 0
+    WEEK = 1
+    MONTH = 2
+    QUARTER = 3
+    YEAR = 4
+
+    _VALUES_TO_NAMES = {
+        0: "DAY",
+        1: "WEEK",
+        2: "MONTH",
+        3: "QUARTER",
+        4: "YEAR",
+    }
+
+    _NAMES_TO_VALUES = {
+        "DAY": 0,
+        "WEEK": 1,
+        "MONTH": 2,
+        "QUARTER": 3,
+        "YEAR": 4,
+    }
+
+
 class ValidateModuleResult(object):
     """
     Validation of a kernel module's code succeeded.
@@ -197,6 +221,76 @@ class ColumnTypeNumber(object):
         return not (self == other)
 
 
+class ColumnTypeDate(object):
+    """
+    A "date"-typed column.
+
+    Attributes:
+     - unit: Which dates are valid. For instance, only the 1st of a MONTH is valid.
+
+    """
+
+    __slots__ = (
+        'unit',
+    )
+
+
+    def __init__(self, unit=0,):
+        self.unit = unit
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.I32:
+                    self.unit = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('ColumnTypeDate')
+        if self.unit is not None:
+            oprot.writeFieldBegin('unit', TType.I32, 1)
+            oprot.writeI32(self.unit)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
 class ColumnTypeTimestamp(object):
     """
     A "timestamp"-typed column.
@@ -262,6 +356,7 @@ class ColumnType(object):
      - text_type
      - number_type
      - timestamp_type
+     - date_type
 
     """
 
@@ -269,13 +364,15 @@ class ColumnType(object):
         'text_type',
         'number_type',
         'timestamp_type',
+        'date_type',
     )
 
 
-    def __init__(self, text_type=None, number_type=None, timestamp_type=None,):
+    def __init__(self, text_type=None, number_type=None, timestamp_type=None, date_type=None,):
         self.text_type = text_type
         self.number_type = number_type
         self.timestamp_type = timestamp_type
+        self.date_type = date_type
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -304,6 +401,12 @@ class ColumnType(object):
                     self.timestamp_type.read(iprot)
                 else:
                     iprot.skip(ftype)
+            elif fid == 4:
+                if ftype == TType.STRUCT:
+                    self.date_type = ColumnTypeDate()
+                    self.date_type.read(iprot)
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -325,6 +428,10 @@ class ColumnType(object):
         if self.timestamp_type is not None:
             oprot.writeFieldBegin('timestamp_type', TType.STRUCT, 3)
             self.timestamp_type.write(oprot)
+            oprot.writeFieldEnd()
+        if self.date_type is not None:
+            oprot.writeFieldBegin('date_type', TType.STRUCT, 4)
+            self.date_type.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2167,6 +2274,11 @@ ColumnTypeNumber.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'format', 'UTF8', "{:,}", ),  # 1
 )
+all_structs.append(ColumnTypeDate)
+ColumnTypeDate.thrift_spec = (
+    None,  # 0
+    (1, TType.I32, 'unit', None, 0, ),  # 1
+)
 all_structs.append(ColumnTypeTimestamp)
 ColumnTypeTimestamp.thrift_spec = (
 )
@@ -2176,6 +2288,7 @@ ColumnType.thrift_spec = (
     (1, TType.STRUCT, 'text_type', [ColumnTypeText, None], None, ),  # 1
     (2, TType.STRUCT, 'number_type', [ColumnTypeNumber, None], None, ),  # 2
     (3, TType.STRUCT, 'timestamp_type', [ColumnTypeTimestamp, None], None, ),  # 3
+    (4, TType.STRUCT, 'date_type', [ColumnTypeDate, None], None, ),  # 4
 )
 all_structs.append(Column)
 Column.thrift_spec = (

@@ -88,61 +88,48 @@ class CompiledModule:
         return marshal.loads(self.marshalled_code_object)
 
 
-class ColumnType(ABC):
-    """
-    Data type of a column.
-
-    This describes how it is presented -- not how its bytes are arranged.
-    """
-
+class ColumnTypeText(NamedTuple):
     @property
-    @abstractmethod
-    def name(self) -> str:
-        """
-        The name of the type: 'text', 'number' or 'timestamp'.
-        """
-        pass
-
-
-@dataclass(frozen=True)
-class ColumnTypeText(ColumnType):
-    # override
-    @property
-    def name(self) -> str:
+    def name(self):
         return "text"
 
 
-@dataclass(frozen=True)
-class ColumnTypeNumber(ColumnType):
-    # https://docs.python.org/3/library/string.html#format-specification-mini-language
-    format: str = "{:,}"  # Python format() string -- default adds commas
-    # TODO handle locale, too: format depends on it. Python will make this
-    # difficult because it can't format a string in an arbitrary locale: it can
-    # only do it using global variables, which we can't use.
+class ColumnTypeNumber(NamedTuple):
+    format: str = "{:,}"
+    """Python format() string.
 
-    def __post_init__(self):
-        parse_number_format(self.format)  # raise ValueError
+    The default value formats a float with commas as thousands separators.
 
-    # override
+    TODO handle locale, too: format depends on it.
+    """
+
     @property
-    def name(self) -> str:
+    def name(self):
         return "number"
 
 
-@dataclass(frozen=True)
-class ColumnTypeTimestamp(ColumnType):
-    # # https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-    # format: str = '{}'  # Python format() string
-
-    # # TODO handle locale, too: format depends on it. Python will make this
-    # # difficult because it can't format a string in an arbitrary locale: it can
-    # # only do it using global variables, which we can't use.
-
-    # override
+class ColumnTypeTimestamp(NamedTuple):
     @property
-    def name(self) -> str:
+    def name(self):
         return "timestamp"
 
+
+class ColumnTypeDate(NamedTuple):
+    unit: Literal["day", "week", "month", "quarter", "year"]
+
+    @property
+    def name(self):
+        return "date"
+
+
+ColumnType = Union[
+    ColumnTypeText, ColumnTypeNumber, ColumnTypeTimestamp, ColumnTypeDate
+]
+"""
+Data type of a column.
+
+This describes how it is presented -- not how its bytes are arranged.
+"""
 
 # Aliases to help with import. e.g.:
 # from cjwkernel.types import Column, ColumnType
@@ -150,12 +137,11 @@ class ColumnTypeTimestamp(ColumnType):
 ColumnType.Text = ColumnTypeText
 ColumnType.Number = ColumnTypeNumber
 ColumnType.Timestamp = ColumnTypeTimestamp
+ColumnType.Date = ColumnTypeDate
 
 
 class Column(NamedTuple):
-    """
-    A column definition.
-    """
+    """A column definition."""
 
     name: str
     """Name of the column."""
@@ -547,7 +533,18 @@ def arrow_column_type_to_thrift(value: ColumnType) -> ttypes.ColumnType:
     elif isinstance(value, ColumnTypeTimestamp):
         return ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp())
     elif isinstance(value, ColumnTypeNumber):
-        return ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber(value.format))
+        return ttypes.ColumnType(
+            number_type=ttypes.ColumnTypeNumber(format=value.format)
+        )
+    elif isinstance(value, ColumnTypeDate):
+        unit = {
+            "day": ttypes.ColumnTypeDateUnit.DAY,
+            "week": ttypes.ColumnTypeDateUnit.WEEK,
+            "month": ttypes.ColumnTypeDateUnit.MONTH,
+            "quarter": ttypes.ColumnTypeDateUnit.QUARTER,
+            "year": ttypes.ColumnTypeDateUnit.YEAR,
+        }[value.unit]
+        return ttypes.ColumnType(date_type=ttypes.ColumnTypeDate(unit=unit))
     else:
         raise NotImplementedError
 
@@ -677,9 +674,20 @@ def thrift_column_type_to_arrow(value: ttypes.ColumnType) -> ColumnType:
         return ColumnTypeText()
     elif value.number_type is not None:
         format = value.number_type.format
-        return ColumnTypeNumber(format)  # raise ValueError on invalid format
+        parse_number_format(format)  # raise ValueError
+        return ColumnTypeNumber(format=format)
     elif value.timestamp_type is not None:
         return ColumnTypeTimestamp()
+    elif value.date_type is not None:
+
+        unit = {
+            ttypes.ColumnTypeDateUnit.DAY: "day",
+            ttypes.ColumnTypeDateUnit.WEEK: "week",
+            ttypes.ColumnTypeDateUnit.MONTH: "month",
+            ttypes.ColumnTypeDateUnit.QUARTER: "quarter",
+            ttypes.ColumnTypeDateUnit.YEAR: "year",
+        }[value.date_type.unit]
+        return ColumnTypeDate(unit=unit)
     else:
         raise ValueError("Unhandled Thrift object: %r" % value)
 

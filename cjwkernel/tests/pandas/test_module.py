@@ -76,7 +76,7 @@ class MigrateParamsTests(unittest.TestCase):
 
     def test_bad_retval_raises(self):
         def migrate_params(params):
-            return [ColumnType.Text()]
+            return [migrate_params]
 
         with self.assertRaisesRegex(TypeError, "not JSON serializable"):
             self._test(migrate_params)
@@ -507,40 +507,6 @@ class FetchTests(unittest.TestCase):
                 )
             )
             return thrift_fetch_result_to_arrow(thrift_result, self.basedir)
-
-    def test_fetch_get_stored_dataframe_happy_path(self):
-        async def fetch(params, *, get_stored_dataframe):
-            df = await get_stored_dataframe()
-            assert_frame_equal(df, pd.DataFrame({"A": [1]}))
-
-        with parquet_file({"A": [1]}, dir=self.basedir) as parquet_path:
-            self._test_fetch(fetch, last_fetch_result=FetchResult(parquet_path, []))
-
-    def test_fetch_get_stored_dataframe_unhandled_parquet_is_error(self):
-        # Why an error? So module authors can handle it. They _created_ the
-        # problem, after all. Let's help them detect it.
-        async def fetch(params, *, get_stored_dataframe):
-            with self.assertRaises(pa.ArrowIOError):
-                await get_stored_dataframe()
-
-        with tempfile_context(dir=self.basedir) as parquet_path:
-            parquet_path.write_bytes(b"12345")
-            self._test_fetch(fetch, last_fetch_result=FetchResult(parquet_path, []))
-
-    def test_fetch_get_stored_dataframe_empty_file_is_empty_table(self):
-        async def fetch(params, *, get_stored_dataframe):
-            df = await get_stored_dataframe()
-            assert_frame_equal(df, pd.DataFrame())
-
-        with tempfile_context(dir=self.basedir) as parquet_path:
-            self._test_fetch(fetch, last_fetch_result=FetchResult(parquet_path, []))
-
-    def test_fetch_get_stored_dataframe_none_is_none(self):
-        async def fetch(params, *, get_stored_dataframe):
-            df = await get_stored_dataframe()
-            self.assertIsNone(df)
-
-        self._test_fetch(fetch, last_fetch_result=None)
 
     def test_fetch_get_input_dataframe_happy_path(self):
         async def fetch(params, *, get_input_dataframe):

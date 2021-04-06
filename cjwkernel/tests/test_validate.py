@@ -1,11 +1,16 @@
 import struct
 import unittest
-import pyarrow
+from datetime import date
+
+import pyarrow as pa
+
 from cjwkernel.types import Column, ColumnType, TableMetadata
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import (
     validate_arrow_file,
     validate_table_metadata,
+    DateValueHasWrongUnit,
+    DateOutOfRange,
     TimestampTimezoneNotAllowed,
     TimestampUnitNotAllowed,
     DuplicateColumnName,
@@ -18,6 +23,10 @@ from cjwkernel.validate import (
     WrongRowCount,
 )
 from cjwkernel.tests.util import arrow_file
+
+
+def Date(name: str, unit: str) -> Column:
+    return Column(name, ColumnType.Date(unit))
 
 
 def Text(name: str) -> Column:
@@ -42,12 +51,12 @@ class ValidateArrowFileTests(unittest.TestCase):
             validate_arrow_file(path)  # do not raise
 
     def test_arrow_file_does_not_validate(self):
-        array = pyarrow.StringArray.from_buffers(
+        array = pa.StringArray.from_buffers(
             1,
             # value_offsets: first item spans buffer offsets 0 to 1
-            pyarrow.py_buffer(struct.pack("II", 0, 1)),
+            pa.py_buffer(struct.pack("II", 0, 1)),
             # data: a not-UTF8-safe character
-            pyarrow.py_buffer(b"\xc9"),
+            pa.py_buffer(b"\xc9"),
         )
         with arrow_file({"A": array}) as path:
             with self.assertRaisesRegex(
@@ -79,21 +88,21 @@ class ValidateTableMetadataTests(unittest.TestCase):
 
     def test_table_not_none_when_should_be_none(self):
         with self.assertRaises(TableShouldBeNone):
-            validate_table_metadata(pyarrow.Table.from_arrays([]), TableMetadata(2, []))
+            validate_table_metadata(pa.Table.from_arrays([]), TableMetadata(2, []))
 
     def test_table_wrong_number_of_rows(self):
         with self.assertRaises(WrongRowCount):
             validate_table_metadata(
-                pyarrow.Table.from_pydict({"A": ["x"]}), TableMetadata(2, [Text("A")])
+                pa.Table.from_pydict({"A": ["x"]}), TableMetadata(2, [Text("A")])
             )
 
     def test_table_not_one_batch(self):
         with self.assertRaises(TableHasTooManyRecordBatches):
             validate_table_metadata(
-                pyarrow.Table.from_batches(
+                pa.Table.from_batches(
                     [
-                        pyarrow.RecordBatch.from_arrays([pyarrow.array(["a"])], ["A"]),
-                        pyarrow.RecordBatch.from_arrays([pyarrow.array(["b"])], ["A"]),
+                        pa.RecordBatch.from_arrays([pa.array(["a"])], ["A"]),
+                        pa.RecordBatch.from_arrays([pa.array(["b"])], ["A"]),
                     ]
                 ),
                 TableMetadata(2, [Text("A")]),
@@ -102,45 +111,41 @@ class ValidateTableMetadataTests(unittest.TestCase):
     def test_duplicate_column_name(self):
         with self.assertRaises(DuplicateColumnName):
             validate_table_metadata(
-                pyarrow.Table.from_arrays(
-                    [pyarrow.array(["a"]), pyarrow.array(["b"])], ["A", "A"]
-                ),
+                pa.Table.from_arrays([pa.array(["a"]), pa.array(["b"])], ["A", "A"]),
                 TableMetadata(1, [Text("A"), Text("A")]),
             )
 
     def test_column_name_mismatch(self):
         with self.assertRaises(WrongColumnName):
             validate_table_metadata(
-                pyarrow.table({"A": ["a"], "B": ["b"]}),
+                pa.table({"A": ["a"], "B": ["b"]}),
                 TableMetadata(1, [Text("A"), Text("B2")]),
             )
 
     def test_column_int_should_be_text(self):
         with self.assertRaises(WrongColumnType):
-            validate_table_metadata(
-                pyarrow.table({"A": [1]}), TableMetadata(1, [Text("A")])
-            )
+            validate_table_metadata(pa.table({"A": [1]}), TableMetadata(1, [Text("A")]))
 
     def test_column_str_should_be_number(self):
         with self.assertRaises(WrongColumnType):
             validate_table_metadata(
-                pyarrow.table({"A": ["x"]}), TableMetadata(1, [Number("A")])
+                pa.table({"A": ["x"]}), TableMetadata(1, [Number("A")])
             )
 
     def test_column_str_should_be_timestamp(self):
         with self.assertRaises(WrongColumnType):
             validate_table_metadata(
-                pyarrow.table({"A": ["x"]}), TableMetadata(1, [Timestamp("A")])
+                pa.table({"A": ["x"]}), TableMetadata(1, [Timestamp("A")])
             )
 
     def test_column_timestamp_should_be_tz_naive(self):
         with self.assertRaises(TimestampTimezoneNotAllowed):
             validate_table_metadata(
-                pyarrow.table(
+                pa.table(
                     {
-                        "A": pyarrow.array(
+                        "A": pa.array(
                             [5298375234123],
-                            type=pyarrow.timestamp("ns", "America/New_York"),
+                            type=pa.timestamp("ns", "America/New_York"),
                         )
                     }
                 ),
@@ -152,29 +157,105 @@ class ValidateTableMetadataTests(unittest.TestCase):
         # https://github.com/pandas-dev/pandas/issues/7307#issuecomment-224180563
         with self.assertRaises(TimestampUnitNotAllowed):
             validate_table_metadata(
-                pyarrow.table(
-                    {
-                        "A": pyarrow.array(
-                            [5298375234], type=pyarrow.timestamp("us", tz=None)
-                        )
-                    }
+                pa.table(
+                    {"A": pa.array([5298375234], type=pa.timestamp("us", tz=None))}
                 ),
                 TableMetadata(1, [Timestamp("A")]),
             )
 
+    def test_date_wrong_column_type(self):
+        with self.assertRaises(WrongColumnType):
+            validate_table_metadata(
+                pa.table({"A": pa.array([1])}), TableMetadata(1, [Date("A", "day")])
+            )
+
+    def test_date_unit_day_ok(self):
+        validate_table_metadata(
+            pa.table({"A": pa.array([date(2021, 4, 6), None])}),
+            TableMetadata(2, [Date("A", "day")]),
+        )
+
+    def test_date_unit_week_ok(self):
+        validate_table_metadata(
+            pa.table({"A": pa.array([date(2021, 4, 5), date(2021, 4, 12), None])}),
+            TableMetadata(3, [Date("A", "week")]),
+        )
+
+    def test_date_unit_week_bad(self):
+        with self.assertRaises(DateValueHasWrongUnit):
+            validate_table_metadata(
+                pa.table({"A": pa.array([date(2021, 4, 4)])}),
+                TableMetadata(1, [Date("A", "week")]),
+            )
+
+    def test_date_unit_month_ok(self):
+        validate_table_metadata(
+            pa.table({"A": pa.array([date(1200, 12, 1), date(3199, 2, 1), None])}),
+            TableMetadata(3, [Date("A", "month")]),
+        )
+
+    def test_date_unit_month_bad(self):
+        with self.assertRaises(DateValueHasWrongUnit):
+            validate_table_metadata(
+                pa.table({"A": pa.array([date(2021, 4, 2)])}),
+                TableMetadata(1, [Date("A", "month")]),
+            )
+
+    def test_date_unit_quarter_ok(self):
+        validate_table_metadata(
+            pa.table(
+                {
+                    "A": pa.array(
+                        [
+                            date(1900, 1, 1),
+                            date(1900, 4, 1),
+                            date(1900, 7, 1),
+                            date(1900, 10, 1),
+                            None,
+                        ]
+                    )
+                }
+            ),
+            TableMetadata(5, [Date("A", "quarter")]),
+        )
+
+    def test_date_unit_quarter_bad(self):
+        with self.assertRaises(DateValueHasWrongUnit):
+            validate_table_metadata(
+                pa.table({"A": pa.array([date(1900, 3, 1)])}),
+                TableMetadata(1, [Date("A", "quarter")]),
+            )
+
+    def test_date_unit_year_ok(self):
+        validate_table_metadata(
+            pa.table(
+                {
+                    "A": pa.array(
+                        [date(1900, 1, 1), date(1, 1, 1), date(9999, 1, 1), None]
+                    )
+                }
+            ),
+            TableMetadata(4, [Date("A", "year")]),
+        )
+
+    def test_date_unit_year_bad(self):
+        with self.assertRaises(DateValueHasWrongUnit):
+            validate_table_metadata(
+                pa.table({"A": pa.array([date(1900, 4, 1)])}),
+                TableMetadata(1, [Date("A", "year")]),
+            )
+
     def test_text_zero_chunks_valid(self):
         validate_table_metadata(
-            pyarrow.Table.from_batches([], pyarrow.schema([("A", pyarrow.string())])),
+            pa.Table.from_batches([], pa.schema([("A", pa.string())])),
             TableMetadata(0, [Text("A")]),
         )
 
     def test_text_dictionary_zero_chunks_is_valid(self):
         validate_table_metadata(
-            pyarrow.Table.from_batches(
+            pa.Table.from_batches(
                 [],
-                pyarrow.schema(
-                    [("A", pyarrow.dictionary(pyarrow.int32(), pyarrow.string()))]
-                ),
+                pa.schema([("A", pa.dictionary(pa.int32(), pa.string()))]),
             ),
             TableMetadata(0, [Text("A")]),
         )

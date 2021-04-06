@@ -273,6 +273,7 @@ class ProcessResultTests(unittest.TestCase):
                     "A": [1, 2],
                     "B": ["x", "y"],
                     "C": [np.nan, dt(2019, 3, 3, 4, 5, 6, 7)],
+                    "D": [pd.Period("2021-01-01", freq="D"), pd.NaT],
                 }
             )
         )
@@ -282,6 +283,7 @@ class ProcessResultTests(unittest.TestCase):
                 Column("A", ColumnType.Number()),
                 Column("B", ColumnType.Text()),
                 Column("C", ColumnType.Timestamp()),
+                Column("D", ColumnType.Date("day")),
             ],
         )
 
@@ -306,10 +308,32 @@ class ProcessResultTests(unittest.TestCase):
             ],
         )
 
+    def test_coerce_infer_columns_with_unit(self):
+        table = pd.DataFrame(
+            {"A": [pd.Period("2021-01-01", freq="D"), None], "B": ["x", "y"]}
+        )
+        result = ProcessResult.coerce(
+            {"dataframe": table, "column_formats": {"A": "year"}}
+        )
+        self.assertEqual(
+            result.columns,
+            [
+                Column("A", ColumnType.Date(unit="year")),
+                Column("B", ColumnType.Text()),
+            ],
+        )
+
     def test_coerce_infer_columns_invalid_format_is_error(self):
         table = pd.DataFrame({"A": [1, 2]})
         with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            ProcessResult.coerce({"dataframe": table, "column_formats": {"A": "x"}})
+            ProcessResult.coerce({"dataframe": table, "column_formats": {"A": "day"}})
+
+    def test_coerce_infer_columns_invalid_unit_is_error(self):
+        table = pd.DataFrame({"A": [pd.Period("2021-01-01", freq="D")]})
+        with self.assertRaisesRegex(
+            ValueError, 'Unit must be "day", "week", "month", "quarter" or "year"'
+        ):
+            ProcessResult.coerce({"dataframe": table, "column_formats": {"A": "{,g}"}})
 
     def test_coerce_infer_columns_wrong_type_format_is_error(self):
         table = pd.DataFrame({"A": [1, 2]})
@@ -366,7 +390,8 @@ class ProcessResultTests(unittest.TestCase):
             ProcessResult.coerce(pd.DataFrame({"A": [1, 2]})[1:])
 
     def test_coerce_validate_processresult(self):
-        """ProcessResult.coerce(<ProcessResult>) should raise on error."""
+        # ProcessResult.coerce(<ProcessResult>) should raise on error.
+
         # render() gets access to a fetch_result. Imagine this module:
         #
         # def render(table, params, *, fetch_result):
@@ -378,7 +403,7 @@ class ProcessResultTests(unittest.TestCase):
         # ProcessResult retvals from `fetch()`; and that'd take a few hours.
         #
         # TODO ban `ProcessResult` retvals from `fetch()`, then raise
-        # Valueerror on ProcessResult.coerce(<ProcessResult>).
+        # ValueError on ProcessResult.coerce(<ProcessResult>).
         fetch_result = ProcessResult(pd.DataFrame({"A": [1, 2, 3]}))
         fetch_result.dataframe.drop(0, inplace=True)  # bad index
         with self.assertRaisesRegex(ValueError, "must use the default RangeIndex"):

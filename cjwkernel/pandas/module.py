@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import cjwparquet
+import cjwpandasmodule
+import cjwpandasmodule.convert
 import pandas as pd
 from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
@@ -83,10 +85,7 @@ def __render_pandas(
         kwargs["tab_name"] = tab_name
     if varkw or "input_columns" in kwonlyargs:
         kwargs["input_columns"] = {
-            c.name: ptypes.RenderColumn(
-                c.name, c.type.name, getattr(c.type, "format", None)
-            )
-            for c in table.metadata.columns
+            c.name: __arrow_column_to_render_column(c) for c in table.metadata.columns
         }
     if varkw or "input_tabs" in kwonlyargs:
         kwargs["input_tabs"] = {
@@ -110,14 +109,14 @@ def __arrow_to_pandas(table: types.ArrowTable) -> pd.DataFrame:
     if not table.metadata.columns:
         return pd.DataFrame(index=pd.RangeIndex(0, table.metadata.n_rows))
     else:
-        return table.table.to_pandas(
-            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-        )  # TODO ensure dictionaries stay dictionaries
+        return cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table.table)
 
 
 def __arrow_column_to_render_column(column: types.Column) -> ptypes.RenderColumn:
     return ptypes.RenderColumn(
-        column.name, column.type.name, getattr(column.type, "format", None)
+        column.name,
+        column.type.name,
+        getattr(column.type, "format", getattr(column.type, "unit", None)),
     )
 
 
@@ -344,16 +343,6 @@ def fetch_pandas(
                 return __parquet_to_pandas(input_table_parquet_path)
 
         kwargs["get_input_dataframe"] = get_input_dataframe
-
-    if varkw or "get_stored_dataframe" in kwonlyargs:
-
-        async def get_stored_dataframe():
-            if last_fetch_result is None:
-                return None
-            else:
-                return __parquet_to_pandas(last_fetch_result.path)
-
-        kwargs["get_stored_dataframe"] = get_stored_dataframe
 
     if varkw or "output_path" in kwonlyargs:
         kwargs["output_path"] = output_path

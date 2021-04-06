@@ -10,31 +10,31 @@ from cjwmodule.i18n import I18nMessage
 class ColumnTypeNumberTests(unittest.TestCase):
     def test_format_too_many_arguments(self):
         with self.assertRaisesRegex(ValueError, "Can only format one number"):
-            types.ColumnType.Number("{:d}{:f}")
+            types.parse_number_format("{:d}{:f}")
 
     def test_format_disallow_non_format(self):
         with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            types.ColumnType.Number("%d")
+            types.parse_number_format("%d")
 
     def test_format_disallow_field_number(self):
         with self.assertRaisesRegex(
             ValueError, "Field names or numbers are not allowed"
         ):
-            types.ColumnType.Number("{0:f}")
+            types.parse_number_format("{0:f}")
 
     def test_format_disallow_field_name(self):
         with self.assertRaisesRegex(
             ValueError, "Field names or numbers are not allowed"
         ):
-            types.ColumnType.Number("{value:f}")
+            types.parse_number_format("{value:f}")
 
     def test_format_disallow_field_converter(self):
         with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
-            types.ColumnType.Number("{!r:f}")
+            types.parse_number_format("{!r:f}")
 
     def test_format_disallow_invalid_type(self):
         with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            types.ColumnType.Number("{:T}")
+            types.parse_number_format("{:T}")
 
 
 class ThriftConvertersTest(unittest.TestCase):
@@ -91,6 +91,26 @@ class ThriftConvertersTest(unittest.TestCase):
                 ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp())
             ),
             types.ColumnType.Timestamp(),
+        )
+
+    def test_column_type_date_to_thrift(self):
+        self.assertEqual(
+            types.arrow_column_type_to_thrift(types.ColumnType.Date(unit="week")),
+            ttypes.ColumnType(
+                date_type=ttypes.ColumnTypeDate(unit=ttypes.ColumnTypeDateUnit.WEEK)
+            ),
+        )
+
+    def test_column_type_date_from_thrift(self):
+        self.assertEqual(
+            types.thrift_column_type_to_arrow(
+                ttypes.ColumnType(
+                    date_type=ttypes.ColumnTypeDate(
+                        unit=ttypes.ColumnTypeDateUnit.MONTH
+                    )
+                )
+            ),
+            types.ColumnType.Date(unit="month"),
         )
 
     def test_column_to_thrift(self):
