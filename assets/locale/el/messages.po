@@ -14,6 +14,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
+#: assets/js/BigTable/Cell/NullCell.js:11
+msgid "js.BigTable.Cell.null"
+msgstr ""
+
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
@@ -592,16 +596,12 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:38
+#: assets/js/WorkflowEditor/Report/TableBlock.js:42
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:46
+#: assets/js/WorkflowEditor/Report/TableBlock.js:50
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
-msgstr ""
-
-#: assets/js/Report/CellFormatters2.js:25
-msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #: assets/js/WorkflowEditor/StepList/StepList.js:14
@@ -1998,16 +1998,27 @@ msgstr "Αύξουσα ταξινόμηση"
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Φθίνουσα ταξινόμηση"
 
-#: assets/js/table/ColumnHeader.js:14
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.table.ColumnHeader.types.date.day"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:11 assets/js/BigTable/ColumnType.js:13
+#: assets/js/BigTable/ColumnType.js:15 assets/js/BigTable/ColumnType.js:17
+msgid "js.table.ColumnHeader.types.date.week"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:24
+#, fuzzy
 msgid "js.table.ColumnHeader.types.number"
 msgstr "αριθμός"
 
-#: assets/js/table/ColumnHeader.js:12
+#: assets/js/BigTable/ColumnType.js:22
 #, fuzzy
 msgid "js.table.ColumnHeader.types.text"
 msgstr "κείμενο"
 
-#: assets/js/table/ColumnHeader.js:16
+#: assets/js/BigTable/ColumnType.js:26
+#, fuzzy
 msgid "js.table.ColumnHeader.types.timestamp"
 msgstr "ημερομηνία & ώρα"
 
@@ -2100,7 +2111,7 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:441
+#: cjwkernel/pandas/types.py:459
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 

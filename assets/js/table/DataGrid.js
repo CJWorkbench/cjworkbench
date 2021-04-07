@@ -345,6 +345,7 @@ export default class DataGrid extends PureComponent {
           stepId={stepId}
           columnKey={column.name}
           columnType={column.type}
+          dateUnit={column.unit || null}
           index={index}
           onDragStartColumnIndex={this.handleDragStartColumnIndex}
           onDragEnd={this.handleDragEnd}

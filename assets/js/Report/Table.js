@@ -4,19 +4,22 @@ import propTypes from '../propTypes'
 import { connect } from 'react-redux'
 import BigTable from '../BigTable'
 import useTiles from '../BigTable/useTiles'
+import ColumnType from '../BigTable/ColumnType'
 import { columnToCellFormatter } from './CellFormatters2'
 
-function ColumnHeader ({ name, type }) {
+function ColumnHeader ({ name, type, dateUnit }) {
   return (
     <div className='column-header'>
       <div className='column-name'>{name}</div>
-      <div className='column-type'>{type}</div>
+      <div className='column-type'>
+        <ColumnType type={type} dateUnit={dateUnit} />
+      </div>
     </div>
   )
 }
 
-function buildColumnHeaderComponent ({ name, type }) {
-  return () => <ColumnHeader name={name} type={type} />
+function buildColumnHeaderComponent ({ name, type, dateUnit }) {
+  return () => <ColumnHeader name={name} type={type} dateUnit={dateUnit} />
 }
 
 function Table ({

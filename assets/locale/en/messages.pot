@@ -1,3 +1,8 @@
+#. default-message: null
+#: assets/js/BigTable/Cell/NullCell.js:11
+msgid "js.BigTable.Cell.null"
+msgstr ""
+
 #. default-message: Paste this code into any webpage HTML
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
@@ -669,18 +674,13 @@ msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr ""
 
 #. default-message: Download data as CSV
-#: assets/js/WorkflowEditor/Report/TableBlock.js:38
+#: assets/js/WorkflowEditor/Report/TableBlock.js:42
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
 #. default-message: No table data
-#: assets/js/WorkflowEditor/Report/TableBlock.js:46
+#: assets/js/WorkflowEditor/Report/TableBlock.js:50
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
-msgstr ""
-
-#. default-message: null
-#: assets/js/Report/CellFormatters2.js:25
-msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #. default-message: This Tab has no Steps.
@@ -2345,18 +2345,28 @@ msgstr ""
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr ""
 
-#. default-message: number
-#: assets/js/table/ColumnHeader.js:14
+#. default-message: js.table.ColumnHeader.types.date.day
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.table.ColumnHeader.types.date.day"
+msgstr ""
+
+#. default-message: js.table.ColumnHeader.types.date.week
+#: assets/js/BigTable/ColumnType.js:11 assets/js/BigTable/ColumnType.js:13 assets/js/BigTable/ColumnType.js:15 assets/js/BigTable/ColumnType.js:17
+msgid "js.table.ColumnHeader.types.date.week"
+msgstr ""
+
+#. default-message:
+#: assets/js/BigTable/ColumnType.js:24
 msgid "js.table.ColumnHeader.types.number"
 msgstr ""
 
-#. default-message: text
-#: assets/js/table/ColumnHeader.js:12
+#. default-message:
+#: assets/js/BigTable/ColumnType.js:22
 msgid "js.table.ColumnHeader.types.text"
 msgstr ""
 
-#. default-message: timestamp
-#: assets/js/table/ColumnHeader.js:16
+#. default-message:
+#: assets/js/BigTable/ColumnType.js:26
 msgid "js.table.ColumnHeader.types.timestamp"
 msgstr ""
 
@@ -2469,7 +2479,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:441
+#: cjwkernel/pandas/types.py:459
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 

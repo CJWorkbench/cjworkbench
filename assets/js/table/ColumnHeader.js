@@ -1,24 +1,10 @@
 import { PureComponent, Component, createRef } from 'react'
 import PropTypes from 'prop-types'
 import ColumnContextMenu from './ColumnContextMenu'
+import ColumnType from '../BigTable/ColumnType'
 import { connect } from 'react-redux'
 import { idxToLetter } from '../utils'
 import { updateTableAction } from './UpdateTableAction'
-import { Trans } from '@lingui/macro'
-
-function ColumnType (props) {
-  switch (props.columnType) {
-    case 'text':
-      return <Trans id='js.table.ColumnHeader.types.text'>text</Trans>
-    case 'number':
-      return <Trans id='js.table.ColumnHeader.types.number'>number</Trans>
-    case 'timestamp':
-      return <Trans id='js.table.ColumnHeader.types.timestamp'>timestamp</Trans>
-  }
-}
-ColumnType.propTypes = {
-  columnType: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
-}
 
 class ReorderColumnDropZone extends PureComponent {
   static propTypes = {
@@ -78,6 +64,7 @@ export class EditableColumnName extends Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
+    dateUnit: PropTypes.oneOf(['day', 'week', 'month', 'quarter', 'year']), // or null
     onRename: PropTypes.func.isRequired,
     inputRef: PropTypes.shape({
       current: PropTypes.instanceOf(window.HTMLElement)
@@ -161,7 +148,7 @@ export class EditableColumnName extends Component {
         <span className='column-key' onClick={this.handleEnterEditMode}>
           <div className='value'>{this.state.newName}</div>
           <div className='column-type'>
-            <ColumnType columnType={this.props.columnType} />
+            <ColumnType columnType={this.props.columnType} dateUnit={this.props.dateUnit} />
           </div>
         </span>
       )
@@ -175,6 +162,7 @@ export class ColumnHeader extends PureComponent {
     stepId: PropTypes.number,
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
+    dateUnit: PropTypes.oneOf(['day', 'week', 'month', 'quarter', 'year']), // or null
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
@@ -257,7 +245,7 @@ export class ColumnHeader extends PureComponent {
   }
 
   render () {
-    const { columnKey, columnType, index, draggingColumnIndex } = this.props
+    const { columnKey, columnType, dateUnit, index, draggingColumnIndex } = this.props
 
     const columnMenuSection = this.renderColumnMenu()
 
@@ -301,6 +289,7 @@ export class ColumnHeader extends PureComponent {
           <EditableColumnName
             columnKey={columnKey}
             columnType={columnType}
+            dateUnit={dateUnit}
             onRename={this.handleRename}
             isReadOnly={this.props.isReadOnly}
             inputRef={this.inputRef}

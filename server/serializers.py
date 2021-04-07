@@ -598,6 +598,8 @@ def jsonize_column(column: Column) -> Dict[str, Any]:
     ret = {"name": column.name, "type": column.type.name}
     if hasattr(column.type, "format"):
         ret["format"] = column.type.format
+    if hasattr(column.type, "unit"):
+        ret["unit"] = column.type.unit
     return ret
 
 

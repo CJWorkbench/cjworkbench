@@ -1,6 +1,6 @@
 # 0 parquet-to-arrow: executables we use in Workbench
-FROM workbenchdata/parquet-to-arrow:v2.1.0 AS parquet-to-arrow
-FROM workbenchdata/arrow-tools:v1.0.0 AS arrow-tools
+FROM workbenchdata/parquet-to-arrow:v2.2.0 AS parquet-to-arrow
+FROM workbenchdata/arrow-tools:v1.1.0 AS arrow-tools
 
 # 1 pybase: Python and tools we use in dev and production
 FROM python:3.8.8-slim-buster AS pybase0

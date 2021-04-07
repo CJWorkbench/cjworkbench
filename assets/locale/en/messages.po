@@ -14,6 +14,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
+#: assets/js/BigTable/Cell/NullCell.js:11
+msgid "js.BigTable.Cell.null"
+msgstr "null"
+
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
@@ -563,17 +567,13 @@ msgstr "Enter MarkDown text here"
 msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr "Save"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:38
+#: assets/js/WorkflowEditor/Report/TableBlock.js:42
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr "Download data as CSV"
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:46
+#: assets/js/WorkflowEditor/Report/TableBlock.js:50
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
 msgstr "No table data"
-
-#: assets/js/Report/CellFormatters2.js:25
-msgid "js.WorkflowEditor.Report.nullCell"
-msgstr "null"
 
 #: assets/js/WorkflowEditor/StepList/StepList.js:14
 msgid "js.WorkflowEditor.StepList.EmptyReadOnlyStepList"
@@ -1944,17 +1944,26 @@ msgstr "Sort ascending"
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Sort descending"
 
-#: assets/js/table/ColumnHeader.js:14
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.table.ColumnHeader.types.date.day"
+msgstr "js.table.ColumnHeader.types.date.day"
+
+#: assets/js/BigTable/ColumnType.js:11 assets/js/BigTable/ColumnType.js:13
+#: assets/js/BigTable/ColumnType.js:15 assets/js/BigTable/ColumnType.js:17
+msgid "js.table.ColumnHeader.types.date.week"
+msgstr "js.table.ColumnHeader.types.date.week"
+
+#: assets/js/BigTable/ColumnType.js:24
 msgid "js.table.ColumnHeader.types.number"
-msgstr "number"
+msgstr ""
 
-#: assets/js/table/ColumnHeader.js:12
+#: assets/js/BigTable/ColumnType.js:22
 msgid "js.table.ColumnHeader.types.text"
-msgstr "text"
+msgstr ""
 
-#: assets/js/table/ColumnHeader.js:16
+#: assets/js/BigTable/ColumnType.js:26
 msgid "js.table.ColumnHeader.types.timestamp"
-msgstr "timestamp"
+msgstr ""
 
 #: assets/js/table/SelectedRowsActions.js:120
 msgid "js.table.SelectedRowsActions.menu"
@@ -2045,7 +2054,7 @@ msgstr "{years}y ago"
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
-#: cjwkernel/pandas/types.py:441
+#: cjwkernel/pandas/types.py:459
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Truncated output from {old_number} rows to {new_number}"
 
