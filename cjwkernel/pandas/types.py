@@ -32,6 +32,19 @@ QuickFixAction = atypes.QuickFixAction
 RenderError = atypes.RenderError
 
 
+def _column_type_name(column_type: ColumnType) -> str:
+    if isinstance(column_type, ColumnType.Text):
+        return "text"
+    elif isinstance(column_type, ColumnType.Date):
+        return "date"
+    elif isinstance(column_type, ColumnType.Number):
+        return "number"
+    elif isinstance(column_type, ColumnType.Timestamp):
+        return "timestamp"
+    else:
+        raise ValueError("Unhandled column type %r" % column_type)
+
+
 @dataclass(frozen=True)
 class RenderColumn:
     """
@@ -98,7 +111,7 @@ class TabOutput:
             name=value.tab.name,
             columns={
                 c.name: RenderColumn(
-                    c.name, c.type.name, getattr(c.type, "format", None)
+                    c.name, _column_type_name(c.type), getattr(c.type, "format", None)
                 )
                 for c in columns
             },

@@ -9,7 +9,7 @@ from cjwmodule.i18n import I18nMessage
 from django.contrib.auth import get_user_model
 from icu import ICUError
 
-from cjwkernel.types import Column, QuickFix, QuickFixAction, RenderError
+from cjwkernel.types import Column, ColumnType, QuickFix, QuickFixAction, RenderError
 from cjworkbench.i18n.trans import (
     MESSAGE_LOCALIZER_REGISTRY,
     MessageLocalizer,
@@ -595,12 +595,19 @@ def jsonize_render_error(
 
 
 def jsonize_column(column: Column) -> Dict[str, Any]:
-    ret = {"name": column.name, "type": column.type.name}
-    if hasattr(column.type, "format"):
-        ret["format"] = column.type.format
-    if hasattr(column.type, "unit"):
-        ret["unit"] = column.type.unit
-    return ret
+    name = column.name
+    ctype = column.type
+
+    if isinstance(ctype, ColumnType.Text):
+        return dict(name=name, type="text")
+    elif isinstance(column.type, ColumnType.Date):
+        return dict(name=name, type="date", unit=ctype.unit)
+    elif isinstance(column.type, ColumnType.Number):
+        return dict(name=name, type="number", format=ctype.format)
+    elif isinstance(ctype, ColumnType.Timestamp):
+        return dict(name=name, type="timestamp")
+    else:
+        raise ValueError("Unknown column type %r" % column.type)
 
 
 def jsonize_fetched_version_list(

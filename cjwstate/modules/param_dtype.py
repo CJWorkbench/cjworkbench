@@ -6,7 +6,6 @@ from typing import Any, ClassVar, Dict, FrozenSet, List, Optional
 import pytz
 
 
-@dataclass(frozen=True)
 class ParamDType:
     """Data type -- that is, storage format -- for a parameter.
 

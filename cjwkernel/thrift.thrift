@@ -71,7 +71,7 @@ struct Column {
 /**
  * Table data that will be cached for easy access.
  */
-struct TableMetadata {
+struct DEPRECATED_TableMetadata {
   /** Number of rows in the table. */
   1: i32 n_rows,
 
@@ -82,7 +82,7 @@ struct TableMetadata {
 /**
  * Table stored on disk, ready to be mmapped.
  */
-struct ArrowTable {
+struct DEPRECATED_ArrowTable {
   /**
    * Name of file on disk that contains data.
    *
@@ -95,7 +95,7 @@ struct ArrowTable {
   1: string filename,
 
   /** Metadata; must agree with the file on disk. */
-  2: TableMetadata metadata
+  2: DEPRECATED_TableMetadata metadata
 }
 
 /**
@@ -198,7 +198,12 @@ struct TabOutput {
   /**
    * Output from the final Step in `tab`.
    */
-  2: ArrowTable table
+  2: DEPRECATED_ArrowTable DEPRECATED_table,
+
+  /**
+   * Output from the final Step in `tab`.
+   */
+  3: string table_filename
 }
 
 /** Argument to a translatable string. */
@@ -323,23 +328,14 @@ struct FetchRequest {
  *
  * An "ok" result may be a user-friendly error -- that is, an empty file (or,
  * for backwards compat, a zero-column parquet file) and non-empty `errors`.
+ *
+ * The module writes the output data to `fetch_request.output_file`.
+ *
+ * Empty file or zero-column parquet file typically means, "error"; but
+ * that's the module's choice and not a hard-and-fast rule.
  */
 struct FetchResult {
-  /**
-   * File the fetch produced.
-   *
-   * The kernel writes the output data to `fetch_request.output_file`.
-   *
-   * Currently, this must be a valid Parquet file. In the future, we will
-   * loosen the requirement and allow any file.
-   *
-   * Empty file or zero-column parquet file typically means, "error"; but
-   * that's the module's choice and not a hard-and-fast rule.
-   *
-   * The file on disk is in a directory agreed upon by the processes passing
-   * this data around. Subdirectories and hidden files aren't allowed.
-   */
-  1: string filename,
+  1: string DEPRECATED_filename,
 
   /**
    * User-facing errors or warnings reported by the module.
@@ -371,7 +367,7 @@ struct RenderRequest {
    *
    * This is zero-row, zero-column on the first Step in a Tab.
    */
-  2: ArrowTable input_table,
+  2: DEPRECATED_ArrowTable DEPRECATED_input_table,
 
   /**
    * User-supplied parameters; must match the module's param_spec.
@@ -402,6 +398,13 @@ struct RenderRequest {
    * The file on disk will be in `basedir`.
    */
   6: string output_filename,
+
+  /**
+   * Output from previous Step.
+   *
+   * This is zero-row, zero-column on the first Step in a Tab.
+   */
+  7: string input_filename,
 }
 
 /**
@@ -409,16 +412,11 @@ struct RenderRequest {
  *
  * An "ok" result may be a user-friendly error -- that is, a zero-column table
  * and non-empty `errors`.
+ *
+ * The module writes the output Arrow data to `render_request.output_file`.
  */
 struct RenderResult {
-  /**
-   * Table the Step outputs.
-   *
-   * If the Step output is "error, then the table must have zero columns.
-   *
-   * The kernel writes the output Arrow data to `render_request.output_file`.
-   */
-  1: ArrowTable table,
+  1: DEPRECATED_ArrowTable DEPRECATED_table,
 
   /**
    * User-facing errors or warnings reported by the module.

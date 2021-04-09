@@ -18,6 +18,38 @@ msgstr ""
 msgid "js.BigTable.Cell.null"
 msgstr "null"
 
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.BigTable.ColumnType.date.day"
+msgstr "date"
+
+#: assets/js/BigTable/ColumnType.js:13
+msgid "js.BigTable.ColumnType.date.month"
+msgstr "date – month"
+
+#: assets/js/BigTable/ColumnType.js:15
+msgid "js.BigTable.ColumnType.date.quarter"
+msgstr "date – quarter"
+
+#: assets/js/BigTable/ColumnType.js:11
+msgid "js.BigTable.ColumnType.date.week"
+msgstr "date – week"
+
+#: assets/js/BigTable/ColumnType.js:17
+msgid "js.BigTable.ColumnType.date.year"
+msgstr "date – year"
+
+#: assets/js/BigTable/ColumnType.js:24
+msgid "js.BigTable.ColumnType.number"
+msgstr "number"
+
+#: assets/js/BigTable/ColumnType.js:22
+msgid "js.BigTable.ColumnType.text"
+msgstr "text"
+
+#: assets/js/BigTable/ColumnType.js:26
+msgid "js.BigTable.ColumnType.timestamp"
+msgstr "timestamp"
+
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Paste this code into any webpage HTML"
@@ -1944,27 +1976,6 @@ msgstr "Sort ascending"
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Sort descending"
 
-#: assets/js/BigTable/ColumnType.js:19
-msgid "js.table.ColumnHeader.types.date.day"
-msgstr "js.table.ColumnHeader.types.date.day"
-
-#: assets/js/BigTable/ColumnType.js:11 assets/js/BigTable/ColumnType.js:13
-#: assets/js/BigTable/ColumnType.js:15 assets/js/BigTable/ColumnType.js:17
-msgid "js.table.ColumnHeader.types.date.week"
-msgstr "js.table.ColumnHeader.types.date.week"
-
-#: assets/js/BigTable/ColumnType.js:24
-msgid "js.table.ColumnHeader.types.number"
-msgstr ""
-
-#: assets/js/BigTable/ColumnType.js:22
-msgid "js.table.ColumnHeader.types.text"
-msgstr ""
-
-#: assets/js/BigTable/ColumnType.js:26
-msgid "js.table.ColumnHeader.types.timestamp"
-msgstr ""
-
 #: assets/js/table/SelectedRowsActions.js:120
 msgid "js.table.SelectedRowsActions.menu"
 msgstr "menu"
@@ -2054,7 +2065,7 @@ msgstr "{years}y ago"
 msgid "js.util.timeDifference.now"
 msgstr "just now"
 
-#: cjwkernel/pandas/types.py:459
+#: cjwkernel/pandas/types.py:472
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Truncated output from {old_number} rows to {new_number}"
 

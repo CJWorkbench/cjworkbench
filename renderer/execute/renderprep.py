@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, Tuple
 import iso8601
-from cjwkernel.types import ArrowTable, Params, RenderResult, Tab, TabOutput
+from cjwkernel.types import ArrowTable, ColumnType, Params, RenderResult, Tab, TabOutput
 from cjwkernel.util import tempfile_context
 from cjwstate import s3
 from cjwstate.models import UploadedFile
@@ -312,6 +312,19 @@ def _clean_condition_recursively(
         return clean_condition, errors
 
 
+def _column_type_name(column_type: ColumnType) -> str:
+    if isinstance(column_type, ColumnType.Text):
+        return "text"
+    elif isinstance(column_type, ColumnType.Date):
+        return "date"
+    elif isinstance(column_type, ColumnType.Number):
+        return "number"
+    elif isinstance(column_type, ColumnType.Timestamp):
+        return "timestamp"
+    else:
+        raise ValueError("Unhandled column type %r" % column_type)
+
+
 @clean_value.register(ParamDType.Condition)
 def _(
     dtype: ParamDType.Condition, value: Dict[str, Any], context: RenderContext
@@ -319,7 +332,7 @@ def _(
     condition, errors = _clean_condition_recursively(
         value,
         {
-            column.name: column.type.name
+            column.name: _column_type_name(column.type)
             for column in context.input_table.metadata.columns
         },
     )
@@ -398,11 +411,11 @@ def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
         return ""  # Null column
 
     column = valid_columns[value]
-    if dtype.column_types and column.type.name not in dtype.column_types:
+    if dtype.column_types and _column_type_name(column.type) not in dtype.column_types:
         if "text" in dtype.column_types:
             found_type = None
         else:
-            found_type = column.type.name
+            found_type = _column_type_name(column.type)
         raise PromptingError(
             [PromptingError.WrongColumnType([value], found_type, dtype.column_types)]
         )
@@ -424,11 +437,14 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], context: RenderContext) -
         if colname not in requested_colnames:
             continue
 
-        if dtype.column_types and column.type.name not in dtype.column_types:
+        if (
+            dtype.column_types
+            and _column_type_name(column.type) not in dtype.column_types
+        ):
             if "text" in dtype.column_types:
                 found_type = None
             else:
-                found_type = column.type.name
+                found_type = _column_type_name(column.type)
             error_agg.add(
                 PromptingError.WrongColumnType(
                     [column.name], found_type, dtype.column_types

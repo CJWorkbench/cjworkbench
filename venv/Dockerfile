@@ -1,23 +1,17 @@
 FROM python:3.8.8-slim-buster
 
 # Need build-essential for:
-# * regex (TODO nix the dep or make it support manylinux .whl)
-# * google-re2
 # * pysycopg2 (binaries are evil because psycopg2 links SSL -- as does Python)
 # * PyICU
 #
-# Need libre2-dev to build google-re2
 # Need pkg-config to build PyICU
-# Need pybind11-dev to build google-re2
 RUN mkdir -p /root/.local/share/virtualenvs \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
       build-essential \
       libicu-dev \
       libpq-dev \
-      libre2-dev \
       pkg-config \
-      pybind11-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python -mpip install pipdeptree

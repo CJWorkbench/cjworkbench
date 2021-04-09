@@ -148,7 +148,7 @@ export class EditableColumnName extends Component {
         <span className='column-key' onClick={this.handleEnterEditMode}>
           <div className='value'>{this.state.newName}</div>
           <div className='column-type'>
-            <ColumnType columnType={this.props.columnType} dateUnit={this.props.dateUnit} />
+            <ColumnType type={this.props.columnType} dateUnit={this.props.dateUnit} />
           </div>
         </span>
       )

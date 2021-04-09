@@ -21,7 +21,6 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
 # iproute2: used by setup-sandboxes.sh to find our IP for NAT
 # iptables: used by setup-sandboxes.sh to set up NAT and firewall
 # libicu63: used by PyICU
-# libre2-5: used by google-re2 (in modules)
 RUN true \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -30,7 +29,6 @@ RUN true \
       iptables \
       libcap2 \
       libicu63 \
-      libre2-5 \
       postgresql-client \
       unzip \
     && rm -rf /var/lib/apt/lists/*
@@ -61,7 +59,6 @@ RUN mkdir -p /opt/venv
 WORKDIR /app
 
 # Need build-essential (and everything below it) for:
-# * google-re2
 # * pysycopg2 (psycopg2-binary is evil because it links SSL -- as does Python)
 # * PyICU
 RUN true \
@@ -70,9 +67,7 @@ RUN true \
       build-essential \
       libicu-dev \
       libpq-dev \
-      libre2-dev \
-      pkg-config \
-      pybind11-dev
+      pkg-config
 
 COPY venv/django-requirements-frozen.txt /app/venv/
 # Clean up after pip, to save disk space. We nix the pycache from venv/django/,

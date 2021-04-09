@@ -12,7 +12,13 @@ import pyarrow.ipc
 import pyarrow.types
 from cjwkernel.util import json_encode
 from cjwmodule.arrow.format import parse_number_format
-from cjwmodule.i18n import I18nMessage
+from cjwmodule.types import (
+    FetchResult,
+    I18nMessage,
+    QuickFix,
+    QuickFixAction,
+    RenderError,
+)
 
 # Some types we can import with no conversion
 from .thrift import ttypes
@@ -55,6 +61,69 @@ __all__ = [
 ]
 
 
+class ColumnTypeText(NamedTuple):
+    pass
+
+
+class ColumnTypeNumber(NamedTuple):
+    format: str = "{:,}"
+    """Python format() string.
+
+    The default value formats a float with commas as thousands separators.
+
+    TODO handle locale, too: format depends on it.
+    """
+
+
+class ColumnTypeTimestamp(NamedTuple):
+    pass
+
+
+class ColumnTypeDate(NamedTuple):
+    unit: Literal["day", "week", "month", "quarter", "year"]
+
+
+ColumnType = Union[
+    ColumnTypeText, ColumnTypeNumber, ColumnTypeTimestamp, ColumnTypeDate
+]
+"""
+Data type of a column.
+
+This describes how it is presented -- not how its bytes are arranged.
+"""
+
+# Aliases to help with import. e.g.:
+# from cjwmodule.types import Column, ColumnType
+# column = Column('A', ColumnType.Number('{:,.2f}'))
+ColumnType.Text = ColumnTypeText
+ColumnType.Number = ColumnTypeNumber
+ColumnType.Timestamp = ColumnTypeTimestamp
+ColumnType.Date = ColumnTypeDate
+
+
+class Column(NamedTuple):
+    """A column definition."""
+
+    name: str
+    """Name of the column."""
+
+    type: ColumnType
+    """How the column data is stored and displayed to the user."""
+
+
+def arrow_field_to_column_type(field: pa.Field) -> ColumnType:
+    if is_string(field.type):
+        return ColumnType.Text()
+    elif is_floating(field.type) or is_integer(field.type):
+        return ColumnType.Number(format=field.metadata["format"].decode("utf-8"))
+    elif is_timestamp(field.type):
+        return ColumnType.Timestamp()
+    elif is_date32(field.type):
+        return ColumnType.Date(unit=field.metadata["unit"].decode("ascii"))
+    else:
+        raise ValueError("Unexpected field type %r" % field.type)
+
+
 def _thrift_filename_to_path(filename: str, basedir: Path) -> Path:
     if "/" in filename:
         raise ValueError("filename must not contain directories; got '%s'" % filename)
@@ -66,8 +135,7 @@ def _thrift_filename_to_path(filename: str, basedir: Path) -> Path:
     return path
 
 
-@dataclass(frozen=True)
-class CompiledModule:
+class CompiledModule(NamedTuple):
     module_slug: str
     """Identifier for the module.
 
@@ -88,68 +156,6 @@ class CompiledModule:
         return marshal.loads(self.marshalled_code_object)
 
 
-class ColumnTypeText(NamedTuple):
-    @property
-    def name(self):
-        return "text"
-
-
-class ColumnTypeNumber(NamedTuple):
-    format: str = "{:,}"
-    """Python format() string.
-
-    The default value formats a float with commas as thousands separators.
-
-    TODO handle locale, too: format depends on it.
-    """
-
-    @property
-    def name(self):
-        return "number"
-
-
-class ColumnTypeTimestamp(NamedTuple):
-    @property
-    def name(self):
-        return "timestamp"
-
-
-class ColumnTypeDate(NamedTuple):
-    unit: Literal["day", "week", "month", "quarter", "year"]
-
-    @property
-    def name(self):
-        return "date"
-
-
-ColumnType = Union[
-    ColumnTypeText, ColumnTypeNumber, ColumnTypeTimestamp, ColumnTypeDate
-]
-"""
-Data type of a column.
-
-This describes how it is presented -- not how its bytes are arranged.
-"""
-
-# Aliases to help with import. e.g.:
-# from cjwkernel.types import Column, ColumnType
-# column = Column('A', ColumnType.Number('{:,.2f}'))
-ColumnType.Text = ColumnTypeText
-ColumnType.Number = ColumnTypeNumber
-ColumnType.Timestamp = ColumnTypeTimestamp
-ColumnType.Date = ColumnTypeDate
-
-
-class Column(NamedTuple):
-    """A column definition."""
-
-    name: str
-    """Name of the column."""
-
-    type: ColumnType
-    """How the column data is stored and displayed to the user."""
-
-
 class TableMetadata(NamedTuple):
     """Table data that will be cached for easy access."""
 
@@ -164,7 +170,7 @@ def _pyarrow_type_to_column_type(
     dtype: pyarrow.DataType, fallback_column_type: Optional[ColumnType]
 ) -> ColumnType:
     if pyarrow.types.is_floating(dtype) or pyarrow.types.is_integer(dtype):
-        if fallback_column_type is not None and fallback_column_type.name == "number":
+        if isinstance(fallback_column_type, ColumnType.Number):  # handles None
             return ColumnTypeNumber(fallback_column_type.format)
         else:
             return ColumnTypeNumber()
@@ -409,66 +415,9 @@ class RawParams(NamedTuple):
 
 
 class Params(NamedTuple):
-    """
-    Nested data structure passed to `render()` -- includes Column/TabOutput.
-    """
+    """Nested data structure passed to `render()` -- includes Column/TabOutput."""
 
     params: Dict[str, Any]
-
-
-class QuickFixAction(ABC):
-    """Instruction for what happens when the user clicks a Quick Fix button."""
-
-
-@dataclass(frozen=True)
-class PrependStepQuickFixAction(QuickFixAction):
-    """Instruction that upon clicking a button, we should create a Step."""
-
-    module_slug: str
-    """Module to prepend."""
-
-    partial_params: Dict[str, Any]
-    """Some params to set on the new Step (atop the module's defaults)."""
-
-
-QuickFixAction.PrependStep = PrependStepQuickFixAction
-
-
-class QuickFix(NamedTuple):
-    """Button the user can click in response to an error message."""
-
-    button_text: I18nMessage
-    action: QuickFixAction
-
-
-class RenderError(NamedTuple):
-    """
-    Error or warning encountered during `render()`.
-
-    If `render()` output is a zero-column table, then its result's errors are
-    "errors" -- they prevent the workflow from executing. If `render()` outputs
-    columns, though, then its result's errors are "warnings" -- execution
-    continues and these messages are presented to the user.
-    """
-
-    message: I18nMessage
-    quick_fixes: List[QuickFix] = []
-
-
-class FetchResult(NamedTuple):
-    """The module executed a Step's fetch() without crashing."""
-
-    path: Path
-    """File storing whatever data fetch() output.
-
-    If `path` starts and ends with Parquet's magic numbers, "PAR1", then
-    fetcher will interpret `path` as tabular data. Otherwise, it will be
-    treated as a file. See `fetcher/versions.py` for rationale. TODO make file
-    format explicit (or nix the concept entirely).
-    """
-
-    errors: List[RenderError] = []
-    """User-facing errors (or warnings) reported by the module."""
 
 
 @dataclass(frozen=True)
@@ -626,7 +575,7 @@ def arrow_params_to_thrift(value: Params) -> Dict[str, ttypes.ParamValue]:
 
 
 def arrow_quick_fix_action_to_thrift(value: QuickFixAction) -> ttypes.QuickFixAction:
-    if isinstance(value, PrependStepQuickFixAction):
+    if isinstance(value, QuickFixAction.PrependStep):
         return ttypes.QuickFixAction(
             prepend_step=ttypes.PrependStepQuickFixAction(
                 value.module_slug, ttypes.RawParams(json_encode(value.partial_params))
@@ -786,7 +735,7 @@ def thrift_params_to_arrow(
 
 def thrift_quick_fix_action_to_arrow(value: ttypes.QuickFixAction) -> QuickFixAction:
     if value.prepend_step is not None:
-        return PrependStepQuickFixAction(
+        return QuickFixAction.PrependStep(
             value.prepend_step.module_slug,
             json.loads(value.prepend_step.partial_params.json),
         )

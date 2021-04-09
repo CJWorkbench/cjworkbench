@@ -3,6 +3,46 @@
 msgid "js.BigTable.Cell.null"
 msgstr ""
 
+#. default-message: date
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.BigTable.ColumnType.date.day"
+msgstr ""
+
+#. default-message: date – month
+#: assets/js/BigTable/ColumnType.js:13
+msgid "js.BigTable.ColumnType.date.month"
+msgstr ""
+
+#. default-message: date – quarter
+#: assets/js/BigTable/ColumnType.js:15
+msgid "js.BigTable.ColumnType.date.quarter"
+msgstr ""
+
+#. default-message: date – week
+#: assets/js/BigTable/ColumnType.js:11
+msgid "js.BigTable.ColumnType.date.week"
+msgstr ""
+
+#. default-message: date – year
+#: assets/js/BigTable/ColumnType.js:17
+msgid "js.BigTable.ColumnType.date.year"
+msgstr ""
+
+#. default-message: number
+#: assets/js/BigTable/ColumnType.js:24
+msgid "js.BigTable.ColumnType.number"
+msgstr ""
+
+#. default-message: text
+#: assets/js/BigTable/ColumnType.js:22
+msgid "js.BigTable.ColumnType.text"
+msgstr ""
+
+#. default-message: timestamp
+#: assets/js/BigTable/ColumnType.js:26
+msgid "js.BigTable.ColumnType.timestamp"
+msgstr ""
+
 #. default-message: Paste this code into any webpage HTML
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
@@ -2345,31 +2385,6 @@ msgstr ""
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr ""
 
-#. default-message: js.table.ColumnHeader.types.date.day
-#: assets/js/BigTable/ColumnType.js:19
-msgid "js.table.ColumnHeader.types.date.day"
-msgstr ""
-
-#. default-message: js.table.ColumnHeader.types.date.week
-#: assets/js/BigTable/ColumnType.js:11 assets/js/BigTable/ColumnType.js:13 assets/js/BigTable/ColumnType.js:15 assets/js/BigTable/ColumnType.js:17
-msgid "js.table.ColumnHeader.types.date.week"
-msgstr ""
-
-#. default-message:
-#: assets/js/BigTable/ColumnType.js:24
-msgid "js.table.ColumnHeader.types.number"
-msgstr ""
-
-#. default-message:
-#: assets/js/BigTable/ColumnType.js:22
-msgid "js.table.ColumnHeader.types.text"
-msgstr ""
-
-#. default-message:
-#: assets/js/BigTable/ColumnType.js:26
-msgid "js.table.ColumnHeader.types.timestamp"
-msgstr ""
-
 #. default-message: menu
 #: assets/js/table/SelectedRowsActions.js:120
 msgid "js.table.SelectedRowsActions.menu"
@@ -2479,7 +2494,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:459
+#: cjwkernel/pandas/types.py:472
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 

@@ -3,13 +3,13 @@ babel
 beautifulsoup4~=4.7.1  # TODO nix, use html5lib
 boto3  # TODO replace with something async
 carehare~=0.0.10
-cjwmodule~=3.3.1
-cjwparse~=1.2.0  # for i18n strings
+cjwmodule~=4.0.0
+cjwparse~=2.0.1  # for i18n strings
 cjwparquet~=2.2.0
 Django~=3.1
 django-allauth~=0.44.0
 django-user-accounts==2.1.0
-google-re2==0.0.5  # 0.0.5 is the latest to work on libre2-5 (newer ones use deprecated symbols). TODO unpin version when we upgrade to Debian Bullseye
+built-google-re2~=0.0.7
 html5lib==1.0.1
 iso8601
 jsonschema~=3.0.1

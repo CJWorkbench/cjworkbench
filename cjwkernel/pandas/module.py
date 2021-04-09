@@ -15,6 +15,7 @@ from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
+    ColumnType,
     arrow_fetch_result_to_thrift,
     arrow_raw_params_to_thrift,
     arrow_render_result_to_thrift,
@@ -112,10 +113,23 @@ def __arrow_to_pandas(table: types.ArrowTable) -> pd.DataFrame:
         return cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table.table)
 
 
+def _column_type_name(column_type: ColumnType) -> str:
+    if isinstance(column_type, ColumnType.Text):
+        return "text"
+    elif isinstance(column_type, ColumnType.Date):
+        return "date"
+    elif isinstance(column_type, ColumnType.Number):
+        return "number"
+    elif isinstance(column_type, ColumnType.Timestamp):
+        return "timestamp"
+    else:
+        raise ValueError("Unhandled column type %r" % column_type)
+
+
 def __arrow_column_to_render_column(column: types.Column) -> ptypes.RenderColumn:
     return ptypes.RenderColumn(
         column.name,
-        column.type.name,
+        _column_type_name(column.type),
         getattr(column.type, "format", getattr(column.type, "unit", None)),
     )
 

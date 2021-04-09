@@ -1,11 +1,11 @@
 beautifulsoup4==4.7.1
 cchardet
-cjwmodule~=3.3.1
-cjwpandasmodule~=0.1.0
+cjwmodule~=4.0.0
+cjwpandasmodule~=0.2.0
 cjwparquet~=2.2.0
-cjwparse~=1.2.0
+cjwparse~=2.0.1
 formulas~=1.0.0
-google-re2==0.0.5 # 0.0.5 is the latest to work on libre2-5 (newer ones use deprecated symbols)
+built-google-re2~=0.0.7
 html5lib==1.0.1
 lxml~=4.6.1
 lz4

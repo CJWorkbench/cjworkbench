@@ -18,6 +18,38 @@ msgstr ""
 msgid "js.BigTable.Cell.null"
 msgstr ""
 
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.BigTable.ColumnType.date.day"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:13
+msgid "js.BigTable.ColumnType.date.month"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:15
+msgid "js.BigTable.ColumnType.date.quarter"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:11
+msgid "js.BigTable.ColumnType.date.week"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:17
+msgid "js.BigTable.ColumnType.date.year"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:24
+msgid "js.BigTable.ColumnType.number"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:22
+msgid "js.BigTable.ColumnType.text"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:26
+msgid "js.BigTable.ColumnType.timestamp"
+msgstr ""
+
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
@@ -34,12 +66,10 @@ msgstr "από τον/την {0}"
 #. `<0>{timeAgo}</0>` will show a time difference (i.e. something like '4h
 #. ago')
 #: assets/js/Embed.js:105
-#, fuzzy
 msgid "js.Embed.metadata.updated"
 msgstr "Ενημερώθηκε {timeAgo}"
 
 #: assets/js/Embed.js:131
-#, fuzzy
 msgid "js.Embed.workflowNotAvailable.footer.logo"
 msgstr "WORKBENCH"
 
@@ -72,7 +102,6 @@ msgstr "CSV"
 
 #. "JSON" (all-caps) is a kind of file
 #: assets/js/ExportModal.js:52
-#, fuzzy
 msgid "js.ExportModal.type.JSON"
 msgstr "ΡΟΗ JSON"
 
@@ -85,7 +114,6 @@ msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr "Εισαγωγή"
 
 #: assets/js/ImportModuleFromGitHub.js:133
-#, fuzzy
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) "
@@ -96,7 +124,6 @@ msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
 #: assets/js/ImportModuleFromGitHub.js:92
-#, fuzzy
 msgid "js.ImportModuleFromGithub.staff.buildingModuleTutorialLink"
 msgstr ""
 "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) "
@@ -108,12 +135,10 @@ msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
 #. This is a success message
 #: assets/js/ImportModuleFromGitHub.js:46
-#, fuzzy
 msgid "js.ImportModuleFromGithub.status.importedModule"
 msgstr "Έγινε εισαγωγή της μονάδας {module} στην κατηγορία {category}"
 
 #: assets/js/ImportModuleFromGitHub.js:28
-#, fuzzy
 msgid "js.ImportModuleFromGithub.status.processing"
 msgstr "Γίνεται επεξεργασία..."
 
@@ -171,12 +196,10 @@ msgid "js.Page.MainNav.billing.title"
 msgstr ""
 
 #: assets/js/Page/MainNav/TopPaths.js:31
-#, fuzzy
 msgid "js.Page.MainNav.examples.title"
 msgstr "Συνταγές"
 
 #: assets/js/Page/MainNav/TopPaths.js:45
-#, fuzzy
 msgid "js.Page.MainNav.lessons.title"
 msgstr "Εκπαίδευση"
 
@@ -197,7 +220,6 @@ msgid "js.Page.MainNav.signIn.title"
 msgstr "Συνδεθείτε"
 
 #: assets/js/Page/MainNav/TopPaths.js:39
-#, fuzzy
 msgid "js.Page.MainNav.training.title"
 msgstr "Εκπαίδευση"
 
@@ -214,7 +236,6 @@ msgid "js.Report.ShareCard.accessibilityDescription.private"
 msgstr "Μόνο συνεργάτες μπορούν να δουν αυτή την έκθεση"
 
 #: assets/js/WorkflowEditor/Report/ShareCard.js:18
-#, fuzzy
 msgid "js.Report.ShareCard.accessibilityDescription.public"
 msgstr "Οποιοσδήποτε μπορεί να δει αυτή την έκθεση"
 
@@ -229,7 +250,6 @@ msgstr "Επεξεργασία απορρήτου"
 
 #. As in 'URL of report'
 #: assets/js/WorkflowEditor/Report/ShareCard.js:53
-#, fuzzy
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr "Διεύθυνση URL αναφοράς"
 
@@ -259,7 +279,6 @@ msgstr "Κλείσιμο"
 
 #. This should be all-caps for styling reasons
 #: assets/js/ShareModal/Modal.js:27
-#, fuzzy
 msgid "js.ShareModal.Modal.header.title"
 msgstr "ΡΥΘΜΙΣΕΙΣ ΚΟΙΝΟΠΟΙΗΣΗΣ"
 
@@ -636,7 +655,6 @@ msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
 #: assets/js/WorkflowEditor/step/Step.js:371
-#, fuzzy
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
@@ -669,7 +687,6 @@ msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
 
 #: assets/js/WorkflowNavBar.js:23
-#, fuzzy
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
 msgstr "Εκπαίδευση"
 
@@ -765,17 +782,14 @@ msgid "js.Workflows.WorkflowLists.nav.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
 #: assets/js/Workflows/ExampleWorkflowsMain.js:11
-#, fuzzy
 msgid "js.Workflows.WorkflowLists.nav.recipes"
 msgstr "Συνταγές"
 
 #: assets/js/Workflows/WorkflowsSharedWithMeMain.js:11
-#, fuzzy
 msgid "js.Workflows.WorkflowLists.nav.sharedWithMe"
 msgstr "Κοινοποιημένες σε μένα"
 
 #: assets/js/Workflows/ExampleWorkflowsMain.js:19
-#, fuzzy
 msgid "js.Workflows.WorkflowLists.publishNewRecipes"
 msgstr "Δημοσίευση νέων συνταγών μέσω του διαχειριστή Django"
 
@@ -836,7 +850,6 @@ msgid "js.i18n.LocaleSwitcher.header.title"
 msgstr "ΓΛΩΣΣΑ"
 
 #: assets/js/lessons/LessonFooter.js:38
-#, fuzzy
 msgid "js.lessons.LessonFooter.training.link"
 msgstr "Εκπαίδευση"
 
@@ -851,7 +864,6 @@ msgid "js.lessons.LessonNav.previous.button"
 msgstr "Προηγούμενο"
 
 #: assets/js/lessons/LessonSection.js:71
-#, fuzzy
 msgid "js.lessons.LessonSection.training.link"
 msgstr "Εκπαίδευση"
 
@@ -986,7 +998,6 @@ msgid "js.params.Condition.Group.heading.title"
 msgstr "Αν"
 
 #: assets/js/params/Custom/Aggregations/Aggregation.js:114
-#, fuzzy
 msgid "js.params.Custom.Aggregations.Aggregation.placeholder.default"
 msgstr "(Προεπιλογή)"
 
@@ -1112,7 +1123,6 @@ msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
 #: assets/js/params/ParamsFormFooter.js:77
-#, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
@@ -1243,7 +1253,6 @@ msgid "js.params.Custom.RefineClusterer.Algorithms.fingerprint.name"
 msgstr "Αποτύπωμα"
 
 #: assets/js/params/Custom/Refine/RefineClusterer.js:34
-#, fuzzy
 msgid "js.params.Custom.RefineClusterer.Algorithms.levenshtein.description"
 msgstr ""
 "Ομαδοποίηση τιμών εάν ο αριθμός των χαρακτήρων που προστίθενται, αλλάζουν"
@@ -1337,12 +1346,10 @@ msgid "js.params.Custom.UploadApiModal.ApiTokenOk.enableApi"
 msgstr "Ενεργοποίηση API"
 
 #: assets/js/params/File/UploadApiModal.js:109
-#, fuzzy
 msgid "js.params.Custom.UploadApiModal.ApiTokenOk.resetApiToken"
 msgstr "Δημιουργία νέου αναγνωριστικού API"
 
 #: assets/js/params/File/UploadApiModal.js:205
-#, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.disabled"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι απενεργοποιημένο. Ενεργοποιήστε το για "
@@ -1350,7 +1357,6 @@ msgstr ""
 
 #. The tag adds emphasis
 #: assets/js/params/File/UploadApiModal.js:197
-#, fuzzy
 msgid "js.params.Custom.UploadApiModal.fileuploadApiStatus.enabled"
 msgstr "Το API ανεβάσματος αρχείων είναι <0>ενεργοποιημένο</0>."
 
@@ -1368,7 +1374,6 @@ msgid "js.params.Custom.UploadApiModal.programmerInstructions"
 msgstr "Αυτές οι οδηγίες απευθύνονται σε προγραμματιστές."
 
 #: assets/js/params/File/UploadApiModal.js:190
-#, fuzzy
 msgid "js.params.Custom.UploadApiModal.theFileUploadApiIsPerfect"
 msgstr ""
 "Το API ανεβάσματος αρχείων είναι ιδανικό για τη φόρτωση δεδομένων από "
@@ -1436,13 +1441,11 @@ msgstr ""
 "συνέχεια, κάντε κλικ στην \"Επανάληψη\" παραπάνω."
 
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
-#, fuzzy
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
 msgstr "Χρειάζεστε υψηλότερο όριο; Στείλτε μας ένα σύντομο <0>email</0>."
 
 #. The two tags add emphasis
 #: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:52
-#, fuzzy
 msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
 msgstr ""
 "Ζητάτε <0>{0}</0> ενημερώσεις κάθε ημέρα σε όλες τις ροές εργασιών σας. "
@@ -1611,7 +1614,6 @@ msgstr "Επιλέξτε αρχείο που έχει ανεβεί"
 #. Means "No files exist". Very rare; most users will see
 #. js.params.File.UploadFileSelect.choosePreviousFile.text first
 #: assets/js/params/File/UploadedFileSelect.js:168
-#, fuzzy
 msgid "js.params.File.UploadedFileSelect.choosePreviousFile.none"
 msgstr "[ΚΑΝΕΝΑ]"
 
@@ -1807,7 +1809,6 @@ msgid "js.params.common.FacetSearch.clearSearch.hoverText"
 msgstr "Καθαρισμός αναζήτησης"
 
 #: assets/js/params/common/FacetSearch.js:32
-#, fuzzy
 msgid "js.params.common.FacetSearch.searchFacets.placeholder"
 msgstr "Αναζήτηση πτυχών..."
 
@@ -1958,7 +1959,6 @@ msgid "js.table.ColumnContextMenu.cleanText"
 msgstr "Καθάρισμα κειμένου"
 
 #: assets/js/table/ColumnContextMenu.js:121
-#, fuzzy
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr "Μετατροπή σε αριθμούς"
 
@@ -1997,30 +1997,6 @@ msgstr "Αύξουσα ταξινόμηση"
 #: assets/js/table/ColumnContextMenu.js:87
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Φθίνουσα ταξινόμηση"
-
-#: assets/js/BigTable/ColumnType.js:19
-msgid "js.table.ColumnHeader.types.date.day"
-msgstr ""
-
-#: assets/js/BigTable/ColumnType.js:11 assets/js/BigTable/ColumnType.js:13
-#: assets/js/BigTable/ColumnType.js:15 assets/js/BigTable/ColumnType.js:17
-msgid "js.table.ColumnHeader.types.date.week"
-msgstr ""
-
-#: assets/js/BigTable/ColumnType.js:24
-#, fuzzy
-msgid "js.table.ColumnHeader.types.number"
-msgstr "αριθμός"
-
-#: assets/js/BigTable/ColumnType.js:22
-#, fuzzy
-msgid "js.table.ColumnHeader.types.text"
-msgstr "κείμενο"
-
-#: assets/js/BigTable/ColumnType.js:26
-#, fuzzy
-msgid "js.table.ColumnHeader.types.timestamp"
-msgstr "ημερομηνία & ώρα"
 
 #: assets/js/table/SelectedRowsActions.js:120
 msgid "js.table.SelectedRowsActions.menu"
@@ -2111,63 +2087,53 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:459
+#: cjwkernel/pandas/types.py:472
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
-msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
+msgstr ""
 
 #: cjworkbench/forms/signup.py:24
 msgid "py.forms.signup.firstName.placeholder"
-msgstr "Όνομα"
+msgstr ""
 
 #: cjworkbench/forms/signup.py:31
 msgid "py.forms.signup.lastName.placeholder"
-msgstr "Επώνυμο"
+msgstr ""
 
 #: fetcher/fetch.py:179
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
-"Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
-"προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
-"Κωδικός σφάλματος: {message}"
 
 #: fetcher/fetch.py:273
 msgid "py.fetcher.fetch.no_loaded_module"
-msgstr "Δεν είναι δυνατή η λήψη: η μονάδα (module) διαγράφηκε"
+msgstr ""
 
 #: fetcher/secrets.py:18
 msgid "py.fetcher.secrets._service_no_longer_configured_error"
-msgstr "Η υπηρεσία \"{service}\" έχει πάψει να είναι διαμορφωμένη"
+msgstr ""
 
 #: fetcher/secrets.py:183
 msgid "py.fetcher.secrets._refresh_oauth2_token.error.general"
 msgstr ""
-"Ο διακομιστής διακριτικών (τεκμηρίων) απάντησε με {status_code}: {error} "
-"({description})"
 
 #: fetcher/secrets.py:197
 msgid "py.fetcher.secrets._refresh_oauth2_token.server_error.general"
-msgstr "Η {service_id} απάντησε με HTTP {status_code} {reason}: {description}"
+msgstr ""
 
 #: fetcher/secrets.py:207
 msgid "py.fetcher.secrets._refresh_oauth2_token.timeout_error"
-msgstr "Λήξη χρονικού ορίου κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2"
+msgstr ""
 
 #: fetcher/secrets.py:217
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
-msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
+msgstr ""
 
 #: renderer/execute/step.py:139
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
-"Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
-"προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
-"Κωδικός σφάλματος: {message}"
 
 #: renderer/execute/step.py:373
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
-"Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
-"βήματος."
 
 #: renderer/execute/step.py:400
 msgid "py.renderer.execute.step.NoLoadedDataError"
@@ -2176,12 +2142,10 @@ msgstr ""
 #: renderer/execute/step.py:411
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
-"Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
-"καρτέλα."
 
 #: renderer/execute/step.py:422
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
-msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
+msgstr ""
 
 #: renderer/execute/types.py:51
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
@@ -2192,20 +2156,15 @@ msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 
 #: renderer/execute/types.py:131
-#, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
-msgstr "Μετατροπή σε κείμενο."
+msgstr ""
 
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
 #: renderer/execute/types.py:137
-#, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
-"Μετατροπή { found_type, select, text {κειμένου} number {αριθμών} "
-"timestamp {ημερομηνιών & ωρών} other {}} σε {best_wanted_type, select, "
-"text {κείμενο} number {αριθμούς} timestamp {ημερομηνίες & ώρες} other{}}."
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
@@ -2213,11 +2172,6 @@ msgstr ""
 #: renderer/execute/types.py:180
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
-"{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρεπει να μετατραπεί σε "
-"κείμενο.} =2 {Οι στήλες “{0}” και “{1}” πρέπει να μετατραπούν σε "
-"κείμενο.} =3 {Οι στήλες “{0}”, “{1}” και “{2}” πρέπει να μετατραπούν σε "
-"κείμενο.} other {Οι στήλες “{0}”, “{1}” και # άλλες πρέπει να μετατραπούν"
-" σε κείμενο.}}"
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names: {0}, {1}, {2},
@@ -2225,85 +2179,64 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
 #: renderer/execute/types.py:193
-#, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
-"{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρέπει να μετατραπεί από { "
-"found_type, select, text {κείμενο} number {αριθμούς} timestamp "
-"{ημερομηνίες & ώρες} other {}} σε {best_wanted_type, select, text "
-"{κείμενο} number {αριθμούς} timestamp {ημερομηνίες & ώρες} other {}}.} =2"
-" {Οι στήλες “{0}” και “{1}” πρέπει να μετατραπούν από { found_type, "
-"select, text {κείμενο} number {αριθμούς} timestamp {ημερομηνίες & ώρες} "
-"other {}} σε {best_wanted_type, select, text {κείμενο} number {αριθμούς} "
-"timestamp {ημερομηνίες & ώρες}  other{}}.} =3 {Οι στήλες “{0}”, “{1}” και"
-" “{2}” πρέπει να μετατραπούν από { found_type, select, text {κείμενο} "
-"number {αριθμούς} timestamp {ημερομηνίες & ώρες} other {}} σε "
-"{best_wanted_type, select, text {κείμενο} number {αριθμούς} timestamp "
-"{ημερομηνίες & ώρες} other{}}.} other {Οι στήλες “{0}”, “{1}” και # άλλες"
-" πρέπει να μετατραπούν από { found_type, select, text {κείμενο} number "
-"{αριθμούς} timestamp {ημερομηνίες & ώρες} other {}} σε {best_wanted_type,"
-" select, text {κείμενο} number {αριθμούς} timestamp {ημερομηνίες & ώρες} "
-"other{}}.}}"
 
 #: templates/403.html:7
 msgid "py.templates.403.title"
-msgstr "403 Απαγορεύεται η πρόσβαση"
+msgstr ""
 
 #: templates/403.html:24
 msgid "py.templates.403.description"
 msgstr ""
-"Ο λογαριασμός στον οποίο έχετε συνδεθεί δεν έχει πρόσβαση σε αυτή τη "
-"σελίδα"
 
 #: templates/403.html:25
 msgid "py.templates.403.goBack.link"
-msgstr "Επιστροφή στον χώρο εργασίας μου"
+msgstr ""
 
 #: templates/404.html:7
 msgid "py.templates.404.title"
-msgstr "404 Η σελίδα δεν βρέθηκε"
+msgstr ""
 
 #: templates/404.html:24
 msgid "py.templates.404.description"
-msgstr "Όχι ο αριθμός που ψάχνετε"
+msgstr ""
 
 #: templates/404.html:25
 msgid "py.templates.404.backToWorkspace.link"
-msgstr "Επιστροφή στον χώρο εργασίας"
+msgstr ""
 
 #: templates/_base.html:14
 msgid "py.templates._base.message"
-msgstr "Μηνύματα:"
+msgstr ""
 
 #: templates/_base.html:24
 msgid "py.templates._base.menu"
-msgstr "Μενού:"
+msgstr ""
 
 #: templates/_base.html:27
 msgid "py.templates._base.changeMail"
-msgstr "Αλλαγή email"
+msgstr ""
 
 #: templates/_base.html:28
 msgid "py.templates._base.signOut"
-msgstr "Αποσύνδεση"
+msgstr ""
 
 #: templates/_base.html:30 templates/account/email_confirm.html:21
 msgid "py.templates._base.signIn"
-msgstr "Σύνδεση"
+msgstr ""
 
 #: templates/_base.html:31 templates/account/email_confirm.html:22
 msgid "py.templates._base.signUp"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/course.html:6
-#, fuzzy
 msgid "py.templates.course.workbenchTraining.title"
-msgstr "Εκπαίδευση στο Workbench"
+msgstr ""
 
 #: templates/course.html:22
-#, fuzzy
 msgid "py.templates.course.tutorials.link"
-msgstr "ΜΑΘΗΜΑΤΑ"
+msgstr ""
 
 #: templates/embed-rendering.html:12
 msgid "py.templates.embed-rendering.description"
@@ -2311,46 +2244,44 @@ msgstr ""
 
 #: templates/embed_404.html:15
 msgid "py.templates.embed_404.notAvailable.header"
-msgstr "Αυτή η ροή εργασιών δεν είναι διαθέσιμη :("
+msgstr ""
 
 #: templates/index.html:3
 msgid "py.templates.title"
-msgstr "Workbench"
+msgstr ""
 
 #: templates/minimum.html:7
 msgid "py.templates.minimum.title"
-msgstr "Workbench"
+msgstr ""
 
 #: templates/oauth_token_request_denied.html:6
 msgid "py.templates.oauth_token_request_denied.title"
-msgstr "Σφάλμα OAuth"
+msgstr ""
 
 #: templates/oauth_token_request_denied.html:16
 msgid "py.templates.oauth_token_request_denied.description"
-msgstr "Ο διακομιστής εξουσιοδότησης αρνήθηκε να σας επιτρέψει σύνδεση."
+msgstr ""
 
 #: templates/oauth_token_request_denied.html:19
 msgid "py.templates.oauth_token_request_denied.suggestRetry"
 msgstr ""
-"Αν βλέπετε αυτό το σφάλμα για πρώτη φορά, κλείστε αυτό το παράθυρο και "
-"προσπαθήστε ξανά."
 
 #: templates/oauth_token_request_denied.html:22
 msgid "py.templates.oauth_token_request_denied.contactUs"
-msgstr "Διαφορετικά, επικοινωνήστε μαζί μας για να καταλάβουμε τι συμβαίνει."
+msgstr ""
 
 #: templates/report.html:32
 msgid "py.templates.report.author"
-msgstr "από {workflowOwner}"
+msgstr ""
 
 #: templates/report.html:33
 msgid "py.templates.report.updated"
-msgstr "Ενημερώθηκε πριν από <time0>{timeAgo}</time0>"
+msgstr ""
 
 #. This is a link to a workflow
 #: templates/report.html:35
 msgid "py.templates.report.sourceDataLink.link"
-msgstr "Δεδομένα προέλευσης"
+msgstr ""
 
 #: templates/report.html:55
 msgid "py.templates.report.table.download"
@@ -2398,50 +2329,48 @@ msgstr ""
 
 #: templates/workflow.html:5
 msgid "py.templates.workflow.title"
-msgstr "Workbench"
+msgstr ""
 
 #: templates/workflow.html:38
 msgid "py.templates.workflow.widerScreen"
-msgstr "Χρειάζεστε μια ευρύτερη οθόνη για να απολαύσετε το Workbench"
+msgstr ""
 
 #: templates/workflow.html:39
 msgid "py.templates.workflow.minimumRequirement"
-msgstr "Ελάχιστο πλάτος 650px"
+msgstr ""
 
 #: templates/workflow.html:40
 msgid "py.templates.workflow.optimizedForDesktop"
-msgstr "Εμπειρία βελτιστοποιημένη για προγράμματα περιήγησης"
+msgstr ""
 
 #: templates/workflow.html:41
 msgid "py.templates.workflow.signupLink.link"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/account/delete.html:5
 msgid "py.templates.account.delete.deleteAccount.header"
-msgstr "Διαγραφή λογαριασμού"
+msgstr ""
 
 #. The tag adds emphasis
 #: templates/account/delete.html:7
 msgid "py.templates.account.delete.accountDeletionExpungeHours"
 msgstr ""
-"Αν προχωρήσετε και διαγράψετε τον λογαριασμό σας, οι πληροφορίες σας "
-"<b0>θα εξαλειφθούν μέσα σε {hours} ώρες</b0>."
 
 #: templates/account/delete.html:11
 msgid "py.templates.account.delete.deleteMyAccount"
-msgstr "Διαγραφή του λογαριασμού μου"
+msgstr ""
 
 #: templates/account/email_confirm.html:5
 msgid "py.templates.account.email_confirm.confirmEmail.title"
-msgstr "Επιβεβαίωση email"
+msgstr ""
 
 #: templates/account/email_confirm.html:10
 msgid "py.templates.account.email_confirm.confirmEmail"
-msgstr "Επιβεβαίωση email"
+msgstr ""
 
 #: templates/account/email_confirm.html:14
 msgid "py.templates.account.email_confirm.confirm.button"
-msgstr "Επιβεβαίωση"
+msgstr ""
 
 #: templates/account/email_confirm.html:18
 msgid "py.templates.account.email_confirm.notFound1"
@@ -2453,377 +2382,335 @@ msgstr ""
 
 #: templates/account/email_confirmation_sent.html:5
 msgid "py.templates.account.email_confirmation_sent.title"
-msgstr "Στάλθηκε email επιβεβαίωσης"
+msgstr ""
 
 #: templates/account/email_confirmation_sent.html:8
 msgid "py.templates.account.email_confirmation_sent.header"
-msgstr "Επιβεβαιώστε το email σας"
+msgstr ""
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
 #: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
-"Έχουμε στείλει μήνυμα ηλ. ταχυδρομείου στη διεύθυνση <b0>{email}</b0> για"
-" επαλήθευση. Εάν δεν το λάβετε μέσα στα επόμενα λεπτά, επικοινωνήστε μαζί"
-" μας στη διεύθυνση <a0>{contactMail}</a0>."
 
 #: templates/account/email_confirmation_sent.html:11
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
-msgstr "Επιστροφή"
+msgstr ""
 
 #: templates/account/email_confirmed.html:5
 msgid "py.templates.account.email_confirmed.title"
-msgstr "Το email επιβεβαιώθηκε"
+msgstr ""
 
 #: templates/account/email_confirmed.html:8
 msgid "py.templates.account.email_confirmed.emailConfirm.header"
-msgstr "Το email επιβεβαιώθηκε"
+msgstr ""
 
 #. The tag adds emphasis
 #: templates/account/email_confirmed.html:9
 msgid "py.templates.account.email_confirmed.youConfirmedEmail"
-msgstr "Έχετε επιβεβαιώσει το <b0>{email}</b0>"
+msgstr ""
 
 #: templates/account/login.html:4 templates/account/login.html:10
 msgid "py.templates.account.login.title"
-msgstr "Σύνδεση"
+msgstr ""
 
 #: templates/account/login.html:12
 msgid "py.templates.account.login.linkToSignUp"
-msgstr "Εγγραφή"
+msgstr ""
 
 #. The 'or' in 'Log in with [Google/Facebook buttons] *or* [username/password]'
 #: templates/account/login.html:27
 msgid "py.templates.account.login.socialSimpleSeparator"
-msgstr "ή"
+msgstr ""
 
 #: templates/account/login.html:43
 msgid "py.templates.account.login.forgotPasswordPrompt"
-msgstr "Ξεχάσατε τον κωδικό;"
+msgstr ""
 
 #: templates/account/login.html:45
 msgid "py.templates.account.login.submitButton"
-msgstr "Σύνδεση"
+msgstr ""
 
 #: templates/account/password_change.html:5
 msgid "py.templates.account.password_change.title"
-msgstr "Αλλαγή κωδικού"
+msgstr ""
 
 #: templates/account/password_change.html:9
 msgid "py.templates.account.password_change.formHeader"
-msgstr "Αλλαγή κωδικού"
+msgstr ""
 
 #: templates/account/password_change.html:13
 msgid "py.templates.account.password_change.saveButton"
-msgstr "Αποθήκευση"
+msgstr ""
 
 #: templates/account/password_reset.html:6
 msgid "py.templates.account.password_reset.title"
-msgstr "Δημιουργία νέου κωδικού"
+msgstr ""
 
 #: templates/account/password_reset.html:12
 msgid "py.templates.account.password_reset.formHeader"
-msgstr "Ξεχάσατε τον κωδικό σας;"
+msgstr ""
 
 #: templates/account/password_reset.html:17
 msgid "py.templates.account.password_reset.sendMeInstructions.button"
-msgstr "Στείλτε μου οδηγίες"
+msgstr ""
 
 #: templates/account/password_reset.html:25
 msgid "py.templates.account.password_reset.backToLogin.link"
-msgstr "Επιστροφή στη σελίδα σύνδεσης"
+msgstr ""
 
 #: templates/account/password_reset_done.html:6
 msgid "py.templates.account.password_reset_done.title"
-msgstr "Στάλθηκε η ανανέωση κωδικού πρόσβασης"
+msgstr ""
 
 #: templates/account/password_reset_done.html:9
 msgid "py.templates.account.password_reset_done.header"
-msgstr "Στάλθηκαν οδηγίες!"
+msgstr ""
 
 #: templates/account/password_reset_done.html:11
 msgid "py.templates.account.password_reset_done.checkYourEmail"
-msgstr "Ελέγξτε το ηλ. ταχυδρομείο σας για να δημιουργήσετε νέο κωδικό πρόσβασης."
+msgstr ""
 
 #. The a0 tag is a mailto link to the email
 #: templates/account/password_reset_done.html:14
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
-"Στείλαμε ξανά το ηλ. μήνυμα με τον κωδικό πρόσβασης. Εάν δεν το λάβετε "
-"μέσα σε λίγα λεπτά, επικοινωνήστε μαζί μας στη διεύθυνση "
-"<a0>{email}</a0>."
 
 #: templates/account/password_reset_done.html:16
 msgid "py.templates.account.password_reset_done.backToLogin.link"
-msgstr "Επιστροφή στη σελίδα σύνδεσης"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:4
 msgid "py.templates.account.password_reset_from_key.title"
-msgstr "Αλλαγή κωδικού"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:7
 msgid "py.templates.account.password_reset_from_key.invalidLink"
-msgstr "Άκυρος σύνδεσμος"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:7
 msgid "py.templates.account.password_reset_from_key.changePass"
-msgstr "Αλλαγή κωδικού"
+msgstr ""
 
 #. The a0 tag is a url to another page
 #: templates/account/password_reset_from_key.html:10
 msgid "py.templates.account.password_reset_from_key.notValidAnymore"
 msgstr ""
-"Αυτός ο σύνδεσμος δεν ισχύει πια. Ζητήστε τη <a0>δημιουργία νέου κωδικού "
-"πρόσβασης</a0>."
 
 #: templates/account/password_reset_from_key.html:20
 msgid "account.password_reset_from_key.input.changePassword.placeholder"
-msgstr "Αλλαγή κωδικού"
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:24
 msgid "py.templates.account.password_reset_from_key.newPassIsSet"
-msgstr "Έχει οριστεί ο νέος σας κωδικός πρόσβασης."
+msgstr ""
 
 #: templates/account/password_reset_from_key_done.html:4
 msgid "py.templates.account.password_reset_from_key_done.title"
-msgstr "Αλλαγή κωδικού"
+msgstr ""
 
 #: templates/account/password_reset_from_key_done.html:7
 msgid "py.templates.account.password_reset_from_key_done.description"
-msgstr "Έχει οριστεί ο νέος σας κωδικός πρόσβασης!"
+msgstr ""
 
 #: templates/account/password_reset_from_key_done.html:9
 msgid "py.templates.account.password_reset_from_key_done.backToLogin.link"
-msgstr "Επιστροφή στη σελίδα σύνδεσης"
+msgstr ""
 
 #: templates/account/settings.html:6
 msgid "py.templates.account.settings.title"
-msgstr "Λογαριασμός"
+msgstr ""
 
 #: templates/account/settings.html:10
 msgid "py.templates.account.settings.header"
-msgstr "Λογαριασμός"
+msgstr ""
 
 #: templates/account/settings.html:13
 msgid "py.templates.account.settings.saveButton"
-msgstr "Αποθήκευση"
+msgstr ""
 
 #: templates/account/signup.html:4
 msgid "py.templates.account.signup.title"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/account/signup.html:10
 msgid "py.templates.account.signup.header.title"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/account/signup.html:12
 msgid "py.templates.account.signup.linkToSignIn"
-msgstr "Σύνδεση"
+msgstr ""
 
 #. The a0 tag is a link to the login page
 #: templates/account/signup.html:26
 msgid "py.templates.account.signup.loginPrompt"
 msgstr ""
-"Αν έχετε ήδη δημιουργήσει λογαριασμό, τότε παρακαλούμε να "
-"<a0>συνδεθείτε</a0>."
 
 #: templates/account/signup.html:44
 msgid "py.templates.account.signup.sendMeNews.label"
-msgstr "Δέχομαι να μου στέλνετε ειδήσεις κατά καιρούς"
+msgstr ""
 
 #. The tags are urls to the respective pages
 #: templates/account/signup.html:51
 msgid "py.templates.account.signup.agreeToTerms"
 msgstr ""
-"Συμφωνώ με τους <a0>Όρους Παροχής Υπηρεσιών</a0> και την <a1>Πολιτική "
-"Απορρήτου</a1> του Workbench."
 
 #: templates/account/signup.html:53
 msgid "py.templates.account.signup.registerButton"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/account/verification_sent.html:5
 msgid "py.templates.account.verification_sent.title"
-msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
+msgstr ""
 
 #: templates/account/verification_sent.html:8
 msgid "py.templates.account.verification_sent.header"
-msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
+msgstr ""
 
 #: templates/account/verification_sent.html:9
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
-"Σας έχουμε στείλει μήνυμα ηλ. ταχυδρομείου για την επαλήθευση του "
-"λογαριασμού σας. Επικοινωνήστε μαζί μας αν δεν το λάβετε μέσα στα επόμενα"
-" λεπτά."
 
 #: templates/account/verification_sent.html:10
 msgid "py.templates.account.verification_sent.backToLogin.link"
-msgstr "Επιστροφή στη σελίδα σύνδεσης"
+msgstr ""
 
 #: templates/account/email/email_confirmation_message.txt:3
 msgid "py.templates.account.email.email_confirmation_message.welcome"
-msgstr "Καλώς ήλθατε στο Workbench!"
+msgstr ""
 
 #: templates/account/email/email_confirmation_message.txt:4
 msgid "py.templates.account.email.email_confirmation_message.confirmYourEmail"
 msgstr ""
-"Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας κάνοντας κλικ στον "
-"παρακάτω σύνδεσμο. Αν δεν έχετε κάνει εσείς εγγραφή, μπορείτε να "
-"αγνοήσετε το παρόν μήνυμα."
 
 #: templates/account/email/email_confirmation_subject.txt:3
 msgid "py.templates.account.email.email_confirmation_subject.pleaseConfirmEmailaddress"
 msgstr ""
-"Παρακαλούμε να επιβεβαιώσετε τη διεύθυνση του ηλεκτρονικού ταχυδρομείου "
-"σας"
 
 #: templates/account/email/password_reset_key_message.txt:3
 msgid "py.templates.account.email.password_reset_key_message.passwordRequest"
 msgstr ""
-"Λαμβάνετε αυτό το μήνυμα ηλεκτρονικού ταχυδρομείου επειδή εσείς ή κάποιος"
-" άλλος έχετε ζητήσει κωδικό πρόσβασης για τον λογαριασμό χρήστη που "
-"έχετε. Μπορείτε να αγνοήσετε το μήνυμα αν δεν ζητήσατε τη δημιουργία νέου"
-" κωδικού πρόσβασης. Κάντε κλικ στον παρακάτω σύνδεσμο για τη δημιουργία "
-"νέου κωδικού."
 
 #: templates/account/email/password_reset_key_message.txt:7
 msgid "py.templates.account.email.password_reset_key_message.forgotUsername"
-msgstr "Σε περίπτωση που έχετε ξεχάσει, το όνομα χρήστη σας είναι {username}."
+msgstr ""
 
 #: templates/account/email/password_reset_key_subject.txt:3
 msgid "py.templates.account.email.password_reset_key_subject"
-msgstr "Μήνυμα δημιουργίας νέου κωδικού πρόσβασης"
+msgstr ""
 
 #: templates/notifications/new_data_version.txt:1
 msgid "py.templates.notifications.new_data_version.hello"
-msgstr "Γεια σας, {userName},"
+msgstr ""
 
 #. The tag is a url
 #: templates/notifications/new_data_version.txt:2
 msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
-"Η ροή εργασιών σας <a0>{workflowName}</a0> ενημερώθηκε με νέα δεδομένα "
-"στις {date, date, medium} {date, time, short}{date, time, z}. Η μονάδα "
-"{moduleName} έχει νέα έξοδο."
 
 #: templates/notifications/new_data_version_subject.txt:1
 msgid "py.templates.notifications.new_data_version_subject"
-msgstr "Νέα δεδομένα διαθέσιμα στο {workflow_name}"
+msgstr ""
 
 #: templates/openid/login.html:5
 msgid "py.templates.openid.login.title"
-msgstr "Σύνδεση OpenID"
+msgstr ""
 
 #: templates/openid/login.html:9
 msgid "py.templates.openid.login.header"
-msgstr "Σύνδεση OpenID"
+msgstr ""
 
 #: templates/openid/login.html:15
 msgid "py.templates.openid.login.signInButton"
-msgstr "Σύνδεση"
+msgstr ""
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "py.templates.socialaccount.authentication_error.title"
-msgstr "Αποτυχία σύνδεσης με το κοινωνικό δίκτυο"
+msgstr ""
 
 #: templates/socialaccount/authentication_error.html:8
 msgid "py.templates.socialaccount.authentication_error.header"
-msgstr "Αποτυχία σύνδεσης με το κοινωνικό δίκτυο"
+msgstr ""
 
 #: templates/socialaccount/authentication_error.html:10
 msgid "py.templates.socialaccount.authentication_error.description"
 msgstr ""
-"Παρουσιάστηκε σφάλμα κατά την προσπάθεια σύνδεσης μέσω του λογαριασμού "
-"σας κοινωνικής δικτύωσης."
 
 #: templates/socialaccount/connections.html:5
 msgid "py.templates.socialaccount.connections.title"
-msgstr "Συνδέσεις λογαριασμού"
+msgstr ""
 
 #. Short for 'The account has been linked!'
 #: templates/socialaccount/connections.html:10
 msgid "py.templates.socialaccount.connections.accountLinked"
-msgstr "Ο λογαριασμός συνδέθηκε!"
+msgstr ""
 
 #: templates/socialaccount/connections.html:12
 msgid "py.templates.socialaccount.connections.signInLink"
-msgstr "Σύνδεση"
+msgstr ""
 
 #: templates/socialaccount/connections.html:16
 msgid "py.templates.socialaccount.connections.removeLinkedAccount"
-msgstr "Κατάργηση συνδεδεμένων λογαριασμών"
+msgstr ""
 
 #: templates/socialaccount/connections.html:41
 msgid "py.templates.socialaccount.connections.removeButton"
-msgstr "Αφαίρεση"
+msgstr ""
 
 #: templates/socialaccount/connections.html:49
 msgid "py.templates.socialaccount.connections.noSocialAccounts"
 msgstr ""
-"Αυτή τη στιγμή δεν έχετε λογαριασμούς κοινωνικής δικτύωσης συνδεδεμένους "
-"με αυτόν τον λογαριασμό."
 
 #: templates/socialaccount/connections.html:52
 msgid "py.templates.socialaccount.connections.addAnotherAccount"
-msgstr "Προσθήκη άλλου λογαριασμού"
+msgstr ""
 
 #: templates/socialaccount/login_cancelled.html:5
 msgid "py.templates.socialaccount.login_cancelled.title"
-msgstr "Ακύρωση σύνδεσης"
+msgstr ""
 
 #: templates/socialaccount/login_cancelled.html:9
 msgid "py.templates.socialaccount.login_cancelled.header"
-msgstr "Ακύρωση σύνδεσης"
+msgstr ""
 
 #. The tag is a link to the login page
 #: templates/socialaccount/login_cancelled.html:13
 msgid "py.templates.socialaccount.login_cancelled.youCancelledLogin"
 msgstr ""
-"Αποφασίσατε να ακυρώσετε την είσοδο στον ιστότοπό μας με τη χρήση ενός "
-"από τους λογαριασμούς σας. Αν αυτό έγινε κατά λάθος, προχωρήστε στη "
-"<a0>σύνδεση</a0>."
 
 #: templates/socialaccount/signup.html:5
 msgid "py.templates.socialaccount.signup.title"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/socialaccount/signup.html:17
 msgid "py.templates.socialaccount.signup.thereIsAlreadyAccount"
 msgstr ""
-"Υπάρχει ήδη ένας λογαριασμός που έχει καταχωρηθεί με τη συγκεκριμένη "
-"διεύθυνση ηλ. ταχυδρομείου."
 
 #: templates/socialaccount/signup.html:19
 msgid "py.templates.socialaccount.signup.connectExistingAccount"
-msgstr "Συνδεθείτε με τον υπάρχοντα λογαριασμό σας."
+msgstr ""
 
 #: templates/socialaccount/signup.html:24
 msgid "py.templates.socialaccount.signup.specificAccountToLogin"
 msgstr ""
-"Πρόκειται να χρησιμοποιήσετε το λογαριασμό σας {provider_name} για να "
-"συνδεθείτε στο {site_name}. Ως τελικό βήμα, συμπληρώστε την παρακάτω "
-"φόρμα:"
 
 #: templates/socialaccount/signup.html:32
 msgid "py.templates.socialaccount.signup.button"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/socialaccount/messages/account_connected.txt:2
 msgid "py.templates.socialaccount.messages.account_connected.text"
-msgstr "Ο λογαριασμός κοινωνικής δικτύωσης έχει συνδεθεί."
+msgstr ""
 
 #: templates/socialaccount/messages/account_connected_other.txt:2
 msgid "py.templates.socialaccount.messages.account_connected_other.text"
 msgstr ""
-"Ο λογαριασμός κοινωνικής δικτύωσης είναι ήδη συνδεδεμένος με διαφορετικό "
-"λογαριασμό."
 
 #: templates/socialaccount/messages/account_disconnected.txt:2
 msgid "py.templates.socialaccount.messages.account_disconnected.text"
-msgstr "Ο λογαριασμός κοινωνικής δικτύωσης έχει αποσυνδεθεί."
+msgstr ""
 
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
-msgstr "Χρησιμοποιήστε τον λογαριασμό {providerName}"
+msgstr ""
 

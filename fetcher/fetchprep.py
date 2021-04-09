@@ -1,7 +1,7 @@
 from functools import partial, singledispatch
 import pathlib
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel.types import TableMetadata
+from cjwkernel.types import ColumnType, TableMetadata
 from cjwstate.modules.param_dtype import ParamDType
 from renderer.execute.renderprep import PromptErrorAggregator
 from renderer.execute.types import PromptingError
@@ -59,6 +59,19 @@ def _(dtype: ParamDType.Tab, value: str, input_metadata: TableMetadata) -> None:
     raise RuntimeError("Unsupported: fetch tab")
 
 
+def _column_type_name(column_type: ColumnType) -> str:
+    if isinstance(column_type, ColumnType.Text):
+        return "text"
+    elif isinstance(column_type, ColumnType.Date):
+        return "date"
+    elif isinstance(column_type, ColumnType.Number):
+        return "number"
+    elif isinstance(column_type, ColumnType.Timestamp):
+        return "timestamp"
+    else:
+        raise ValueError("Unhandled column type %r" % column_type)
+
+
 @clean_value.register(ParamDType.Column)
 def _(dtype: ParamDType.Column, value: str, input_metadata: TableMetadata) -> str:
     if dtype.tab_parameter:
@@ -72,11 +85,11 @@ def _(dtype: ParamDType.Column, value: str, input_metadata: TableMetadata) -> st
         return ""  # Null column
 
     column = valid_columns[value]
-    if dtype.column_types and column.type.name not in dtype.column_types:
+    if dtype.column_types and _column_type_name(column.type) not in dtype.column_types:
         if "text" in dtype.column_types:
             found_type = None
         else:
-            found_type = column.type.name
+            found_type = _column_type_name(column.type)
         raise PromptingError(
             [PromptingError.WrongColumnType([value], found_type, dtype.column_types)]
         )
@@ -101,11 +114,14 @@ def _(
         if column.name not in requested_colnames:
             continue
 
-        if dtype.column_types and column.type.name not in dtype.column_types:
+        if (
+            dtype.column_types
+            and _column_type_name(column.type) not in dtype.column_types
+        ):
             if "text" in dtype.column_types:
                 found_type = None
             else:
-                found_type = column.type.name
+                found_type = _column_type_name(column.type)
             error_agg.add(
                 PromptingError.WrongColumnType(
                     [column.name], found_type, dtype.column_types
