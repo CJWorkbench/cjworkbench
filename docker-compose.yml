@@ -269,7 +269,7 @@ services:
       '-port=80',
       # Use frontend:8080 -- the Django app, not the proxy. The proxy tries to
       # keep connections alive and clients can sometimes notice.
-      '-hooks-http=http://frontend:8000/tusd-hooks',
+      '-hooks-http=http://frontend:8080/tusd-hooks',
       '-hooks-enabled-events=pre-finish',
       '-s3-endpoint=http://minio:9000',
       '-s3-bucket=dev-upload',
