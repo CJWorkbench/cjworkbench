@@ -11,9 +11,9 @@ describe('DataGrid', () => {
   const testColumns = [
     { name: 'aaa', type: 'number', format: '{:,}' },
     { name: 'bbbb', type: 'text' },
-    // deliberately try and trigger https://github.com/adazzle/react-data-grid/issues/1270
+    // try and trigger https://github.com/adazzle/react-data-grid/issues/1270
     { name: 'getCell', type: 'text' },
-    // deliberately try and trigger https://github.com/adazzle/react-data-grid/issues/1269
+    // try and trigger https://github.com/adazzle/react-data-grid/issues/1269
     { name: 'select-row', type: 'text' }
   ]
 
@@ -91,12 +91,8 @@ describe('DataGrid', () => {
     expect(tree.find('EditableColumnName')).toHaveLength(4)
     expect(tree.find('EditableColumnName').get(0).props.columnKey).toBe('aaa')
     expect(tree.find('EditableColumnName').get(1).props.columnKey).toBe('bbbb')
-    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe(
-      'getCell'
-    )
-    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe(
-      'select-row'
-    )
+    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('getCell')
+    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('select-row')
 
     // no spinner at first
     expect(tree.find('.spinner-container-transparent')).toHaveLength(0)
@@ -116,26 +112,17 @@ describe('DataGrid', () => {
   })
 
   it('should edit a cell', async () => {
-    const tree = await wrapper()
+    // Copy `testRows`: react-data-grid modifies things AARGH why do we still use it
+    const tree = await wrapper({}, [JSON.parse(JSON.stringify(testRows))])
     await tick()
     tree.update() // load data
     // weird incantation to simulate double-click
-    tree
-      .find('.react-grid-Cell')
-      .first()
-      .simulate('click')
-    tree
-      .find('.react-grid-Cell')
-      .first()
-      .simulate('doubleClick')
+    tree.find('.react-grid-Cell').first().simulate('click')
+    tree.find('.react-grid-Cell').first().simulate('doubleClick')
     const input = tree.find('EditorContainer')
     input.find('input').instance().value = 'X' // react-data-grid has a weird way of editing cells
     input.simulate('keyDown', { key: 'Enter' })
-    expect(tree.find('DataGrid').prop('editCell')).toHaveBeenCalledWith(
-      0,
-      'aaa',
-      'X'
-    )
+    expect(tree.find('DataGrid').prop('editCell')).toHaveBeenCalledWith(0, 'aaa', 'X')
   })
 
   it('should not edit a cell when its value does not change', async () => {
@@ -143,14 +130,8 @@ describe('DataGrid', () => {
     await tick()
     tree.update() // load data
     // weird incantation to simulate double-click
-    tree
-      .find('.react-grid-Cell')
-      .first()
-      .simulate('click')
-    tree
-      .find('.react-grid-Cell')
-      .first()
-      .simulate('doubleClick')
+    tree.find('.react-grid-Cell').first().simulate('click')
+    tree.find('.react-grid-Cell').first().simulate('doubleClick')
     const input = tree.find('EditorContainer')
     input.simulate('keyDown', { key: 'Enter' })
     expect(tree.find('DataGrid').prop('editCell')).not.toHaveBeenCalled()
@@ -170,45 +151,21 @@ describe('DataGrid', () => {
   it('should show letters in the header', async () => {
     const tree = await wrapper({})
     expect(tree.find('.column-letter')).toHaveLength(4)
-    expect(
-      tree
-        .find('.column-letter')
-        .at(0)
-        .text()
-    ).toEqual('A')
-    expect(
-      tree
-        .find('.column-letter')
-        .at(1)
-        .text()
-    ).toEqual('B')
-    expect(
-      tree
-        .find('.column-letter')
-        .at(2)
-        .text()
-    ).toEqual('C')
-    expect(
-      tree
-        .find('.column-letter')
-        .at(3)
-        .text()
-    ).toEqual('D')
+    expect(tree.find('.column-letter').at(0).text()).toEqual('A')
+    expect(tree.find('.column-letter').at(1).text()).toEqual('B')
+    expect(tree.find('.column-letter').at(2).text()).toEqual('C')
+    expect(tree.find('.column-letter').at(3).text()).toEqual('D')
   })
 
   it('should respect isReadOnly for rename columns', async () => {
     const tree = await wrapper({ isReadOnly: true })
-    tree
-      .find('EditableColumnName')
-      .first()
-      .simulate('click')
+    tree.find('EditableColumnName').first().simulate('click')
     tree.update()
     expect(tree.find('EditableColumnName input')).toHaveLength(0)
   })
 
   it('should set className to include type', async () => {
     const tree = await wrapper()
-    await tick()
     tree.update() // load data
     expect(tree.find('.cell-text')).toHaveLength(6)
     expect(tree.find('.cell-number')).toHaveLength(2)
@@ -234,38 +191,18 @@ describe('DataGrid', () => {
     const tree = await wrapper()
     await tick()
     tree.update() // load data
-    expect(
-      tree
-        .find('input[type="checkbox"]')
-        .at(1)
-        .prop('checked')
-    ).toBe(false)
-    tree
-      .find('input[type="checkbox"]')
-      .at(1)
-      .simulate('change', { target: { checked: true } })
-    expect(
-      tree.find('DataGrid').prop('onSetSelectedRowIndexes')
-    ).toHaveBeenCalledWith([1])
+    expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(false)
+    tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: true } })
+    expect(tree.find('DataGrid').prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([1])
   })
 
   it('should deselect a row', async () => {
     const tree = await wrapper({ selectedRowIndexes: [1] })
     await tick()
     tree.update() // load data
-    expect(
-      tree
-        .find('input[type="checkbox"]')
-        .at(1)
-        .prop('checked')
-    ).toBe(true)
-    tree
-      .find('input[type="checkbox"]')
-      .at(1)
-      .simulate('change', { target: { checked: false } })
-    expect(
-      tree.find('DataGrid').prop('onSetSelectedRowIndexes')
-    ).toHaveBeenCalledWith([])
+    expect(tree.find('input[type="checkbox"]').at(1).prop('checked')).toBe(true)
+    tree.find('input[type="checkbox"]').at(1).simulate('change', { target: { checked: false } })
+    expect(tree.find('DataGrid').prop('onSetSelectedRowIndexes')).toHaveBeenCalledWith([])
   })
 
   it('should lazily load rows as needed', async () => {
@@ -295,14 +232,8 @@ describe('DataGrid', () => {
     tree.update() // let rows load
 
     // force load by reading a missing row
-    const missingRowForNow = tree
-      .find('DataGrid')
-      .instance()
-      .getRow(200)
-    tree
-      .find('DataGrid')
-      .instance()
-      .getRow(201) // spurious getRow() -- there are lots
+    const missingRowForNow = tree.find('DataGrid').instance().getRow(200)
+    tree.find('DataGrid').instance().getRow(201) // spurious getRow() -- there are lots
     expect(missingRowForNow).not.toBe(null)
     await tick() // begin load
     expect(loadRows).toHaveBeenCalledWith(200, 400)
@@ -311,18 +242,12 @@ describe('DataGrid', () => {
     tree.update() // let load finish
 
     // read a row, _not_ forcing a load
-    const nonMissingRow = tree
-      .find('DataGrid')
-      .instance()
-      .getRow(201)
+    const nonMissingRow = tree.find('DataGrid').instance().getRow(201)
     expect(nonMissingRow.bbbb).toEqual('201')
     expect(loadRows).not.toHaveBeenCalledWith(1, 2, 201, 401)
 
     // force another load (to test we keep loading)
-    tree
-      .find('DataGrid')
-      .instance()
-      .getRow(600)
+    tree.find('DataGrid').instance().getRow(600)
     await tick() // begin load
     expect(loadRows).toHaveBeenCalledWith(600, 800)
     await tick()

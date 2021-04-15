@@ -33,7 +33,7 @@ export function columnToCellFormatter (column) {
       // react-data-grid's cache has a race. sometimes we switch formatters
       // after the data is already switched. When that happens, render null
       // and wait for react-data-grid to render again with the correct formatter
-      if (typeof value === 'string' || typeof value === 'object') {
+      if (value !== null && !Number.isFinite(value)) {
         return null
       }
 
