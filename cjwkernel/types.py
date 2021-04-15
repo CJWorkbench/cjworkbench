@@ -2,12 +2,8 @@ from __future__ import annotations
 
 import json
 import marshal
-import os
-import stat
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Literal, NamedTuple, Optional, Union
+from typing import Any, Dict, List, Literal, NamedTuple, Union
 
 import pyarrow
 import pyarrow.ipc
@@ -105,19 +101,6 @@ class Column(NamedTuple):
 
     type: ColumnType
     """How the column data is stored and displayed to the user."""
-
-
-def arrow_field_to_column_type(field: pa.Field) -> ColumnType:
-    if is_string(field.type):
-        return ColumnType.Text()
-    elif is_floating(field.type) or is_integer(field.type):
-        return ColumnType.Number(format=field.metadata["format"].decode("utf-8"))
-    elif is_timestamp(field.type):
-        return ColumnType.Timestamp()
-    elif is_date32(field.type):
-        return ColumnType.Date(unit=field.metadata["unit"].decode("ascii"))
-    else:
-        raise ValueError("Unexpected field type %r" % field.type)
 
 
 def _thrift_filename_to_path(filename: str, basedir: Path) -> Path:

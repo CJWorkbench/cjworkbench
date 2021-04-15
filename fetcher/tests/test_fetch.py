@@ -3,7 +3,6 @@ import datetime
 import logging
 import shutil
 import textwrap
-import unittest
 from typing import NamedTuple
 from unittest.mock import patch
 

@@ -1,8 +1,7 @@
-import datetime
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 import pyarrow as pa
 import pyarrow.compute

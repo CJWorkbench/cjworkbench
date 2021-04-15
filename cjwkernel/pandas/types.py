@@ -3,23 +3,19 @@
 from __future__ import annotations
 
 import json
-from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from pathlib import Path
-from string import Formatter
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Literal, NamedTuple, Optional
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
 
-import pyarrow
 from cjwmodule.i18n import I18nMessage
 from cjwmodule.arrow.format import parse_number_format
-from cjwpandasmodule.convert import pandas_dataframe_to_arrow_table
 from cjwpandasmodule.validate import validate_dataframe
 
-from ..validate import load_trusted_arrow_file, read_columns
 from .. import settings
 from .. import types as atypes
 from . import moduletypes as mtypes
@@ -32,37 +28,21 @@ QuickFixAction = atypes.QuickFixAction
 RenderError = atypes.RenderError
 
 
-def _column_type_name(column_type: ColumnType) -> str:
-    if isinstance(column_type, ColumnType.Text):
-        return "text"
-    elif isinstance(column_type, ColumnType.Date):
-        return "date"
-    elif isinstance(column_type, ColumnType.Number):
-        return "number"
-    elif isinstance(column_type, ColumnType.Timestamp):
-        return "timestamp"
-    else:
-        raise ValueError("Unhandled column type %r" % column_type)
+class RenderColumn(NamedTuple):
+    """Column presented to a render() function in its `input_columns` argument.
 
-
-@dataclass(frozen=True)
-class RenderColumn:
-    """
-    Column presented to a render() function in its `input_columns` argument.
-
-    A column has a `name` and a `type`. The `type` is one of "number", "text"
-    or "timestamp".
+    A column has a `name` and a `type`. The `type` is one of "date", "number",
+    "text" or "timestamp".
     """
 
     name: str
     """Column name in the DataFrame."""
 
-    type: str
-    """'number', 'date', 'text' or 'timestamp'."""
+    type: Literal["date", "number", "text", "timestamp"]
+    """Column type."""
 
     format: Optional[str]
-    """
-    Format string (for 'number') or date unit (for 'date').
+    """Format string (for 'number') or date unit (for 'date').
 
     >>> column = RenderColumn('A', 'number', '{:,d} bottles of beer')
     >>> column.format.format(1234)
@@ -70,10 +50,8 @@ class RenderColumn:
     """
 
 
-@dataclass(frozen=True)
-class TabOutput:
-    """
-    Tab data presented to a render() function.
+class TabOutput(NamedTuple):
+    """Tab data presented to a render() function.
 
     A tab has `slug` (JS-side ID), `name` (user-assigned tab name), `dataframe`
     (pandas.DataFrame), and `columns` (dict of `RenderColumn`, keyed by each
@@ -84,40 +62,20 @@ class TabOutput:
     """
 
     slug: str
-    """
-    Tab slug (permanent ID, unique in this Workflow, that leaks to the user).
+    """Tab slug (permanent ID, unique in this Workflow, that leaks to the user).
     """
 
     name: str
     """Tab name visible to the user and editable by the user."""
 
     columns: Dict[str, RenderColumn]
-    """
-    Columns output by the final module in this tab.
+    """Columns output by the final module in this tab.
 
     `set(columns.keys()) == set(dataframe.columns)`.
     """
 
     dataframe: pd.DataFrame
-    """
-    DataFrame output by the final module in this tab.
-    """
-
-    @classmethod
-    def from_arrow(cls, value: atypes.TabOutput):
-        table = load_trusted_arrow_file(value.table_filename)
-        dataframe, columns = arrow_table_to_dataframe(table)
-        return cls(
-            slug=value.tab.slug,
-            name=value.tab.name,
-            columns={
-                c.name: RenderColumn(
-                    c.name, _column_type_name(c.type), getattr(c.type, "format", None)
-                )
-                for c in columns
-            },
-            dataframe=dataframe,
-        )
+    """DataFrame output by the final module in this tab."""
 
 
 def coerce_I18nMessage(value: mtypes.Message) -> I18nMessage:
@@ -207,7 +165,7 @@ def _infer_column(
     dtype = series.dtype
     if is_numeric_dtype(dtype):
         if given_format is not None:
-            atypes.parse_number_format(given_format)
+            parse_number_format(given_format)
             return Column(series.name, ColumnType.Number(format=given_format))
         elif try_fallback is not None and isinstance(
             try_fallback.type, ColumnType.Number
@@ -273,55 +231,55 @@ def _infer_columns(
     ]
 
 
-def _dtype_to_arrow_type(dtype: np.dtype) -> pyarrow.DataType:
+def _dtype_to_arrow_type(dtype: np.dtype) -> pa.DataType:
     if dtype == np.int8:
-        return pyarrow.int8()
+        return pa.int8()
     elif dtype == np.int16:
-        return pyarrow.int16()
+        return pa.int16()
     elif dtype == np.int32:
-        return pyarrow.int32()
+        return pa.int32()
     elif dtype == np.int64:
-        return pyarrow.int64()
+        return pa.int64()
     elif dtype == np.uint8:
-        return pyarrow.uint8()
+        return pa.uint8()
     elif dtype == np.uint16:
-        return pyarrow.uint16()
+        return pa.uint16()
     elif dtype == np.uint32:
-        return pyarrow.uint32()
+        return pa.uint32()
     elif dtype == np.uint64:
-        return pyarrow.uint64()
+        return pa.uint64()
     elif dtype == np.float16:
-        return pyarrow.float16()
+        return pa.float16()
     elif dtype == np.float32:
-        return pyarrow.float32()
+        return pa.float32()
     elif dtype == np.float64:
-        return pyarrow.float64()
+        return pa.float64()
     elif dtype.kind == "M":
         # [2019-09-17] Pandas only allows "ns" unit -- as in, datetime64[ns]
         # https://github.com/pandas-dev/pandas/issues/7307#issuecomment-224180563
         assert dtype.str.endswith("[ns]")
-        return pyarrow.timestamp(unit="ns", tz=None)
+        return pa.timestamp(unit="ns", tz=None)
     elif dtype == np.object_:
-        return pyarrow.string()
+        return pa.string()
     else:
         raise RuntimeError("Unhandled dtype %r" % dtype)
 
 
-def series_to_arrow_array(series: pd.Series) -> pyarrow.Array:
+def series_to_arrow_array(series: pd.Series) -> pa.Array:
     """
     Convert a Pandas series to an in-memory Arrow array.
     """
     if hasattr(series, "cat"):
-        return pyarrow.DictionaryArray.from_arrays(
+        return pa.DictionaryArray.from_arrays(
             # Pandas categorical value "-1" means None
-            pyarrow.Array.from_pandas(series.cat.codes, mask=(series.cat.codes == -1)),
+            pa.Array.from_pandas(series.cat.codes, mask=(series.cat.codes == -1)),
             series_to_arrow_array(series.cat.categories),
         )
     else:
-        return pyarrow.array(series, type=_dtype_to_arrow_type(series.dtype))
+        return pa.array(series, type=_dtype_to_arrow_type(series.dtype))
 
 
-def _fix_arrow_field(field: pyarrow.Field, column_type: ColumnType):
+def _fix_arrow_field(field: pa.Field, column_type: ColumnType):
     if isinstance(column_type, ColumnType.Date):
         return field.with_metadata({"unit": column_type.unit})
     if isinstance(column_type, ColumnType.Number):
@@ -333,41 +291,41 @@ def dataframe_to_arrow_table(
     dataframe: pd.DataFrame, columns: List[Column], path: Path
 ) -> None:
     """Write `dataframe` to an Arrow file."""
-    if columns:
-        arrays = []
-        for column in columns:
-            arrays.append(series_to_arrow_array(dataframe[column.name]))
+    arrays = []
+    for column in columns:
+        arrays.append(series_to_arrow_array(dataframe[column.name]))
 
-        arrow_table_without_metadata = pyarrow.Table.from_arrays(
-            arrays, names=[c.name for c in columns]
-        )
-        fields = [
-            _fix_arrow_field(
-                arrow_table_without_metadata.schema.field(i), columns[i].type
-            )
-            for i in range(len(columns))
-        ]
-        arrow_table = pyarrow.table(
-            arrow_table_without_metadata.columns, pyarrow.schema(fields)
-        )
+    arrow_table_without_metadata = pa.Table.from_arrays(
+        arrays, names=[c.name for c in columns]
+    )
+    fields = [
+        _fix_arrow_field(arrow_table_without_metadata.schema.field(i), columns[i].type)
+        for i in range(len(columns))
+    ]
+    arrow_table = pa.table(arrow_table_without_metadata.columns, pa.schema(fields))
 
-        with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
-            writer.write_table(arrow_table)
+    with pa.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
+        writer.write_table(arrow_table)
+
+
+def _arrow_field_to_render_column(field: pa.Field) -> RenderColumn:
+    if pa.types.is_integer(field.type) or pa.types.is_floating(field.type):
+        return RenderColumn(
+            field.name, "number", field.metadata[b"format"].decode("utf-8")
+        )
+    elif pa.types.is_date32(field.type):
+        return RenderColumn(field.name, "date", field.metadata[b"unit"].decode("utf-8"))
+    elif pa.types.is_timestamp(field.type):
+        return RenderColumn(field.name, "timestamp", None)
     else:
-        path.write_bytes(b"")
+        return RenderColumn(field.name, "text", None)
 
 
-def arrow_table_to_dataframe(table: pyarrow.Table) -> Tuple[pd.DataFrame, List[Column]]:
-    if table is None:
-        dataframe = pd.DataFrame()
-        columns = []
-    else:
-        dataframe = table.to_pandas(
-            date_as_object=False, deduplicate_objects=True, ignore_metadata=True
-        )
-        columns = read_columns(table, full=False)
-
-    return dataframe, columns
+def arrow_schema_to_render_columns(schema: pa.Schema) -> Dict[str, RenderColumn]:
+    return {
+        name: _arrow_field_to_render_column(schema.field(i))
+        for i, name in enumerate(schema.names)
+    }
 
 
 def coerce_RenderError(value: mtypes.RenderError) -> RenderError:
@@ -647,13 +605,6 @@ class ProcessResult:
                         "errors, json, column_formats} keys"
                     )
                 ) from err
-
-    @classmethod
-    def from_arrow(self, value: atypes.RenderResult) -> ProcessResult:
-        dataframe, columns = arrow_table_to_dataframe(value.table)
-        return ProcessResult(
-            dataframe=dataframe, errors=value.errors, json=value.json, columns=columns
-        )
 
     def to_arrow(self, path: Path) -> atypes.RenderResult:
         """Build a lower-level RenderResult from this ProcessResult.
