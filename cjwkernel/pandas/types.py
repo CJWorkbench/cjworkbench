@@ -19,6 +19,7 @@ from cjwmodule.arrow.format import parse_number_format
 from cjwpandasmodule.convert import pandas_dataframe_to_arrow_table
 from cjwpandasmodule.validate import validate_dataframe
 
+from ..validate import load_trusted_arrow_file, read_columns
 from .. import settings
 from .. import types as atypes
 from . import moduletypes as mtypes
@@ -105,7 +106,8 @@ class TabOutput:
 
     @classmethod
     def from_arrow(cls, value: atypes.TabOutput):
-        dataframe, columns = arrow_table_to_dataframe(value.table)
+        table = load_trusted_arrow_file(value.table_filename)
+        dataframe, columns = arrow_table_to_dataframe(table)
         return cls(
             slug=value.tab.slug,
             name=value.tab.name,
@@ -320,44 +322,53 @@ def series_to_arrow_array(series: pd.Series) -> pyarrow.Array:
         return pyarrow.array(series, type=_dtype_to_arrow_type(series.dtype))
 
 
+def _fix_arrow_field(field: pyarrow.Field, column_type: ColumnType):
+    if isinstance(column_type, ColumnType.Date):
+        return field.with_metadata({"unit": column_type.unit})
+    if isinstance(column_type, ColumnType.Number):
+        return field.with_metadata({"format": column_type.format})
+    return field
+
+
 def dataframe_to_arrow_table(
     dataframe: pd.DataFrame, columns: List[Column], path: Path
-) -> atypes.ArrowTable:
-    """
-    Write `dataframe` to an Arrow file and return an ArrowTable backed by it.
-
-    The result will consume little RAM, because its data is stored in an
-    mmapped file.
-    """
-    arrow_columns = []
+) -> None:
+    """Write `dataframe` to an Arrow file."""
     if columns:
         arrays = []
         for column in columns:
             arrays.append(series_to_arrow_array(dataframe[column.name]))
 
-        arrow_table = pyarrow.Table.from_arrays(arrays, names=[c.name for c in columns])
+        arrow_table_without_metadata = pyarrow.Table.from_arrays(
+            arrays, names=[c.name for c in columns]
+        )
+        fields = [
+            _fix_arrow_field(
+                arrow_table_without_metadata.schema.field(i), columns[i].type
+            )
+            for i in range(len(columns))
+        ]
+        arrow_table = pyarrow.table(
+            arrow_table_without_metadata.columns, pyarrow.schema(fields)
+        )
+
         with pyarrow.RecordBatchFileWriter(str(path), arrow_table.schema) as writer:
             writer.write_table(arrow_table)
     else:
-        path = None
-        arrow_table = None
-
-    return atypes.ArrowTable(
-        path, arrow_table, atypes.TableMetadata(len(dataframe), columns or [])
-    )
+        path.write_bytes(b"")
 
 
-def arrow_table_to_dataframe(
-    table: atypes.ArrowTable,
-) -> Tuple[pd.DataFrame, List[Column]]:
-    if table.table is None:
+def arrow_table_to_dataframe(table: pyarrow.Table) -> Tuple[pd.DataFrame, List[Column]]:
+    if table is None:
         dataframe = pd.DataFrame()
+        columns = []
     else:
-        dataframe = table.table.to_pandas(
+        dataframe = table.to_pandas(
             date_as_object=False, deduplicate_objects=True, ignore_metadata=True
         )
+        columns = read_columns(table, full=False)
 
-    return dataframe, table.metadata.columns
+    return dataframe, columns
 
 
 def coerce_RenderError(value: mtypes.RenderError) -> RenderError:
@@ -486,10 +497,6 @@ class ProcessResult:
     @property
     def column_names(self):
         return [c.name for c in self.columns]
-
-    @property
-    def table_metadata(self) -> TableMetadata:
-        return TableMetadata(len(self.dataframe), self.columns)
 
     @classmethod
     def coerce(
@@ -650,20 +657,12 @@ class ProcessResult:
         )
 
     def to_arrow(self, path: Path) -> atypes.RenderResult:
-        """
-        Build a lower-level RenderResult from this ProcessResult.
+        """Build a lower-level RenderResult from this ProcessResult.
 
-        Iff this ProcessResult is not an error result, an Arrow table will be
-        written to `path`, then mmapped and validated (because
-        `ArrowTable.__post_init__()` opens and validates Arrow files).
-
-        If this ProcessResult _is_ an error result, then nothing will be
-        written to `path` and the returned RenderResult will not refer to
-        `path`.
+        An Arrow table (maybe-empty) will be written to `path`.
 
         RenderResult is a lower-level (and more modern) representation of a
-        module's result. Prefer it everywhere. We want to eventually deprecate
-        ProcessResult.
+        module's result. Prefer it everywhere. We will deprecate ProcessResult.
         """
-        table = dataframe_to_arrow_table(self.dataframe, self.columns, path)
-        return atypes.RenderResult(table, self.errors, self.json)
+        dataframe_to_arrow_table(self.dataframe, self.columns, path)
+        return atypes.RenderResult(errors=self.errors, json=self.json)

@@ -4,6 +4,7 @@
 
 import asyncio
 import inspect
+import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -11,20 +12,27 @@ import cjwparquet
 import cjwpandasmodule
 import cjwpandasmodule.convert
 import pandas as pd
+import pyarrow as pa
+
 from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
+    ArrowTable,
     ColumnType,
+    TableMetadata,
     arrow_fetch_result_to_thrift,
     arrow_raw_params_to_thrift,
     arrow_render_result_to_thrift,
-    thrift_arrow_table_to_arrow,
     thrift_fetch_result_to_arrow,
     thrift_params_to_arrow,
     thrift_raw_params_to_arrow,
 )
 from cjwkernel.util import tempfile_context
+from cjwkernel.validate import (
+    load_trusted_arrow_file,
+    load_trusted_arrow_file_with_columns,
+)
 from cjwmodule.i18n import I18nMessage
 
 
@@ -44,8 +52,7 @@ def __render_pandas(
     fetch_result: Optional[types.FetchResult],
     output_path: Path,
 ) -> types.RenderResult:
-    """
-    Call `render()` with the Pandas signature style.
+    """Call `render()` with the Pandas signature style.
 
     Features:
 
@@ -59,7 +66,7 @@ def __render_pandas(
     """
     # Convert input arguments
     pandas_table = __arrow_to_pandas(table)
-    pandas_params = __arrow_param_to_pandas_param(params)
+    pandas_params = __arrow_param_to_pandas_param(params, output_path.parent)
 
     spec = inspect.getfullargspec(render)
     kwargs = {}
@@ -71,7 +78,7 @@ def __render_pandas(
                 fetch_result.path.stat().st_size == 0
                 or cjwparquet.file_has_parquet_magic_number(fetch_result.path)
             ):
-                fetched_table = __parquet_to_pandas(fetch_result.path)
+                fetched_table = _parquet_to_pandas(fetch_result.path)
                 pandas_fetch_result = ptypes.ProcessResult(
                     fetched_table, fetch_result.errors
                 )
@@ -90,7 +97,7 @@ def __render_pandas(
         }
     if varkw or "input_tabs" in kwonlyargs:
         kwargs["input_tabs"] = {
-            to.tab.slug: __arrow_tab_output_to_pandas(to)
+            to.tab.slug: __arrow_tab_output_to_pandas(to, output_path.parent)
             for to in __find_tab_outputs(params)
         }
 
@@ -134,20 +141,22 @@ def __arrow_column_to_render_column(column: types.Column) -> ptypes.RenderColumn
     )
 
 
-def __arrow_tab_output_to_pandas(tab_output: types.TabOutput) -> ptypes.TabOutput:
-    columns = {
-        c.name: __arrow_column_to_render_column(c)
-        for c in tab_output.table.metadata.columns
-    }
+def __arrow_tab_output_to_pandas(
+    tab_output: types.TabOutput, basedir: Path
+) -> ptypes.TabOutput:
+    table, columns = load_trusted_arrow_file_with_columns(
+        basedir / tab_output.table_filename
+    )
+    render_columns = {c.name: __arrow_column_to_render_column(c) for c in columns}
     return ptypes.TabOutput(
         tab_output.tab.slug,
         tab_output.tab.name,
-        columns,
-        __arrow_to_pandas(tab_output.table),
+        render_columns,
+        cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table),
     )
 
 
-def __parquet_to_pandas(path: Path) -> pd.DataFrame:
+def _parquet_to_pandas(path: Path) -> pd.DataFrame:
     if path.stat().st_size == 0:
         return pd.DataFrame()
     else:
@@ -167,9 +176,7 @@ def __parquet_to_pandas(path: Path) -> pd.DataFrame:
 
 
 def __find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
-    """
-    Find all `TabOutput` objects in the param dict, `values`.
-    """
+    """Find all `TabOutput` objects in the param dict, `values`."""
     agg: Dict[str, types.TabOutput] = {}  # slug => TabOutput
 
     def _find_nested(child: Any) -> None:
@@ -186,6 +193,56 @@ def __find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
     _find_nested(value)
 
     return list(agg.values())
+
+
+def __DEPRECATED_fix_field(
+    field: pa.Field, fallback_type: Optional[ColumnType]
+) -> pa.Field:
+    if pa.types.is_integer(field.type) or pa.types.is_floating(field.type):
+        if field.metadata is not None and b"format" in field.metadata:
+            return field
+        if isinstance(fallback_type, ColumnType.Number):
+            return pa.field(
+                field.name, field.type, metadata={"format": fallback_type.format}
+            )
+        return pa.field(field.name, field.type, metadata={"format": "{:,}"})
+    if pa.types.is_date32(field.type):
+        if field.metadata is not None and b"unit" in field.metadata:
+            return field
+        if isinstance(fallback_type, ColumnType.Date):
+            return pa.field(
+                field.name, field.type, metadata={"unit": fallback_type.unit}
+            )
+        return pa.field(field.name, field.type, metadata={"unit": "day"})
+    return field
+
+
+def __DEPRECATED_overwrite_to_fix_arrow_table_schema(
+    path: Path, fallback_column_types: Dict[str, ColumnType]
+) -> None:
+    if path.stat().st_size > 0:
+        table = load_trusted_arrow_file(path)
+
+        untyped_schema = table.schema
+        fields = [
+            __DEPRECATED_fix_field(
+                untyped_schema.field(i), fallback_column_types.get(name)
+            )
+            for i, name in enumerate(untyped_schema.names)
+        ]
+        schema = pa.schema(fields)
+
+        # Overwrite with new data
+        #
+        # We don't short-circuit by comparing schemas: two pa.Schema values
+        # with different number formats evaluate as equal.
+        #
+        # We write a separate file to /var/tmp and then copy it: our sandbox
+        # won't let us `rename(2)` in `path`'s directory.
+        with tempfile_context(dir="/var/tmp") as rewrite_path:
+            with pa.ipc.RecordBatchFileWriter(rewrite_path, schema) as writer:
+                writer.write_table(pa.table(table.columns, schema=schema))
+            shutil.copyfile(rewrite_path, path)
 
 
 def __render_arrow(
@@ -217,7 +274,7 @@ def __render_arrow(
     # TODO let module output column types. (Currently, the lack of column types
     # means this is only useful for fetch modules that don't output number
     # formats.)
-    table = types.ArrowTable.from_arrow_file_with_inferred_metadata(
+    __DEPRECATED_overwrite_to_fix_arrow_table_schema(
         output_path,
         fallback_column_types={c.name: c.type for c in table.metadata.columns},
     )
@@ -237,7 +294,7 @@ def __render_arrow(
     elif raw_result is None:
         errors = []
 
-    return types.RenderResult(table, errors)
+    return types.RenderResult(errors=errors)
 
 
 def __render_by_signature(
@@ -269,8 +326,7 @@ def __render_by_signature(
 
 
 def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
-    """
-    Render using Thrift data types.
+    """Render using Thrift data types.
 
     This function will convert to `cjwkernel.types` (opening Arrow tables in
     the process), call `render_arrow()`, and then convert the result back to
@@ -283,9 +339,10 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
     function.
     """
     basedir = Path(request.basedir)
-    arrow_table = thrift_arrow_table_to_arrow(
-        request.input_table, basedir, trusted=True
-    )
+    input_path = basedir / request.input_filename
+    table, columns = load_trusted_arrow_file_with_columns(input_path)
+    arrow_table = ArrowTable(input_path, table, TableMetadata(table.num_rows, columns))
+
     params = thrift_params_to_arrow(request.params, basedir)
     params_dict = params.params
     if request.fetch_result is None:
@@ -305,8 +362,7 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
 
 
 def fetch(params: Dict[str, Any], **kwargs):
-    """
-    Function users should replace in most module code.
+    """Function users should replace in most module code.
 
     (After building a working `fetch()`, module authors might consider
     optimizing by rewriting as `fetch_arrow()` ... and maybe even
@@ -354,7 +410,7 @@ def fetch_pandas(
             if input_table_parquet_path is None:
                 return None
             else:
-                return __parquet_to_pandas(input_table_parquet_path)
+                return _parquet_to_pandas(input_table_parquet_path)
 
         kwargs["get_input_dataframe"] = get_input_dataframe
 
@@ -375,18 +431,18 @@ def fetch_pandas(
         return ptypes.ProcessResult.coerce(result)
 
 
-def __arrow_param_to_pandas_param(param):
+def __arrow_param_to_pandas_param(param: Any, basedir: Path):
     """
     Recursively prepare `params` to be passed to `render()`.
 
     * TabOutput gets converted so it has dataframe.
     """
     if isinstance(param, list):
-        return [__arrow_param_to_pandas_param(p) for p in param]
+        return [__arrow_param_to_pandas_param(p, basedir) for p in param]
     elif isinstance(param, dict):
-        return {k: __arrow_param_to_pandas_param(v) for k, v in param.items()}
+        return {k: __arrow_param_to_pandas_param(v, basedir) for k, v in param.items()}
     elif isinstance(param, types.TabOutput):
-        return ptypes.TabOutput.from_arrow(param)
+        return __arrow_tab_output_to_pandas(param, basedir)
     else:
         return param
 
@@ -406,7 +462,7 @@ def fetch_arrow(
     `fetch()` signature deals in dataframes instead of in raw data.
     """
     pandas_result: Union[ptypes.ProcessResult, types.FetchResult] = fetch_pandas(
-        params=__arrow_param_to_pandas_param(params),
+        params=__arrow_param_to_pandas_param(params, output_path.parent),
         secrets=secrets,
         last_fetch_result=last_fetch_result,
         input_table_parquet_path=input_table_parquet_path,
@@ -418,10 +474,12 @@ def fetch_arrow(
         # ProcessResult => RenderResult => FetchResult.
         with tempfile_context(suffix=".arrow") as arrow_path:
             hacky_result = pandas_result.to_arrow(arrow_path)
-        if hacky_result.table.path:
-            cjwparquet.write(output_path, hacky_result.table.table)
-        else:
-            output_path.write_bytes(b"")
+
+            if arrow_path.stat().st_size > 0:
+                table = load_trusted_arrow_file(arrow_path)
+                cjwparquet.write(output_path, table)
+            else:
+                output_path.write_bytes(b"")
         return types.FetchResult(output_path, hacky_result.errors)
     else:  # it's already a types.FetchResult
         return pandas_result
@@ -448,8 +506,7 @@ def fetch_thrift(request: ttypes.FetchRequest) -> ttypes.FetchResult:
 
 
 def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Function users should replace in most module code.
+    """Function users should replace in most module code.
 
     The input `params` are any params that were _ever_ returned from
     `migrate_params()` -- back to the beginning of time. Basically, if a the
@@ -484,8 +541,7 @@ def migrate_params_thrift(params: ttypes.RawParams):
 
 
 def validate_thrift() -> ttypes.ValidateModuleResult:
-    """
-    Crash with an error to stdout if something about this module seems amiss.
+    """Crash with an error to stdout if something about this module seems amiss.
 
     This does not prove the module is bug-free. It just helps catch some errors
     early.

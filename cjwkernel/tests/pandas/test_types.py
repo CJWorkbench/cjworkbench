@@ -3,11 +3,13 @@ import tempfile
 import unittest
 from datetime import datetime as dt
 from pathlib import Path
+from typing import List
 
 import numpy as np
 import pandas as pd
 import pyarrow
 from pandas.testing import assert_frame_equal, assert_series_equal
+from cjwmodule.arrow.testing import make_table, make_column, assert_arrow_table_equals
 
 import cjwkernel.types as atypes
 from cjwkernel.i18n import TODO_i18n
@@ -25,12 +27,9 @@ from cjwkernel.pandas.types import (
     coerce_RenderError,
     dataframe_to_arrow_table,
 )
-from cjwkernel.tests.util import (
-    arrow_table,
-    assert_arrow_table_equals,
-    override_settings,
-)
+from cjwkernel.tests.util import override_settings, tempfile_context
 from cjwkernel.util import create_tempfile
+from cjwkernel.validate import load_untrusted_arrow_file_with_columns
 from cjwmodule.i18n import I18nMessage
 
 
@@ -972,35 +971,22 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result.column_names, [])
         self.assertEqual(result.columns, [])
 
-    def test_table_metadata(self):
-        df = pd.DataFrame({"A": [1, 2, 3]})
-        result = ProcessResult(df)
-        self.assertEqual(
-            result.table_metadata, TableMetadata(3, [Column("A", ColumnType.Number())])
-        )
-
-    def test_empty_table_metadata(self):
-        result = ProcessResult()
-        self.assertEqual(result.table_metadata, TableMetadata(0, []))
-
     def test_to_arrow_empty_dataframe(self):
         fd, filename = tempfile.mkstemp()
+        # We'll test that ProcessResult.to_arrow() writes empty bytes on error
+        os.write(fd, b"to-remove")
         os.close(fd)
-        # Remove the file. Then we'll test that ProcessResult.to_arrow() does
-        # not write it (because the result is an error)
-        os.unlink(filename)
         try:
+
             result = ProcessResult.coerce("bad, bad error").to_arrow(Path(filename))
             self.assertEqual(
                 result,
                 atypes.RenderResult(
-                    atypes.ArrowTable(None, None, TableMetadata(0, [])),
                     [RenderError(TODO_i18n("bad, bad error"), [])],
                     {},
                 ),
             )
-            with self.assertRaises(FileNotFoundError):
-                open(filename)
+            self.assertEqual(Path(filename).stat().st_size, 0)
         finally:
             try:
                 os.unlink(filename)
@@ -1009,35 +995,27 @@ class ProcessResultTests(unittest.TestCase):
 
     def test_to_arrow_normal_dataframe(self):
         fd, filename = tempfile.mkstemp()
-        os.close(fd)
-        # Remove the file. Then we'll test that ProcessResult.to_arrow() does
-        # not write it (because the result is an error)
-        os.unlink(filename)
         try:
             process_result = ProcessResult.coerce(pd.DataFrame({"A": [1, 2]}))
             result = process_result.to_arrow(Path(filename))
             self.assertEqual(
                 result,
                 atypes.RenderResult(
-                    atypes.ArrowTable(
-                        Path(filename),
-                        pyarrow.table({"A": [1, 2]}),
-                        atypes.TableMetadata(
-                            2,
-                            [
-                                atypes.Column(
-                                    "A",
-                                    ColumnType.Number(
-                                        # Whatever .format
-                                        # ProcessResult.coerce() gave
-                                        process_result.columns[0].type.format
-                                    ),
-                                )
-                            ],
-                        ),
-                    ),
                     [],
                     {},
+                ),
+            )
+            with pyarrow.ipc.open_file(filename) as reader:
+                table = reader.read_all()
+            assert_arrow_table_equals(
+                table,
+                make_table(
+                    make_column(
+                        # Whatever .format ProcessResult.coerce() gave
+                        "A",
+                        [1, 2],
+                        format=process_result.columns[0].type.format,
+                    )
                 ),
             )
         finally:
@@ -1053,82 +1031,77 @@ class ArrowConversionTests(unittest.TestCase):
         self.path.unlink()
         super().tearDown()
 
+    def _test_dataframe_to_arrow_table(
+        self,
+        dataframe: pd.DataFrame,
+        columns: List[Column],
+        expected_table: pyarrow.Table,
+    ) -> None:
+        with tempfile_context() as path:
+            dataframe_to_arrow_table(dataframe, columns, path)
+            # "untrusted": more integration-test-ish
+            result_table, result_columns = load_untrusted_arrow_file_with_columns(path)
+            assert_arrow_table_equals(result_table, expected_table)
+            self.assertEqual(result_columns, columns)  # testing the round trip
+
     def test_dataframe_all_null_text_column(self):
-        assert_arrow_table_equals(
-            dataframe_to_arrow_table(
-                pd.DataFrame({"A": [None]}, dtype=str),
-                [Column("A", ColumnType.Text())],
-                self.path,
-            ),
-            arrow_table({"A": pyarrow.array([None], pyarrow.string())}),
+        self._test_dataframe_to_arrow_table(
+            pd.DataFrame({"A": [None]}, dtype=str),
+            [Column("A", ColumnType.Text())],
+            expected_table=make_table(make_column("A", [None], pyarrow.string())),
         )
 
     def test_arrow_all_null_text_column(self):
         dataframe, columns = arrow_table_to_dataframe(
-            arrow_table(
-                {"A": pyarrow.array(["a", "b", None, "c"])},
-                columns=[atypes.Column("A", ColumnType.Text())],
-            )
+            make_table(make_column("A", [None], pyarrow.string()))
         )
-        assert_frame_equal(dataframe, pd.DataFrame({"A": ["a", "b", np.nan, "c"]}))
+        assert_frame_equal(dataframe, pd.DataFrame({"A": [None]}, dtype=str))
         self.assertEqual(columns, [Column("A", ColumnType.Text())])
 
     def test_dataframe_category_column(self):
-        assert_arrow_table_equals(
-            dataframe_to_arrow_table(
-                pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category"),
-                [Column("A", ColumnType.Text())],
-                self.path,
-            ),
-            arrow_table(
+        self._test_dataframe_to_arrow_table(
+            pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category"),
+            [Column("A", ColumnType.Text())],
+            pyarrow.table(
                 {
                     "A": pyarrow.DictionaryArray.from_arrays(
-                        pyarrow.array([0, 1, None, 0], type=pyarrow.int8()),
-                        pyarrow.array(["A", "B"], type=pyarrow.string()),
-                    )
+                        pyarrow.array([0, 1, None, 0], pyarrow.int8()),
+                        pyarrow.array(["A", "B"], pyarrow.string()),
+                    ),
                 }
             ),
         )
 
     def test_arrow_category_column(self):
-        atable = arrow_table(
-            {
-                "A": pyarrow.DictionaryArray.from_arrays(
-                    pyarrow.array([0, 1, None, 0], type=pyarrow.int8()),
-                    pyarrow.array(["A", "B"], type=pyarrow.string()),
-                )
-            }
+        dataframe, columns = arrow_table_to_dataframe(
+            make_table(make_column("A", ["A", "B", None, "A"], dictionary=True))
         )
-        dataframe, columns = arrow_table_to_dataframe(atable)
         self.assertEqual(columns, [Column("A", ColumnType.Text())])
         assert_frame_equal(
             dataframe, pd.DataFrame({"A": ["A", "B", None, "A"]}, dtype="category")
         )
 
     def test_dataframe_all_null_category_column(self):
-        assert_arrow_table_equals(
-            dataframe_to_arrow_table(
-                pd.DataFrame({"A": [None]}, dtype=str).astype("category"),
-                [Column("A", ColumnType.Text())],
-                self.path,
-            ),
-            arrow_table(
+        self._test_dataframe_to_arrow_table(
+            pd.DataFrame({"A": [None]}, dtype=str).astype("category"),
+            [Column("A", ColumnType.Text())],
+            pyarrow.table(
                 {
                     "A": pyarrow.DictionaryArray.from_arrays(
-                        pyarrow.array([None], type=pyarrow.int8()),
-                        pyarrow.array([], type=pyarrow.string()),
-                    )
+                        pyarrow.array([None], pyarrow.int8()),
+                        pyarrow.array([], pyarrow.string()),
+                    ),
                 }
             ),
         )
 
     def test_arrow_all_null_category_column(self):
-        atable = arrow_table(
+        atable = pyarrow.table(
             {
                 "A": pyarrow.DictionaryArray.from_arrays(
-                    pyarrow.array([None], type=pyarrow.int8()),
-                    pyarrow.array([], type=pyarrow.string()),
-                )
+                    pyarrow.array([None], pyarrow.int8()),
+                    pyarrow.array([], pyarrow.string()),
+                ),
             }
         )
         dataframe, columns = arrow_table_to_dataframe(atable)
@@ -1138,24 +1111,19 @@ class ArrowConversionTests(unittest.TestCase):
         )
 
     def test_dataframe_uint8_column(self):
-        assert_arrow_table_equals(
-            dataframe_to_arrow_table(
-                pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8),
-                [Column("A", ColumnType.Number("{:,d}"))],
-                self.path,
-            ),
-            arrow_table(
-                {"A": pyarrow.array([1, 2, 3, 253], type=pyarrow.uint8())},
-                [atypes.Column("A", ColumnType.Number("{:,d}"))],
+        self._test_dataframe_to_arrow_table(
+            pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8),
+            [Column("A", ColumnType.Number("{:,d}"))],
+            make_table(
+                make_column("A", [1, 2, 3, 253], type=pyarrow.uint8(), format="{:,d}")
             ),
         )
 
     def test_arrow_uint8_column(self):
         dataframe, columns = arrow_table_to_dataframe(
-            arrow_table(
-                {"A": pyarrow.array([1, 2, 3, 253], type=pyarrow.uint8())},
-                columns=[atypes.Column("A", ColumnType.Number("{:,d}"))],
-            )
+            make_table(
+                make_column("A", [1, 2, 3, 253], type=pyarrow.uint8(), format="{:,d}")
+            ),
         )
         assert_frame_equal(
             dataframe, pd.DataFrame({"A": [1, 2, 3, 253]}, dtype=np.uint8)
@@ -1163,36 +1131,21 @@ class ArrowConversionTests(unittest.TestCase):
         self.assertEqual(columns, [Column("A", ColumnType.Number("{:,d}"))])
 
     def test_dataframe_datetime_column(self):
-        assert_arrow_table_equals(
-            dataframe_to_arrow_table(
-                pd.DataFrame(
-                    {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
-                ),
-                [Column("A", ColumnType.Timestamp())],
-                self.path,
+        self._test_dataframe_to_arrow_table(
+            pd.DataFrame(
+                {"A": ["2019-09-17T21:21:00.123456Z", None]}, dtype="datetime64[ns]"
             ),
-            arrow_table(
-                {
-                    "A": pyarrow.array(
-                        [dt.fromisoformat("2019-09-17T21:21:00.123456"), None],
-                        type=pyarrow.timestamp(unit="ns", tz=None),
-                    )
-                },
-                [atypes.Column("A", ColumnType.Timestamp())],
+            [Column("A", ColumnType.Timestamp())],
+            make_table(
+                make_column("A", [dt.fromisoformat("2019-09-17T21:21:00.123456"), None])
             ),
         )
 
     def test_arrow_timestamp_column(self):
         dataframe, columns = arrow_table_to_dataframe(
-            arrow_table(
-                {
-                    "A": pyarrow.array(
-                        [dt.fromisoformat("2019-09-17T21:21:00.123456"), None],
-                        type=pyarrow.timestamp(unit="ns", tz=None),
-                    )
-                },
-                [atypes.Column("A", ColumnType.Timestamp())],
-            )
+            make_table(
+                make_column("A", [dt.fromisoformat("2019-09-17T21:21:00.123456"), None])
+            ),
         )
         assert_frame_equal(
             dataframe,
@@ -1203,5 +1156,7 @@ class ArrowConversionTests(unittest.TestCase):
         self.assertEqual(columns, [Column("A", ColumnType.Timestamp())])
 
     def test_arrow_table_reuse_string_memory(self):
-        dataframe, _ = arrow_table_to_dataframe(arrow_table({"A": ["x", "x"]}))
+        dataframe, _ = arrow_table_to_dataframe(
+            make_table(make_column("A", ["x", "x"]))
+        )
         self.assertIs(dataframe["A"][0], dataframe["A"][1])

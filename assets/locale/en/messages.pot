@@ -2494,7 +2494,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:472
+#: cjwkernel/pandas/types.py:483
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
@@ -2543,43 +2543,43 @@ msgstr ""
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
-#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
-#: renderer/execute/step.py:139
-msgid "py.renderer.execute.step.user_visible_bug_during_render"
-msgstr ""
-
 #. default-message: Please delete this step: an administrator uninstalled its code.
-#: renderer/execute/step.py:373
+#: renderer/execute/step.py:389
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
 
 #. default-message: Please Add Data before this step.
-#: renderer/execute/step.py:400
+#: renderer/execute/step.py:418
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr ""
 
 #. default-message: The chosen tab depends on this one. Please choose another tab.
-#: renderer/execute/step.py:411
+#: renderer/execute/step.py:430
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
 
 #. default-message: The chosen tab has no output. Please select another one.
-#: renderer/execute/step.py:422
+#: renderer/execute/step.py:442
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr ""
 
+#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
+#: renderer/execute/step.py:483
+msgid "py.renderer.execute.step.user_visible_bug_during_render"
+msgstr ""
+
 #. default-message: “{value}” is not a number. Please enter a number.
-#: renderer/execute/types.py:51
+#: renderer/execute/types.py:65
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr ""
 
 #. default-message: “{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.
-#: renderer/execute/types.py:69
+#: renderer/execute/types.py:83
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 
 #. default-message: Convert to Text
-#: renderer/execute/types.py:131
+#: renderer/execute/types.py:145
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr ""
 
@@ -2587,7 +2587,7 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
 #. default-message: Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}
-#: renderer/execute/types.py:137
+#: renderer/execute/types.py:151
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
 
@@ -2595,7 +2595,7 @@ msgstr ""
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted to Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other {The columns “{0}”, “{1}” and # others must be converted to Text.}}
-#: renderer/execute/types.py:180
+#: renderer/execute/types.py:194
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 
@@ -2605,7 +2605,7 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}
-#: renderer/execute/types.py:193
+#: renderer/execute/types.py:207
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 

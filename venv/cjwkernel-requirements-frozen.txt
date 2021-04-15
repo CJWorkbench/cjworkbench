@@ -1,7 +1,7 @@
 beautifulsoup4==4.7.1
   soupsieve==2.2.1
 cjwpandasmodule==0.2.0
-  cjwmodule==4.0.0
+  cjwmodule==4.0.2
     built-google-re2==0.0.7.20210224100510
       six==1.15.0
     httpx==0.17.1
@@ -23,7 +23,7 @@ cjwparquet==2.2.0
     numpy==1.20.2
 cjwparse==2.0.1
   cchardet==2.1.7
-  cjwmodule==4.0.0
+  cjwmodule==4.0.2
     built-google-re2==0.0.7.20210224100510
       six==1.15.0
     httpx==0.17.1

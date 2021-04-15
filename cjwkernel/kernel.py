@@ -15,7 +15,6 @@ from cjwkernel.chroot import READONLY_CHROOT_DIR, ChrootContext
 from cjwkernel.errors import ModuleExitedError, ModuleTimeoutError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
-    ArrowTable,
     CompiledModule,
     FetchResult,
     Params,
@@ -283,7 +282,7 @@ class Kernel:
         compiled_module: CompiledModule,
         chroot_context: ChrootContext,
         basedir: Path,
-        input_table: ArrowTable,
+        input_filename: str,
         params: Params,
         tab: Tab,
         fetch_result: Optional[FetchResult],
@@ -296,16 +295,16 @@ class Kernel:
         chroot_dir = chroot_context.chroot.root
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
-            str(basedir_seen_by_module),
-            arrow_arrow_table_to_thrift(input_table),
-            arrow_params_to_thrift(params),
-            arrow_tab_to_thrift(tab),
-            (
+            basedir=str(basedir_seen_by_module),
+            params=arrow_params_to_thrift(params),
+            tab=arrow_tab_to_thrift(tab),
+            fetch_result=(
                 None
                 if fetch_result is None
                 else arrow_fetch_result_to_thrift(fetch_result)
             ),
-            output_filename,
+            output_filename=output_filename,
+            input_filename=input_filename,
         )
         try:
             with chroot_context.writable_file(basedir / output_filename):
@@ -321,24 +320,7 @@ class Kernel:
         finally:
             chroot_context.clear_unowned_edits()
 
-        if result.table.filename and result.table.filename != output_filename:
-            raise ModuleExitedError(
-                compiled_module.module_slug, 0, "Module wrote to wrong output file"
-            )
-
-        try:
-            # thrift_render_result_to_arrow() verifies all filenames passed by
-            # the module are in the directory the module has access to. It
-            # assumes the Arrow file (if there is one) is untrusted, so it can
-            # raise ValidateError
-            render_result = thrift_render_result_to_arrow(result, basedir)
-        except ValidateError as err:
-            raise ModuleExitedError(
-                compiled_module.module_slug,
-                0,
-                "Module produced invalid data: %s" % str(err),
-            )
-        return render_result
+        return thrift_render_result_to_arrow(result)
 
     def fetch(
         self,
@@ -358,16 +340,16 @@ class Kernel:
         chroot_dir = chroot_context.chroot.root
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
-            str(basedir_seen_by_module),
-            arrow_params_to_thrift(params),
-            arrow_raw_params_to_thrift(RawParams(secrets)),
-            (
+            basedir=str(basedir_seen_by_module),
+            params=arrow_params_to_thrift(params),
+            secrets=arrow_raw_params_to_thrift(RawParams(secrets)),
+            last_fetch_result=(
                 None
                 if last_fetch_result is None
                 else arrow_fetch_result_to_thrift(last_fetch_result)
             ),
-            input_parquet_filename,
-            output_filename,
+            input_table_parquet_filename=input_parquet_filename,
+            output_filename=output_filename,
         )
         try:
             with chroot_context.writable_file(basedir / output_filename):

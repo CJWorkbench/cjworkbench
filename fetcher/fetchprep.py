@@ -26,9 +26,7 @@ def clean_value(dtype: ParamDType, value: Any, input_metadata: TableMetadata) ->
 
     Features:
 
-        * `Tab` parameters become Optional[TabOutput] (declared here)
-        * Eliminate missing `Tab`s: they'll be `None`
-        * Raise `TabCycleError` if a chosen Tab has not been rendered
+        * `Tab` and `MultiTab` raise RuntimeError.
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type

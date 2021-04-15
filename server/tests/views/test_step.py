@@ -4,16 +4,16 @@ from datetime import datetime as dt
 from http import HTTPStatus as status
 from unittest.mock import patch
 
+import pyarrow as pa
+from cjwmodule.arrow.testing import make_table, make_column
 from django.test import override_settings
 
 import cjwstate.modules
-import pyarrow as pa
-from cjwkernel.tests.util import arrow_table
-from cjwkernel.types import Column, ColumnType, RenderResult
 from cjwstate import commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.fields import Role
-from cjwstate.rendercache.io import cache_render_result, delete_parquet_files_for_step
+from cjwstate.rendercache.io import delete_parquet_files_for_step
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -67,15 +67,10 @@ class RenderTableSliceTest(StepViewTestCase):
             order=1, slug="step-2", last_relevant_delta_id=2
         )
 
-    def _request_slug_delta(self, step_slug, delta_id, query_string=""):
+    def _request_step(self, step, query_string=""):
         return self.client.get(
             "/workflows/%d/steps/%s/delta-%d/result-table-slice.json%s"
-            % (self.workflow.id, step_slug, delta_id, query_string)
-        )
-
-    def _request_step(self, step, query_string=""):
-        return self._request_slug_delta(
-            step.slug, step.last_relevant_delta_id, query_string
+            % (self.workflow.id, step.slug, step.last_relevant_delta_id, query_string)
         )
 
     # Test some json conversion gotchas we encountered during development
@@ -84,11 +79,11 @@ class RenderTableSliceTest(StepViewTestCase):
         # conversion throws ValueError
         # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
         int64 = 2 ** 62 + 10
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [1, int64]})),
+            make_table(make_column("A", [1], pa.int64())),
         )
         self.step2.save()
 
@@ -100,11 +95,16 @@ class RenderTableSliceTest(StepViewTestCase):
         # Only at most MAX_COLUMNS_PER_CLIENT_REQUEST should be returned,
         # since we do not display more than that. (This is a funky hack that
         # assumes the client will behave differently when it has >MAX columns.)
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [1], "B": [2], "C": [3], "D": [4]})),
+            make_table(
+                make_column("A", [1]),
+                make_column("B", [2]),
+                make_column("C", [3]),
+                make_column("D", [4]),
+            ),
         )
 
         response = self._request_step(self.step2)
@@ -114,18 +114,14 @@ class RenderTableSliceTest(StepViewTestCase):
         self.assertEqual(len(read_streaming_json(response)[0]), 3)
 
     def test_data(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(
-                arrow_table(
-                    {
-                        "Class": ["math", "english", "history", "economics"],
-                        "M": [10, None, 11, 20],
-                        "F": [12, 7, 13, 20],
-                    }
-                )
+            make_table(
+                make_column("Class", ["math", "english", "history", "economics"]),
+                make_column("M", [10, None, 11, 20], pa.float64()),
+                make_column("F", [12, 7, 13, 20]),
             ),
         )
 
@@ -227,20 +223,11 @@ class RenderTableSliceTest(StepViewTestCase):
 
     def test_null_timestamp(self):
         # Ran into problems 2019-09-06, when switching to Arrow
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(
-                arrow_table(
-                    {
-                        "A": pa.array(
-                            [dt(2019, 1, 2, 3, 4, 5, 6007, None), None],
-                            pa.timestamp("ns"),
-                        )
-                    }
-                )
-            ),
+            make_table(make_column("A", [dt(2019, 1, 2, 3, 4, 5, 6007, None), None])),
         )
 
         response = self._request_step(self.step2)
@@ -252,11 +239,11 @@ class RenderTableSliceTest(StepViewTestCase):
 
     def test_missing_parquet_file(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [1]})),
+            make_table(make_column("A", [1])),
         )
 
         # Simulate a race: we're overwriting the cache or deleting the Step
@@ -268,11 +255,11 @@ class RenderTableSliceTest(StepViewTestCase):
         self.assertEqual(json.loads(response.content), [])
 
     def test_only_rows(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
+            make_table(make_column("A", [0, 1, 2, 3, 4])),
         )
 
         response = self._request_step(self.step2, "?startrow=1&endrow=3")
@@ -280,11 +267,11 @@ class RenderTableSliceTest(StepViewTestCase):
         self.assertEqual(read_streaming_json(response), [{"A": 1}, {"A": 2}])
 
     def test_clip_out_of_bounds(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [0, 1]})),
+            make_table(make_column("A", [0, 1])),
         )
 
         # index out of bounds should clip
@@ -293,11 +280,11 @@ class RenderTableSliceTest(StepViewTestCase):
         self.assertEqual(read_streaming_json(response), [{"A": 0}, {"A": 1}])
 
     def test_start_row_after_end_row(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
+            make_table(make_column("A", [0, 1, 2, 3, 4])),
         )
 
         response = self._request_step(self.step2, "?startrow=3&endrow=1")
@@ -309,17 +296,15 @@ class RenderTableSliceTest(StepViewTestCase):
         response = self._request_step(self.step2, "?startrow=0&endrow=frog")
         self.assertEqual(response.status_code, status.BAD_REQUEST)
 
-    def test_wrong_delta_id(self):
-        cache_render_result(
+    def test_wrong_cached_delta_id(self):
+        write_to_rendercache(
             self.workflow,
             self.step2,
-            self.step2.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": [0, 1, 2, 3, 4]})),
+            self.step2.last_relevant_delta_id - 1,
+            make_table(make_column("A", [1])),
         )
-        self.step2.last_relevant_delta_id = 99
-        self.step2.save(update_fields=["last_relevant_delta_id"])
 
-        response = self._request_slug_delta(self.step2.slug, 99)
+        response = self._request_step(self.step2)
         self.assertEqual(response.status_code, status.OK)
         self.assertEqual(json.loads(response.content), [])
 
@@ -369,11 +354,8 @@ class EmbedTest(StepViewTestCase):
 
     def test_init_state(self):
         create_module_zipfile("chart", spec_kwargs={"html_output": True}, html="hi")
-        cache_render_result(
-            self.workflow,
-            self.step,
-            1,
-            RenderResult(arrow_table({"A": [1]}), json={}),
+        write_to_rendercache(
+            self.workflow, self.step, 1, make_table(make_column("A", [1])), json={}
         )
 
         with self.assertLogs("cjwstate.params", level="INFO"):
@@ -392,11 +374,8 @@ class EmbedTest(StepViewTestCase):
         create_module_zipfile(
             "chart", spec_kwargs={"html_output": True}, html="hi", version="develop"
         )
-        cache_render_result(
-            self.workflow,
-            self.step,
-            1,
-            RenderResult(arrow_table({"A": [1]}), json={}),
+        write_to_rendercache(
+            self.workflow, self.step, 1, make_table(make_column("A", [1])), json={}
         )
         self.step.last_relevant_delta_id = 2
         self.step.save(update_fields=["last_relevant_delta_id"])
@@ -436,11 +415,11 @@ class ResultColumnValueCountsTest(StepViewTestCase):
         )
 
     def test_str(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step1,
             self.step1.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": ["a", "b", "b", "a", "c", None]})),
+            make_table(make_column("A", ["a", "b", "b", "a", "c", None])),
         )
 
         response = self._request("A")
@@ -451,14 +430,12 @@ class ResultColumnValueCountsTest(StepViewTestCase):
         )
 
     def test_dictionary(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step1,
             self.step1.last_relevant_delta_id,
-            RenderResult(
-                arrow_table(
-                    {"A": pa.array(["a", "b", "b", "a", "c", None]).dictionary_encode()}
-                )
+            make_table(
+                make_column("A", ["a", "b", "b", "a", "c", None], dictionary=True)
             ),
         )
 
@@ -471,11 +448,11 @@ class ResultColumnValueCountsTest(StepViewTestCase):
 
     def test_corrupt_cache(self):
         # https://www.pivotaltracker.com/story/show/161988744
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step1,
             self.step1.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": ["a"]})),
+            make_table(make_column("A", ["a"])),
         )
         # Simulate a race: we're overwriting the cache or deleting the Step
         # or some-such.
@@ -493,16 +470,11 @@ class ResultColumnValueCountsTest(StepViewTestCase):
         )
 
     def test_disallow_non_text(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step1,
             self.step1.last_relevant_delta_id,
-            RenderResult(
-                arrow_table(
-                    {"A": [1, 2, 3, 2, 1]},
-                    columns=[Column("A", ColumnType.Number(format="{:.2f}"))],
-                )
-            ),
+            make_table(make_column("A", [1, 2, 3, 2, 1])),
         )
 
         response = self._request("A")
@@ -522,11 +494,11 @@ class ResultColumnValueCountsTest(StepViewTestCase):
         )
 
     def test_wrong_column(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step1,
             self.step1.last_relevant_delta_id,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+            make_table(make_column("A", ["a"])),
         )
 
         response = self._request("B")
@@ -554,11 +526,12 @@ class ResultJsonTest(StepViewTestCase):
         )
 
     def test_cached_result_has_wrong_delta_id(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step,
             1,
-            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+            make_table(make_column("A", [1])),
+            json={"hello": "world"},
         )
         self.step.last_relevant_delta_id = 3
         self.step.save(update_fields=["last_relevant_delta_id"])
@@ -571,11 +544,12 @@ class ResultJsonTest(StepViewTestCase):
         )
 
     def test_json(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step,
             1,
-            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+            make_table(make_column("A", [1])),
+            json={"hello": "world!"},
         )
 
         response = self._request()
@@ -584,8 +558,8 @@ class ResultJsonTest(StepViewTestCase):
         self.assertEqual(json.loads(response.content), {"hello": "world!"})
 
     def test_empty_json(self):
-        cache_render_result(
-            self.workflow, self.step, 1, RenderResult(arrow_table({"A": ["a", "b"]}))
+        write_to_rendercache(
+            self.workflow, self.step, 1, make_table(make_column("A", [1])), json={}
         )
 
         response = self._request()
@@ -596,11 +570,12 @@ class ResultJsonTest(StepViewTestCase):
         )
 
     def test_auth_report_viewer_denied_custom_report_table(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step,
             1,
-            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+            make_table(make_column("A", [1])),
+            json={"hello": "world!"},
         )
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
@@ -616,11 +591,12 @@ class ResultJsonTest(StepViewTestCase):
         )
 
     def test_auth_report_viewer_allowed_custom_report_chart(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step,
             1,
-            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+            make_table(make_column("A", [1])),
+            json={"hello": "world!"},
         )
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
@@ -634,11 +610,12 @@ class ResultJsonTest(StepViewTestCase):
         self.assertEqual(response.status_code, 200, "Should have access to Chart step")
 
     def test_auth_report_viewer_allowed_auto_report_chart(self):
-        cache_render_result(
+        write_to_rendercache(
             self.workflow,
             self.step,
             1,
-            RenderResult(arrow_table({"A": ["a", "b"]}), json={"hello": "world!"}),
+            make_table(make_column("A", [1])),
+            json={"hello": "world!"},
         )
         user = create_test_user("alice", "alice@example.org")
         self.workflow.acl.create(email="alice@example.org", role=Role.REPORT_VIEWER)
@@ -673,11 +650,8 @@ class TileTest(StepViewTestCase):
         )
 
     def test_cached_result_has_wrong_delta_id(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", [1]))
         )
         self.step2.cached_render_result_delta_id = 3
         self.step2.last_relevant_delta_id = 3
@@ -694,11 +668,8 @@ class TileTest(StepViewTestCase):
         )
 
     def test_tile_row_out_of_bounds(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", [1]))
         )
 
         response = self.client.get(
@@ -708,11 +679,8 @@ class TileTest(StepViewTestCase):
         self.assertEqual(json.loads(response.content), {"error": "tile out of bounds"})
 
     def test_corrupt_cache_error(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", [1]))
         )
         delete_parquet_files_for_step(self.workflow.id, self.step2.id)
 
@@ -726,11 +694,8 @@ class TileTest(StepViewTestCase):
         )
 
     def test_json(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", ["a", "b"]))
         )
 
         response = self.client.get(
@@ -754,7 +719,7 @@ class CurrentTableTest(StepViewTestCase):
         )
 
     def test_current_table_zero_columns(self):
-        cache_render_result(self.workflow, self.step2, 2, RenderResult(arrow_table({})))
+        write_to_rendercache(self.workflow, self.step2, 2, make_table())
 
         # CSV
         response = self.client.get(
@@ -771,11 +736,8 @@ class CurrentTableTest(StepViewTestCase):
         self.assertEqual(read_streaming_json(response), [])
 
     def test_current_table_json(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", ["a", "b"]))
         )
 
         response = self.client.get(
@@ -785,11 +747,8 @@ class CurrentTableTest(StepViewTestCase):
         self.assertEqual(read_streaming_json(response), [{"A": "a"}, {"A": "b"}])
 
     def test_deprecated_current_table_json(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", ["a", "b"]))
         )
 
         response = self.client.get(f"/public/moduledata/live/{self.step2.id}.json")
@@ -797,11 +756,8 @@ class CurrentTableTest(StepViewTestCase):
         self.assertEqual(read_streaming_json(response), [{"A": "a"}, {"A": "b"}])
 
     def test_current_table_csv(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", ["a", "b"]))
         )
 
         response = self.client.get(
@@ -811,11 +767,8 @@ class CurrentTableTest(StepViewTestCase):
         self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
 
     def test_deprecated_current_table_csv(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", ["a", "b"]))
         )
 
         response = self.client.get(f"/public/moduledata/live/{self.step2.id}.csv")
@@ -823,11 +776,8 @@ class CurrentTableTest(StepViewTestCase):
         self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
 
     def test_secret_link(self):
-        cache_render_result(
-            self.workflow,
-            self.step2,
-            2,
-            RenderResult(arrow_table({"A": ["a", "b"]})),
+        write_to_rendercache(
+            self.workflow, self.step2, 2, make_table(make_column("A", ["a", "b"]))
         )
         self.workflow.secret_id = "wsecret"
         self.workflow.public = False

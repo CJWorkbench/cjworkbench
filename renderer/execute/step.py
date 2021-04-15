@@ -1,27 +1,32 @@
 import asyncio
-from collections import namedtuple
 import contextlib
 import datetime
-from functools import partial
 import logging
-from pathlib import Path
 import time
-from typing import Any, Dict, NamedTuple, Optional
+from collections import namedtuple
+from functools import partial
+from pathlib import Path
+from typing import Any, Dict, List, NamedTuple, Optional
+
+import cjwparquet
+import pyarrow as pa
+
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.i18n import trans
 from cjwkernel.types import (
-    ArrowTable,
+    Column,
     FetchResult,
     I18nMessage,
     Params,
     RenderError,
-    RenderResult,
+    LoadedRenderResult,
     Tab,
+    thrift_render_result_to_arrow,
 )
+from cjwkernel.validate import load_untrusted_arrow_file_with_columns
 from cjwkernel.util import tempfile_context
-import cjwparquet
 from cjwstate import clientside, s3, rabbitmq, rendercache
 from cjwstate.models import StoredObject, Step, Workflow
 import cjwstate.modules
@@ -35,6 +40,7 @@ from .types import (
     PromptingError,
 )
 from . import renderprep
+from .types import StepResult
 
 
 logger = logging.getLogger(__name__)
@@ -125,35 +131,17 @@ def _load_fetch_result(
     return FetchResult(path, step.fetch_errors)
 
 
-def _wrap_render_errors(render_call):
-    try:
-        return render_call()
-    except ModuleError as err:
-        return RenderResult(
-            errors=[
-                RenderError(
-                    trans(
-                        "py.renderer.execute.step.user_visible_bug_during_render",
-                        default="Something unexpected happened. We have been notified and are "
-                        "working to fix it. If this persists, contact us. Error code: {message}",
-                        arguments={"message": format_for_user_debugging(err)},
-                    )
-                )
-            ]
-        )
-
-
 def invoke_render(
     module_zipfile: ModuleZipfile,
     *,
     chroot_context: ChrootContext,
     basedir: Path,
-    input_table: ArrowTable,
+    input_filename: Optional[str],
     params: Params,
     tab: Tab,
     fetch_result: Optional[FetchResult],
     output_filename: str,
-) -> RenderResult:
+) -> LoadedRenderResult:
     """Use kernel to process `table` with module `render` function.
 
     Raise `ModuleError` on error. (This is usually the module author's fault.)
@@ -164,12 +152,14 @@ def invoke_render(
     datasets. Consider calling it from an executor.
     """
     time1 = time.time()
-    begin_status_format = "%s:render() (%d rows, %d cols, %0.1fMB)"
+    begin_status_format = "%s:render() (%0.1fMB input)"
     begin_status_args = (
         module_zipfile.path.name,
-        input_table.metadata.n_rows,
-        len(input_table.metadata.columns),
-        input_table.n_bytes_on_disk / 1024 / 1024,
+        (
+            (basedir / input_filename).stat().st_size / 1024 / 1024
+            if input_filename is not None
+            else 0
+        ),
     )
     logger.info(begin_status_format + " begin", *begin_status_args)
     status = "???"
@@ -178,18 +168,40 @@ def invoke_render(
             module_zipfile.compile_code_without_executing(),
             chroot_context=chroot_context,
             basedir=basedir,
-            input_table=input_table,
+            input_filename=input_filename,
             params=params,
             tab=tab,
             fetch_result=fetch_result,
             output_filename=output_filename,
         )
-        status = "(%drows, %dcols, %0.1fMB)" % (
-            result.table.metadata.n_rows,
-            len(result.table.metadata.columns),
-            result.table.n_bytes_on_disk / 1024 / 1024,
+
+        output_path = basedir / output_filename
+        st_size = output_path.stat().st_size
+        if st_size == 0:
+            table = pa.table({})
+            columns = []
+            status = "(no output)"
+        else:
+            try:
+                table, columns = load_untrusted_arrow_file_with_columns(output_path)
+                status = "(%drows, %dcols, %0.1fMB)" % (
+                    table.num_rows,
+                    table.num_columns,
+                    st_size / 1024 / 1024,
+                )
+            except ValidateError as err:
+                raise ModuleExitedError(
+                    module_zipfile.path.name,
+                    0,
+                    "Module wrote invalid data: %s" % str(err),
+                )
+        return LoadedRenderResult(
+            path=output_path,
+            table=table,
+            columns=columns,
+            errors=result.errors,
+            json=result.json,
         )
-        return result
     except ModuleError as err:
         logger.exception("Exception in %s:render", module_zipfile.path.name)
         status = type(err).__name__
@@ -212,14 +224,16 @@ class ExecuteStepPreResult(NamedTuple):
 
 @database_sync_to_async
 def _execute_step_pre(
+    *,
     basedir: Path,
     exit_stack: contextlib.ExitStack,
     workflow: Workflow,
     step: Step,
     module_zipfile: ModuleZipfile,
     raw_params: Dict[str, Any],
-    input_table: ArrowTable,
-    tab_results: Dict[Tab, Optional[RenderResult]],
+    input_path: Path,
+    input_table_columns: List[Column],
+    tab_results: Dict[Tab, Optional[StepResult]],
 ) -> ExecuteStepPreResult:
     """First step of execute_step().
 
@@ -246,17 +260,17 @@ def _execute_step_pre(
         fetch_result = _load_fetch_result(safe_step, basedir, exit_stack)
 
         module_spec = module_zipfile.get_spec()
-        if not module_spec.loads_data and input_table.table is None:
+        if not module_spec.loads_data and not input_table_columns:
             raise NoLoadedDataError
 
         param_schema = module_spec.get_param_schema()
         render_context = renderprep.RenderContext(
             step.id,
-            input_table,
-            tab_results,
-            basedir,
-            exit_stack,
-            raw_params,  # ugh
+            input_table_columns=input_table_columns,
+            tab_results=tab_results,
+            basedir=basedir,
+            exit_stack=exit_stack,
+            params=raw_params,  # ugh
         )
         # raise TabCycleError, TabOutputUnreachableError, PromptingError
         params = renderprep.get_param_values(param_schema, raw_params, render_context)
@@ -266,7 +280,7 @@ def _execute_step_pre(
 
 @database_sync_to_async
 def _execute_step_save(
-    workflow: Workflow, step: Step, result: RenderResult
+    workflow: Workflow, step: Step, result: LoadedRenderResult
 ) -> SaveResult:
     """Call rendercache.cache_render_result() and build notifications.OutputDelta.
 
@@ -352,22 +366,24 @@ async def _render_step(
     module_zipfile: Optional[ModuleZipfile],
     raw_params: Dict[str, Any],
     tab: Tab,
-    input_result: RenderResult,
-    tab_results: Dict[Tab, Optional[RenderResult]],
+    input_path: Path,
+    input_table_columns: List[Column],
+    tab_results: Dict[Tab, Optional[StepResult]],
     output_path: Path,
-) -> RenderResult:
-    """Prepare and call `step`'s `render()`; return a RenderResult.
+) -> LoadedRenderResult:
+    """Prepare and call `step`'s `render()`; return a LoadedRenderResult.
 
     The actual render runs in a background thread so the event loop can process
     other events.
     """
     basedir = output_path.parent
 
-    if step.order > 0 and input_result.status != "ok":
-        return RenderResult()  # 'unreachable'
+    if step.order > 0 and not input_table_columns:
+        return LoadedRenderResult.unreachable(output_path)
 
     if module_zipfile is None:
-        return RenderResult(
+        return LoadedRenderResult.from_errors(
+            output_path,
             errors=[
                 RenderError(
                     trans(
@@ -375,7 +391,7 @@ async def _render_step(
                         default="Please delete this step: an administrator uninstalled its code.",
                     )
                 )
-            ]
+            ],
         )
 
     # exit_stack: stuff that gets deleted when the render is done
@@ -384,17 +400,19 @@ async def _render_step(
             # raise UnneededExecution, TabCycleError, TabOutputUnreachableError,
             # NoLoadedDataError, PromptingError
             fetch_result, params = await _execute_step_pre(
-                basedir,
-                exit_stack,
-                workflow,
-                step,
-                module_zipfile,
-                raw_params,
-                input_result.table,
-                tab_results,
+                basedir=basedir,
+                exit_stack=exit_stack,
+                workflow=workflow,
+                step=step,
+                module_zipfile=module_zipfile,
+                raw_params=raw_params,
+                input_path=input_path,
+                input_table_columns=input_table_columns,
+                tab_results=tab_results,
             )
         except NoLoadedDataError:
-            return RenderResult(
+            return LoadedRenderResult.from_errors(
+                output_path,
                 errors=[
                     RenderError(
                         trans(
@@ -402,10 +420,11 @@ async def _render_step(
                             default="Please Add Data before this step.",
                         )
                     )
-                ]
+                ],
             )
         except TabCycleError:
-            return RenderResult(
+            return LoadedRenderResult.from_errors(
+                output_path,
                 errors=[
                     RenderError(
                         trans(
@@ -413,10 +432,11 @@ async def _render_step(
                             default="The chosen tab depends on this one. Please choose another tab.",
                         )
                     )
-                ]
+                ],
             )
         except TabOutputUnreachableError:
-            return RenderResult(
+            return LoadedRenderResult.from_errors(
+                output_path,
                 errors=[
                     RenderError(
                         trans(
@@ -424,42 +444,62 @@ async def _render_step(
                             default="The chosen tab has no output. Please select another one.",
                         )
                     )
-                ]
+                ],
             )
         except PromptingError as err:
-            return RenderResult(errors=err.as_render_errors())
+            return LoadedRenderResult.from_errors(
+                output_path, errors=err.as_render_errors()
+            )
 
         # Render may take a while. run_in_executor to push that slowdown to a
         # thread and keep our event loop responsive.
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
-            None,
-            _wrap_render_errors,
-            partial(
-                invoke_render,
-                module_zipfile,
-                chroot_context=chroot_context,
-                basedir=basedir,
-                input_table=input_result.table,
-                params=params,
-                tab=tab,
-                fetch_result=fetch_result,
-                output_filename=output_path.name,
-            ),
-        )
+
+        try:
+            return await loop.run_in_executor(
+                None,
+                partial(
+                    invoke_render,
+                    module_zipfile,
+                    chroot_context=chroot_context,
+                    basedir=basedir,
+                    input_filename=input_path.name,
+                    params=params,
+                    tab=tab,
+                    fetch_result=fetch_result,
+                    output_filename=output_path.name,
+                ),
+            )
+        except ModuleError as err:
+            output_path.write_bytes(b"")  # SECURITY
+            return LoadedRenderResult.from_errors(
+                output_path,
+                errors=[
+                    RenderError(
+                        trans(
+                            "py.renderer.execute.step.user_visible_bug_during_render",
+                            default="Something unexpected happened. We have been notified and are "
+                            "working to fix it. If this persists, contact us. Error code: {message}",
+                            arguments={"message": format_for_user_debugging(err)},
+                        )
+                    )
+                ],
+            )
 
 
 async def execute_step(
+    *,
     chroot_context: ChrootContext,
     workflow: Workflow,
     step: Step,
     module_zipfile: Optional[ModuleZipfile],
     params: Dict[str, Any],
     tab: Tab,
-    input_result: RenderResult,
-    tab_results: Dict[Tab, Optional[RenderResult]],
+    input_path: Path,
+    input_table_columns: List[Column],
+    tab_results: Dict[Tab, Optional[StepResult]],
     output_path: Path,
-) -> RenderResult:
+) -> StepResult:
     """Render a single Step; cache, broadcast and return output.
 
     CONCURRENCY NOTES: This function is reasonably concurrency-friendly:
@@ -488,20 +528,21 @@ async def execute_step(
     Raises `UnneededExecution` when the input Step should not be rendered.
     """
     # may raise UnneededExecution
-    result = await _render_step(
+    loaded_render_result = await _render_step(
         chroot_context=chroot_context,
         workflow=workflow,
         step=step,
         module_zipfile=module_zipfile,
         raw_params=params,
         tab=tab,
-        input_result=input_result,
+        input_path=input_path,
+        input_table_columns=input_table_columns,
         tab_results=tab_results,
         output_path=output_path,
     )
 
     # may raise UnneededExecution
-    crr, output_delta = await _execute_step_save(workflow, step, result)
+    crr, output_delta = await _execute_step_save(workflow, step, loaded_render_result)
 
     update = clientside.Update(
         steps={
@@ -527,4 +568,6 @@ async def execute_step(
     # TODO if there's no change, is it possible for us to skip the render
     # of future modules, setting their cached_render_result_delta_id =
     # last_relevant_delta_id?  Investigate whether this is worthwhile.
-    return result
+    return StepResult(
+        path=loaded_render_result.path, columns=loaded_render_result.columns
+    )

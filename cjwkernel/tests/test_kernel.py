@@ -1,13 +1,18 @@
 import contextlib
 import marshal
+import os
 import textwrap
 import unittest
 from unittest.mock import patch
+
 import pyarrow
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+
+from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError, ModuleTimeoutError
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context
-from cjwkernel.chroot import EDITABLE_CHROOT
+from cjwkernel.validate import load_untrusted_arrow_file_with_columns
 from cjwkernel import types
 
 
@@ -40,8 +45,11 @@ class KernelTests(unittest.TestCase):
         self.basedir = self.ctx.enter_context(
             self.chroot_context.tempdir_context(prefix="basedir-")
         )
+        self.old_cwd = os.getcwd()
+        os.chdir(self.basedir)
 
     def tearDown(self):
+        os.chdir(self.old_cwd)
         self.ctx.close()
         super().tearDown()
 
@@ -88,7 +96,7 @@ class KernelTests(unittest.TestCase):
     #         "import os\ndef migrate_params(params): return {'x':[int(pid) for pid in os.listdir('/proc') if pid.isdigit()]}",
     #     )
     #     result = self.kernel.migrate_params(cm, {})
-    #     self.assertEquals(result["x"], [1])
+    #     self.assertEquals(result["x"], ["x"])
 
     def test_validate_works_with_dataclasses(self):
         """
@@ -131,31 +139,34 @@ class KernelTests(unittest.TestCase):
             "import pandas as pd\ndef render(table, params): return pd.DataFrame({'A': table['A'] * params['m'], 'B': table['B'] + params['s']})",
         )
         with arrow_table_context(
-            {"A": [1, 2, 3], "B": ["a", "b", "c"]},
-            columns=[
-                types.Column("A", types.ColumnType.Number("{:,d}")),
-                types.Column("B", types.ColumnType.Text()),
-            ],
+            make_column("A", [1, 2, 3], format="{:,d}"),
+            make_column("B", ["a", "b", "c"]),
             dir=self.basedir,
-        ) as input_table:
-            input_table.path.chmod(0o644)
+        ) as (input_table_path, _):
+            input_table_path.chmod(0o644)
             with self.chroot_context.tempfile_context(
                 prefix="output-", dir=self.basedir
             ) as output_path:
                 result = self.kernel.render(
                     mod,
                     self.chroot_context,
-                    self.basedir,
-                    input_table,
-                    types.Params({"m": 2.5, "s": "XX"}),
-                    types.Tab("tab-1", "Tab 1"),
-                    None,
+                    basedir=self.basedir,
+                    input_filename=input_table_path.name,
+                    params=types.Params({"m": 2.5, "s": "XX"}),
+                    tab=types.Tab("tab-1", "Tab 1"),
+                    fetch_result=None,
                     output_filename=output_path.name,
                 )
 
-                self.assertEquals(
-                    result.table.table.to_pydict(),
-                    {"A": [2.5, 5.0, 7.5], "B": ["aXX", "bXX", "cXX"]},
+                output_table, columns = load_untrusted_arrow_file_with_columns(
+                    output_path
+                )
+                assert_arrow_table_equals(
+                    output_table,
+                    make_table(
+                        make_column("A", [2.5, 5.0, 7.5], format="{:,d}"),
+                        make_column("B", ["aXX", "bXX", "cXX"]),
+                    ),
                 )
 
     def test_render_exception(self):
@@ -163,19 +174,22 @@ class KernelTests(unittest.TestCase):
             "foo.py", "import os\ndef render(table, params): raise RuntimeError('fail')"
         )
         with self.assertRaises(ModuleExitedError) as cm:
-            with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
-                input_table.path.chmod(0o644)
+            with arrow_table_context(make_column("A", ["x"]), dir=self.basedir) as (
+                input_table_path,
+                _,
+            ):
+                input_table_path.chmod(0o644)
                 with self.chroot_context.tempfile_context(
                     prefix="output-", dir=self.basedir
                 ) as output_path:
                     self.kernel.render(
                         mod,
                         self.chroot_context,
-                        self.basedir,
-                        input_table,
-                        types.Params({"m": 2.5, "s": "XX"}),
-                        types.Tab("tab-1", "Tab 1"),
-                        None,
+                        basedir=self.basedir,
+                        input_filename=input_table_path.name,
+                        params=types.Params({"m": 2.5, "s": "XX"}),
+                        tab=types.Tab("tab-1", "Tab 1"),
+                        fetch_result=None,
                         output_filename=output_path.name,
                     )
 
@@ -219,19 +233,19 @@ class KernelTests(unittest.TestCase):
     #         "foo",
     #     )
     #     with self.assertRaises(ModuleExitedError) as cm:
-    #         with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
-    #             input_table.path.chmod(0o644)
+    #         with arrow_table_context(make_column("A", ["x"]), dir=self.basedir) as (input_table_path, _):
+    #             input_table_path.chmod(0o644)
     #             with self.chroot_context.tempfile_context(
     #                 prefix="output-", dir=self.basedir
     #             ) as output_path:
     #                 self.kernel.render(
     #                     module,
     #                     self.chroot_context,
-    #                     self.basedir,
-    #                     input_table,
-    #                     types.Params({"m": 2.5, "s": "XX"}),
-    #                     types.Tab("tab-1", "Tab 1"),
-    #                     None,
+    #                     basedir=self.basedir,
+    #                     input_filename=input_table_path,
+    #                     params=types.Params({"m": 2.5, "s": "XX"}),
+    #                     tab=types.Tab("tab-1", "Tab 1"),
+    #                     fetch_result=None,
     #                     output_filename=output_path.name,
     #                 )
     #
@@ -244,19 +258,22 @@ class KernelTests(unittest.TestCase):
         )
         with patch.object(self.kernel, "render_timeout", 0.001):
             with self.assertRaises(ModuleTimeoutError):
-                with arrow_table_context({"A": [1]}, dir=self.basedir) as input_table:
-                    input_table.path.chmod(0o644)
+                with arrow_table_context(make_column("A", ["x"]), dir=self.basedir) as (
+                    input_table_path,
+                    _,
+                ):
+                    input_table_path.chmod(0o644)
                     with self.chroot_context.tempfile_context(
                         prefix="output-", dir=self.basedir
                     ) as output_path:
                         self.kernel.render(
                             mod,
                             self.chroot_context,
-                            self.basedir,
-                            input_table,
-                            types.Params({}),
-                            types.Tab("tab-1", "Tab 1"),
-                            None,
+                            basedir=self.basedir,
+                            input_filename=input_table_path.name,
+                            params=types.Params({}),
+                            tab=types.Tab("tab-1", "Tab 1"),
+                            fetch_result=None,
                             output_filename=output_path.name,
                         )
 
@@ -279,14 +296,14 @@ class KernelTests(unittest.TestCase):
             result = self.kernel.fetch(
                 mod,
                 self.chroot_context,
-                self.basedir,
-                types.Params({"a": 1}),
-                {},
-                None,
-                None,
+                basedir=self.basedir,
+                params=types.Params({"a": "x"}),
+                secrets={},
+                input_parquet_filename=None,
+                last_fetch_result=None,
                 output_filename=output_path.name,
             )
 
             self.assertEquals(result.errors, [])
             table = pyarrow.parquet.read_pandas(str(result.path))
-            self.assertEquals(table.to_pydict(), {"A": [1]})
+            self.assertEquals(table.to_pydict(), {"A": ["x"]})

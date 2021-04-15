@@ -541,7 +541,7 @@ class Column(object):
         return not (self == other)
 
 
-class TableMetadata(object):
+class DEPRECATED_TableMetadata(object):
     """
     Table data that will be cached for easy access.
 
@@ -595,7 +595,7 @@ class TableMetadata(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('TableMetadata')
+        oprot.writeStructBegin('DEPRECATED_TableMetadata')
         if self.n_rows is not None:
             oprot.writeFieldBegin('n_rows', TType.I32, 1)
             oprot.writeI32(self.n_rows)
@@ -632,7 +632,7 @@ class TableMetadata(object):
         return not (self == other)
 
 
-class ArrowTable(object):
+class DEPRECATED_ArrowTable(object):
     """
     Table stored on disk, ready to be mmapped.
 
@@ -674,7 +674,7 @@ class ArrowTable(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.metadata = TableMetadata()
+                    self.metadata = DEPRECATED_TableMetadata()
                     self.metadata.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -687,7 +687,7 @@ class ArrowTable(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('ArrowTable')
+        oprot.writeStructBegin('DEPRECATED_ArrowTable')
         if self.filename is not None:
             oprot.writeFieldBegin('filename', TType.STRING, 1)
             oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
@@ -1098,19 +1098,22 @@ class TabOutput(object):
 
     Attributes:
      - tab: Tab that was processed.
-     - table: Output from the final Step in `tab`.
+     - DEPRECATED_table: Output from the final Step in `tab`.
+     - table_filename: Output from the final Step in `tab`.
 
     """
 
     __slots__ = (
         'tab',
-        'table',
+        'DEPRECATED_table',
+        'table_filename',
     )
 
 
-    def __init__(self, tab=None, table=None,):
+    def __init__(self, tab=None, DEPRECATED_table=None, table_filename=None,):
         self.tab = tab
-        self.table = table
+        self.DEPRECATED_table = DEPRECATED_table
+        self.table_filename = table_filename
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1129,8 +1132,13 @@ class TabOutput(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.table = ArrowTable()
-                    self.table.read(iprot)
+                    self.DEPRECATED_table = DEPRECATED_ArrowTable()
+                    self.DEPRECATED_table.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.STRING:
+                    self.table_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -1147,9 +1155,13 @@ class TabOutput(object):
             oprot.writeFieldBegin('tab', TType.STRUCT, 1)
             self.tab.write(oprot)
             oprot.writeFieldEnd()
-        if self.table is not None:
-            oprot.writeFieldBegin('table', TType.STRUCT, 2)
-            self.table.write(oprot)
+        if self.DEPRECATED_table is not None:
+            oprot.writeFieldBegin('DEPRECATED_table', TType.STRUCT, 2)
+            self.DEPRECATED_table.write(oprot)
+            oprot.writeFieldEnd()
+        if self.table_filename is not None:
+            oprot.writeFieldBegin('table_filename', TType.STRING, 3)
+            oprot.writeString(self.table_filename.encode('utf-8') if sys.version_info[0] == 2 else self.table_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1886,19 +1898,13 @@ class FetchResult(object):
     An "ok" result may be a user-friendly error -- that is, an empty file (or,
     for backwards compat, a zero-column parquet file) and non-empty `errors`.
 
-    Attributes:
-     - filename: File the fetch produced.
-
-    The kernel writes the output data to `fetch_request.output_file`.
-
-    Currently, this must be a valid Parquet file. In the future, we will
-    loosen the requirement and allow any file.
+    The module writes the output data to `fetch_request.output_file`.
 
     Empty file or zero-column parquet file typically means, "error"; but
     that's the module's choice and not a hard-and-fast rule.
 
-    The file on disk is in a directory agreed upon by the processes passing
-    this data around. Subdirectories and hidden files aren't allowed.
+    Attributes:
+     - filename
      - errors: User-facing errors or warnings reported by the module.
 
     These are separate from `filename` for two reasons: 1) a convenience for
@@ -2000,7 +2006,7 @@ class RenderRequest(object):
     sandboxing, mount an OverlayFS with all the input files as read-only,
     then overlay-mount a "scratch" directory for the module to use (and
     write to `output_filename`).
-     - input_table: Output from previous Step.
+     - DEPRECATED_input_table: Output from previous Step.
 
     This is zero-row, zero-column on the first Step in a Tab.
      - params: User-supplied parameters; must match the module's param_spec.
@@ -2019,26 +2025,31 @@ class RenderRequest(object):
     writable.
 
     The file on disk will be in `basedir`.
+     - input_filename: Output from previous Step.
+
+    This is zero-row, zero-column on the first Step in a Tab.
 
     """
 
     __slots__ = (
         'basedir',
-        'input_table',
+        'DEPRECATED_input_table',
         'params',
         'tab',
         'fetch_result',
         'output_filename',
+        'input_filename',
     )
 
 
-    def __init__(self, basedir=None, input_table=None, params=None, tab=None, fetch_result=None, output_filename=None,):
+    def __init__(self, basedir=None, DEPRECATED_input_table=None, params=None, tab=None, fetch_result=None, output_filename=None, input_filename=None,):
         self.basedir = basedir
-        self.input_table = input_table
+        self.DEPRECATED_input_table = DEPRECATED_input_table
         self.params = params
         self.tab = tab
         self.fetch_result = fetch_result
         self.output_filename = output_filename
+        self.input_filename = input_filename
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -2056,8 +2067,8 @@ class RenderRequest(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.STRUCT:
-                    self.input_table = ArrowTable()
-                    self.input_table.read(iprot)
+                    self.DEPRECATED_input_table = DEPRECATED_ArrowTable()
+                    self.DEPRECATED_input_table.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
@@ -2089,6 +2100,11 @@ class RenderRequest(object):
                     self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
+            elif fid == 7:
+                if ftype == TType.STRING:
+                    self.input_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -2103,9 +2119,9 @@ class RenderRequest(object):
             oprot.writeFieldBegin('basedir', TType.STRING, 1)
             oprot.writeString(self.basedir.encode('utf-8') if sys.version_info[0] == 2 else self.basedir)
             oprot.writeFieldEnd()
-        if self.input_table is not None:
-            oprot.writeFieldBegin('input_table', TType.STRUCT, 2)
-            self.input_table.write(oprot)
+        if self.DEPRECATED_input_table is not None:
+            oprot.writeFieldBegin('DEPRECATED_input_table', TType.STRUCT, 2)
+            self.DEPRECATED_input_table.write(oprot)
             oprot.writeFieldEnd()
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 3)
@@ -2126,6 +2142,10 @@ class RenderRequest(object):
         if self.output_filename is not None:
             oprot.writeFieldBegin('output_filename', TType.STRING, 6)
             oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
+            oprot.writeFieldEnd()
+        if self.input_filename is not None:
+            oprot.writeFieldBegin('input_filename', TType.STRING, 7)
+            oprot.writeString(self.input_filename.encode('utf-8') if sys.version_info[0] == 2 else self.input_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2159,12 +2179,10 @@ class RenderResult(object):
     An "ok" result may be a user-friendly error -- that is, a zero-column table
     and non-empty `errors`.
 
+    The module writes the output Arrow data to `render_request.output_file`.
+
     Attributes:
-     - table: Table the Step outputs.
-
-    If the Step output is "error, then the table must have zero columns.
-
-    The kernel writes the output Arrow data to `render_request.output_file`.
+     - DEPRECATED_table
      - errors: User-facing errors or warnings reported by the module.
      - json: JSON to pass to the module's HTML, if it has HTML.
 
@@ -2173,14 +2191,14 @@ class RenderResult(object):
     """
 
     __slots__ = (
-        'table',
+        'DEPRECATED_table',
         'errors',
         'json',
     )
 
 
-    def __init__(self, table=None, errors=None, json="",):
-        self.table = table
+    def __init__(self, DEPRECATED_table=None, errors=None, json="",):
+        self.DEPRECATED_table = DEPRECATED_table
         self.errors = errors
         self.json = json
 
@@ -2195,8 +2213,8 @@ class RenderResult(object):
                 break
             if fid == 1:
                 if ftype == TType.STRUCT:
-                    self.table = ArrowTable()
-                    self.table.read(iprot)
+                    self.DEPRECATED_table = DEPRECATED_ArrowTable()
+                    self.DEPRECATED_table.read(iprot)
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
@@ -2225,9 +2243,9 @@ class RenderResult(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('RenderResult')
-        if self.table is not None:
-            oprot.writeFieldBegin('table', TType.STRUCT, 1)
-            self.table.write(oprot)
+        if self.DEPRECATED_table is not None:
+            oprot.writeFieldBegin('DEPRECATED_table', TType.STRUCT, 1)
+            self.DEPRECATED_table.write(oprot)
             oprot.writeFieldEnd()
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
@@ -2296,17 +2314,17 @@ Column.thrift_spec = (
     (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
     (2, TType.STRUCT, 'type', [ColumnType, None], None, ),  # 2
 )
-all_structs.append(TableMetadata)
-TableMetadata.thrift_spec = (
+all_structs.append(DEPRECATED_TableMetadata)
+DEPRECATED_TableMetadata.thrift_spec = (
     None,  # 0
     (1, TType.I32, 'n_rows', None, None, ),  # 1
     (2, TType.LIST, 'columns', (TType.STRUCT, [Column, None], False), None, ),  # 2
 )
-all_structs.append(ArrowTable)
-ArrowTable.thrift_spec = (
+all_structs.append(DEPRECATED_ArrowTable)
+DEPRECATED_ArrowTable.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
+    (2, TType.STRUCT, 'metadata', [DEPRECATED_TableMetadata, None], None, ),  # 2
 )
 all_structs.append(ParamValue)
 ParamValue.thrift_spec = (
@@ -2336,7 +2354,8 @@ all_structs.append(TabOutput)
 TabOutput.thrift_spec = (
     None,  # 0
     (1, TType.STRUCT, 'tab', [Tab, None], None, ),  # 1
-    (2, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 2
+    (2, TType.STRUCT, 'DEPRECATED_table', [DEPRECATED_ArrowTable, None], None, ),  # 2
+    (3, TType.STRING, 'table_filename', 'UTF8', None, ),  # 3
 )
 all_structs.append(I18nArgument)
 I18nArgument.thrift_spec = (
@@ -2395,16 +2414,17 @@ all_structs.append(RenderRequest)
 RenderRequest.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'basedir', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 2
+    (2, TType.STRUCT, 'DEPRECATED_input_table', [DEPRECATED_ArrowTable, None], None, ),  # 2
     (3, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 3
     (4, TType.STRUCT, 'tab', [Tab, None], None, ),  # 4
     (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5
     (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
+    (7, TType.STRING, 'input_filename', 'UTF8', None, ),  # 7
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 1
+    (1, TType.STRUCT, 'DEPRECATED_table', [DEPRECATED_ArrowTable, None], None, ),  # 1
     (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
     (3, TType.STRING, 'json', 'UTF8', "", ),  # 3
 )

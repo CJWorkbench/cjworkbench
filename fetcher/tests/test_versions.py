@@ -1,10 +1,11 @@
 import contextlib
 import unittest
-import pyarrow
-from cjwkernel.tests.util import arrow_table
+
+from cjwmodule.arrow.testing import make_column, make_table
+import cjwparquet
+
 from cjwkernel.types import FetchResult, RenderError, I18nMessage
 from cjwkernel.util import tempfile_context
-import cjwparquet
 from fetcher.versions import are_fetch_results_equal
 
 
@@ -26,7 +27,7 @@ class DiffTest(unittest.TestCase):
         )
 
     def test_old_parquet_new_empty(self):
-        cjwparquet.write(self.old_path, arrow_table({"A": [1]}).table)
+        cjwparquet.write(self.old_path, make_table(make_column("A", [1])))
         self.assertFalse(
             are_fetch_results_equal(
                 FetchResult(self.old_path), FetchResult(self.new_path)
@@ -34,7 +35,7 @@ class DiffTest(unittest.TestCase):
         )
 
     def test_new_parquet_old_empty(self):
-        cjwparquet.write(self.new_path, arrow_table({"A": [1]}).table)
+        cjwparquet.write(self.old_path, make_table(make_column("A", [1])))
         self.assertFalse(
             are_fetch_results_equal(
                 FetchResult(self.old_path), FetchResult(self.new_path)
@@ -42,8 +43,8 @@ class DiffTest(unittest.TestCase):
         )
 
     def test_parquet_different(self):
-        cjwparquet.write(self.old_path, arrow_table({"A": [1]}).table)
-        cjwparquet.write(self.new_path, arrow_table({"A": [2]}).table)
+        cjwparquet.write(self.old_path, make_table(make_column("A", [1])))
+        cjwparquet.write(self.new_path, make_table(make_column("A", [2])))
         self.assertFalse(
             are_fetch_results_equal(
                 FetchResult(self.old_path), FetchResult(self.new_path)
@@ -51,10 +52,9 @@ class DiffTest(unittest.TestCase):
         )
 
     def test_parquet_same_data_different_bytes(self):
-        cjwparquet.write(self.old_path, arrow_table({"A": ["a"]}).table)
+        cjwparquet.write(self.old_path, make_table(make_column("A", ["a"])))
         cjwparquet.write(
-            self.new_path,
-            arrow_table({"A": pyarrow.array(["a"]).dictionary_encode()}).table,
+            self.new_path, make_table(make_column("A", ["a"], dictionary=True))
         )
         self.assertTrue(
             are_fetch_results_equal(
@@ -63,7 +63,7 @@ class DiffTest(unittest.TestCase):
         )
 
     def test_parquet_vs_non_parquet(self):
-        cjwparquet.write(self.old_path, arrow_table({"A": ["a"]}).table)
+        cjwparquet.write(self.old_path, make_table(make_column("A", ["a"])))
         self.new_path.write_bytes(b"12345")
         self.assertFalse(
             are_fetch_results_equal(

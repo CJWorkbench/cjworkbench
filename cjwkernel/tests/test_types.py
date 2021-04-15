@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -41,139 +42,13 @@ class ThriftConvertersTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.basedir = Path(tempfile.mkdtemp())
+        self.old_cwd = os.getcwd()
+        os.chdir(self.basedir)
 
     def tearDown(self):
+        os.chdir(self.old_cwd)
         self.basedir.rmdir()
         super().tearDown()
-
-    def test_column_type_text_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Text()),
-            ttypes.ColumnType(text_type=ttypes.ColumnTypeText()),
-        )
-
-    def test_column_type_text_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-            ),
-            types.ColumnType.Text(),
-        )
-
-    def test_column_type_number_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Number("{:,.1%}")),
-            ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:,.1%}")),
-        )
-
-    def test_column_type_number_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:,.1%}"))
-            ),
-            types.ColumnType.Number("{:,.1%}"),
-        )
-
-    def test_column_type_number_from_thrift_invalid_format(self):
-        thrift_value = ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:T}"))
-        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            types.thrift_column_type_to_arrow(thrift_value)
-
-    def test_column_type_timestamp_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Timestamp()),
-            ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp()),
-        )
-
-    def test_column_type_timestamp_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp())
-            ),
-            types.ColumnType.Timestamp(),
-        )
-
-    def test_column_type_date_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Date(unit="week")),
-            ttypes.ColumnType(
-                date_type=ttypes.ColumnTypeDate(unit=ttypes.ColumnTypeDateUnit.WEEK)
-            ),
-        )
-
-    def test_column_type_date_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(
-                    date_type=ttypes.ColumnTypeDate(
-                        unit=ttypes.ColumnTypeDateUnit.MONTH
-                    )
-                )
-            ),
-            types.ColumnType.Date(unit="month"),
-        )
-
-    def test_column_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_to_thrift(types.Column("A", types.ColumnType.Text())),
-            ttypes.Column("A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())),
-        )
-
-    def test_column_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_to_arrow(
-                ttypes.Column("A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText()))
-            ),
-            types.Column("A", types.ColumnType.Text()),
-        )
-
-    def test_table_metadata_to_thrift(self):
-        self.assertEqual(
-            types.arrow_table_metadata_to_thrift(
-                types.TableMetadata(
-                    4,
-                    [
-                        types.Column("A", types.ColumnType.Text()),
-                        types.Column("B", types.ColumnType.Text()),
-                    ],
-                )
-            ),
-            ttypes.TableMetadata(
-                4,
-                [
-                    ttypes.Column(
-                        "A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                    ),
-                    ttypes.Column(
-                        "B", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                    ),
-                ],
-            ),
-        )
-
-    def test_table_metadata_from_thrift(self):
-        self.assertEqual(
-            types.thrift_table_metadata_to_arrow(
-                ttypes.TableMetadata(
-                    4,
-                    [
-                        ttypes.Column(
-                            "A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                        ),
-                        ttypes.Column(
-                            "B", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                        ),
-                    ],
-                )
-            ),
-            types.TableMetadata(
-                4,
-                [
-                    types.Column("A", types.ColumnType.Text()),
-                    types.Column("B", types.ColumnType.Text()),
-                ],
-            ),
-        )
 
     def test_arrow_table_to_thrift(self):
         pass  # TODO test ArrowTable conversions
@@ -319,19 +194,18 @@ class ThriftConvertersTest(unittest.TestCase):
 
     def test_params_filename_from_thrift_happy_path(self):
         with tempfile.NamedTemporaryFile(dir=self.basedir) as tf:
-            path = Path(tf.name)
-            path.write_bytes(b"")
+            filename = Path(tf.name).name
+            Path(tf.name).write_bytes(b"")
             self.assertEqual(
                 types.thrift_params_to_arrow(
-                    {"A": ttypes.ParamValue(filename_value=path.name)}, self.basedir
+                    {"A": ttypes.ParamValue(filename_value=filename)}, self.basedir
                 ),
-                types.Params({"A": path}),
+                types.Params({"A": Path(tf.name)}),
             )
 
     def test_params_filename_to_thrift(self):
-        path = self.basedir / "x.bin"
         self.assertEqual(
-            types.arrow_params_to_thrift(types.Params({"A": path})),
+            types.arrow_params_to_thrift(types.Params({"A": Path("x.bin")})),
             {"A": ttypes.ParamValue(filename_value="x.bin")},
         )
 
@@ -562,15 +436,15 @@ class ThriftConvertersTest(unittest.TestCase):
         pass  # TODO test RenderResult conversion
 
     def test_fetch_result_from_thrift_disallow_directories(self):
-        with self.assertRaisesRegex(ValueError, "must not contain directories"):
+        with self.assertRaisesRegex(ValueError, "must not include directory names"):
             types.thrift_fetch_result_to_arrow(
-                ttypes.FetchResult("/etc/passwd", []), Path(__file__).parent
+                ttypes.FetchResult("/etc/passwd", []), self.basedir
             )
 
     def test_fetch_result_from_thrift_disallow_hidden_files(self):
         with self.assertRaisesRegex(ValueError, "must not be hidden"):
             types.thrift_fetch_result_to_arrow(
-                ttypes.FetchResult(".secrets", []), Path(__file__).parent
+                ttypes.FetchResult(".secrets", []), self.basedir
             )
 
     def test_fetch_result_from_thrift_disallow_non_files(self):
@@ -583,15 +457,17 @@ class ThriftConvertersTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=str(self.basedir)) as tmpsubdir:
             with self.assertRaisesRegex(ValueError, "be a regular file"):
                 types.thrift_fetch_result_to_arrow(
-                    ttypes.FetchResult(Path(tmpsubdir).name, []), self.basedir
+                    ttypes.FetchResult(Path(tmpsubdir).name, []),
+                    self.basedir,
                 )
 
     def test_fetch_result_from_thrift_happy_path(self):
         with tempfile.NamedTemporaryFile(dir=str(self.basedir)) as tf:
+            filename = Path(tf.name).name
             self.assertEqual(
                 types.thrift_fetch_result_to_arrow(
                     ttypes.FetchResult(
-                        Path(tf.name).name,
+                        filename,
                         [ttypes.RenderError(ttypes.I18nMessage("hi", {}, None), [])],
                     ),
                     self.basedir,

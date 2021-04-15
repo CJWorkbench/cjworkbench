@@ -1,16 +1,24 @@
+import re
+import iso8601
 from contextlib import ExitStack
 from dataclasses import dataclass
 from functools import partial, singledispatch
-import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, Tuple
-import iso8601
-from cjwkernel.types import ArrowTable, ColumnType, Params, RenderResult, Tab, TabOutput
+from cjwkernel.types import (
+    Column,
+    ColumnType,
+    LoadedRenderResult,
+    Params,
+    Tab,
+    TabOutput,
+)
+
 from cjwkernel.util import tempfile_context
 from cjwstate import s3
 from cjwstate.models import UploadedFile
 from cjwstate.modules.param_dtype import ParamDType
-from .types import TabCycleError, TabOutputUnreachableError, PromptingError
+from .types import StepResult, TabCycleError, TabOutputUnreachableError, PromptingError
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -81,7 +89,7 @@ class PromptErrorAggregator:
 @dataclass(frozen=True)
 class _TabData:
     tab: Tab
-    result: Optional[RenderResult]
+    result: Optional[LoadedRenderResult]
 
     @property
     def slug(self) -> str:
@@ -92,9 +100,9 @@ class RenderContext:
     def __init__(
         self,
         step_id: int,
-        input_table: ArrowTable,
+        input_table_columns: List[Column],
         # assume tab_results keys are ordered the way the user ordered the tabs.
-        tab_results: Dict[Tab, Optional[RenderResult]],
+        tab_results: Dict[Tab, Optional[StepResult]],
         basedir: Path,
         exit_stack: ExitStack,
         # params is a HACK to let column selectors rely on a tab_parameter,
@@ -108,7 +116,7 @@ class RenderContext:
         params: Dict[str, Any],
     ):
         self.step_id = step_id
-        self.input_table = input_table
+        self.input_table_columns = input_table_columns
         self.tabs: Dict[str, _TabData] = {
             k.slug: _TabData(k, v) for k, v in tab_results.items()
         }
@@ -119,7 +127,7 @@ class RenderContext:
     def output_columns_for_tab_parameter(self, tab_parameter):
         if tab_parameter is None:
             # Common case: param selects from the input table
-            return {c.name: c for c in self.input_table.metadata.columns}
+            return {c.name: c for c in self.input_table_columns}
 
         # Rare case: there's a "tab" parameter, and the column selector is
         # selecting from _that_ tab's output columns.
@@ -132,11 +140,11 @@ class RenderContext:
         except KeyError:
             # Tab does not exist
             return {}
-        if tab_data.result is None or tab_data.result.status != "ok":
+        if tab_data.result is None or not tab_data.result.columns:
             # Tab has a cycle or other error.
             return {}
 
-        return {c.name: c for c in tab_data.result.table.metadata.columns}
+        return {c.name: c for c in tab_data.result.columns}
 
 
 def get_param_values(
@@ -152,7 +160,7 @@ def get_param_values(
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type
-          (so the caller can return a RenderResult with errors and quickfixes)
+          (so the caller can build errors and quickfixes)
 
     This uses database connections, and it's slow! (It needs to load input tab
     data.) Be sure the Workflow is locked while you call it.
@@ -333,7 +341,7 @@ def _(
         value,
         {
             column.name: _column_type_name(column.type)
-            for column in context.input_table.metadata.columns
+            for column in context.input_table_columns
         },
     )
     error_agg = PromptErrorAggregator()
@@ -398,10 +406,10 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
         # It's an un-rendered tab. Or at least, the executor _tells_ us it's
         # un-rendered. That means there's a tab-cycle.
         raise TabCycleError
-    if tab_result.status != "ok":
+    if not tab_result.columns:
         raise TabOutputUnreachableError
 
-    return TabOutput(tab_data.tab, tab_result.table)
+    return TabOutput(tab_data.tab, table_filename=tab_result.path.name)
 
 
 @clean_value.register(ParamDType.Column)

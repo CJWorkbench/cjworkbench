@@ -1,9 +1,10 @@
 from unittest.mock import patch
 
+from cjwmodule.arrow.testing import make_column, make_table
+
 from cjwkernel.types import RenderResult
-from cjwkernel.tests.util import arrow_table
 from cjwstate import clientside, commands, rabbitmq
-from cjwstate.rendercache.io import cache_render_result
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DuplicateTab
 from cjwstate.tests.utils import DbTestCase
@@ -201,8 +202,9 @@ class DuplicateTabTest(DbTestCase):
             params={"p": "s1"},
             last_relevant_delta_id=init_delta_id,
         )
-        render_result = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(workflow, step1, init_delta_id, render_result)
+        write_to_rendercache(
+            workflow, step1, init_delta_id, make_table(make_column("A", [1]))
+        )
 
         cmd = self.run_with_async_db(
             commands.do(

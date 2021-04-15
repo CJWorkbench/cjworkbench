@@ -1,22 +1,23 @@
+import os
 import shutil
 import unittest
 from contextlib import ExitStack  # workaround https://github.com/psf/black/issues/664
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
+from typing import Tuple
 from unittest.mock import patch
 
 import pandas as pd
 import pyarrow as pa
 from pandas.testing import assert_frame_equal
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
 
 import cjwkernel.pandas.types as ptypes
+from cjwkernel.files import read_parquet_as_arrow
 from cjwkernel.i18n import TODO_i18n
 from cjwkernel.pandas import module
 from cjwkernel.tests.util import (
-    arrow_table,
     arrow_table_context,
-    assert_arrow_table_equals,
-    assert_render_result_equals,
     override_settings,
     parquet_file,
 )
@@ -32,7 +33,6 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
     TabOutput,
-    arrow_arrow_table_to_thrift,
     arrow_fetch_result_to_thrift,
     arrow_params_to_thrift,
     arrow_raw_params_to_thrift,
@@ -42,6 +42,7 @@ from cjwkernel.types import (
     thrift_render_result_to_arrow,
 )
 from cjwkernel.util import create_tempdir, tempfile_context
+from cjwkernel.validate import load_untrusted_arrow_file_with_columns, read_columns
 
 
 class MigrateParamsTests(unittest.TestCase):
@@ -86,47 +87,81 @@ class RenderTests(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.basedir = create_tempdir()
+        self.old_cwd = os.getcwd()
+        os.chdir(self.basedir)
 
     def tearDown(self):
+        os.chdir(self.old_cwd)
         shutil.rmtree(self.basedir)
         super().tearDown()
 
     def _test_render(
         self,
         render_fn,
-        arrow_table_dict={},
-        arrow_table=None,
+        arrow_table_columns=[],
+        arrow_table_filename=None,
         params={},
         tab=Tab("tab-1", "Tab 1"),
         fetch_result=None,
         output_filename=None,
     ):
         with ExitStack() as ctx:
-            if arrow_table is None:
-                arrow_table = ctx.enter_context(
-                    arrow_table_context(arrow_table_dict, dir=self.basedir)
+            if arrow_table_filename is None:
+                arrow_table_path, _ = ctx.enter_context(
+                    arrow_table_context(*arrow_table_columns, dir=self.basedir)
                 )
+                arrow_table_filename = arrow_table_path.name
             ctx.enter_context(patch.object(module, "render", render_fn))
-            out_filename = ctx.enter_context(tempfile_context(dir=self.basedir)).name
+            if output_filename is None:
+                output_filename = ctx.enter_context(
+                    tempfile_context(dir=self.basedir)
+                ).name
             thrift_result = module.render_thrift(
                 ttypes.RenderRequest(
-                    str(self.basedir),
-                    arrow_arrow_table_to_thrift(arrow_table),
-                    arrow_params_to_thrift(Params(params)),
-                    arrow_tab_to_thrift(tab),
-                    arrow_fetch_result_to_thrift(fetch_result)
-                    if fetch_result is not None
-                    else None,
-                    out_filename,
+                    basedir=str(self.basedir),
+                    input_filename=arrow_table_filename,
+                    params=arrow_params_to_thrift(Params(params)),
+                    tab=arrow_tab_to_thrift(tab),
+                    fetch_result=(
+                        arrow_fetch_result_to_thrift(fetch_result)
+                        if fetch_result is not None
+                        else None
+                    ),
+                    output_filename=output_filename,
                 )
             )
-            return thrift_render_result_to_arrow(thrift_result, self.basedir)
+            return thrift_render_result_to_arrow(thrift_result)
+
+    def _test_render_with_output_table(
+        self,
+        render_fn,
+        arrow_table_columns=[],
+        arrow_table_filename=None,
+        params={},
+        tab=Tab("tab-1", "Tab 1"),
+        fetch_result=None,
+    ) -> Tuple[RenderResult, pa.Table]:
+        with tempfile_context(dir=self.basedir) as out_path:
+            result = self._test_render(
+                render_fn=render_fn,
+                arrow_table_columns=arrow_table_columns,
+                arrow_table_filename=arrow_table_filename,
+                params=params,
+                tab=tab,
+                fetch_result=fetch_result,
+                output_filename=out_path.name,
+            )
+            if out_path.stat().st_size > 0:
+                table, _ = load_untrusted_arrow_file_with_columns(out_path)
+            else:
+                table = None
+            return result, table
 
     def test_default_render_returns_fetch_result(self):
         # Functionality used by libraryofcongress
         with ExitStack() as ctx:
-            input_arrow_table = ctx.enter_context(
-                arrow_table_context({"A": [1]}, dir=self.basedir)
+            input_path, _ = ctx.enter_context(
+                arrow_table_context(make_column("A", [1]), dir=self.basedir)
             )
             parquet_filename = Path(
                 ctx.enter_context(parquet_file({"A": [2]}, dir=self.basedir)).name
@@ -134,13 +169,13 @@ class RenderTests(unittest.TestCase):
             out_filename = ctx.enter_context(tempfile_context(dir=self.basedir)).name
             thrift_result = module.render_thrift(
                 ttypes.RenderRequest(
-                    str(self.basedir),
-                    arrow_arrow_table_to_thrift(input_arrow_table),
-                    {},  # params
-                    ttypes.Tab("tab-1", "Tab 1"),
-                    ttypes.FetchResult(
-                        parquet_filename,
-                        [
+                    basedir=str(self.basedir),
+                    input_filename=input_path.name,
+                    params={},
+                    tab=ttypes.Tab("tab-1", "Tab 1"),
+                    fetch_result=ttypes.FetchResult(
+                        filename=parquet_filename,
+                        errors=[
                             ttypes.RenderError(
                                 ttypes.I18nMessage(
                                     "TODO_i18n",
@@ -155,17 +190,15 @@ class RenderTests(unittest.TestCase):
                             )
                         ],
                     ),
-                    out_filename,
+                    output_filename=out_filename,
                 )
             )
-            result = thrift_render_result_to_arrow(thrift_result, self.basedir)
-            assert_render_result_equals(
-                result,
-                RenderResult(
-                    arrow_table({"A": [2]}),
-                    [RenderError(TODO_i18n("A warning"))],
-                ),
+            result = thrift_render_result_to_arrow(thrift_result)
+            self.assertEqual(
+                result, RenderResult([RenderError(TODO_i18n("A warning"))])
             )
+            result_table, _ = load_untrusted_arrow_file_with_columns(Path(out_filename))
+            assert_arrow_table_equals(result_table, make_table(make_column("A", [2])))
 
     def test_render_with_tab_name(self):
         def render(table, params, *, tab_name):
@@ -184,8 +217,11 @@ class RenderTests(unittest.TestCase):
         def render(table, params):
             return table * 2
 
-        result = self._test_render(render, {"A": [1]})
-        assert_arrow_table_equals(result.table, {"A": [2]})
+        result, table = self._test_render_with_output_table(
+            render, [make_column("A", [1])]
+        )
+        self.assertEqual(result, RenderResult())
+        assert_arrow_table_equals(table, make_table(make_column("A", [2])))
 
     def test_render_arrow_table(self):
         # The param name "arrow_table" is a special case
@@ -193,30 +229,27 @@ class RenderTests(unittest.TestCase):
             out = pa.table({"A": [2]})
             with pa.ipc.RecordBatchFileWriter(output_path, out.schema) as writer:
                 writer.write_table(out)
+            # Normally, this file wouldn't be readable by
+            # load_untrusted_arrow_file_with_columns(). The module framework
+            # must rewrite it to be compatible; that's what we're testing.
 
-        result = self._test_render(render, {"A": [1]})
-        assert_arrow_table_equals(result.table, {"A": [2]})
+        result, table = self._test_render_with_output_table(
+            render, [make_column("A", [1])]
+        )
+        self.assertEqual(result, RenderResult())
+        assert_arrow_table_equals(table, make_table(make_column("A", [2])))
 
     def test_render_arrow_table_zero_byte_output_is_empty(self):
         # The param name "arrow_table" is a special case
         def render(arrow_table, params, output_path, **kwargs):
             output_path.write_bytes(b"")
 
-        result = self._test_render(render, {"A": [1]})
-        self.assertIsNone(result.table.path)
-        self.assertIsNone(result.table.table)
-
-    def test_render_arrow_table_missing_output_file_is_empty(self):
-        # The param name "arrow_table" is a special case
-        def render(arrow_table, params, output_path, **kwargs):
-            try:
-                output_path.unlink()
-            except FileNotFoundError:
-                pass
-
-        result = self._test_render(render, {"A": [1]})
-        self.assertIsNone(result.table.path)
-        self.assertIsNone(result.table.table)
+        with tempfile_context(dir=self.basedir) as out_path:
+            result = self._test_render(
+                render, [make_column("A", [1])], output_filename=out_path.name
+            )
+            self.assertEqual(result, RenderResult())
+            self.assertEqual(out_path.stat().st_size, 0)
 
     def test_render_arrow_table_empty_output_table_is_empty(self):
         # The param name "arrow_table" is a special case
@@ -225,18 +258,26 @@ class RenderTests(unittest.TestCase):
             with pa.ipc.RecordBatchFileWriter(output_path, out.schema) as writer:
                 writer.write_table(out)
 
-        result = self._test_render(render, {"A": [1]})
-        self.assertIsNone(result.table.path)
-        self.assertIsNone(result.table.table)
+        result, table = self._test_render_with_output_table(
+            render, [make_column("A", [1])]
+        )
+        self.assertEqual(result, RenderResult())
+        assert_arrow_table_equals(table, make_table())
 
     def test_render_arrow_table_errors(self):
         # The param name "arrow_table" is a special case
         def render(arrow_table, params, output_path, **kwargs):
             return [("x", {"a": "b"}, "cjwmodule")]
 
-        result = self._test_render(render, {"A": [1]})
+        result, table = self._test_render_with_output_table(
+            render, [make_column("A", [1])]
+        )
+        self.assertIsNone(table)
         self.assertEqual(
-            result.errors, [RenderError(I18nMessage("x", {"a": "b"}, "cjwmodule"))]
+            result,
+            RenderResult(
+                errors=[RenderError(I18nMessage("x", {"a": "b"}, "cjwmodule"))]
+            ),
         )
 
     @override_settings(MAX_ROWS_PER_TABLE=12)
@@ -244,27 +285,33 @@ class RenderTests(unittest.TestCase):
         def render(arrow_table, params, output_path, *, settings, **kwargs):
             return [("x", {"n": settings.MAX_ROWS_PER_TABLE})]
 
-        result = self._test_render(render, {"A": [1]})
+        result = self._test_render(render, [make_column("A", [1])])
         self.assertEqual(
-            result.errors, [RenderError(I18nMessage("x", {"n": 12}, None))]
+            result,
+            RenderResult(errors=[RenderError(I18nMessage("x", {"n": 12}, None))]),
         )
 
     def test_render_arrow_table_infer_output_column_formats_from_input(self):
-        input_columns = [
-            Column("A", ColumnType.Number("{:,.3f}")),
-            Column("B", ColumnType.Number("{:,.3f}")),
-            Column("C", ColumnType.Number("{:,.3f}")),
-            Column("D", ColumnType.Timestamp()),
-            Column("E", ColumnType.Timestamp()),
-            Column("F", ColumnType.Timestamp()),
-            Column("G", ColumnType.Text()),
-            Column("H", ColumnType.Text()),
-            Column("I", ColumnType.Text()),
-        ]
         # The param name "arrow_table" is a special case
         def render(arrow_table, params, output_path, *, columns, **kwargs):
             # Test the "columns" kwarg
-            self.assertEqual(columns, input_columns)
+            self.assertEqual(
+                columns,
+                [
+                    Column("A", ColumnType.Number("{:,.3f}")),
+                    Column("B", ColumnType.Number("{:,.3f}")),
+                    Column("C", ColumnType.Number("{:,.3f}")),
+                    Column("D", ColumnType.Timestamp()),
+                    Column("E", ColumnType.Timestamp()),
+                    Column("F", ColumnType.Timestamp()),
+                    Column("G", ColumnType.Text()),
+                    Column("H", ColumnType.Text()),
+                    Column("I", ColumnType.Text()),
+                    Column("J", ColumnType.Date(unit="day")),
+                    Column("K", ColumnType.Date(unit="week")),
+                    Column("L", ColumnType.Text()),
+                ],
+            )
             table = pa.table(
                 {
                     "A": [1],
@@ -276,41 +323,53 @@ class RenderTests(unittest.TestCase):
                     "G": [1],
                     "H": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
                     "I": ["a"],
+                    "J": pa.array([date(2021, 4, 1)]),
+                    "K": pa.array([date(2021, 4, 12)]),
+                    "L": pa.array([date(2021, 4, 1)]),
                 }
             )
-            with pa.ipc.RecordBatchFileWriter(output_path, table.schema) as writer:
-                writer.write_table(table)
+            schema = table.schema.set(
+                table.schema.get_field_index("J"),
+                pa.field("J", pa.date32(), metadata={"unit": "month"}),
+            )
+            with pa.ipc.RecordBatchFileWriter(output_path, schema) as writer:
+                writer.write_table(pa.table(table.columns, schema=schema))
             return []
 
         with arrow_table_context(
-            {
-                "A": [1],
-                "B": [1],
-                "C": [1],
-                "D": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
-                "E": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
-                "F": pa.array([datetime(2020, 3, 8)], pa.timestamp("ns")),
-                "G": ["a"],
-                "H": ["a"],
-                "I": ["a"],
-            },
-            columns=input_columns,
+            make_column("A", [1], format="{:,.3f}"),
+            make_column("B", [1], format="{:,.3f}"),
+            make_column("C", [1], format="{:,.3f}"),
+            make_column("D", [datetime(2020, 3, 8)]),
+            make_column("E", [datetime(2020, 3, 8)]),
+            make_column("F", [datetime(2020, 3, 8)]),
+            make_column("G", ["a"]),
+            make_column("H", ["a"]),
+            make_column("I", ["a"]),
+            make_column("J", [date(2021, 4, 13)], unit="day"),
+            make_column("K", [date(2021, 4, 12)], unit="week"),
+            make_column("L", ["a"]),
             dir=self.basedir,
-        ) as arrow_table:
-            result = self._test_render(render, arrow_table=arrow_table)
+        ) as (arrow_table_path, _):
+            result, table = self._test_render_with_output_table(
+                render, arrow_table_filename=arrow_table_path.name
+            )
             self.assertEqual(
-                result.table.metadata.columns,
-                [
-                    Column("A", ColumnType.Number("{:,.3f}")),  # recalled
-                    Column("B", ColumnType.Timestamp()),  # inferred
-                    Column("C", ColumnType.Text()),  # inferred
-                    Column("D", ColumnType.Number("{:,}")),  # inferred
-                    Column("E", ColumnType.Timestamp()),  # recalled
-                    Column("F", ColumnType.Text()),  # inferred
-                    Column("G", ColumnType.Number("{:,}")),  # inferred
-                    Column("H", ColumnType.Timestamp()),  # inferred
-                    Column("I", ColumnType.Text()),  # recalled
-                ],
+                table,
+                make_table(
+                    make_column("A", [1], format="{:,.3f}"),  # recalled
+                    make_column("B", [datetime(2020, 3, 8)]),
+                    make_column("C", ["a"]),
+                    make_column("D", [1], format="{:,}"),  # inferred
+                    make_column("E", [datetime(2020, 3, 8)]),
+                    make_column("F", ["a"]),
+                    make_column("G", [1], format="{:,}"),  # inferred
+                    make_column("H", [datetime(2020, 3, 8)]),
+                    make_column("I", ["a"]),
+                    make_column("J", [date(2021, 4, 1)], unit="month"),  # inferred
+                    make_column("K", [date(2021, 4, 12)], unit="week"),  # recalled
+                    make_column("L", [date(2021, 4, 1)], unit="day"),  # fallback
+                ),
             )
 
     def test_render_exception_raises(self):
@@ -341,10 +400,11 @@ class RenderTests(unittest.TestCase):
             return fetch_result
 
         with parquet_file({"A": ["fetched"]}, dir=self.basedir) as pf:
-            result = self._test_render(render, fetch_result=FetchResult(pf))
-            assert_render_result_equals(
-                result, RenderResult(arrow_table({"A": ["fetched"]}))
+            result, table = self._test_render_with_output_table(
+                render, fetch_result=FetchResult(pf)
             )
+            self.assertEqual(result, RenderResult())
+            assert_arrow_table_equals(table, make_table(make_column("A", ["fetched"])))
 
     def test_render_with_non_parquet_fetch_result(self):
         def render(table, params, *, fetch_result):
@@ -352,18 +412,23 @@ class RenderTests(unittest.TestCase):
 
         with tempfile_context(dir=self.basedir) as tf:
             tf.write_bytes(b"abcd")
-            result = self._test_render(render, fetch_result=FetchResult(tf))
-            assert_render_result_equals(
-                result, RenderResult(arrow_table({"A": ["abcd"]}))
+            result, table = self._test_render_with_output_table(
+                render, fetch_result=FetchResult(tf)
             )
+            self.assertEqual(result, RenderResult())
+            assert_arrow_table_equals(table, make_table(make_column("A", ["abcd"])))
 
     def test_render_empty_file_fetch_result_is_parquet(self):
         def render(table, params, *, fetch_result):
+            assert_frame_equal(fetch_result.dataframe, pd.DataFrame({}))
             return fetch_result.dataframe
 
         with tempfile_context(dir=self.basedir) as tf:
-            result = self._test_render(render, fetch_result=FetchResult(tf))
-            assert_render_result_equals(result, RenderResult(arrow_table({})))
+            result, table = self._test_render_with_output_table(
+                render, fetch_result=FetchResult(tf)
+            )
+            self.assertEqual(result, RenderResult())
+            self.assertIsNone(table)  # no columns: table is written as b""
 
     def test_render_with_input_columns(self):
         def render(table, params, *, input_columns):
@@ -377,39 +442,36 @@ class RenderTests(unittest.TestCase):
             )
 
         with arrow_table_context(
-            {"A": ["x"], "B": [1], "C": pa.array([datetime.now()], pa.timestamp("ns"))},
-            columns=[
-                Column("A", ColumnType.Text()),
-                Column("B", ColumnType.Number("{:,.3f}")),
-                Column("C", ColumnType.Timestamp()),
-            ],
+            make_column("A", ["x"]),
+            make_column("B", [1], format="{:,.3f}"),
+            make_column("C", [datetime.now()]),
             dir=self.basedir,
-        ) as arrow_table:
-            self._test_render(render, arrow_table=arrow_table)
+        ) as (arrow_table_path, _):
+            self._test_render(render, arrow_table_filename=arrow_table_path.name)
 
     def test_render_use_input_columns_as_try_fallback_columns(self):
         def render(table, params, *, input_columns):
             return pd.DataFrame({"A": [1]})
 
         with arrow_table_context(
-            {"A": [1]}, [Column("A", ColumnType.Number("{:,.3f}"))], dir=self.basedir
-        ) as arrow_table:
-            result = self._test_render(render, arrow_table=arrow_table)
-            self.assertEqual(
-                result.table.metadata.columns,
-                [Column("A", ColumnType.Number("{:,.3f}"))],
+            make_column("A", [1], format="{:,.3f}"), dir=self.basedir
+        ) as (arrow_table_path, table):
+            result, table = self._test_render_with_output_table(
+                render, arrow_table_filename=arrow_table_path.name
             )
+            self.assertEqual(table, make_table(make_column("A", [1], format="{:,.3f}")))
 
     def test_render_return_column_formats(self):
         def render(table, params):
             return {
                 "dataframe": pd.DataFrame({"A": [1]}),
-                "column_formats": {"A": "{:,d}"},
+                "column_formats": {"A": "${:,d}"},
             }
 
-        result = self._test_render(render)
-        self.assertEqual(
-            result.table.metadata.columns[0].type, ColumnType.Number("{:,d}")
+        result, table = self._test_render_with_output_table(render)
+        self.assertEqual(result, RenderResult())
+        assert_arrow_table_equals(
+            table, make_table(make_column("A", [1], format="${:,d}"))
         )
 
     @override_settings(MAX_ROWS_PER_TABLE=2)
@@ -417,19 +479,21 @@ class RenderTests(unittest.TestCase):
         def render(table, params):
             return pd.DataFrame({"A": [1, 2, 3]})
 
-        result = self._test_render(render)
-        assert_arrow_table_equals(result.table, {"A": [1, 2]})
+        result, table = self._test_render_with_output_table(render)
+        assert_arrow_table_equals(table, make_table(make_column("A", [1, 2])))
         self.assertEqual(
-            result.errors,
-            [
-                RenderError(
-                    I18nMessage(
-                        "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
-                        {"old_number": 3, "new_number": 2},
-                        None,
+            result,
+            RenderResult(
+                [
+                    RenderError(
+                        I18nMessage(
+                            "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                            {"old_number": 3, "new_number": 2},
+                            None,
+                        )
                     )
-                )
-            ],
+                ]
+            ),
         )
 
     def test_render_using_tab_output(self):
@@ -448,15 +512,17 @@ class RenderTests(unittest.TestCase):
             )
 
         with arrow_table_context(
-            {"X": [1], "Y": ["y"]},
-            columns=[
-                Column("X", ColumnType.Number("{:,d}")),
-                Column("Y", ColumnType.Text()),
-            ],
+            make_column("X", [1], format="{:,d}"),
+            make_column("Y", ["y"]),
             dir=self.basedir,
-        ) as atable:
+        ) as (path, table):
             self._test_render(
-                render, params={"tabparam": TabOutput(Tab("tab-1", "Tab 1"), atable)}
+                render,
+                params={
+                    "tabparam": TabOutput(
+                        tab=Tab("tab-1", "Tab 1"), table_filename=path.name
+                    )
+                },
             )
 
 
@@ -464,8 +530,11 @@ class FetchTests(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.basedir = create_tempdir()
+        self.old_cwd = os.getcwd()
+        os.chdir(self.basedir)
 
     def tearDown(self):
+        os.chdir(self.old_cwd)
         shutil.rmtree(self.basedir)
         super().tearDown()
 
@@ -545,15 +614,18 @@ class FetchTests(unittest.TestCase):
 
     def test_fetch_return_dataframe(self):
         async def fetch(params):
-            return pd.DataFrame({"A": [1, 2, 3]})
+            return pd.DataFrame({"A": ["x", "y"]})
 
         with tempfile_context(dir=self.basedir) as outfile:
             result = self._test_fetch(fetch, output_filename=outfile.name)
 
-            self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
-            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
-            assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
+            arrow_table = read_parquet_as_arrow(
+                outfile, [Column("A", ColumnType.Text())]
+            )
+            assert_arrow_table_equals(
+                arrow_table, make_table(make_column("A", ["x", "y"]))
+            )
 
     def test_fetch_return_path(self):
         with tempfile_context(dir=self.basedir) as outfile:
@@ -562,7 +634,7 @@ class FetchTests(unittest.TestCase):
                 outfile.write_text("xyz")
                 return outfile
 
-            result = self._test_fetch(fetch, output_filename=outfile.name)
+            result = self._test_fetch(fetch, output_filename=Path(outfile.name).name)
 
             self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
@@ -605,11 +677,8 @@ class FetchTests(unittest.TestCase):
 
             result = self._test_fetch(fetch, output_filename=outfile.name)
             self.assertEqual(
-                result,
-                FetchResult(
-                    outfile,
-                    [RenderError(I18nMessage("message.id", {"k": "v"}, "module"))],
-                ),
+                result.errors,
+                [RenderError(I18nMessage("message.id", {"k": "v"}, "module"))],
             )
 
     @override_settings(MAX_ROWS_PER_TABLE=2)
@@ -620,19 +689,23 @@ class FetchTests(unittest.TestCase):
         with tempfile_context(dir=self.basedir) as outfile:
             result = self._test_fetch(fetch, output_filename=outfile.name)
             self.assertEqual(
-                result.errors,
-                [
-                    RenderError(
-                        I18nMessage(
-                            "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
-                            {"old_number": 3, "new_number": 2},
-                            None,
+                result,
+                FetchResult(
+                    outfile,
+                    errors=[
+                        RenderError(
+                            I18nMessage(
+                                "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
+                                {"old_number": 3, "new_number": 2},
+                                None,
+                            )
                         )
-                    )
-                ],
+                    ],
+                ),
             )
-            arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
-            assert_arrow_table_equals(arrow_table, {"A": [1, 2]})
+            assert_frame_equal(
+                module._parquet_to_pandas(outfile), pd.DataFrame({"A": [1, 2]})
+            )
 
     def test_fetch_return_error(self):
         async def fetch(params):
@@ -640,7 +713,6 @@ class FetchTests(unittest.TestCase):
 
         with tempfile_context(dir=self.basedir) as outfile:
             result = self._test_fetch(fetch, output_filename=outfile.name)
-            self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [RenderError(TODO_i18n("bad things"))])
             self.assertEqual(outfile.read_bytes(), b"")
 
@@ -663,9 +735,21 @@ class FetchTests(unittest.TestCase):
             return pd.DataFrame({"A": [1, 2, 3]})
 
         with tempfile_context(dir=self.basedir) as outfile:
-            result = self._test_fetch(fetch, output_filename=outfile.name)
+            filename = Path(outfile.name).name
+            result = self._test_fetch(fetch, output_filename=filename)
 
             self.assertEqual(result.path, outfile)
             self.assertEqual(result.errors, [])
             arrow_table = pa.parquet.read_table(str(outfile), use_threads=False)
-            assert_arrow_table_equals(arrow_table, {"A": [1, 2, 3]})
+            assert_arrow_table_equals(
+                arrow_table,
+                make_table(
+                    make_column("A", [1, 2, 3])._replace(
+                        field=pa.field(
+                            "A",
+                            pa.int64(),
+                            metadata={"format": "{:,}", "PARQUET:field_id": "1"},
+                        )
+                    )
+                ),
+            )

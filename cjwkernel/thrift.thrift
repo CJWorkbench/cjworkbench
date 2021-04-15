@@ -335,7 +335,7 @@ struct FetchRequest {
  * that's the module's choice and not a hard-and-fast rule.
  */
 struct FetchResult {
-  1: string DEPRECATED_filename,
+  1: string filename,
 
   /**
    * User-facing errors or warnings reported by the module.

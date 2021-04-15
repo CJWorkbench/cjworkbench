@@ -1,10 +1,12 @@
 import datetime
+
 import numpy as np
 import pyarrow as pa
-from cjwkernel.tests.util import arrow_table, assert_render_result_equals
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+
 from cjwkernel.types import (
     RenderError,
-    RenderResult,
+    LoadedRenderResult,
     Column,
     ColumnType,
     I18nMessage,
@@ -12,7 +14,7 @@ from cjwkernel.types import (
     QuickFixAction,
     TableMetadata,
 )
-from cjwkernel.tests.util import tempfile_context
+from cjwkernel.tests.util import arrow_table_context, tempfile_context
 from cjwstate import s3
 from cjwstate.models import Workflow, Step
 from cjwstate.tests.utils import DbTestCase
@@ -20,7 +22,6 @@ from cjwstate.rendercache.io import (
     BUCKET,
     CorruptCacheError,
     cache_render_result,
-    load_cached_render_result,
     open_cached_render_result,
     clear_cached_render_result_for_step,
     crr_parquet_key,
@@ -38,23 +39,26 @@ class RendercacheIoTests(DbTestCase):
         )
 
     def test_cache_render_result(self):
-        result = RenderResult(
-            arrow_table({"A": [1]}),
-            [
-                RenderError(
-                    I18nMessage("e1", {"text": "hi"}, None),
-                    [
-                        QuickFix(
-                            I18nMessage("q1", {"var": 2}, None),
-                            QuickFixAction.PrependStep("filter", {"a": "x"}),
-                        )
-                    ],
-                ),
-                RenderError(I18nMessage("e2", {}, None), []),
-            ],
-            {"foo": "bar"},
-        )
-        cache_render_result(self.workflow, self.step, 1, result)
+        with arrow_table_context(make_column("A", [1])) as (table_path, table):
+            result = LoadedRenderResult(
+                path=table_path,
+                table=table,
+                columns=[Column("A", ColumnType.Number(format="{:,}"))],
+                errors=[
+                    RenderError(
+                        I18nMessage("e1", {"text": "hi"}, None),
+                        [
+                            QuickFix(
+                                I18nMessage("q1", {"var": 2}, None),
+                                QuickFixAction.PrependStep("filter", {"a": "x"}),
+                            )
+                        ],
+                    ),
+                    RenderError(I18nMessage("e2", {}, None), []),
+                ],
+                json={"foo": "bar"},
+            )
+            cache_render_result(self.workflow, self.step, 1, result)
 
         cached = self.step.cached_render_result
         self.assertEqual(cached.step_id, self.step.id)
@@ -71,11 +75,24 @@ class RendercacheIoTests(DbTestCase):
         self.assertEqual(from_db, cached)
 
         with open_cached_render_result(from_db) as result2:
-            assert_render_result_equals(result2, result)
+            assert_arrow_table_equals(
+                result2.table, make_table(make_column("A", [1], format="{:,}"))
+            )
+            self.assertEqual(
+                result2.columns, [Column("A", ColumnType.Number(format="{:,}"))]
+            )
 
     def test_clear(self):
-        result = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(self.workflow, self.step, 1, result)
+        with arrow_table_context(make_column("A", [1])) as (path, table):
+            result = LoadedRenderResult(
+                path=path,
+                table=table,
+                columns=[Column("A", ColumnType.Number(format="{:,}"))],
+                errors=[],
+                json={},
+            )
+            cache_render_result(self.workflow, self.step, 1, result)
+
         parquet_key = crr_parquet_key(self.step.cached_render_result)
         clear_cached_render_result_for_step(self.step)
 
@@ -84,25 +101,23 @@ class RendercacheIoTests(DbTestCase):
 
         self.assertFalse(s3.exists(BUCKET, parquet_key))
 
-    def test_metadata_comes_from_db_columns(self):
+    def test_metadata_does_not_require_file_read(self):
         columns = [
             Column("A", ColumnType.Number(format="{:,.2f}")),
             Column("B", ColumnType.Timestamp()),
             Column("C", ColumnType.Text()),
             Column("D", ColumnType.Date("month")),
         ]
-        result = RenderResult(
-            arrow_table(
-                {
-                    "A": [1],
-                    "B": pa.array([datetime.datetime.now()], pa.timestamp("ns")),
-                    "C": ["x"],
-                    "D": pa.array([datetime.date(2021, 4, 1)], pa.date32()),
-                },
-                columns=columns,
+        with arrow_table_context(
+            make_column("A", [1], format="{:,.2f}"),
+            make_column("B", [datetime.datetime(2021, 4, 13)]),
+            make_column("C", ["c"]),
+            make_column("D", [datetime.date(2021, 4, 1)], unit="month"),
+        ) as (path, table):
+            result = LoadedRenderResult(
+                path=path, table=table, columns=columns, errors=[], json={}
             )
-        )
-        cache_render_result(self.workflow, self.step, 1, result)
+            cache_render_result(self.workflow, self.step, 1, result)
         # Delete from disk entirely, to prove we did not read.
         s3.remove(BUCKET, crr_parquet_key(self.step.cached_render_result))
 
@@ -113,22 +128,34 @@ class RendercacheIoTests(DbTestCase):
         self.assertEqual(cached_result.table_metadata, TableMetadata(1, columns))
 
     def test_invalid_parquet_is_corrupt_cache_error(self):
-        result = RenderResult(arrow_table({"A": [1]}))
-        cache_render_result(self.workflow, self.step, 1, result)
+        with arrow_table_context(make_column("A", ["x"])) as (path, table):
+            result = LoadedRenderResult(
+                path=path,
+                table=table,
+                columns=[Column("A", ColumnType.Text())],
+                errors=[],
+                json={},
+            )
+            cache_render_result(self.workflow, self.step, 1, result)
         crr = self.step.cached_render_result
         s3.put_bytes(BUCKET, crr_parquet_key(crr), b"NOT PARQUET")
         with tempfile_context() as arrow_path:
             with self.assertRaises(CorruptCacheError):
-                load_cached_render_result(crr, arrow_path)
+                with open_cached_render_result(crr) as loaded:
+                    pass
 
     def test_read_cached_render_result_slice_as_text_timestamp(self):
-        result = RenderResult(
-            arrow_table(
-                {"A": pa.array([2134213412341232967, None], pa.timestamp("ns"))},
+        with arrow_table_context(
+            make_column("A", [2134213412341232967, None], pa.timestamp("ns"))
+        ) as (path, table):
+            result = LoadedRenderResult(
+                path=path,
+                table=table,
                 columns=[Column("A", ColumnType.Timestamp())],
+                errors=[],
+                json={},
             )
-        )
-        cache_render_result(self.workflow, self.step, 1, result)
+            cache_render_result(self.workflow, self.step, 1, result)
         crr = self.step.cached_render_result
         self.assertEqual(
             read_cached_render_result_slice_as_text(crr, "csv", range(2), range(3)),

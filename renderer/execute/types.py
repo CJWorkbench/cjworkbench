@@ -1,9 +1,23 @@
 from __future__ import annotations
 from functools import reduce
 from dataclasses import dataclass
-from typing import FrozenSet, List, Optional
+from typing import FrozenSet, List, NamedTuple, Optional
 from cjwkernel.i18n import trans
 from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
+
+
+class StepResult(NamedTuple):
+    """All the renderer needs to know to render subsequent Steps.
+
+    A StepResult with no columns has status "error" or "unreachable". Subsequent
+    steps won't render.
+    """
+
+    path: Path
+    """Trusted Arrow file containing the output."""
+
+    columns: List[Column]
+    """Shape of the Arrow file."""
 
 
 class UnneededExecution(Exception):
