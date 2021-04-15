@@ -27,7 +27,6 @@ from ..i18n import TODO_i18n, trans
 
 ColumnType = atypes.ColumnType
 Column = atypes.Column
-TableMetadata = atypes.TableMetadata
 QuickFix = atypes.QuickFix
 QuickFixAction = atypes.QuickFixAction
 RenderError = atypes.RenderError

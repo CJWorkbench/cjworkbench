@@ -26,7 +26,6 @@ from cjwmodule.types import (
 from .thrift import ttypes
 
 __all__ = [
-    "ArrowTable",
     "Column",
     "ColumnType",
     "CompiledModule",
@@ -40,14 +39,12 @@ __all__ = [
     "TabOutput",
     "arrow_column_to_thrift",
     "arrow_column_type_to_thrift",
-    "arrow_arrow_table_to_thrift",
     "arrow_fetch_result_to_thrift",
     "arrow_params_to_thrift",
     "arrow_quick_fix_action_to_thrift",
     "arrow_quick_fix_to_thrift",
     "arrow_raw_params_to_thrift",
     "arrow_render_error_to_thrift",
-    "arrow_table_metadata_to_thrift",
     "arrow_tab_to_thrift",
     "thrift_column_type_to_arrow",
     "thrift_fetch_result_to_arrow",
@@ -171,45 +168,6 @@ class TableMetadata(NamedTuple):
 
     columns: List[Column] = []
     """Columns -- the user-visible aspects of them, at least."""
-
-
-@dataclass(frozen=True)
-class ArrowTable:
-    """
-    Table on disk, opened and mmapped.
-
-    A table with no rows must have a file on disk. A table with no _columns_
-    is a special case: it _may_ have `table is None and path is None`, or it
-    may have an empty Arrow table on disk.
-
-    `self.table` will be populated and validated during construction.
-
-    To pass an ArrowTable between processes, the file must be readable at the
-    same `path` to both processes. If your ArrowTable isn't being shared
-    between processes, you may safely delete the file at `path` immediately
-    after constructing the ArrowTable.
-    """
-
-    path: Optional[Path] = None
-    """
-    Name of file on disk that contains data.
-
-    If the table has columns, the file must exist.
-    """
-
-    table: Optional[pyarrow.Table] = None
-    """
-    Pyarrow table, loaded with mmap.
-
-    If the table has columns, `table` must exist.
-    """
-
-    metadata: TableMetadata = field(default_factory=TableMetadata)
-    """
-    Metadata that agrees with `table`.
-
-    If `table is None`, then `metadata` has no columns.
-    """
 
 
 class Tab(NamedTuple):
@@ -352,19 +310,6 @@ def arrow_column_type_to_thrift(value: ColumnType) -> ttypes.ColumnType:
 
 def arrow_column_to_thrift(value: Column) -> ttypes.Column:
     return ttypes.Column(value.name, arrow_column_type_to_thrift(value.type))
-
-
-def arrow_table_metadata_to_thrift(value: TableMetadata) -> ttypes.TableMetadata:
-    return ttypes.TableMetadata(
-        value.n_rows, [arrow_column_to_thrift(c) for c in value.columns]
-    )
-
-
-def arrow_arrow_table_to_thrift(value: ArrowTable) -> ttypes.ArrowTable:
-    return ttypes.ArrowTable(
-        "" if value.path is None else value.path.name,
-        arrow_table_metadata_to_thrift(value.metadata),
-    )
 
 
 def arrow_tab_to_thrift(value: Tab) -> ttypes.Tab:
@@ -517,12 +462,6 @@ def thrift_raw_params_to_arrow(value: ttypes.RawParams) -> RawParams:
 
 def thrift_column_to_arrow(value: ttypes.Column) -> Column:
     return Column(value.name, thrift_column_type_to_arrow(value.type))
-
-
-def thrift_table_metadata_to_arrow(value: ttypes.TableMetadata) -> TableMetadata:
-    return TableMetadata(
-        value.n_rows, [thrift_column_to_arrow(c) for c in value.columns]
-    )
 
 
 def _thrift_param_value_to_arrow(value: ttypes.ParamValue, basedir: Path) -> ParamValue:

@@ -20,7 +20,6 @@ from cjwkernel.pandas.types import (
     RenderError,
     QuickFix,
     QuickFixAction,
-    TableMetadata,
     arrow_table_to_dataframe,
     coerce_I18nMessage,
     coerce_RenderError_list,

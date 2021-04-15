@@ -5,7 +5,7 @@ from datetime import date
 import pyarrow as pa
 from cjwmodule.arrow.testing import make_column
 
-from cjwkernel.types import Column, ColumnType, TableMetadata
+from cjwkernel.types import Column, ColumnType
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import (
     read_columns,

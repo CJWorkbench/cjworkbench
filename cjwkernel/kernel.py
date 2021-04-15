@@ -21,7 +21,6 @@ from cjwkernel.types import (
     RawParams,
     RenderResult,
     Tab,
-    arrow_arrow_table_to_thrift,
     arrow_fetch_result_to_thrift,
     arrow_params_to_thrift,
     arrow_raw_params_to_thrift,

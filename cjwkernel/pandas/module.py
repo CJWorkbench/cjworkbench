@@ -6,7 +6,7 @@ import asyncio
 import inspect
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Union
 
 import cjwparquet
 import cjwpandasmodule
@@ -18,7 +18,6 @@ from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
-    ArrowTable,
     ColumnType,
     TableMetadata,
     arrow_fetch_result_to_thrift,
@@ -36,6 +35,22 @@ from cjwkernel.validate import (
 from cjwmodule.i18n import I18nMessage
 
 
+class ArrowTable(NamedTuple):
+    """Table on disk, opened and mmapped.
+
+    This is passed to deprecated Arrow-based modules.
+    """
+
+    path: Path
+    """Name of file on disk that contains data."""
+
+    table: pa.Table
+    """Pyarrow table, loaded with mmap."""
+
+    metadata: TableMetadata
+    """Metadata that agrees with `table`."""
+
+
 def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
     """Function users should replace in all module code."""
     if "fetch_result" in kwargs:
@@ -46,7 +61,7 @@ def render(table: pd.DataFrame, params: Dict[str, Any], **kwargs):
 
 def __render_pandas(
     *,
-    table: types.ArrowTable,
+    table: ArrowTable,
     params: Dict[str, Any],
     tab_name: str,
     fetch_result: Optional[types.FetchResult],
@@ -113,7 +128,7 @@ def __render_pandas(
     return result.to_arrow(output_path)
 
 
-def __arrow_to_pandas(table: types.ArrowTable) -> pd.DataFrame:
+def __arrow_to_pandas(table: ArrowTable) -> pd.DataFrame:
     if not table.metadata.columns:
         return pd.DataFrame(index=pd.RangeIndex(0, table.metadata.n_rows))
     else:
@@ -247,7 +262,7 @@ def __DEPRECATED_overwrite_to_fix_arrow_table_schema(
 
 def __render_arrow(
     *,
-    table: types.ArrowTable,
+    table: ArrowTable,
     params: Dict[str, Any],
     tab_name: str,
     fetch_result: Optional[types.FetchResult],
@@ -299,7 +314,7 @@ def __render_arrow(
 
 def __render_by_signature(
     *,
-    table: types.ArrowTable,
+    table: ArrowTable,
     params: Dict[str, Any],
     tab_name: str,
     fetch_result: Optional[types.FetchResult],

@@ -8,7 +8,7 @@ import pyarrow as pa
 import pyarrow.compute
 from cjwmodule.arrow.format import parse_number_format
 
-from .types import Column, ColumnType, TableMetadata
+from .types import Column, ColumnType
 from . import settings
 
 

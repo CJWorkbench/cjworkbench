@@ -50,13 +50,6 @@ class ThriftConvertersTest(unittest.TestCase):
         self.basedir.rmdir()
         super().tearDown()
 
-    def test_arrow_table_to_thrift(self):
-        pass  # TODO test ArrowTable conversions
-
-    def test_arrow_table_from_thrift(self):
-        pass  # TODO test ArrowTable conversions
-        # ... we should also test _validation_ when reading from thrift.
-
     def test_tab_to_thrift(self):
         self.assertEqual(
             types.arrow_tab_to_thrift(types.Tab("tab-123", "Tab 1")),
