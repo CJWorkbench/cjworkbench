@@ -40,13 +40,21 @@ def __DEPRECATED_fix_field(
     if pa.types.is_integer(field.type) or pa.types.is_floating(field.type):
         if field.metadata is not None and b"format" in field.metadata:
             return field
-        if fallback_field.metadata and b"format" in fallback_field.metadata:
+        if (
+            fallback_field
+            and fallback_field.metadata
+            and b"format" in fallback_field.metadata
+        ):
             return pa.field(field.name, field.type, metadata=fallback_field.metadata)
         return pa.field(field.name, field.type, metadata={"format": "{:,}"})
     if pa.types.is_date32(field.type):
         if field.metadata is not None and b"unit" in field.metadata:
             return field
-        if fallback_field.metadata and b"unit" in fallback_field.metadata:
+        if (
+            fallback_field
+            and fallback_field.metadata
+            and b"unit" in fallback_field.metadata
+        ):
             return pa.field(field.name, field.type, metadata=fallback_field.metadata)
         return pa.field(field.name, field.type, metadata={"unit": "day"})
     return field

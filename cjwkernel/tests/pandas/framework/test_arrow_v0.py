@@ -82,6 +82,22 @@ class RenderTests(unittest.TestCase):
         with ModuleTestEnv(render=render) as env:
             env.call_render(make_table(), {})
 
+    def test_render_arrow_table_infer_output_column_formats(self):
+        def render(arrow_table, params, output_path, *, columns, **kwargs):
+            out = pa.table({"A": [1], "B": [date(2021, 4, 1)]})
+            with pa.ipc.RecordBatchFileWriter(output_path, out.schema) as writer:
+                writer.write_table(out)
+
+        with ModuleTestEnv(render=render) as env:
+            outcome = env.call_render(make_table(), {})
+            assert_arrow_table_equals(
+                outcome.read_table(),
+                make_table(
+                    make_column("A", [1], format="{:,}"),
+                    make_column("B", [date(2021, 4, 1)], unit="day"),
+                ),
+            )
+
     def test_render_arrow_table_infer_output_column_formats_from_input(self):
         # The param name "arrow_table" is a special case
         def render(arrow_table, params, output_path, *, columns, **kwargs):
