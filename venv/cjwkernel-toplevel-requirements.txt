@@ -1,11 +1,11 @@
 beautifulsoup4==4.7.1
 cchardet
-cjwmodule~=4.0.0
+cjwmodule~=4.1.3
 cjwpandasmodule~=0.2.0
 cjwparquet~=2.2.0
 cjwparse~=2.0.1
 formulas~=1.0.0
-built-google-re2~=0.0.7
+google-re2~=0.1.20210401
 html5lib==1.0.1
 lxml~=4.6.1
 lz4

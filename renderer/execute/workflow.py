@@ -36,18 +36,17 @@ def _get_migrated_params(step: Step, module_zipfile: ModuleZipfile) -> Dict[str,
         return {}
 
     module_spec = module_zipfile.get_spec()
-    param_schema = module_spec.get_param_schema()
 
     try:
         result = get_migrated_params(step, module_zipfile=module_zipfile)
     except ModuleError:
         # LoadedModule logged this error; no need to log it again.
-        return param_schema.coerce(None)
+        return module_spec.param_schema.default
 
     # Is the module buggy? It might be. Log that error, and return a valid
     # set of params anyway -- even if it isn't the params the user wants.
     try:
-        param_schema.validate(result)
+        module_spec.param_schema.validate(result)
         return result
     except ValueError as err:
         logger.exception(
@@ -55,7 +54,7 @@ def _get_migrated_params(step: Step, module_zipfile: ModuleZipfile) -> Dict[str,
             module_zipfile.path.name,
             str(err),
         )
-        return param_schema.coerce(result)
+        return module_spec.param_schema.default
 
 
 def _build_execute_step(

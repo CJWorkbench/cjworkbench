@@ -116,8 +116,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertResponse(
             response,
             error=(
-                "ValueError: Value {'foo': '', 'foo1': 'bar'} has wrong names: "
-                "expected names {'foo'}"
+                "ValueError: Value {'foo': '', 'foo1': 'bar'} has wrong keys: "
+                "expected frozenset({'foo'})"
             ),
         )
 

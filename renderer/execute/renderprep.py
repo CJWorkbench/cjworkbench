@@ -1,10 +1,12 @@
 import re
-import iso8601
 from contextlib import ExitStack
-from dataclasses import dataclass
 from functools import partial, singledispatch
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Union, Tuple
+
+import iso8601
+from cjwmodule.spec.paramschema import ParamSchema
+
 from cjwkernel.types import (
     Column,
     ColumnType,
@@ -13,11 +15,9 @@ from cjwkernel.types import (
     Tab,
     TabOutput,
 )
-
 from cjwkernel.util import tempfile_context
 from cjwstate import s3
 from cjwstate.models import UploadedFile
-from cjwstate.modules.param_dtype import ParamDType
 from .types import StepResult, TabCycleError, TabOutputUnreachableError, PromptingError
 
 
@@ -86,8 +86,7 @@ class PromptErrorAggregator:
         raise PromptingError(errors)
 
 
-@dataclass(frozen=True)
-class _TabData:
+class _TabData(NamedTuple):
     tab: Tab
     result: Optional[LoadedRenderResult]
 
@@ -148,7 +147,7 @@ class RenderContext:
 
 
 def get_param_values(
-    schema: ParamDType.Dict, params: Dict[str, Any], context: RenderContext
+    schema: ParamSchema.Dict, params: Dict[str, Any], context: RenderContext
 ) -> Params:
     """Convert `params` to a dict we'll pass to a module `render()` function.
 
@@ -169,8 +168,8 @@ def get_param_values(
     return Params(values)
 
 
-# singledispatch primer: `clean_value(dtype, value, context)` will choose its
-# logic based on the _type_ of `dtype`. (Handily, it'll prefer a specific class
+# singledispatch primer: `clean_value(schema, value, context)` will choose its
+# logic based on the _type_ of `schema`. (Handily, it'll prefer a specific class
 # to its parent class.)
 #
 # The recursive logic in fetchprep.py was copy/pasted from renderprep.py.
@@ -178,12 +177,12 @@ def get_param_values(
 # TODO abstract this pattern. The recursion parts seem like they should be
 # written in just one place.
 @singledispatch
-def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
+def clean_value(schema: ParamSchema, value: Any, context: RenderContext) -> Any:
     """Ensure `value` fits the Params dict `render()` expects.
 
     The most basic implementation is to just return `value`: it looks a lot
     like the dict we pass `render()`. But we have special-case implementations
-    for a few dtypes.
+    for a few schemas.
 
     Raise TabCycleError, TabOutputUnreachableError or UnneededExecution if
     render cannot be called and there's nothing we can do to fix that.
@@ -194,11 +193,11 @@ def clean_value(dtype: ParamDType, value: Any, context: RenderContext) -> Any:
     return value  # fallback method
 
 
-@clean_value.register(ParamDType.Float)
+@clean_value.register(ParamSchema.Float)
 def _(
-    dtype: ParamDType.Float, value: Union[int, float], context: RenderContext
+    schema: ParamSchema.Float, value: Union[int, float], context: RenderContext
 ) -> float:
-    # ParamDType.Float can have `int` values (because values come from
+    # ParamSchema.Float can have `int` values (because values come from
     # json.parse(), which only gives Numbers so can give "3" instead of
     # "3.0". We want to pass that as `float` in the `params` dict.
     return float(value)
@@ -333,9 +332,9 @@ def _column_type_name(column_type: ColumnType) -> str:
         raise ValueError("Unhandled column type %r" % column_type)
 
 
-@clean_value.register(ParamDType.Condition)
+@clean_value.register(ParamSchema.Condition)
 def _(
-    dtype: ParamDType.Condition, value: Dict[str, Any], context: RenderContext
+    schema: ParamSchema.Condition, value: Dict[str, Any], context: RenderContext
 ) -> Optional[Dict[str, Any]]:
     condition, errors = _clean_condition_recursively(
         value,
@@ -351,9 +350,9 @@ def _(
     return condition
 
 
-@clean_value.register(ParamDType.File)
+@clean_value.register(ParamSchema.File)
 def _(
-    dtype: ParamDType.File, value: Optional[str], context: RenderContext
+    schema: ParamSchema.File, value: Optional[str], context: RenderContext
 ) -> Optional[Path]:
     """Convert a `file` String-encoded UUID to a tempfile `pathlib.Path`.
 
@@ -393,8 +392,8 @@ def _(
         return None
 
 
-@clean_value.register(ParamDType.Tab)
-def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
+@clean_value.register(ParamSchema.Tab)
+def _(schema: ParamSchema.Tab, value: str, context: RenderContext) -> TabOutput:
     tab_slug = value
     try:
         tab_data = context.tabs[tab_slug]
@@ -412,28 +411,31 @@ def _(dtype: ParamDType.Tab, value: str, context: RenderContext) -> TabOutput:
     return TabOutput(tab_data.tab, table_filename=tab_result.path.name)
 
 
-@clean_value.register(ParamDType.Column)
-def _(dtype: ParamDType.Column, value: str, context: RenderContext) -> str:
-    valid_columns = context.output_columns_for_tab_parameter(dtype.tab_parameter)
+@clean_value.register(ParamSchema.Column)
+def _(schema: ParamSchema.Column, value: str, context: RenderContext) -> str:
+    valid_columns = context.output_columns_for_tab_parameter(schema.tab_parameter)
     if value not in valid_columns:
         return ""  # Null column
 
     column = valid_columns[value]
-    if dtype.column_types and _column_type_name(column.type) not in dtype.column_types:
-        if "text" in dtype.column_types:
+    if (
+        schema.column_types
+        and _column_type_name(column.type) not in schema.column_types
+    ):
+        if "text" in schema.column_types:
             found_type = None
         else:
             found_type = _column_type_name(column.type)
         raise PromptingError(
-            [PromptingError.WrongColumnType([value], found_type, dtype.column_types)]
+            [PromptingError.WrongColumnType([value], found_type, schema.column_types)]
         )
 
     return value
 
 
-@clean_value.register(ParamDType.Multicolumn)
-def _(dtype: ParamDType.Multicolumn, value: List[str], context: RenderContext) -> str:
-    valid_columns = context.output_columns_for_tab_parameter(dtype.tab_parameter)
+@clean_value.register(ParamSchema.Multicolumn)
+def _(schema: ParamSchema.Multicolumn, value: List[str], context: RenderContext) -> str:
+    valid_columns = context.output_columns_for_tab_parameter(schema.tab_parameter)
 
     error_agg = PromptErrorAggregator()
     requested_colnames = set(value)
@@ -446,16 +448,16 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], context: RenderContext) -
             continue
 
         if (
-            dtype.column_types
-            and _column_type_name(column.type) not in dtype.column_types
+            schema.column_types
+            and _column_type_name(column.type) not in schema.column_types
         ):
-            if "text" in dtype.column_types:
+            if "text" in schema.column_types:
                 found_type = None
             else:
                 found_type = _column_type_name(column.type)
             error_agg.add(
                 PromptingError.WrongColumnType(
-                    [column.name], found_type, dtype.column_types
+                    [column.name], found_type, schema.column_types
                 )
             )
         else:
@@ -466,14 +468,22 @@ def _(dtype: ParamDType.Multicolumn, value: List[str], context: RenderContext) -
     return valid_colnames
 
 
-@clean_value.register(ParamDType.Multichartseries)
+@clean_value.register(ParamSchema.Multichartseries)
 def _(
-    dtype: ParamDType.Multichartseries,
+    schema: ParamSchema.Multichartseries,
     value: List[Dict[str, str]],
     context: RenderContext,
 ) -> List[Dict[str, str]]:
-    # Recurse to clean_value(ParamDType.Column) to clear missing columns
-    inner_clean = partial(clean_value, dtype.inner_dtype)
+    # Recurse to clean_value(ParamSchema.Column) to clear missing columns
+    inner_clean = partial(
+        clean_value,
+        ParamSchema.Dict(
+            {
+                "color": ParamSchema.String(default="#000000"),
+                "column": ParamSchema.Column(column_types=frozenset(["number"])),
+            }
+        ),
+    )
 
     ret = []
     error_agg = PromptErrorAggregator()
@@ -491,11 +501,11 @@ def _(
 
 
 # ... and then the methods for recursing
-@clean_value.register(ParamDType.List)
+@clean_value.register(ParamSchema.List)
 def clean_value_list(
-    dtype: ParamDType.List, value: List[Any], context: RenderContext
+    schema: ParamSchema.List, value: List[Any], context: RenderContext
 ) -> List[Any]:
-    inner_clean = partial(clean_value, dtype.inner_dtype)
+    inner_clean = partial(clean_value, schema.inner_schema)
     ret = []
     error_agg = PromptErrorAggregator()
     for v in value:
@@ -507,14 +517,16 @@ def clean_value_list(
     return ret
 
 
-@clean_value.register(ParamDType.Multitab)
+@clean_value.register(ParamSchema.Multitab)
 def _(
-    dtype: ParamDType.Multitab, value: List[str], context: RenderContext
+    schema: ParamSchema.Multitab, value: List[str], context: RenderContext
 ) -> List[TabOutput]:
     unordered: Dict[Tab, TabOutput] = {
         tab_output.tab.slug: tab_output
         # recurse -- the same way we clean a list.
-        for tab_output in clean_value_list(dtype, value, context)
+        for tab_output in clean_value_list(
+            ParamSchema.List(inner_schema=ParamSchema.Tab()), value, context
+        )
         if tab_output is not None
     }
 
@@ -522,16 +534,16 @@ def _(
     return [unordered[tab] for tab in context.tabs.keys() if tab in unordered]
 
 
-@clean_value.register(ParamDType.Dict)
+@clean_value.register(ParamSchema.Dict)
 def _(
-    dtype: ParamDType.Dict, value: Dict[str, Any], context: RenderContext
+    schema: ParamSchema.Dict, value: Dict[str, Any], context: RenderContext
 ) -> Dict[str, Any]:
     ret = {}
     error_agg = PromptErrorAggregator()
 
     for k, v in value.items():
         try:
-            ret[k] = clean_value(dtype.properties[k], v, context)
+            ret[k] = clean_value(schema.properties[k], v, context)
         except PromptingError as err:
             error_agg.extend(err.errors)
 
@@ -539,10 +551,9 @@ def _(
     return ret
 
 
-@clean_value.register(ParamDType.Map)
+@clean_value.register(ParamSchema.Map)
 def _(
-    dtype: ParamDType.Map, value: Dict[str, Any], context: RenderContext
+    schema: ParamSchema.Map, value: Dict[str, Any], context: RenderContext
 ) -> Dict[str, Any]:
-    value_dtype = dtype.value_dtype
-    value_clean = partial(clean_value, value_dtype)
+    value_clean = partial(clean_value, schema.value_schema)
     return dict((k, value_clean(v, context)) for k, v in value.items())

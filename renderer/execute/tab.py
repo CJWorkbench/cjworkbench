@@ -7,13 +7,13 @@ from typing import Any, Dict, List, Optional, FrozenSet
 
 import pyarrow as pa
 
-from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import ChrootContext
-from cjwkernel.types import LoadedRenderResult, Tab
-from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
+from cjwkernel.types import Tab
+from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import Step, Workflow
-from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.modules.types import ModuleZipfile
+from cjwstate.modules.util import gather_param_tab_slugs
+from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from .step import execute_step, locked_step
 from .types import StepResult
 
@@ -110,16 +110,15 @@ class TabFlow:
     @cached_property
     def input_tab_slugs(self) -> FrozenSet[str]:
         """Slugs of tabs that are used as _input_ into this tab's steps."""
-        ret = set()
-        for step in self.steps:
-            if step.module_zipfile is not None:
-                schema = step.module_zipfile.get_spec().get_param_schema()
-                ret.update(
-                    v
-                    for dt, v in schema.iter_dfs_dtype_values(step.params)
-                    if isinstance(dt, ParamDType.Tab)
+        return frozenset.union(
+            *(
+                gather_param_tab_slugs(
+                    step.module_zipfile.get_spec().param_schema, step.params
                 )
-        return frozenset(ret)
+                for step in self.steps
+                if step.module_zipfile
+            )
+        )
 
 
 @database_sync_to_async

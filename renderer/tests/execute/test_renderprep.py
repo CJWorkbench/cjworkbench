@@ -1,23 +1,13 @@
 import uuid
 from contextlib import ExitStack
-from datetime import datetime
 from pathlib import Path
-from typing import List
 
-import pyarrow as pa
+from cjwmodule.spec.paramschema import ParamSchema
 
-from cjwkernel.types import (
-    Column,
-    ColumnType,
-    LoadedRenderResult,
-    RenderError,
-    Tab,
-    TabOutput,
-)
+from cjwkernel.types import Column, ColumnType, Tab, TabOutput
 from cjwkernel.util import tempdir_context
 from cjwstate import s3
 from cjwstate.models import Workflow, UploadedFile
-from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import clean_value, RenderContext
 from renderer.execute.types import (
@@ -71,20 +61,20 @@ class CleanValueTests(DbTestCase):
         )
 
     def test_clean_float(self):
-        result = clean_value(ParamDType.Float(), 3.0, None)
+        result = clean_value(ParamSchema.Float(), 3.0, None)
         self.assertEqual(result, 3.0)
         self.assertIsInstance(result, float)
 
     def test_clean_float_with_int_value(self):
-        # ParamDType.Float can have `int` values (because values come from
+        # ParamSchema.Float can have `int` values (because values come from
         # json.parse(), which only gives Numbers so can give "3" instead of
         # "3.0". We want to pass that as `float` in the `params` dict.
-        result = clean_value(ParamDType.Float(), 3, None)
+        result = clean_value(ParamSchema.Float(), 3, None)
         self.assertEqual(result, 3.0)
         self.assertIsInstance(result, float)
 
     def test_clean_file_none(self):
-        result = clean_value(ParamDType.File(), None, None)
+        result = clean_value(ParamSchema.File(), None, None)
         self.assertEqual(result, None)
 
     def test_clean_file_happy_path(self):
@@ -99,7 +89,7 @@ class CleanValueTests(DbTestCase):
         )
         with ExitStack() as inner_stack:
             context = self._render_context(step_id=step.id, exit_stack=inner_stack)
-            result: Path = clean_value(ParamDType.File(), id, context)
+            result: Path = clean_value(ParamSchema.File(), id, context)
             self.assertIsInstance(result, Path)
             self.assertEqual(result.read_bytes(), b"1234")
             self.assertEqual(result.suffixes, [".csv", ".gz"])
@@ -112,7 +102,7 @@ class CleanValueTests(DbTestCase):
         tab = workflow.tabs.first()
         step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
         context = self._render_context(step_id=step.id)
-        result = clean_value(ParamDType.File(), str(uuid.uuid4()), context)
+        result = clean_value(ParamSchema.File(), str(uuid.uuid4()), context)
         self.assertIsNone(result)
         # Assert that if a temporary file was created to house the download, it
         # no longer exists.
@@ -131,7 +121,7 @@ class CleanValueTests(DbTestCase):
             step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
         context = self._render_context(step_id=step.id)
-        result = clean_value(ParamDType.File(), id, context)
+        result = clean_value(ParamSchema.File(), id, context)
         self.assertIsNone(result)
         # Assert that if a temporary file was created to house the download, it
         # no longer exists.
@@ -149,7 +139,7 @@ class CleanValueTests(DbTestCase):
             step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
         context = self._render_context(step_id=step.id)
-        result = clean_value(ParamDType.File(), id, context)
+        result = clean_value(ParamSchema.File(), id, context)
         self.assertIsNone(result)
         # Assert that if a temporary file was created to house the download, it
         # no longer exists.
@@ -157,8 +147,8 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_normal_dict(self):
         context = self._render_context()
-        schema = ParamDType.Dict(
-            {"str": ParamDType.String(), "int": ParamDType.Integer()}
+        schema = ParamSchema.Dict(
+            {"str": ParamSchema.String(), "int": ParamSchema.Integer()}
         )
         value = {"str": "foo", "int": 3}
         expected = dict(value)  # no-op
@@ -167,7 +157,7 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_column_valid(self):
         context = self._render_context(input_table_columns=[TEXT("A")])
-        result = clean_value(ParamDType.Column(), "A", context)
+        result = clean_value(ParamSchema.Column(), "A", context)
         self.assertEqual(result, "A")
 
     def test_clean_column_prompting_error_convert_to_text(self):
@@ -180,7 +170,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Column(column_types=frozenset({"text"})), "A", context
+                ParamSchema.Column(column_types=frozenset({"text"})), "A", context
             )
 
         self.assertEqual(
@@ -192,7 +182,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TEXT("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Column(column_types=frozenset({"number"})), "A", context
+                ParamSchema.Column(column_types=frozenset({"number"})), "A", context
             )
         self.assertEqual(
             cm.exception.errors,
@@ -201,8 +191,8 @@ class CleanValueTests(DbTestCase):
 
     def test_list_prompting_error_concatenate_same_type(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TEXT("B")])
-        schema = ParamDType.List(
-            inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
+        schema = ParamSchema.List(
+            inner_schema=ParamSchema.Column(column_types=frozenset({"number"}))
         )
         with self.assertRaises(PromptingError) as cm:
             clean_value(schema, ["A", "B"], context)
@@ -214,8 +204,8 @@ class CleanValueTests(DbTestCase):
 
     def test_list_prompting_error_concatenate_different_type(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TIMESTAMP("B")])
-        schema = ParamDType.List(
-            inner_dtype=ParamDType.Column(column_types=frozenset({"number"}))
+        schema = ParamSchema.List(
+            inner_schema=ParamSchema.Column(column_types=frozenset({"number"}))
         )
         with self.assertRaises(PromptingError) as cm:
             clean_value(schema, ["A", "B"], context)
@@ -234,8 +224,8 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(
             input_table_columns=[NUMBER("A"), TIMESTAMP("B")]
         )
-        schema = ParamDType.List(
-            inner_dtype=ParamDType.Column(column_types=frozenset({"text"}))
+        schema = ParamSchema.List(
+            inner_schema=ParamSchema.Column(column_types=frozenset({"text"}))
         )
         with self.assertRaises(PromptingError) as cm:
             clean_value(schema, ["A", "B"], context)
@@ -247,10 +237,10 @@ class CleanValueTests(DbTestCase):
 
     def test_dict_prompting_error(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TEXT("B")])
-        schema = ParamDType.Dict(
+        schema = ParamSchema.Dict(
             {
-                "col1": ParamDType.Column(column_types=frozenset({"number"})),
-                "col2": ParamDType.Column(column_types=frozenset({"timestamp"})),
+                "col1": ParamSchema.Column(column_types=frozenset({"number"})),
+                "col2": ParamSchema.Column(column_types=frozenset({"timestamp"})),
             }
         )
         with self.assertRaises(PromptingError) as cm:
@@ -266,10 +256,10 @@ class CleanValueTests(DbTestCase):
 
     def test_dict_prompting_error_concatenate_same_type(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TEXT("B")])
-        schema = ParamDType.Dict(
+        schema = ParamSchema.Dict(
             {
-                "x": ParamDType.Column(column_types=frozenset({"number"})),
-                "y": ParamDType.Column(column_types=frozenset({"number"})),
+                "x": ParamSchema.Column(column_types=frozenset({"number"})),
+                "y": ParamSchema.Column(column_types=frozenset({"number"})),
             }
         )
         with self.assertRaises(PromptingError) as cm:
@@ -282,10 +272,10 @@ class CleanValueTests(DbTestCase):
 
     def test_dict_prompting_error_concatenate_different_types(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TIMESTAMP("B")])
-        schema = ParamDType.Dict(
+        schema = ParamSchema.Dict(
             {
-                "x": ParamDType.Column(column_types=frozenset({"number"})),
-                "y": ParamDType.Column(column_types=frozenset({"number"})),
+                "x": ParamSchema.Column(column_types=frozenset({"number"})),
+                "y": ParamSchema.Column(column_types=frozenset({"number"})),
             }
         )
         with self.assertRaises(PromptingError) as cm:
@@ -303,17 +293,17 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_column_missing_becomes_empty_string(self):
         context = self._render_context(input_table_columns=[TEXT("A")])
-        result = clean_value(ParamDType.Column(), "B", context)
+        result = clean_value(ParamSchema.Column(), "B", context)
         self.assertEqual(result, "")
 
     def test_clean_multicolumn_valid(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TEXT("B")])
-        result = clean_value(ParamDType.Multicolumn(), ["A", "B"], context)
+        result = clean_value(ParamSchema.Multicolumn(), ["A", "B"], context)
         self.assertEqual(result, ["A", "B"])
 
     def test_clean_multicolumn_sort_in_table_order(self):
         context = self._render_context(input_table_columns=[TEXT("B"), TEXT("A")])
-        result = clean_value(ParamDType.Multicolumn(), ["A", "B"], context)
+        result = clean_value(ParamSchema.Multicolumn(), ["A", "B"], context)
         self.assertEqual(result, ["B", "A"])
 
     def test_clean_multicolumn_prompting_error_convert_to_text(self):
@@ -321,7 +311,7 @@ class CleanValueTests(DbTestCase):
             input_table_columns=[NUMBER("A"), TIMESTAMP("B"), TEXT("C")]
         )
         with self.assertRaises(PromptingError) as cm:
-            schema = ParamDType.Multicolumn(column_types=frozenset({"text"}))
+            schema = ParamSchema.Multicolumn(column_types=frozenset({"text"}))
             clean_value(schema, ["A", "B"], context)
 
         self.assertEqual(
@@ -331,7 +321,7 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_multicolumn_missing_is_removed(self):
         context = self._render_context(input_table_columns=[TEXT("A"), TEXT("B")])
-        result = clean_value(ParamDType.Multicolumn(), ["A", "X", "B"], context)
+        result = clean_value(ParamSchema.Multicolumn(), ["A", "X", "B"], context)
         self.assertEqual(result, ["A", "B"])
 
     def test_clean_multichartseries_missing_is_removed(self):
@@ -340,7 +330,7 @@ class CleanValueTests(DbTestCase):
             {"column": "A", "color": "#aaaaaa"},
             {"column": "C", "color": "#cccccc"},
         ]
-        result = clean_value(ParamDType.Multichartseries(), value, context)
+        result = clean_value(ParamSchema.Multichartseries(), value, context)
         self.assertEqual(result, [{"column": "A", "color": "#aaaaaa"}])
 
     def test_clean_multichartseries_non_number_is_prompting_error(self):
@@ -350,7 +340,7 @@ class CleanValueTests(DbTestCase):
             {"column": "B", "color": "#cccccc"},
         ]
         with self.assertRaises(PromptingError) as cm:
-            clean_value(ParamDType.Multichartseries(), value, context)
+            clean_value(ParamSchema.Multichartseries(), value, context)
 
         self.assertEqual(
             cm.exception.errors,
@@ -367,16 +357,16 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(
             tab_results={tab: StepResult(Path("tab-1.arrow"), [TEXT("A")])}
         )
-        result = clean_value(ParamDType.Tab(), "tab-1", context)
+        result = clean_value(ParamSchema.Tab(), "tab-1", context)
         self.assertEqual(result, TabOutput(tab, "tab-1.arrow"))
 
     def test_clean_multicolumn_from_other_tab(self):
         tab2 = Tab("tab-2", "Tab 2")
 
-        schema = ParamDType.Dict(
+        schema = ParamSchema.Dict(
             {
-                "tab": ParamDType.Tab(),
-                "columns": ParamDType.Multicolumn(tab_parameter="tab"),
+                "tab": ParamSchema.Tab(),
+                "columns": ParamSchema.Multicolumn(tab_parameter="tab"),
             }
         )
         params = {"tab": "tab-2", "columns": ["A-from-tab-1", "A-from-tab-2"]}
@@ -394,10 +384,10 @@ class CleanValueTests(DbTestCase):
     def test_clean_multicolumn_from_other_tab_that_does_not_exist(self):
         # The other tab would not exist if the user selected and then deleted
         # it.
-        schema = ParamDType.Dict(
+        schema = ParamSchema.Dict(
             {
-                "tab": ParamDType.Tab(),
-                "columns": ParamDType.Multicolumn(tab_parameter="tab"),
+                "tab": ParamSchema.Tab(),
+                "columns": ParamSchema.Multicolumn(tab_parameter="tab"),
             }
         )
         params = {"tab": "tab-missing", "columns": ["A-from-tab-1"]}
@@ -412,7 +402,7 @@ class CleanValueTests(DbTestCase):
 
     def test_clean_tab_no_tab_selected_gives_none(self):
         context = self._render_context(tab_results={})
-        result = clean_value(ParamDType.Tab(), "", context)
+        result = clean_value(ParamSchema.Tab(), "", context)
         self.assertEqual(result, None)
 
     def test_clean_tab_missing_tab_selected_gives_none(self):
@@ -420,14 +410,14 @@ class CleanValueTests(DbTestCase):
         #
         # JS sees nonexistent tab slugs. render() doesn't.
         context = self._render_context(tab_results={})
-        result = clean_value(ParamDType.Tab(), "tab-XXX", context)
+        result = clean_value(ParamSchema.Tab(), "tab-XXX", context)
         self.assertEqual(result, None)
 
     def test_clean_tab_cycle(self):
         tab = Tab("tab-1", "Tab 1")
         context = self._render_context(tab_results={tab: None})
         with self.assertRaises(TabCycleError):
-            clean_value(ParamDType.Tab(), "tab-1", context)
+            clean_value(ParamSchema.Tab(), "tab-1", context)
 
     def test_clean_tab_unreachable(self):
         tab = Tab("tab-error", "Buggy Tab")
@@ -435,7 +425,7 @@ class CleanValueTests(DbTestCase):
             tab_results={tab: StepResult(Path("tab-error.arrow"), [])}
         )
         with self.assertRaises(TabOutputUnreachableError):
-            clean_value(ParamDType.Tab(), "tab-error", context)
+            clean_value(ParamSchema.Tab(), "tab-error", context)
 
     def test_clean_tabs_happy_path(self):
         tab2 = Tab("tab-2", "Tab 2")
@@ -447,7 +437,7 @@ class CleanValueTests(DbTestCase):
                 tab3: StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
             }
         )
-        result = clean_value(ParamDType.Multitab(), ["tab-2", "tab-3"], context)
+        result = clean_value(ParamSchema.Multitab(), ["tab-2", "tab-3"], context)
         self.assertEqual(
             result, [TabOutput(tab2, "tab-2.arrow"), TabOutput(tab3, "tab-3.arrow")]
         )
@@ -464,21 +454,21 @@ class CleanValueTests(DbTestCase):
             }
         )
         # Supply wrongly-ordered tabs; renderprep should reorder them.
-        result = clean_value(ParamDType.Multitab(), ["tab-2", "tab-3"], context)
+        result = clean_value(ParamSchema.Multitab(), ["tab-2", "tab-3"], context)
         self.assertEqual(
             result, [TabOutput(tab3, "tab-3.arrow"), TabOutput(tab2, "tab-2.arrow")]
         )
 
     def test_clean_tabs_nix_missing_tab(self):
         context = self._render_context(tab_results={})
-        result = clean_value(ParamDType.Multitab(), ["tab-missing"], context)
+        result = clean_value(ParamSchema.Multitab(), ["tab-missing"], context)
         self.assertEqual(result, [])
 
     def test_clean_tabs_tab_cycle(self):
         tab = Tab("tab-1", "Tab 1")
         context = self._render_context(tab_results={tab: None})
         with self.assertRaises(TabCycleError):
-            clean_value(ParamDType.Multitab(), ["tab-1"], context)
+            clean_value(ParamSchema.Multitab(), ["tab-1"], context)
 
     def test_clean_tabs_tab_unreachable(self):
         tab = Tab("tab-1", "Tab 1")
@@ -486,13 +476,13 @@ class CleanValueTests(DbTestCase):
             tab_results={tab: StepResult(Path("tab-1.arrow"), [])}
         )
         with self.assertRaises(TabOutputUnreachableError):
-            clean_value(ParamDType.Multitab(), ["tab-1"], context)
+            clean_value(ParamSchema.Multitab(), ["tab-1"], context)
 
     def test_clean_condition_empty_and_and_or_are_none(self):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "and",
                     "conditions": [{"operation": "or", "conditions": []}],
@@ -506,7 +496,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "text_is",
                     "column": "",
@@ -521,7 +511,7 @@ class CleanValueTests(DbTestCase):
         # And test it in the context of a broader and/or
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "and",
                     "conditions": [
@@ -548,7 +538,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "and",
                     "conditions": [
@@ -578,7 +568,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TEXT("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "and",
                     "conditions": [
@@ -643,7 +633,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "text_is",
                     "column": "B",
@@ -660,7 +650,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "text_is",
                     "column": "A",
@@ -680,7 +670,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TEXT("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "text_is",
                     "column": "A",
@@ -703,7 +693,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TEXT("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "text_is_not",
                     "column": "A",
@@ -729,7 +719,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "text_is",
                     "column": "A",
@@ -749,7 +739,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TEXT("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "number_is",
                     "column": "A",
@@ -769,7 +759,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "number_is",
                     "column": "A",
@@ -788,7 +778,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TEXT("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "number_is",
                     "column": "A",
@@ -811,7 +801,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "number_is",
                     "column": "A",
@@ -832,7 +822,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "timestamp_is_greater_than",
                     "column": "A",
@@ -856,7 +846,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TIMESTAMP("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "timestamp_is_greater_than",
                     "column": "A",
@@ -878,7 +868,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         with self.assertRaises(PromptingError) as cm:
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "timestamp_is_greater_than",
                     "column": "A",
@@ -903,7 +893,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[TIMESTAMP("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "timestamp_is_greater_than",
                     "column": "A",
@@ -924,7 +914,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "cell_is_blank",
                     "column": "A",
@@ -944,7 +934,7 @@ class CleanValueTests(DbTestCase):
         context = self._render_context(input_table_columns=[NUMBER("A")])
         self.assertEqual(
             clean_value(
-                ParamDType.Condition(),
+                ParamSchema.Condition(),
                 {
                     "operation": "",
                     "column": "A",

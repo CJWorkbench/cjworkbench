@@ -4,23 +4,21 @@ import shutil
 import textwrap
 import unittest
 from collections import namedtuple
-from dataclasses import replace
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pyarrow as pa
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
 
-from cjwkernel.errors import ModuleExitedError
 from cjwkernel.kernel import Kernel
 from cjwkernel.i18n import TODO_i18n
-from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
+from cjwkernel.types import RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table_context
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.rendercache import cache_render_result, open_cached_render_result
+from cjwstate.rendercache import open_cached_render_result
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
-from renderer.execute.types import StepResult, UnneededExecution
+from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
 
 
@@ -120,7 +118,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta_id = workflow.last_delta_id
         create_module_zipfile(
             "mod",
             spec_kwargs={"loads_data": True},
@@ -165,14 +162,14 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
-    def test_execute_migrate_params_invalid_params_are_coerced(self):
+    def test_execute_migrate_params_invalid_params_become_default(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         create_module_zipfile(
             "mod",
             spec_kwargs={
                 "loads_data": True,
-                "parameters": [{"id_name": "x", "type": "string"}],
+                "parameters": [{"id_name": "x", "type": "string", "default": "blah"}],
             },
             python_code=textwrap.dedent(
                 """
@@ -189,7 +186,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step.refresh_from_db()
         self.assertEqual(
             step.cached_render_result_errors,
-            [RenderError(TODO_i18n('params: {"x": "2"}'))],
+            [RenderError(TODO_i18n('params: {"x": "blah"}'))],
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
@@ -250,7 +247,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_resume_without_rerunning_unneeded_renders(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta_id = workflow.last_delta_id
         create_module_zipfile(
             # If this runs on step1, it'll return pd.DataFrame().
             # If this runs on step2, it'll return step1-output * 2.
@@ -348,7 +344,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
         )
-        step = tab.steps.create(
+        tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",

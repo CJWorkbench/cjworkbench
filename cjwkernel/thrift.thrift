@@ -370,7 +370,7 @@ struct RenderRequest {
   2: DEPRECATED_ArrowTable DEPRECATED_input_table,
 
   /**
-   * User-supplied parameters; must match the module's param_spec.
+   * User-supplied parameters; must match the module's param_schema.
    *
    * `File` params are passed as strings, pointing to temporary files in
    * `basedir`.

@@ -1,9 +1,11 @@
 from __future__ import annotations
 from functools import reduce
+from pathlib import Path
 from dataclasses import dataclass
 from typing import FrozenSet, List, NamedTuple, Optional
+
 from cjwkernel.i18n import trans
-from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
+from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
 
 
 class StepResult(NamedTuple):
@@ -125,17 +127,8 @@ class PromptingError(Exception):
                 raise RuntimeError(f"Unhandled wanted_types: {self.wanted_types}")
 
         @property
-        def found_type_name(self):
-            assert not self.should_be_text
-            return TypeNames[self.found_type]
-
-        @property
         def should_be_text(self):
             return self.found_type is None
-
-        @property
-        def best_wanted_type_name(self):
-            return TypeNames[self.best_wanted_type_id]
 
         def as_render_errors(self) -> List[RenderError]:
             """Build RenderError(s) that describe this error.

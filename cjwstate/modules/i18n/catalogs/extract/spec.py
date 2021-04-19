@@ -1,7 +1,8 @@
 from functools import singledispatch
 from typing import Dict, Union
-from cjwstate.modules.types import ModuleSpec
-from cjwstate.modules.param_spec import ParamSpec, MenuOptionEnum
+
+from cjwmodule.spec.types import ModuleSpec
+from cjwmodule.spec.paramfield import ParamField
 
 
 def find_spec_messages(spec: ModuleSpec) -> Dict[str, str]:
@@ -12,11 +13,9 @@ def find_spec_messages(spec: ModuleSpec) -> Dict[str, str]:
     _add_if_set(messages, spec, prefix, "row_action_menu_entry_title")
     if spec.deprecated:
         _add_if_set(messages, spec.deprecated, f"{prefix}.deprecated", "message")
-    for param_spec in spec.param_fields:
+    for field in spec.param_fields:
         messages.update(
-            extract_param_messages(
-                param_spec, f"{prefix}.parameters.{param_spec.id_name}"
-            )
+            extract_param_messages(field, f"{prefix}.parameters.{field.id_name}")
         )
     return messages
 
@@ -36,12 +35,12 @@ def _add_if_set(
 
 
 @singledispatch
-def extract_param_messages(spec: ParamSpec, prefix: str) -> Dict[str, str]:
+def extract_param_messages(spec: ParamField, prefix: str) -> Dict[str, str]:
     return {}
 
 
-@extract_param_messages.register(ParamSpec.String)
-def _(spec: ParamSpec.String, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.String)
+def _(spec: ParamField.String, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     _add_if_set(result, spec, prefix, "placeholder")
@@ -49,49 +48,49 @@ def _(spec: ParamSpec.String, prefix: str) -> Dict[str, str]:
     return result
 
 
-@extract_param_messages.register(ParamSpec.Statictext)
-def _(spec: ParamSpec.Statictext, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Statictext)
+def _(spec: ParamField.Statictext, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Integer)
-def _(spec: ParamSpec.Integer, prefix: str) -> Dict[str, str]:
-    result = {}
-    _add_if_set(result, spec, prefix, "name")
-    _add_if_set(result, spec, prefix, "placeholder")
-    return result
-
-
-@extract_param_messages.register(ParamSpec.Float)
-def _(spec: ParamSpec.Float, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Integer)
+def _(spec: ParamField.Integer, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     _add_if_set(result, spec, prefix, "placeholder")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Checkbox)
-def _(spec: ParamSpec.Checkbox, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Float)
+def _(spec: ParamField.Float, prefix: str) -> Dict[str, str]:
+    result = {}
+    _add_if_set(result, spec, prefix, "name")
+    _add_if_set(result, spec, prefix, "placeholder")
+    return result
+
+
+@extract_param_messages.register(ParamField.Checkbox)
+def _(spec: ParamField.Checkbox, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Menu)
-def _(spec: ParamSpec.Menu, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Menu)
+def _(spec: ParamField.Menu, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     _add_if_set(result, spec, prefix, "placeholder")
     for option in spec.options:
-        if isinstance(option, MenuOptionEnum):
+        if isinstance(option, ParamField.Menu.Option.Value):
             _add_if_set(result, option, f"{prefix}.options.{option.value}", "label")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Radio)
-def _(spec: ParamSpec.Radio, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Radio)
+def _(spec: ParamField.Radio, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     for option in spec.options:
@@ -99,62 +98,61 @@ def _(spec: ParamSpec.Radio, prefix: str) -> Dict[str, str]:
     return result
 
 
-@extract_param_messages.register(ParamSpec.Button)
-def _(spec: ParamSpec.Button, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Button)
+def _(spec: ParamField.Button, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     return result
 
 
-@extract_param_messages.register(ParamSpec.NumberFormat)
-def _(spec: ParamSpec.NumberFormat, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.NumberFormat)
+def _(spec: ParamField.NumberFormat, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
-    _add_if_set(result, spec, prefix, "placeholder")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Column)
-def _(spec: ParamSpec.Column, prefix: str) -> Dict[str, str]:
-    result = {}
-    _add_if_set(result, spec, prefix, "name")
-    _add_if_set(result, spec, prefix, "placeholder")
-    return result
-
-
-@extract_param_messages.register(ParamSpec.Multicolumn)
-def _(spec: ParamSpec.Multicolumn, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Column)
+def _(spec: ParamField.Column, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     _add_if_set(result, spec, prefix, "placeholder")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Tab)
-def _(spec: ParamSpec.Tab, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Multicolumn)
+def _(spec: ParamField.Multicolumn, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     _add_if_set(result, spec, prefix, "placeholder")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Multitab)
-def _(spec: ParamSpec.Multitab, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Tab)
+def _(spec: ParamField.Tab, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     _add_if_set(result, spec, prefix, "placeholder")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Multichartseries)
-def _(spec: ParamSpec.Multichartseries, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Multitab)
+def _(spec: ParamField.Multitab, prefix: str) -> Dict[str, str]:
+    result = {}
+    _add_if_set(result, spec, prefix, "name")
+    _add_if_set(result, spec, prefix, "placeholder")
+    return result
+
+
+@extract_param_messages.register(ParamField.Multichartseries)
+def _(spec: ParamField.Multichartseries, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     return result
 
 
-@extract_param_messages.register(ParamSpec.Secret)
-def _(spec: ParamSpec.Secret, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Secret)
+def _(spec: ParamField.Secret, prefix: str) -> Dict[str, str]:
     result = {}
     if spec.secret_logic.provider == "string":
         secret_prefix = f"{prefix}.secret_logic"
@@ -165,15 +163,15 @@ def _(spec: ParamSpec.Secret, prefix: str) -> Dict[str, str]:
     return result
 
 
-@extract_param_messages.register(ParamSpec.Custom)
-def _(spec: ParamSpec.Custom, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.Custom)
+def _(spec: ParamField.Custom, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     return result
 
 
-@extract_param_messages.register(ParamSpec.List)
-def _(spec: ParamSpec.List, prefix: str) -> Dict[str, str]:
+@extract_param_messages.register(ParamField.List)
+def _(spec: ParamField.List, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
     for child_spec in spec.child_parameters:

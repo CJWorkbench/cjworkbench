@@ -120,9 +120,8 @@ class AddStep(ChangesStepOutputs, BaseCommand):
         # Set _all_ params (not just the user-specified ones). Our
         # dropdown-menu actions only specify the relevant params and expect us
         # to set the others to defaults.
-        params = {**module_spec.default_params, **param_values}
-
-        module_spec.get_param_schema().validate(params)  # raises ValueError
+        params = {**module_spec.param_schema.default, **param_values}
+        module_spec.param_schema.validate(params)  # raises ValueError
 
         # step starts off "deleted" and gets un-deleted in forward().
         step = tab.steps.create(

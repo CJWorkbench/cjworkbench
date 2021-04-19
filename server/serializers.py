@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
 
 from allauth.account.utils import user_display
 from cjwmodule.i18n import I18nMessage
+from cjwmodule.spec.paramfield import ParamField
 from django.contrib.auth import get_user_model
 from icu import ICUError
 
@@ -18,7 +19,6 @@ from cjworkbench.i18n.trans import (
 from cjworkbench.models.userlimits import UserLimits
 from cjworkbench.settings import KB_ROOT_URL
 from cjwstate import clientside
-from cjwstate.modules.param_spec import ParamSpec
 from server.settingsutils import workbench_user_display
 
 User = get_user_model()
@@ -137,214 +137,245 @@ def jsonize_clientside_acl_entry(entry: clientside.AclEntry) -> Dict[str, Any]:
 
 
 @singledispatch
-def _jsonize_param_spec(
-    spec: ParamSpec, ctx: JsonizeModuleContext, prefix: str
+def _jsonize_param_field(
+    spec: ParamField, ctx: JsonizeModuleContext, prefix: str
 ) -> Dict[str, Any]:
-    return _camelize_dict(spec.to_dict())
+    raise NotImplementedError("Cannot handle spec %r" % spec)
 
 
-@_jsonize_param_spec.register(ParamSpec.String)
-def _(spec: ParamSpec.String, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
-    )
-    ret["default"] = _localize_module_spec_message(
-        f"{prefix}.default", ctx, spec.default
-    )
-    return ret
-
-
-@_jsonize_param_spec.register(ParamSpec.Statictext)
+@_jsonize_param_field.register(ParamField.String)
 def _(
-    spec: ParamSpec.Statictext, ctx: JsonizeModuleContext, prefix: str
+    spec: ParamField.String, ctx: JsonizeModuleContext, prefix: str
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    return ret
+    return dict(
+        type="string",
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        placeholder=_localize_module_spec_message(
+            f"{prefix}.placeholder", ctx, spec.placeholder
+        ),
+        default=_localize_module_spec_message(f"{prefix}.default", ctx, spec.default),
+        multiline=spec.multiline,
+        syntax=spec.syntax,
+    )
 
 
-@_jsonize_param_spec.register(ParamSpec.Integer)
+@_jsonize_param_field.register(ParamField.Float)
+@_jsonize_param_field.register(ParamField.Integer)
 def _(
-    spec: ParamSpec.Integer, ctx: JsonizeModuleContext, prefix: str
+    spec: Union[ParamField.Float, ParamField.Integer],
+    ctx: JsonizeModuleContext,
+    prefix: str,
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
+    return dict(
+        type=spec.type,
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        placeholder=_localize_module_spec_message(
+            f"{prefix}.placeholder", ctx, spec.placeholder
+        ),
+        default=spec.default,
     )
-    return ret
 
 
-@_jsonize_param_spec.register(ParamSpec.Float)
-def _(spec: ParamSpec.Float, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
-    )
-    return ret
-
-
-@_jsonize_param_spec.register(ParamSpec.Checkbox)
+@_jsonize_param_field.register(ParamField.Multichartseries)
+@_jsonize_param_field.register(ParamField.Multitab)
+@_jsonize_param_field.register(ParamField.Tab)
 def _(
-    spec: ParamSpec.Checkbox, ctx: JsonizeModuleContext, prefix: str
+    spec: Union[ParamField.Multichartseries, ParamField.Multitab, ParamField.Tab],
+    ctx: JsonizeModuleContext,
+    prefix: str,
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    return ret
-
-
-@_jsonize_param_spec.register(ParamSpec.Menu)
-def _(spec: ParamSpec.Menu, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
+    return dict(
+        type=spec.type,
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        placeholder=_localize_module_spec_message(
+            f"{prefix}.placeholder", ctx, spec.placeholder
+        ),
     )
-    ret["options"] = [
-        "separator"
-        if option is ParamSpec.Menu.Option.Separator
-        else {
-            "value": option.value,
-            "label": _localize_module_spec_message(
-                f"{prefix}.options.{option.value}.label", ctx, option.label
-            ),
-        }
-        for option in spec.options
-    ]
-    return ret
 
 
-@_jsonize_param_spec.register(ParamSpec.Radio)
-def _(spec: ParamSpec.Radio, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["options"] = [
-        {
-            "value": option.value,
-            "label": _localize_module_spec_message(
-                f"{prefix}.options.{option.value}.label", ctx, option.label
-            ),
-        }
-        for option in spec.options
-    ]
-    return ret
-
-
-@_jsonize_param_spec.register(ParamSpec.Button)
-def _(spec: ParamSpec.Button, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    return ret
-
-
-@_jsonize_param_spec.register(ParamSpec.NumberFormat)
+@_jsonize_param_field.register(ParamField.Checkbox)
+@_jsonize_param_field.register(ParamField.Custom)
+@_jsonize_param_field.register(ParamField.NumberFormat)
 def _(
-    spec: ParamSpec.NumberFormat, ctx: JsonizeModuleContext, prefix: str
+    spec: Union[ParamField.Checkbox, ParamField.Custom, ParamField.NumberFormat],
+    ctx: JsonizeModuleContext,
+    prefix: str,
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
+    return dict(
+        type=spec.type,
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        default=spec.default,
     )
-    return ret
 
 
-@_jsonize_param_spec.register(ParamSpec.Column)
-def _(spec: ParamSpec.Column, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
+@_jsonize_param_field.register(ParamField.Menu)
+def _(spec: ParamField.Menu, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    return dict(
+        type="menu",
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        placeholder=_localize_module_spec_message(
+            f"{prefix}.placeholder", ctx, spec.placeholder
+        ),
+        default=spec.default,
+        options=[
+            "separator"
+            if option is ParamField.Menu.Option.Separator
+            else {
+                "value": option.value,
+                "label": _localize_module_spec_message(
+                    f"{prefix}.options.{option.value}.label", ctx, option.label
+                ),
+            }
+            for option in spec.options
+        ],
     )
-    return ret
 
 
-@_jsonize_param_spec.register(ParamSpec.Multicolumn)
+@_jsonize_param_field.register(ParamField.Radio)
+def _(spec: ParamField.Radio, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    return dict(
+        type="radio",
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        default=spec.default,
+        options=[
+            "separator"
+            if option is ParamField.Menu.Option.Separator
+            else {
+                "value": option.value,
+                "label": _localize_module_spec_message(
+                    f"{prefix}.options.{option.value}.label", ctx, option.label
+                ),
+            }
+            for option in spec.options
+        ],
+    )
+
+
+@_jsonize_param_field.register(ParamField.Button)
+@_jsonize_param_field.register(ParamField.Statictext)
+@_jsonize_param_field.register(ParamField.Timezone)
 def _(
-    spec: ParamSpec.Multicolumn, ctx: JsonizeModuleContext, prefix: str
+    spec: Union[ParamField.Button, ParamField.Statictext, ParamField.Timezone],
+    ctx: JsonizeModuleContext,
+    prefix: str,
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
+    return dict(
+        type=spec.type,
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
     )
-    return ret
 
 
-@_jsonize_param_spec.register(ParamSpec.Tab)
-def _(spec: ParamSpec.Tab, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
-    )
-    return ret
-
-
-@_jsonize_param_spec.register(ParamSpec.Multitab)
+@_jsonize_param_field.register(ParamField.Column)
+@_jsonize_param_field.register(ParamField.Multicolumn)
 def _(
-    spec: ParamSpec.Multitab, ctx: JsonizeModuleContext, prefix: str
+    spec: Union[ParamField.Column, ParamField.Multicolumn],
+    ctx: JsonizeModuleContext,
+    prefix: str,
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["placeholder"] = _localize_module_spec_message(
-        f"{prefix}.placeholder", ctx, spec.placeholder
+    return dict(
+        type=spec.type,
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        placeholder=_localize_module_spec_message(
+            f"{prefix}.placeholder", ctx, spec.placeholder
+        ),
+        columnTypes=list(spec.column_types),
+        tabParameter=spec.tab_parameter,
     )
-    return ret
 
 
-@_jsonize_param_spec.register(ParamSpec.Multichartseries)
+@_jsonize_param_field.register(ParamField.Condition)
+@_jsonize_param_field.register(ParamField.File)
 def _(
-    spec: ParamSpec.Multichartseries, ctx: JsonizeModuleContext, prefix: str
+    spec: Union[ParamField.Condition, ParamField.File],
+    ctx: JsonizeModuleContext,
+    prefix: str,
 ) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    return ret
+    return dict(
+        type=spec.type,
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+    )
 
 
-@_jsonize_param_spec.register(ParamSpec.Secret)
-def _(spec: ParamSpec.Secret, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    if spec.secret_logic.provider == "string":
-        ret["secretLogic"]["label"] = _localize_module_spec_message(
-            f"{prefix}.secret_logic.label", ctx, spec.secret_logic.label
-        )
-        ret["secretLogic"]["help"] = _localize_module_spec_message(
-            f"{prefix}.secret_logic.help", ctx, spec.secret_logic.help
-        )
-        ret["secretLogic"]["helpUrl"] = _localize_module_spec_message(
-            f"{prefix}.secret_logic.help_url", ctx, spec.secret_logic.help_url
-        )
-        ret["secretLogic"]["helpUrlPrompt"] = _localize_module_spec_message(
-            f"{prefix}.secret_logic.help_url_prompt",
-            ctx,
-            spec.secret_logic.help_url_prompt,
-        )
-    return ret
+@_jsonize_param_field.register(ParamField.Gdrivefile)
+def _(
+    spec: ParamField.Gdrivefile, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    return dict(
+        type="gdrivefile",
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        secretParameter=spec.secret_parameter,
+    )
 
 
-@_jsonize_param_spec.register(ParamSpec.Custom)
-def _(spec: ParamSpec.Custom, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    return ret
+@_jsonize_param_field.register(ParamField.Secret)
+def _(
+    spec: ParamField.Secret, ctx: JsonizeModuleContext, prefix: str
+) -> Dict[str, Any]:
+    logic = spec.secret_logic
+    return dict(
+        type="secret",
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        secretLogic=(
+            dict(
+                provider="string",
+                label=_localize_module_spec_message(
+                    f"{prefix}.secret_logic.label", ctx, spec.secret_logic.label
+                ),
+                pattern=logic.pattern,
+                placeholder=logic.placeholder,
+                help=_localize_module_spec_message(
+                    f"{prefix}.secret_logic.help", ctx, spec.secret_logic.help
+                ),
+                helpUrl=_localize_module_spec_message(
+                    f"{prefix}.secret_logic.help_url", ctx, spec.secret_logic.help_url
+                ),
+                helpUrlPrompt=_localize_module_spec_message(
+                    f"{prefix}.secret_logic.help_url_prompt",
+                    ctx,
+                    spec.secret_logic.help_url_prompt,
+                ),
+            )
+            if logic.provider == "string"
+            else dict(provider=logic.provider, service=logic.service)
+        ),
+    )
 
 
-@_jsonize_param_spec.register(ParamSpec.List)
-def _(spec: ParamSpec.List, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
-    ret = _camelize_dict(spec.to_dict())
-    ret["name"] = _localize_module_spec_message(f"{prefix}.name", ctx, spec.name)
-    ret["childDefault"] = spec.dtype.inner_dtype.default
-    ret["childParameters"] = [
-        _jsonize_param_spec(
-            child_spec, ctx, f"{prefix}.child_parameters.{child_spec.id_name}"
-        )
-        for child_spec in spec.child_parameters
-    ]
-    return ret
+@_jsonize_param_field.register(ParamField.List)
+def _(spec: ParamField.List, ctx: JsonizeModuleContext, prefix: str) -> Dict[str, Any]:
+    return dict(
+        type="list",
+        idName=spec.id_name,
+        visibleIf=_camelize_value(spec.visible_if),
+        name=_localize_module_spec_message(f"{prefix}.name", ctx, spec.name),
+        childDefault=spec.to_schema().inner_schema.default,
+        childParameters=[
+            _jsonize_param_field(
+                child_spec, ctx, f"{prefix}.child_parameters.{child_spec.id_name}"
+            )
+            for child_spec in spec.child_parameters
+        ],
+    )
 
 
 def jsonize_clientside_workflow(
@@ -428,7 +459,7 @@ def jsonize_clientside_module(
         else None,
         "icon": spec.icon or "url",
         "loads_data": spec.loads_data,
-        "uses_data": spec.get_uses_data(),
+        "uses_data": spec.uses_data,
         "help_url": help_url,
         "has_zen_mode": spec.has_zen_mode,
         "has_html_output": spec.html_output,
@@ -437,7 +468,9 @@ def jsonize_clientside_module(
         ),
         "js_module": module.js_module,
         "param_fields": [
-            _jsonize_param_spec(field, module_ctx, prefix=f"parameters.{field.id_name}")
+            _jsonize_param_field(
+                field, module_ctx, prefix=f"parameters.{field.id_name}"
+            )
             for field in spec.param_fields
         ],
     }

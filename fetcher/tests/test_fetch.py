@@ -7,6 +7,7 @@ from typing import NamedTuple
 from unittest.mock import patch
 
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+from cjwmodule.spec.paramschema import ParamSchema
 from dateutil import parser
 
 import cjwstate.modules
@@ -25,8 +26,7 @@ from cjwkernel.types import (
 from cjwkernel.tests.util import arrow_table_context, parquet_file
 from cjwkernel.util import tempfile_context
 from cjwstate import s3, rabbitmq, rendercache, storedobjects
-from cjwstate.models import CachedRenderResult, ModuleVersion, Step, Workflow
-from cjwstate.modules.param_dtype import ParamDType
+from cjwstate.models import CachedRenderResult, Step, Workflow
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import (
     DbTestCase,
@@ -47,7 +47,7 @@ def async_value(v):
 class MockModuleVersion(NamedTuple):
     id_name: str = "mod"
     source_version_hash: str = "abc123"
-    param_schema: ParamDType.Dict = ParamDType.Dict({})
+    param_schema: ParamSchema.Dict = ParamSchema.Dict({})
 
 
 class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):

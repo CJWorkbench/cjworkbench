@@ -68,7 +68,6 @@ class SetStepParams(ChangesStepOutputs, BaseCommand):
         old_values = step.params
 
         module_spec = module_zipfile.get_spec()
-        param_schema = module_spec.get_param_schema()
 
         # New values: store _migrated_ old_values, with new_values applied on
         # top
@@ -83,9 +82,9 @@ class SetStepParams(ChangesStepOutputs, BaseCommand):
         #
         # If you're seeing this because your unit test failed, try this:
         #     self.kernel.migrate_params.side_effect = lambda m, p: p
-        param_schema.validate(migrated_old_values)  # raises ValueError
+        module_spec.param_schema.validate(migrated_old_values)  # raises ValueError
         new_values = {**migrated_old_values, **new_values}
-        param_schema.validate(new_values)  # raises ValueError
+        module_spec.param_schema.validate(new_values)  # raises ValueError
 
         return {
             **kwargs,

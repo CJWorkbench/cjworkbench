@@ -256,8 +256,6 @@ class Step(models.Model):
     # --- Duplicate ---
     # used when duplicating a whole workflow
     def duplicate_into_new_workflow(self, to_tab):
-        to_workflow = to_tab.workflow
-
         # Slug must be unique across the entire workflow; therefore, the
         # duplicate Step must be on a different workflow. (If we need
         # to duplicate within the same workflow, we'll need to change the
@@ -534,7 +532,7 @@ class Step(models.Model):
             from cjwstate.params import get_migrated_params
 
             module_spec = module_zipfile.get_spec()
-            param_schema = module_spec.get_param_schema()
+            param_schema = module_spec.param_schema
             # raise ModuleError
             params = get_migrated_params(self, module_zipfile=module_zipfile)
             try:
@@ -545,7 +543,7 @@ class Step(models.Model):
                     self.module_id_name,
                     params,
                 )
-                params = param_schema.coerce(params)
+                params = param_schema.default
 
         crr = self._build_cached_render_result_fresh_or_not()
         if crr is None:

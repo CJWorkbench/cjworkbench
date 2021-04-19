@@ -142,7 +142,7 @@ def _add_step_to_tab(step_dict, order, tab, lesson):
     # All params not set in json get default values
     # Also, we must have a dict with all param values set or we can't migrate
     # params later
-    params = {**module_spec.default_params, **step_dict["params"]}
+    params = {**module_spec.param_schema.default, **step_dict["params"]}
 
     # Rewrite 'url' params: if the spec has them as relative, make them the
     # absolute path -- relative to the lesson URL.
@@ -164,7 +164,7 @@ def _add_step_to_tab(step_dict, order, tab, lesson):
 
     # 500 error if params are invalid
     # TODO testme
-    module_spec.get_param_schema().validate(params)  # raises ValueError
+    module_spec.param_schema.validate(params)  # raises ValueError
 
     return tab.steps.create(
         order=order,

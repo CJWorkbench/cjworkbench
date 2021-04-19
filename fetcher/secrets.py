@@ -1,13 +1,12 @@
-import asyncio
-import json
 from functools import singledispatch
 from typing import Any, Dict, List, Optional
 
 import httpx
+from cjwmodule.spec.paramfield import ParamField
+
 from cjwkernel.i18n import trans
 from cjwkernel.types import I18nMessage
 from cjwstate import oauth
-from cjwstate.modules.param_spec import ParamSpec, ParamSpecSecret
 
 
 UserProvidedSecret = Optional[Dict[str, Any]]
@@ -23,7 +22,7 @@ def _service_no_longer_configured_error(service: str):
 
 
 async def prepare_secrets(
-    fields: List[ParamSpec], values: Dict[str, UserProvidedSecret]
+    fields: List[ParamField], values: Dict[str, UserProvidedSecret]
 ) -> Dict[str, ModuleSecret]:
     """Given secrets set by the user, build secrets for a module's `fetch()` call.
 
@@ -44,7 +43,7 @@ async def prepare_secrets(
             field.secret_logic, values.get(field.id_name)
         )
         for field in fields
-        if isinstance(field, ParamSpecSecret)
+        if isinstance(field, ParamField.Secret)
     }
 
 
@@ -63,7 +62,7 @@ def _secret_error(user_secret: Dict[str, Any], message: I18nMessage) -> Dict[str
 
 @singledispatch
 async def prepare_secret(
-    logic: ParamSpecSecret.Logic, value: UserProvidedSecret
+    logic: ParamField.Secret.Logic, value: UserProvidedSecret
 ) -> ModuleSecret:
     """Convert the user-provided value in `step.secrets` to module format.
 
@@ -74,9 +73,9 @@ async def prepare_secret(
     raise NotImplementedError
 
 
-@prepare_secret.register(ParamSpecSecret.Logic.Oauth1a)
+@prepare_secret.register(ParamField.Secret.Logic.Oauth1a)
 async def prepare_secret_oauth1a(
-    logic: ParamSpecSecret.Logic.Oauth1a, value: UserProvidedSecret
+    logic: ParamField.Secret.Logic.Oauth1a, value: UserProvidedSecret
 ) -> ModuleSecret:
     """Prepare an OAuth1a secret for a module fetch() call.
 
@@ -144,7 +143,7 @@ async def _refresh_oauth2_token(
     """
     timeout = httpx.Timeout(30)
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
                 service.refresh_url,
                 data={
@@ -219,9 +218,9 @@ async def _refresh_oauth2_token(
         )
 
 
-@prepare_secret.register(ParamSpecSecret.Logic.Oauth2)
+@prepare_secret.register(ParamField.Secret.Logic.Oauth2)
 async def prepare_secret_oauth2(
-    logic: ParamSpecSecret.Logic.Oauth2, value: UserProvidedSecret
+    logic: ParamField.Secret.Logic.Oauth2, value: UserProvidedSecret
 ) -> ModuleSecret:
     """Prepare an OAuth2 secret for a module fetch() call.
 
@@ -278,9 +277,9 @@ async def prepare_secret_oauth2(
     }
 
 
-@prepare_secret.register(ParamSpecSecret.Logic.String)
+@prepare_secret.register(ParamField.Secret.Logic.String)
 async def prepare_secret_string(
-    logic: ParamSpecSecret.Logic.String, value: UserProvidedSecret
+    logic: ParamField.Secret.Logic.String, value: UserProvidedSecret
 ) -> ModuleSecret:
     """Prepare a String secret for a module fetch() call.
 

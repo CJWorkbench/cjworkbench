@@ -278,7 +278,7 @@ def fetch_or_wrap_error(
             ],
         )
     module_spec = module_zipfile.get_spec()
-    param_schema = module_spec.get_param_schema()
+    param_schema = module_spec.param_schema
 
     if isinstance(migrated_params_or_error, ModuleError):
         # raise the exception so we can log it

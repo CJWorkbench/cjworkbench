@@ -2009,7 +2009,7 @@ class RenderRequest(object):
      - DEPRECATED_input_table: Output from previous Step.
 
     This is zero-row, zero-column on the first Step in a Tab.
-     - params: User-supplied parameters; must match the module's param_spec.
+     - params: User-supplied parameters; must match the module's param_schema.
 
     `File` params are passed as strings, pointing to temporary files in
     `basedir`.

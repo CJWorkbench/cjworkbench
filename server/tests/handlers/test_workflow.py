@@ -8,7 +8,6 @@ from server.handlers.workflow import (
 )
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import SetWorkflowTitle
 from .util import HandlerTestCase
 
 

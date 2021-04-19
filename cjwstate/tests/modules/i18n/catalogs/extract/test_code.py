@@ -195,7 +195,7 @@ def render(table):
         """
         )
         with self.assertRaises(SyntaxError):
-            result = find_messages_in_module_code(code, "module.py")
+            find_messages_in_module_code(code, "module.py")
 
     def test_translation_with_nonstring_id_and_default(self):
         code = BytesIO(

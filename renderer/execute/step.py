@@ -263,7 +263,6 @@ def _execute_step_pre(
         if not module_spec.loads_data and not input_table_columns:
             raise NoLoadedDataError
 
-        param_schema = module_spec.get_param_schema()
         render_context = renderprep.RenderContext(
             step.id,
             input_table_columns=input_table_columns,
@@ -273,7 +272,9 @@ def _execute_step_pre(
             params=raw_params,  # ugh
         )
         # raise TabCycleError, TabOutputUnreachableError, PromptingError
-        params = renderprep.get_param_values(param_schema, raw_params, render_context)
+        params = renderprep.get_param_values(
+            module_spec.param_schema, raw_params, render_context
+        )
 
         return ExecuteStepPreResult(fetch_result, params)
 

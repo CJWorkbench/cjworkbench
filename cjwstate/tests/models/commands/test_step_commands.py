@@ -52,7 +52,7 @@ class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
 
         # Add a module, insert before the existing one, check to make sure it
         # went there and old one is after
-        cmd = self.run_with_async_db(
+        self.run_with_async_db(
             commands.do(
                 AddStep,
                 workflow_id=self.workflow.id,
