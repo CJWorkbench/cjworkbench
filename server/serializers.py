@@ -294,7 +294,7 @@ def _(
         placeholder=_localize_module_spec_message(
             f"{prefix}.placeholder", ctx, spec.placeholder
         ),
-        columnTypes=list(spec.column_types),
+        columnTypes=(list(spec.column_types) if spec.column_types else None),
         tabParameter=spec.tab_parameter,
     )
 
