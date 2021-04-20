@@ -1,6 +1,6 @@
 beautifulsoup4==4.7.1
 cchardet
-cjwmodule~=4.1.3
+cjwmodule~=4.1.4
 cjwpandasmodule~=0.2.0
 cjwparquet~=2.2.0
 cjwparse~=2.0.1
