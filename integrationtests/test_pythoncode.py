@@ -73,7 +73,7 @@ def process(table):
         # _previous_ iframe, if any -- the one that appeared when we added the
         # step -- will disappear.
         b.assert_element(
-            '.step[data-module-name="pythoncode"]:not(.status-busy)', wait=True
+            '.step[data-module-name="Python"]:not(.status-busy)', wait=True
         )
         # Now, wait for the new iframe to appear.
         #
