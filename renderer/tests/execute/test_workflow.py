@@ -37,6 +37,7 @@ def mock_render(arrow_table: pa.Table):
         tab,
         fetch_result,
         tab_outputs,
+        uploaded_files,
         output_filename,
     ):
         output_path = basedir / output_filename

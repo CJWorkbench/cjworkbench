@@ -22,6 +22,7 @@ from cjwkernel.types import (
     RenderError,
     Tab,
     TabOutput,
+    UploadedFile,
 )
 from cjwkernel.validate import ValidateError, load_untrusted_arrow_file_with_columns
 from cjwkernel.util import tempfile_context
@@ -139,6 +140,7 @@ def invoke_render(
     tab: Tab,
     fetch_result: Optional[FetchResult],
     tab_outputs: List[TabOutput],
+    uploaded_files: Dict[str, UploadedFile],
     output_filename: str,
 ) -> LoadedRenderResult:
     """Use kernel to process `table` with module `render` function.
@@ -172,6 +174,7 @@ def invoke_render(
             tab=tab,
             fetch_result=fetch_result,
             tab_outputs=tab_outputs,
+            uploaded_files=uploaded_files,
             output_filename=output_filename,
         )
 
@@ -221,6 +224,7 @@ class ExecuteStepPreResult(NamedTuple):
     fetch_result: Optional[FetchResult]
     params: Dict[str, Any]
     tab_outputs: List[TabOutput]
+    uploaded_files: Dict[str, UploadedFile]
 
 
 @database_sync_to_async
@@ -265,7 +269,7 @@ def _execute_step_pre(
             raise NoLoadedDataError
 
         # raise TabCycleError, TabOutputUnreachableError, PromptingError
-        params, tab_outputs = renderprep.prep_params(
+        params, tab_outputs, uploaded_files = renderprep.prep_params(
             params=raw_params,
             schema=module_spec.param_schema,
             step_id=step.id,
@@ -275,7 +279,7 @@ def _execute_step_pre(
             exit_stack=exit_stack,
         )
 
-        return ExecuteStepPreResult(fetch_result, params, tab_outputs)
+        return ExecuteStepPreResult(fetch_result, params, tab_outputs, uploaded_files)
 
 
 @database_sync_to_async
@@ -399,7 +403,7 @@ async def _render_step(
         try:
             # raise UnneededExecution, TabCycleError, TabOutputUnreachableError,
             # NoLoadedDataError, PromptingError
-            fetch_result, params, tab_outputs = await _execute_step_pre(
+            fetch_result, params, tab_outputs, uploaded_files = await _execute_step_pre(
                 basedir=basedir,
                 exit_stack=exit_stack,
                 workflow=workflow,
@@ -467,6 +471,7 @@ async def _render_step(
                     params=params,
                     tab=tab,
                     tab_outputs=tab_outputs,
+                    uploaded_files=uploaded_files,
                     fetch_result=fetch_result,
                     output_filename=output_path.name,
                 ),

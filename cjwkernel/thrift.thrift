@@ -120,7 +120,6 @@ struct RenderError {
   2: list<QuickFix> quick_fixes,
 }
 
-
 /**
  * Parameters to `fetch()`.
  */
@@ -204,6 +203,23 @@ struct FetchResult {
 }
 
 /**
+ * File the user uploaded.
+ *
+ * This points to a file on disk. The file on disk has the same extension as the
+ * original filename.
+ */
+struct UploadedFile {
+  /** Filename the user uploaded. */
+  1: string name,
+
+  /** Filename on disk. */
+  2: string filename,
+
+  /** Time the file was uploaded, in microseconds since the epoch. */
+  3: i64 uploaded_at_timestampus,
+}
+
+/**
  * Parameters to `render()`.
  */
 struct RenderRequest {
@@ -260,6 +276,11 @@ struct RenderRequest {
    * Outputs from other tabs that are inputs into this Step.
    */
   7: list<TabOutput> tab_outputs,
+
+  /**
+   * Files the user uploaded and chose, keyed by UUID.
+   */
+  8: map<string, UploadedFile> uploaded_files,
 }
 
 /**

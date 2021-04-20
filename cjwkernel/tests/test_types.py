@@ -1,3 +1,4 @@
+import datetime
 import os
 import tempfile
 import unittest
@@ -374,3 +375,35 @@ class ThriftConvertersTest(unittest.TestCase):
                     [types.RenderError(types.I18nMessage("hi", {}, None))],
                 ),
             )
+
+    def test_uploaded_file_to_thrift(self):
+        self.assertEqual(
+            types.arrow_uploaded_file_to_thrift(
+                types.UploadedFile(
+                    "x.tar.gz",
+                    "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                    datetime.datetime(2021, 4, 20, 15, 48, 11, 906539),
+                ),
+            ),
+            ttypes.UploadedFile(
+                "x.tar.gz",
+                "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                1618933691906539,
+            ),
+        )
+
+    def test_uploaded_file_from_thrift(self):
+        self.assertEqual(
+            types.thrift_uploaded_file_to_arrow(
+                ttypes.UploadedFile(
+                    "x.tar.gz",
+                    "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                    1618933691906539,
+                )
+            ),
+            types.UploadedFile(
+                "x.tar.gz",
+                "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                datetime.datetime(2021, 4, 20, 15, 48, 11, 906539),
+            ),
+        )

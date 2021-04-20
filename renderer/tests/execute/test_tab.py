@@ -33,6 +33,7 @@ def mock_render(arrow_table: pa.Table):
         params,
         tab,
         tab_outputs,
+        uploaded_files,
         fetch_result,
         output_filename,
     ):

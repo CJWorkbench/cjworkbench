@@ -47,7 +47,7 @@ def _prepare_params(
 
     The returned value is the same as `params`, except:
 
-    * File params become `Path` objects
+    * File params raise NotImplementedError
     * Tab and Multitab are converted to `ptypes.TabOutput` objects
     """
 
@@ -70,7 +70,7 @@ def _prepare_params(
         elif isinstance(schema, ParamSchema.Multitab):
             return [pandas_tab_outputs[v] for v in value]
         elif isinstance(schema, ParamSchema.File):
-            return basedir / value
+            raise NotImplementedError
         else:
             return value
 

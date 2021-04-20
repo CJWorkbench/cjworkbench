@@ -20,9 +20,11 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
     TabOutput,
+    UploadedFile,
     arrow_fetch_result_to_thrift,
     arrow_tab_to_thrift,
     arrow_tab_output_to_thrift,
+    arrow_uploaded_file_to_thrift,
     pydict_to_thrift_json_object,
     thrift_json_object_to_pydict,
     thrift_fetch_result_to_arrow,
@@ -231,6 +233,10 @@ class Kernel:
                 "cjwmodule.i18n",
                 "cjwmodule.http.client",
                 "cjwmodule.http.httpfile",
+                "cjwmodule.spec",
+                "cjwmodule.spec.loader",
+                "cjwmodule.spec.paramfield",
+                "cjwmodule.spec.paramschema",
                 "cjwmodule.util",
                 "cjwpandasmodule",
                 "cjwpandasmodule.convert",
@@ -283,6 +289,7 @@ class Kernel:
         tab: Tab,
         fetch_result: Optional[FetchResult],
         tab_outputs: List[TabOutput],
+        uploaded_files: Dict[str, UploadedFile],
         output_filename: str,
     ) -> RenderResult:
         """Run the module's `render_thrift()` function and return its result.
@@ -296,6 +303,9 @@ class Kernel:
             params=pydict_to_thrift_json_object(params),
             tab=arrow_tab_to_thrift(tab),
             tab_outputs=[arrow_tab_output_to_thrift(to) for to in tab_outputs],
+            uploaded_files={
+                k: arrow_uploaded_file_to_thrift(v) for k, v in uploaded_files.items()
+            },
             fetch_result=(
                 None
                 if fetch_result is None

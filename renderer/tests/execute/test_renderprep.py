@@ -5,10 +5,11 @@ from typing import Any, Dict
 
 from cjwmodule.spec.paramschema import ParamSchema
 
-from cjwkernel.types import Column, ColumnType, Tab, TabOutput
+from cjwkernel.types import Column, ColumnType, Tab, TabOutput, UploadedFile
 from cjwkernel.util import tempdir_context
 from cjwstate import s3
-from cjwstate.models import Workflow, UploadedFile
+from cjwstate.models.workflow import Workflow
+from cjwstate.models.uploaded_file import UploadedFile as UploadedFileModel
 from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import PrepParamsResult, prep_params
 from renderer.execute.types import (
@@ -90,22 +91,76 @@ class CleanValueTests(DbTestCase):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
-        id = str(uuid.uuid4())
-        key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
+        key = f"wf-${workflow.id}/wfm-${step.id}/6e00511a-8ac4-4b72-9acc-9d069992b5cf"
         s3.put_bytes(s3.UserFilesBucket, key, b"1234")
-        UploadedFile.objects.create(
-            step=step, name="x.csv.gz", size=4, uuid=id, key=key
+        model = UploadedFileModel.objects.create(
+            step=step,
+            name="x.csv.gz",
+            size=4,
+            uuid="6e00511a-8ac4-4b72-9acc-9d069992b5cf",
+            key=key,
         )
         with ExitStack() as inner_stack:
-            result: Path = self._call_clean_value(
-                ParamSchema.File(), id, step_id=step.id, exit_stack=inner_stack
+            result = self._call_prep_params(
+                ParamSchema.Dict({"file": ParamSchema.File()}),
+                {"file": "6e00511a-8ac4-4b72-9acc-9d069992b5cf"},
+                step_id=step.id,
+                exit_stack=inner_stack,
             )
-            self.assertIsInstance(result, Path)
-            self.assertEqual(result.read_bytes(), b"1234")
-            self.assertEqual(result.suffixes, [".csv", ".gz"])
+            self.assertEqual(
+                result,
+                PrepParamsResult(
+                    {"file": "6e00511a-8ac4-4b72-9acc-9d069992b5cf"},
+                    tab_outputs=[],
+                    uploaded_files={
+                        "6e00511a-8ac4-4b72-9acc-9d069992b5cf": UploadedFile(
+                            "x.csv.gz",
+                            "6e00511a-8ac4-4b72-9acc-9d069992b5cf_x.csv.gz",
+                            model.created_at,
+                        )
+                    },
+                ),
+            )
+            self.assertEqual(
+                (
+                    self.basedir / "6e00511a-8ac4-4b72-9acc-9d069992b5cf_x.csv.gz"
+                ).read_bytes(),
+                b"1234",
+            )
 
         # Assert that once `exit_stack` goes out of scope, file is deleted
-        self.assertFalse(result.exists())
+        self.assertFalse(
+            (self.basedir / "6e00511a-8ac4-4b72-9acc-9d069992b5cf_x.csv.gz").exists()
+        )
+
+    def test_clean_file_safe_filename(self):
+        workflow = Workflow.create_and_init()
+        tab = workflow.tabs.first()
+        step = tab.steps.create(module_id_name="uploadfile", order=0, slug="step-1")
+        key = f"wf-${workflow.id}/wfm-${step.id}/6e00511a-8ac4-4b72-9acc-9d069992b5cf"
+        s3.put_bytes(s3.UserFilesBucket, key, b"1234")
+        model = UploadedFileModel.objects.create(
+            step=step,
+            name="/etc/passwd.$/etc/passwd",
+            size=4,
+            uuid="6e00511a-8ac4-4b72-9acc-9d069992b5cf",
+            key=key,
+        )
+        with ExitStack() as inner_stack:
+            result = self._call_prep_params(
+                ParamSchema.Dict({"file": ParamSchema.File()}),
+                {"file": "6e00511a-8ac4-4b72-9acc-9d069992b5cf"},
+                step_id=step.id,
+                exit_stack=inner_stack,
+            )
+            self.assertEqual(
+                result.uploaded_files["6e00511a-8ac4-4b72-9acc-9d069992b5cf"],
+                UploadedFile(
+                    "/etc/passwd.$/etc/passwd",
+                    "6e00511a-8ac4-4b72-9acc-9d069992b5cf_-etc-passwd.--etc-passwd",
+                    model.created_at,
+                ),
+            )
 
     def test_clean_file_no_uploaded_file(self):
         workflow = Workflow.create_and_init()
@@ -128,7 +183,7 @@ class CleanValueTests(DbTestCase):
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         # Oops -- let's _not_ put the file!
         # s3.put_bytes(s3.UserFilesBucket, key, b'1234')
-        UploadedFile.objects.create(
+        UploadedFileModel.objects.create(
             step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
         result = self._call_clean_value(ParamSchema.File(), id, step_id=step.id)
@@ -145,7 +200,7 @@ class CleanValueTests(DbTestCase):
         id = str(uuid.uuid4())
         key = f"wf-${workflow.id}/wfm-${step.id}/${id}"
         s3.put_bytes(s3.UserFilesBucket, key, b"1234")
-        UploadedFile.objects.create(
+        UploadedFileModel.objects.create(
             step=step2, name="x.csv.gz", size=4, uuid=id, key=key
         )
         result = self._call_clean_value(ParamSchema.File(), id, step_id=step.id)
@@ -403,6 +458,7 @@ class CleanValueTests(DbTestCase):
             PrepParamsResult(
                 {"x": "tab-1"},
                 tab_outputs=[TabOutput(Tab("tab-1", "Tab 1"), "tab-1.arrow")],
+                uploaded_files={},
             ),
         )
 
@@ -495,6 +551,7 @@ class CleanValueTests(DbTestCase):
             PrepParamsResult(
                 {"x": ["tab-2", "tab-3"]},
                 [TabOutput(tab2, "tab-2.arrow"), TabOutput(tab3, "tab-3.arrow")],
+                uploaded_files={},
             ),
         )
 
@@ -516,6 +573,7 @@ class CleanValueTests(DbTestCase):
             PrepParamsResult(
                 {"x": ["tab-3", "tab-2"]},
                 [TabOutput(tab3, "tab-3.arrow"), TabOutput(tab2, "tab-2.arrow")],
+                uploaded_files={},
             ),
         )
 

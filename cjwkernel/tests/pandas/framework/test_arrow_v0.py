@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 import pyarrow as pa
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+from cjwmodule.spec.paramschema import ParamSchema
 
 from cjwkernel.tests.util import override_settings
 from cjwkernel.types import (
@@ -11,6 +12,7 @@ from cjwkernel.types import (
     I18nMessage,
     RenderError,
     RenderResult,
+    UploadedFile,
 )
 from cjwkernel.validate import load_untrusted_arrow_file_with_columns
 from .util import ModuleTestEnv
@@ -180,3 +182,29 @@ class RenderTests(unittest.TestCase):
                     make_column("L", [date(2021, 4, 1)], unit="day"),  # fallback
                 ),
             )
+
+    def test_render_file_param(self):
+        def render(arrow_table, params, output_path, *args, **kwargs):
+            self.assertEqual(params["file"].read_bytes(), b"hi")
+
+        param_schema = ParamSchema.Dict({"file": ParamSchema.File()})
+        with ModuleTestEnv(param_schema=param_schema, render=render) as env:
+            filename = "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz"
+            (env.basedir / filename).write_bytes(b"hi")
+            env.call_render(
+                make_table(),
+                {"file": "839526fa-1adb-4eec-9d29-f5b4d2fbba30"},
+                uploaded_files={
+                    "839526fa-1adb-4eec-9d29-f5b4d2fbba30": UploadedFile(
+                        "x.tar.gz", filename, datetime.now()
+                    )
+                },
+            )
+
+    def test_render_empty_file_param(self):
+        def render(arrow_table, params, output_path, *args, **kwargs):
+            self.assertIsNone(params["file"])
+
+        param_schema = ParamSchema.Dict({"file": ParamSchema.File()})
+        with ModuleTestEnv(param_schema=param_schema, render=render) as env:
+            env.call_render(make_table(), {"file": None})

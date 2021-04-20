@@ -189,6 +189,7 @@ class KernelTests(unittest.TestCase):
                     params={"m": 2.5, "s": "XX"},
                     tab=types.Tab("tab-1", "Tab 1"),
                     tab_outputs=[],
+                    uploaded_files={},
                     fetch_result=None,
                     output_filename=output_path.name,
                 )
@@ -226,6 +227,7 @@ class KernelTests(unittest.TestCase):
                         params={"m": 2.5, "s": "XX"},
                         tab=types.Tab("tab-1", "Tab 1"),
                         tab_outputs=[],
+                        uploaded_files={},
                         fetch_result=None,
                         output_filename=output_path.name,
                     )
@@ -283,6 +285,7 @@ class KernelTests(unittest.TestCase):
     #                     params={"m": 2.5, "s": "XX"},
     #                     tab=types.Tab("tab-1", "Tab 1"),
     #                     tab_outputs=[],
+    #                     uploaded_files={},
     #                     fetch_result=None,
     #                     output_filename=output_path.name,
     #                 )
@@ -312,6 +315,7 @@ class KernelTests(unittest.TestCase):
                             params={},
                             tab=types.Tab("tab-1", "Tab 1"),
                             tab_outputs=[],
+                            uploaded_files={},
                             fetch_result=None,
                             output_filename=output_path.name,
                         )

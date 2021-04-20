@@ -15,7 +15,9 @@ from cjwkernel.types import (
     RenderResult,
     Tab,
     TabOutput,
+    UploadedFile,
     arrow_fetch_result_to_thrift,
+    arrow_uploaded_file_to_thrift,
     pydict_to_thrift_json_object,
     arrow_tab_to_thrift,
     arrow_tab_output_to_thrift,
@@ -112,6 +114,7 @@ class ModuleTestEnv:
         tab: Tab = Tab("tab-1", "Tab 1"),
         tab_outputs: List[TabOutput] = [],
         fetch_result: Optional[FetchResult] = None,
+        uploaded_files: Dict[str, UploadedFile] = {},
     ) -> RenderOutcome:
         """Conveniently call the module's `render_thrift()`.
 
@@ -140,6 +143,10 @@ class ModuleTestEnv:
                             if fetch_result is not None
                             else None
                         ),
+                        uploaded_files={
+                            k: arrow_uploaded_file_to_thrift(v)
+                            for k, v in uploaded_files.items()
+                        },
                         output_filename=output_path.name,
                     )
                 )

@@ -9,10 +9,12 @@ from cjwkernel import settings
 from cjwkernel.pandas.types import coerce_RenderError_list
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
+    UploadedFile,
     arrow_fetch_result_to_thrift,
     arrow_render_error_to_thrift,
     thrift_fetch_result_to_arrow,
     thrift_json_object_to_pydict,
+    thrift_uploaded_file_to_arrow,
 )
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import (
@@ -95,7 +97,9 @@ def _DEPRECATED_overwrite_to_fix_arrow_table_schema(
         shutil.copyfile(rewrite_path, path)
 
 
-def _prepare_params(params: Dict[str, Any], basedir: Path) -> Dict[str, Any]:
+def _prepare_params(
+    params: Dict[str, Any], basedir: Path, uploaded_files: Dict[str, UploadedFile]
+) -> Dict[str, Any]:
     """Convert JSON-ish params into params that Pandas-v0 render() expects.
 
     This walks the global ModuleSpec's `.param_schema`.
@@ -116,7 +120,10 @@ def _prepare_params(params: Dict[str, Any], basedir: Path) -> Dict[str, Any]:
                 for name, inner_schema in schema.properties.items()
             }
         elif isinstance(schema, ParamSchema.File):
-            return basedir / value
+            if value is None:
+                return None
+            else:
+                return basedir / uploaded_files[value].filename
         else:
             return value
 
@@ -163,7 +170,12 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
     input_path = basedir / request.input_filename
     table, columns = load_trusted_arrow_file_with_columns(input_path)
     params = _prepare_params(
-        thrift_json_object_to_pydict(request.params), basedir=basedir
+        thrift_json_object_to_pydict(request.params),
+        basedir=basedir,
+        uploaded_files={
+            k: thrift_uploaded_file_to_arrow(v)
+            for k, v in request.uploaded_files.items()
+        },
     )
     if request.fetch_result is None:
         fetch_result = None

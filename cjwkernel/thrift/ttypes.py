@@ -1299,6 +1299,103 @@ class FetchResult(object):
         return not (self == other)
 
 
+class UploadedFile(object):
+    """
+    File the user uploaded.
+
+    This points to a file on disk. The file on disk has the same extension as the
+    original filename.
+
+    Attributes:
+     - name: Filename the user uploaded.
+     - filename: Filename on disk.
+     - uploaded_at_timestampus: Time the file was uploaded, in microseconds since the epoch.
+
+    """
+
+    __slots__ = (
+        'name',
+        'filename',
+        'uploaded_at_timestampus',
+    )
+
+
+    def __init__(self, name=None, filename=None, uploaded_at_timestampus=None,):
+        self.name = name
+        self.filename = filename
+        self.uploaded_at_timestampus = uploaded_at_timestampus
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.name = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRING:
+                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.I64:
+                    self.uploaded_at_timestampus = iprot.readI64()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('UploadedFile')
+        if self.name is not None:
+            oprot.writeFieldBegin('name', TType.STRING, 1)
+            oprot.writeString(self.name.encode('utf-8') if sys.version_info[0] == 2 else self.name)
+            oprot.writeFieldEnd()
+        if self.filename is not None:
+            oprot.writeFieldBegin('filename', TType.STRING, 2)
+            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
+            oprot.writeFieldEnd()
+        if self.uploaded_at_timestampus is not None:
+            oprot.writeFieldBegin('uploaded_at_timestampus', TType.I64, 3)
+            oprot.writeI64(self.uploaded_at_timestampus)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
 class RenderRequest(object):
     """
     Parameters to `render()`.
@@ -1332,6 +1429,7 @@ class RenderRequest(object):
 
     The file on disk will be in `basedir`.
      - tab_outputs: Outputs from other tabs that are inputs into this Step.
+     - uploaded_files: Files the user uploaded and chose, keyed by UUID.
 
     """
 
@@ -1343,10 +1441,11 @@ class RenderRequest(object):
         'fetch_result',
         'output_filename',
         'tab_outputs',
+        'uploaded_files',
     )
 
 
-    def __init__(self, basedir=None, input_filename=None, params=None, tab=None, fetch_result=None, output_filename=None, tab_outputs=None,):
+    def __init__(self, basedir=None, input_filename=None, params=None, tab=None, fetch_result=None, output_filename=None, tab_outputs=None, uploaded_files=None,):
         self.basedir = basedir
         self.input_filename = input_filename
         self.params = params
@@ -1354,6 +1453,7 @@ class RenderRequest(object):
         self.fetch_result = fetch_result
         self.output_filename = output_filename
         self.tab_outputs = tab_outputs
+        self.uploaded_files = uploaded_files
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1414,6 +1514,18 @@ class RenderRequest(object):
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
+            elif fid == 8:
+                if ftype == TType.MAP:
+                    self.uploaded_files = {}
+                    (_ktype89, _vtype90, _size88) = iprot.readMapBegin()
+                    for _i92 in range(_size88):
+                        _key93 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val94 = UploadedFile()
+                        _val94.read(iprot)
+                        self.uploaded_files[_key93] = _val94
+                    iprot.readMapEnd()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -1435,9 +1547,9 @@ class RenderRequest(object):
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 3)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter88, viter89 in self.params.items():
-                oprot.writeString(kiter88.encode('utf-8') if sys.version_info[0] == 2 else kiter88)
-                viter89.write(oprot)
+            for kiter95, viter96 in self.params.items():
+                oprot.writeString(kiter95.encode('utf-8') if sys.version_info[0] == 2 else kiter95)
+                viter96.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.tab is not None:
@@ -1455,9 +1567,17 @@ class RenderRequest(object):
         if self.tab_outputs is not None:
             oprot.writeFieldBegin('tab_outputs', TType.LIST, 7)
             oprot.writeListBegin(TType.STRUCT, len(self.tab_outputs))
-            for iter90 in self.tab_outputs:
-                iter90.write(oprot)
+            for iter97 in self.tab_outputs:
+                iter97.write(oprot)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.uploaded_files is not None:
+            oprot.writeFieldBegin('uploaded_files', TType.MAP, 8)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.uploaded_files))
+            for kiter98, viter99 in self.uploaded_files.items():
+                oprot.writeString(kiter98.encode('utf-8') if sys.version_info[0] == 2 else kiter98)
+                viter99.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1521,23 +1641,23 @@ class RenderResult(object):
             if fid == 1:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype94, _size91) = iprot.readListBegin()
-                    for _i95 in range(_size91):
-                        _elem96 = RenderError()
-                        _elem96.read(iprot)
-                        self.errors.append(_elem96)
+                    (_etype103, _size100) = iprot.readListBegin()
+                    for _i104 in range(_size100):
+                        _elem105 = RenderError()
+                        _elem105.read(iprot)
+                        self.errors.append(_elem105)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.MAP:
                     self.json = {}
-                    (_ktype98, _vtype99, _size97) = iprot.readMapBegin()
-                    for _i101 in range(_size97):
-                        _key102 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val103 = Json()
-                        _val103.read(iprot)
-                        self.json[_key102] = _val103
+                    (_ktype107, _vtype108, _size106) = iprot.readMapBegin()
+                    for _i110 in range(_size106):
+                        _key111 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val112 = Json()
+                        _val112.read(iprot)
+                        self.json[_key111] = _val112
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -1554,16 +1674,16 @@ class RenderResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 1)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter104 in self.errors:
-                iter104.write(oprot)
+            for iter113 in self.errors:
+                iter113.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.json is not None:
             oprot.writeFieldBegin('json', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.json))
-            for kiter105, viter106 in self.json.items():
-                oprot.writeString(kiter105.encode('utf-8') if sys.version_info[0] == 2 else kiter105)
-                viter106.write(oprot)
+            for kiter114, viter115 in self.json.items():
+                oprot.writeString(kiter114.encode('utf-8') if sys.version_info[0] == 2 else kiter114)
+                viter115.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1672,6 +1792,13 @@ FetchResult.thrift_spec = (
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
     (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
 )
+all_structs.append(UploadedFile)
+UploadedFile.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
+    (2, TType.STRING, 'filename', 'UTF8', None, ),  # 2
+    (3, TType.I64, 'uploaded_at_timestampus', None, None, ),  # 3
+)
 all_structs.append(RenderRequest)
 RenderRequest.thrift_spec = (
     None,  # 0
@@ -1682,6 +1809,7 @@ RenderRequest.thrift_spec = (
     (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5
     (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
     (7, TType.LIST, 'tab_outputs', (TType.STRUCT, [TabOutput, None], False), None, ),  # 7
+    (8, TType.MAP, 'uploaded_files', (TType.STRING, 'UTF8', TType.STRUCT, [UploadedFile, None], False), None, ),  # 8
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (

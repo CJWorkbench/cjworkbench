@@ -1,8 +1,8 @@
 import re
-from contextlib import ExitStack
+from contextlib import ExitStack, contextmanager, suppress
 from functools import singledispatchmethod
 from pathlib import Path
-from typing import Any, Dict, List, NamedTuple, Optional, Union, Tuple
+from typing import Any, ContextManager, Dict, List, NamedTuple, Optional, Union, Tuple
 
 import iso8601
 from cjwmodule.spec.paramschema import ParamSchema
@@ -13,10 +13,10 @@ from cjwkernel.types import (
     LoadedRenderResult,
     Tab,
     TabOutput,
+    UploadedFile,
 )
-from cjwkernel.util import tempfile_context
 from cjwstate import s3
-from cjwstate.models import UploadedFile
+from cjwstate.models import UploadedFile as UploadedFileModel
 from .types import StepResult, TabCycleError, TabOutputUnreachableError, PromptingError
 
 
@@ -24,9 +24,19 @@ FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
 SingleDigitMonthOrDay = re.compile(r".*\b\d\b.*")
 
 
+@contextmanager
+def deferred_delete(path: Path) -> ContextManager[None]:
+    try:
+        yield
+    finally:
+        with suppress(FileNotFoundError):
+            path.unlink()
+
+
 class PrepParamsResult(NamedTuple):
     params: Dict[str, Any]
     tab_outputs: List[TabOutput]
+    uploaded_files: Dict[str, UploadedFile]
 
 
 def _validate_iso8601_string(s):
@@ -124,6 +134,7 @@ class _Cleaner:
         # "output" params
         self.exit_stack = exit_stack
         self.used_tab_slugs = set()
+        self.uploaded_files = dict()
         self.result = None
 
     def clean(self):
@@ -136,7 +147,7 @@ class _Cleaner:
             for td in self.tabs.values()
             if td.slug in self.used_tab_slugs
         ]
-        self.result = PrepParamsResult(cleaned_params, tab_outputs)
+        self.result = PrepParamsResult(cleaned_params, tab_outputs, self.uploaded_files)
         return self.result
 
     def output_columns_for_tab_parameter(self, tab_parameter):
@@ -216,29 +227,32 @@ class _Cleaner:
         if value is None:
             return None
         try:
-            uploaded_file = UploadedFile.objects.get(uuid=value, step_id=self.step_id)
-        except UploadedFile.DoesNotExist:
+            uploaded_file = UploadedFileModel.objects.get(
+                uuid=value, step_id=self.step_id
+            )
+        except UploadedFileModel.DoesNotExist:
             return None
 
-        # UploadedFile.name may not be POSIX-compliant. We want the filename to
+        # UploadedFileModel.name may not be POSIX-compliant. We want the filename to
         # have the same suffix as the original: that helps with filetype
         # detection. We also put the UUID in the name so debug messages help
         # devs find the original file.
         safe_name = FilesystemUnsafeChars.sub("-", uploaded_file.name)
-        path = self.exit_stack.enter_context(
-            tempfile_context(
-                prefix="file-",
-                suffix=(uploaded_file.uuid + "-" + safe_name),
-                dir=self.basedir,
-            )
-        )
+        path = self.basedir / (value + "_" + safe_name)
+        self.exit_stack.enter_context(deferred_delete(path))
         try:
             # Overwrite the file
             s3.download(s3.UserFilesBucket, uploaded_file.key, path)
-            return path
         except FileNotFoundError:
             # tempfile will be deleted by self.exit_stack
             return None
+
+        self.uploaded_files[value] = UploadedFile(
+            name=uploaded_file.name,
+            filename=path.name,
+            uploaded_at=uploaded_file.created_at,
+        )
+        return value
 
     @clean_value.register(ParamSchema.Tab)
     def _(self, schema: ParamSchema.Tab, value: str) -> str:
