@@ -1,7 +1,6 @@
 import contextlib
 import logging
 import shutil
-from dataclasses import replace
 from unittest.mock import patch
 
 import pyarrow as pa
@@ -11,7 +10,7 @@ from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.kernel import Kernel
 from cjwkernel.tests.util import arrow_table_context
 from cjwkernel.types import Column, ColumnType, RenderResult
-from cjwkernel.validate import load_trusted_arrow_file, read_columns
+from cjwkernel.validate import load_trusted_arrow_file
 from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.models import Workflow
 from cjwstate.rendercache.testing import write_to_rendercache
@@ -33,6 +32,7 @@ def mock_render(arrow_table: pa.Table):
         input_filename,
         params,
         tab,
+        tab_outputs,
         fetch_result,
         output_filename,
     ):

@@ -19,8 +19,7 @@ from renderer.execute.types import PromptingError
 # written in just one place.
 @singledispatch
 def clean_value(schema: ParamSchema, value: Any, input_metadata: TableMetadata) -> Any:
-    """
-    Ensure `value` fits the Params dict `render()` expects.
+    """Ensure `value` fits the Params dict `render()` expects.
 
     The most basic implementation is to just return `value`: it looks a lot
     like the dict we pass `render()`. But we have special-case implementations

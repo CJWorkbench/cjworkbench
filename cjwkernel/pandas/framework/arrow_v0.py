@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Callable, Dict, NamedTuple, Optional
 
+from cjwmodule.spec.paramschema import ParamSchema
 import pyarrow as pa
 
 from cjwkernel import settings
@@ -11,8 +12,7 @@ from cjwkernel.types import (
     arrow_fetch_result_to_thrift,
     arrow_render_error_to_thrift,
     thrift_fetch_result_to_arrow,
-    thrift_params_to_arrow,
-    thrift_raw_params_to_arrow,
+    thrift_json_object_to_pydict,
 )
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import (
@@ -95,6 +95,35 @@ def _DEPRECATED_overwrite_to_fix_arrow_table_schema(
         shutil.copyfile(rewrite_path, path)
 
 
+def _prepare_params(params: Dict[str, Any], basedir: Path) -> Dict[str, Any]:
+    """Convert JSON-ish params into params that Pandas-v0 render() expects.
+
+    This walks the global ModuleSpec's `.param_schema`.
+
+    The returned value is the same as `params`, except:
+
+    * File params become `Path` objects
+    """
+
+    def recurse(schema: ParamSchema, value: Any) -> Any:
+        if isinstance(schema, ParamSchema.List):
+            return [recurse(schema.inner_dtype, v) for v in value]
+        elif isinstance(schema, ParamSchema.Map):
+            return {k: recurse(schema.value_dtype, v) for k, v in value.items()}
+        elif isinstance(schema, ParamSchema.Dict):
+            return {
+                name: recurse(inner_schema, value[name])
+                for name, inner_schema in schema.properties.items()
+            }
+        elif isinstance(schema, ParamSchema.File):
+            return basedir / value
+        else:
+            return value
+
+    global ModuleSpec  # injected by cjwkernel.pandas.main
+    return recurse(ModuleSpec.param_schema, params)
+
+
 def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchResult:
     """Call `fetch()` and validate the result.
 
@@ -104,8 +133,8 @@ def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchRes
     """
     # thrift => pandas
     basedir = Path(request.basedir)
-    params: Dict[str, Any] = thrift_params_to_arrow(request.params, basedir).params
-    secrets: Dict[str, Any] = thrift_raw_params_to_arrow(request.secrets).params
+    params: Dict[str, Any] = thrift_json_object_to_pydict(request.params)
+    secrets: Dict[str, Any] = thrift_json_object_to_pydict(request.secrets)
     if request.input_table_parquet_filename is None:
         input_table_parquet_path = None
     else:
@@ -133,7 +162,9 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
     basedir = Path(request.basedir)
     input_path = basedir / request.input_filename
     table, columns = load_trusted_arrow_file_with_columns(input_path)
-    params = thrift_params_to_arrow(request.params, basedir).params
+    params = _prepare_params(
+        thrift_json_object_to_pydict(request.params), basedir=basedir
+    )
     if request.fetch_result is None:
         fetch_result = None
     else:
@@ -167,5 +198,6 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
         raise ValueError("Unhandled raw_result")
 
     return ttypes.RenderResult(
-        errors=[arrow_render_error_to_thrift(e) for e in errors], json="{}"
+        errors=[arrow_render_error_to_thrift(e) for e in errors],
+        json={},  # this framework never produces JSON
     )

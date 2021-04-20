@@ -17,19 +17,17 @@ from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     CompiledModule,
     FetchResult,
-    Params,
-    RawParams,
     RenderResult,
     Tab,
+    TabOutput,
     arrow_fetch_result_to_thrift,
-    arrow_params_to_thrift,
-    arrow_raw_params_to_thrift,
     arrow_tab_to_thrift,
+    arrow_tab_output_to_thrift,
+    pydict_to_thrift_json_object,
+    thrift_json_object_to_pydict,
     thrift_fetch_result_to_arrow,
-    thrift_raw_params_to_arrow,
     thrift_render_result_to_arrow,
 )
-from cjwkernel.validate import ValidateError
 
 logger = logging.getLogger(__name__)
 
@@ -264,17 +262,16 @@ class Kernel:
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
         """Call a module's migrate_params()."""
-        request = arrow_raw_params_to_thrift(RawParams(params))
         response = self._run_in_child(
             chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,
             compiled_module=compiled_module,
             timeout=self.migrate_params_timeout,
-            result=ttypes.RawParams(),
+            result=ttypes.MigrateParamsResult(),
             function="migrate_params_thrift",
-            args=[request],
+            args=[pydict_to_thrift_json_object(params)],
         )
-        return thrift_raw_params_to_arrow(response).params
+        return thrift_json_object_to_pydict(response.params)
 
     def render(
         self,
@@ -282,9 +279,10 @@ class Kernel:
         chroot_context: ChrootContext,
         basedir: Path,
         input_filename: str,
-        params: Params,
+        params: Dict[str, Any],
         tab: Tab,
         fetch_result: Optional[FetchResult],
+        tab_outputs: List[TabOutput],
         output_filename: str,
     ) -> RenderResult:
         """Run the module's `render_thrift()` function and return its result.
@@ -295,8 +293,9 @@ class Kernel:
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
             basedir=str(basedir_seen_by_module),
-            params=arrow_params_to_thrift(params),
+            params=pydict_to_thrift_json_object(params),
             tab=arrow_tab_to_thrift(tab),
+            tab_outputs=[arrow_tab_output_to_thrift(to) for to in tab_outputs],
             fetch_result=(
                 None
                 if fetch_result is None
@@ -326,7 +325,7 @@ class Kernel:
         compiled_module: CompiledModule,
         chroot_context: ChrootContext,
         basedir: Path,
-        params: Params,
+        params: Dict[str, Any],
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
         input_parquet_filename: Optional[str],
@@ -340,8 +339,8 @@ class Kernel:
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
             basedir=str(basedir_seen_by_module),
-            params=arrow_params_to_thrift(params),
-            secrets=arrow_raw_params_to_thrift(RawParams(secrets)),
+            params=pydict_to_thrift_json_object(params),
+            secrets=pydict_to_thrift_json_object(secrets),
             last_fetch_result=(
                 None
                 if last_fetch_result is None

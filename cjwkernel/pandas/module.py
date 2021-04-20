@@ -5,9 +5,8 @@
 import inspect
 from typing import Any, Dict
 
-from cjwkernel import types
 from cjwkernel.thrift import ttypes
-from cjwkernel.types import arrow_raw_params_to_thrift, thrift_raw_params_to_arrow
+from cjwkernel.types import pydict_to_thrift_json_object, thrift_json_object_to_pydict
 from .framework import arrow_v0, pandas_v0
 
 
@@ -25,6 +24,9 @@ def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
         framework = arrow_v0
     else:
         framework = pandas_v0
+
+    global ModuleSpec  # injected by cjwkernel.pandas.main
+    framework.ModuleSpec = ModuleSpec
 
     return framework.call_render(render, request)
 
@@ -87,10 +89,10 @@ def migrate_params(params: Dict[str, Any]) -> Dict[str, Any]:
     return params
 
 
-def migrate_params_thrift(params: ttypes.RawParams):
-    params_dict: Dict[str, Any] = thrift_raw_params_to_arrow(params).params
+def migrate_params_thrift(thrift_params: Dict[str, ttypes.Json]):
+    params_dict: Dict[str, Any] = thrift_json_object_to_pydict(thrift_params)
     result_dict = migrate_params(params_dict)
-    return arrow_raw_params_to_thrift(types.RawParams(result_dict))
+    return ttypes.MigrateParamsResult(pydict_to_thrift_json_object(result_dict))
 
 
 def validate_thrift() -> ttypes.ValidateModuleResult:

@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 
 import pyarrow
+import yaml
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
 
 from cjwkernel.chroot import EDITABLE_CHROOT
@@ -16,12 +17,24 @@ from cjwkernel.validate import load_untrusted_arrow_file_with_columns
 from cjwkernel import types
 
 
-def _compile(module_id: str, code: str) -> types.CompiledModule:
+DefaultSpec = b"""
+id_name: testmodule
+name: Test Module
+category: Clean
+parameters: []
+"""
+
+
+def _compile(
+    module_id: str, code: str, spec: str = DefaultSpec
+) -> types.CompiledModule:
     filename = module_id + ".py"
     code_object = compile(
         code, filename=filename, mode="exec", dont_inherit=True, optimize=0
     )
-    return types.CompiledModule(module_id, marshal.dumps(code_object))
+    module_spec_dict = yaml.safe_load(spec)
+
+    return types.CompiledModule(module_id, marshal.dumps(code_object), module_spec_dict)
 
 
 class KernelTests(unittest.TestCase):
@@ -134,10 +147,31 @@ class KernelTests(unittest.TestCase):
             self.kernel.migrate_params(mod, {"foo": 123})
 
     def test_render_happy_path(self):
-        mod = _compile(
-            "foo",
-            "import pandas as pd\ndef render(table, params): return pd.DataFrame({'A': table['A'] * params['m'], 'B': table['B'] + params['s']})",
+        spec = textwrap.dedent(
+            """\
+            id_name: testmodule
+            name: Test Module
+            category: Clean
+            parameters:
+            - id_name: m
+              name: M
+              type: float
+            - id_name: s
+              name: S
+              type: string
+            """
         )
+        code = textwrap.dedent(
+            """\
+            import pandas as pd
+            def render(table, params):
+                return pd.DataFrame({
+                    'A': table['A'] * params['m'],
+                    'B': table['B'] + params['s'],
+                })
+            """
+        )
+        mod = _compile("foo", code, spec)
         with arrow_table_context(
             make_column("A", [1, 2, 3], format="{:,d}"),
             make_column("B", ["a", "b", "c"]),
@@ -152,12 +186,14 @@ class KernelTests(unittest.TestCase):
                     self.chroot_context,
                     basedir=self.basedir,
                     input_filename=input_table_path.name,
-                    params=types.Params({"m": 2.5, "s": "XX"}),
+                    params={"m": 2.5, "s": "XX"},
                     tab=types.Tab("tab-1", "Tab 1"),
+                    tab_outputs=[],
                     fetch_result=None,
                     output_filename=output_path.name,
                 )
 
+                self.assertEqual(result, types.RenderResult())
                 output_table, columns = load_untrusted_arrow_file_with_columns(
                     output_path
                 )
@@ -187,8 +223,9 @@ class KernelTests(unittest.TestCase):
                         self.chroot_context,
                         basedir=self.basedir,
                         input_filename=input_table_path.name,
-                        params=types.Params({"m": 2.5, "s": "XX"}),
+                        params={"m": 2.5, "s": "XX"},
                         tab=types.Tab("tab-1", "Tab 1"),
+                        tab_outputs=[],
                         fetch_result=None,
                         output_filename=output_path.name,
                     )
@@ -243,8 +280,9 @@ class KernelTests(unittest.TestCase):
     #                     self.chroot_context,
     #                     basedir=self.basedir,
     #                     input_filename=input_table_path,
-    #                     params=types.Params({"m": 2.5, "s": "XX"}),
+    #                     params={"m": 2.5, "s": "XX"},
     #                     tab=types.Tab("tab-1", "Tab 1"),
+    #                     tab_outputs=[],
     #                     fetch_result=None,
     #                     output_filename=output_path.name,
     #                 )
@@ -271,8 +309,9 @@ class KernelTests(unittest.TestCase):
                             self.chroot_context,
                             basedir=self.basedir,
                             input_filename=input_table_path.name,
-                            params=types.Params({}),
+                            params={},
                             tab=types.Tab("tab-1", "Tab 1"),
+                            tab_outputs=[],
                             fetch_result=None,
                             output_filename=output_path.name,
                         )
@@ -297,7 +336,7 @@ class KernelTests(unittest.TestCase):
                 mod,
                 self.chroot_context,
                 basedir=self.basedir,
-                params=types.Params({"a": "x"}),
+                params={"a": "x"},
                 secrets={},
                 input_parquet_filename=None,
                 last_fetch_result=None,

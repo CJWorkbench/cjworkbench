@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import marshal
 from pathlib import Path
 from typing import Any, Dict, List, Literal, NamedTuple, Union
@@ -8,8 +7,6 @@ from typing import Any, Dict, List, Literal, NamedTuple, Union
 import pyarrow
 import pyarrow.ipc
 import pyarrow.types
-from cjwkernel.util import json_encode
-from cjwmodule.arrow.format import parse_number_format
 from cjwmodule.types import (
     FetchResult,
     I18nMessage,
@@ -25,7 +22,6 @@ __all__ = [
     "Column",
     "ColumnType",
     "CompiledModule",
-    "Params",
     "QuickFix",
     "QuickFixAction",
     "RenderError",
@@ -33,21 +29,16 @@ __all__ = [
     "Tab",
     "TableMetadata",
     "TabOutput",
-    "arrow_column_to_thrift",
-    "arrow_column_type_to_thrift",
     "arrow_fetch_result_to_thrift",
-    "arrow_params_to_thrift",
     "arrow_quick_fix_action_to_thrift",
     "arrow_quick_fix_to_thrift",
-    "arrow_raw_params_to_thrift",
     "arrow_render_error_to_thrift",
     "arrow_tab_to_thrift",
-    "thrift_column_type_to_arrow",
+    "pydict_to_thrift_json_object",
     "thrift_fetch_result_to_arrow",
-    "thrift_params_to_arrow",
+    "thrift_json_object_to_pydict",
     "thrift_quick_fix_action_to_arrow",
     "thrift_quick_fix_to_arrow",
-    "thrift_raw_params_to_arrow",
     "thrift_render_error_to_arrow",
     "thrift_tab_to_arrow",
 ]
@@ -138,6 +129,13 @@ class CompiledModule(NamedTuple):
     that's the way we use it.)
     """
 
+    module_spec_dict: Dict[str, Any]
+    """Python dict the module can parse into a cjwmodule.spec.types.ModuleSpec.
+
+    It's a bit of a hack that we parse the spec every time a module is invoked.
+    But [2021-04-19] no need to optimize prematurely....
+    """
+
     @property
     def code_object(self) -> Any:
         return marshal.loads(self.marshalled_code_object)
@@ -188,7 +186,7 @@ def _thrift_i18n_argument_to_arrow(
     elif value.double_value is not None:
         return value.double_value
     else:
-        raise ValueError("Unhandled ttypes.I18nArgument: %r" % value)
+        raise ValueError("Unhandled ttypes.I18nArgument: %r" % (value,))
 
 
 def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgument:
@@ -199,7 +197,7 @@ def _i18n_argument_to_thrift(value: Union[str, int, float]) -> ttypes.I18nArgume
     elif isinstance(value, float):
         return ttypes.I18nArgument(double_value=value)
     else:
-        raise RuntimeError("Unhandled value for I18nArgument: %r" % value)
+        raise RuntimeError("Unhandled value for I18nArgument: %r" % (value,))
 
 
 ParamValue = Union[
@@ -213,16 +211,6 @@ ParamValue = Union[
     List[Any],  # should be List[ParamValue]
     Dict[str, Any],  # should be Dict[str, ParamValue]
 ]
-
-
-class RawParams(NamedTuple):
-    params: Dict[str, Any]
-
-
-class Params(NamedTuple):
-    """Nested data structure passed to `render()` -- includes Column/TabOutput."""
-
-    params: Dict[str, Any]
 
 
 class RenderResult(NamedTuple):
@@ -314,10 +302,6 @@ def arrow_i18n_message_to_thrift(value: I18nMessage) -> ttypes.I18nMessage:
     )
 
 
-def arrow_raw_params_to_thrift(value: RawParams) -> ttypes.RawParams:
-    return ttypes.RawParams(json_encode(value.params))
-
-
 def arrow_param_value_to_thrift(value: ParamValue) -> ttypes.ParamValue:
     PV = ttypes.ParamValue
 
@@ -351,15 +335,11 @@ def arrow_param_value_to_thrift(value: ParamValue) -> ttypes.ParamValue:
         raise RuntimeError("Unhandled value %r" % value)
 
 
-def arrow_params_to_thrift(value: Params) -> Dict[str, ttypes.ParamValue]:
-    return {k: arrow_param_value_to_thrift(v) for k, v in value.params.items()}
-
-
 def arrow_quick_fix_action_to_thrift(value: QuickFixAction) -> ttypes.QuickFixAction:
     if isinstance(value, QuickFixAction.PrependStep):
         return ttypes.QuickFixAction(
             prepend_step=ttypes.PrependStepQuickFixAction(
-                value.module_slug, ttypes.RawParams(json_encode(value.partial_params))
+                value.module_slug, pydict_to_thrift_json_object(value.partial_params)
             )
         )
     else:
@@ -389,36 +369,13 @@ def arrow_fetch_result_to_thrift(value: FetchResult) -> ttypes.FetchResult:
 def arrow_render_result_to_thrift(value: RenderResult) -> ttypes.RenderResult:
     return ttypes.RenderResult(
         errors=[arrow_render_error_to_thrift(e) for e in value.errors],
-        json="{}" if value.json is None else json_encode(value.json),
+        json=pydict_to_thrift_json_object(value.json),
     )
 
 
 ### thrift_*_to_arrow(): decode Arrow types from Thrift
 #
 # They raise ValueError on cheap-to-detect semantic errors.
-
-
-def thrift_column_type_to_arrow(value: ttypes.ColumnType) -> ColumnType:
-    if value.text_type is not None:
-        return ColumnTypeText()
-    elif value.number_type is not None:
-        format = value.number_type.format
-        parse_number_format(format)  # raise ValueError
-        return ColumnTypeNumber(format=format)
-    elif value.timestamp_type is not None:
-        return ColumnTypeTimestamp()
-    elif value.date_type is not None:
-
-        unit = {
-            ttypes.ColumnTypeDateUnit.DAY: "day",
-            ttypes.ColumnTypeDateUnit.WEEK: "week",
-            ttypes.ColumnTypeDateUnit.MONTH: "month",
-            ttypes.ColumnTypeDateUnit.QUARTER: "quarter",
-            ttypes.ColumnTypeDateUnit.YEAR: "year",
-        }[value.date_type.unit]
-        return ColumnTypeDate(unit=unit)
-    else:
-        raise ValueError("Unhandled Thrift object: %r" % value)
 
 
 def thrift_tab_to_arrow(value: ttypes.Tab) -> Tab:
@@ -439,53 +396,57 @@ def thrift_i18n_message_to_arrow(value: ttypes.I18nMessage) -> I18nMessage:
     )
 
 
-def thrift_raw_params_to_arrow(value: ttypes.RawParams) -> RawParams:
-    return RawParams(json.loads(value.json))
-
-
-def thrift_column_to_arrow(value: ttypes.Column) -> Column:
-    return Column(value.name, thrift_column_type_to_arrow(value.type))
-
-
-def _thrift_param_value_to_arrow(value: ttypes.ParamValue, basedir: Path) -> ParamValue:
+def _thrift_json_to_python(value: ttypes.Json) -> Any:
     if value.string_value is not None:
         return value.string_value
-    elif value.integer_value is not None:
-        return value.integer_value
-    elif value.float_value is not None:
-        return value.float_value
+    elif value.int64_value is not None:
+        return value.int64_value
+    elif value.number_value is not None:
+        return value.number_value
     elif value.boolean_value is not None:
         return value.boolean_value
-    elif value.column_value is not None:
-        return thrift_column_to_arrow(value.column_value)
-    elif value.tab_value is not None:
-        return thrift_tab_output_to_arrow(value.tab_value)
-    elif value.list_value is not None:
-        return [_thrift_param_value_to_arrow(v, basedir) for v in value.list_value]
-    elif value.map_value is not None:
-        return {
-            k: _thrift_param_value_to_arrow(v, basedir)
-            for k, v in value.map_value.items()
-        }
-    elif value.filename_value is not None:
-        return _thrift_filename_to_path(value.filename_value, basedir)
+    elif value.array_value is not None:
+        return [_thrift_json_to_python(v) for v in value.array_value]
+    elif value.object_value is not None:
+        return {k: _thrift_json_to_python(v) for k, v in value.object_value.items()}
     else:
         return None
 
 
-def thrift_params_to_arrow(
-    value: Dict[str, ttypes.ParamsValue], basedir: Path
-) -> Params:
-    return Params(
-        {k: _thrift_param_value_to_arrow(v, basedir) for k, v in value.items()}
-    )
+def thrift_json_object_to_pydict(value: Dict[str, ttypes.Json]) -> Dict[str, Any]:
+    return {k: _thrift_json_to_python(v) for k, v in value.items()}
+
+
+def _python_to_thrift_json(value: Any) -> ttypes.Json:
+    if value is None:
+        return ttypes.Json()
+    elif isinstance(value, str):
+        return ttypes.Json(string_value=value)
+    elif isinstance(value, bool):  # before int! Python bool is subclass of int
+        return ttypes.Json(boolean_value=value)
+    elif isinstance(value, int):
+        return ttypes.Json(int64_value=value)
+    elif isinstance(value, float):
+        return ttypes.Json(number_value=value)
+    elif isinstance(value, list):
+        return ttypes.Json(array_value=[_python_to_thrift_json(v) for v in value])
+    elif isinstance(value, dict):
+        return ttypes.Json(
+            object_value={k: _python_to_thrift_json(v) for k, v in value.items()}
+        )
+    else:
+        raise ValueError("Invalid JSON-ish value: %r" % (value,))
+
+
+def pydict_to_thrift_json_object(pydict: Dict[str, Any]) -> Dict[str, ttypes.Json]:
+    return {k: _python_to_thrift_json(v) for k, v in pydict.items()}
 
 
 def thrift_quick_fix_action_to_arrow(value: ttypes.QuickFixAction) -> QuickFixAction:
     if value.prepend_step is not None:
         return QuickFixAction.PrependStep(
             value.prepend_step.module_slug,
-            json.loads(value.prepend_step.partial_params.json),
+            thrift_json_object_to_pydict(value.prepend_step.partial_params),
         )
     else:
         raise ValueError("Invalid QuickFixAction")
@@ -514,6 +475,6 @@ def thrift_fetch_result_to_arrow(
 
 def thrift_render_result_to_arrow(value: ttypes.RenderResult) -> RenderResult:
     return RenderResult(
-        [thrift_render_error_to_arrow(e) for e in value.errors],
-        json.loads(value.json) if value.json else None,
+        errors=[thrift_render_error_to_arrow(e) for e in value.errors],
+        json=thrift_json_object_to_pydict(value.json),
     )

@@ -16,162 +16,24 @@ namespace py cjwkernel.thrift
  */
 struct ValidateModuleResult {}
 
-/** A "text"-typed column. */
-struct ColumnTypeText {
-}
 
-/** A "number"-typed column. */
-struct ColumnTypeNumber {
-  /** Python-syntax number format, like `{,.2%}` */
-  1: string format = "{:,}"
-}
-
-
-enum ColumnTypeDateUnit {
-  DAY = 0,
-  WEEK = 1,
-  MONTH = 2,
-  QUARTER = 3,
-  YEAR = 4
-}
-
-/** A "date"-typed column. */
-struct ColumnTypeDate {
-  /** Which dates are valid. For instance, only the 1st of a MONTH is valid. */
-  1: ColumnTypeDateUnit unit = ColumnTypeDateUnit.DAY
-}
-
-/** A "timestamp"-typed column. */
-struct ColumnTypeTimestamp {
-  /* TODO add a `format` */
+/**
+ * Migrating params succeeded.
+ */
+struct MigrateParamsResult {
+  1: map<string, Json> params
 }
 
 /**
- * The type (and its options) of a column.
- *
- * This is the _user-visible_ type. We do not store the bit layout. For
- * instance, we store "number" and not "i32" or "i64".
+ * JSON-compatible value.
  */
-union ColumnType {
-  1: ColumnTypeText text_type,
-  2: ColumnTypeNumber number_type,
-  3: ColumnTypeTimestamp timestamp_type,
-  4: ColumnTypeDate date_type
-}
-
-/** Description of a column in a table. */
-struct Column {
-  /** Name of the column (unique among all columns in the table). */
-  1: string name,
-
-  /** Date type the user will see. */
-  2: ColumnType type
-}
-
-/**
- * Table data that will be cached for easy access.
- */
-struct DEPRECATED_TableMetadata {
-  /** Number of rows in the table. */
-  1: i32 n_rows,
-
-  /** Columns -- the user-visible aspects of them, at least. */
-  2: list<Column> columns
-}
-
-/**
- * Table stored on disk, ready to be mmapped.
- */
-struct DEPRECATED_ArrowTable {
-  /**
-   * Name of file on disk that contains data.
-   *
-   * For a zero-column table, filename may be the empty string -- meaning there
-   * is no file on disk. In all other cases, the file on disk must exist.
-   *
-   * The file on disk is in a directory agreed upon by the processes passing
-   * this data around. Subdirectories and hidden files aren't allowed.
-   */
-  1: string filename,
-
-  /** Metadata; must agree with the file on disk. */
-  2: DEPRECATED_TableMetadata metadata
-}
-
-/**
- * Value (or nested value) in Params passed to render()/fetch().
- *
- * These params are connected to the `table` parameter: a "column"-typed
- * parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput`.
- *
- * This is more permissive than module_spec. Callers should validate against
- * the module spec.
- *
- * The special value `None` is allowed. Thrift unions are just structs with
- * optional fields; in this case, if all fields are unset, then that means
- * `null`.
- */
-union ParamValue {
-  /**
-   * String value.
-   *
-   * This represents "string", "enum" and "file" values. Over the wire, it's
-   * all the same to us.
-   */
+union Json {
   1: string string_value,
-  2: i64 integer_value,
-  3: double float_value,
+  2: i64 int64_value,
+  3: double number_value,
   4: bool boolean_value,
-  5: Column column_value,
-  6: TabOutput tab_value,
-  /**
-   * List of nested values.
-   *
-   * This represents "list", "multicolumn", "multitab" and "multichartseries"
-   * dtypes. Over the wire, it's all the same to us.
-   */
-  7: list<ParamValue> list_value,
-  /**
-   * Mapping of key to nested value.
-   *
-   * This represents "map" and "dict" dtypes. Over the wire, it's all the same
-   * to us.
-   */
-  8: map<string, ParamValue> map_value,
-  /**
-   * A string filename, with no path information, pointing to a file on disk.
-   *
-   * The directory is assumed based on context.
-   */
-  9: string filename_value,
-}
-
-/**
- * Module `render()` and `fetch()` parameters.
- *
- * These are _basically_ JSON ... but Params can include TabOutput, Column, and
- * others, so JSON doesn't cut it.
- *
- * See `module_spec_schema.yaml` for the data this needs to model.
- *
- * Examples:
- *
- * * `params["slug"].integer_value`
- * * `params["slug"].multicolumn_value[2].name`;
- * * `params["slug"].dict_value["subslug"].column_value.type
- */
-typedef map<string, ParamValue> Params
-
-/**
- * Value (or nested value) passed to `migrate_params()`.
- *
- * Raw parameter values are stored in the database as JSON. We pass them using
- * JSON-encoded string. This is not the same as the Thrift type "Params", which
- * is passed to `render()`: Params are objects with TabOutput/Column/etc
- * members.
- */
-struct RawParams {
-  1: string json
+  5: list<Json> array_value,
+  6: map<string, Json> object_value,
 }
 
 /** Tab description. */
@@ -198,12 +60,7 @@ struct TabOutput {
   /**
    * Output from the final Step in `tab`.
    */
-  2: DEPRECATED_ArrowTable DEPRECATED_table,
-
-  /**
-   * Output from the final Step in `tab`.
-   */
-  3: string table_filename
+  2: string table_filename
 }
 
 /** Argument to a translatable string. */
@@ -235,7 +92,7 @@ struct PrependStepQuickFixAction {
   1: string module_slug,
 
   /** Some params to set on the new Step (atop the module's defaults). */
-  2: RawParams partial_params,
+  2: map<string, Json> partial_params,
 }
 
 /** Instruction for what happens when the user clicks a Quick Fix button. */
@@ -280,12 +137,12 @@ struct FetchRequest {
   /**
    * User-supplied params.
    */
-  2: Params params,
+  2: map<string, Json> params,
 
   /**
    * User-supplied secrets.
    */
-  3: RawParams secrets,
+  3: map<string, Json> secrets,
 
   /**
    * Result of the previous fetch().
@@ -367,7 +224,7 @@ struct RenderRequest {
    *
    * This is zero-row, zero-column on the first Step in a Tab.
    */
-  2: DEPRECATED_ArrowTable DEPRECATED_input_table,
+  2: string input_filename,
 
   /**
    * User-supplied parameters; must match the module's param_schema.
@@ -375,7 +232,7 @@ struct RenderRequest {
    * `File` params are passed as strings, pointing to temporary files in
    * `basedir`.
    */
-  3: Params params,
+  3: map<string, Json> params,
 
   /** Description of tab being rendered. */
   4: Tab tab,
@@ -400,11 +257,9 @@ struct RenderRequest {
   6: string output_filename,
 
   /**
-   * Output from previous Step.
-   *
-   * This is zero-row, zero-column on the first Step in a Tab.
+   * Outputs from other tabs that are inputs into this Step.
    */
-  7: string input_filename,
+  7: list<TabOutput> tab_outputs,
 }
 
 /**
@@ -416,19 +271,15 @@ struct RenderRequest {
  * The module writes the output Arrow data to `render_request.output_file`.
  */
 struct RenderResult {
-  1: DEPRECATED_ArrowTable DEPRECATED_table,
-
   /**
    * User-facing errors or warnings reported by the module.
    */
-  2: list<RenderError> errors,
+  1: list<RenderError> errors,
 
   /**
    * JSON to pass to the module's HTML, if it has HTML.
-   *
-   * This must be either an empty string, or a valid JSON value.
    */
-  3: string json = ""
+  2: map<string, Json> json,
 }
 
 /**
@@ -436,7 +287,7 @@ struct RenderResult {
  */
 service KernelModule {
   ValidateModuleResult validateModule(),
-  RawParams migrateParams(1: RawParams params),
+  MigrateParamsResult migrateParams(1: map<string, Json> params),
   RenderResult render(1: RenderRequest render_request),
   FetchResult fetch(1: FetchRequest fetch_request)
 }

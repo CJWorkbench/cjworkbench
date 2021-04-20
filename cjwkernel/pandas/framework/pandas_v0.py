@@ -1,23 +1,25 @@
 import asyncio
 import inspect
 from pathlib import Path
-from typing import Any, Dict, Callable, List
+from typing import Any, Callable, Dict, List
 
 import pandas as pd
 import cjwparquet
 import cjwpandasmodule
 import cjwpandasmodule.convert
+from cjwmodule.spec.paramschema import ParamSchema
 
 from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
 from cjwkernel.pandas.types import arrow_schema_to_render_columns
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
+    TabOutput,
     arrow_render_error_to_thrift,
     arrow_render_result_to_thrift,
-    thrift_params_to_arrow,
-    thrift_raw_params_to_arrow,
+    thrift_json_object_to_pydict,
     thrift_render_error_to_arrow,
+    thrift_tab_output_to_arrow,
 )
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import load_trusted_arrow_file, read_columns
@@ -34,6 +36,46 @@ def _arrow_tab_output_to_pandas(
         render_columns,
         cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table),
     )
+
+
+def _prepare_params(
+    params: Dict[str, Any], basedir: Path, tab_outputs: List[TabOutput]
+) -> Dict[str, Any]:
+    """Convert JSON-ish params into params that Pandas-v0 render() expects.
+
+    This walks the global ModuleSpec's `.param_schema`.
+
+    The returned value is the same as `params`, except:
+
+    * File params become `Path` objects
+    * Tab and Multitab are converted to `ptypes.TabOutput` objects
+    """
+
+    pandas_tab_outputs = {
+        to.tab.slug: _arrow_tab_output_to_pandas(to, basedir) for to in tab_outputs
+    }
+
+    def recurse(schema: ParamSchema, value: Any) -> Any:
+        if isinstance(schema, ParamSchema.List):
+            return [recurse(schema.inner_dtype, v) for v in value]
+        elif isinstance(schema, ParamSchema.Map):
+            return {k: recurse(schema.value_dtype, v) for k, v in value.items()}
+        elif isinstance(schema, ParamSchema.Dict):
+            return {
+                name: recurse(inner_schema, value[name])
+                for name, inner_schema in schema.properties.items()
+            }
+        elif isinstance(schema, ParamSchema.Tab):
+            return pandas_tab_outputs.get(value, None)  # handles value==""
+        elif isinstance(schema, ParamSchema.Multitab):
+            return [pandas_tab_outputs[v] for v in value]
+        elif isinstance(schema, ParamSchema.File):
+            return basedir / value
+        else:
+            return value
+
+    global ModuleSpec  # injected by cjwkernel.pandas.main
+    return recurse(ModuleSpec.param_schema, params)
 
 
 def _parquet_to_pandas(path: Path) -> pd.DataFrame:
@@ -55,35 +97,15 @@ def _parquet_to_pandas(path: Path) -> pd.DataFrame:
             )  # TODO ensure dictionaries stay dictionaries
 
 
-def __find_tab_outputs(value: Dict[str, Any]) -> List[types.TabOutput]:
-    """Find all `TabOutput` objects in the param dict, `values`."""
-    agg: Dict[str, types.TabOutput] = {}  # slug => TabOutput
-
-    def _find_nested(child: Any) -> None:
-        if isinstance(child, types.TabOutput):
-            nonlocal agg
-            agg[child.tab.slug] = child
-        elif isinstance(child, dict):
-            for grandchild in child.values():
-                _find_nested(grandchild)
-        elif isinstance(child, list):
-            for grandchild in child:
-                _find_nested(grandchild)
-
-    _find_nested(value)
-
-    return list(agg.values())
-
-
 def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.RenderResult:
     basedir = Path(request.basedir)
     input_path = basedir / request.input_filename
     table = load_trusted_arrow_file(input_path)
     dataframe = cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table)
-    params = _arrow_param_to_pandas_param(
-        thrift_params_to_arrow(request.params, basedir).params, basedir
+    tab_outputs = [thrift_tab_output_to_arrow(v) for v in request.tab_outputs]
+    params = _prepare_params(
+        thrift_json_object_to_pydict(request.params), basedir, tab_outputs
     )
-
     spec = inspect.getfullargspec(render)
     kwargs = {}
     varkw = bool(spec.varkw)  # if True, function accepts **kwargs
@@ -130,21 +152,6 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
     return arrow_render_result_to_thrift(arrow_result)
 
 
-def _arrow_param_to_pandas_param(param: Any, basedir: Path):
-    """Recursively prepare `params` to be passed to `render()`.
-
-    * TabOutput gets converted so it has dataframe.
-    """
-    if isinstance(param, list):
-        return [_arrow_param_to_pandas_param(p, basedir) for p in param]
-    elif isinstance(param, dict):
-        return {k: _arrow_param_to_pandas_param(v, basedir) for k, v in param.items()}
-    elif isinstance(param, types.TabOutput):
-        return _arrow_tab_output_to_pandas(param, basedir)
-    else:
-        return param
-
-
 def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchResult:
     """Call `fetch()` and validate the result.
 
@@ -154,9 +161,7 @@ def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchRes
     """
     # thrift => pandas
     basedir = Path(request.basedir)
-    params: Dict[str, Any] = _arrow_param_to_pandas_param(
-        thrift_params_to_arrow(request.params, basedir).params, basedir
-    )
+    params: Dict[str, Any] = thrift_json_object_to_pydict(request.params)
     output_path = basedir / request.output_filename
 
     spec = inspect.getfullargspec(fetch)
@@ -165,7 +170,7 @@ def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchRes
     kwonlyargs = spec.kwonlyargs
 
     if varkw or "secrets" in kwonlyargs:
-        kwargs["secrets"] = thrift_raw_params_to_arrow(request.secrets).params
+        kwargs["secrets"] = thrift_json_object_to_pydict(request.secrets)
     if varkw or "settings" in kwonlyargs:
         kwargs["settings"] = settings
     if varkw or "get_input_dataframe" in kwonlyargs:

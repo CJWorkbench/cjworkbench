@@ -13,19 +13,17 @@ import pyarrow as pa
 
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import ChrootContext
-from cjwkernel.errors import ModuleError, format_for_user_debugging
+from cjwkernel.errors import ModuleError, ModuleExitedError, format_for_user_debugging
 from cjwkernel.i18n import trans
 from cjwkernel.types import (
     Column,
     FetchResult,
-    I18nMessage,
-    Params,
-    RenderError,
     LoadedRenderResult,
+    RenderError,
     Tab,
-    thrift_render_result_to_arrow,
+    TabOutput,
 )
-from cjwkernel.validate import load_untrusted_arrow_file_with_columns
+from cjwkernel.validate import ValidateError, load_untrusted_arrow_file_with_columns
 from cjwkernel.util import tempfile_context
 from cjwstate import clientside, s3, rabbitmq, rendercache
 from cjwstate.models import StoredObject, Step, Workflow
@@ -137,9 +135,10 @@ def invoke_render(
     chroot_context: ChrootContext,
     basedir: Path,
     input_filename: Optional[str],
-    params: Params,
+    params: Dict[str, Any],
     tab: Tab,
     fetch_result: Optional[FetchResult],
+    tab_outputs: List[TabOutput],
     output_filename: str,
 ) -> LoadedRenderResult:
     """Use kernel to process `table` with module `render` function.
@@ -172,6 +171,7 @@ def invoke_render(
             params=params,
             tab=tab,
             fetch_result=fetch_result,
+            tab_outputs=tab_outputs,
             output_filename=output_filename,
         )
 
@@ -220,6 +220,7 @@ def invoke_render(
 class ExecuteStepPreResult(NamedTuple):
     fetch_result: Optional[FetchResult]
     params: Dict[str, Any]
+    tab_outputs: List[TabOutput]
 
 
 @database_sync_to_async
@@ -263,20 +264,18 @@ def _execute_step_pre(
         if not module_spec.loads_data and not input_table_columns:
             raise NoLoadedDataError
 
-        render_context = renderprep.RenderContext(
-            step.id,
+        # raise TabCycleError, TabOutputUnreachableError, PromptingError
+        params, tab_outputs = renderprep.prep_params(
+            params=raw_params,
+            schema=module_spec.param_schema,
+            step_id=step.id,
             input_table_columns=input_table_columns,
             tab_results=tab_results,
             basedir=basedir,
             exit_stack=exit_stack,
-            params=raw_params,  # ugh
-        )
-        # raise TabCycleError, TabOutputUnreachableError, PromptingError
-        params = renderprep.get_param_values(
-            module_spec.param_schema, raw_params, render_context
         )
 
-        return ExecuteStepPreResult(fetch_result, params)
+        return ExecuteStepPreResult(fetch_result, params, tab_outputs)
 
 
 @database_sync_to_async
@@ -400,7 +399,7 @@ async def _render_step(
         try:
             # raise UnneededExecution, TabCycleError, TabOutputUnreachableError,
             # NoLoadedDataError, PromptingError
-            fetch_result, params = await _execute_step_pre(
+            fetch_result, params, tab_outputs = await _execute_step_pre(
                 basedir=basedir,
                 exit_stack=exit_stack,
                 workflow=workflow,
@@ -467,6 +466,7 @@ async def _render_step(
                     input_filename=input_path.name,
                     params=params,
                     tab=tab,
+                    tab_outputs=tab_outputs,
                     fetch_result=fetch_result,
                     output_filename=output_path.name,
                 ),

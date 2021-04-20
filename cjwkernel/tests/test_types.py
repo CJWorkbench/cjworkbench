@@ -8,36 +8,6 @@ from cjwkernel.thrift import ttypes
 from cjwmodule.i18n import I18nMessage
 
 
-class ColumnTypeNumberTests(unittest.TestCase):
-    def test_format_too_many_arguments(self):
-        with self.assertRaisesRegex(ValueError, "Can only format one number"):
-            types.parse_number_format("{:d}{:f}")
-
-    def test_format_disallow_non_format(self):
-        with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            types.parse_number_format("%d")
-
-    def test_format_disallow_field_number(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            types.parse_number_format("{0:f}")
-
-    def test_format_disallow_field_name(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            types.parse_number_format("{value:f}")
-
-    def test_format_disallow_field_converter(self):
-        with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
-            types.parse_number_format("{!r:f}")
-
-    def test_format_disallow_invalid_type(self):
-        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            types.parse_number_format("{:T}")
-
-
 class ThriftConvertersTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
@@ -68,145 +38,79 @@ class ThriftConvertersTest(unittest.TestCase):
     def test_tab_output_to_thrift(self):
         pass  # TODO test ArrowTable conversions, then test TabOutput conversions
 
-    def test_raw_params_from_thrift(self):
+    def test_thrift_json_object_to_pydict(self):
         self.assertEqual(
-            types.thrift_raw_params_to_arrow(ttypes.RawParams('{"A":"x","B":[1,2]}')),
-            types.RawParams({"A": "x", "B": [1, 2]}),
-        )
-
-    def test_raw_params_to_thrift(self):
-        self.assertEqual(
-            types.arrow_raw_params_to_thrift(types.RawParams({"A": "x", "B": [1, 2]})),
-            ttypes.RawParams('{"A":"x","B":[1,2]}'),
-        )
-
-    def test_params_from_thrift(self):
-        self.assertEqual(
-            types.thrift_params_to_arrow(
+            types.thrift_json_object_to_pydict(
                 {
-                    "str": ttypes.ParamValue(string_value="s"),
-                    "int": ttypes.ParamValue(integer_value=2),
-                    "float": ttypes.ParamValue(float_value=1.2),
-                    "null": ttypes.ParamValue(),
-                    "bool": ttypes.ParamValue(boolean_value=False),
-                    "column": ttypes.ParamValue(
-                        column_value=ttypes.Column(
-                            "A",
-                            ttypes.ColumnType(
-                                number_type=ttypes.ColumnTypeNumber(format="{:,.2f}")
-                            ),
-                        )
-                    ),
-                    "listofmaps": ttypes.ParamValue(
-                        list_value=[
-                            ttypes.ParamValue(
-                                map_value={
-                                    "A": ttypes.ParamValue(string_value="a"),
-                                    "B": ttypes.ParamValue(string_value="b"),
+                    "str": ttypes.Json(string_value="s"),
+                    "int": ttypes.Json(int64_value=2),
+                    "float": ttypes.Json(number_value=1.2),
+                    "null": ttypes.Json(),
+                    "bool": ttypes.Json(boolean_value=False),
+                    "arrayofobjects": ttypes.Json(
+                        array_value=[
+                            ttypes.Json(
+                                object_value={
+                                    "A": ttypes.Json(string_value="a"),
+                                    "B": ttypes.Json(string_value="b"),
                                 }
                             ),
-                            ttypes.ParamValue(
-                                map_value={
-                                    "C": ttypes.ParamValue(string_value="c"),
-                                    "D": ttypes.ParamValue(string_value="d"),
+                            ttypes.Json(
+                                object_value={
+                                    "C": ttypes.Json(string_value="c"),
+                                    "D": ttypes.Json(string_value="d"),
                                 }
                             ),
                         ]
                     ),
-                    "tab": ttypes.ParamValue(string_value="TODO tabs"),
                 },
-                self.basedir,
             ),
-            types.Params(
+            {
+                "str": "s",
+                "int": 2,
+                "float": 1.2,
+                "null": None,
+                "bool": False,
+                "arrayofobjects": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
+            },
+        )
+
+    def test_pydict_to_thrift_json_object(self):
+        self.assertEqual(
+            types.pydict_to_thrift_json_object(
                 {
                     "str": "s",
                     "int": 2,
                     "float": 1.2,
                     "null": None,
                     "bool": False,
-                    "column": types.Column(
-                        "A", types.ColumnType.Number(format="{:,.2f}")
-                    ),
-                    "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
-                    "tab": "TODO tabs",
+                    "arrayofobjects": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
                 }
             ),
-        )
-
-    def test_params_to_thrift(self):
-        self.assertEqual(
-            types.arrow_params_to_thrift(
-                types.Params(
-                    {
-                        "str": "s",
-                        "int": 2,
-                        "float": 1.2,
-                        "null": None,
-                        "bool": False,
-                        "column": types.Column(
-                            "A", types.ColumnType.Number(format="{:,.2f}")
-                        ),
-                        "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
-                        "tab": "TODO tabs",
-                    }
-                )
-            ),
             {
-                "str": ttypes.ParamValue(string_value="s"),
-                "int": ttypes.ParamValue(integer_value=2),
-                "float": ttypes.ParamValue(float_value=1.2),
-                "null": ttypes.ParamValue(),
-                "bool": ttypes.ParamValue(boolean_value=False),
-                "column": ttypes.ParamValue(
-                    column_value=ttypes.Column(
-                        "A",
-                        ttypes.ColumnType(
-                            number_type=ttypes.ColumnTypeNumber(format="{:,.2f}")
-                        ),
-                    )
-                ),
-                "listofmaps": ttypes.ParamValue(
-                    list_value=[
-                        ttypes.ParamValue(
-                            map_value={
-                                "A": ttypes.ParamValue(string_value="a"),
-                                "B": ttypes.ParamValue(string_value="b"),
+                "str": ttypes.Json(string_value="s"),
+                "int": ttypes.Json(int64_value=2),
+                "float": ttypes.Json(number_value=1.2),
+                "null": ttypes.Json(),
+                "bool": ttypes.Json(boolean_value=False),
+                "arrayofobjects": ttypes.Json(
+                    array_value=[
+                        ttypes.Json(
+                            object_value={
+                                "A": ttypes.Json(string_value="a"),
+                                "B": ttypes.Json(string_value="b"),
                             }
                         ),
-                        ttypes.ParamValue(
-                            map_value={
-                                "C": ttypes.ParamValue(string_value="c"),
-                                "D": ttypes.ParamValue(string_value="d"),
+                        ttypes.Json(
+                            object_value={
+                                "C": ttypes.Json(string_value="c"),
+                                "D": ttypes.Json(string_value="d"),
                             }
                         ),
                     ]
                 ),
-                "tab": ttypes.ParamValue(string_value="TODO tabs"),
             },
         )
-
-    def test_params_filename_from_thrift_happy_path(self):
-        with tempfile.NamedTemporaryFile(dir=self.basedir) as tf:
-            filename = Path(tf.name).name
-            Path(tf.name).write_bytes(b"")
-            self.assertEqual(
-                types.thrift_params_to_arrow(
-                    {"A": ttypes.ParamValue(filename_value=filename)}, self.basedir
-                ),
-                types.Params({"A": Path(tf.name)}),
-            )
-
-    def test_params_filename_to_thrift(self):
-        self.assertEqual(
-            types.arrow_params_to_thrift(types.Params({"A": Path("x.bin")})),
-            {"A": ttypes.ParamValue(filename_value="x.bin")},
-        )
-
-    def test_params_filename_from_thrift_file_not_found_is_error(self):
-        with self.assertRaisesRegexp(ValueError, "file must exist"):
-            types.thrift_params_to_arrow(
-                {"A": ttypes.ParamValue(filename_value="does_not_exist")}, self.basedir
-            )
 
     def test_i18n_message_from_thrift_source_module(self):
         self.assertEqual(
@@ -311,7 +215,7 @@ class ThriftConvertersTest(unittest.TestCase):
             types.thrift_quick_fix_action_to_arrow(
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
-                        "filter", ttypes.RawParams('{"x":"y"}')
+                        "filter", {"x": ttypes.Json(string_value="y")}
                     )
                 )
             ),
@@ -325,7 +229,7 @@ class ThriftConvertersTest(unittest.TestCase):
             ),
             ttypes.QuickFixAction(
                 prepend_step=ttypes.PrependStepQuickFixAction(
-                    "filter", ttypes.RawParams('{"x":"y"}')
+                    "filter", {"x": ttypes.Json(string_value="y")}
                 )
             ),
         )
@@ -337,7 +241,7 @@ class ThriftConvertersTest(unittest.TestCase):
                     ttypes.I18nMessage("click", {}, None),
                     ttypes.QuickFixAction(
                         prepend_step=ttypes.PrependStepQuickFixAction(
-                            "filter", ttypes.RawParams('{"x":"y"}')
+                            "filter", {"x": ttypes.Json(string_value="y")}
                         )
                     ),
                 )
@@ -360,7 +264,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 ttypes.I18nMessage("click", {}, None),
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
-                        "filter", ttypes.RawParams('{"x":"y"}')
+                        "filter", {"x": ttypes.Json(string_value="y")}
                     )
                 ),
             ),
@@ -376,7 +280,7 @@ class ThriftConvertersTest(unittest.TestCase):
                             ttypes.I18nMessage("click", {}, None),
                             ttypes.QuickFixAction(
                                 prepend_step=ttypes.PrependStepQuickFixAction(
-                                    "filter", ttypes.RawParams('{"x":"y"}')
+                                    "filter", {"x": ttypes.Json(string_value="y")}
                                 )
                             ),
                         )
@@ -414,7 +318,7 @@ class ThriftConvertersTest(unittest.TestCase):
                         ttypes.I18nMessage("click", {}, None),
                         ttypes.QuickFixAction(
                             prepend_step=ttypes.PrependStepQuickFixAction(
-                                "filter", ttypes.RawParams('{"x":"y"}')
+                                "filter", {"x": ttypes.Json(string_value="y")}
                             )
                         ),
                     )

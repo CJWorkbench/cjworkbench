@@ -2,23 +2,24 @@ import asyncio
 import contextlib
 import datetime
 import logging
-import os
-from pathlib import Path
 import time
-from typing import Any, ContextManager, Dict, List, NamedTuple, Optional, Union
+from pathlib import Path
+from typing import Any, Dict, List, NamedTuple, Optional, Union
+
 from django.conf import settings
-from django.db import DatabaseError, InterfaceError
+
+import cjwstate.params
+import fetcher.secrets
 from cjwkernel.chroot import EDITABLE_CHROOT, ChrootContext
 from cjwkernel.errors import ModuleError, format_for_user_debugging
 from cjwkernel.i18n import trans
-from cjwkernel.types import FetchResult, I18nMessage, Params, RenderError, TableMetadata
+from cjwkernel.types import FetchResult, RenderError, TableMetadata
 from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import CachedRenderResult, StoredObject, Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
-import cjwstate.params
 from cjwstate import rendercache, storedobjects
-import fetcher.secrets
+
 from . import fetchprep, save, versions
 
 
@@ -30,7 +31,7 @@ def invoke_fetch(
     *,
     chroot_context: ChrootContext,
     basedir: Path,
-    params: Params,
+    params: Dict[str, Any],
     secrets: Dict[str, Any],
     last_fetch_result: Optional[FetchResult],
     input_parquet_filename: Optional[str],
@@ -194,13 +195,13 @@ DownloadedCachedRenderResult = NamedTuple(
 
 
 def _download_cached_render_result(
-    ctx: contextlib.ExitStack, maybe_crr: Optional[CachedRenderResult], dir: Path
+    exit_stack: contextlib.ExitStack, maybe_crr: Optional[CachedRenderResult], dir: Path
 ) -> DownloadedCachedRenderResult:
     if maybe_crr is None:
         return DownloadedCachedRenderResult(None, TableMetadata())
     else:
         try:
-            parquet_path = ctx.enter_context(
+            parquet_path = exit_stack.enter_context(
                 rendercache.downloaded_parquet_file(maybe_crr, dir=dir)
             )
             return DownloadedCachedRenderResult(parquet_path, maybe_crr.table_metadata)
@@ -212,7 +213,7 @@ def _download_cached_render_result(
 
 
 def _stored_object_to_fetch_result(
-    ctx: contextlib.ExitStack,
+    exit_stack: contextlib.ExitStack,
     stored_object: Optional[StoredObject],
     step_fetch_errors: List[RenderError],
     dir: Path,
@@ -225,7 +226,7 @@ def _stored_object_to_fetch_result(
         return None
     else:
         try:
-            last_fetch_path = ctx.enter_context(
+            last_fetch_path = exit_stack.enter_context(
                 storedobjects.downloaded_file(stored_object, dir=dir)
             )
             return FetchResult(last_fetch_path, step_fetch_errors)
@@ -234,7 +235,7 @@ def _stored_object_to_fetch_result(
 
 
 def fetch_or_wrap_error(
-    ctx: contextlib.ExitStack,
+    exit_stack: contextlib.ExitStack,
     chroot_context: ChrootContext,
     basedir: Path,
     module_id_name: str,
@@ -307,13 +308,11 @@ def fetch_or_wrap_error(
 
     # get input_metadata, input_parquet_path. (This can't error.)
     input_parquet_path, input_metadata = _download_cached_render_result(
-        ctx, maybe_input_crr, dir=basedir
+        exit_stack, maybe_input_crr, dir=basedir
     )
 
     # Clean params, so they're of the correct type. (This can't error.)
-    params = Params(
-        fetchprep.clean_value(param_schema, migrated_params, input_metadata)
-    )
+    params = fetchprep.clean_value(param_schema, migrated_params, input_metadata)
 
     # actually fetch
     try:
@@ -383,20 +382,22 @@ async def fetch(
     if now is None:
         now = datetime.datetime.now()
 
-    with contextlib.ExitStack() as ctx:
-        chroot_context = ctx.enter_context(EDITABLE_CHROOT.acquire_context())
-        basedir = ctx.enter_context(chroot_context.tempdir_context(prefix="fetch-"))
-        output_path = ctx.enter_context(
+    with contextlib.ExitStack() as exit_stack:
+        chroot_context = exit_stack.enter_context(EDITABLE_CHROOT.acquire_context())
+        basedir = exit_stack.enter_context(
+            chroot_context.tempdir_context(prefix="fetch-")
+        )
+        output_path = exit_stack.enter_context(
             chroot_context.tempfile_context(prefix="fetch-result-", dir=basedir)
         )
         # get last_fetch_result (This can't error.)
         last_fetch_result = _stored_object_to_fetch_result(
-            ctx, stored_object, step.fetch_errors, dir=basedir
+            exit_stack, stored_object, step.fetch_errors, dir=basedir
         )
         result = await asyncio.get_event_loop().run_in_executor(
             None,
             fetch_or_wrap_error,
-            ctx,
+            exit_stack,
             chroot_context,
             basedir,
             step.module_id_name,

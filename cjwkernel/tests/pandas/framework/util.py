@@ -2,21 +2,23 @@ import os
 import shutil
 from pathlib import Path
 from tempfile import mkstemp
-from typing import Any, Dict, NamedTuple, Optional
+from typing import Any, Dict, List, NamedTuple, Optional
 
 import pyarrow as pa
+from cjwmodule.spec.paramschema import ParamSchema
 from cjwmodule.types import FetchResult
 
 import cjwkernel.pandas.module
 from cjwkernel.tests.util import arrow_table_context
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
-    Params,
     RenderResult,
     Tab,
+    TabOutput,
     arrow_fetch_result_to_thrift,
-    arrow_params_to_thrift,
+    pydict_to_thrift_json_object,
     arrow_tab_to_thrift,
+    arrow_tab_output_to_thrift,
     thrift_render_result_to_arrow,
 )
 from cjwkernel.util import create_tempdir
@@ -51,6 +53,12 @@ class RenderOutcome(NamedTuple):
         return load_untrusted_arrow_file_with_columns(self.path)[0]
 
 
+class MockModuleSpec(NamedTuple):
+    """ModuleSpec for use in ModuleTestEnv."""
+
+    param_schema: ParamSchema.Dict
+
+
 class ModuleTestEnv:
     r"""Module code and environment to execute it
 
@@ -60,7 +68,7 @@ class ModuleTestEnv:
             raise NotImplementedError
 
         def test_something():
-            with ModuleTextEnv(render=render) as env:
+            with ModuleTestEnv(render=render) as env:
                 output_path = env.call_render(
                     table=make_table(make_column("A", [1])), params={}
                 )
@@ -68,25 +76,32 @@ class ModuleTestEnv:
                     env.read_table(output_path), make_table(make_column("A", [2])),
                 )
 
+    To test with params:
+
+        schema = ParamSchema.Dict({"x": ParamSchema.String()})
+        with ModuleTestEnv(param_schema=schema, ...):
+            pass
+
     The same `ModuleTestEnv` can test any framework. Choose a framework by
     passing the correct function signatures to `__init__()`.
     """
 
-    def __init__(self, **functions):
-        self.functions = functions
+    def __init__(self, param_schema: ParamSchema = ParamSchema.Dict({}), **defs):
+        self.defs = {"ModuleSpec": MockModuleSpec(param_schema), **defs}
 
     def __enter__(self):
         self.basedir = create_tempdir()
         mod = cjwkernel.pandas.module
-        self.old_functions = {
-            name: mod.__dict__[name] for name in self.functions.keys()
-        }
-        mod.__dict__.update(self.functions)
+        self.old_defs = {}
+        for name in self.defs.keys():
+            if name in mod.__dict__:
+                self.old_defs[name] = mod.__dict__[name]
+        mod.__dict__.update(self.defs)
         return self
 
     def __exit__(self, *args):
-        cjwkernel.pandas.module.__dict__.update(self.old_functions)
-        del self.old_functions
+        cjwkernel.pandas.module.__dict__.update(self.old_defs)
+        del self.old_defs
         shutil.rmtree(self.basedir)
         del self.basedir
 
@@ -95,6 +110,7 @@ class ModuleTestEnv:
         table: pa.Table,
         params: Dict[str, Any],
         tab: Tab = Tab("tab-1", "Tab 1"),
+        tab_outputs: List[TabOutput] = [],
         fetch_result: Optional[FetchResult] = None,
     ) -> RenderOutcome:
         """Conveniently call the module's `render_thrift()`.
@@ -114,8 +130,11 @@ class ModuleTestEnv:
                     ttypes.RenderRequest(
                         basedir=self.basedir,
                         input_filename=input_path.name,
-                        params=arrow_params_to_thrift(Params(params)),
+                        params=pydict_to_thrift_json_object(params),
                         tab=arrow_tab_to_thrift(tab),
+                        tab_outputs=[
+                            arrow_tab_output_to_thrift(to) for to in tab_outputs
+                        ],
                         fetch_result=(
                             arrow_fetch_result_to_thrift(fetch_result)
                             if fetch_result is not None

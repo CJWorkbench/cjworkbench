@@ -19,7 +19,6 @@ from cjwkernel.types import (
     ColumnType,
     FetchResult,
     I18nMessage,
-    Params,
     RenderError,
     TableMetadata,
 )
@@ -247,23 +246,23 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         with self.assertLogs("fetcher.fetch", level=logging.INFO):
             result = fetch.fetch_or_wrap_error(
-                self.ctx,
-                self.chroot_context,
-                self.basedir,
-                "mod",
-                module_zipfile,
-                {"A": "B"},
-                {"C": "D"},
-                None,
-                None,
-                self.output_path,
+                exit_stack=self.ctx,
+                chroot_context=self.chroot_context,
+                basedir=self.basedir,
+                module_id_name="mod",
+                module_zipfile=module_zipfile,
+                migrated_params_or_error={"A": "B"},
+                secrets={"C": "D"},
+                last_fetch_result=None,
+                maybe_input_crr=None,
+                output_path=self.output_path,
             )
         self.assertEqual(result, FetchResult(self.output_path, []))
         self.assertEqual(
             self.kernel.fetch.call_args[1]["compiled_module"],
             module_zipfile.compile_code_without_executing(),
         )
-        self.assertEqual(self.kernel.fetch.call_args[1]["params"], Params({"A": "B"}))
+        self.assertEqual(self.kernel.fetch.call_args[1]["params"], {"A": "B"})
         self.assertEqual(self.kernel.fetch.call_args[1]["secrets"], {"C": "D"})
         self.assertIsNone(self.kernel.fetch.call_args[1]["last_fetch_result"])
         self.assertIsNone(self.kernel.fetch.call_args[1]["input_parquet_filename"])

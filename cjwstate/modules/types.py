@@ -171,7 +171,9 @@ class ModuleZipfile:
             dont_inherit=True,
             optimize=0,  # keep assertions -- we use them!
         )
-        return CompiledModule(self.module_id, marshal.dumps(code_object))
+        return CompiledModule(
+            self.module_id, marshal.dumps(code_object), self.get_spec_dict()
+        )
 
     @lru_cache(1)
     def get_optional_html(self) -> Optional[str]:

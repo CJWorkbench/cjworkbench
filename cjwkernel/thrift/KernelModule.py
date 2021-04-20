@@ -461,9 +461,15 @@ class migrateParams_args(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.params = RawParams()
-                    self.params.read(iprot)
+                if ftype == TType.MAP:
+                    self.params = {}
+                    (_ktype108, _vtype109, _size107) = iprot.readMapBegin()
+                    for _i111 in range(_size107):
+                        _key112 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val113 = Json()
+                        _val113.read(iprot)
+                        self.params[_key112] = _val113
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             else:
@@ -477,8 +483,12 @@ class migrateParams_args(object):
             return
         oprot.writeStructBegin('migrateParams_args')
         if self.params is not None:
-            oprot.writeFieldBegin('params', TType.STRUCT, 1)
-            self.params.write(oprot)
+            oprot.writeFieldBegin('params', TType.MAP, 1)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
+            for kiter114, viter115 in self.params.items():
+                oprot.writeString(kiter114.encode('utf-8') if sys.version_info[0] == 2 else kiter114)
+                viter115.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -506,7 +516,7 @@ class migrateParams_args(object):
 all_structs.append(migrateParams_args)
 migrateParams_args.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'params', [RawParams, None], None, ),  # 1
+    (1, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 1
 )
 
 
@@ -536,7 +546,7 @@ class migrateParams_result(object):
                 break
             if fid == 0:
                 if ftype == TType.STRUCT:
-                    self.success = RawParams()
+                    self.success = MigrateParamsResult()
                     self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
@@ -579,7 +589,7 @@ class migrateParams_result(object):
         return not (self == other)
 all_structs.append(migrateParams_result)
 migrateParams_result.thrift_spec = (
-    (0, TType.STRUCT, 'success', [RawParams, None], None, ),  # 0
+    (0, TType.STRUCT, 'success', [MigrateParamsResult, None], None, ),  # 0
 )
 
 

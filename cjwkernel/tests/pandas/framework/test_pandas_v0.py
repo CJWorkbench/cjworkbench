@@ -8,8 +8,9 @@ from unittest.mock import patch
 
 import pandas as pd
 import pyarrow as pa
-from pandas.testing import assert_frame_equal
+from cjwmodule.spec.paramschema import ParamSchema
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+from pandas.testing import assert_frame_equal
 
 import cjwkernel.pandas.types as ptypes
 from cjwkernel.files import read_parquet_as_arrow
@@ -26,15 +27,12 @@ from cjwkernel.types import (
     ColumnType,
     FetchResult,
     I18nMessage,
-    Params,
-    RawParams,
     RenderError,
     RenderResult,
     Tab,
     TabOutput,
     arrow_fetch_result_to_thrift,
-    arrow_params_to_thrift,
-    arrow_raw_params_to_thrift,
+    pydict_to_thrift_json_object,
     thrift_fetch_result_to_arrow,
 )
 from cjwkernel.util import create_tempdir, tempfile_context
@@ -81,7 +79,8 @@ class RenderTests(unittest.TestCase):
         def render(table, params):
             return table * params["n"]
 
-        with ModuleTestEnv(render=render) as env:
+        param_schema = ParamSchema.Dict({"n": ParamSchema.Float()})
+        with ModuleTestEnv(param_schema=param_schema, render=render) as env:
             outcome = env.call_render(make_table(make_column("A", [1])), {"n": 2})
             assert_arrow_table_equals(
                 outcome.read_table(), make_table(make_column("A", [2]))
@@ -241,7 +240,8 @@ class RenderTests(unittest.TestCase):
                 params["tabparam"].dataframe, pd.DataFrame({"X": [1], "Y": ["y"]})
             )
 
-        with ModuleTestEnv(render=render) as env:
+        param_schema = ParamSchema.Dict({"tabparam": ParamSchema.Tab()})
+        with ModuleTestEnv(param_schema=param_schema, render=render) as env:
             with arrow_table_context(
                 make_column("X", [1], format="{:,d}"),
                 make_column("Y", ["y"]),
@@ -249,11 +249,10 @@ class RenderTests(unittest.TestCase):
             ) as (path, _):
                 env.call_render(
                     make_table(),
-                    params={
-                        "tabparam": TabOutput(
-                            tab=Tab("tab-1", "Tab 1"), table_filename=path.name
-                        )
-                    },
+                    params={"tabparam": "tab-1"},
+                    tab_outputs=[
+                        TabOutput(tab=Tab("tab-1", "Tab 1"), table_filename=path.name)
+                    ],
                 )
 
 
@@ -292,8 +291,8 @@ class FetchTests(unittest.TestCase):
             thrift_result = module.fetch_thrift(
                 ttypes.FetchRequest(
                     basedir=str(self.basedir),
-                    params=arrow_params_to_thrift(Params(params)),
-                    secrets=arrow_raw_params_to_thrift(RawParams(secrets)),
+                    params=pydict_to_thrift_json_object(params),
+                    secrets=pydict_to_thrift_json_object(secrets),
                     last_fetch_result=(
                         arrow_fetch_result_to_thrift(last_fetch_result)
                         if last_fetch_result is not None
