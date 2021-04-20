@@ -148,7 +148,7 @@ class WorkbenchBase(unittest.TestCase):
             f'.step[data-module-name="{module_name}"] .param[data-name="{name}"]',
             **kwargs,
         ):
-            self.browser.assert_element(f".react-select:not(.loading)", wait=True)
+            self.browser.assert_element(".react-select:not(.loading)", wait=True)
             self.browser.click_whatever(".react-select__dropdown-indicator")
 
         self.browser.click_whatever(".react-select__option", text=text)
