@@ -57,9 +57,9 @@ def _prepare_params(
 
     def recurse(schema: ParamSchema, value: Any) -> Any:
         if isinstance(schema, ParamSchema.List):
-            return [recurse(schema.inner_dtype, v) for v in value]
+            return [recurse(schema.inner_schema, v) for v in value]
         elif isinstance(schema, ParamSchema.Map):
-            return {k: recurse(schema.value_dtype, v) for k, v in value.items()}
+            return {k: recurse(schema.value_schema, v) for k, v in value.items()}
         elif isinstance(schema, ParamSchema.Dict):
             return {
                 name: recurse(inner_schema, value[name])
