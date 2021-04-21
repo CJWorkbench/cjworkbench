@@ -6,7 +6,7 @@ carehare~=0.0.10
 cjwmodule~=4.1.5
 cjwparse~=2.0.1  # for i18n strings
 cjwparquet~=2.2.0
-Django~=3.1
+Django~=3.1.0  # until 3.2.1 at least - https://code.djangoproject.com/ticket/32643
 django-allauth~=0.44.0
 django-user-accounts==2.1.0
 html5lib==1.0.1

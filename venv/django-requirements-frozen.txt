@@ -21,7 +21,7 @@ channels-rabbitmq==3.0.0
     pamqp==3.0.1
   channels==3.0.3
     asgiref==3.3.4
-    Django==3.2
+    Django==3.1.8
       asgiref==3.3.4
       pytz==2021.1
       sqlparse==0.4.1
@@ -54,7 +54,7 @@ cjwparse==2.0.1
   pyarrow==3.0.0
     numpy==1.20.2
 django-allauth==0.44.0
-  Django==3.2
+  Django==3.1.8
     asgiref==3.3.4
     pytz==2021.1
     sqlparse==0.4.1
@@ -74,12 +74,12 @@ django-allauth==0.44.0
       idna==2.10
       urllib3==1.26.4
 django-user-accounts==2.1.0
-  Django==3.2
+  Django==3.1.8
     asgiref==3.3.4
     pytz==2021.1
     sqlparse==0.4.1
   django-appconf==1.0.4
-    Django==3.2
+    Django==3.1.8
       asgiref==3.3.4
       pytz==2021.1
       sqlparse==0.4.1
