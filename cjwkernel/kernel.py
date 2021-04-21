@@ -159,8 +159,19 @@ class Kernel:
                 # I'm frustrated.
                 "OPENBLAS_NUM_THREADS": "1",
             },
+            # Try to preload all the Python modules that any Workbench module
+            # might use.
+            #
+            # When we preload, we execute the Python code once, during Workbench
+            # startup.
+            #
+            # When we neglect to preload a Python module, every Workbench Step
+            # that imports it will execute it every time it is run.
+            #
+            # The huge win here is pyarrow+numpy+pandas, which takes >1s to run.
+            # Other imports only help a little bit.
             preload_imports=[
-                "_strptime",
+                # Python
                 "abc",
                 "asyncio",
                 "base64",
@@ -180,14 +191,18 @@ class Kernel:
                 "multiprocessing.connection",
                 "multiprocessing.popen_fork",
                 "os.path",
+                "pathlib",
                 "re",
                 "sqlite3",
                 "ssl",
                 "string",
+                "_strptime",
                 "tarfile",
                 "typing",
                 "urllib.parse",
                 "warnings",
+                *ENCODING_IMPORTS,
+                # Third-party
                 "bs4",
                 "formulas",
                 "formulas.functions.operators",
@@ -204,10 +219,10 @@ class Kernel:
                 "lxml.html.html5parser",
                 "lz4",
                 "lz4.frame",
-                "numpy",
                 "nltk",
                 "nltk.corpus",
                 "nltk.sentiment.vader",
+                "numpy",
                 "oauthlib",
                 "oauthlib.oauth1",
                 "oauthlib.oauth2",
@@ -226,13 +241,12 @@ class Kernel:
                 "schedula.utils.sol",
                 "thrift.protocol.TBinaryProtocol",
                 "thrift.transport.TTransport",
-                *ENCODING_IMPORTS,
-                "cjwkernel.pandas.main",
-                "cjwkernel.pandas.module",
+                "yaml",
+                # Other Workbench-controlled packages
                 "cjwmodule",
-                "cjwmodule.i18n",
                 "cjwmodule.http.client",
                 "cjwmodule.http.httpfile",
+                "cjwmodule.i18n",
                 "cjwmodule.spec",
                 "cjwmodule.spec.loader",
                 "cjwmodule.spec.paramfield",
@@ -243,6 +257,9 @@ class Kernel:
                 "cjwpandasmodule.validate",
                 "cjwparquet",
                 "cjwparse.api",
+                # Internal
+                "cjwkernel.pandas.main",
+                "cjwkernel.pandas.module",
             ],
         )
 
