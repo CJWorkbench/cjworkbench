@@ -110,7 +110,7 @@ class TabFlow:
     @cached_property
     def input_tab_slugs(self) -> FrozenSet[str]:
         """Slugs of tabs that are used as _input_ into this tab's steps."""
-        return frozenset.union(
+        return frozenset().union(
             *(
                 gather_param_tab_slugs(
                     step.module_zipfile.get_spec().param_schema, step.params
