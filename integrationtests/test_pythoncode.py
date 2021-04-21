@@ -1,5 +1,3 @@
-import selenium.common.exceptions
-
 from integrationtests.utils import LoggedInIntegrationTest
 
 
@@ -69,7 +67,15 @@ def process(table):
         )
 
         b = self.browser
-        # wait for iframe to appear and load data
+
+        # wait for iframe to appear and load data.
+        # First, wait for the step to complete. When this finishes, the
+        # _previous_ iframe, if any -- the one that appeared when we added the
+        # step -- will disappear.
+        b.assert_element(
+            '.step[data-module-name="Python"]:not(.status-busy)', wait=True
+        )
+        # Now, wait for the new iframe to appear.
         #
         # pythoncode will start with no .has-height-from-iframe; then it will
         # have .has-height-from-iframe.height-0; and then when it receives
@@ -78,20 +84,7 @@ def process(table):
             ".outputpane-iframe.has-height-from-iframe:not(.height-0) iframe", wait=True
         )
 
-        def try_assert_iframe_contents():
-            with b.iframe(".outputpane-iframe iframe"):
-                # wait for page load
-                b.assert_element("pre", text="Hello, world!", wait=True)
-                b.assert_element("pre", text="NameError: name 'p' is not defined")
-
-        try:
-            try_assert_iframe_contents()
-        except (
-            selenium.common.exceptions.NoSuchWindowException,
-            selenium.common.exceptions.StaleElementReferenceException,
-        ):
-            # There's a race involving a reloading iframe. TODO figure out how
-            # this happens. It's only on Google Cloud Build, never on dev
-            #
-            # ... try again
-            try_assert_iframe_contents()
+        with b.iframe(".outputpane-iframe iframe"):
+            # wait for page load
+            b.assert_element("pre", text="Hello, world!", wait=True)
+            b.assert_element("pre", text="NameError: name 'p' is not defined")

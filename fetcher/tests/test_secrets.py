@@ -1,14 +1,13 @@
 import asyncio
-import json
-import logging
 import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import ContextManager, List, NamedTuple, Tuple
 from unittest.mock import patch
 
+from cjwmodule.spec.paramfield import ParamField
+
 from cjwstate import oauth
-from cjwstate.modules.param_spec import ParamSpec
 from fetcher.secrets import prepare_secret
 
 
@@ -62,7 +61,7 @@ class PrepareSecretStringTests(unittest.TestCase):
         self.assertEqual(
             asyncio.run(
                 prepare_secret(
-                    ParamSpec.Secret.Logic.String(
+                    ParamField.Secret.Logic.String(
                         "provider",
                         "label",
                         "pattern",
@@ -81,7 +80,7 @@ class PrepareSecretStringTests(unittest.TestCase):
         self.assertEqual(
             asyncio.run(
                 prepare_secret(
-                    ParamSpec.Secret.Logic.String(
+                    ParamField.Secret.Logic.String(
                         "provider",
                         "label",
                         "pattern",
@@ -102,7 +101,7 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
         self.assertEqual(
             asyncio.run(
                 prepare_secret(
-                    ParamSpec.Secret.Logic.Oauth1a("oauth1a", "twitter"), None
+                    ParamField.Secret.Logic.Oauth1a("oauth1a", "twitter"), None
                 )
             ),
             None,
@@ -113,7 +112,7 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
         self.assertEqual(
             asyncio.run(
                 prepare_secret(
-                    ParamSpec.Secret.Logic.Oauth1a("oauth1a", "twitter"),
+                    ParamField.Secret.Logic.Oauth1a("oauth1a", "twitter"),
                     {
                         "name": "@testy",
                         "secret": {
@@ -140,7 +139,7 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
         self.assertEqual(
             asyncio.run(
                 prepare_secret(
-                    ParamSpec.Secret.Logic.Oauth1a("oauth1a", "twitter"),
+                    ParamField.Secret.Logic.Oauth1a("oauth1a", "twitter"),
                     {
                         "name": "@testy",
                         "secret": {
@@ -165,8 +164,8 @@ class PrepareSecretOauth1aTests(unittest.TestCase):
 
 
 class PrepareSecretOauth2(unittest.IsolatedAsyncioTestCase):
-    GoogleLogic = ParamSpec.Secret.Logic.Oauth2("oauth2", "google")
-    IntercomLogic = ParamSpec.Secret.Logic.Oauth2("oauth2", "intercom")
+    GoogleLogic = ParamField.Secret.Logic.Oauth2("oauth2", "google")
+    IntercomLogic = ParamField.Secret.Logic.Oauth2("oauth2", "intercom")
 
     def setUp(self):
         super().setUp()

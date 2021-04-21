@@ -14,6 +14,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
+#: assets/js/BigTable/Cell/NullCell.js:11
+msgid "js.BigTable.Cell.null"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.BigTable.ColumnType.date.day"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:13
+msgid "js.BigTable.ColumnType.date.month"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:15
+msgid "js.BigTable.ColumnType.date.quarter"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:11
+msgid "js.BigTable.ColumnType.date.week"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:17
+msgid "js.BigTable.ColumnType.date.year"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:24
+msgid "js.BigTable.ColumnType.number"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:22
+msgid "js.BigTable.ColumnType.text"
+msgstr ""
+
+#: assets/js/BigTable/ColumnType.js:26
+msgid "js.BigTable.ColumnType.timestamp"
+msgstr ""
+
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
 msgstr "Επικολλήστε αυτόν τον κώδικα στην HTML οποιασδήποτε ιστοσελίδας"
@@ -592,16 +628,12 @@ msgstr ""
 msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:38
+#: assets/js/WorkflowEditor/Report/TableBlock.js:42
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
-#: assets/js/WorkflowEditor/Report/TableBlock.js:46
+#: assets/js/WorkflowEditor/Report/TableBlock.js:50
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
-msgstr ""
-
-#: assets/js/Report/CellFormatters2.js:25
-msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #: assets/js/WorkflowEditor/StepList/StepList.js:14
@@ -1998,19 +2030,6 @@ msgstr "Αύξουσα ταξινόμηση"
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Φθίνουσα ταξινόμηση"
 
-#: assets/js/table/ColumnHeader.js:14
-msgid "js.table.ColumnHeader.types.number"
-msgstr "αριθμός"
-
-#: assets/js/table/ColumnHeader.js:12
-#, fuzzy
-msgid "js.table.ColumnHeader.types.text"
-msgstr "κείμενο"
-
-#: assets/js/table/ColumnHeader.js:16
-msgid "js.table.ColumnHeader.types.timestamp"
-msgstr "ημερομηνία & ώρα"
-
 #: assets/js/table/SelectedRowsActions.js:120
 msgid "js.table.SelectedRowsActions.menu"
 msgstr "μενού"
@@ -2100,7 +2119,7 @@ msgstr "{years}έτη πριν"
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 
-#: cjwkernel/pandas/types.py:441
+#: cjwkernel/pandas/types.py:483
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 
@@ -2145,42 +2164,42 @@ msgstr "Λήξη χρονικού ορίου κατά την ανανέωση τ
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
 
-#: renderer/execute/step.py:139
+#: renderer/execute/step.py:389
+msgid "py.renderer.execute.step.noModule"
+msgstr ""
+"Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
+"βήματος."
+
+#: renderer/execute/step.py:418
+msgid "py.renderer.execute.step.NoLoadedDataError"
+msgstr ""
+
+#: renderer/execute/step.py:430
+msgid "py.renderer.execute.step.TabCycleError"
+msgstr ""
+"Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
+"καρτέλα."
+
+#: renderer/execute/step.py:442
+msgid "py.renderer.execute.step.TabOutputUnreachableError"
+msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
+
+#: renderer/execute/step.py:483
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "
 "προσπαθούμε να το διορθώσουμε. Αν συνεχιστεί, επικοινωνήστε μαζί μας. "
 "Κωδικός σφάλματος: {message}"
 
-#: renderer/execute/step.py:373
-msgid "py.renderer.execute.step.noModule"
-msgstr ""
-"Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
-"βήματος."
-
-#: renderer/execute/step.py:400
-msgid "py.renderer.execute.step.NoLoadedDataError"
-msgstr ""
-
-#: renderer/execute/step.py:411
-msgid "py.renderer.execute.step.TabCycleError"
-msgstr ""
-"Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
-"καρτέλα."
-
-#: renderer/execute/step.py:422
-msgid "py.renderer.execute.step.TabOutputUnreachableError"
-msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
-
-#: renderer/execute/types.py:51
+#: renderer/execute/types.py:65
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr ""
 
-#: renderer/execute/types.py:69
+#: renderer/execute/types.py:83
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 
-#: renderer/execute/types.py:131
+#: renderer/execute/types.py:145
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr "Μετατροπή σε κείμενο."
@@ -2188,7 +2207,7 @@ msgstr "Μετατροπή σε κείμενο."
 #. i18n: The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:137
+#: renderer/execute/types.py:151
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
@@ -2199,7 +2218,7 @@ msgstr ""
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#: renderer/execute/types.py:180
+#: renderer/execute/types.py:194
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 "{ columns, plural, offset:2 =1 {Η στήλη “{0}” πρεπει να μετατραπεί σε "
@@ -2213,7 +2232,7 @@ msgstr ""
 #. etc. The parameters {found_type} and {best_wanted_type} will have values
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
-#: renderer/execute/types.py:193
+#: renderer/execute/types.py:207
 #, fuzzy
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""

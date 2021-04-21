@@ -1,3 +1,48 @@
+#. default-message: null
+#: assets/js/BigTable/Cell/NullCell.js:11
+msgid "js.BigTable.Cell.null"
+msgstr ""
+
+#. default-message: date
+#: assets/js/BigTable/ColumnType.js:19
+msgid "js.BigTable.ColumnType.date.day"
+msgstr ""
+
+#. default-message: date – month
+#: assets/js/BigTable/ColumnType.js:13
+msgid "js.BigTable.ColumnType.date.month"
+msgstr ""
+
+#. default-message: date – quarter
+#: assets/js/BigTable/ColumnType.js:15
+msgid "js.BigTable.ColumnType.date.quarter"
+msgstr ""
+
+#. default-message: date – week
+#: assets/js/BigTable/ColumnType.js:11
+msgid "js.BigTable.ColumnType.date.week"
+msgstr ""
+
+#. default-message: date – year
+#: assets/js/BigTable/ColumnType.js:17
+msgid "js.BigTable.ColumnType.date.year"
+msgstr ""
+
+#. default-message: number
+#: assets/js/BigTable/ColumnType.js:24
+msgid "js.BigTable.ColumnType.number"
+msgstr ""
+
+#. default-message: text
+#: assets/js/BigTable/ColumnType.js:22
+msgid "js.BigTable.ColumnType.text"
+msgstr ""
+
+#. default-message: timestamp
+#: assets/js/BigTable/ColumnType.js:26
+msgid "js.BigTable.ColumnType.timestamp"
+msgstr ""
+
 #. default-message: Paste this code into any webpage HTML
 #: assets/js/Embed.js:68
 msgid "js.Embed.embedCode"
@@ -669,18 +714,13 @@ msgid "js.WorkflowEditor.Report.MarkdownEditor.submit"
 msgstr ""
 
 #. default-message: Download data as CSV
-#: assets/js/WorkflowEditor/Report/TableBlock.js:38
+#: assets/js/WorkflowEditor/Report/TableBlock.js:42
 msgid "js.WorkflowEditor.Report.TableBlock.downloadCsv"
 msgstr ""
 
 #. default-message: No table data
-#: assets/js/WorkflowEditor/Report/TableBlock.js:46
+#: assets/js/WorkflowEditor/Report/TableBlock.js:50
 msgid "js.WorkflowEditor.Report.TableBlock.noTableData"
-msgstr ""
-
-#. default-message: null
-#: assets/js/Report/CellFormatters2.js:25
-msgid "js.WorkflowEditor.Report.nullCell"
 msgstr ""
 
 #. default-message: This Tab has no Steps.
@@ -2345,21 +2385,6 @@ msgstr ""
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr ""
 
-#. default-message: number
-#: assets/js/table/ColumnHeader.js:14
-msgid "js.table.ColumnHeader.types.number"
-msgstr ""
-
-#. default-message: text
-#: assets/js/table/ColumnHeader.js:12
-msgid "js.table.ColumnHeader.types.text"
-msgstr ""
-
-#. default-message: timestamp
-#: assets/js/table/ColumnHeader.js:16
-msgid "js.table.ColumnHeader.types.timestamp"
-msgstr ""
-
 #. default-message: menu
 #: assets/js/table/SelectedRowsActions.js:120
 msgid "js.table.SelectedRowsActions.menu"
@@ -2469,7 +2494,7 @@ msgid "js.util.timeDifference.now"
 msgstr ""
 
 #. default-message: Truncated output from {old_number} rows to {new_number}
-#: cjwkernel/pandas/types.py:441
+#: cjwkernel/pandas/types.py:483
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr ""
 
@@ -2518,43 +2543,43 @@ msgstr ""
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
-#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
-#: renderer/execute/step.py:139
-msgid "py.renderer.execute.step.user_visible_bug_during_render"
-msgstr ""
-
 #. default-message: Please delete this step: an administrator uninstalled its code.
-#: renderer/execute/step.py:373
+#: renderer/execute/step.py:389
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
 
 #. default-message: Please Add Data before this step.
-#: renderer/execute/step.py:400
+#: renderer/execute/step.py:418
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr ""
 
 #. default-message: The chosen tab depends on this one. Please choose another tab.
-#: renderer/execute/step.py:411
+#: renderer/execute/step.py:430
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
 
 #. default-message: The chosen tab has no output. Please select another one.
-#: renderer/execute/step.py:422
+#: renderer/execute/step.py:442
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr ""
 
+#. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
+#: renderer/execute/step.py:483
+msgid "py.renderer.execute.step.user_visible_bug_during_render"
+msgstr ""
+
 #. default-message: “{value}” is not a number. Please enter a number.
-#: renderer/execute/types.py:51
+#: renderer/execute/types.py:65
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr ""
 
 #. default-message: “{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.
-#: renderer/execute/types.py:69
+#: renderer/execute/types.py:83
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
 msgstr ""
 
 #. default-message: Convert to Text
-#: renderer/execute/types.py:131
+#: renderer/execute/types.py:145
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
 msgstr ""
 
@@ -2562,7 +2587,7 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including an (possibly empty)
 #. "other" case is mandatory.
 #. default-message: Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}
-#: renderer/execute/types.py:137
+#: renderer/execute/types.py:151
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
 
@@ -2570,7 +2595,7 @@ msgstr ""
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted to Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other {The columns “{0}”, “{1}” and # others must be converted to Text.}}
-#: renderer/execute/types.py:180
+#: renderer/execute/types.py:194
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
 msgstr ""
 
@@ -2580,7 +2605,7 @@ msgstr ""
 #. among "text", "number", "timestamp"; however, including a (possibly empty)
 #. "other" case is mandatory.
 #. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}
-#: renderer/execute/types.py:193
+#: renderer/execute/types.py:207
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
 msgstr ""
 

@@ -1,16 +1,18 @@
 from dataclasses import replace
+
 import pyarrow
-from cjwkernel.tests.util import arrow_table, assert_render_result_equals
-from cjwkernel.types import I18nMessage, RenderError, RenderResult
+from cjwmodule.types import I18nMessage, RenderError
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+
 from cjwstate import s3
 from cjwstate.models import Workflow
 from cjwstate.rendercache.io import (
     BUCKET,
-    cache_render_result,
     open_cached_render_result,
     clear_cached_render_result_for_step,
     crr_parquet_key,
 )
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -27,10 +29,14 @@ class CachedRenderResultTests(DbTestCase):
         self.assertIsNone(self.step.cached_render_result)
 
     def test_delete_step(self):
-        result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
+        write_to_rendercache(
+            self.workflow,
+            self.step,
+            1,
+            table=make_table(make_column("A", [1])),
+            errors=[RenderError(I18nMessage("X", {}, None), [])],
+            json={"foo": "bar"},
         )
-        cache_render_result(self.workflow, self.step, 1, result)
 
         parquet_key = crr_parquet_key(self.step.cached_render_result)
         self.step.delete()
@@ -45,20 +51,24 @@ class CachedRenderResultTests(DbTestCase):
         # Longer-term, a better approach is to nix soft-deletion.
 
     def test_double_clear(self):
-        result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
+        write_to_rendercache(
+            self.workflow, self.step, 1, make_table(make_column("A", [1]))
         )
-        cache_render_result(self.workflow, self.step, 1, result)
         clear_cached_render_result_for_step(self.step)
         clear_cached_render_result_for_step(self.step)  # don't crash
 
     def test_duplicate_copies_fresh_cache(self):
         # The cache's filename depends on workflow_id and step_id.
         # Duplicating it would need more complex code :).
-        result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
+        table = make_table(make_column("A", [1], format="${:,.2f}"))
+        write_to_rendercache(
+            self.workflow,
+            self.step,
+            1,
+            table=table,
+            errors=[RenderError(I18nMessage("X", {}, None))],
+            json={"foo": "bar"},
         )
-        cache_render_result(self.workflow, self.step, 1, result)
 
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)
@@ -75,18 +85,15 @@ class CachedRenderResultTests(DbTestCase):
             ),
         )
         with open_cached_render_result(dup_cached_result) as result2:
-            assert_render_result_equals(result2, result)
+            assert_arrow_table_equals(result2.table, table)
+            self.assertEqual(result2.errors, [RenderError(I18nMessage("X", {}, None))])
+            self.assertEqual(result2.json, {"foo": "bar"})
 
     def test_duplicate_ignores_stale_cache(self):
-        # The cache's filename depends on workflow_id and step_id.
-        # Duplicating it would need more complex code :).
-        result = RenderResult(
-            arrow_table({"A": [1]}), [RenderError(I18nMessage("X", {}, None), [])], {}
+        # write to the wrong delta ID: "stale"
+        write_to_rendercache(
+            self.workflow, self.step, 5, make_table(make_column("A", [1]))
         )
-        cache_render_result(self.workflow, self.step, 1, result)
-        # Now simulate a new delta that hasn't been rendered
-        self.step.last_relevant_delta_id = 2
-        self.step.save(update_fields=["last_relevant_delta_id"])
 
         workflow2 = Workflow.objects.create()
         tab2 = workflow2.tabs.create(position=0)

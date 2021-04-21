@@ -334,8 +334,7 @@ async def result_column_value_counts(
     try:
         # raise CorruptCacheError
         with open_cached_render_result(cached_result) as result:
-            arrow_table = result.table.table
-            chunked_array = arrow_table.column(column_index)
+            chunked_array = result.table.column(column_index)
     except CorruptCacheError:
         # We _could_ return an empty result set; but our only goal here is
         # "don't crash" and this 404 seems to be the simplest implementation.

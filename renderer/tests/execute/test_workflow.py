@@ -1,23 +1,22 @@
 import asyncio
-from collections import namedtuple
-from dataclasses import replace
 import logging
 import shutil
 import textwrap
 import unittest
-from unittest.mock import Mock, patch
-from cjwkernel.errors import ModuleExitedError
+from collections import namedtuple
+from unittest.mock import patch
+
+import pyarrow as pa
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+
 from cjwkernel.kernel import Kernel
 from cjwkernel.i18n import TODO_i18n
-from cjwkernel.types import I18nMessage, Params, RenderError, RenderResult
-from cjwkernel.tests.util import (
-    arrow_table,
-    arrow_table_context,
-    assert_render_result_equals,
-)
+from cjwkernel.types import RenderError, RenderResult
+from cjwkernel.tests.util import arrow_table_context
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.rendercache import cache_render_result, open_cached_render_result
+from cjwstate.rendercache import open_cached_render_result
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
@@ -27,32 +26,26 @@ async def fake_send(*args, **kwargs):
     pass
 
 
-def mock_render(arrow_table_dict):
+def mock_render(arrow_table: pa.Table):
     def inner(
         module_zipfile,
         *,
         chroot_context,
         basedir,
-        input_table,
+        input_filename,
         params,
         tab,
         fetch_result,
+        tab_outputs,
+        uploaded_files,
         output_filename,
     ):
         output_path = basedir / output_filename
-        with arrow_table_context(arrow_table_dict) as arrow_table:
-            shutil.copy(arrow_table.path, output_path)
-            return RenderResult(table=replace(arrow_table, path=output_path))
+        with arrow_table_context(arrow_table) as (table_path, table):
+            shutil.copy(table_path, output_path)
+            return RenderResult(errors=[])
 
     return inner
-
-
-def cached_render_result_revision_list(workflow):
-    return list(
-        workflow.tabs.first().live_steps.values_list(
-            "cached_render_result_delta_id", flat=True
-        )
-    )
 
 
 class WorkflowTests(DbTestCaseWithModuleRegistry):
@@ -72,19 +65,18 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=1,
+            last_relevant_delta_id=2,
             module_id_name="mod",
         )
-        cache_render_result(workflow, step, 1, RenderResult(arrow_table({"A": [1]})))
-        step.last_relevant_delta_id = 2
-        step.save(update_fields=["last_relevant_delta_id"])
+        # stale
+        write_to_rendercache(workflow, step, 1, make_table(make_column("A", ["a"])))
 
         self._execute(workflow)
 
         step.refresh_from_db()
 
         with open_cached_render_result(step.cached_render_result) as result:
-            assert_render_result_equals(result, RenderResult(arrow_table({"B": [2]})))
+            assert_arrow_table_equals(result.table, make_table(make_column("B", [2])))
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_tempdir_not_in_tmpfs(self):
@@ -94,7 +86,9 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         tab.steps.create(order=0, slug="step-1", module_id_name="mod")
 
-        with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
+        with patch.object(
+            Kernel, "render", side_effect=mock_render(make_table(make_column("B", [2])))
+        ):
             self._execute(workflow)
             self.assertRegex(str(Kernel.render.call_args[1]["basedir"]), r"/var/tmp/")
 
@@ -108,7 +102,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         def render_and_delete(*args, **kwargs):
             # Render successfully. Then delete `workflow`, which should force
             # us to cancel before the next render().
-            ret = mock_render({"B": [2]})(*args, **kwargs)
+            ret = mock_render(make_table(make_column("B", [2])))(*args, **kwargs)
             Workflow.objects.filter(id=workflow.id).delete()
             return ret
 
@@ -126,7 +120,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta_id = workflow.last_delta_id
         create_module_zipfile(
             "mod",
             spec_kwargs={"loads_data": True},
@@ -136,26 +129,28 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step2 = tab.steps.create(order=1, slug="step-2", module_id_name="mod")
         step3 = tab.steps.create(order=2, slug="step-3", module_id_name="mod")
 
-        error_result = RenderResult(
-            errors=[RenderError(TODO_i18n("error, not warning"))]
-        )
-
         self._execute(workflow)
 
+        # step1: error
         step1.refresh_from_db()
-        self.assertEqual(step1.cached_render_result.status, "error")
         with open_cached_render_result(step1.cached_render_result) as result:
-            assert_render_result_equals(result, error_result)
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(
+                step1.cached_render_result.errors,
+                [RenderError(TODO_i18n("error, not warning"))],
+            )
 
+        # step2, step3: unreachable (no errors, no table data)
         step2.refresh_from_db()
         self.assertEqual(step2.cached_render_result.status, "unreachable")
         with open_cached_render_result(step2.cached_render_result) as result:
-            assert_render_result_equals(result, RenderResult())
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(step2.cached_render_result.errors, [])
 
         step3.refresh_from_db()
-        self.assertEqual(step3.cached_render_result.status, "unreachable")
         with open_cached_render_result(step3.cached_render_result) as result:
-            assert_render_result_equals(result, RenderResult())
+            self.assertEqual(result.path.read_bytes(), b"")
+            self.assertEqual(step3.cached_render_result.errors, [])
 
         send_update.assert_called_with(
             workflow.id,
@@ -169,14 +164,14 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
-    def test_execute_migrate_params_invalid_params_are_coerced(self):
+    def test_execute_migrate_params_invalid_params_become_default(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         create_module_zipfile(
             "mod",
             spec_kwargs={
                 "loads_data": True,
-                "parameters": [{"id_name": "x", "type": "string"}],
+                "parameters": [{"id_name": "x", "type": "string", "default": "blah"}],
             },
             python_code=textwrap.dedent(
                 """
@@ -193,7 +188,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step.refresh_from_db()
         self.assertEqual(
             step.cached_render_result_errors,
-            [RenderError(TODO_i18n('params: {"x": "2"}'))],
+            [RenderError(TODO_i18n('params: {"x": "blah"}'))],
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
@@ -237,14 +232,14 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             module_id_name="mod",
             last_relevant_delta_id=2,
         )
-        cache_render_result(workflow, step1, 2, RenderResult(arrow_table({"A": [1]})))
+        write_to_rendercache(workflow, step1, 2, make_table(make_column("A", ["a"])))
         step2 = tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="mod",
             last_relevant_delta_id=1,
         )
-        cache_render_result(workflow, step2, 1, RenderResult(arrow_table({"B": [2]})))
+        write_to_rendercache(workflow, step2, 1, make_table(make_column("B", ["b"])))
 
         with patch.object(Kernel, "render", return_value=None):
             self._execute(workflow)
@@ -254,7 +249,6 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     def test_resume_without_rerunning_unneeded_renders(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        delta_id = workflow.last_delta_id
         create_module_zipfile(
             # If this runs on step1, it'll return pd.DataFrame().
             # If this runs on step2, it'll return step1-output * 2.
@@ -272,7 +266,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             last_relevant_delta_id=1,
             module_id_name="mod",
         )
-        cache_render_result(workflow, step1, 1, RenderResult(arrow_table({"A": [1]})))
+        write_to_rendercache(workflow, step1, 1, make_table(make_column("A", [1])))
 
         # step2: has no cached result (must be rendered)
         step2 = tab.steps.create(
@@ -286,7 +280,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         step2.refresh_from_db()
         with open_cached_render_result(step2.cached_render_result) as actual:
-            assert_render_result_equals(actual, RenderResult(arrow_table({"A": [2]})))
+            assert_arrow_table_equals(actual.table, make_table(make_column("A", [2])))
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
@@ -301,14 +295,12 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=1,
+            last_relevant_delta_id=2,
             module_id_name="mod",
             notifications=True,
         )
-        cache_render_result(workflow, step, 1, RenderResult(arrow_table({"A": [1]})))
-
-        step.last_relevant_delta_id = 2
-        step.save(update_fields=["last_relevant_delta_id"])
+        # stale
+        write_to_rendercache(workflow, step, 1, make_table(make_column("A", [1])))
 
         self._execute(workflow)
 
@@ -327,15 +319,12 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         step = tab.steps.create(
             order=0,
             slug="step-1",
-            last_relevant_delta_id=1,
+            last_relevant_delta_id=2,
             module_id_name="mod",
             notifications=True,
         )
-        cache_render_result(workflow, step, 1, RenderResult(arrow_table({"A": [1]})))
-
-        # Make a new delta, so we need to re-render. Give it the same output.
-        step.last_relevant_delta_id = 2
-        step.save(update_fields=["last_relevant_delta_id"])
+        # stale, same result
+        write_to_rendercache(workflow, step, 1, make_table(make_column("A", [1])))
 
         self._execute(workflow)
 
@@ -357,7 +346,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
             spec_kwargs={"loads_data": True},
             python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
         )
-        step = tab.steps.create(
+        tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="mod",

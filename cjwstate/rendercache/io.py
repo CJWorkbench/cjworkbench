@@ -1,9 +1,12 @@
 import contextlib
 from pathlib import Path
 from typing import ContextManager
+
 import cjwparquet
-import pyarrow
-from cjwkernel.types import ArrowTable, RenderResult, TableMetadata
+import pyarrow as pa
+
+from cjwkernel.files import read_parquet_as_arrow
+from cjwkernel.types import LoadedRenderResult
 from cjwkernel.util import json_encode, tempfile_context
 from cjwstate import s3
 from cjwstate.models import Step, Workflow, CachedRenderResult
@@ -47,13 +50,13 @@ def crr_parquet_key(crr: CachedRenderResult) -> str:
 
 
 def cache_render_result(
-    workflow: Workflow, step: Step, delta_id: int, result: RenderResult
+    workflow: Workflow, step: Step, delta_id: int, result: LoadedRenderResult
 ) -> None:
     """Save `result` for later viewing.
 
     Raise AssertionError if `delta_id` is not what we expect.
 
-    Since this alters data, be sure to call it within a lock:
+    Since this alters data, call it within a lock:
 
         with workflow.cooperative_lock():
             step.refresh_from_db()  # may change delta_id
@@ -63,7 +66,7 @@ def cache_render_result(
     assert result is not None
 
     json_bytes = json_encode(result.json).encode("utf-8")
-    if not result.table.metadata.columns:
+    if not result.columns:
         if result.errors:
             status = "error"
         else:
@@ -75,16 +78,16 @@ def cache_render_result(
     step.cached_render_result_errors = result.errors
     step.cached_render_result_status = status
     step.cached_render_result_json = json_bytes
-    step.cached_render_result_columns = result.table.metadata.columns
-    step.cached_render_result_nrows = result.table.metadata.n_rows
+    step.cached_render_result_columns = result.columns
+    step.cached_render_result_nrows = result.table.num_rows
 
     # Now we get to the part where things can end up inconsistent. Try to
     # err on the side of not-caching when that happens.
     delete_parquet_files_for_step(workflow.id, step.id)  # makes old cache inconsistent
     step.save(update_fields=STEP_FIELDS)  # makes new cache inconsistent
-    if result.table.metadata.columns:  # only write non-zero-column tables
+    if result.table.num_columns:  # only write non-zero-column tables
         with tempfile_context() as parquet_path:
-            cjwparquet.write(parquet_path, result.table.table)
+            cjwparquet.write(parquet_path, result.table)
             s3.fput_file(
                 BUCKET, parquet_key(workflow.id, step.id, delta_id), parquet_path
             )  # makes new cache consistent
@@ -118,8 +121,15 @@ def downloaded_parquet_file(crr: CachedRenderResult, dir=None) -> ContextManager
         yield path
 
 
-def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResult:
-    """Return a RenderResult equivalent to the one passed to `cache_render_result()`.
+def load_cached_render_result(
+    crr: CachedRenderResult, path: Path
+) -> LoadedRenderResult:
+    """Create a LoadedRenderResult was it was passed to `cache_render_result()`.
+
+    Write a zero-byte file if `crr` has no columns.
+
+    The returned LoadedRenderResult is backed by `path`, an mmapped file on
+    disk. The whole operation doesn't require much physical RAM.
 
     Raise CorruptCacheError if the cached data does not match `crr`. That can
     mean:
@@ -129,36 +139,51 @@ def load_cached_render_result(crr: CachedRenderResult, path: Path) -> RenderResu
         * `crr` is stale -- the cached result is for a different delta. This
           could be detected by a `Workflow.cooperative_lock()`, too, should the
           caller want to distinguish this error from the others.
-
-    The returned RenderResult is backed by an mmapped file on disk -- the one
-    supplied as `path`. It doesn't require much physical RAM: the Linux kernel
-    may page out data we aren't using.
     """
     if not crr.table_metadata.columns:
         # Zero-column tables aren't written to cache
-        return RenderResult(
-            ArrowTable.from_zero_column_metadata(
-                TableMetadata(crr.table_metadata.n_rows, [])
-            ),
-            crr.errors,
-            crr.json,
+        path.write_bytes(b"")
+        return LoadedRenderResult(
+            path=path,
+            table=pa.table({}),
+            columns=[],
+            errors=crr.errors,
+            json=crr.json,
         )
+    else:
+        # raises CorruptCacheError
+        with downloaded_parquet_file(crr) as parquet_path:
+            try:
+                # raises ArrowIOError
+                table = read_parquet_as_arrow(parquet_path, crr.table_metadata.columns)
+            except pa.ArrowIOError as err:
+                raise CorruptCacheError from err
 
-    # raises CorruptCacheError
-    with downloaded_parquet_file(crr) as parquet_path:
-        try:
-            # raises ArrowIOError
-            cjwparquet.convert_parquet_file_to_arrow_file(parquet_path, path)
-        except pyarrow.ArrowIOError as err:
-            raise CorruptCacheError from err
-    # TODO handle validation errors => CorruptCacheError
-    arrow_table = ArrowTable.from_trusted_file(path, crr.table_metadata)
-    return RenderResult(arrow_table, crr.errors, crr.json)
+            # We don't expect errors writing to disk: this shouldn't consume RAM
+            with pa.ipc.RecordBatchFileWriter(path, table.schema) as writer:
+                writer.write_table(table)
+
+            # Now, read the table from the file, so that `path` and `table` are
+            # equivalent. Don't validate the file: we know what it contains.
+            with pa.ipc.open_file(path) as reader:
+                table = reader.read_all()
+
+            return LoadedRenderResult(
+                path=path,
+                table=table,
+                columns=crr.table_metadata.columns,
+                errors=crr.errors,
+                json=crr.json,
+            )
 
 
 @contextlib.contextmanager
-def open_cached_render_result(crr: CachedRenderResult) -> ContextManager[RenderResult]:
-    """Yield a RenderResult equivalent to the one passed to `cache_render_result()`.
+def open_cached_render_result(
+    crr: CachedRenderResult,
+) -> ContextManager[LoadedRenderResult]:
+    """Yield a LoadedRenderResult equivalent to the one passed to `cache_render_result()`.
+
+    Create a zero-byte file if `crr` has no columns.
 
     Raise CorruptCacheError if the cached data does not match `crr`. That can
     mean:
@@ -168,26 +193,10 @@ def open_cached_render_result(crr: CachedRenderResult) -> ContextManager[RenderR
         * `crr` is stale -- the cached result is for a different delta. This
           could be detected by a `Workflow.cooperative_lock()`, too, should the
           caller want to distinguish this error from the others.
-
-    The returned RenderResult is backed by an mmapped file on disk, so it
-    doesn't require much physical RAM.
     """
-    if not crr.table_metadata.columns:
-        # Zero-column tables aren't written to cache
-        yield RenderResult(
-            ArrowTable.from_zero_column_metadata(
-                TableMetadata(crr.table_metadata.n_rows, [])
-            ),
-            crr.errors,
-            crr.json,
-        )
-        return
-
-    with tempfile_context(prefix="cached-render-result") as arrow_path:
-        # raise CorruptCacheError (deleting `arrow_path` in the process)
-        result = load_cached_render_result(crr, arrow_path)
-
-        yield result
+    with tempfile_context() as path:
+        loaded_result = load_cached_render_result(crr, path)
+        yield loaded_result
 
 
 def read_cached_render_result_slice_as_text(
@@ -226,7 +235,7 @@ def read_cached_render_result_slice_as_text(
                 only_columns=only_columns,
                 only_rows=only_rows,
             )
-    except (pyarrow.ArrowIOError, FileNotFoundError):  # FIXME unit-test
+    except (pa.ArrowIOError, FileNotFoundError):  # FIXME unit-test
         raise CorruptCacheError
 
 

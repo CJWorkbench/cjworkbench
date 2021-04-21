@@ -1,49 +1,53 @@
 import contextlib
-from dataclasses import replace
 import logging
 import shutil
 from unittest.mock import patch
+
+import pyarrow as pa
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.kernel import Kernel
-from cjwkernel.types import RenderResult
-from cjwkernel.tests.util import (
-    arrow_table,
-    arrow_table_context,
-    assert_render_result_equals,
-)
+from cjwkernel.tests.util import arrow_table_context
+from cjwkernel.types import Column, ColumnType, RenderResult
+from cjwkernel.validate import load_trusted_arrow_file
 from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.models import Workflow
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
+from renderer.execute.types import StepResult
 
 
 async def fake_send(*args, **kwargs):
     pass
 
 
-def mock_render(arrow_table_dict):
+def mock_render(arrow_table: pa.Table):
     def inner(
         module_zipfile,
         *,
         chroot_context,
         basedir,
-        input_table,
+        input_filename,
         params,
         tab,
+        tab_outputs,
+        uploaded_files,
         fetch_result,
         output_filename,
     ):
         output_path = basedir / output_filename
-        with arrow_table_context(arrow_table_dict) as arrow_table:
-            shutil.copy(arrow_table.path, output_path)
-            return RenderResult(table=replace(arrow_table, path=output_path))
+        with arrow_table_context(arrow_table) as (table_path, table):
+            shutil.copy(table_path, output_path)
+            return RenderResult(errors=[])
 
     return inner
 
 
 class TabTests(DbTestCaseWithModuleRegistry):
     @contextlib.contextmanager
-    def _execute(self, workflow, flow, tab_results, expect_log_level=logging.DEBUG):
+    def _execute(self, workflow, flow, tab_columns, expect_log_level=logging.DEBUG):
         with EDITABLE_CHROOT.acquire_context() as chroot_context:
             with chroot_context.tempdir_context(prefix="test_tab") as tempdir:
                 with chroot_context.tempfile_context(
@@ -52,41 +56,34 @@ class TabTests(DbTestCaseWithModuleRegistry):
                     with self.assertLogs("renderer.execute", level=expect_log_level):
                         result = self.run_with_async_db(
                             execute_tab_flow(
-                                chroot_context, workflow, flow, tab_results, out_path
+                                chroot_context, workflow, flow, tab_columns, out_path
                             )
                         )
-                        yield result
+                        yield result, out_path
 
     def test_execute_empty_tab(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         tab_flow = TabFlow(tab.to_arrow(), [])
-        with self._execute(workflow, tab_flow, {}) as result:
-            assert_render_result_equals(result, RenderResult())
+        with self._execute(workflow, tab_flow, {}) as (result, path):
+            self.assertEqual(result, StepResult(path, []))
+            self.assertEqual(load_trusted_arrow_file(path), make_table())
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_hit(self):
+        cached_table1 = make_table(make_column("A", [1]))
+        cached_table2 = make_table(make_column("B", [2], format="${:,}"))
         module_zipfile = create_module_zipfile("mod", spec_kwargs={"loads_data": True})
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step1 = tab.steps.create(
             order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
         )
-        rendercache.cache_render_result(
-            workflow,
-            step1,
-            workflow.last_delta_id,
-            RenderResult(arrow_table({"A": [1]})),
-        )
+        write_to_rendercache(workflow, step1, workflow.last_delta_id, cached_table1)
         step2 = tab.steps.create(
             order=1, slug="step-2", last_relevant_delta_id=workflow.last_delta_id
         )
-        rendercache.cache_render_result(
-            workflow,
-            step2,
-            workflow.last_delta_id,
-            RenderResult(arrow_table({"B": [2]})),
-        )
+        write_to_rendercache(workflow, step2, workflow.last_delta_id, cached_table2)
 
         tab_flow = TabFlow(
             tab.to_arrow(),
@@ -96,11 +93,16 @@ class TabTests(DbTestCaseWithModuleRegistry):
             ],
         )
 
-        with patch.object(Kernel, "render", side_effect=mock_render({"No": ["bad"]})):
-            with self._execute(workflow, tab_flow, {}) as result:
-                assert_render_result_equals(
-                    result, RenderResult(arrow_table({"B": [2]}), [])
+        unwanted_table = make_table(make_column("No", ["bad"]))
+        with patch.object(Kernel, "render", side_effect=mock_render(unwanted_table)):
+            with self._execute(workflow, tab_flow, {}) as (result, path):
+                self.assertEqual(
+                    result,
+                    StepResult(path, [Column("B", ColumnType.Number(format="${:,}"))]),
                 )
+                assert_arrow_table_equals(load_trusted_arrow_file(path), cached_table2)
+
+            Kernel.render.assert_not_called()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_cache_miss(self):
@@ -128,10 +130,14 @@ class TabTests(DbTestCaseWithModuleRegistry):
             ],
         )
 
-        with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
-            with self._execute(workflow, tab_flow, {}) as result:
-                expected = RenderResult(arrow_table({"B": [2]}))
-                assert_render_result_equals(result, expected)
+        table = make_table(make_column("A", ["a"]))
+
+        with patch.object(Kernel, "render", side_effect=mock_render(table)):
+            with self._execute(workflow, tab_flow, {}) as (result, path):
+                self.assertEqual(
+                    result, StepResult(path, [Column("A", ColumnType.Text())])
+                )
+                assert_arrow_table_equals(load_trusted_arrow_file(path), table)
 
             self.assertEqual(Kernel.render.call_count, 2)  # step2, not step1
             self.assertRegex(
@@ -152,27 +158,22 @@ class TabTests(DbTestCaseWithModuleRegistry):
             module_id_name="mod",
             last_relevant_delta_id=workflow.last_delta_id,
         )
-        rendercache.cache_render_result(
-            workflow,
-            step1,
-            workflow.last_delta_id,
-            RenderResult(arrow_table({"A": [1]})),
+        write_to_rendercache(
+            workflow, step1, workflow.last_delta_id, make_table(make_column("A", ["a"]))
         )
         # step2: cached result is stale, so must be re-rendered
         step2 = tab.steps.create(
             order=1,
             slug="step-2",
             module_id_name="mod",
-            last_relevant_delta_id=workflow.last_delta_id - 1,
+            last_relevant_delta_id=workflow.last_delta_id,
         )
-        rendercache.cache_render_result(
+        write_to_rendercache(
             workflow,
             step2,
             workflow.last_delta_id - 1,
-            RenderResult(arrow_table({"B": [2]})),
+            make_table(make_column("B", ["b"])),
         )
-        step2.last_relevant_delta_id = workflow.last_delta_id
-        step2.save(update_fields=["last_relevant_delta_id"])
 
         tab_flow = TabFlow(
             tab.to_arrow(),
@@ -182,10 +183,14 @@ class TabTests(DbTestCaseWithModuleRegistry):
             ],
         )
 
-        with patch.object(Kernel, "render", side_effect=mock_render({"B": [3]})):
-            with self._execute(workflow, tab_flow, {}) as result:
-                expected = RenderResult(arrow_table({"B": [3]}))
-                assert_render_result_equals(result, expected)
+        new_table = make_table(make_column("C", ["c"]))
+
+        with patch.object(Kernel, "render", side_effect=mock_render(new_table)):
+            with self._execute(workflow, tab_flow, {}) as (result, path):
+                self.assertEqual(
+                    result, StepResult(path, [Column("C", ColumnType.Text())])
+                )
+                assert_arrow_table_equals(load_trusted_arrow_file(path), new_table)
 
             Kernel.render.assert_called_once()  # step2, not step1
 
@@ -207,12 +212,10 @@ class TabTests(DbTestCaseWithModuleRegistry):
             module_id_name="mod",
             last_relevant_delta_id=workflow.last_delta_id,
         )
-        rendercache.cache_render_result(
-            workflow,
-            step1,
-            workflow.last_delta_id,
-            RenderResult(arrow_table({"A": [1]})),
+        write_to_rendercache(
+            workflow, step1, workflow.last_delta_id, make_table(make_column("A", [1]))
         )
+        step1.refresh_from_db()
         s3.put_bytes(
             # Write corrupted data -- will lead to CorruptCacheError
             rendercache.io.BUCKET,
@@ -230,12 +233,15 @@ class TabTests(DbTestCaseWithModuleRegistry):
             ],
         )
 
-        with patch.object(Kernel, "render", side_effect=mock_render({"B": [2]})):
+        new_table = make_table(make_column("B", ["b"]))
+
+        with patch.object(Kernel, "render", side_effect=mock_render(new_table)):
             with self._execute(
                 workflow, tab_flow, {}, expect_log_level=logging.ERROR
-            ) as result:
-                expected = RenderResult(arrow_table({"B": [2]}))
-                assert_render_result_equals(result, expected)
+            ) as (result, path):
+                self.assertEqual(
+                    result, StepResult(path, [Column("B", ColumnType.Text())])
+                )
 
             self.assertEqual(
                 # called with step1, then step2

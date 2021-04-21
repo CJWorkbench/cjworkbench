@@ -1,14 +1,16 @@
-from functools import partial, singledispatch
 import pathlib
+from functools import partial, singledispatch
 from typing import Any, Dict, List, Optional, Union
-from cjwkernel.types import TableMetadata
-from cjwstate.modules.param_dtype import ParamDType
+
+from cjwmodule.spec.paramschema import ParamSchema
+
+from cjwkernel.types import ColumnType, TableMetadata
 from renderer.execute.renderprep import PromptErrorAggregator
 from renderer.execute.types import PromptingError
 
 
-# singledispatch primer: `clean_value(dtype, value, context)` will choose its
-# logic based on the _type_ of `dtype`. (Handily, it'll prefer a specific class
+# singledispatch primer: `clean_value(schema, value, context)` will choose its
+# logic based on the _type_ of `schema`. (Handily, it'll prefer a specific class
 # to its parent class.)
 #
 # The recursive logic in fetchprep.py was copy/pasted from renderprep.py.
@@ -16,19 +18,16 @@ from renderer.execute.types import PromptingError
 # TODO abstract this pattern. The recursion parts seem like they should be
 # written in just one place.
 @singledispatch
-def clean_value(dtype: ParamDType, value: Any, input_metadata: TableMetadata) -> Any:
-    """
-    Ensure `value` fits the Params dict `render()` expects.
+def clean_value(schema: ParamSchema, value: Any, input_metadata: TableMetadata) -> Any:
+    """Ensure `value` fits the Params dict `render()` expects.
 
     The most basic implementation is to just return `value`: it looks a lot
     like the dict we pass `render()`. But we have special-case implementations
-    for a few dtypes.
+    for a few schemas.
 
     Features:
 
-        * `Tab` parameters become Optional[TabOutput] (declared here)
-        * Eliminate missing `Tab`s: they'll be `None`
-        * Raise `TabCycleError` if a chosen Tab has not been rendered
+        * `Tab` and `MultiTab` raise RuntimeError.
         * `column` parameters become '' if they aren't input columns
         * `multicolumn` parameters lose values that aren't input columns
         * Raise `PromptingError` if a chosen column is of the wrong type
@@ -37,31 +36,44 @@ def clean_value(dtype: ParamDType, value: Any, input_metadata: TableMetadata) ->
     return value  # fallback method
 
 
-@clean_value.register(ParamDType.Float)
+@clean_value.register(ParamSchema.Float)
 def _(
-    dtype: ParamDType.Float, value: Union[int, float], input_metadata: TableMetadata
+    schema: ParamSchema.Float, value: Union[int, float], input_metadata: TableMetadata
 ) -> float:
-    # ParamDType.Float can have `int` values (because values come from
+    # ParamSchema.Float can have `int` values (because values come from
     # json.parse(), which only gives Numbers so can give "3" instead of
     # "3.0". We want to pass that as `float` in the `params` dict.
     return float(value)
 
 
-@clean_value.register(ParamDType.File)
+@clean_value.register(ParamSchema.File)
 def _(
-    dtype: ParamDType.File, value: Optional[str], input_metadata: TableMetadata
+    schema: ParamSchema.File, value: Optional[str], input_metadata: TableMetadata
 ) -> Optional[pathlib.Path]:
     raise RuntimeError("Unsupported: fetch file")
 
 
-@clean_value.register(ParamDType.Tab)
-def _(dtype: ParamDType.Tab, value: str, input_metadata: TableMetadata) -> None:
+@clean_value.register(ParamSchema.Tab)
+def _(schema: ParamSchema.Tab, value: str, input_metadata: TableMetadata) -> None:
     raise RuntimeError("Unsupported: fetch tab")
 
 
-@clean_value.register(ParamDType.Column)
-def _(dtype: ParamDType.Column, value: str, input_metadata: TableMetadata) -> str:
-    if dtype.tab_parameter:
+def _column_type_name(column_type: ColumnType) -> str:
+    if isinstance(column_type, ColumnType.Text):
+        return "text"
+    elif isinstance(column_type, ColumnType.Date):
+        return "date"
+    elif isinstance(column_type, ColumnType.Number):
+        return "number"
+    elif isinstance(column_type, ColumnType.Timestamp):
+        return "timestamp"
+    else:
+        raise ValueError("Unhandled column type %r" % column_type)
+
+
+@clean_value.register(ParamSchema.Column)
+def _(schema: ParamSchema.Column, value: str, input_metadata: TableMetadata) -> str:
+    if schema.tab_parameter:
         raise RuntimeError("Unsupported: fetch column with tab_parameter")
 
     if not input_metadata.columns:
@@ -72,23 +84,26 @@ def _(dtype: ParamDType.Column, value: str, input_metadata: TableMetadata) -> st
         return ""  # Null column
 
     column = valid_columns[value]
-    if dtype.column_types and column.type.name not in dtype.column_types:
-        if "text" in dtype.column_types:
+    if (
+        schema.column_types
+        and _column_type_name(column.type) not in schema.column_types
+    ):
+        if "text" in schema.column_types:
             found_type = None
         else:
-            found_type = column.type.name
+            found_type = _column_type_name(column.type)
         raise PromptingError(
-            [PromptingError.WrongColumnType([value], found_type, dtype.column_types)]
+            [PromptingError.WrongColumnType([value], found_type, schema.column_types)]
         )
 
     return value
 
 
-@clean_value.register(ParamDType.Multicolumn)
+@clean_value.register(ParamSchema.Multicolumn)
 def _(
-    dtype: ParamDType.Multicolumn, value: List[str], input_metadata: TableMetadata
+    schema: ParamSchema.Multicolumn, value: List[str], input_metadata: TableMetadata
 ) -> str:
-    if dtype.tab_parameter:
+    if schema.tab_parameter:
         raise RuntimeError("Unsupported: fetch multicolumn with tab_parameter")
 
     error_agg = PromptErrorAggregator()
@@ -101,14 +116,17 @@ def _(
         if column.name not in requested_colnames:
             continue
 
-        if dtype.column_types and column.type.name not in dtype.column_types:
-            if "text" in dtype.column_types:
+        if (
+            schema.column_types
+            and _column_type_name(column.type) not in schema.column_types
+        ):
+            if "text" in schema.column_types:
                 found_type = None
             else:
-                found_type = column.type.name
+                found_type = _column_type_name(column.type)
             error_agg.add(
                 PromptingError.WrongColumnType(
-                    [column.name], found_type, dtype.column_types
+                    [column.name], found_type, schema.column_types
                 )
             )
         else:
@@ -119,9 +137,9 @@ def _(
     return valid_colnames
 
 
-@clean_value.register(ParamDType.Multichartseries)
+@clean_value.register(ParamSchema.Multichartseries)
 def _(
-    dtype: ParamDType.Multichartseries,
+    schema: ParamSchema.Multichartseries,
     value: List[Dict[str, str]],
     input_metadata: TableMetadata,
 ) -> List[Dict[str, str]]:
@@ -129,11 +147,11 @@ def _(
 
 
 # ... and then the methods for recursing
-@clean_value.register(ParamDType.List)
+@clean_value.register(ParamSchema.List)
 def clean_value_list(
-    dtype: ParamDType.List, value: List[Any], input_metadata: TableMetadata
+    schema: ParamSchema.List, value: List[Any], input_metadata: TableMetadata
 ) -> List[Any]:
-    inner_clean = partial(clean_value, dtype.inner_dtype)
+    inner_clean = partial(clean_value, schema.inner_schema)
     ret = []
     error_agg = PromptErrorAggregator()
     for v in value:
@@ -145,23 +163,23 @@ def clean_value_list(
     return ret
 
 
-@clean_value.register(ParamDType.Multitab)
+@clean_value.register(ParamSchema.Multitab)
 def _(
-    dtype: ParamDType.Multitab, value: List[str], input_metadata: TableMetadata
+    schema: ParamSchema.Multitab, value: List[str], input_metadata: TableMetadata
 ) -> List[Any]:
     raise RuntimeError("Unsupported: fetch multitab")
 
 
-@clean_value.register(ParamDType.Dict)
+@clean_value.register(ParamSchema.Dict)
 def _(
-    dtype: ParamDType.Dict, value: Dict[str, Any], input_metadata: TableMetadata
+    schema: ParamSchema.Dict, value: Dict[str, Any], input_metadata: TableMetadata
 ) -> Dict[str, Any]:
     ret = {}
     error_agg = PromptErrorAggregator()
 
     for k, v in value.items():
         try:
-            ret[k] = clean_value(dtype.properties[k], v, input_metadata)
+            ret[k] = clean_value(schema.properties[k], v, input_metadata)
         except PromptingError as err:
             error_agg.extend(err.errors)
 
@@ -169,10 +187,9 @@ def _(
     return ret
 
 
-@clean_value.register(ParamDType.Map)
+@clean_value.register(ParamSchema.Map)
 def _(
-    dtype: ParamDType.Map, value: Dict[str, Any], input_metadata: TableMetadata
+    schema: ParamSchema.Map, value: Dict[str, Any], input_metadata: TableMetadata
 ) -> Dict[str, Any]:
-    value_dtype = dtype.value_dtype
-    value_clean = partial(clean_value, value_dtype)
+    value_clean = partial(clean_value, schema.value_schema)
     return dict((k, value_clean(v, input_metadata)) for k, v in value.items())

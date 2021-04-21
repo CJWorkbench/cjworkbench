@@ -3,11 +3,16 @@ import datetime
 import logging
 import textwrap
 from unittest.mock import patch
+
+import pyarrow as pa
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel.tests.util import assert_render_result_equals
 from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
-from cjwkernel.tests.util import arrow_table, parquet_file
+from cjwkernel.tests.util import parquet_file
+from cjwkernel.validate import load_trusted_arrow_file
 from cjwstate import s3, rabbitmq, rendercache
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
@@ -27,6 +32,11 @@ class StepTests(DbTestCaseWithModuleRegistry):
         basedir = self.ctx.enter_context(
             self.chroot_context.tempdir_context(prefix="test_step-")
         )
+        self.empty_table_path = self.ctx.enter_context(
+            self.chroot_context.tempfile_context(prefix="empty-table-", dir=basedir)
+        )
+        with pa.ipc.RecordBatchFileWriter(self.empty_table_path, pa.schema([])):
+            pass
         self.output_path = self.ctx.enter_context(
             self.chroot_context.tempfile_context(prefix="output-", dir=basedir)
         )
@@ -47,25 +57,26 @@ class StepTests(DbTestCaseWithModuleRegistry):
         )
         result = self.run_with_async_db(
             execute_step(
-                self.chroot_context,
-                workflow,
-                step,
-                None,
-                {},
-                tab.to_arrow(),
-                RenderResult(),
-                {},
-                self.output_path,
+                chroot_context=self.chroot_context,
+                workflow=workflow,
+                step=step,
+                module_zipfile=None,
+                params={},
+                tab=Tab(tab.slug, tab.name),
+                input_path=self.empty_table_path,
+                input_table_columns=[],
+                tab_results={},
+                output_path=self.output_path,
             )
         )
-        expected = RenderResult(
-            errors=[
-                RenderError(I18nMessage("py.renderer.execute.step.noModule", {}, None))
-            ]
-        )
-        assert_render_result_equals(result, expected)
+        self.assertEqual(result.columns, [])
+        self.assertEqual(self.output_path.read_bytes(), b"")
+
         step.refresh_from_db()
-        self.assertEqual(step.cached_render_result.errors, expected.errors)
+        self.assertEqual(
+            step.cached_render_result.errors,
+            [RenderError(I18nMessage("py.renderer.execute.step.noModule", {}, None))],
+        )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(notifications, "email_output_delta")
@@ -76,17 +87,15 @@ class StepTests(DbTestCaseWithModuleRegistry):
             order=0,
             slug="step-1",
             module_id_name="x",
-            last_relevant_delta_id=workflow.last_delta_id - 1,
+            last_relevant_delta_id=workflow.last_delta_id,
             notifications=True,
         )
-        rendercache.cache_render_result(
+        write_to_rendercache(
             workflow,
             step,
-            workflow.last_delta_id - 1,
-            RenderResult(arrow_table({"A": [1]})),
+            workflow.last_delta_id - 1,  # stale
+            make_table(make_column("A", [1])),
         )
-        step.last_relevant_delta_id = workflow.last_delta_id
-        step.save(update_fields=["last_relevant_delta_id"])
 
         module_zipfile = create_module_zipfile(
             "x",
@@ -96,15 +105,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
         email_delta.assert_called()
@@ -118,27 +128,25 @@ class StepTests(DbTestCaseWithModuleRegistry):
     @patch.object(rendercache, "downloaded_parquet_file")
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_ignore_corrupt_cache_error(self, email_delta, read_cache):
-        read_cache.side_effect = rendercache.CorruptCacheError
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,
             slug="step-1",
             module_id_name="x",
-            last_relevant_delta_id=workflow.last_delta_id - 1,
+            last_relevant_delta_id=workflow.last_delta_id,
             notifications=True,
         )
         # We need to actually populate the cache to set up the test. The code
         # under test will only try to open the render result if the database
         # says there's something there.
-        rendercache.cache_render_result(
+        write_to_rendercache(
             workflow,
             step,
-            workflow.last_delta_id - 1,
-            RenderResult(arrow_table({"A": [1]})),
+            workflow.last_delta_id - 1,  # stale
+            make_table(make_column("A", [1])),
         )
-        step.last_relevant_delta_id = workflow.last_delta_id
-        step.save(update_fields=["last_relevant_delta_id"])
+        read_cache.side_effect = rendercache.CorruptCacheError
 
         module_zipfile = create_module_zipfile(
             "x",
@@ -150,15 +158,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.ERROR):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -173,26 +182,21 @@ class StepTests(DbTestCaseWithModuleRegistry):
             order=0,
             slug="step-1",
             module_id_name="x",
-            last_relevant_delta_id=workflow.last_delta_id - 1,
+            last_relevant_delta_id=workflow.last_delta_id,
             notifications=True,
         )
         # We need to actually populate the cache to set up the test. The code
         # under test will only try to open the render result if the database
         # says there's something there.
-        rendercache.cache_render_result(
+        write_to_rendercache(
             workflow,
             step,
-            workflow.last_delta_id - 1,
-            RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage("py.renderer.execute.step.noModule", {}, None)
-                    )
-                ]
-            ),
+            workflow.last_delta_id - 1,  # stale
+            table=make_table(),
+            errors=[
+                RenderError(I18nMessage("py.renderer.execute.step.noModule", {}, None))
+            ],
         )
-        step.last_relevant_delta_id = workflow.last_delta_id
-        step.save(update_fields=["last_relevant_delta_id"])
 
         module_zipfile = create_module_zipfile(
             "x",
@@ -204,15 +208,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -233,32 +238,28 @@ class StepTests(DbTestCaseWithModuleRegistry):
         # We need to actually populate the cache to set up the test. The code
         # under test will only try to open the render result if the database
         # says there's something there.
-        rendercache.cache_render_result(
+        write_to_rendercache(
             workflow,
             step,
-            workflow.last_delta_id - 1,
-            RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage("py.renderer.execute.step.noModule", {}, None)
-                    )
-                ]
-            ),
+            workflow.last_delta_id - 1,  # stale
+            table=make_table(),
+            errors=[
+                RenderError(I18nMessage("py.renderer.execute.step.noModule", {}, None))
+            ],
         )
-        step.last_relevant_delta_id = workflow.last_delta_id
-        step.save(update_fields=["last_relevant_delta_id"])
 
         self.run_with_async_db(
             execute_step(
-                self.chroot_context,
-                workflow,
-                step,
-                None,  # module_zipfile
-                {},
-                Tab(tab.slug, tab.name),
-                RenderResult(),
-                {},
-                self.output_path,
+                chroot_context=self.chroot_context,
+                workflow=workflow,
+                step=step,
+                module_zipfile=None,  # will cause noModule error
+                params={},
+                tab=Tab(tab.slug, tab.name),
+                input_path=self.empty_table_path,
+                input_table_columns=[],
+                tab_results={},
+                output_path=self.output_path,
             )
         )
 
@@ -274,20 +275,11 @@ class StepTests(DbTestCaseWithModuleRegistry):
             order=0,
             slug="step-1",
             module_id_name="x",
-            last_relevant_delta_id=workflow.last_delta_id - 1,
+            last_relevant_delta_id=workflow.last_delta_id,
             notifications=True,
         )
-        # We need to actually populate the cache to set up the test. The code
-        # under test will only try to open the render result if the database
-        # says there's something there.
-        rendercache.cache_render_result(
-            workflow,
-            step,
-            workflow.last_delta_id - 1,
-            RenderResult(arrow_table({})),  # does not write a Parquet file
-        )
-        step.last_relevant_delta_id = workflow.last_delta_id
-        step.save(update_fields=["last_relevant_delta_id"])
+        # "unreachable" previous step
+        write_to_rendercache(workflow, step, workflow.last_delta_id - 1, make_table())
 
         module_zipfile = create_module_zipfile(
             "x",
@@ -299,15 +291,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -323,40 +316,36 @@ class StepTests(DbTestCaseWithModuleRegistry):
             order=0,
             slug="step-1",
             module_id_name="x",
-            last_relevant_delta_id=workflow.last_delta_id - 1,
+            last_relevant_delta_id=workflow.last_delta_id,
             notifications=True,
         )
-        # We need to actually populate the cache to set up the test. The code
-        # under test will only try to open the render result if the database
-        # says there's something there.
-        rendercache.cache_render_result(
+        write_to_rendercache(
             workflow,
             step,
             workflow.last_delta_id - 1,
-            RenderResult(arrow_table({"A": [1]})),
+            make_table(make_column("A", [1])),
         )
-        step.last_relevant_delta_id = workflow.last_delta_id
-        step.save(update_fields=["last_relevant_delta_id"])
 
         module_zipfile = create_module_zipfile(
             "x",
             spec_kwargs={"loads_data": True},
-            # returns different data
+            # returns empty result -- meaning, "unreachable"
             python_code="import pandas as pd\ndef render(table, params): return pd.DataFrame({})",
         )
 
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -406,15 +395,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -435,10 +425,6 @@ class StepTests(DbTestCaseWithModuleRegistry):
         # Now delete the file on S3 -- but leave the DB pointing to it.
         s3.remove(s3.StoredObjectsBucket, so.key)
 
-        def render(*args, fetch_result, **kwargs):
-            self.assertIsNone(fetch_result)
-            return RenderResult()
-
         module_zipfile = create_module_zipfile(
             "x",
             spec_kwargs={"loads_data": True},
@@ -455,15 +441,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -477,7 +464,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
             module_id_name="x",
             last_relevant_delta_id=workflow.last_delta_id,
             # step.stored_data_version is buggy: it can point at a nonexistent
-            # StoredObject. Let's do that.
+            # StoredObject. Do that, for this test.
             stored_data_version=datetime.datetime.now(),
         )
 
@@ -497,15 +484,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -536,15 +524,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -579,15 +568,16 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
 
@@ -609,28 +599,29 @@ class StepTests(DbTestCaseWithModuleRegistry):
 
         result = self.run_with_async_db(
             execute_step(
-                self.chroot_context,
-                workflow,
-                step,
-                module_zipfile,
-                {},
-                Tab(tab.slug, tab.name),
-                RenderResult(),
-                {},
-                self.output_path,
+                chroot_context=self.chroot_context,
+                workflow=workflow,
+                step=step,
+                module_zipfile=module_zipfile,
+                params={},
+                tab=Tab(tab.slug, tab.name),
+                input_path=self.empty_table_path,
+                input_table_columns=[],
+                tab_results={},
+                output_path=self.output_path,
             )
         )
-        assert_render_result_equals(
-            result,
-            RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage(
-                            "py.renderer.execute.step.NoLoadedDataError", {}, None
-                        )
-                    )
-                ]
-            ),
+        self.assertEqual(result.columns, [])
+        self.assertEqual(self.output_path.read_bytes(), b"")
+
+        step.refresh_from_db()
+        self.assertEqual(
+            step.cached_render_result.errors,
+            [
+                RenderError(
+                    I18nMessage("py.renderer.execute.step.NoLoadedDataError", {}, None)
+                )
+            ],
         )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
@@ -653,30 +644,33 @@ class StepTests(DbTestCaseWithModuleRegistry):
         with self.assertLogs(level=logging.INFO):
             result = self.run_with_async_db(
                 execute_step(
-                    self.chroot_context,
-                    workflow,
-                    step,
-                    module_zipfile,
-                    {},
-                    Tab(tab.slug, tab.name),
-                    RenderResult(),
-                    {},
-                    self.output_path,
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab=Tab(tab.slug, tab.name),
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
                 )
             )
-        assert_render_result_equals(
-            result,
-            RenderResult(
-                errors=[
-                    RenderError(
-                        I18nMessage(
-                            "py.renderer.execute.step.user_visible_bug_during_render",
-                            {
-                                "message": "exit code 1: NameError: name 'undefined' is not defined"
-                            },
-                            None,
-                        )
+        self.assertEquals(result.columns, [])
+        self.assertEqual(self.output_path.read_bytes(), b"")
+
+        step.refresh_from_db()
+        self.assertEqual(
+            step.cached_render_result.errors,
+            [
+                RenderError(
+                    I18nMessage(
+                        "py.renderer.execute.step.user_visible_bug_during_render",
+                        {
+                            "message": "exit code 1: NameError: name 'undefined' is not defined"
+                        },
+                        None,
                     )
-                ]
-            ),
+                )
+            ],
         )

@@ -1,3 +1,5 @@
+import datetime
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -7,160 +9,17 @@ from cjwkernel.thrift import ttypes
 from cjwmodule.i18n import I18nMessage
 
 
-class ColumnTypeNumberTests(unittest.TestCase):
-    def test_format_too_many_arguments(self):
-        with self.assertRaisesRegex(ValueError, "Can only format one number"):
-            types.ColumnType.Number("{:d}{:f}")
-
-    def test_format_disallow_non_format(self):
-        with self.assertRaisesRegex(ValueError, 'Format must look like "{:...}"'):
-            types.ColumnType.Number("%d")
-
-    def test_format_disallow_field_number(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            types.ColumnType.Number("{0:f}")
-
-    def test_format_disallow_field_name(self):
-        with self.assertRaisesRegex(
-            ValueError, "Field names or numbers are not allowed"
-        ):
-            types.ColumnType.Number("{value:f}")
-
-    def test_format_disallow_field_converter(self):
-        with self.assertRaisesRegex(ValueError, "Field converters are not allowed"):
-            types.ColumnType.Number("{!r:f}")
-
-    def test_format_disallow_invalid_type(self):
-        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            types.ColumnType.Number("{:T}")
-
-
 class ThriftConvertersTest(unittest.TestCase):
     def setUp(self):
         super().setUp()
         self.basedir = Path(tempfile.mkdtemp())
+        self.old_cwd = os.getcwd()
+        os.chdir(self.basedir)
 
     def tearDown(self):
+        os.chdir(self.old_cwd)
         self.basedir.rmdir()
         super().tearDown()
-
-    def test_column_type_text_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Text()),
-            ttypes.ColumnType(text_type=ttypes.ColumnTypeText()),
-        )
-
-    def test_column_type_text_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-            ),
-            types.ColumnType.Text(),
-        )
-
-    def test_column_type_number_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Number("{:,.1%}")),
-            ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:,.1%}")),
-        )
-
-    def test_column_type_number_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:,.1%}"))
-            ),
-            types.ColumnType.Number("{:,.1%}"),
-        )
-
-    def test_column_type_number_from_thrift_invalid_format(self):
-        thrift_value = ttypes.ColumnType(number_type=ttypes.ColumnTypeNumber("{:T}"))
-        with self.assertRaisesRegex(ValueError, "Unknown format code 'T'"):
-            types.thrift_column_type_to_arrow(thrift_value)
-
-    def test_column_type_timestamp_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_type_to_thrift(types.ColumnType.Timestamp()),
-            ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp()),
-        )
-
-    def test_column_type_timestamp_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_type_to_arrow(
-                ttypes.ColumnType(timestamp_type=ttypes.ColumnTypeTimestamp())
-            ),
-            types.ColumnType.Timestamp(),
-        )
-
-    def test_column_to_thrift(self):
-        self.assertEqual(
-            types.arrow_column_to_thrift(types.Column("A", types.ColumnType.Text())),
-            ttypes.Column("A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())),
-        )
-
-    def test_column_from_thrift(self):
-        self.assertEqual(
-            types.thrift_column_to_arrow(
-                ttypes.Column("A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText()))
-            ),
-            types.Column("A", types.ColumnType.Text()),
-        )
-
-    def test_table_metadata_to_thrift(self):
-        self.assertEqual(
-            types.arrow_table_metadata_to_thrift(
-                types.TableMetadata(
-                    4,
-                    [
-                        types.Column("A", types.ColumnType.Text()),
-                        types.Column("B", types.ColumnType.Text()),
-                    ],
-                )
-            ),
-            ttypes.TableMetadata(
-                4,
-                [
-                    ttypes.Column(
-                        "A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                    ),
-                    ttypes.Column(
-                        "B", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                    ),
-                ],
-            ),
-        )
-
-    def test_table_metadata_from_thrift(self):
-        self.assertEqual(
-            types.thrift_table_metadata_to_arrow(
-                ttypes.TableMetadata(
-                    4,
-                    [
-                        ttypes.Column(
-                            "A", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                        ),
-                        ttypes.Column(
-                            "B", ttypes.ColumnType(text_type=ttypes.ColumnTypeText())
-                        ),
-                    ],
-                )
-            ),
-            types.TableMetadata(
-                4,
-                [
-                    types.Column("A", types.ColumnType.Text()),
-                    types.Column("B", types.ColumnType.Text()),
-                ],
-            ),
-        )
-
-    def test_arrow_table_to_thrift(self):
-        pass  # TODO test ArrowTable conversions
-
-    def test_arrow_table_from_thrift(self):
-        pass  # TODO test ArrowTable conversions
-        # ... we should also test _validation_ when reading from thrift.
 
     def test_tab_to_thrift(self):
         self.assertEqual(
@@ -180,146 +39,79 @@ class ThriftConvertersTest(unittest.TestCase):
     def test_tab_output_to_thrift(self):
         pass  # TODO test ArrowTable conversions, then test TabOutput conversions
 
-    def test_raw_params_from_thrift(self):
+    def test_thrift_json_object_to_pydict(self):
         self.assertEqual(
-            types.thrift_raw_params_to_arrow(ttypes.RawParams('{"A":"x","B":[1,2]}')),
-            types.RawParams({"A": "x", "B": [1, 2]}),
-        )
-
-    def test_raw_params_to_thrift(self):
-        self.assertEqual(
-            types.arrow_raw_params_to_thrift(types.RawParams({"A": "x", "B": [1, 2]})),
-            ttypes.RawParams('{"A":"x","B":[1,2]}'),
-        )
-
-    def test_params_from_thrift(self):
-        self.assertEqual(
-            types.thrift_params_to_arrow(
+            types.thrift_json_object_to_pydict(
                 {
-                    "str": ttypes.ParamValue(string_value="s"),
-                    "int": ttypes.ParamValue(integer_value=2),
-                    "float": ttypes.ParamValue(float_value=1.2),
-                    "null": ttypes.ParamValue(),
-                    "bool": ttypes.ParamValue(boolean_value=False),
-                    "column": ttypes.ParamValue(
-                        column_value=ttypes.Column(
-                            "A",
-                            ttypes.ColumnType(
-                                number_type=ttypes.ColumnTypeNumber(format="{:,.2f}")
-                            ),
-                        )
-                    ),
-                    "listofmaps": ttypes.ParamValue(
-                        list_value=[
-                            ttypes.ParamValue(
-                                map_value={
-                                    "A": ttypes.ParamValue(string_value="a"),
-                                    "B": ttypes.ParamValue(string_value="b"),
+                    "str": ttypes.Json(string_value="s"),
+                    "int": ttypes.Json(int64_value=2),
+                    "float": ttypes.Json(number_value=1.2),
+                    "null": ttypes.Json(),
+                    "bool": ttypes.Json(boolean_value=False),
+                    "arrayofobjects": ttypes.Json(
+                        array_value=[
+                            ttypes.Json(
+                                object_value={
+                                    "A": ttypes.Json(string_value="a"),
+                                    "B": ttypes.Json(string_value="b"),
                                 }
                             ),
-                            ttypes.ParamValue(
-                                map_value={
-                                    "C": ttypes.ParamValue(string_value="c"),
-                                    "D": ttypes.ParamValue(string_value="d"),
+                            ttypes.Json(
+                                object_value={
+                                    "C": ttypes.Json(string_value="c"),
+                                    "D": ttypes.Json(string_value="d"),
                                 }
                             ),
                         ]
                     ),
-                    "tab": ttypes.ParamValue(string_value="TODO tabs"),
                 },
-                self.basedir,
             ),
-            types.Params(
+            {
+                "str": "s",
+                "int": 2,
+                "float": 1.2,
+                "null": None,
+                "bool": False,
+                "arrayofobjects": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
+            },
+        )
+
+    def test_pydict_to_thrift_json_object(self):
+        self.assertEqual(
+            types.pydict_to_thrift_json_object(
                 {
                     "str": "s",
                     "int": 2,
                     "float": 1.2,
                     "null": None,
                     "bool": False,
-                    "column": types.Column(
-                        "A", types.ColumnType.Number(format="{:,.2f}")
-                    ),
-                    "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
-                    "tab": "TODO tabs",
+                    "arrayofobjects": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
                 }
             ),
-        )
-
-    def test_params_to_thrift(self):
-        self.assertEqual(
-            types.arrow_params_to_thrift(
-                types.Params(
-                    {
-                        "str": "s",
-                        "int": 2,
-                        "float": 1.2,
-                        "null": None,
-                        "bool": False,
-                        "column": types.Column(
-                            "A", types.ColumnType.Number(format="{:,.2f}")
-                        ),
-                        "listofmaps": [{"A": "a", "B": "b"}, {"C": "c", "D": "d"}],
-                        "tab": "TODO tabs",
-                    }
-                )
-            ),
             {
-                "str": ttypes.ParamValue(string_value="s"),
-                "int": ttypes.ParamValue(integer_value=2),
-                "float": ttypes.ParamValue(float_value=1.2),
-                "null": ttypes.ParamValue(),
-                "bool": ttypes.ParamValue(boolean_value=False),
-                "column": ttypes.ParamValue(
-                    column_value=ttypes.Column(
-                        "A",
-                        ttypes.ColumnType(
-                            number_type=ttypes.ColumnTypeNumber(format="{:,.2f}")
-                        ),
-                    )
-                ),
-                "listofmaps": ttypes.ParamValue(
-                    list_value=[
-                        ttypes.ParamValue(
-                            map_value={
-                                "A": ttypes.ParamValue(string_value="a"),
-                                "B": ttypes.ParamValue(string_value="b"),
+                "str": ttypes.Json(string_value="s"),
+                "int": ttypes.Json(int64_value=2),
+                "float": ttypes.Json(number_value=1.2),
+                "null": ttypes.Json(),
+                "bool": ttypes.Json(boolean_value=False),
+                "arrayofobjects": ttypes.Json(
+                    array_value=[
+                        ttypes.Json(
+                            object_value={
+                                "A": ttypes.Json(string_value="a"),
+                                "B": ttypes.Json(string_value="b"),
                             }
                         ),
-                        ttypes.ParamValue(
-                            map_value={
-                                "C": ttypes.ParamValue(string_value="c"),
-                                "D": ttypes.ParamValue(string_value="d"),
+                        ttypes.Json(
+                            object_value={
+                                "C": ttypes.Json(string_value="c"),
+                                "D": ttypes.Json(string_value="d"),
                             }
                         ),
                     ]
                 ),
-                "tab": ttypes.ParamValue(string_value="TODO tabs"),
             },
         )
-
-    def test_params_filename_from_thrift_happy_path(self):
-        with tempfile.NamedTemporaryFile(dir=self.basedir) as tf:
-            path = Path(tf.name)
-            path.write_bytes(b"")
-            self.assertEqual(
-                types.thrift_params_to_arrow(
-                    {"A": ttypes.ParamValue(filename_value=path.name)}, self.basedir
-                ),
-                types.Params({"A": path}),
-            )
-
-    def test_params_filename_to_thrift(self):
-        path = self.basedir / "x.bin"
-        self.assertEqual(
-            types.arrow_params_to_thrift(types.Params({"A": path})),
-            {"A": ttypes.ParamValue(filename_value="x.bin")},
-        )
-
-    def test_params_filename_from_thrift_file_not_found_is_error(self):
-        with self.assertRaisesRegexp(ValueError, "file must exist"):
-            types.thrift_params_to_arrow(
-                {"A": ttypes.ParamValue(filename_value="does_not_exist")}, self.basedir
-            )
 
     def test_i18n_message_from_thrift_source_module(self):
         self.assertEqual(
@@ -424,7 +216,7 @@ class ThriftConvertersTest(unittest.TestCase):
             types.thrift_quick_fix_action_to_arrow(
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
-                        "filter", ttypes.RawParams('{"x":"y"}')
+                        "filter", {"x": ttypes.Json(string_value="y")}
                     )
                 )
             ),
@@ -438,7 +230,7 @@ class ThriftConvertersTest(unittest.TestCase):
             ),
             ttypes.QuickFixAction(
                 prepend_step=ttypes.PrependStepQuickFixAction(
-                    "filter", ttypes.RawParams('{"x":"y"}')
+                    "filter", {"x": ttypes.Json(string_value="y")}
                 )
             ),
         )
@@ -450,7 +242,7 @@ class ThriftConvertersTest(unittest.TestCase):
                     ttypes.I18nMessage("click", {}, None),
                     ttypes.QuickFixAction(
                         prepend_step=ttypes.PrependStepQuickFixAction(
-                            "filter", ttypes.RawParams('{"x":"y"}')
+                            "filter", {"x": ttypes.Json(string_value="y")}
                         )
                     ),
                 )
@@ -473,7 +265,7 @@ class ThriftConvertersTest(unittest.TestCase):
                 ttypes.I18nMessage("click", {}, None),
                 ttypes.QuickFixAction(
                     prepend_step=ttypes.PrependStepQuickFixAction(
-                        "filter", ttypes.RawParams('{"x":"y"}')
+                        "filter", {"x": ttypes.Json(string_value="y")}
                     )
                 ),
             ),
@@ -489,7 +281,7 @@ class ThriftConvertersTest(unittest.TestCase):
                             ttypes.I18nMessage("click", {}, None),
                             ttypes.QuickFixAction(
                                 prepend_step=ttypes.PrependStepQuickFixAction(
-                                    "filter", ttypes.RawParams('{"x":"y"}')
+                                    "filter", {"x": ttypes.Json(string_value="y")}
                                 )
                             ),
                         )
@@ -527,7 +319,7 @@ class ThriftConvertersTest(unittest.TestCase):
                         ttypes.I18nMessage("click", {}, None),
                         ttypes.QuickFixAction(
                             prepend_step=ttypes.PrependStepQuickFixAction(
-                                "filter", ttypes.RawParams('{"x":"y"}')
+                                "filter", {"x": ttypes.Json(string_value="y")}
                             )
                         ),
                     )
@@ -542,15 +334,15 @@ class ThriftConvertersTest(unittest.TestCase):
         pass  # TODO test RenderResult conversion
 
     def test_fetch_result_from_thrift_disallow_directories(self):
-        with self.assertRaisesRegex(ValueError, "must not contain directories"):
+        with self.assertRaisesRegex(ValueError, "must not include directory names"):
             types.thrift_fetch_result_to_arrow(
-                ttypes.FetchResult("/etc/passwd", []), Path(__file__).parent
+                ttypes.FetchResult("/etc/passwd", []), self.basedir
             )
 
     def test_fetch_result_from_thrift_disallow_hidden_files(self):
         with self.assertRaisesRegex(ValueError, "must not be hidden"):
             types.thrift_fetch_result_to_arrow(
-                ttypes.FetchResult(".secrets", []), Path(__file__).parent
+                ttypes.FetchResult(".secrets", []), self.basedir
             )
 
     def test_fetch_result_from_thrift_disallow_non_files(self):
@@ -563,15 +355,17 @@ class ThriftConvertersTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=str(self.basedir)) as tmpsubdir:
             with self.assertRaisesRegex(ValueError, "be a regular file"):
                 types.thrift_fetch_result_to_arrow(
-                    ttypes.FetchResult(Path(tmpsubdir).name, []), self.basedir
+                    ttypes.FetchResult(Path(tmpsubdir).name, []),
+                    self.basedir,
                 )
 
     def test_fetch_result_from_thrift_happy_path(self):
         with tempfile.NamedTemporaryFile(dir=str(self.basedir)) as tf:
+            filename = Path(tf.name).name
             self.assertEqual(
                 types.thrift_fetch_result_to_arrow(
                     ttypes.FetchResult(
-                        Path(tf.name).name,
+                        filename,
                         [ttypes.RenderError(ttypes.I18nMessage("hi", {}, None), [])],
                     ),
                     self.basedir,
@@ -581,3 +375,35 @@ class ThriftConvertersTest(unittest.TestCase):
                     [types.RenderError(types.I18nMessage("hi", {}, None))],
                 ),
             )
+
+    def test_uploaded_file_to_thrift(self):
+        self.assertEqual(
+            types.arrow_uploaded_file_to_thrift(
+                types.UploadedFile(
+                    "x.tar.gz",
+                    "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                    datetime.datetime(2021, 4, 20, 15, 48, 11, 906539),
+                ),
+            ),
+            ttypes.UploadedFile(
+                "x.tar.gz",
+                "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                1618933691906539,
+            ),
+        )
+
+    def test_uploaded_file_from_thrift(self):
+        self.assertEqual(
+            types.thrift_uploaded_file_to_arrow(
+                ttypes.UploadedFile(
+                    "x.tar.gz",
+                    "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                    1618933691906539,
+                )
+            ),
+            types.UploadedFile(
+                "x.tar.gz",
+                "839526fa-1adb-4eec-9d29-f5b4d2fbba30_x.tar.gz",
+                datetime.datetime(2021, 4, 20, 15, 48, 11, 906539),
+            ),
+        )

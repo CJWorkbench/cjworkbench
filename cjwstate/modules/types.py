@@ -1,19 +1,20 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from functools import lru_cache
 import json
+import logging
 import marshal
-from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, NewType, Pattern, Tuple
 import re
 import zipfile
+from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
+from typing import Any, ClassVar, Dict, Optional, NewType, Pattern, Tuple
+
 import yaml
+from cjwmodule.spec.loader import load_spec
+from cjwmodule.spec.types import ModuleSpec
+
 from cjwkernel.types import CompiledModule
-from cjwstate.modules.param_dtype import ParamDType
-from .module_loader import validate_module_spec
-from .param_spec import ParamSpec
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -22,65 +23,6 @@ logger = logging.getLogger(__name__)
 ModuleId = NewType("ModuleId", str)
 ModuleVersion = NewType("ModuleVersion", str)
 ModuleIdAndVersion = Tuple[ModuleId, ModuleVersion]
-
-
-@dataclass(frozen=True)
-class ModuleSpec:
-    """
-    Dict-like object representing a valid module spec.
-
-    See `module_spec_schema.yaml` for the spec definition.
-
-    You may pass this to `ModuleVersion.create_or_replace_from_spec()`.
-    """
-
-    id_name: str
-    name: str
-    category: str
-    parameters: List[Dict[str, Any]] = field(default_factory=list)
-
-    deprecated: Optional[Dict[str, str]] = None
-    icon: str = ""
-    link: str = ""
-    description: str = ""
-    loads_data: bool = False
-    uses_data: Optional[bool] = None
-    html_output: bool = False  # janky -- really we should check ModuleZipfile
-    has_zen_mode: bool = False
-    row_action_menu_entry_title: str = ""
-    help_url: str = ""
-    param_schema: Optional[Dict[str, Any]] = None
-
-    def get_uses_data(self):
-        if self.uses_data is None:
-            return not self.loads_data
-        else:
-            return self.uses_data
-
-    @property
-    def default_params(self) -> Dict[str, Any]:
-        return self.get_param_schema().coerce(None)
-
-    @property
-    def param_fields(self) -> List[ParamSpec]:
-        return [ParamSpec.from_dict(d) for d in self.parameters]
-
-    # Returns a dict of DTypes for all parameters
-    def get_param_schema(self) -> ParamDType.Dict:
-        if self.param_schema is not None:
-            # Module author wrote a schema in the YAML, to define storage of 'custom' parameters
-            json_schema = self.param_schema
-            return ParamDType.parse({"type": "dict", "properties": json_schema})
-        else:
-            # Usual case: infer schema from module parameter types
-            # Use of dict here means schema is not sensitive to parameter ordering, which is good
-            return ParamDType.Dict(
-                dict(
-                    (f.id_name, f.dtype)
-                    for f in self.param_fields
-                    if f.dtype is not None
-                )
-            )
 
 
 @dataclass(frozen=True)
@@ -150,15 +92,10 @@ class ModuleZipfile:
         data = self._read_bytes(path)  # raise FileNotFoundError, BadZipFile, KeyError
         return data.decode("utf-8")  # raise UnicodeDecodeError
 
-    @lru_cache(1)
-    def get_spec(self) -> ModuleSpec:
-        """Load the ModuleSpec from the zipfile.
-
-        The spec will be validated to test that it is internally consistent.
+    def get_spec_dict(self) -> Dict[str, Any]:
+        """Return parsed-but-unvalidated JSON or YAML module spec data.
 
         Raise `KeyError` if the module spec could not be found.
-
-        Raise `ValueError` if the module spec is invalid.
 
         Raise `FileNotFoundError` or `BadZipFile` if `self.path` is not a valid
         zipfile.
@@ -167,7 +104,7 @@ class ModuleZipfile:
             # raise KeyError (which we'll catch), BadZipFile, ValueError (UnicodeError)
             yaml_text = self._read_text(self.module_id + ".yaml")
             try:
-                spec_dict = yaml.safe_load(yaml_text)
+                return yaml.safe_load(yaml_text)
             except yaml.YAMLError as err:
                 raise ValueError(
                     "YAML syntax error in %s: %s" % (self.path.name, str(err))
@@ -181,12 +118,28 @@ class ModuleZipfile:
                 # there is no ".json" file, either. Tell the developer to create
                 # a ".yaml" file.
                 raise original_err
-            spec_dict = json.loads(json_text)  # raise ValueError
+            return json.loads(json_text)  # raise ValueError
 
-        validate_module_spec(spec_dict)  # raise ValueError
+    @lru_cache(1)
+    def get_spec(self) -> ModuleSpec:
+        """Load the ModuleSpec from the zipfile.
+
+        The spec will be validated to test that it is internally consistent.
+
+        Raise `KeyError` if the module spec could not be found.
+
+        Raise `ValueError` if the module spec is invalid.
+
+        Raise `FileNotFoundError` or `BadZipFile` if `self.path` is not a valid
+        zipfile.
+        """
+        spec_dict = (
+            self.get_spec_dict()
+        )  # raise BadZipFile, ValueError, FileNotFoundError
+        ret = load_spec(spec_dict)
         if spec_dict["id_name"] != self.module_id:
             raise ValueError("id_name must be %r" % self.module_id)
-        return ModuleSpec(**spec_dict)
+        return ret
 
     @lru_cache(1)
     def compile_code_without_executing(self) -> CompiledModule:
@@ -218,7 +171,9 @@ class ModuleZipfile:
             dont_inherit=True,
             optimize=0,  # keep assertions -- we use them!
         )
-        return CompiledModule(self.module_id, marshal.dumps(code_object))
+        return CompiledModule(
+            self.module_id, marshal.dumps(code_object), self.get_spec_dict()
+        )
 
     @lru_cache(1)
     def get_optional_html(self) -> Optional[str]:

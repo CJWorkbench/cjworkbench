@@ -1,12 +1,12 @@
 import json
-from pathlib import Path
-import os
 import zipfile
-from cjwstate import clientside
+
+from cjwmodule.spec.loader import load_spec
+
 from cjwkernel.errors import ModuleExitedError
 from cjwkernel.util import tempdir_context
+from cjwstate import clientside
 from cjwstate.importmodule import import_zipfile, WorkbenchModuleImportError
-from cjwstate.modules.types import ModuleSpec
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry
 
 
@@ -95,11 +95,13 @@ class ImportModuleTest(DbTestCaseWithModuleRegistry):
         self.assertEqual(
             clientside_module,
             clientside.Module(
-                spec=ModuleSpec(
-                    id_name="importmodule",
-                    name="Importable module",
-                    category="Clean",
-                    parameters=[],
+                spec=load_spec(
+                    dict(
+                        id_name="importmodule",
+                        name="Importable module",
+                        category="Clean",
+                        parameters=[],
+                    )
                 ),
                 js_module="",
             ),

@@ -3,8 +3,9 @@ from __future__ import annotations
 import datetime
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple
+from typing import ContextManager, Dict, FrozenSet, List, Set, Tuple
 
+from cjwmodule.spec.paramschema import ParamSchema
 from django.contrib.auth.models import User
 from django.db import connection, models, transaction
 from django.db.models import Exists, OuterRef, Q
@@ -17,7 +18,7 @@ from cjworkbench.models.db_object_cooperative_lock import (
 )
 from cjwstate import clientside, s3
 from cjwstate.models.fields import Role
-from cjwstate.modules.param_spec import ParamDType
+from cjwstate.modules.util import gather_param_tab_slugs
 
 
 class Workflow(models.Model):
@@ -468,8 +469,8 @@ class Workflow(models.Model):
         self,
         *,
         include_tab_slugs: bool = True,
-        include_block_slugs: Bool = True,
-        include_acl: Bool = True,
+        include_block_slugs: bool = True,
+        include_acl: bool = True,
     ) -> clientside.WorkflowUpdate:
         if include_tab_slugs:
             tab_slugs = list(self.live_tabs.values_list("slug", flat=True))
@@ -502,6 +503,25 @@ class Workflow(models.Model):
             updated_at=self.updated_at,
             acl=acl,
         )
+
+
+def _schema_contains_tabs(schema: ParamSchema) -> bool:
+    """Determine whether a ParamSchema contains a Tab, recursively."""
+    if isinstance(schema, ParamSchema.List):
+        return _schema_contains_tabs(schema.inner_schema)
+    elif isinstance(schema, ParamSchema.Dict):
+        return any(
+            _schema_contains_tabs(inner_schema)
+            for inner_schema in schema.properties.values()
+        )
+    elif isinstance(schema, ParamSchema.Map):
+        return _schema_contains_tabs(schema.value_schema)
+    elif isinstance(schema, ParamSchema.Tab):
+        return True
+    elif isinstance(schema, ParamSchema.Multitab):
+        return True
+    else:
+        return False
 
 
 @dataclass(frozen=True)
@@ -566,28 +586,17 @@ class DependencyGraph:
                 try:
                     module_zipfile = module_zipfiles[step.module_id_name]
                 except KeyError:
-                    steps[step.id] = cls.Step(set())
+                    steps[step.id] = cls.Step(frozenset())
                     continue
 
                 module_spec = module_zipfile.get_spec()
-                schema = module_spec.get_param_schema()
+                schema = module_spec.param_schema
 
                 # Optimization: don't migrate_params() if we know there are no
-                # tab params. (get_migrated_params() invokes module code, and
-                # we'd prefer for module code to execute only in the renderer.)
-                if all(
-                    (
-                        (
-                            not isinstance(dtype, ParamDType.Tab)
-                            and not isinstance(dtype, ParamDType.Multitab)
-                        )
-                        for dtype, v in schema.iter_dfs_dtype_values(
-                            schema.coerce(None)
-                        )
-                    )
-                ):
-                    # There are no tab params.
-                    steps[step.id] = cls.Step(set())
+                # tab params. (get_migrated_params() invokes module code, so we
+                # prefer to wait and let it run in the renderer.
+                if not _schema_contains_tabs(schema):
+                    steps[step.id] = cls.Step(frozenset())
                     continue
 
                 from cjwstate.params import get_migrated_params
@@ -596,12 +605,7 @@ class DependencyGraph:
 
                 # raises ValueError (and we don't handle that right now)
                 schema.validate(params)
-                tab_slugs = frozenset(
-                    v
-                    for dtype, v in schema.iter_dfs_dtype_values(params)
-                    if isinstance(dtype, ParamDType.Tab)
-                )
-                steps[step.id] = cls.Step(tab_slugs)
+                steps[step.id] = cls.Step(gather_param_tab_slugs(schema, params))
 
             tabs.append(cls.Tab(tab.slug, tab_step_ids))
 

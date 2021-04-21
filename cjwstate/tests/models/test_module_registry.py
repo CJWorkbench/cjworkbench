@@ -2,6 +2,9 @@ import io
 import json
 import time
 import zipfile
+
+from cjwmodule.spec.loader import load_spec
+
 from cjwkernel.errors import ModuleExitedError
 from cjwstate import s3
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -9,6 +12,20 @@ from cjwstate.models.module_version import ModuleVersion
 from cjwstate.modules import init_module_system
 from cjwstate.modules.types import ModuleSpec
 from cjwstate.tests.utils import DbTestCase
+
+
+def create_or_replace_from_spec(
+    spec, *, source_version_hash="", js_module=""
+) -> "ModuleVersion":
+    load_spec(dict(spec))  # raises ValueError
+
+    module_version, _ = ModuleVersion.objects.update_or_create(
+        id_name=spec["id_name"],
+        source_version_hash=source_version_hash,
+        defaults={"spec": dict(spec), "js_module": js_module},
+    )
+
+    return module_version
 
 
 class ModuleRegistryTest(DbTestCase):
@@ -24,7 +41,7 @@ class ModuleRegistryTest(DbTestCase):
 
     def test_db_s3_latest_order_by_last_update_time(self):
         # old version
-        ModuleVersion.create_or_replace_from_spec(
+        create_or_replace_from_spec(
             {
                 "id_name": "regtest1",
                 "name": "regtest1 v1",
@@ -35,7 +52,7 @@ class ModuleRegistryTest(DbTestCase):
         )
         time.sleep(0.000002)  # guarantee new timestamp
         # new version
-        v2 = ModuleVersion.create_or_replace_from_spec(
+        v2 = create_or_replace_from_spec(
             {
                 "id_name": "regtest1",
                 "name": "regtest1 v2",
@@ -55,10 +72,10 @@ class ModuleRegistryTest(DbTestCase):
         )
 
         zf = MODULE_REGISTRY.latest("regtest1")
-        self.assertEqual(zf.get_spec(), ModuleSpec(**v2.spec))
+        self.assertEqual(zf.get_spec(), load_spec(v2.spec))
 
     def test_db_s3_use_cache_for_same_version(self):
-        mv = ModuleVersion.create_or_replace_from_spec(
+        mv = create_or_replace_from_spec(
             {
                 "id_name": "regtest4",
                 "name": "regtest4 v1",
@@ -82,7 +99,7 @@ class ModuleRegistryTest(DbTestCase):
         self.assertIs(zf2, zf1)
 
     def test_db_s3_refresh_cache_for_new_version(self):
-        v1 = ModuleVersion.create_or_replace_from_spec(
+        v1 = create_or_replace_from_spec(
             {
                 "id_name": "regtest5",
                 "name": "regtest5 v1",
@@ -103,7 +120,7 @@ class ModuleRegistryTest(DbTestCase):
 
         zipfile1 = MODULE_REGISTRY.latest("regtest5")
 
-        ModuleVersion.create_or_replace_from_spec(
+        create_or_replace_from_spec(
             {
                 "id_name": "regtest5",
                 "name": "regtest5 v2",
@@ -124,7 +141,7 @@ class ModuleRegistryTest(DbTestCase):
         self.assertEqual(zipfile2.version, "b1c2d3")
 
     def test_db_s3_syntax_error_is_runtime_error(self):
-        mv = ModuleVersion.create_or_replace_from_spec(
+        mv = create_or_replace_from_spec(
             {
                 "id_name": "regtest9",
                 "name": "regtest9 v1",
@@ -151,7 +168,7 @@ class ModuleRegistryTest(DbTestCase):
         self.assertIsInstance(cm.exception.__cause__, SyntaxError)
 
     def test_db_s3_validate_spec(self):
-        mv = ModuleVersion.create_or_replace_from_spec(
+        mv = create_or_replace_from_spec(
             {
                 "id_name": "regtest8",
                 "name": "regtest8 v1",
@@ -178,7 +195,7 @@ class ModuleRegistryTest(DbTestCase):
         self.assertIsInstance(cm.exception.__cause__, ValueError)
 
     def test_db_s3_validate_code_with_kernel(self):
-        mv = ModuleVersion.create_or_replace_from_spec(
+        mv = create_or_replace_from_spec(
             {
                 "id_name": "regtest7",
                 "name": "regtest7 v1",
@@ -205,7 +222,7 @@ class ModuleRegistryTest(DbTestCase):
 
     def test_db_s3_all_latest_use_max_last_update_time(self):
         # old version
-        ModuleVersion.create_or_replace_from_spec(
+        create_or_replace_from_spec(
             {
                 "id_name": "regtest6",
                 "name": "regtest6 v1",
@@ -216,7 +233,7 @@ class ModuleRegistryTest(DbTestCase):
         )
         time.sleep(0.000002)  # guarantee new timestamp
         # new version
-        v2 = ModuleVersion.create_or_replace_from_spec(
+        v2 = create_or_replace_from_spec(
             {
                 "id_name": "regtest6",
                 "name": "regtest6 v2",
@@ -236,4 +253,4 @@ class ModuleRegistryTest(DbTestCase):
         )
 
         zf = MODULE_REGISTRY.all_latest()["regtest6"]
-        self.assertEqual(zf.get_spec(), ModuleSpec(**v2.spec))
+        self.assertEqual(zf.get_spec(), load_spec(v2.spec))

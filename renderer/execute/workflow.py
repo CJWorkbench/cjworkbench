@@ -1,15 +1,16 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
+
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleError
-from cjwkernel.types import RenderResult, Tab
+from cjwkernel.types import Tab
 from cjwstate.models import Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
-from .types import UnneededExecution
+from .types import StepResult, UnneededExecution
 
 
 logger = logging.getLogger(__name__)
@@ -35,18 +36,17 @@ def _get_migrated_params(step: Step, module_zipfile: ModuleZipfile) -> Dict[str,
         return {}
 
     module_spec = module_zipfile.get_spec()
-    param_schema = module_spec.get_param_schema()
 
     try:
         result = get_migrated_params(step, module_zipfile=module_zipfile)
     except ModuleError:
         # LoadedModule logged this error; no need to log it again.
-        return param_schema.coerce(None)
+        return module_spec.param_schema.default
 
     # Is the module buggy? It might be. Log that error, and return a valid
     # set of params anyway -- even if it isn't the params the user wants.
     try:
-        param_schema.validate(result)
+        module_spec.param_schema.validate(result)
         return result
     except ValueError as err:
         logger.exception(
@@ -54,7 +54,7 @@ def _get_migrated_params(step: Step, module_zipfile: ModuleZipfile) -> Dict[str,
             module_zipfile.path.name,
             str(err),
         )
-        return param_schema.coerce(result)
+        return module_spec.param_schema.default
 
 
 def _build_execute_step(
@@ -138,15 +138,15 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     # raises UnneededExecution
     pending_tab_flows = await _load_tab_flows(workflow, delta_id)
 
-    # tab_shapes: keep track of outputs of each tab. (Outputs are used as
+    # tab_results: keep track of outputs of each tab. (Outputs are used as
     # inputs into other tabs.) Before render begins, all outputs are `None`.
     # We'll execute tabs dependencies-first; if a Step depends on a
-    # `tab_shape` we haven't rendered yet, that's because it _couldn't_ be
+    # `tab_results` we haven't rendered yet, that's because it _couldn't_ be
     # rendered first -- prompting a `TabCycleError`.
     #
-    # `tab_shapes.keys()` returns tab slugs in the Workflow's tab order -- that
+    # `tab_results.keys()` returns tab slugs in the Workflow's tab order -- that
     # is, the order the user determines.
-    tab_results: Dict[Tab, Optional[RenderResult]] = {
+    tab_results: Dict[Tab, Optional[StepResult]] = {
         flow.tab: None for flow in pending_tab_flows
     }
     output_paths = []
@@ -160,7 +160,7 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     with EDITABLE_CHROOT.acquire_context() as chroot_context:
         with chroot_context.tempdir_context("render-") as basedir:
 
-            async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> RenderResult:
+            async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> StepResult:
                 nonlocal workflow, tab_results, output_paths
                 output_path = basedir / (
                     "tab-output-%s.arrow" % tab_flow.tab_slug.replace("/", "-")
@@ -180,8 +180,8 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
                     break
 
                 for tab_flow in ready_flows:
-                    result = await execute_tab_flow_into_new_file(tab_flow)
-                    tab_results[tab_flow.tab] = result
+                    tab_result = await execute_tab_flow_into_new_file(tab_flow)
+                    tab_results[tab_flow.tab] = tab_result
 
                 pending_tab_flows = dependent_flows  # iterate
 

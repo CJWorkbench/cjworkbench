@@ -1,19 +1,34 @@
+import io
+import logging
 from dataclasses import dataclass
 from itertools import cycle
-import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, FrozenSet
-from cjworkbench.sync import database_sync_to_async
+
+import pyarrow as pa
+
 from cjwkernel.chroot import ChrootContext
-from cjwkernel.types import RenderResult, Tab
-from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
+from cjwkernel.types import Tab
+from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import Step, Workflow
-from cjwstate.modules.param_dtype import ParamDType
 from cjwstate.modules.types import ModuleZipfile
+from cjwstate.modules.util import gather_param_tab_slugs
+from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from .step import execute_step, locked_step
+from .types import StepResult
 
 
 logger = logging.getLogger(__name__)
+
+
+def _init_empty_table_bytes() -> bytes:
+    bio = io.BytesIO()
+    with pa.ipc.RecordBatchFileWriter(bio, pa.schema([])):
+        pass
+    return bio.getvalue()
+
+
+EmptyTableBytes: bytes = _init_empty_table_bytes()
 
 
 class cached_property:
@@ -95,38 +110,38 @@ class TabFlow:
     @cached_property
     def input_tab_slugs(self) -> FrozenSet[str]:
         """Slugs of tabs that are used as _input_ into this tab's steps."""
-        ret = set()
-        for step in self.steps:
-            if step.module_zipfile is not None:
-                schema = step.module_zipfile.get_spec().get_param_schema()
-                ret.update(
-                    v
-                    for dt, v in schema.iter_dfs_dtype_values(step.params)
-                    if isinstance(dt, ParamDType.Tab)
+        return frozenset().union(
+            *(
+                gather_param_tab_slugs(
+                    step.module_zipfile.get_spec().param_schema, step.params
                 )
-        return frozenset(ret)
+                for step in self.steps
+                if step.module_zipfile
+            )
+        )
 
 
 @database_sync_to_async
-def _load_step_output_from_rendercache(
+def _load_step_result_from_rendercache(
     workflow: Workflow, step: Step, path: Path
-) -> RenderResult:
+) -> StepResult:
     # raises UnneededExecution
     with locked_step(workflow, step) as safe_step:
         crr = safe_step.cached_render_result
         assert crr is not None  # otherwise we'd have raised UnneededExecution
 
         # Read the entire input Parquet file. Raise CorruptCacheError.
-        return load_cached_render_result(crr, path)
+        load_cached_render_result(crr, path)
+        return StepResult(path, crr.table_metadata.columns)
 
 
 async def execute_tab_flow(
     chroot_context: ChrootContext,
     workflow: Workflow,
     flow: TabFlow,
-    tab_results: Dict[Tab, Optional[RenderResult]],
+    tab_results: Dict[Tab, Optional[StepResult]],
     output_path: Path,
-) -> RenderResult:
+) -> StepResult:
     """Ensure `flow.tab.live_steps` all cache fresh render results.
 
     `tab_results.keys()` must be ordered as the Workflow's tabs are.
@@ -184,7 +199,7 @@ async def execute_tab_flow(
         # (the input to `flow.steps[step_index]`)
         known_stale = flow.first_stale_index
         for step_index in range(len(flow.steps) - 1, -1, -1):
-            step_output_path = next(step_output_paths)
+            input_path = next(step_output_paths)
             if known_stale is not None and step_index >= known_stale:
                 # We know this step needs to be rendered, from our
                 # last_relevant_delta_id math.
@@ -196,10 +211,10 @@ async def execute_tab_flow(
                 step = flow.steps[step_index].step
                 try:
                     # raise CorruptCacheError, UnneededExecution
-                    last_result = await _load_step_output_from_rendercache(
-                        workflow, step, step_output_path
+                    last_result = await _load_step_result_from_rendercache(
+                        workflow, step, input_path
                     )
-                    # `last_result` will be the input into steps[step_index]
+                    # `input_path` will be input into steps[step_index]
                     step_index += 1
                     break
                 except CorruptCacheError:
@@ -214,23 +229,25 @@ async def execute_tab_flow(
             #
             # fiddle with cycle's state -- `last_result` has no backing file;
             # but if it did, it would be `next(step_output_paths)`.
-            next(step_output_paths)
-            last_result = RenderResult()
+            input_path = next(step_output_paths)
+            input_path.write_bytes(EmptyTableBytes)
+            last_result = StepResult(path=input_path, columns=[])
             step_index = 0  # needed when there are no steps at all
 
-        for step, step_output_path in zip(flow.steps[step_index:], step_output_paths):
-            step_output_path.write_bytes(b"")  # don't leak data from two steps ago
-            next_result = await execute_step(
+        for step, output_path in zip(flow.steps[step_index:], step_output_paths):
+            output_path.write_bytes(b"")  # don't leak data from two steps ago
+            output: StepResult = await execute_step(
                 chroot_context=chroot_context,
                 workflow=workflow,
                 step=step.step,
                 module_zipfile=step.module_zipfile,
                 params=step.params,
                 tab=flow.tab,
-                input_result=last_result,
+                input_path=last_result.path,
+                input_table_columns=last_result.columns,
                 tab_results=tab_results,
-                output_path=step_output_path,
+                output_path=output_path,
             )
-            last_result = next_result
+            last_result = output
 
         return last_result

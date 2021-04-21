@@ -1,29 +1,24 @@
 import unittest
 import logging
-from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
+from io import BytesIO
+from typing import Dict, List, Tuple
+
+from cjwmodule.spec.loader import load_spec
+from babel.messages.catalog import Catalog
+from babel.messages.pofile import write_po
+
+from cjwkernel.i18n import TODO_i18n
+from cjwkernel.types import I18nMessage
+from cjworkbench.tests.i18n.util import mock_app_catalogs, mock_cjwmodule_catalogs
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
+from cjwstate.clientside import ChartBlock, Module, Update, TableBlock, TextBlock
 from server.serializers import (
     jsonize_i18n_message,
     JsonizeContext,
     JsonizeModuleContext,
     jsonize_clientside_module,
     jsonize_clientside_update,
-    _jsonize_param_spec,
 )
-from cjworkbench.tests.i18n.util import mock_app_catalogs, mock_cjwmodule_catalogs
-from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
-from babel.messages.catalog import Catalog
-from cjwkernel.i18n import TODO_i18n
-from cjwstate.modules.types import ModuleSpec
-from cjwstate.clientside import (
-    Module,
-    Update,
-    ChartBlock,
-    TableBlock,
-    TextBlock,
-)
-from typing import Dict, Any, List, Tuple
-from io import BytesIO
-from babel.messages.pofile import write_po
 
 
 def create_module_zipfile_with_catalogs(
@@ -84,8 +79,13 @@ DEFAULT_SERIALIZED_MODULE_PARAM = {"idName": None, "type": None, "visibleIf": No
 class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
     def test_with_js(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "var js = 1; console.log(js)",
         )
@@ -104,8 +104,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_no_params_translate(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -134,8 +139,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         self,
     ):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -163,8 +173,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_no_params_translate_message_only_exists_in_default_catalog(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -191,8 +206,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_no_params_translate_message_empty_in_all_catalogs(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -220,8 +240,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_no_params_translate_empty_catalogs(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -247,8 +272,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_no_params_translate_not_internationalized(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -267,8 +297,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_no_params_translate_not_in_context(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -287,8 +322,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
     # Tests that translatable catalog entries which are not in the spec are ignored
     def test_no_params_translate_superfluous_catalog(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme", name="Test Module", category="Clean", parameters=[]
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                )
             ),
             "",
         )
@@ -315,24 +355,26 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_everything_except_parameters(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[],
-                description="I do that",
-                deprecated={
-                    "message": "Please use something else",
-                    "end_date": "2030-12-31",
-                },
-                icon="url",
-                link="http://example.com/module",
-                loads_data=False,
-                uses_data=True,
-                html_output=False,
-                has_zen_mode=True,
-                row_action_menu_entry_title="Solve your problem",
-                help_url="testme",
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[],
+                    description="I do that",
+                    deprecated={
+                        "message": "Please use something else",
+                        "end_date": "2030-12-31",
+                    },
+                    icon="url",
+                    link="http://example.com/module",
+                    loads_data=False,
+                    uses_data=True,
+                    html_output=False,
+                    has_zen_mode=True,
+                    row_action_menu_entry_title="Solve your problem",
+                    help_url="testme",
+                )
             ),
             "",
         )
@@ -375,37 +417,39 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_everything_with_parameters(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "list",
-                        "name": "Hello there!",
-                        "child_parameters": [
-                            {
-                                "id_name": "hello2",
-                                "type": "statictext",
-                                "name": "Hello there 2!",
-                            }
-                        ],
-                    }
-                ],
-                description="I do that",
-                deprecated={
-                    "message": "Please use something else",
-                    "end_date": "2030-12-31",
-                },
-                icon="url",
-                link="http://example.com/module",
-                loads_data=False,
-                uses_data=True,
-                html_output=False,
-                has_zen_mode=True,
-                row_action_menu_entry_title="Solve your problem",
-                help_url="testme",
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "list",
+                            "name": "Hello there!",
+                            "child_parameters": [
+                                {
+                                    "id_name": "hello2",
+                                    "type": "statictext",
+                                    "name": "Hello there 2!",
+                                }
+                            ],
+                        }
+                    ],
+                    description="I do that",
+                    deprecated={
+                        "message": "Please use something else",
+                        "end_date": "2030-12-31",
+                    },
+                    icon="url",
+                    link="http://example.com/module",
+                    loads_data=False,
+                    uses_data=True,
+                    html_output=False,
+                    has_zen_mode=True,
+                    row_action_menu_entry_title="Solve your problem",
+                    help_url="testme",
+                )
             ),
             "",
         )
@@ -470,13 +514,19 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_statictext(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {"id_name": "hello", "type": "statictext", "name": "Hello there!"}
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "statictext",
+                            "name": "Hello there!",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -506,20 +556,22 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_string(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "string",
-                        "name": "Hello there!",
-                        "placeholder": "Hey",
-                        "multiline": False,
-                        "default": "H",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "string",
+                            "name": "Hello there!",
+                            "placeholder": "Hey",
+                            "multiline": False,
+                            "default": "H",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -555,19 +607,21 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_integer(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "integer",
-                        "name": "Hello there!",
-                        "placeholder": "Hey",
-                        "default": 3,
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "integer",
+                            "name": "Hello there!",
+                            "placeholder": "Hey",
+                            "default": 3,
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -600,19 +654,21 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_float(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "float",
-                        "name": "Hello there!",
-                        "placeholder": "Hey",
-                        "default": 3.4,
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "float",
+                            "name": "Hello there!",
+                            "placeholder": "Hey",
+                            "default": 3.4,
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -645,18 +701,20 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_checkbox(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "checkbox",
-                        "name": "Hello there!",
-                        "default": True,
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "checkbox",
+                            "name": "Hello there!",
+                            "default": True,
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -687,24 +745,26 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_menu(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "menu",
-                        "name": "Hello there!",
-                        "placeholder": "Choose something...",
-                        "options": [
-                            {"label": "First", "value": "first"},
-                            "separator",
-                            {"label": "Second", "value": "second"},
-                        ],
-                        "default": "first",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "menu",
+                            "name": "Hello there!",
+                            "placeholder": "Choose something...",
+                            "options": [
+                                {"label": "First", "value": "first"},
+                                "separator",
+                                {"label": "Second", "value": "second"},
+                            ],
+                            "default": "first",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -751,22 +811,24 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_radio(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "radio",
-                        "name": "Hello there!",
-                        "options": [
-                            {"label": "First", "value": "first"},
-                            {"label": "Second", "value": True},
-                        ],
-                        "default": "first",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "radio",
+                            "name": "Hello there!",
+                            "options": [
+                                {"label": "First", "value": "first"},
+                                {"label": "Second", "value": True},
+                            ],
+                            "default": "first",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -810,18 +872,19 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_numberformat(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "numberformat",
-                        "name": "Hello there!",
-                        "placeholder": "Fill me",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "numberformat",
+                            "name": "Hello there!",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -830,9 +893,6 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
         default_catalog = Catalog()
         default_catalog.add("_spec.name", string="Test Module")
         default_catalog.add("_spec.parameters.hello.name", string="Hello default")
-        default_catalog.add(
-            "_spec.parameters.hello.placeholder", string="Fill me default"
-        )
         result = jsonize_clientside_module(
             module,
             mock_jsonize_context(
@@ -848,7 +908,6 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
                 "idName": "hello",
                 "type": "numberformat",
                 "name": "Hello translated",
-                "placeholder": "Fill me default",
                 "default": "{:,}",
             }
         ]
@@ -856,21 +915,23 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_column(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "column",
-                        "name": "Hello there!",
-                        "placeholder": "Fill me",
-                        "column_types": ["text"],
-                        "tab_parameter": "tab",
-                    },
-                    {"id_name": "tab", "type": "tab", "name": "Hello there 2!"},
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "column",
+                            "name": "Hello there!",
+                            "placeholder": "Fill me",
+                            "column_types": ["text"],
+                            "tab_parameter": "tab",
+                        },
+                        {"id_name": "tab", "type": "tab", "name": "Hello there 2!"},
+                    ],
+                )
             ),
             "",
         )
@@ -914,21 +975,23 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_multicolumn(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "multicolumn",
-                        "name": "Hello there!",
-                        "placeholder": "Fill me",
-                        "column_types": ["text"],
-                        "tab_parameter": "tab",
-                    },
-                    {"id_name": "tab", "type": "tab", "name": "Hello there 2!"},
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "multicolumn",
+                            "name": "Hello there!",
+                            "placeholder": "Fill me",
+                            "column_types": ["text"],
+                            "tab_parameter": "tab",
+                        },
+                        {"id_name": "tab", "type": "tab", "name": "Hello there 2!"},
+                    ],
+                )
             ),
             "",
         )
@@ -972,18 +1035,20 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_tab(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "tab",
-                        "name": "Hello there!",
-                        "placeholder": "Fill me",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "tab",
+                            "name": "Hello there!",
+                            "placeholder": "Fill me",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -1017,18 +1082,20 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_multitab(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "multitab",
-                        "name": "Hello there!",
-                        "placeholder": "Fill me",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "multitab",
+                            "name": "Hello there!",
+                            "placeholder": "Fill me",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -1062,17 +1129,19 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_multichartseries(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "multichartseries",
-                        "name": "Hello there!",
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "multichartseries",
+                            "name": "Hello there!",
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -1103,25 +1172,27 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_secret_string(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "secret",
-                        "secret_logic": {
-                            "provider": "string",
-                            "label": "Secret",
-                            "pattern": "[A-Z]{10,12}",
-                            "placeholder": "AAAAAAAAAAAA",
-                            "help": "Find it there",
-                            "help_url_prompt": "Take me there",
-                            "help_url": "https://example.com/get_secret",
-                        },
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "secret",
+                            "secret_logic": {
+                                "provider": "string",
+                                "label": "Secret",
+                                "pattern": "[A-Z]{10,12}",
+                                "placeholder": "AAAAAAAAAAAA",
+                                "help": "Find it there",
+                                "help_url_prompt": "Take me there",
+                                "help_url": "https://example.com/get_secret",
+                            },
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -1182,17 +1253,19 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_secret_oauth2(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "secret",
-                        "secret_logic": {"provider": "oauth2", "service": "google"},
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="googlesheets",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "secret",
+                            "secret_logic": {"provider": "oauth2", "service": "google"},
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -1204,7 +1277,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             mock_jsonize_context(
                 locale_id="el",
                 module_catalogs_data=[
-                    ("testme", {"el": catalog, "en": default_catalog})
+                    ("googlesheets", {"el": catalog, "en": default_catalog})
                 ],
             ),
         )
@@ -1220,17 +1293,22 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_secret_oauth1a(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "secret",
-                        "secret_logic": {"provider": "oauth1a", "service": "twitter"},
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="twitter",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "secret",
+                            "secret_logic": {
+                                "provider": "oauth1a",
+                                "service": "twitter",
+                            },
+                        }
+                    ],
+                )
             ),
             "",
         )
@@ -1242,7 +1320,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             mock_jsonize_context(
                 locale_id="el",
                 module_catalogs_data=[
-                    ("testme", {"el": catalog, "en": default_catalog})
+                    ("twitter", {"el": catalog, "en": default_catalog})
                 ],
             ),
         )
@@ -1258,22 +1336,24 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_gdrivefile(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "google",
-                        "type": "secret",
-                        "secret_logic": {"provider": "oauth2", "service": "google"},
-                    },
-                    {
-                        "id_name": "hello2",
-                        "type": "gdrivefile",
-                        "secret_parameter": "google",
-                    },
-                ],
+            load_spec(
+                dict(
+                    id_name="googlesheets",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "google",
+                            "type": "secret",
+                            "secret_logic": {"provider": "oauth2", "service": "google"},
+                        },
+                        {
+                            "id_name": "hello2",
+                            "type": "gdrivefile",
+                            "secret_parameter": "google",
+                        },
+                    ],
+                )
             ),
             "",
         )
@@ -1285,7 +1365,7 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
             mock_jsonize_context(
                 locale_id="el",
                 module_catalogs_data=[
-                    ("testme", {"el": catalog, "en": default_catalog})
+                    ("googlesheets", {"el": catalog, "en": default_catalog})
                 ],
             ),
         )
@@ -1308,11 +1388,13 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_file(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[{"id_name": "hello", "type": "file"}],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[{"id_name": "hello", "type": "file"}],
+                )
             ),
             "",
         )
@@ -1335,13 +1417,15 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_custom(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {"id_name": "hello", "type": "custom", "name": "Hello there!"}
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {"id_name": "hello", "type": "custom", "name": "Hello there!"}
+                    ],
+                )
             ),
             "",
         )
@@ -1372,24 +1456,26 @@ class JsonizeClientsideModuleTest(DbTestCaseWithModuleRegistry):
 
     def test_parameter_type_list(self):
         module = Module(
-            ModuleSpec(
-                id_name="testme",
-                name="Test Module",
-                category="Clean",
-                parameters=[
-                    {
-                        "id_name": "hello",
-                        "type": "list",
-                        "name": "Hello there!",
-                        "child_parameters": [
-                            {
-                                "id_name": "hello2",
-                                "type": "statictext",
-                                "name": "Hello there 2!",
-                            }
-                        ],
-                    }
-                ],
+            load_spec(
+                dict(
+                    id_name="testme",
+                    name="Test Module",
+                    category="Clean",
+                    parameters=[
+                        {
+                            "id_name": "hello",
+                            "type": "list",
+                            "name": "Hello there!",
+                            "child_parameters": [
+                                {
+                                    "id_name": "hello2",
+                                    "type": "statictext",
+                                    "name": "Hello there 2!",
+                                }
+                            ],
+                        }
+                    ],
+                )
             ),
             "",
         )

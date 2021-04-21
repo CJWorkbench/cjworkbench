@@ -1,10 +1,13 @@
 import sys
 import types
 from typing import Any, List
+
 import thrift.protocol.TBinaryProtocol
 import thrift.transport.TTransport
-from cjwkernel.types import CompiledModule
+from cjwmodule.spec.loader import load_spec
+
 import cjwkernel.pandas.module
+from cjwkernel.types import CompiledModule
 
 
 def main(compiled_module: CompiledModule, function: str, args: List[Any]) -> None:
@@ -40,6 +43,7 @@ def run_in_sandbox(
     module_name = f"rawmodule.{compiled_module.module_slug}"
     user_code_module = types.ModuleType(module_name)
     sys.modules[module_name] = user_code_module  # simulate "import"
+
     exec(compiled_module.code_object, user_code_module.__dict__)
 
     # And now ... now we're unsafe! Because `code_object` may be malicious, any
@@ -66,6 +70,8 @@ def run_in_sandbox(
     ):
         if fn in user_code_module.__dict__:
             module.__dict__[fn] = user_code_module.__dict__[fn]
+    # Set ModuleSpec global parameter -- module frameworks use it for params
+    module.__dict__["ModuleSpec"] = load_spec(compiled_module.module_spec_dict)
 
     if function == "render_thrift":
         result = module.render_thrift(*args)

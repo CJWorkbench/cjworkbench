@@ -3,36 +3,30 @@ import datetime
 import logging
 import shutil
 import textwrap
-import unittest
-from dataclasses import dataclass, field
-from functools import partial
+from typing import NamedTuple
 from unittest.mock import patch
 
+from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+from cjwmodule.spec.paramschema import ParamSchema
 from dateutil import parser
 
-import pyarrow.parquet
+import cjwstate.modules
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleExitedError
+from cjwkernel.files import read_parquet_as_arrow
 from cjwkernel.types import (
     Column,
     ColumnType,
     FetchResult,
     I18nMessage,
-    Params,
     RenderError,
-    RenderResult,
     TableMetadata,
 )
+from cjwkernel.tests.util import arrow_table_context, parquet_file
 from cjwkernel.util import tempfile_context
-from cjwkernel.tests.util import (
-    arrow_table_context,
-    assert_arrow_table_equals,
-    parquet_file,
-)
 from cjwstate import s3, rabbitmq, rendercache, storedobjects
-from cjwstate.models import CachedRenderResult, ModuleVersion, Step, Workflow
-import cjwstate.modules
-from cjwstate.modules.param_dtype import ParamDType
+from cjwstate.models import CachedRenderResult, Step, Workflow
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import (
     DbTestCase,
     DbTestCaseWithModuleRegistry,
@@ -49,11 +43,10 @@ def async_value(v):
     return async_value_inner
 
 
-@dataclass(frozen=True)
-class MockModuleVersion:
+class MockModuleVersion(NamedTuple):
     id_name: str = "mod"
     source_version_hash: str = "abc123"
-    param_schema: ParamDType.Dict = field(default_factory=partial(ParamDType.Dict, {}))
+    param_schema: ParamSchema.Dict = ParamSchema.Dict({})
 
 
 class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
@@ -170,24 +163,21 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
         self.assertEqual(result.stored_object, so2)
 
     def test_load_input_cached_render_result(self):
-        with arrow_table_context({"A": [1]}) as atable:
-            input_render_result = RenderResult(atable)
-
+        input_table = make_table(make_column("A", [1]))
+        with arrow_table_context(input_table) as atable:
             workflow = Workflow.create_and_init()
             step1 = workflow.tabs.first().steps.create(
                 order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
             )
+            write_to_rendercache(workflow, step1, workflow.last_delta_id, input_table)
             step2 = workflow.tabs.first().steps.create(order=1, slug="step-2")
-            rendercache.cache_render_result(
-                workflow, step1, workflow.last_delta_id, input_render_result
-            )
             result = self.run_with_async_db(
                 fetch.load_database_objects(workflow.id, step2.id)
             )
-            input_crr = step1.cached_render_result
-            assert input_crr is not None
-            self.assertEqual(result[4], input_crr)
-            self.assertEqual(result.input_cached_render_result, input_crr)
+            self.assertEqual(result[4], step1.cached_render_result)
+            self.assertEqual(
+                result.input_cached_render_result, step1.cached_render_result
+            )
 
     def test_load_input_cached_render_result_is_none(self):
         # Most of these tests assume the fetch is at step 0. This one tests
@@ -256,23 +246,23 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         with self.assertLogs("fetcher.fetch", level=logging.INFO):
             result = fetch.fetch_or_wrap_error(
-                self.ctx,
-                self.chroot_context,
-                self.basedir,
-                "mod",
-                module_zipfile,
-                {"A": "B"},
-                {"C": "D"},
-                None,
-                None,
-                self.output_path,
+                exit_stack=self.ctx,
+                chroot_context=self.chroot_context,
+                basedir=self.basedir,
+                module_id_name="mod",
+                module_zipfile=module_zipfile,
+                migrated_params_or_error={"A": "B"},
+                secrets={"C": "D"},
+                last_fetch_result=None,
+                maybe_input_crr=None,
+                output_path=self.output_path,
             )
         self.assertEqual(result, FetchResult(self.output_path, []))
         self.assertEqual(
             self.kernel.fetch.call_args[1]["compiled_module"],
             module_zipfile.compile_code_without_executing(),
         )
-        self.assertEqual(self.kernel.fetch.call_args[1]["params"], Params({"A": "B"}))
+        self.assertEqual(self.kernel.fetch.call_args[1]["params"], {"A": "B"})
         self.assertEqual(self.kernel.fetch.call_args[1]["secrets"], {"C": "D"})
         self.assertIsNone(self.kernel.fetch.call_args[1]["last_fetch_result"])
         self.assertIsNone(self.kernel.fetch.call_args[1]["input_parquet_filename"])
@@ -457,8 +447,12 @@ class FetchTests(DbTestCaseWithModuleRegistry):
         step.refresh_from_db()
         so = step.stored_objects.get(stored_at=step.stored_data_version)
         with s3.temporarily_download(s3.StoredObjectsBucket, so.key) as parquet_path:
-            table = pyarrow.parquet.read_table(str(parquet_path), use_threads=False)
-            assert_arrow_table_equals(table, {"A": [1]})
+            # fetch results are stored without a schema. Let's hard-code a
+            # schema simply so we can test that the table data is the same.
+            table = read_parquet_as_arrow(
+                parquet_path, [Column("A", ColumnType.Number())]
+            )
+            assert_arrow_table_equals(table, make_table(make_column("A", [1])))
 
         workflow.refresh_from_db()
         queue_render.assert_called_with(workflow.id, workflow.last_delta_id)

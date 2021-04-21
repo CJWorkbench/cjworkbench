@@ -15,23 +15,21 @@ from cjwkernel.chroot import READONLY_CHROOT_DIR, ChrootContext
 from cjwkernel.errors import ModuleExitedError, ModuleTimeoutError
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
-    ArrowTable,
     CompiledModule,
     FetchResult,
-    Params,
-    RawParams,
     RenderResult,
     Tab,
-    arrow_arrow_table_to_thrift,
+    TabOutput,
+    UploadedFile,
     arrow_fetch_result_to_thrift,
-    arrow_params_to_thrift,
-    arrow_raw_params_to_thrift,
     arrow_tab_to_thrift,
+    arrow_tab_output_to_thrift,
+    arrow_uploaded_file_to_thrift,
+    pydict_to_thrift_json_object,
+    thrift_json_object_to_pydict,
     thrift_fetch_result_to_arrow,
-    thrift_raw_params_to_arrow,
     thrift_render_result_to_arrow,
 )
-from cjwkernel.validate import ValidateError
 
 logger = logging.getLogger(__name__)
 
@@ -161,8 +159,19 @@ class Kernel:
                 # I'm frustrated.
                 "OPENBLAS_NUM_THREADS": "1",
             },
+            # Try to preload all the Python modules that any Workbench module
+            # might use.
+            #
+            # When we preload, we execute the Python code once, during Workbench
+            # startup.
+            #
+            # When we neglect to preload a Python module, every Workbench Step
+            # that imports it will execute it every time it is run.
+            #
+            # The huge win here is pyarrow+numpy+pandas, which takes >1s to run.
+            # Other imports only help a little bit.
             preload_imports=[
-                "_strptime",
+                # Python
                 "abc",
                 "asyncio",
                 "base64",
@@ -182,14 +191,18 @@ class Kernel:
                 "multiprocessing.connection",
                 "multiprocessing.popen_fork",
                 "os.path",
+                "pathlib",
                 "re",
                 "sqlite3",
                 "ssl",
                 "string",
+                "_strptime",
                 "tarfile",
                 "typing",
                 "urllib.parse",
                 "warnings",
+                *ENCODING_IMPORTS,
+                # Third-party
                 "bs4",
                 "formulas",
                 "formulas.functions.operators",
@@ -206,10 +219,10 @@ class Kernel:
                 "lxml.html.html5parser",
                 "lz4",
                 "lz4.frame",
-                "numpy",
                 "nltk",
                 "nltk.corpus",
                 "nltk.sentiment.vader",
+                "numpy",
                 "oauthlib",
                 "oauthlib.oauth1",
                 "oauthlib.oauth2",
@@ -228,16 +241,25 @@ class Kernel:
                 "schedula.utils.sol",
                 "thrift.protocol.TBinaryProtocol",
                 "thrift.transport.TTransport",
-                *ENCODING_IMPORTS,
-                "cjwkernel.pandas.main",
-                "cjwkernel.pandas.module",
+                "yaml",
+                # Other Workbench-controlled packages
                 "cjwmodule",
-                "cjwmodule.i18n",
                 "cjwmodule.http.client",
                 "cjwmodule.http.httpfile",
+                "cjwmodule.i18n",
+                "cjwmodule.spec",
+                "cjwmodule.spec.loader",
+                "cjwmodule.spec.paramfield",
+                "cjwmodule.spec.paramschema",
                 "cjwmodule.util",
+                "cjwpandasmodule",
+                "cjwpandasmodule.convert",
+                "cjwpandasmodule.validate",
                 "cjwparquet",
                 "cjwparse.api",
+                # Internal
+                "cjwkernel.pandas.main",
+                "cjwkernel.pandas.module",
             ],
         )
 
@@ -263,27 +285,28 @@ class Kernel:
         self, compiled_module: CompiledModule, params: Dict[str, Any]
     ) -> None:
         """Call a module's migrate_params()."""
-        request = arrow_raw_params_to_thrift(RawParams(params))
         response = self._run_in_child(
             chroot_dir=READONLY_CHROOT_DIR,
             network_config=None,
             compiled_module=compiled_module,
             timeout=self.migrate_params_timeout,
-            result=ttypes.RawParams(),
+            result=ttypes.MigrateParamsResult(),
             function="migrate_params_thrift",
-            args=[request],
+            args=[pydict_to_thrift_json_object(params)],
         )
-        return thrift_raw_params_to_arrow(response).params
+        return thrift_json_object_to_pydict(response.params)
 
     def render(
         self,
         compiled_module: CompiledModule,
         chroot_context: ChrootContext,
         basedir: Path,
-        input_table: ArrowTable,
-        params: Params,
+        input_filename: str,
+        params: Dict[str, Any],
         tab: Tab,
         fetch_result: Optional[FetchResult],
+        tab_outputs: List[TabOutput],
+        uploaded_files: Dict[str, UploadedFile],
         output_filename: str,
     ) -> RenderResult:
         """Run the module's `render_thrift()` function and return its result.
@@ -293,16 +316,20 @@ class Kernel:
         chroot_dir = chroot_context.chroot.root
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.RenderRequest(
-            str(basedir_seen_by_module),
-            arrow_arrow_table_to_thrift(input_table),
-            arrow_params_to_thrift(params),
-            arrow_tab_to_thrift(tab),
-            (
+            basedir=str(basedir_seen_by_module),
+            params=pydict_to_thrift_json_object(params),
+            tab=arrow_tab_to_thrift(tab),
+            tab_outputs=[arrow_tab_output_to_thrift(to) for to in tab_outputs],
+            uploaded_files={
+                k: arrow_uploaded_file_to_thrift(v) for k, v in uploaded_files.items()
+            },
+            fetch_result=(
                 None
                 if fetch_result is None
                 else arrow_fetch_result_to_thrift(fetch_result)
             ),
-            output_filename,
+            output_filename=output_filename,
+            input_filename=input_filename,
         )
         try:
             with chroot_context.writable_file(basedir / output_filename):
@@ -318,31 +345,14 @@ class Kernel:
         finally:
             chroot_context.clear_unowned_edits()
 
-        if result.table.filename and result.table.filename != output_filename:
-            raise ModuleExitedError(
-                compiled_module.module_slug, 0, "Module wrote to wrong output file"
-            )
-
-        try:
-            # thrift_render_result_to_arrow() verifies all filenames passed by
-            # the module are in the directory the module has access to. It
-            # assumes the Arrow file (if there is one) is untrusted, so it can
-            # raise ValidateError
-            render_result = thrift_render_result_to_arrow(result, basedir)
-        except ValidateError as err:
-            raise ModuleExitedError(
-                compiled_module.module_slug,
-                0,
-                "Module produced invalid data: %s" % str(err),
-            )
-        return render_result
+        return thrift_render_result_to_arrow(result)
 
     def fetch(
         self,
         compiled_module: CompiledModule,
         chroot_context: ChrootContext,
         basedir: Path,
-        params: Params,
+        params: Dict[str, Any],
         secrets: Dict[str, Any],
         last_fetch_result: Optional[FetchResult],
         input_parquet_filename: Optional[str],
@@ -355,16 +365,16 @@ class Kernel:
         chroot_dir = chroot_context.chroot.root
         basedir_seen_by_module = Path("/") / basedir.relative_to(chroot_dir)
         request = ttypes.FetchRequest(
-            str(basedir_seen_by_module),
-            arrow_params_to_thrift(params),
-            arrow_raw_params_to_thrift(RawParams(secrets)),
-            (
+            basedir=str(basedir_seen_by_module),
+            params=pydict_to_thrift_json_object(params),
+            secrets=pydict_to_thrift_json_object(secrets),
+            last_fetch_result=(
                 None
                 if last_fetch_result is None
                 else arrow_fetch_result_to_thrift(last_fetch_result)
             ),
-            input_parquet_filename,
-            output_filename,
+            input_table_parquet_filename=input_parquet_filename,
+            output_filename=output_filename,
         )
         try:
             with chroot_context.writable_file(basedir / output_filename):

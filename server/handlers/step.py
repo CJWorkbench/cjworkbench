@@ -4,6 +4,7 @@ import functools
 import secrets
 from typing import Any, Dict, List, Optional
 
+from cjwmodule.spec.paramfield import ParamField
 from dateutil.parser import isoparse
 from django.conf import settings
 from django.db import transaction
@@ -18,7 +19,6 @@ from cjwstate.models.commands import (
     SetStepNote,
 )
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjwstate.modules.param_spec import ParamSpec
 import server.utils
 from . import autofetch
 from .types import HandlerError
@@ -350,10 +350,10 @@ def _lookup_service(step: Step, param: str) -> oauth.OAuthService:
     for field in module_spec.param_fields:
         if (
             field.id_name == param
-            and isinstance(field, ParamSpec.Secret)
+            and isinstance(field, ParamField.Secret)
             and (
-                isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth1a)
-                or isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth2)
+                isinstance(field.secret_logic, ParamField.Secret.Logic.Oauth1a)
+                or isinstance(field.secret_logic, ParamField.Secret.Logic.Oauth2)
             )
         ):
             service_name = field.secret_logic.service
@@ -484,7 +484,7 @@ def _step_set_secret_and_build_delta(
             p.type == "secret" and p.secret_logic.provider == "string"
             for p in module_spec.param_fields
         ):
-            raise HandlerError(f"BadRequest: param is not a secret string parameter")
+            raise HandlerError("BadRequest: param is not a secret string parameter")
 
         created_at = datetime.datetime.now()
         created_at_str = (

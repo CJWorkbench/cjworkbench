@@ -1,12 +1,14 @@
 import unittest
+
+from cjwmodule.spec.loader import load_spec
+
 from cjwstate.modules.i18n.catalogs.extract.spec import find_spec_messages
-from cjwstate.modules.types import ModuleSpec
 
 
 class FindSpecMessagesTest(unittest.TestCase):
     def test_only_required(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -18,8 +20,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_everything_except_parameters(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -49,8 +51,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_statictext(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -67,8 +69,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_string(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -94,8 +96,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_integer(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -119,8 +121,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_float(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -144,8 +146,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_checkbox(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -167,8 +169,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_menu(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -199,8 +201,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_radio(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -228,8 +230,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_numberformat(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -238,7 +240,6 @@ class FindSpecMessagesTest(unittest.TestCase):
                         "id_name": "hello",
                         "type": "numberformat",
                         "name": "Hello there!",
-                        "placeholder": "Fill me",
                     }
                 ],
             }
@@ -247,13 +248,12 @@ class FindSpecMessagesTest(unittest.TestCase):
         expected = {
             "_spec.name": "Test Module",
             "_spec.parameters.hello.name": "Hello there!",
-            "_spec.parameters.hello.placeholder": "Fill me",
         }
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_column(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -280,8 +280,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_multicolumn(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -308,8 +308,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_tab(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -332,8 +332,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_multitab(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -356,8 +356,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_multichartseries(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -378,8 +378,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_secret_string(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -411,8 +411,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_secret_oauth2(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "googlesheets",
                 "name": "Test Module",
                 "category": "Clean",
@@ -430,8 +430,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_secret_oauth1a(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "twitter",
                 "name": "Test Module",
                 "category": "Clean",
@@ -449,8 +449,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_gdrivefile(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "googlesheets",
                 "name": "Test Module",
                 "category": "Clean",
@@ -473,8 +473,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_file(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -486,8 +486,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_custom(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -504,8 +504,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_parameter_type_list(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "category": "Clean",
@@ -534,8 +534,8 @@ class FindSpecMessagesTest(unittest.TestCase):
         self.assertDictEqual(result, expected)
 
     def test_ignore_empty(self):
-        spec = ModuleSpec(
-            **{
+        spec = load_spec(
+            {
                 "id_name": "testme",
                 "name": "Test Module",
                 "description": "",

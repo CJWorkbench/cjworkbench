@@ -1,21 +1,22 @@
 import contextlib
-from dataclasses import asdict
 import hashlib
-import logging
 import json
-from pathlib import Path
+import logging
 import re
 import shutil
-from typing import ContextManager
 import zipfile
+from pathlib import Path
+from typing import ContextManager
+
 import httpx
 import pathspec
+
+import cjwstate.modules
 from cjwkernel.errors import ModuleError
 from cjwkernel.util import tempdir_context
 from cjwstate import s3
 from cjwstate.models import ModuleVersion
 from cjwstate import clientside
-import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.models.module_registry import MODULE_REGISTRY
 
@@ -131,6 +132,7 @@ def import_zipfile(path: Path) -> clientside.Module:
     validate_zipfile(temp_zipfile)  # raise WorkbenchModuleImportError
     module_id = temp_zipfile.module_id
     version = temp_zipfile.version
+    module_spec_dict = temp_zipfile.get_spec_dict()
     module_spec = temp_zipfile.get_spec()
     js_module = temp_zipfile.get_optional_js_module() or ""
 
@@ -138,7 +140,7 @@ def import_zipfile(path: Path) -> clientside.Module:
     ModuleVersion.objects.update_or_create(
         id_name=module_id,
         source_version_hash=version,
-        spec=asdict(temp_zipfile.get_spec()),
+        spec=module_spec_dict,
         js_module=js_module,
     )
 

@@ -73,76 +73,22 @@ class ValidateModuleResult(object):
         return not (self == other)
 
 
-class ColumnTypeText(object):
+class MigrateParamsResult(object):
     """
-    A "text"-typed column.
-
-    """
-
-    __slots__ = (
-    )
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ColumnTypeText')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ColumnTypeNumber(object):
-    """
-    A "number"-typed column.
+    Migrating params succeeded.
 
     Attributes:
-     - format: Python-syntax number format, like `{,.2%}`
+     - params
 
     """
 
     __slots__ = (
-        'format',
+        'params',
     )
 
 
-    def __init__(self, format="{:,}",):
-        self.format = format
+    def __init__(self, params=None,):
+        self.params = params
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -154,329 +100,15 @@ class ColumnTypeNumber(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.STRING:
-                    self.format = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ColumnTypeNumber')
-        if self.format is not None:
-            oprot.writeFieldBegin('format', TType.STRING, 1)
-            oprot.writeString(self.format.encode('utf-8') if sys.version_info[0] == 2 else self.format)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ColumnTypeTimestamp(object):
-    """
-    A "timestamp"-typed column.
-
-    """
-
-    __slots__ = (
-    )
-
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ColumnTypeTimestamp')
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ColumnType(object):
-    """
-    The type (and its options) of a column.
-
-    This is the _user-visible_ type. We do not store the bit layout. For
-    instance, we store "number" and not "i32" or "i64".
-
-    Attributes:
-     - text_type
-     - number_type
-     - timestamp_type
-
-    """
-
-    __slots__ = (
-        'text_type',
-        'number_type',
-        'timestamp_type',
-    )
-
-
-    def __init__(self, text_type=None, number_type=None, timestamp_type=None,):
-        self.text_type = text_type
-        self.number_type = number_type
-        self.timestamp_type = timestamp_type
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.text_type = ColumnTypeText()
-                    self.text_type.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.number_type = ColumnTypeNumber()
-                    self.number_type.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.STRUCT:
-                    self.timestamp_type = ColumnTypeTimestamp()
-                    self.timestamp_type.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ColumnType')
-        if self.text_type is not None:
-            oprot.writeFieldBegin('text_type', TType.STRUCT, 1)
-            self.text_type.write(oprot)
-            oprot.writeFieldEnd()
-        if self.number_type is not None:
-            oprot.writeFieldBegin('number_type', TType.STRUCT, 2)
-            self.number_type.write(oprot)
-            oprot.writeFieldEnd()
-        if self.timestamp_type is not None:
-            oprot.writeFieldBegin('timestamp_type', TType.STRUCT, 3)
-            self.timestamp_type.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class Column(object):
-    """
-    Description of a column in a table.
-
-    Attributes:
-     - name: Name of the column (unique among all columns in the table).
-     - type: Date type the user will see.
-
-    """
-
-    __slots__ = (
-        'name',
-        'type',
-    )
-
-
-    def __init__(self, name=None, type=None,):
-        self.name = name
-        self.type = type
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.name = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.type = ColumnType()
-                    self.type.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('Column')
-        if self.name is not None:
-            oprot.writeFieldBegin('name', TType.STRING, 1)
-            oprot.writeString(self.name.encode('utf-8') if sys.version_info[0] == 2 else self.name)
-            oprot.writeFieldEnd()
-        if self.type is not None:
-            oprot.writeFieldBegin('type', TType.STRUCT, 2)
-            self.type.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class TableMetadata(object):
-    """
-    Table data that will be cached for easy access.
-
-    Attributes:
-     - n_rows: Number of rows in the table.
-     - columns: Columns -- the user-visible aspects of them, at least.
-
-    """
-
-    __slots__ = (
-        'n_rows',
-        'columns',
-    )
-
-
-    def __init__(self, n_rows=None, columns=None,):
-        self.n_rows = n_rows
-        self.columns = columns
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.I32:
-                    self.n_rows = iprot.readI32()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.LIST:
-                    self.columns = []
-                    (_etype3, _size0) = iprot.readListBegin()
+                if ftype == TType.MAP:
+                    self.params = {}
+                    (_ktype1, _vtype2, _size0) = iprot.readMapBegin()
                     for _i4 in range(_size0):
-                        _elem5 = Column()
-                        _elem5.read(iprot)
-                        self.columns.append(_elem5)
-                    iprot.readListEnd()
+                        _key5 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val6 = Json()
+                        _val6.read(iprot)
+                        self.params[_key5] = _val6
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             else:
@@ -488,17 +120,14 @@ class TableMetadata(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('TableMetadata')
-        if self.n_rows is not None:
-            oprot.writeFieldBegin('n_rows', TType.I32, 1)
-            oprot.writeI32(self.n_rows)
-            oprot.writeFieldEnd()
-        if self.columns is not None:
-            oprot.writeFieldBegin('columns', TType.LIST, 2)
-            oprot.writeListBegin(TType.STRUCT, len(self.columns))
-            for iter6 in self.columns:
-                iter6.write(oprot)
-            oprot.writeListEnd()
+        oprot.writeStructBegin('MigrateParamsResult')
+        if self.params is not None:
+            oprot.writeFieldBegin('params', TType.MAP, 1)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
+            for kiter7, viter8 in self.params.items():
+                oprot.writeString(kiter7.encode('utf-8') if sys.version_info[0] == 2 else kiter7)
+                viter8.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -525,156 +154,37 @@ class TableMetadata(object):
         return not (self == other)
 
 
-class ArrowTable(object):
+class Json(object):
     """
-    Table stored on disk, ready to be mmapped.
+    JSON-compatible value.
 
     Attributes:
-     - filename: Name of file on disk that contains data.
-
-    For a zero-column table, filename may be the empty string -- meaning there
-    is no file on disk. In all other cases, the file on disk must exist.
-
-    The file on disk is in a directory agreed upon by the processes passing
-    this data around. Subdirectories and hidden files aren't allowed.
-     - metadata: Metadata; must agree with the file on disk.
-
-    """
-
-    __slots__ = (
-        'filename',
-        'metadata',
-    )
-
-
-    def __init__(self, filename=None, metadata=None,):
-        self.filename = filename
-        self.metadata = metadata
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.metadata = TableMetadata()
-                    self.metadata.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('ArrowTable')
-        if self.filename is not None:
-            oprot.writeFieldBegin('filename', TType.STRING, 1)
-            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
-            oprot.writeFieldEnd()
-        if self.metadata is not None:
-            oprot.writeFieldBegin('metadata', TType.STRUCT, 2)
-            self.metadata.write(oprot)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class ParamValue(object):
-    """
-    Value (or nested value) in Params passed to render()/fetch().
-
-    These params are connected to the `table` parameter: a "column"-typed
-    parameter will be a `Column`; a "tab"-typed parameter will be a `TabOutput`.
-
-    This is more permissive than module_spec. Callers should validate against
-    the module spec.
-
-    The special value `None` is allowed. Thrift unions are just structs with
-    optional fields; in this case, if all fields are unset, then that means
-    `null`.
-
-    Attributes:
-     - string_value: String value.
-
-    This represents "string", "enum" and "file" values. Over the wire, it's
-    all the same to us.
-     - integer_value
-     - float_value
+     - string_value
+     - int64_value
+     - number_value
      - boolean_value
-     - column_value
-     - tab_value
-     - list_value: List of nested values.
-
-    This represents "list", "multicolumn", "multitab" and "multichartseries"
-    dtypes. Over the wire, it's all the same to us.
-     - map_value: Mapping of key to nested value.
-
-    This represents "map" and "dict" dtypes. Over the wire, it's all the same
-    to us.
-     - filename_value: A string filename, with no path information, pointing to a file on disk.
-
-    The directory is assumed based on context.
+     - array_value
+     - object_value
 
     """
 
     __slots__ = (
         'string_value',
-        'integer_value',
-        'float_value',
+        'int64_value',
+        'number_value',
         'boolean_value',
-        'column_value',
-        'tab_value',
-        'list_value',
-        'map_value',
-        'filename_value',
+        'array_value',
+        'object_value',
     )
 
 
-    def __init__(self, string_value=None, integer_value=None, float_value=None, boolean_value=None, column_value=None, tab_value=None, list_value=None, map_value=None, filename_value=None,):
+    def __init__(self, string_value=None, int64_value=None, number_value=None, boolean_value=None, array_value=None, object_value=None,):
         self.string_value = string_value
-        self.integer_value = integer_value
-        self.float_value = float_value
+        self.int64_value = int64_value
+        self.number_value = number_value
         self.boolean_value = boolean_value
-        self.column_value = column_value
-        self.tab_value = tab_value
-        self.list_value = list_value
-        self.map_value = map_value
-        self.filename_value = filename_value
+        self.array_value = array_value
+        self.object_value = object_value
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -692,12 +202,12 @@ class ParamValue(object):
                     iprot.skip(ftype)
             elif fid == 2:
                 if ftype == TType.I64:
-                    self.integer_value = iprot.readI64()
+                    self.int64_value = iprot.readI64()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.DOUBLE:
-                    self.float_value = iprot.readDouble()
+                    self.number_value = iprot.readDouble()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
@@ -706,43 +216,26 @@ class ParamValue(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 5:
-                if ftype == TType.STRUCT:
-                    self.column_value = Column()
-                    self.column_value.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 6:
-                if ftype == TType.STRUCT:
-                    self.tab_value = TabOutput()
-                    self.tab_value.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 7:
                 if ftype == TType.LIST:
-                    self.list_value = []
-                    (_etype10, _size7) = iprot.readListBegin()
-                    for _i11 in range(_size7):
-                        _elem12 = ParamValue()
-                        _elem12.read(iprot)
-                        self.list_value.append(_elem12)
+                    self.array_value = []
+                    (_etype12, _size9) = iprot.readListBegin()
+                    for _i13 in range(_size9):
+                        _elem14 = Json()
+                        _elem14.read(iprot)
+                        self.array_value.append(_elem14)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
-            elif fid == 8:
+            elif fid == 6:
                 if ftype == TType.MAP:
-                    self.map_value = {}
-                    (_ktype14, _vtype15, _size13) = iprot.readMapBegin()
-                    for _i17 in range(_size13):
-                        _key18 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val19 = ParamValue()
-                        _val19.read(iprot)
-                        self.map_value[_key18] = _val19
+                    self.object_value = {}
+                    (_ktype16, _vtype17, _size15) = iprot.readMapBegin()
+                    for _i19 in range(_size15):
+                        _key20 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val21 = Json()
+                        _val21.read(iprot)
+                        self.object_value[_key20] = _val21
                     iprot.readMapEnd()
-                else:
-                    iprot.skip(ftype)
-            elif fid == 9:
-                if ftype == TType.STRING:
-                    self.filename_value = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -754,124 +247,37 @@ class ParamValue(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
-        oprot.writeStructBegin('ParamValue')
+        oprot.writeStructBegin('Json')
         if self.string_value is not None:
             oprot.writeFieldBegin('string_value', TType.STRING, 1)
             oprot.writeString(self.string_value.encode('utf-8') if sys.version_info[0] == 2 else self.string_value)
             oprot.writeFieldEnd()
-        if self.integer_value is not None:
-            oprot.writeFieldBegin('integer_value', TType.I64, 2)
-            oprot.writeI64(self.integer_value)
+        if self.int64_value is not None:
+            oprot.writeFieldBegin('int64_value', TType.I64, 2)
+            oprot.writeI64(self.int64_value)
             oprot.writeFieldEnd()
-        if self.float_value is not None:
-            oprot.writeFieldBegin('float_value', TType.DOUBLE, 3)
-            oprot.writeDouble(self.float_value)
+        if self.number_value is not None:
+            oprot.writeFieldBegin('number_value', TType.DOUBLE, 3)
+            oprot.writeDouble(self.number_value)
             oprot.writeFieldEnd()
         if self.boolean_value is not None:
             oprot.writeFieldBegin('boolean_value', TType.BOOL, 4)
             oprot.writeBool(self.boolean_value)
             oprot.writeFieldEnd()
-        if self.column_value is not None:
-            oprot.writeFieldBegin('column_value', TType.STRUCT, 5)
-            self.column_value.write(oprot)
-            oprot.writeFieldEnd()
-        if self.tab_value is not None:
-            oprot.writeFieldBegin('tab_value', TType.STRUCT, 6)
-            self.tab_value.write(oprot)
-            oprot.writeFieldEnd()
-        if self.list_value is not None:
-            oprot.writeFieldBegin('list_value', TType.LIST, 7)
-            oprot.writeListBegin(TType.STRUCT, len(self.list_value))
-            for iter20 in self.list_value:
-                iter20.write(oprot)
+        if self.array_value is not None:
+            oprot.writeFieldBegin('array_value', TType.LIST, 5)
+            oprot.writeListBegin(TType.STRUCT, len(self.array_value))
+            for iter22 in self.array_value:
+                iter22.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
-        if self.map_value is not None:
-            oprot.writeFieldBegin('map_value', TType.MAP, 8)
-            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.map_value))
-            for kiter21, viter22 in self.map_value.items():
-                oprot.writeString(kiter21.encode('utf-8') if sys.version_info[0] == 2 else kiter21)
-                viter22.write(oprot)
+        if self.object_value is not None:
+            oprot.writeFieldBegin('object_value', TType.MAP, 6)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.object_value))
+            for kiter23, viter24 in self.object_value.items():
+                oprot.writeString(kiter23.encode('utf-8') if sys.version_info[0] == 2 else kiter23)
+                viter24.write(oprot)
             oprot.writeMapEnd()
-            oprot.writeFieldEnd()
-        if self.filename_value is not None:
-            oprot.writeFieldBegin('filename_value', TType.STRING, 9)
-            oprot.writeString(self.filename_value.encode('utf-8') if sys.version_info[0] == 2 else self.filename_value)
-            oprot.writeFieldEnd()
-        oprot.writeFieldStop()
-        oprot.writeStructEnd()
-
-    def validate(self):
-        return
-
-    def __repr__(self):
-        L = ['%s=%r' % (key, getattr(self, key))
-             for key in self.__slots__]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        for attr in self.__slots__:
-            my_val = getattr(self, attr)
-            other_val = getattr(other, attr)
-            if my_val != other_val:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-
-class RawParams(object):
-    """
-    Value (or nested value) passed to `migrate_params()`.
-
-    Raw parameter values are stored in the database as JSON. We pass them using
-    JSON-encoded string. This is not the same as the Thrift type "Params", which
-    is passed to `render()`: Params are objects with TabOutput/Column/etc
-    members.
-
-    Attributes:
-     - json
-
-    """
-
-    __slots__ = (
-        'json',
-    )
-
-
-    def __init__(self, json=None,):
-        self.json = json
-
-    def read(self, iprot):
-        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
-            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
-            return
-        iprot.readStructBegin()
-        while True:
-            (fname, ftype, fid) = iprot.readFieldBegin()
-            if ftype == TType.STOP:
-                break
-            if fid == 1:
-                if ftype == TType.STRING:
-                    self.json = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                else:
-                    iprot.skip(ftype)
-            else:
-                iprot.skip(ftype)
-            iprot.readFieldEnd()
-        iprot.readStructEnd()
-
-    def write(self, oprot):
-        if oprot._fast_encode is not None and self.thrift_spec is not None:
-            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
-            return
-        oprot.writeStructBegin('RawParams')
-        if self.json is not None:
-            oprot.writeFieldBegin('json', TType.STRING, 1)
-            oprot.writeString(self.json.encode('utf-8') if sys.version_info[0] == 2 else self.json)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -991,19 +397,19 @@ class TabOutput(object):
 
     Attributes:
      - tab: Tab that was processed.
-     - table: Output from the final Step in `tab`.
+     - table_filename: Output from the final Step in `tab`.
 
     """
 
     __slots__ = (
         'tab',
-        'table',
+        'table_filename',
     )
 
 
-    def __init__(self, tab=None, table=None,):
+    def __init__(self, tab=None, table_filename=None,):
         self.tab = tab
-        self.table = table
+        self.table_filename = table_filename
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1021,9 +427,8 @@ class TabOutput(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.table = ArrowTable()
-                    self.table.read(iprot)
+                if ftype == TType.STRING:
+                    self.table_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             else:
@@ -1040,9 +445,9 @@ class TabOutput(object):
             oprot.writeFieldBegin('tab', TType.STRUCT, 1)
             self.tab.write(oprot)
             oprot.writeFieldEnd()
-        if self.table is not None:
-            oprot.writeFieldBegin('table', TType.STRUCT, 2)
-            self.table.write(oprot)
+        if self.table_filename is not None:
+            oprot.writeFieldBegin('table_filename', TType.STRING, 2)
+            oprot.writeString(self.table_filename.encode('utf-8') if sys.version_info[0] == 2 else self.table_filename)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1205,12 +610,12 @@ class I18nMessage(object):
             elif fid == 2:
                 if ftype == TType.MAP:
                     self.arguments = {}
-                    (_ktype24, _vtype25, _size23) = iprot.readMapBegin()
-                    for _i27 in range(_size23):
-                        _key28 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val29 = I18nArgument()
-                        _val29.read(iprot)
-                        self.arguments[_key28] = _val29
+                    (_ktype26, _vtype27, _size25) = iprot.readMapBegin()
+                    for _i29 in range(_size25):
+                        _key30 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val31 = I18nArgument()
+                        _val31.read(iprot)
+                        self.arguments[_key30] = _val31
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -1236,9 +641,9 @@ class I18nMessage(object):
         if self.arguments is not None:
             oprot.writeFieldBegin('arguments', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.arguments))
-            for kiter30, viter31 in self.arguments.items():
-                oprot.writeString(kiter30.encode('utf-8') if sys.version_info[0] == 2 else kiter30)
-                viter31.write(oprot)
+            for kiter32, viter33 in self.arguments.items():
+                oprot.writeString(kiter32.encode('utf-8') if sys.version_info[0] == 2 else kiter32)
+                viter33.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.source is not None:
@@ -1305,9 +710,15 @@ class PrependStepQuickFixAction(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.partial_params = RawParams()
-                    self.partial_params.read(iprot)
+                if ftype == TType.MAP:
+                    self.partial_params = {}
+                    (_ktype35, _vtype36, _size34) = iprot.readMapBegin()
+                    for _i38 in range(_size34):
+                        _key39 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val40 = Json()
+                        _val40.read(iprot)
+                        self.partial_params[_key39] = _val40
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             else:
@@ -1325,8 +736,12 @@ class PrependStepQuickFixAction(object):
             oprot.writeString(self.module_slug.encode('utf-8') if sys.version_info[0] == 2 else self.module_slug)
             oprot.writeFieldEnd()
         if self.partial_params is not None:
-            oprot.writeFieldBegin('partial_params', TType.STRUCT, 2)
-            self.partial_params.write(oprot)
+            oprot.writeFieldBegin('partial_params', TType.MAP, 2)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.partial_params))
+            for kiter41, viter42 in self.partial_params.items():
+                oprot.writeString(kiter41.encode('utf-8') if sys.version_info[0] == 2 else kiter41)
+                viter42.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1551,11 +966,11 @@ class RenderError(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.quick_fixes = []
-                    (_etype35, _size32) = iprot.readListBegin()
-                    for _i36 in range(_size32):
-                        _elem37 = QuickFix()
-                        _elem37.read(iprot)
-                        self.quick_fixes.append(_elem37)
+                    (_etype46, _size43) = iprot.readListBegin()
+                    for _i47 in range(_size43):
+                        _elem48 = QuickFix()
+                        _elem48.read(iprot)
+                        self.quick_fixes.append(_elem48)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1576,8 +991,8 @@ class RenderError(object):
         if self.quick_fixes is not None:
             oprot.writeFieldBegin('quick_fixes', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.quick_fixes))
-            for iter38 in self.quick_fixes:
-                iter38.write(oprot)
+            for iter49 in self.quick_fixes:
+                iter49.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -1678,19 +1093,25 @@ class FetchRequest(object):
             elif fid == 2:
                 if ftype == TType.MAP:
                     self.params = {}
-                    (_ktype40, _vtype41, _size39) = iprot.readMapBegin()
-                    for _i43 in range(_size39):
-                        _key44 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val45 = ParamValue()
-                        _val45.read(iprot)
-                        self.params[_key44] = _val45
+                    (_ktype51, _vtype52, _size50) = iprot.readMapBegin()
+                    for _i54 in range(_size50):
+                        _key55 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val56 = Json()
+                        _val56.read(iprot)
+                        self.params[_key55] = _val56
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
-                if ftype == TType.STRUCT:
-                    self.secrets = RawParams()
-                    self.secrets.read(iprot)
+                if ftype == TType.MAP:
+                    self.secrets = {}
+                    (_ktype58, _vtype59, _size57) = iprot.readMapBegin()
+                    for _i61 in range(_size57):
+                        _key62 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val63 = Json()
+                        _val63.read(iprot)
+                        self.secrets[_key62] = _val63
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             elif fid == 4:
@@ -1726,14 +1147,18 @@ class FetchRequest(object):
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 2)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter46, viter47 in self.params.items():
-                oprot.writeString(kiter46.encode('utf-8') if sys.version_info[0] == 2 else kiter46)
-                viter47.write(oprot)
+            for kiter64, viter65 in self.params.items():
+                oprot.writeString(kiter64.encode('utf-8') if sys.version_info[0] == 2 else kiter64)
+                viter65.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.secrets is not None:
-            oprot.writeFieldBegin('secrets', TType.STRUCT, 3)
-            self.secrets.write(oprot)
+            oprot.writeFieldBegin('secrets', TType.MAP, 3)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.secrets))
+            for kiter66, viter67 in self.secrets.items():
+                oprot.writeString(kiter66.encode('utf-8') if sys.version_info[0] == 2 else kiter66)
+                viter67.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.last_fetch_result is not None:
             oprot.writeFieldBegin('last_fetch_result', TType.STRUCT, 4)
@@ -1779,19 +1204,13 @@ class FetchResult(object):
     An "ok" result may be a user-friendly error -- that is, an empty file (or,
     for backwards compat, a zero-column parquet file) and non-empty `errors`.
 
-    Attributes:
-     - filename: File the fetch produced.
-
-    The kernel writes the output data to `fetch_request.output_file`.
-
-    Currently, this must be a valid Parquet file. In the future, we will
-    loosen the requirement and allow any file.
+    The module writes the output data to `fetch_request.output_file`.
 
     Empty file or zero-column parquet file typically means, "error"; but
     that's the module's choice and not a hard-and-fast rule.
 
-    The file on disk is in a directory agreed upon by the processes passing
-    this data around. Subdirectories and hidden files aren't allowed.
+    Attributes:
+     - filename
      - errors: User-facing errors or warnings reported by the module.
 
     These are separate from `filename` for two reasons: 1) a convenience for
@@ -1826,11 +1245,11 @@ class FetchResult(object):
             elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype51, _size48) = iprot.readListBegin()
-                    for _i52 in range(_size48):
-                        _elem53 = RenderError()
-                        _elem53.read(iprot)
-                        self.errors.append(_elem53)
+                    (_etype71, _size68) = iprot.readListBegin()
+                    for _i72 in range(_size68):
+                        _elem73 = RenderError()
+                        _elem73.read(iprot)
+                        self.errors.append(_elem73)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
@@ -1851,9 +1270,106 @@ class FetchResult(object):
         if self.errors is not None:
             oprot.writeFieldBegin('errors', TType.LIST, 2)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter54 in self.errors:
-                iter54.write(oprot)
+            for iter74 in self.errors:
+                iter74.write(oprot)
             oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class UploadedFile(object):
+    """
+    File the user uploaded.
+
+    This points to a file on disk. The file on disk has the same extension as the
+    original filename.
+
+    Attributes:
+     - name: Filename the user uploaded.
+     - filename: Filename on disk.
+     - uploaded_at_timestampus: Time the file was uploaded, in microseconds since the epoch.
+
+    """
+
+    __slots__ = (
+        'name',
+        'filename',
+        'uploaded_at_timestampus',
+    )
+
+
+    def __init__(self, name=None, filename=None, uploaded_at_timestampus=None,):
+        self.name = name
+        self.filename = filename
+        self.uploaded_at_timestampus = uploaded_at_timestampus
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.name = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRING:
+                    self.filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.I64:
+                    self.uploaded_at_timestampus = iprot.readI64()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('UploadedFile')
+        if self.name is not None:
+            oprot.writeFieldBegin('name', TType.STRING, 1)
+            oprot.writeString(self.name.encode('utf-8') if sys.version_info[0] == 2 else self.name)
+            oprot.writeFieldEnd()
+        if self.filename is not None:
+            oprot.writeFieldBegin('filename', TType.STRING, 2)
+            oprot.writeString(self.filename.encode('utf-8') if sys.version_info[0] == 2 else self.filename)
+            oprot.writeFieldEnd()
+        if self.uploaded_at_timestampus is not None:
+            oprot.writeFieldBegin('uploaded_at_timestampus', TType.I64, 3)
+            oprot.writeI64(self.uploaded_at_timestampus)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -1893,10 +1409,10 @@ class RenderRequest(object):
     sandboxing, mount an OverlayFS with all the input files as read-only,
     then overlay-mount a "scratch" directory for the module to use (and
     write to `output_filename`).
-     - input_table: Output from previous Step.
+     - input_filename: Output from previous Step.
 
     This is zero-row, zero-column on the first Step in a Tab.
-     - params: User-supplied parameters; must match the module's param_spec.
+     - params: User-supplied parameters; must match the module's param_schema.
 
     `File` params are passed as strings, pointing to temporary files in
     `basedir`.
@@ -1912,26 +1428,32 @@ class RenderRequest(object):
     writable.
 
     The file on disk will be in `basedir`.
+     - tab_outputs: Outputs from other tabs that are inputs into this Step.
+     - uploaded_files: Files the user uploaded and chose, keyed by UUID.
 
     """
 
     __slots__ = (
         'basedir',
-        'input_table',
+        'input_filename',
         'params',
         'tab',
         'fetch_result',
         'output_filename',
+        'tab_outputs',
+        'uploaded_files',
     )
 
 
-    def __init__(self, basedir=None, input_table=None, params=None, tab=None, fetch_result=None, output_filename=None,):
+    def __init__(self, basedir=None, input_filename=None, params=None, tab=None, fetch_result=None, output_filename=None, tab_outputs=None, uploaded_files=None,):
         self.basedir = basedir
-        self.input_table = input_table
+        self.input_filename = input_filename
         self.params = params
         self.tab = tab
         self.fetch_result = fetch_result
         self.output_filename = output_filename
+        self.tab_outputs = tab_outputs
+        self.uploaded_files = uploaded_files
 
     def read(self, iprot):
         if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
@@ -1948,20 +1470,19 @@ class RenderRequest(object):
                 else:
                     iprot.skip(ftype)
             elif fid == 2:
-                if ftype == TType.STRUCT:
-                    self.input_table = ArrowTable()
-                    self.input_table.read(iprot)
+                if ftype == TType.STRING:
+                    self.input_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
             elif fid == 3:
                 if ftype == TType.MAP:
                     self.params = {}
-                    (_ktype56, _vtype57, _size55) = iprot.readMapBegin()
-                    for _i59 in range(_size55):
-                        _key60 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val61 = ParamValue()
-                        _val61.read(iprot)
-                        self.params[_key60] = _val61
+                    (_ktype76, _vtype77, _size75) = iprot.readMapBegin()
+                    for _i79 in range(_size75):
+                        _key80 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val81 = Json()
+                        _val81.read(iprot)
+                        self.params[_key80] = _val81
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -1982,6 +1503,29 @@ class RenderRequest(object):
                     self.output_filename = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
                 else:
                     iprot.skip(ftype)
+            elif fid == 7:
+                if ftype == TType.LIST:
+                    self.tab_outputs = []
+                    (_etype85, _size82) = iprot.readListBegin()
+                    for _i86 in range(_size82):
+                        _elem87 = TabOutput()
+                        _elem87.read(iprot)
+                        self.tab_outputs.append(_elem87)
+                    iprot.readListEnd()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 8:
+                if ftype == TType.MAP:
+                    self.uploaded_files = {}
+                    (_ktype89, _vtype90, _size88) = iprot.readMapBegin()
+                    for _i92 in range(_size88):
+                        _key93 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val94 = UploadedFile()
+                        _val94.read(iprot)
+                        self.uploaded_files[_key93] = _val94
+                    iprot.readMapEnd()
+                else:
+                    iprot.skip(ftype)
             else:
                 iprot.skip(ftype)
             iprot.readFieldEnd()
@@ -1996,16 +1540,16 @@ class RenderRequest(object):
             oprot.writeFieldBegin('basedir', TType.STRING, 1)
             oprot.writeString(self.basedir.encode('utf-8') if sys.version_info[0] == 2 else self.basedir)
             oprot.writeFieldEnd()
-        if self.input_table is not None:
-            oprot.writeFieldBegin('input_table', TType.STRUCT, 2)
-            self.input_table.write(oprot)
+        if self.input_filename is not None:
+            oprot.writeFieldBegin('input_filename', TType.STRING, 2)
+            oprot.writeString(self.input_filename.encode('utf-8') if sys.version_info[0] == 2 else self.input_filename)
             oprot.writeFieldEnd()
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 3)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter62, viter63 in self.params.items():
-                oprot.writeString(kiter62.encode('utf-8') if sys.version_info[0] == 2 else kiter62)
-                viter63.write(oprot)
+            for kiter95, viter96 in self.params.items():
+                oprot.writeString(kiter95.encode('utf-8') if sys.version_info[0] == 2 else kiter95)
+                viter96.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         if self.tab is not None:
@@ -2019,6 +1563,21 @@ class RenderRequest(object):
         if self.output_filename is not None:
             oprot.writeFieldBegin('output_filename', TType.STRING, 6)
             oprot.writeString(self.output_filename.encode('utf-8') if sys.version_info[0] == 2 else self.output_filename)
+            oprot.writeFieldEnd()
+        if self.tab_outputs is not None:
+            oprot.writeFieldBegin('tab_outputs', TType.LIST, 7)
+            oprot.writeListBegin(TType.STRUCT, len(self.tab_outputs))
+            for iter97 in self.tab_outputs:
+                iter97.write(oprot)
+            oprot.writeListEnd()
+            oprot.writeFieldEnd()
+        if self.uploaded_files is not None:
+            oprot.writeFieldBegin('uploaded_files', TType.MAP, 8)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.uploaded_files))
+            for kiter98, viter99 in self.uploaded_files.items():
+                oprot.writeString(kiter98.encode('utf-8') if sys.version_info[0] == 2 else kiter98)
+                viter99.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2052,28 +1611,21 @@ class RenderResult(object):
     An "ok" result may be a user-friendly error -- that is, a zero-column table
     and non-empty `errors`.
 
+    The module writes the output Arrow data to `render_request.output_file`.
+
     Attributes:
-     - table: Table the Step outputs.
-
-    If the Step output is "error, then the table must have zero columns.
-
-    The kernel writes the output Arrow data to `render_request.output_file`.
      - errors: User-facing errors or warnings reported by the module.
      - json: JSON to pass to the module's HTML, if it has HTML.
-
-    This must be either an empty string, or a valid JSON value.
 
     """
 
     __slots__ = (
-        'table',
         'errors',
         'json',
     )
 
 
-    def __init__(self, table=None, errors=None, json="",):
-        self.table = table
+    def __init__(self, errors=None, json=None,):
         self.errors = errors
         self.json = json
 
@@ -2087,25 +1639,26 @@ class RenderResult(object):
             if ftype == TType.STOP:
                 break
             if fid == 1:
-                if ftype == TType.STRUCT:
-                    self.table = ArrowTable()
-                    self.table.read(iprot)
-                else:
-                    iprot.skip(ftype)
-            elif fid == 2:
                 if ftype == TType.LIST:
                     self.errors = []
-                    (_etype67, _size64) = iprot.readListBegin()
-                    for _i68 in range(_size64):
-                        _elem69 = RenderError()
-                        _elem69.read(iprot)
-                        self.errors.append(_elem69)
+                    (_etype103, _size100) = iprot.readListBegin()
+                    for _i104 in range(_size100):
+                        _elem105 = RenderError()
+                        _elem105.read(iprot)
+                        self.errors.append(_elem105)
                     iprot.readListEnd()
                 else:
                     iprot.skip(ftype)
-            elif fid == 3:
-                if ftype == TType.STRING:
-                    self.json = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+            elif fid == 2:
+                if ftype == TType.MAP:
+                    self.json = {}
+                    (_ktype107, _vtype108, _size106) = iprot.readMapBegin()
+                    for _i110 in range(_size106):
+                        _key111 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val112 = Json()
+                        _val112.read(iprot)
+                        self.json[_key111] = _val112
+                    iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
             else:
@@ -2118,20 +1671,20 @@ class RenderResult(object):
             oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
             return
         oprot.writeStructBegin('RenderResult')
-        if self.table is not None:
-            oprot.writeFieldBegin('table', TType.STRUCT, 1)
-            self.table.write(oprot)
-            oprot.writeFieldEnd()
         if self.errors is not None:
-            oprot.writeFieldBegin('errors', TType.LIST, 2)
+            oprot.writeFieldBegin('errors', TType.LIST, 1)
             oprot.writeListBegin(TType.STRUCT, len(self.errors))
-            for iter70 in self.errors:
-                iter70.write(oprot)
+            for iter113 in self.errors:
+                iter113.write(oprot)
             oprot.writeListEnd()
             oprot.writeFieldEnd()
         if self.json is not None:
-            oprot.writeFieldBegin('json', TType.STRING, 3)
-            oprot.writeString(self.json.encode('utf-8') if sys.version_info[0] == 2 else self.json)
+            oprot.writeFieldBegin('json', TType.MAP, 2)
+            oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.json))
+            for kiter114, viter115 in self.json.items():
+                oprot.writeString(kiter114.encode('utf-8') if sys.version_info[0] == 2 else kiter114)
+                viter115.write(oprot)
+            oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()
@@ -2159,59 +1712,20 @@ class RenderResult(object):
 all_structs.append(ValidateModuleResult)
 ValidateModuleResult.thrift_spec = (
 )
-all_structs.append(ColumnTypeText)
-ColumnTypeText.thrift_spec = (
-)
-all_structs.append(ColumnTypeNumber)
-ColumnTypeNumber.thrift_spec = (
+all_structs.append(MigrateParamsResult)
+MigrateParamsResult.thrift_spec = (
     None,  # 0
-    (1, TType.STRING, 'format', 'UTF8', "{:,}", ),  # 1
+    (1, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 1
 )
-all_structs.append(ColumnTypeTimestamp)
-ColumnTypeTimestamp.thrift_spec = (
-)
-all_structs.append(ColumnType)
-ColumnType.thrift_spec = (
-    None,  # 0
-    (1, TType.STRUCT, 'text_type', [ColumnTypeText, None], None, ),  # 1
-    (2, TType.STRUCT, 'number_type', [ColumnTypeNumber, None], None, ),  # 2
-    (3, TType.STRUCT, 'timestamp_type', [ColumnTypeTimestamp, None], None, ),  # 3
-)
-all_structs.append(Column)
-Column.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'type', [ColumnType, None], None, ),  # 2
-)
-all_structs.append(TableMetadata)
-TableMetadata.thrift_spec = (
-    None,  # 0
-    (1, TType.I32, 'n_rows', None, None, ),  # 1
-    (2, TType.LIST, 'columns', (TType.STRUCT, [Column, None], False), None, ),  # 2
-)
-all_structs.append(ArrowTable)
-ArrowTable.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'metadata', [TableMetadata, None], None, ),  # 2
-)
-all_structs.append(ParamValue)
-ParamValue.thrift_spec = (
+all_structs.append(Json)
+Json.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'string_value', 'UTF8', None, ),  # 1
-    (2, TType.I64, 'integer_value', None, None, ),  # 2
-    (3, TType.DOUBLE, 'float_value', None, None, ),  # 3
+    (2, TType.I64, 'int64_value', None, None, ),  # 2
+    (3, TType.DOUBLE, 'number_value', None, None, ),  # 3
     (4, TType.BOOL, 'boolean_value', None, None, ),  # 4
-    (5, TType.STRUCT, 'column_value', [Column, None], None, ),  # 5
-    (6, TType.STRUCT, 'tab_value', [TabOutput, None], None, ),  # 6
-    (7, TType.LIST, 'list_value', (TType.STRUCT, [ParamValue, None], False), None, ),  # 7
-    (8, TType.MAP, 'map_value', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 8
-    (9, TType.STRING, 'filename_value', 'UTF8', None, ),  # 9
-)
-all_structs.append(RawParams)
-RawParams.thrift_spec = (
-    None,  # 0
-    (1, TType.STRING, 'json', 'UTF8', None, ),  # 1
+    (5, TType.LIST, 'array_value', (TType.STRUCT, [Json, None], False), None, ),  # 5
+    (6, TType.MAP, 'object_value', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 6
 )
 all_structs.append(Tab)
 Tab.thrift_spec = (
@@ -2223,7 +1737,7 @@ all_structs.append(TabOutput)
 TabOutput.thrift_spec = (
     None,  # 0
     (1, TType.STRUCT, 'tab', [Tab, None], None, ),  # 1
-    (2, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 2
+    (2, TType.STRING, 'table_filename', 'UTF8', None, ),  # 2
 )
 all_structs.append(I18nArgument)
 I18nArgument.thrift_spec = (
@@ -2243,7 +1757,7 @@ all_structs.append(PrependStepQuickFixAction)
 PrependStepQuickFixAction.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'module_slug', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'partial_params', [RawParams, None], None, ),  # 2
+    (2, TType.MAP, 'partial_params', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 2
 )
 all_structs.append(QuickFixAction)
 QuickFixAction.thrift_spec = (
@@ -2266,8 +1780,8 @@ all_structs.append(FetchRequest)
 FetchRequest.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'basedir', 'UTF8', None, ),  # 1
-    (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 2
-    (3, TType.STRUCT, 'secrets', [RawParams, None], None, ),  # 3
+    (2, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 2
+    (3, TType.MAP, 'secrets', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 3
     (4, TType.STRUCT, 'last_fetch_result', [FetchResult, None], None, ),  # 4
     (5, TType.STRING, 'input_table_parquet_filename', 'UTF8', None, ),  # 5
     (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
@@ -2278,22 +1792,30 @@ FetchResult.thrift_spec = (
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
     (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
 )
+all_structs.append(UploadedFile)
+UploadedFile.thrift_spec = (
+    None,  # 0
+    (1, TType.STRING, 'name', 'UTF8', None, ),  # 1
+    (2, TType.STRING, 'filename', 'UTF8', None, ),  # 2
+    (3, TType.I64, 'uploaded_at_timestampus', None, None, ),  # 3
+)
 all_structs.append(RenderRequest)
 RenderRequest.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'basedir', 'UTF8', None, ),  # 1
-    (2, TType.STRUCT, 'input_table', [ArrowTable, None], None, ),  # 2
-    (3, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [ParamValue, None], False), None, ),  # 3
+    (2, TType.STRING, 'input_filename', 'UTF8', None, ),  # 2
+    (3, TType.MAP, 'params', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 3
     (4, TType.STRUCT, 'tab', [Tab, None], None, ),  # 4
     (5, TType.STRUCT, 'fetch_result', [FetchResult, None], None, ),  # 5
     (6, TType.STRING, 'output_filename', 'UTF8', None, ),  # 6
+    (7, TType.LIST, 'tab_outputs', (TType.STRUCT, [TabOutput, None], False), None, ),  # 7
+    (8, TType.MAP, 'uploaded_files', (TType.STRING, 'UTF8', TType.STRUCT, [UploadedFile, None], False), None, ),  # 8
 )
 all_structs.append(RenderResult)
 RenderResult.thrift_spec = (
     None,  # 0
-    (1, TType.STRUCT, 'table', [ArrowTable, None], None, ),  # 1
-    (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
-    (3, TType.STRING, 'json', 'UTF8', "", ),  # 3
+    (1, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 1
+    (2, TType.MAP, 'json', (TType.STRING, 'UTF8', TType.STRUCT, [Json, None], False), None, ),  # 2
 )
 fix_spec(all_structs)
 del all_structs

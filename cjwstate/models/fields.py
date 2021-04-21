@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from enum import Enum
 from typing import Any, Dict
 
@@ -8,7 +7,6 @@ from django.db.models import Field, JSONField
 from cjwkernel.types import (
     Column,
     ColumnType,
-    PrependStepQuickFixAction,
     QuickFix,
     QuickFixAction,
     RenderError,
@@ -38,7 +36,7 @@ def _dict_to_i18n_message(value: Dict[str, Any]) -> I18nMessage:
 
 
 def _quick_fix_action_to_dict(value: QuickFixAction) -> Dict[str, Any]:
-    if isinstance(value, PrependStepQuickFixAction):
+    if isinstance(value, QuickFixAction.PrependStep):
         return {
             "type": "prependStep",
             "moduleSlug": value.module_slug,
@@ -50,7 +48,7 @@ def _quick_fix_action_to_dict(value: QuickFixAction) -> Dict[str, Any]:
 
 def _dict_to_quick_fix_action(value: Dict[str, Any]) -> QuickFixAction:
     if value["type"] == "prependStep":
-        return PrependStepQuickFixAction(value["moduleSlug"], value["partialParams"])
+        return QuickFixAction.PrependStep(value["moduleSlug"], value["partialParams"])
     else:
         raise ValueError("Unhandled type in QuickFixAction: %r", value)
 
@@ -83,8 +81,20 @@ def _dict_to_render_error(value: Dict[str, Any]) -> RenderError:
     )
 
 
-def _column_to_dict(value: Column) -> Dict[str, Any]:
-    return {"name": value.name, "type": value.type.name, **asdict(value.type)}
+def _column_to_dict(column: Column) -> Dict[str, Any]:
+    name = column.name
+    ctype = column.type
+
+    if isinstance(ctype, ColumnType.Text):
+        return dict(name=name, type="text")
+    elif isinstance(column.type, ColumnType.Date):
+        return dict(name=name, type="date", unit=ctype.unit)
+    elif isinstance(column.type, ColumnType.Number):
+        return dict(name=name, type="number", format=ctype.format)
+    elif isinstance(ctype, ColumnType.Timestamp):
+        return dict(name=name, type="timestamp")
+    else:
+        raise ValueError("Unknown column type %r" % column.type)
 
 
 def _dict_to_column(value: Dict[str, Any]) -> ColumnType:
@@ -96,7 +106,8 @@ def _dict_to_column(value: Dict[str, Any]) -> ColumnType:
             "text": ColumnType.Text,
             "number": ColumnType.Number,
             "timestamp": ColumnType.Timestamp,
-            "datetime": ColumnType.Timestamp,
+            "datetime": ColumnType.Timestamp,  # legacy
+            "date": ColumnType.Date,
         }[type_name]
     except KeyError:
         raise ValueError("Invalid type: %r" % type_name)

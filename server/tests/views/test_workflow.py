@@ -3,15 +3,13 @@ from http import HTTPStatus as status
 from unittest.mock import patch
 
 from django.contrib.auth.models import User
+from cjwmodule.arrow.testing import make_table, make_column
 
-from cjwkernel.tests.util import arrow_table
-from cjwkernel.types import RenderResult
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.fields import Role
-from cjwstate.rendercache import cache_render_result
+from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCase
-from server.views.workflows import Index, render_workflow
 
 
 async def async_noop(*args, **kwargs):
@@ -160,12 +158,9 @@ class WorkflowViewTests(DbTestCase):
             last_relevant_delta_id=1,
             cached_render_result_delta_id=1,
         )
-        # Cache a result
-        cache_render_result(
-            self.workflow1,
-            step,
-            1,
-            RenderResult(arrow_table({"A": ["a"]})),
+        # Cache a stale result
+        write_to_rendercache(
+            self.workflow1, step, 1, make_table(make_column("A", ["a"]))
         )
         step.last_relevant_delta_id = 2
         step.save(update_fields=["last_relevant_delta_id"])

@@ -1,7 +1,9 @@
-from collections import namedtuple
 import logging
+from collections import namedtuple
 from typing import Tuple
+
 from asgiref.sync import async_to_sync
+from cjwmodule.spec.paramfield import ParamField
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -13,7 +15,6 @@ from django.template.response import TemplateResponse
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import ModuleVersion, Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjwstate.modules.param_spec import ParamSpec
 
 
 logger = logging.getLogger(__name__)
@@ -52,11 +53,11 @@ def _load_step_and_service(
     module_spec = module_zipfile.get_spec()
     for field in module_spec.param_fields:
         if (
-            isinstance(field, ParamSpec.Secret)
+            isinstance(field, ParamField.Secret)
             and field.id_name == param
             and (
-                isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth1a)
-                or isinstance(field.secret_logic, ParamSpec.Secret.Logic.Oauth2)
+                isinstance(field.secret_logic, ParamField.Secret.Logic.Oauth1a)
+                or isinstance(field.secret_logic, ParamField.Secret.Logic.Oauth2)
             )
         ):
             service_name = field.secret_logic.service
