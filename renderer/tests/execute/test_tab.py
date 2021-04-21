@@ -16,7 +16,7 @@ from cjwstate.models import Workflow
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
-from renderer.execute.types import StepResult
+from renderer.execute.types import StepResult, Tab
 
 
 async def fake_send(*args, **kwargs):
@@ -31,7 +31,7 @@ def mock_render(arrow_table: pa.Table):
         basedir,
         input_filename,
         params,
-        tab,
+        tab_name,
         tab_outputs,
         uploaded_files,
         fetch_result,
@@ -64,7 +64,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
     def test_execute_empty_tab(self):
         workflow = Workflow.create_and_init()
         tab = workflow.tabs.first()
-        tab_flow = TabFlow(tab.to_arrow(), [])
+        tab_flow = TabFlow(Tab(tab.slug, tab.name), [])
         with self._execute(workflow, tab_flow, {}) as (result, path):
             self.assertEqual(result, StepResult(path, []))
             self.assertEqual(load_trusted_arrow_file(path), make_table())
@@ -86,7 +86,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         write_to_rendercache(workflow, step2, workflow.last_delta_id, cached_table2)
 
         tab_flow = TabFlow(
-            tab.to_arrow(),
+            Tab(tab.slug, tab.name),
             [
                 ExecuteStep(step1, module_zipfile, {}),
                 ExecuteStep(step2, module_zipfile, {}),
@@ -123,7 +123,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         )
 
         tab_flow = TabFlow(
-            tab.to_arrow(),
+            Tab(tab.slug, tab.name),
             [
                 ExecuteStep(step1, module_zipfile, {}),
                 ExecuteStep(step2, module_zipfile, {}),
@@ -176,7 +176,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         )
 
         tab_flow = TabFlow(
-            tab.to_arrow(),
+            Tab(tab.slug, tab.name),
             [
                 ExecuteStep(step1, module_zipfile, {}),
                 ExecuteStep(step2, module_zipfile, {}),
@@ -226,7 +226,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         step2 = tab.steps.create(order=1, slug="step-2", module_id_name="mod")
 
         tab_flow = TabFlow(
-            tab.to_arrow(),
+            Tab(tab.slug, tab.name),
             [
                 ExecuteStep(step1, module_zipfile, {}),
                 ExecuteStep(step2, module_zipfile, {}),

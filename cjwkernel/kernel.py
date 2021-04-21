@@ -18,11 +18,9 @@ from cjwkernel.types import (
     CompiledModule,
     FetchResult,
     RenderResult,
-    Tab,
     TabOutput,
     UploadedFile,
     arrow_fetch_result_to_thrift,
-    arrow_tab_to_thrift,
     arrow_tab_output_to_thrift,
     arrow_uploaded_file_to_thrift,
     pydict_to_thrift_json_object,
@@ -303,7 +301,7 @@ class Kernel:
         basedir: Path,
         input_filename: str,
         params: Dict[str, Any],
-        tab: Tab,
+        tab_name: str,
         fetch_result: Optional[FetchResult],
         tab_outputs: List[TabOutput],
         uploaded_files: Dict[str, UploadedFile],
@@ -318,8 +316,10 @@ class Kernel:
         request = ttypes.RenderRequest(
             basedir=str(basedir_seen_by_module),
             params=pydict_to_thrift_json_object(params),
-            tab=arrow_tab_to_thrift(tab),
-            tab_outputs=[arrow_tab_output_to_thrift(to) for to in tab_outputs],
+            tab_name=tab_name,
+            tab_outputs={
+                k: arrow_tab_output_to_thrift(v) for k, v in tab_outputs.items()
+            },
             uploaded_files={
                 k: arrow_uploaded_file_to_thrift(v) for k, v in uploaded_files.items()
             },

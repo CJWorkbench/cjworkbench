@@ -1,7 +1,7 @@
 import asyncio
 import inspect
 from pathlib import Path
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict
 
 import pandas as pd
 import cjwparquet
@@ -14,32 +14,29 @@ from cjwkernel.pandas import types as ptypes
 from cjwkernel.pandas.types import arrow_schema_to_render_columns
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
-    TabOutput,
     arrow_render_error_to_thrift,
     arrow_render_result_to_thrift,
     thrift_json_object_to_pydict,
     thrift_render_error_to_arrow,
-    thrift_tab_output_to_arrow,
 )
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import load_trusted_arrow_file, read_columns
 
 
-def _arrow_tab_output_to_pandas(
-    tab_output: types.TabOutput, basedir: Path
+def _thrift_tab_output_to_pandas(
+    tab_output: ttypes.TabOutput, basedir: Path
 ) -> ptypes.TabOutput:
     table = load_trusted_arrow_file(basedir / tab_output.table_filename)
     render_columns = arrow_schema_to_render_columns(table.schema)
     return ptypes.TabOutput(
-        tab_output.tab.slug,
-        tab_output.tab.name,
+        tab_output.tab_name,
         render_columns,
         cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table),
     )
 
 
 def _prepare_params(
-    params: Dict[str, Any], basedir: Path, tab_outputs: List[TabOutput]
+    params: Dict[str, Any], basedir: Path, tab_outputs: Dict[str, ptypes.TabOutput]
 ) -> Dict[str, Any]:
     """Convert JSON-ish params into params that Pandas-v0 render() expects.
 
@@ -50,10 +47,6 @@ def _prepare_params(
     * File params raise NotImplementedError
     * Tab and Multitab are converted to `ptypes.TabOutput` objects
     """
-
-    pandas_tab_outputs = {
-        to.tab.slug: _arrow_tab_output_to_pandas(to, basedir) for to in tab_outputs
-    }
 
     def recurse(schema: ParamSchema, value: Any) -> Any:
         if isinstance(schema, ParamSchema.List):
@@ -66,9 +59,9 @@ def _prepare_params(
                 for name, inner_schema in schema.properties.items()
             }
         elif isinstance(schema, ParamSchema.Tab):
-            return pandas_tab_outputs.get(value, None)  # handles value==""
+            return tab_outputs.get(value)  # value=="" => None
         elif isinstance(schema, ParamSchema.Multitab):
-            return [pandas_tab_outputs[v] for v in value]
+            return [tab_outputs[v] for v in value]
         elif isinstance(schema, ParamSchema.File):
             raise NotImplementedError
         else:
@@ -102,7 +95,10 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
     input_path = basedir / request.input_filename
     table = load_trusted_arrow_file(input_path)
     dataframe = cjwpandasmodule.convert.arrow_table_to_pandas_dataframe(table)
-    tab_outputs = [thrift_tab_output_to_arrow(v) for v in request.tab_outputs]
+    tab_outputs = {
+        k: _thrift_tab_output_to_pandas(v, basedir)
+        for k, v in request.tab_outputs.items()
+    }
     params = _prepare_params(
         thrift_json_object_to_pydict(request.params), basedir, tab_outputs
     )
@@ -135,7 +131,7 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
     if varkw or "settings" in kwonlyargs:
         kwargs["settings"] = settings
     if varkw or "tab_name" in kwonlyargs:
-        kwargs["tab_name"] = request.tab.name
+        kwargs["tab_name"] = request.tab_name
     if varkw or "input_columns" in kwonlyargs:
         kwargs["input_columns"] = arrow_schema_to_render_columns(table.schema)
 

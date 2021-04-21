@@ -20,7 +20,6 @@ from cjwkernel.types import (
     FetchResult,
     LoadedRenderResult,
     RenderError,
-    Tab,
     TabOutput,
     UploadedFile,
 )
@@ -33,10 +32,11 @@ from cjwstate.modules.types import ModuleZipfile
 from renderer import notifications
 from .types import (
     NoLoadedDataError,
+    PromptingError,
+    Tab,
     TabCycleError,
     TabOutputUnreachableError,
     UnneededExecution,
-    PromptingError,
 )
 from . import renderprep
 from .types import StepResult
@@ -139,7 +139,7 @@ def invoke_render(
     params: Dict[str, Any],
     tab: Tab,
     fetch_result: Optional[FetchResult],
-    tab_outputs: List[TabOutput],
+    tab_outputs: Dict[str, TabOutput],
     uploaded_files: Dict[str, UploadedFile],
     output_filename: str,
 ) -> LoadedRenderResult:

@@ -21,24 +21,6 @@ class ThriftConvertersTest(unittest.TestCase):
         self.basedir.rmdir()
         super().tearDown()
 
-    def test_tab_to_thrift(self):
-        self.assertEqual(
-            types.arrow_tab_to_thrift(types.Tab("tab-123", "Tab 1")),
-            ttypes.Tab("tab-123", "Tab 1"),
-        )
-
-    def test_tab_from_thrift(self):
-        self.assertEqual(
-            types.thrift_tab_to_arrow(ttypes.Tab("tab-123", "Tab 1")),
-            types.Tab("tab-123", "Tab 1"),
-        )
-
-    def test_tab_output_from_thrift(self):
-        pass  # TODO test ArrowTable conversions, then test TabOutput conversions
-
-    def test_tab_output_to_thrift(self):
-        pass  # TODO test ArrowTable conversions, then test TabOutput conversions
-
     def test_thrift_json_object_to_pydict(self):
         self.assertEqual(
             types.thrift_json_object_to_pydict(

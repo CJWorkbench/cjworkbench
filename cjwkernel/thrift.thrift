@@ -36,15 +36,6 @@ union Json {
   6: map<string, Json> object_value,
 }
 
-/** Tab description. */
-struct Tab {
-  /** Tab identifier, unique in its Workflow. */
-  1: string slug,
-
-  /** Tab name, provided by the user. */
-  2: string name
-}
-
 /**
  * Already-computed output of a tab.
  *
@@ -55,7 +46,7 @@ struct Tab {
  */
 struct TabOutput {
   /** Tab that was processed. */
-  1: Tab tab,
+  1: string tab_name,
 
   /**
    * Output from the final Step in `tab`.
@@ -251,7 +242,7 @@ struct RenderRequest {
   3: map<string, Json> params,
 
   /** Description of tab being rendered. */
-  4: Tab tab,
+  4: string tab_name,
 
   /**
    * Result of latest `fetch`.
@@ -273,12 +264,16 @@ struct RenderRequest {
   6: string output_filename,
 
   /**
-   * Outputs from other tabs that are inputs into this Step.
+   * Outputs from other tabs that are inputs into this Step, keyed by slug.
+   *
+   * `params` values may refer to keys here.
    */
-  7: list<TabOutput> tab_outputs,
+  7: map<string, TabOutput> tab_outputs,
 
   /**
    * Files the user uploaded and chose, keyed by UUID.
+   *
+   * `params` values may refer to keys here.
    */
   8: map<string, UploadedFile> uploaded_files,
 }

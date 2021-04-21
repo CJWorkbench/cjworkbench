@@ -8,6 +8,16 @@ from cjwkernel.i18n import trans
 from cjwkernel.types import Column, I18nMessage, QuickFix, QuickFixAction, RenderError
 
 
+class Tab(NamedTuple):
+    """Tab description."""
+
+    slug: str
+    """Tab identifier, unique in its Workflow."""
+
+    name: str
+    """Tab name, provided by the user."""
+
+
 class StepResult(NamedTuple):
     """All the renderer needs to know to render subsequent Steps.
 

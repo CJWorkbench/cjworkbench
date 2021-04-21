@@ -5,12 +5,11 @@ import textwrap
 from unittest.mock import patch
 
 import pyarrow as pa
-from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+from cjwmodule.arrow.testing import make_column, make_table
 
 from cjwkernel.chroot import EDITABLE_CHROOT
-from cjwkernel.types import I18nMessage, RenderError, RenderResult, Tab
+from cjwkernel.types import I18nMessage, RenderError
 from cjwkernel.tests.util import parquet_file
-from cjwkernel.validate import load_trusted_arrow_file
 from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.storedobjects import create_stored_object
@@ -62,7 +61,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                 step=step,
                 module_zipfile=None,
                 params={},
-                tab=Tab(tab.slug, tab.name),
+                tab_name=tab.name,
                 input_path=self.empty_table_path,
                 input_table_columns=[],
                 tab_results={},
@@ -110,7 +109,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -163,7 +162,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -213,7 +212,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -255,7 +254,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                 step=step,
                 module_zipfile=None,  # will cause noModule error
                 params={},
-                tab=Tab(tab.slug, tab.name),
+                tab_name=tab.name,
                 input_path=self.empty_table_path,
                 input_table_columns=[],
                 tab_results={},
@@ -296,7 +295,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -341,7 +340,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -400,7 +399,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -446,7 +445,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -489,7 +488,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -529,7 +528,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -573,7 +572,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},
@@ -604,7 +603,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                 step=step,
                 module_zipfile=module_zipfile,
                 params={},
-                tab=Tab(tab.slug, tab.name),
+                tab_name=tab.name,
                 input_path=self.empty_table_path,
                 input_table_columns=[],
                 tab_results={},
@@ -649,7 +648,7 @@ class StepTests(DbTestCaseWithModuleRegistry):
                     step=step,
                     module_zipfile=module_zipfile,
                     params={},
-                    tab=Tab(tab.slug, tab.name),
+                    tab_name=tab.name,
                     input_path=self.empty_table_path,
                     input_table_columns=[],
                     tab_results={},

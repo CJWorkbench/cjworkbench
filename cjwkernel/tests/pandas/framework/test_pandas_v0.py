@@ -29,7 +29,6 @@ from cjwkernel.types import (
     I18nMessage,
     RenderError,
     RenderResult,
-    Tab,
     TabOutput,
     arrow_fetch_result_to_thrift,
     pydict_to_thrift_json_object,
@@ -65,7 +64,7 @@ class RenderTests(unittest.TestCase):
             self.assertEqual(tab_name, "Tab X")
 
         with ModuleTestEnv(render=render) as env:
-            env.call_render(make_table(), {}, tab=Tab("tab-x", "Tab X"))
+            env.call_render(make_table(), {}, tab_name="Tab X")
 
     @override_settings(MAX_ROWS_PER_TABLE=12)
     def test_render_with_settings(self):
@@ -227,7 +226,6 @@ class RenderTests(unittest.TestCase):
 
     def test_render_using_tab_output(self):
         def render(table, params):
-            self.assertEqual(params["tabparam"].slug, "tab-1")
             self.assertEqual(params["tabparam"].name, "Tab 1")
             self.assertEqual(
                 params["tabparam"].columns,
@@ -250,9 +248,9 @@ class RenderTests(unittest.TestCase):
                 env.call_render(
                     make_table(),
                     params={"tabparam": "tab-1"},
-                    tab_outputs=[
-                        TabOutput(tab=Tab("tab-1", "Tab 1"), table_filename=path.name)
-                    ],
+                    tab_outputs={
+                        "tab-1": TabOutput(tab_name="Tab 1", table_filename=path.name)
+                    },
                 )
 
 

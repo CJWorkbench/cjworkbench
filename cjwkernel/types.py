@@ -27,21 +27,19 @@ __all__ = [
     "QuickFixAction",
     "RenderError",
     "RenderResult",
-    "Tab",
     "TableMetadata",
     "TabOutput",
     "arrow_fetch_result_to_thrift",
     "arrow_quick_fix_action_to_thrift",
     "arrow_quick_fix_to_thrift",
+    "arrow_tab_output_to_thrift",
     "arrow_render_error_to_thrift",
-    "arrow_tab_to_thrift",
     "pydict_to_thrift_json_object",
     "thrift_fetch_result_to_arrow",
     "thrift_json_object_to_pydict",
     "thrift_quick_fix_action_to_arrow",
     "thrift_quick_fix_to_arrow",
     "thrift_render_error_to_arrow",
-    "thrift_tab_to_arrow",
 ]
 
 
@@ -152,16 +150,6 @@ class TableMetadata(NamedTuple):
     """Columns -- the user-visible aspects of them, at least."""
 
 
-class Tab(NamedTuple):
-    """Tab description."""
-
-    slug: str
-    """Tab identifier, unique in its Workflow."""
-
-    name: str
-    """Tab name, provided by the user."""
-
-
 class UploadedFile(NamedTuple):
     """File uploaded by the user."""
 
@@ -189,7 +177,7 @@ class TabOutput(NamedTuple):
     won't render a Step whose inputs aren't valid.)
     """
 
-    tab: Tab
+    tab_name: str
     """Tab that was processed."""
 
     table_filename: str
@@ -264,13 +252,9 @@ class LoadedRenderResult(NamedTuple):
 ### arrow_*_to_thrift(): encode Arrow types as Thrift
 
 
-def arrow_tab_to_thrift(value: Tab) -> ttypes.Tab:
-    return ttypes.Tab(value.slug, value.name)
-
-
-def arrow_tab_output_to_thrift(value: TabOutput) -> ttypes.Tab:
+def arrow_tab_output_to_thrift(value: TabOutput) -> ttypes.TabOutput:
     return ttypes.TabOutput(
-        arrow_tab_to_thrift(value.tab),
+        tab_name=value.tab_name,
         table_filename=value.table_filename,
     )
 
@@ -332,14 +316,6 @@ def arrow_uploaded_file_to_thrift(value: UploadedFile) -> ttypes.UploadedFile:
 ### thrift_*_to_arrow(): decode Arrow types from Thrift
 #
 # They raise ValueError on cheap-to-detect semantic errors.
-
-
-def thrift_tab_to_arrow(value: ttypes.Tab) -> Tab:
-    return Tab(value.slug, value.name)
-
-
-def thrift_tab_output_to_arrow(value: ttypes.TabOutput) -> TabOutput:
-    return TabOutput(thrift_tab_to_arrow(value.tab), value.table_filename)
 
 
 def thrift_i18n_message_to_arrow(value: ttypes.I18nMessage) -> I18nMessage:

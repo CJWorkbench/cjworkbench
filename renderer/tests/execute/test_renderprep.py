@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 from cjwmodule.spec.paramschema import ParamSchema
 
-from cjwkernel.types import Column, ColumnType, Tab, TabOutput, UploadedFile
+from cjwkernel.types import Column, ColumnType, TabOutput, UploadedFile
 from cjwkernel.util import tempdir_context
 from cjwstate import s3
 from cjwstate.models.workflow import Workflow
@@ -14,6 +14,7 @@ from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import PrepParamsResult, prep_params
 from renderer.execute.types import (
     StepResult,
+    Tab,
     TabCycleError,
     TabOutputUnreachableError,
     PromptingError,
@@ -457,7 +458,7 @@ class CleanValueTests(DbTestCase):
             result,
             PrepParamsResult(
                 {"x": "tab-1"},
-                tab_outputs=[TabOutput(Tab("tab-1", "Tab 1"), "tab-1.arrow")],
+                tab_outputs=[TabOutput("Tab 1", "tab-1.arrow")],
                 uploaded_files={},
             ),
         )
@@ -472,12 +473,9 @@ class CleanValueTests(DbTestCase):
                 Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [TEXT("A")]),
             },
         )
-        self.assertEqual(
-            result.tab_outputs, [TabOutput(Tab("tab-1", "Tab 1"), "tab-1.arrow")]
-        )
+        self.assertEqual(result.tab_outputs, [TabOutput("Tab 1", "tab-1.arrow")])
 
     def test_clean_multicolumn_from_other_tab(self):
-        tab2 = Tab("tab-2", "Tab 2")
         schema = ParamSchema.Dict(
             {
                 "tab": ParamSchema.Tab(),
@@ -490,7 +488,9 @@ class CleanValueTests(DbTestCase):
             params,
             input_table_columns=[NUMBER("A-from-tab-1")],
             tab_results={
-                tab2: StepResult(Path("tab-2.arrow"), [NUMBER("A-from-tab-2")])
+                Tab("tab-2", "Tab 2"): StepResult(
+                    Path("tab-2.arrow"), [NUMBER("A-from-tab-2")]
+                )
             },
         )
         self.assertEqual(result.params["columns"], ["A-from-tab-2"])
@@ -536,11 +536,9 @@ class CleanValueTests(DbTestCase):
             )
 
     def test_clean_tabs_happy_path(self):
-        tab2 = Tab("tab-2", "Tab 2")
-        tab3 = Tab("tab-3", "Tab 3")
         tab_results = {
-            tab2: StepResult(Path("tab-2.arrow"), [NUMBER("B")]),
-            tab3: StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
+            Tab("tab-2", "Tab 2"): StepResult(Path("tab-2.arrow"), [NUMBER("B")]),
+            Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
         }
         self.assertEqual(
             self._call_prep_params(
@@ -550,29 +548,26 @@ class CleanValueTests(DbTestCase):
             ),
             PrepParamsResult(
                 {"x": ["tab-2", "tab-3"]},
-                [TabOutput(tab2, "tab-2.arrow"), TabOutput(tab3, "tab-3.arrow")],
+                [TabOutput("tab-2", "tab-2.arrow"), TabOutput("tab-3", "tab-3.arrow")],
                 uploaded_files={},
             ),
         )
 
     def test_clean_tabs_preserve_ordering(self):
-        tab2 = Tab("tab-2", "Tab 2")
-        tab3 = Tab("tab-3", "Tab 3")
-
-        # Supply wrongly-ordered tabs; renderprep should reorder them.
+        # "x" gives wrongly-ordered tabs; renderprep should reorder them.
         result = self._call_prep_params(
             ParamSchema.Dict({"x": ParamSchema.Multitab()}),
             {"x": ["tab-2", "tab-3"]},
             tab_results={
-                tab3: StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
-                tab2: StepResult(Path("tab-2.arrow"), [NUMBER("B")]),
+                Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
+                Tab("tab-2", "Tab 2"): StepResult(Path("tab-2.arrow"), [NUMBER("B")]),
             },
         )
         self.assertEqual(
             result,
             PrepParamsResult(
                 {"x": ["tab-3", "tab-2"]},
-                [TabOutput(tab3, "tab-3.arrow"), TabOutput(tab2, "tab-2.arrow")],
+                [TabOutput("tab-3", "tab-3.arrow"), TabOutput("tab-2", "tab-2.arrow")],
                 uploaded_files={},
             ),
         )

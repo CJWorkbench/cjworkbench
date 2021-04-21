@@ -189,7 +189,7 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
         output_path,
         columns=columns,
         settings=settings,
-        tab_name=request.tab.name,
+        tab_name=request.tab_name,
         fetch_result=fetch_result,
     )
 

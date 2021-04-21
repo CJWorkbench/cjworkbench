@@ -53,16 +53,11 @@ class RenderColumn(NamedTuple):
 class TabOutput(NamedTuple):
     """Tab data presented to a render() function.
 
-    A tab has `slug` (JS-side ID), `name` (user-assigned tab name), `dataframe`
-    (pandas.DataFrame), and `columns` (dict of `RenderColumn`, keyed by each
-    column in `dataframe.columns`.)
+    A tab has `name` (user-assigned tab name), `dataframe` (pandas.DataFrame)
+    and `columns` (dict of `RenderColumn`, keyed by each column in
+    `dataframe.columns`.)
 
     `columns` is designed to mirror the `input_columns` argument to render().
-    It's a Dict[str, RenderColumn].
-    """
-
-    slug: str
-    """Tab slug (permanent ID, unique in this Workflow, that leaks to the user).
     """
 
     name: str
