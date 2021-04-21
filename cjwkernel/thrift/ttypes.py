@@ -840,6 +840,85 @@ class QuickFix(object):
         return not (self == other)
 
 
+class FetchError(object):
+    """
+    Error or warning encountered during `fetch()`.
+
+    These errors are passed to `render()`, via the `FetchResult`.
+
+    This is a convenience feature used only by modules. Normally, `fetch()`
+    passes information to `render()` via a written file. That's a simple
+    pattern, but it means the module needs to handle serialize+deserialize
+    itself. Since errors are so common, and every module's error-serializing
+    code tends to look identical, the framework provides a shortcut.
+
+    Attributes:
+     - message
+
+    """
+
+    __slots__ = (
+        'message',
+    )
+
+
+    def __init__(self, message=None,):
+        self.message = message
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, [self.__class__, self.thrift_spec])
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRUCT:
+                    self.message = I18nMessage()
+                    self.message.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, [self.__class__, self.thrift_spec]))
+            return
+        oprot.writeStructBegin('FetchError')
+        if self.message is not None:
+            oprot.writeFieldBegin('message', TType.STRUCT, 1)
+            self.message.write(oprot)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, getattr(self, key))
+             for key in self.__slots__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        for attr in self.__slots__:
+            my_val = getattr(self, attr)
+            other_val = getattr(other, attr)
+            if my_val != other_val:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
 class RenderError(object):
     """
     Error or warning encountered during `render()`.
@@ -1164,7 +1243,7 @@ class FetchResult(object):
                     self.errors = []
                     (_etype71, _size68) = iprot.readListBegin()
                     for _i72 in range(_size68):
-                        _elem73 = RenderError()
+                        _elem73 = FetchError()
                         _elem73.read(iprot)
                         self.errors.append(_elem73)
                     iprot.readListEnd()
@@ -1686,6 +1765,11 @@ QuickFix.thrift_spec = (
     (1, TType.STRUCT, 'button_text', [I18nMessage, None], None, ),  # 1
     (2, TType.STRUCT, 'action', [QuickFixAction, None], None, ),  # 2
 )
+all_structs.append(FetchError)
+FetchError.thrift_spec = (
+    None,  # 0
+    (1, TType.STRUCT, 'message', [I18nMessage, None], None, ),  # 1
+)
 all_structs.append(RenderError)
 RenderError.thrift_spec = (
     None,  # 0
@@ -1706,7 +1790,7 @@ all_structs.append(FetchResult)
 FetchResult.thrift_spec = (
     None,  # 0
     (1, TType.STRING, 'filename', 'UTF8', None, ),  # 1
-    (2, TType.LIST, 'errors', (TType.STRUCT, [RenderError, None], False), None, ),  # 2
+    (2, TType.LIST, 'errors', (TType.STRUCT, [FetchError, None], False), None, ),  # 2
 )
 all_structs.append(UploadedFile)
 UploadedFile.thrift_spec = (

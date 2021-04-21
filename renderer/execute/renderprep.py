@@ -147,11 +147,11 @@ class _Cleaner:
             raise RuntimeError("You cannot call clean() twice on the same _Cleaner")
 
         cleaned_params = self.clean_value(self.schema, self.params)
-        tab_outputs = [
-            TabOutput(td.tab.name, td.result.path.name)
+        tab_outputs = {
+            td.slug: TabOutput(td.tab.name, td.result.path.name)
             for td in self.tabs.values()
             if td.slug in self.used_tab_slugs
-        ]
+        }
         self.result = PrepParamsResult(cleaned_params, tab_outputs, self.uploaded_files)
         return self.result
 

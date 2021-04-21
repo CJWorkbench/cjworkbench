@@ -99,6 +99,21 @@ struct QuickFix {
 }
 
 /**
+ * Error or warning encountered during `fetch()`.
+ *
+ * These errors are passed to `render()`, via the `FetchResult`.
+ *
+ * This is a convenience feature used only by modules. Normally, `fetch()`
+ * passes information to `render()` via a written file. That's a simple
+ * pattern, but it means the module needs to handle serialize+deserialize
+ * itself. Since errors are so common, and every module's error-serializing
+ * code tends to look identical, the framework provides a shortcut.
+ */
+struct FetchError {
+  1: I18nMessage message,
+}
+
+/**
  * Error or warning encountered during `render()`.
  *
  * If `render()` output is a zero-column table, then its result's errors are
@@ -190,7 +205,7 @@ struct FetchResult {
    * These are separate from `filename` for two reasons: 1) a convenience for
    * module authors; and 2) so we can run SQL to find common problems.
    */
-  2: list<RenderError> errors,
+  2: list<FetchError> errors,
 }
 
 /**

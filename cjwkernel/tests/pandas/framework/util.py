@@ -101,6 +101,8 @@ class ModuleTestEnv:
 
     def __exit__(self, *args):
         cjwkernel.pandas.module.__dict__.update(self.old_defs)
+        if hasattr(cjwkernel.pandas.module, "render_arrow_v1"):
+            del cjwkernel.pandas.module.render_arrow_v1
         del self.old_defs
         shutil.rmtree(self.basedir)
         del self.basedir

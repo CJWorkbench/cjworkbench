@@ -8,6 +8,8 @@ import cjwparquet
 import cjwpandasmodule
 import cjwpandasmodule.convert
 from cjwmodule.spec.paramschema import ParamSchema
+from cjwmodule.spec.types import ModuleSpec
+from cjwmodule.types import RenderError
 
 from cjwkernel import settings, types
 from cjwkernel.pandas import types as ptypes
@@ -16,8 +18,8 @@ from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     arrow_render_error_to_thrift,
     arrow_render_result_to_thrift,
+    thrift_i18n_message_to_arrow,
     thrift_json_object_to_pydict,
-    thrift_render_error_to_arrow,
 )
 from cjwkernel.util import tempfile_context
 from cjwkernel.validate import load_trusted_arrow_file, read_columns
@@ -36,11 +38,14 @@ def _thrift_tab_output_to_pandas(
 
 
 def _prepare_params(
-    params: Dict[str, Any], basedir: Path, tab_outputs: Dict[str, ptypes.TabOutput]
+    module_spec: ModuleSpec,
+    params: Dict[str, Any],
+    basedir: Path,
+    tab_outputs: Dict[str, ptypes.TabOutput],
 ) -> Dict[str, Any]:
     """Convert JSON-ish params into params that Pandas-v0 render() expects.
 
-    This walks the global ModuleSpec's `.param_schema`.
+    This walks `module_spec.param_schema`.
 
     The returned value is the same as `params`, except:
 
@@ -67,8 +72,7 @@ def _prepare_params(
         else:
             return value
 
-    global ModuleSpec  # injected by cjwkernel.pandas.main
-    return recurse(ModuleSpec.param_schema, params)
+    return recurse(module_spec.param_schema, params)
 
 
 def _parquet_to_pandas(path: Path) -> pd.DataFrame:
@@ -90,7 +94,9 @@ def _parquet_to_pandas(path: Path) -> pd.DataFrame:
             )  # TODO ensure dictionaries stay dictionaries
 
 
-def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.RenderResult:
+def call_render(
+    module_spec: ModuleSpec, render: Callable, request: ttypes.RenderRequest
+) -> ttypes.RenderResult:
     basedir = Path(request.basedir)
     input_path = basedir / request.input_filename
     table = load_trusted_arrow_file(input_path)
@@ -100,7 +106,7 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
         for k, v in request.tab_outputs.items()
     }
     params = _prepare_params(
-        thrift_json_object_to_pydict(request.params), basedir, tab_outputs
+        module_spec, thrift_json_object_to_pydict(request.params), basedir, tab_outputs
     )
     spec = inspect.getfullargspec(render)
     kwargs = {}
@@ -112,7 +118,9 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
         else:
             fetch_result_path = basedir / request.fetch_result.filename
             errors = [
-                thrift_render_error_to_arrow(e) for e in request.fetch_result.errors
+                # Data comes in as FetchError and we return RenderError.
+                RenderError(thrift_i18n_message_to_arrow(e.message))
+                for e in request.fetch_result.errors
             ]
             if (
                 fetch_result_path.stat().st_size == 0

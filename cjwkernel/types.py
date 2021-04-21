@@ -9,6 +9,7 @@ import pyarrow
 import pyarrow.ipc
 import pyarrow.types
 from cjwmodule.types import (
+    FetchError,
     FetchResult,
     I18nMessage,
     QuickFix,
@@ -156,7 +157,7 @@ class UploadedFile(NamedTuple):
     name: str
     """Name as the user uploaded it.
 
-    This is an "unsafe" value: it could point to, say, `/etc/passwd`.
+    This is an "unsafe" value: it could be, say, `/etc/passwd`.
     """
 
     filename: str
@@ -285,6 +286,10 @@ def arrow_quick_fix_to_thrift(value: QuickFix) -> ttypes.QuickFix:
     )
 
 
+def arrow_fetch_error_to_thrift(value: RenderError) -> ttypes.FetchError:
+    return ttypes.RenderError(arrow_i18n_message_to_thrift(value.message))
+
+
 def arrow_render_error_to_thrift(value: RenderError) -> ttypes.RenderError:
     return ttypes.RenderError(
         arrow_i18n_message_to_thrift(value.message),
@@ -294,7 +299,7 @@ def arrow_render_error_to_thrift(value: RenderError) -> ttypes.RenderError:
 
 def arrow_fetch_result_to_thrift(value: FetchResult) -> ttypes.FetchResult:
     return ttypes.FetchResult(
-        value.path.name, [arrow_render_error_to_thrift(e) for e in value.errors]
+        value.path.name, [arrow_fetch_error_to_thrift(e) for e in value.errors]
     )
 
 
@@ -391,6 +396,10 @@ def thrift_quick_fix_to_arrow(value: ttypes.QuickFix) -> QuickFix:
     )
 
 
+def thrift_fetch_error_to_arrow(value: ttypes.FetchError) -> FetchError:
+    return FetchError(thrift_i18n_message_to_arrow(value.message))
+
+
 def thrift_render_error_to_arrow(value: ttypes.RenderError) -> RenderError:
     return RenderError(
         thrift_i18n_message_to_arrow(value.message),
@@ -402,7 +411,7 @@ def thrift_fetch_result_to_arrow(
     value: ttypes.FetchResult, basedir: Path
 ) -> FetchResult:
     path = _thrift_filename_to_path(value.filename, basedir)
-    return FetchResult(path, [thrift_render_error_to_arrow(e) for e in value.errors])
+    return FetchResult(path, [thrift_fetch_error_to_arrow(e) for e in value.errors])
 
 
 def thrift_render_result_to_arrow(value: ttypes.RenderResult) -> RenderResult:

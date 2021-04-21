@@ -348,13 +348,13 @@ class ThriftConvertersTest(unittest.TestCase):
                 types.thrift_fetch_result_to_arrow(
                     ttypes.FetchResult(
                         filename,
-                        [ttypes.RenderError(ttypes.I18nMessage("hi", {}, None), [])],
+                        [ttypes.FetchError(ttypes.I18nMessage("hi", {}, None))],
                     ),
                     self.basedir,
                 ),
                 types.FetchResult(
                     Path(tf.name),
-                    [types.RenderError(types.I18nMessage("hi", {}, None))],
+                    [types.FetchError(types.I18nMessage("hi", {}, None))],
                 ),
             )
 

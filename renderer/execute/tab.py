@@ -241,7 +241,7 @@ async def execute_tab_flow(
                 step=step.step,
                 module_zipfile=step.module_zipfile,
                 params=step.params,
-                tab=flow.tab,
+                tab_name=flow.tab.name,
                 input_path=last_result.path,
                 input_table_columns=last_result.columns,
                 tab_results=tab_results,

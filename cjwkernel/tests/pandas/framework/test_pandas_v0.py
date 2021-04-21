@@ -25,6 +25,7 @@ from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     Column,
     ColumnType,
+    FetchError,
     FetchResult,
     I18nMessage,
     RenderError,
@@ -49,7 +50,7 @@ class RenderTests(unittest.TestCase):
                     make_table(),
                     {},
                     fetch_result=FetchResult(
-                        path=parquet_path, errors=[RenderError(TODO_i18n("A warning"))]
+                        path=parquet_path, errors=[FetchError(TODO_i18n("A warning"))]
                     ),
                 )
             self.assertEqual(
@@ -377,7 +378,7 @@ class FetchTests(unittest.TestCase):
                 return outfile, "foo"
 
             result = self._test_fetch(fetch, output_filename=outfile.name)
-            self.assertEqual(result.errors, [RenderError(TODO_i18n("foo"))])
+            self.assertEqual(result.errors, [FetchError(TODO_i18n("foo"))])
 
     def test_fetch_return_tuple_path_and_errors(self):
         with tempfile_context(dir=self.basedir) as outfile:
@@ -393,8 +394,8 @@ class FetchTests(unittest.TestCase):
             self.assertEqual(
                 result.errors,
                 [
-                    RenderError(I18nMessage("foo", {"a": "b"}, "module")),
-                    RenderError(I18nMessage("bar", {"b": 1}, "cjwmodule")),
+                    FetchError(I18nMessage("foo", {"a": "b"}, "module")),
+                    FetchError(I18nMessage("bar", {"b": 1}, "cjwmodule")),
                 ],
             )
 
@@ -407,7 +408,7 @@ class FetchTests(unittest.TestCase):
             result = self._test_fetch(fetch, output_filename=outfile.name)
             self.assertEqual(
                 result.errors,
-                [RenderError(I18nMessage("message.id", {"k": "v"}, "module"))],
+                [FetchError(I18nMessage("message.id", {"k": "v"}, "module"))],
             )
 
     @override_settings(MAX_ROWS_PER_TABLE=2)
@@ -422,7 +423,7 @@ class FetchTests(unittest.TestCase):
                 FetchResult(
                     outfile,
                     errors=[
-                        RenderError(
+                        FetchError(
                             I18nMessage(
                                 "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
                                 {"old_number": 3, "new_number": 2},
@@ -445,7 +446,7 @@ class FetchTests(unittest.TestCase):
 
         with tempfile_context(dir=self.basedir) as outfile:
             result = self._test_fetch(fetch, output_filename=outfile.name)
-            self.assertEqual(result.errors, [RenderError(TODO_i18n("bad things"))])
+            self.assertEqual(result.errors, [FetchError(TODO_i18n("bad things"))])
             self.assertEqual(outfile.read_bytes(), b"")
 
     def test_fetch_return_uncoerceable_dataframe_is_error(self):

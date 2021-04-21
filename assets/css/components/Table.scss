@@ -327,7 +327,7 @@
         border: 0px solid transparent;
 
         .react-grid-Cell__value > * {
-          // .cell-text, .cell-timestamp, .cell-number, .cell-null
+          // .cell-date, .cell-text, .cell-timestamp, .cell-number, .cell-null
           @include table-content;
           overflow: hidden;
           white-space: nowrap;
@@ -359,7 +359,7 @@
           padding: 0 0.2rem 0 1rem;
         }
 
-        .cell-timestamp {
+        .cell-date, .cell-timestamp {
           text-align: left;
           padding: 0 1rem;
         }

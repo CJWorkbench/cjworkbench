@@ -112,7 +112,7 @@ class CleanValueTests(DbTestCase):
                 result,
                 PrepParamsResult(
                     {"file": "6e00511a-8ac4-4b72-9acc-9d069992b5cf"},
-                    tab_outputs=[],
+                    tab_outputs={},
                     uploaded_files={
                         "6e00511a-8ac4-4b72-9acc-9d069992b5cf": UploadedFile(
                             "x.csv.gz",
@@ -458,7 +458,7 @@ class CleanValueTests(DbTestCase):
             result,
             PrepParamsResult(
                 {"x": "tab-1"},
-                tab_outputs=[TabOutput("Tab 1", "tab-1.arrow")],
+                tab_outputs={"tab-1": TabOutput("Tab 1", "tab-1.arrow")},
                 uploaded_files={},
             ),
         )
@@ -473,7 +473,9 @@ class CleanValueTests(DbTestCase):
                 Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [TEXT("A")]),
             },
         )
-        self.assertEqual(result.tab_outputs, [TabOutput("Tab 1", "tab-1.arrow")])
+        self.assertEqual(
+            result.tab_outputs, {"tab-1": TabOutput("Tab 1", "tab-1.arrow")}
+        )
 
     def test_clean_multicolumn_from_other_tab(self):
         schema = ParamSchema.Dict(
@@ -536,19 +538,25 @@ class CleanValueTests(DbTestCase):
             )
 
     def test_clean_tabs_happy_path(self):
-        tab_results = {
-            Tab("tab-2", "Tab 2"): StepResult(Path("tab-2.arrow"), [NUMBER("B")]),
-            Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
-        }
         self.assertEqual(
             self._call_prep_params(
                 ParamSchema.Dict({"x": ParamSchema.Multitab()}),
                 {"x": ["tab-2", "tab-3"]},
-                tab_results=tab_results,
+                tab_results={
+                    Tab("tab-2", "Tab 2"): StepResult(
+                        Path("tab-2.arrow"), [NUMBER("B")]
+                    ),
+                    Tab("tab-3", "Tab 3"): StepResult(
+                        Path("tab-3.arrow"), [NUMBER("C")]
+                    ),
+                },
             ),
             PrepParamsResult(
                 {"x": ["tab-2", "tab-3"]},
-                [TabOutput("tab-2", "tab-2.arrow"), TabOutput("tab-3", "tab-3.arrow")],
+                {
+                    "tab-2": TabOutput("Tab 2", "tab-2.arrow"),
+                    "tab-3": TabOutput("Tab 3", "tab-3.arrow"),
+                },
                 uploaded_files={},
             ),
         )
@@ -567,7 +575,10 @@ class CleanValueTests(DbTestCase):
             result,
             PrepParamsResult(
                 {"x": ["tab-3", "tab-2"]},
-                [TabOutput("tab-3", "tab-3.arrow"), TabOutput("tab-2", "tab-2.arrow")],
+                {
+                    "tab-3": TabOutput("Tab 3", "tab-3.arrow"),
+                    "tab-2": TabOutput("Tab 2", "tab-2.arrow"),
+                },
                 uploaded_files={},
             ),
         )
