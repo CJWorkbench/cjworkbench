@@ -11,7 +11,7 @@ from cjwkernel.types import TableMetadata
 from cjwstate import clientside, s3
 
 from .cached_render_result import CachedRenderResult
-from .fields import ColumnsField, RenderErrorsField
+from .fields import ColumnsField, FetchErrorsField, RenderErrorsField
 from .tab import Tab
 from .workflow import Workflow
 
@@ -147,7 +147,7 @@ class Step(models.Model):
     # be implied by the fact that the cached output revision is wrong.
     is_busy = models.BooleanField(default=False, null=False)
 
-    fetch_errors = RenderErrorsField(default=list)
+    fetch_errors = FetchErrorsField(default=list)
     """Most recent collection of errors preventing StoredObject creation.
 
     For instance, HTTP errors.

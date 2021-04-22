@@ -225,3 +225,35 @@ class DictConvertersTest(unittest.TestCase):
             fields._dict_to_column({"name": "A", "type": "number", "format": "{:d}"}),
             types.Column("A", types.ColumnType.Number("{:d}")),
         )
+
+    def test_fetch_error_from_dict(self):
+        self.assertEqual(
+            fields._dict_to_fetch_error({"message": {"id": "err", "arguments": {}}}),
+            types.FetchError(types.I18nMessage("err", {}, None)),
+        )
+
+    def test_fetch_error_from_dict_pre_2021_04_22(self):
+        # We used to store "quick_fixes" in FetchError -- really, it was the
+        # exact same thing as RenderError.
+        #
+        # These old structures remain in the database, so we need to support
+        # them.
+        #
+        # Why not allow quick_fixes? Because we don't know that FetchError and
+        # RenderError will always be identical, moving forward. Let's not
+        # publish a whole big feature for module authors just to save ourselves
+        # ten lines of code: in the future, it might cost us dearly.
+        self.assertEqual(
+            fields._dict_to_fetch_error(
+                {"message": {"id": "err", "arguments": {}}, "quick_fixes": []}
+            ),
+            types.FetchError(types.I18nMessage("err", {}, None)),
+        )
+
+    def test_fetch_error_to_dict(self):
+        self.assertEqual(
+            fields._fetch_error_to_dict(
+                types.FetchError(types.I18nMessage("err", {}, None))
+            ),
+            {"message": {"id": "err", "arguments": {}}},
+        )

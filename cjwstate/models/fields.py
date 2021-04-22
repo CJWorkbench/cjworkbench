@@ -9,6 +9,7 @@ from cjwkernel.types import (
     ColumnType,
     QuickFix,
     QuickFixAction,
+    FetchError,
     RenderError,
 )
 from cjwmodule.i18n import I18nMessage
@@ -78,6 +79,18 @@ def _dict_to_render_error(value: Dict[str, Any]) -> RenderError:
     return RenderError(
         _dict_to_i18n_message(value["message"]),
         [_dict_to_quick_fix(qf) for qf in value["quickFixes"]],
+    )
+
+
+def _fetch_error_to_dict(value: RenderError) -> Dict[str, Any]:
+    return {
+        "message": _i18n_message_to_dict(value.message),
+    }
+
+
+def _dict_to_fetch_error(value: Dict[str, Any]) -> RenderError:
+    return FetchError(
+        _dict_to_i18n_message(value["message"]),
     )
 
 
@@ -186,6 +199,43 @@ class RenderErrorsField(JSONField):
             return None
 
         arr = [_render_error_to_dict(re) for re in value]
+        return super().get_prep_value(arr)  # JSONField: arr->bytes
+
+
+class FetchErrorsField(JSONField):
+    """Maps a List[FetchError] to a database JSON column."""
+
+    description = "List of FetchErrors, stored as JSON"
+
+    def from_db_value(self, value, *args, **kwargs):
+        value = super().from_db_value(value, *args, **kwargs)
+        if value is None:
+            return None
+
+        return [_dict_to_fetch_error(re) for re in value]
+
+    def validate(self, value, model_instance):
+        super().validate(value, model_instance)
+
+        if value is None:
+            return
+
+        if not isinstance(value, list):
+            raise ValidationError("not a list", code="invalid", params={"value": value})
+
+        for item in value:
+            if not isinstance(item, FetchError):
+                raise ValidationError(
+                    "list item is not a FetchError",
+                    code="invalid",
+                    params={"value": value},
+                )
+
+    def get_prep_value(self, value):
+        if value is None:
+            return None
+
+        arr = [_fetch_error_to_dict(re) for re in value]
         return super().get_prep_value(arr)  # JSONField: arr->bytes
 
 

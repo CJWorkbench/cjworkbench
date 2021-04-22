@@ -17,12 +17,12 @@ from cjwkernel.files import read_parquet_as_arrow
 from cjwkernel.types import (
     Column,
     ColumnType,
+    FetchError,
     FetchResult,
     I18nMessage,
-    RenderError,
     TableMetadata,
 )
-from cjwkernel.tests.util import arrow_table_context, parquet_file
+from cjwkernel.tests.util import parquet_file
 from cjwkernel.util import tempfile_context
 from cjwstate import s3, rabbitmq, rendercache, storedobjects
 from cjwstate.models import CachedRenderResult, Step, Workflow
@@ -91,7 +91,7 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
 
     def test_load_migrate_params_even_when_invalid(self):
         workflow = Workflow.create_and_init()
-        module_zipfile = create_module_zipfile(
+        create_module_zipfile(
             "mod",
             spec_kwargs={"parameters": [{"id_name": "a", "type": "string"}]},
             python_code=textwrap.dedent(
@@ -112,7 +112,7 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
 
     def test_load_migrate_params_raise_module_error(self):
         workflow = Workflow.create_and_init()
-        module_zipfile = create_module_zipfile(
+        create_module_zipfile(
             "mod",
             spec_kwargs={"parameters": [{"id_name": "a", "type": "string"}]},
             python_code=textwrap.dedent(
@@ -164,20 +164,17 @@ class LoadDatabaseObjectsTests(DbTestCaseWithModuleRegistry):
 
     def test_load_input_cached_render_result(self):
         input_table = make_table(make_column("A", [1]))
-        with arrow_table_context(input_table) as atable:
-            workflow = Workflow.create_and_init()
-            step1 = workflow.tabs.first().steps.create(
-                order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
-            )
-            write_to_rendercache(workflow, step1, workflow.last_delta_id, input_table)
-            step2 = workflow.tabs.first().steps.create(order=1, slug="step-2")
-            result = self.run_with_async_db(
-                fetch.load_database_objects(workflow.id, step2.id)
-            )
-            self.assertEqual(result[4], step1.cached_render_result)
-            self.assertEqual(
-                result.input_cached_render_result, step1.cached_render_result
-            )
+        workflow = Workflow.create_and_init()
+        step1 = workflow.tabs.first().steps.create(
+            order=0, slug="step-1", last_relevant_delta_id=workflow.last_delta_id
+        )
+        write_to_rendercache(workflow, step1, workflow.last_delta_id, input_table)
+        step2 = workflow.tabs.first().steps.create(order=1, slug="step-2")
+        result = self.run_with_async_db(
+            fetch.load_database_objects(workflow.id, step2.id)
+        )
+        self.assertEqual(result[4], step1.cached_render_result)
+        self.assertEqual(result.input_cached_render_result, step1.cached_render_result)
 
     def test_load_input_cached_render_result_is_none(self):
         # Most of these tests assume the fetch is at step 0. This one tests
@@ -208,7 +205,7 @@ class FetchOrWrapErrorTests(DbTestCaseWithModuleRegistryAndMockKernel):
         super().tearDown()
 
     def _err(self, message: I18nMessage) -> FetchResult:
-        return FetchResult(self.output_path, [RenderError(message)])
+        return FetchResult(self.output_path, [FetchError(message)])
 
     def _bug_err(self, message: str) -> FetchResult:
         return self._err(

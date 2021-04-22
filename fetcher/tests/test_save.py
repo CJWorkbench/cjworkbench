@@ -2,7 +2,7 @@ import datetime
 from unittest.mock import patch
 
 from cjwkernel.tests.util import parquet_file
-from cjwkernel.types import FetchResult, I18nMessage, RenderError
+from cjwkernel.types import FetchError, FetchResult, I18nMessage
 from cjwstate import clientside, rabbitmq, storedobjects
 from cjwstate.models import Step, Workflow
 from cjwstate.models.commands import SetStepDataVersion
@@ -25,7 +25,7 @@ class SaveTests(DbTestCase):
             order=0,
             slug="step-1",
             is_busy=True,
-            fetch_errors=[RenderError(I18nMessage("foo", {}, "module"))],
+            fetch_errors=[FetchError(I18nMessage("foo", {}, "module"))],
         )
         now = datetime.datetime(2019, 10, 22, 12, 22)
 
@@ -65,7 +65,7 @@ class SaveTests(DbTestCase):
             order=0,
             slug="step-1",
             is_busy=True,
-            fetch_errors=[RenderError(I18nMessage("foo", {}, "module"))],
+            fetch_errors=[FetchError(I18nMessage("foo", {}, "module"))],
         )
         now = datetime.datetime(2019, 10, 22, 12, 22)
 
@@ -73,13 +73,13 @@ class SaveTests(DbTestCase):
         self.assertEqual(step.stored_objects.count(), 0)
 
         self.assertEqual(
-            step.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
+            step.fetch_errors, [FetchError(I18nMessage("foo", {}, "module"))]
         )
         self.assertEqual(step.is_busy, False)
         self.assertEqual(step.last_update_check, now)
         step.refresh_from_db()
         self.assertEqual(
-            step.fetch_errors, [RenderError(I18nMessage("foo", {}, "module"))]
+            step.fetch_errors, [FetchError(I18nMessage("foo", {}, "module"))]
         )
         self.assertEqual(step.is_busy, False)
         self.assertEqual(step.last_update_check, now)

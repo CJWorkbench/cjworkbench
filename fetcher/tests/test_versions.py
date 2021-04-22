@@ -4,7 +4,7 @@ import unittest
 from cjwmodule.arrow.testing import make_column, make_table
 import cjwparquet
 
-from cjwkernel.types import FetchResult, RenderError, I18nMessage
+from cjwkernel.types import FetchError, FetchResult, I18nMessage
 from cjwkernel.util import tempfile_context
 from fetcher.versions import are_fetch_results_equal
 
@@ -21,8 +21,8 @@ class DiffTest(unittest.TestCase):
     def test_different_errors(self):
         self.assertFalse(
             are_fetch_results_equal(
-                FetchResult(self.old_path, [RenderError(I18nMessage("foo", {}, None))]),
-                FetchResult(self.old_path, [RenderError(I18nMessage("bar", {}, None))]),
+                FetchResult(self.old_path, [FetchError(I18nMessage("foo", {}, None))]),
+                FetchResult(self.old_path, [FetchError(I18nMessage("bar", {}, None))]),
             )
         )
 
