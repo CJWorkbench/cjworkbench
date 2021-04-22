@@ -11,9 +11,7 @@ from cjwkernel.types import CompiledModule
 
 
 def main(compiled_module: CompiledModule, function: str, args: List[Any]) -> None:
-    """
-    Run `function` with `args`, and write the (Thrift) result to stdout.
-    """
+    """Run `function` with `args`, and write the (Thrift) result to stdout."""
 
     assert function in (
         "render_thrift",
@@ -32,9 +30,7 @@ def main(compiled_module: CompiledModule, function: str, args: List[Any]) -> Non
 def run_in_sandbox(
     compiled_module: CompiledModule, function: str, args: List[Any]
 ) -> None:
-    """
-    Run `function` with `args`, and write the (Thrift) result to `sys.stdout`.
-    """
+    """Run `function` with `args`, and write the (Thrift) result to `sys.stdout`."""
     # TODO sandbox -- will need an OS `clone()` with namespace, cgroups, ....
 
     # Run the user's code in a new (programmatic) module.
@@ -65,6 +61,7 @@ def run_in_sandbox(
         "migrate_params_thrift",
         "render",
         "render_arrow",
+        "render_arrow_v1",
         "render_pandas",
         "render_thrift",
     ):

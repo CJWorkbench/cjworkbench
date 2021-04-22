@@ -11,13 +11,18 @@ from cjwkernel.types import (
     Column,
     ColumnType,
     LoadedRenderResult,
-    Tab,
     TabOutput,
     UploadedFile,
 )
 from cjwstate import s3
 from cjwstate.models import UploadedFile as UploadedFileModel
-from .types import StepResult, TabCycleError, TabOutputUnreachableError, PromptingError
+from .types import (
+    StepResult,
+    Tab,
+    TabCycleError,
+    TabOutputUnreachableError,
+    PromptingError,
+)
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -142,11 +147,11 @@ class _Cleaner:
             raise RuntimeError("You cannot call clean() twice on the same _Cleaner")
 
         cleaned_params = self.clean_value(self.schema, self.params)
-        tab_outputs = [
-            TabOutput(td.tab, td.result.path.name)
+        tab_outputs = {
+            td.slug: TabOutput(td.tab.name, td.result.path.name)
             for td in self.tabs.values()
             if td.slug in self.used_tab_slugs
-        ]
+        }
         self.result = PrepParamsResult(cleaned_params, tab_outputs, self.uploaded_files)
         return self.result
 
@@ -373,7 +378,7 @@ class _Cleaner:
 
     @clean_value.register(ParamSchema.Multitab)
     def _(self, schema: ParamSchema.Multitab, value: List[str]) -> List[str]:
-        slugs: Dict[Tab, TabOutput] = frozenset(
+        slugs = frozenset(
             # recurse -- the same way we clean a list.
             slug
             for slug in self.clean_value_list(

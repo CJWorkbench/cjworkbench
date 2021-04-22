@@ -4,13 +4,12 @@ from typing import Any, Dict, List, Optional, Tuple
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.errors import ModuleError
-from cjwkernel.types import Tab
 from cjwstate.models import Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
-from .types import StepResult, UnneededExecution
+from .types import StepResult, Tab, UnneededExecution
 
 
 logger = logging.getLogger(__name__)

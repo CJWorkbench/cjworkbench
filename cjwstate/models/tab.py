@@ -1,6 +1,5 @@
 from django.db import models
 from .workflow import Workflow
-from cjwkernel.types import Tab as ArrowTab
 from cjwstate import clientside
 
 
@@ -52,9 +51,6 @@ class Tab(models.Model):
         steps = list(self.live_steps)
         for step in steps:
             step.duplicate_into_new_workflow(new_tab)
-
-    def to_arrow(self) -> ArrowTab:
-        return ArrowTab(self.slug, self.name)
 
     def to_clientside(self) -> clientside.TabUpdate:
         return clientside.TabUpdate(

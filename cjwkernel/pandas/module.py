@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import pydict_to_thrift_json_object, thrift_json_object_to_pydict
-from .framework import arrow_v0, pandas_v0
+from .framework import arrow_v0, arrow_v1, pandas_v0
 
 
 def render(table, params: Dict[str, Any], **kwargs):
@@ -19,16 +19,17 @@ def render(table, params: Dict[str, Any], **kwargs):
 
 
 def render_thrift(request: ttypes.RenderRequest) -> ttypes.RenderResult:
-    spec = inspect.getfullargspec(render)
-    if spec.args[0] == "arrow_table":
-        framework = arrow_v0
-    else:
-        framework = pandas_v0
-
     global ModuleSpec  # injected by cjwkernel.pandas.main
-    framework.ModuleSpec = ModuleSpec
 
-    return framework.call_render(render, request)
+    if "render_arrow_v1" in globals():
+        global render_arrow_v1
+        return arrow_v1.call_render(render_arrow_v1, request)
+    else:
+        spec = inspect.getfullargspec(render)
+        if spec.args[0] == "arrow_table":
+            return arrow_v0.call_render(ModuleSpec, render, request)
+        else:
+            return pandas_v0.call_render(ModuleSpec, render, request)
 
 
 def fetch(params: Dict[str, Any], **kwargs):

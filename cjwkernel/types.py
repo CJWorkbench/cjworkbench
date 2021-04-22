@@ -9,6 +9,7 @@ import pyarrow
 import pyarrow.ipc
 import pyarrow.types
 from cjwmodule.types import (
+    FetchError,
     FetchResult,
     I18nMessage,
     QuickFix,
@@ -27,21 +28,19 @@ __all__ = [
     "QuickFixAction",
     "RenderError",
     "RenderResult",
-    "Tab",
     "TableMetadata",
     "TabOutput",
     "arrow_fetch_result_to_thrift",
     "arrow_quick_fix_action_to_thrift",
     "arrow_quick_fix_to_thrift",
+    "arrow_tab_output_to_thrift",
     "arrow_render_error_to_thrift",
-    "arrow_tab_to_thrift",
     "pydict_to_thrift_json_object",
     "thrift_fetch_result_to_arrow",
     "thrift_json_object_to_pydict",
     "thrift_quick_fix_action_to_arrow",
     "thrift_quick_fix_to_arrow",
     "thrift_render_error_to_arrow",
-    "thrift_tab_to_arrow",
 ]
 
 
@@ -152,23 +151,13 @@ class TableMetadata(NamedTuple):
     """Columns -- the user-visible aspects of them, at least."""
 
 
-class Tab(NamedTuple):
-    """Tab description."""
-
-    slug: str
-    """Tab identifier, unique in its Workflow."""
-
-    name: str
-    """Tab name, provided by the user."""
-
-
 class UploadedFile(NamedTuple):
     """File uploaded by the user."""
 
     name: str
     """Name as the user uploaded it.
 
-    This is an "unsafe" value: it could point to, say, `/etc/passwd`.
+    This is an "unsafe" value: it could be, say, `/etc/passwd`.
     """
 
     filename: str
@@ -189,7 +178,7 @@ class TabOutput(NamedTuple):
     won't render a Step whose inputs aren't valid.)
     """
 
-    tab: Tab
+    tab_name: str
     """Tab that was processed."""
 
     table_filename: str
@@ -264,13 +253,9 @@ class LoadedRenderResult(NamedTuple):
 ### arrow_*_to_thrift(): encode Arrow types as Thrift
 
 
-def arrow_tab_to_thrift(value: Tab) -> ttypes.Tab:
-    return ttypes.Tab(value.slug, value.name)
-
-
-def arrow_tab_output_to_thrift(value: TabOutput) -> ttypes.Tab:
+def arrow_tab_output_to_thrift(value: TabOutput) -> ttypes.TabOutput:
     return ttypes.TabOutput(
-        arrow_tab_to_thrift(value.tab),
+        tab_name=value.tab_name,
         table_filename=value.table_filename,
     )
 
@@ -301,6 +286,10 @@ def arrow_quick_fix_to_thrift(value: QuickFix) -> ttypes.QuickFix:
     )
 
 
+def arrow_fetch_error_to_thrift(value: RenderError) -> ttypes.FetchError:
+    return ttypes.RenderError(arrow_i18n_message_to_thrift(value.message))
+
+
 def arrow_render_error_to_thrift(value: RenderError) -> ttypes.RenderError:
     return ttypes.RenderError(
         arrow_i18n_message_to_thrift(value.message),
@@ -310,7 +299,7 @@ def arrow_render_error_to_thrift(value: RenderError) -> ttypes.RenderError:
 
 def arrow_fetch_result_to_thrift(value: FetchResult) -> ttypes.FetchResult:
     return ttypes.FetchResult(
-        value.path.name, [arrow_render_error_to_thrift(e) for e in value.errors]
+        value.path.name, [arrow_fetch_error_to_thrift(e) for e in value.errors]
     )
 
 
@@ -332,14 +321,6 @@ def arrow_uploaded_file_to_thrift(value: UploadedFile) -> ttypes.UploadedFile:
 ### thrift_*_to_arrow(): decode Arrow types from Thrift
 #
 # They raise ValueError on cheap-to-detect semantic errors.
-
-
-def thrift_tab_to_arrow(value: ttypes.Tab) -> Tab:
-    return Tab(value.slug, value.name)
-
-
-def thrift_tab_output_to_arrow(value: ttypes.TabOutput) -> TabOutput:
-    return TabOutput(thrift_tab_to_arrow(value.tab), value.table_filename)
 
 
 def thrift_i18n_message_to_arrow(value: ttypes.I18nMessage) -> I18nMessage:
@@ -415,6 +396,10 @@ def thrift_quick_fix_to_arrow(value: ttypes.QuickFix) -> QuickFix:
     )
 
 
+def thrift_fetch_error_to_arrow(value: ttypes.FetchError) -> FetchError:
+    return FetchError(thrift_i18n_message_to_arrow(value.message))
+
+
 def thrift_render_error_to_arrow(value: ttypes.RenderError) -> RenderError:
     return RenderError(
         thrift_i18n_message_to_arrow(value.message),
@@ -426,7 +411,7 @@ def thrift_fetch_result_to_arrow(
     value: ttypes.FetchResult, basedir: Path
 ) -> FetchResult:
     path = _thrift_filename_to_path(value.filename, basedir)
-    return FetchResult(path, [thrift_render_error_to_arrow(e) for e in value.errors])
+    return FetchResult(path, [thrift_fetch_error_to_arrow(e) for e in value.errors])
 
 
 def thrift_render_result_to_arrow(value: ttypes.RenderResult) -> RenderResult:

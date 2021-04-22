@@ -463,12 +463,12 @@ class migrateParams_args(object):
             if fid == 1:
                 if ftype == TType.MAP:
                     self.params = {}
-                    (_ktype117, _vtype118, _size116) = iprot.readMapBegin()
-                    for _i120 in range(_size116):
-                        _key121 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
-                        _val122 = Json()
-                        _val122.read(iprot)
-                        self.params[_key121] = _val122
+                    (_ktype119, _vtype120, _size118) = iprot.readMapBegin()
+                    for _i122 in range(_size118):
+                        _key123 = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                        _val124 = Json()
+                        _val124.read(iprot)
+                        self.params[_key123] = _val124
                     iprot.readMapEnd()
                 else:
                     iprot.skip(ftype)
@@ -485,9 +485,9 @@ class migrateParams_args(object):
         if self.params is not None:
             oprot.writeFieldBegin('params', TType.MAP, 1)
             oprot.writeMapBegin(TType.STRING, TType.STRUCT, len(self.params))
-            for kiter123, viter124 in self.params.items():
-                oprot.writeString(kiter123.encode('utf-8') if sys.version_info[0] == 2 else kiter123)
-                viter124.write(oprot)
+            for kiter125, viter126 in self.params.items():
+                oprot.writeString(kiter125.encode('utf-8') if sys.version_info[0] == 2 else kiter125)
+                viter126.write(oprot)
             oprot.writeMapEnd()
             oprot.writeFieldEnd()
         oprot.writeFieldStop()

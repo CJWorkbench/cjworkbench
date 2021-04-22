@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 from tempfile import mkstemp
-from typing import Any, Dict, List, NamedTuple, Optional
+from typing import Any, Dict, NamedTuple, Optional
 
 import pyarrow as pa
 from cjwmodule.spec.paramschema import ParamSchema
@@ -13,13 +13,11 @@ from cjwkernel.tests.util import arrow_table_context
 from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     RenderResult,
-    Tab,
     TabOutput,
     UploadedFile,
     arrow_fetch_result_to_thrift,
     arrow_uploaded_file_to_thrift,
     pydict_to_thrift_json_object,
-    arrow_tab_to_thrift,
     arrow_tab_output_to_thrift,
     thrift_render_result_to_arrow,
 )
@@ -103,6 +101,8 @@ class ModuleTestEnv:
 
     def __exit__(self, *args):
         cjwkernel.pandas.module.__dict__.update(self.old_defs)
+        if hasattr(cjwkernel.pandas.module, "render_arrow_v1"):
+            del cjwkernel.pandas.module.render_arrow_v1
         del self.old_defs
         shutil.rmtree(self.basedir)
         del self.basedir
@@ -111,8 +111,8 @@ class ModuleTestEnv:
         self,
         table: pa.Table,
         params: Dict[str, Any],
-        tab: Tab = Tab("tab-1", "Tab 1"),
-        tab_outputs: List[TabOutput] = [],
+        tab_name: str = "Tab 1",
+        tab_outputs: Dict[str, TabOutput] = {},
         fetch_result: Optional[FetchResult] = None,
         uploaded_files: Dict[str, UploadedFile] = {},
     ) -> RenderOutcome:
@@ -134,10 +134,11 @@ class ModuleTestEnv:
                         basedir=self.basedir,
                         input_filename=input_path.name,
                         params=pydict_to_thrift_json_object(params),
-                        tab=arrow_tab_to_thrift(tab),
-                        tab_outputs=[
-                            arrow_tab_output_to_thrift(to) for to in tab_outputs
-                        ],
+                        tab_name=tab_name,
+                        tab_outputs={
+                            k: arrow_tab_output_to_thrift(v)
+                            for k, v in tab_outputs.items()
+                        },
                         fetch_result=(
                             arrow_fetch_result_to_thrift(fetch_result)
                             if fetch_result is not None

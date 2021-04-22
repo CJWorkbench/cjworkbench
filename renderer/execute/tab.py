@@ -8,14 +8,13 @@ from typing import Any, Dict, List, Optional, FrozenSet
 import pyarrow as pa
 
 from cjwkernel.chroot import ChrootContext
-from cjwkernel.types import Tab
 from cjworkbench.sync import database_sync_to_async
 from cjwstate.models import Step, Workflow
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.modules.util import gather_param_tab_slugs
 from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from .step import execute_step, locked_step
-from .types import StepResult
+from .types import StepResult, Tab
 
 
 logger = logging.getLogger(__name__)
@@ -242,7 +241,7 @@ async def execute_tab_flow(
                 step=step.step,
                 module_zipfile=step.module_zipfile,
                 params=step.params,
-                tab=flow.tab,
+                tab_name=flow.tab.name,
                 input_path=last_result.path,
                 input_table_columns=last_result.columns,
                 tab_results=tab_results,

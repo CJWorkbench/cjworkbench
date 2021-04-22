@@ -25,11 +25,11 @@ from cjwkernel.thrift import ttypes
 from cjwkernel.types import (
     Column,
     ColumnType,
+    FetchError,
     FetchResult,
     I18nMessage,
     RenderError,
     RenderResult,
-    Tab,
     TabOutput,
     arrow_fetch_result_to_thrift,
     pydict_to_thrift_json_object,
@@ -50,7 +50,7 @@ class RenderTests(unittest.TestCase):
                     make_table(),
                     {},
                     fetch_result=FetchResult(
-                        path=parquet_path, errors=[RenderError(TODO_i18n("A warning"))]
+                        path=parquet_path, errors=[FetchError(TODO_i18n("A warning"))]
                     ),
                 )
             self.assertEqual(
@@ -65,7 +65,7 @@ class RenderTests(unittest.TestCase):
             self.assertEqual(tab_name, "Tab X")
 
         with ModuleTestEnv(render=render) as env:
-            env.call_render(make_table(), {}, tab=Tab("tab-x", "Tab X"))
+            env.call_render(make_table(), {}, tab_name="Tab X")
 
     @override_settings(MAX_ROWS_PER_TABLE=12)
     def test_render_with_settings(self):
@@ -227,7 +227,6 @@ class RenderTests(unittest.TestCase):
 
     def test_render_using_tab_output(self):
         def render(table, params):
-            self.assertEqual(params["tabparam"].slug, "tab-1")
             self.assertEqual(params["tabparam"].name, "Tab 1")
             self.assertEqual(
                 params["tabparam"].columns,
@@ -250,9 +249,9 @@ class RenderTests(unittest.TestCase):
                 env.call_render(
                     make_table(),
                     params={"tabparam": "tab-1"},
-                    tab_outputs=[
-                        TabOutput(tab=Tab("tab-1", "Tab 1"), table_filename=path.name)
-                    ],
+                    tab_outputs={
+                        "tab-1": TabOutput(tab_name="Tab 1", table_filename=path.name)
+                    },
                 )
 
 
@@ -379,7 +378,7 @@ class FetchTests(unittest.TestCase):
                 return outfile, "foo"
 
             result = self._test_fetch(fetch, output_filename=outfile.name)
-            self.assertEqual(result.errors, [RenderError(TODO_i18n("foo"))])
+            self.assertEqual(result.errors, [FetchError(TODO_i18n("foo"))])
 
     def test_fetch_return_tuple_path_and_errors(self):
         with tempfile_context(dir=self.basedir) as outfile:
@@ -395,8 +394,8 @@ class FetchTests(unittest.TestCase):
             self.assertEqual(
                 result.errors,
                 [
-                    RenderError(I18nMessage("foo", {"a": "b"}, "module")),
-                    RenderError(I18nMessage("bar", {"b": 1}, "cjwmodule")),
+                    FetchError(I18nMessage("foo", {"a": "b"}, "module")),
+                    FetchError(I18nMessage("bar", {"b": 1}, "cjwmodule")),
                 ],
             )
 
@@ -409,7 +408,7 @@ class FetchTests(unittest.TestCase):
             result = self._test_fetch(fetch, output_filename=outfile.name)
             self.assertEqual(
                 result.errors,
-                [RenderError(I18nMessage("message.id", {"k": "v"}, "module"))],
+                [FetchError(I18nMessage("message.id", {"k": "v"}, "module"))],
             )
 
     @override_settings(MAX_ROWS_PER_TABLE=2)
@@ -424,7 +423,7 @@ class FetchTests(unittest.TestCase):
                 FetchResult(
                     outfile,
                     errors=[
-                        RenderError(
+                        FetchError(
                             I18nMessage(
                                 "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning",
                                 {"old_number": 3, "new_number": 2},
@@ -447,7 +446,7 @@ class FetchTests(unittest.TestCase):
 
         with tempfile_context(dir=self.basedir) as outfile:
             result = self._test_fetch(fetch, output_filename=outfile.name)
-            self.assertEqual(result.errors, [RenderError(TODO_i18n("bad things"))])
+            self.assertEqual(result.errors, [FetchError(TODO_i18n("bad things"))])
             self.assertEqual(outfile.read_bytes(), b"")
 
     def test_fetch_return_uncoerceable_dataframe_is_error(self):

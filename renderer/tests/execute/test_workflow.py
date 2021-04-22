@@ -34,7 +34,7 @@ def mock_render(arrow_table: pa.Table):
         basedir,
         input_filename,
         params,
-        tab,
+        tab_name,
         fetch_result,
         tab_outputs,
         uploaded_files,

@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Callable, Dict, NamedTuple, Optional
 
+from cjwmodule.spec.types import ModuleSpec
 from cjwmodule.spec.paramschema import ParamSchema
 import pyarrow as pa
 
@@ -98,11 +99,14 @@ def _DEPRECATED_overwrite_to_fix_arrow_table_schema(
 
 
 def _prepare_params(
-    params: Dict[str, Any], basedir: Path, uploaded_files: Dict[str, UploadedFile]
+    module_spec: ModuleSpec,
+    params: Dict[str, Any],
+    basedir: Path,
+    uploaded_files: Dict[str, UploadedFile],
 ) -> Dict[str, Any]:
     """Convert JSON-ish params into params that Pandas-v0 render() expects.
 
-    This walks the global ModuleSpec's `.param_schema`.
+    This walks `module_spec.param_schema`
 
     The returned value is the same as `params`, except:
 
@@ -127,8 +131,7 @@ def _prepare_params(
         else:
             return value
 
-    global ModuleSpec  # injected by cjwkernel.pandas.main
-    return recurse(ModuleSpec.param_schema, params)
+    return recurse(module_spec.param_schema, params)
 
 
 def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchResult:
@@ -165,11 +168,14 @@ def call_fetch(fetch: Callable, request: ttypes.FetchRequest) -> ttypes.FetchRes
     return arrow_fetch_result_to_thrift(result)
 
 
-def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.RenderResult:
+def call_render(
+    module_spec: ModuleSpec, render: Callable, request: ttypes.RenderRequest
+) -> ttypes.RenderResult:
     basedir = Path(request.basedir)
     input_path = basedir / request.input_filename
     table, columns = load_trusted_arrow_file_with_columns(input_path)
     params = _prepare_params(
+        module_spec,
         thrift_json_object_to_pydict(request.params),
         basedir=basedir,
         uploaded_files={
@@ -189,7 +195,7 @@ def call_render(render: Callable, request: ttypes.RenderRequest) -> ttypes.Rende
         output_path,
         columns=columns,
         settings=settings,
-        tab_name=request.tab.name,
+        tab_name=request.tab_name,
         fetch_result=fetch_result,
     )
 
