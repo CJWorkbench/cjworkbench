@@ -1,7 +1,7 @@
 import os
 import tempfile
 import unittest
-from datetime import datetime as dt
+from datetime import datetime as dt, date
 from pathlib import Path
 from typing import List
 
@@ -1117,6 +1117,13 @@ class ArrowConversionTests(unittest.TestCase):
             make_table(
                 make_column("A", [dt.fromisoformat("2019-09-17T21:21:00.123456"), None])
             ),
+        )
+
+    def test_dataframe_date_column(self):
+        self._test_dataframe_to_arrow_table(
+            pd.DataFrame({"A": [pd.Period("2021-04-01", freq="D"), None]}),
+            [Column("A", ColumnType.Date(unit="month"))],
+            make_table(make_column("A", [date(2021, 4, 1), None], unit="month")),
         )
 
     def test_arrow_timestamp_column(self):

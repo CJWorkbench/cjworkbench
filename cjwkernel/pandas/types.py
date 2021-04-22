@@ -270,6 +270,10 @@ def series_to_arrow_array(series: pd.Series) -> pa.Array:
             pa.Array.from_pandas(series.cat.codes, mask=(series.cat.codes == -1)),
             series_to_arrow_array(series.cat.categories),
         )
+    elif pd.PeriodDtype(freq="D") == series.dtype:
+        return pa.array(
+            [(None if v is pd.NaT else v.ordinal) for v in series], type=pa.date32()
+        )
     else:
         return pa.array(series, type=_dtype_to_arrow_type(series.dtype))
 
