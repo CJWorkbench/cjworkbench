@@ -16,7 +16,7 @@ spec:
   connectionDraining:
     drainingTimeoutSec: 30
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend-ingress
@@ -36,10 +36,7 @@ spec:
       # TODO make tusd-hooks a different service
       paths:
       - path: /tusd-hooks
-        backend:
-          serviceName: http-404-service
-          servicePort: 80
-      - path: /tusd-hooks/*  # Don't trust Django: will it serve /tusd-hooks/?
+        pathType: Prefix  # Don't trust Django: it might serve "/tusd-hooks/" if we didn't use Prefix
         backend:
           serviceName: http-404-service
           servicePort: 80

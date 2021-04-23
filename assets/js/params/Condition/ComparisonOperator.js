@@ -99,6 +99,51 @@ export default function ComparisonOperator (props) {
           </>
           )
         : null}
+      {dtype === 'date'
+        // Condition's "timestamp_is" works on dates. Just change the text.
+        // This is backwards-compatible: a user who converts a column from
+        // "timestamp" to "date" won't need to re-enter data.
+        ? (
+          <>
+            <option value='timestamp_is'>
+              {t({
+                id: 'js.params.Condition.Comparison.dateIs',
+                message: 'Date is'
+              })}
+            </option>
+            <option value='timestamp_is_not'>
+              {t({
+                id: 'js.params.Condition.Comparison.dateIsNot',
+                message: 'Date is not'
+              })}
+            </option>
+            <option value='timestamp_is_after'>
+              {t({
+                id: 'js.params.Condition.Comparison.dateIsAfter',
+                message: 'Date is after'
+              })}
+            </option>
+            <option value='timestamp_is_after_or_equals'>
+              {t({
+                id: 'js.params.Condition.Comparison.dateIsAfterOrEquals',
+                message: 'Date is after or equals'
+              })}
+            </option>
+            <option value='timestamp_is_before'>
+              {t({
+                id: 'js.params.Condition.Comparison.dateIsBefore',
+                message: 'Date is before'
+              })}
+            </option>
+            <option value='timestamp_is_before_or_equals'>
+              {t({
+                id: 'js.params.Condition.Comparison.dateIsBeforeOrEquals',
+                message: 'Date is before or equals'
+              })}
+            </option>
+          </>
+          )
+        : null}
       {dtype === 'number'
         ? (
           <>

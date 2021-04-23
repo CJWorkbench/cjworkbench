@@ -537,10 +537,12 @@ def _clean_condition_recursively(
                     }
 
             elif value["operation"].startswith("timestamp"):
-                if column_type != "timestamp":
+                if column_type not in {"date", "timestamp"}:
                     errors.append(
                         PromptingError.WrongColumnType(
-                            [value["column"]], column_type, frozenset(["timestamp"])
+                            [value["column"]],
+                            column_type,
+                            frozenset(["date", "timestamp"]),
                         )
                     )
                 try:

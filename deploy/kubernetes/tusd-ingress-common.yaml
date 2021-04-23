@@ -1,5 +1,4 @@
----
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: tusd-ingress
@@ -12,13 +11,13 @@ spec:
   - http:
       paths:
       - path: /files  # spelling #1
+        # tusd allows POST to /files and /files/, to create files. This is a
+        # SECURITY risk. Prevent end-user users from POSTing to /files by
+        # responding with HTTP 404 if they try
         backend:
           serviceName: http-404-service
           servicePort: 80
       - path: /files/  # spelling #2
-        # tusd allows POST to /files and /files/, to create files. This is a
-        # SECURITY risk. Prevent end-user users from POSTing to /files by
-        # responding with HTTP 404 if they try
         backend:
           serviceName: http-404-service
           servicePort: 80

@@ -148,6 +148,7 @@ def _(spec: ParamField.Multitab, prefix: str) -> Dict[str, str]:
 def _(spec: ParamField.Multichartseries, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
+    _add_if_set(result, spec, prefix, "placeholder")
     return result
 
 
@@ -164,6 +165,13 @@ def _(spec: ParamField.Secret, prefix: str) -> Dict[str, str]:
 
 
 @extract_param_messages.register(ParamField.Custom)
+def _(spec: ParamField.Custom, prefix: str) -> Dict[str, str]:
+    result = {}
+    _add_if_set(result, spec, prefix, "name")
+    return result
+
+
+@extract_param_messages.register(ParamField.Timezone)
 def _(spec: ParamField.Custom, prefix: str) -> Dict[str, str]:
     result = {}
     _add_if_set(result, spec, prefix, "name")
