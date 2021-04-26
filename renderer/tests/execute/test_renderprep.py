@@ -948,7 +948,7 @@ class CleanValueTests(DbTestCase):
             cm.exception.errors,
             [
                 PromptingError.WrongColumnType(
-                    ["A"], "number", frozenset({"timestamp"})
+                    ["A"], "number", frozenset({"date", "timestamp"})
                 ),
             ],
         )
@@ -992,7 +992,7 @@ class CleanValueTests(DbTestCase):
             cm.exception.errors,
             [
                 PromptingError.WrongColumnType(
-                    ["A"], "number", frozenset({"timestamp"})
+                    ["A"], "number", frozenset({"date", "timestamp"})
                 ),
                 PromptingError.CannotCoerceValueToTimestamp("Yesterday"),
             ],
