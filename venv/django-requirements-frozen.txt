@@ -44,7 +44,7 @@ cjwparse==2.0.2
     jsonschema==3.0.2
       attrs==20.3.0
       pyrsistent==0.17.3
-      setuptools==54.1.1
+      setuptools==54.2.0
       six==1.15.0
     pyarrow==4.0.0
       numpy==1.20.2
