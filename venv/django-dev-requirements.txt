@@ -1,5 +1,6 @@
 # Requirements we install in dev mode but not production
 black==20.8b1  # code formatting
+isort[pyproject]  # code formatting
 watchdog  # develop-module
 freezegun  # unit tests
 cjwpandasmodule~=0.2.0  # unit tests
