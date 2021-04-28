@@ -1058,22 +1058,22 @@ msgid "js.params.Condition.Comparison.caseSensitive"
 msgstr ""
 
 #. default-message: Cell is empty
-#: assets/js/params/Condition/ComparisonOperator.js:157
+#: assets/js/params/Condition/ComparisonOperator.js:202
 msgid "js.params.Condition.Comparison.cellIsEmpty"
 msgstr ""
 
 #. default-message: Cell is not empty
-#: assets/js/params/Condition/ComparisonOperator.js:163
+#: assets/js/params/Condition/ComparisonOperator.js:208
 msgid "js.params.Condition.Comparison.cellIsNotEmpty"
 msgstr ""
 
 #. default-message: Cell is not null
-#: assets/js/params/Condition/ComparisonOperator.js:151
+#: assets/js/params/Condition/ComparisonOperator.js:196
 msgid "js.params.Condition.Comparison.cellIsNotNull"
 msgstr ""
 
 #. default-message: Cell is null
-#: assets/js/params/Condition/ComparisonOperator.js:145
+#: assets/js/params/Condition/ComparisonOperator.js:190
 msgid "js.params.Condition.Comparison.cellIsNull"
 msgstr ""
 
@@ -1082,33 +1082,63 @@ msgstr ""
 msgid "js.params.Condition.Comparison.column.placeholder"
 msgstr ""
 
+#. default-message: Date is
+#: assets/js/params/Condition/ComparisonOperator.js:109
+msgid "js.params.Condition.Comparison.dateIs"
+msgstr ""
+
+#. default-message: Date is after
+#: assets/js/params/Condition/ComparisonOperator.js:121
+msgid "js.params.Condition.Comparison.dateIsAfter"
+msgstr ""
+
+#. default-message: Date is after or equals
+#: assets/js/params/Condition/ComparisonOperator.js:127
+msgid "js.params.Condition.Comparison.dateIsAfterOrEquals"
+msgstr ""
+
+#. default-message: Date is before
+#: assets/js/params/Condition/ComparisonOperator.js:133
+msgid "js.params.Condition.Comparison.dateIsBefore"
+msgstr ""
+
+#. default-message: Date is before or equals
+#: assets/js/params/Condition/ComparisonOperator.js:139
+msgid "js.params.Condition.Comparison.dateIsBeforeOrEquals"
+msgstr ""
+
+#. default-message: Date is not
+#: assets/js/params/Condition/ComparisonOperator.js:115
+msgid "js.params.Condition.Comparison.dateIsNot"
+msgstr ""
+
 #. default-message: Number is
-#: assets/js/params/Condition/ComparisonOperator.js:106
+#: assets/js/params/Condition/ComparisonOperator.js:151
 msgid "js.params.Condition.Comparison.numberIs"
 msgstr ""
 
 #. default-message: Number is greater than
-#: assets/js/params/Condition/ComparisonOperator.js:118
+#: assets/js/params/Condition/ComparisonOperator.js:163
 msgid "js.params.Condition.Comparison.numberIsGreaterThan"
 msgstr ""
 
 #. default-message: Number is greater than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:124
+#: assets/js/params/Condition/ComparisonOperator.js:169
 msgid "js.params.Condition.Comparison.numberIsGreaterThanOrEqual"
 msgstr ""
 
 #. default-message: Number is less than
-#: assets/js/params/Condition/ComparisonOperator.js:130
+#: assets/js/params/Condition/ComparisonOperator.js:175
 msgid "js.params.Condition.Comparison.numberIsLessThan"
 msgstr ""
 
 #. default-message: Number is less than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:136
+#: assets/js/params/Condition/ComparisonOperator.js:181
 msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
 msgstr ""
 
 #. default-message: Number is not
-#: assets/js/params/Condition/ComparisonOperator.js:112
+#: assets/js/params/Condition/ComparisonOperator.js:157
 msgid "js.params.Condition.Comparison.numberIsNot"
 msgstr ""
 
@@ -1344,78 +1374,113 @@ msgstr ""
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
-#. default-message: Convert columns
-#: assets/js/params/Custom/Groups/DateGranularities.js:89
-msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
+#. default-message: The “Group Dates” option has changed. Please upgrade from Timestamps to Dates. Workbench will force-upgrade in January 2022.
+#: assets/js/params/Custom/Groups/DateGranularities.js:61
+msgid "js.params.Custom.Groups.DateGranularities.deprecated"
 msgstr ""
 
-#. default-message: There are no Date and Time columns to group by date
-#: assets/js/params/Custom/Groups/DateGranularities.js:79
-msgid "js.params.Custom.Groups.DateGranularities.noTimestampToGroup"
-msgstr ""
-
-#. default-message: Select a Date and Time column to group it by date
-#: assets/js/params/Custom/Groups/DateGranularities.js:97
-msgid "js.params.Custom.Groups.DateGranularities.selectTimestampToGroup"
+#. default-message: Upgrade to Dates
+#: assets/js/params/Custom/Groups/DateGranularities.js:67
+msgid "js.params.Custom.Groups.DateGranularities.upgrade"
 msgstr ""
 
 #. default-message: as is
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
+#: assets/js/params/Custom/Groups/DateGranularity.js:26
 msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
 msgstr ""
 
 #. default-message: by day
-#: assets/js/params/Custom/Groups/DateGranularity.js:65
+#: assets/js/params/Custom/Groups/DateGranularity.js:50
 msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
 msgstr ""
 
 #. default-message: by hour
-#: assets/js/params/Custom/Groups/DateGranularity.js:59
+#: assets/js/params/Custom/Groups/DateGranularity.js:44
 msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
 msgstr ""
 
 #. default-message: by minute
-#: assets/js/params/Custom/Groups/DateGranularity.js:53
+#: assets/js/params/Custom/Groups/DateGranularity.js:38
 msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
 msgstr ""
 
 #. default-message: by month
-#: assets/js/params/Custom/Groups/DateGranularity.js:77
+#: assets/js/params/Custom/Groups/DateGranularity.js:62
 msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
 msgstr ""
 
 #. default-message: by quarter
-#: assets/js/params/Custom/Groups/DateGranularity.js:83
+#: assets/js/params/Custom/Groups/DateGranularity.js:68
 msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
 msgstr ""
 
 #. default-message: by second
-#: assets/js/params/Custom/Groups/DateGranularity.js:47
+#: assets/js/params/Custom/Groups/DateGranularity.js:32
 msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
 msgstr ""
 
 #. default-message: by week
-#: assets/js/params/Custom/Groups/DateGranularity.js:71
+#: assets/js/params/Custom/Groups/DateGranularity.js:56
 msgid "js.params.Custom.Groups.DateGranularity.byWeek.option"
 msgstr ""
 
 #. default-message: Weeks begin Monday at midnight UTC.
-#: assets/js/params/Custom/Groups/DateGranularity.js:98
+#: assets/js/params/Custom/Groups/DateGranularity.js:83
 msgid "js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday"
 msgstr ""
 
 #. default-message: by year
-#: assets/js/params/Custom/Groups/DateGranularity.js:89
+#: assets/js/params/Custom/Groups/DateGranularity.js:74
 msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
 msgstr ""
 
 #. default-message: Granularity of “{colname}”
-#: assets/js/params/Custom/Groups/DateGranularity.js:29
+#: assets/js/params/Custom/Groups/DateGranularity.js:15
 msgid "js.params.Custom.Groups.DateGranularity.heading.title"
 msgstr ""
 
-#. default-message: Group dates
-#: assets/js/params/Custom/Groups/index.js:78
+#. default-message: “{name}” holds <0>{valueTypes}.</0>
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:33
+msgid "js.params.Custom.Groups.SelectedTemporalColumn"
+msgstr ""
+
+#. default-message: Convert to Date
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:42
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.convertToDate"
+msgstr ""
+
+#. default-message: days
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:12
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.type.days"
+msgstr ""
+
+#. default-message: months
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:14
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.type.months"
+msgstr ""
+
+#. default-message: quarters
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:15
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.type.quarters"
+msgstr ""
+
+#. default-message: timestamps
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:10
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.type.timestamps"
+msgstr ""
+
+#. default-message: weeks
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:13
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.type.weeks"
+msgstr ""
+
+#. default-message: years
+#: assets/js/params/Custom/Groups/SelectedTemporalColumn.js:16
+msgid "js.params.Custom.Groups.SelectedTemporalColumn.type.years"
+msgstr ""
+
+#. default-message: Group dates [deprecated]
+#: assets/js/params/Custom/Groups/index.js:66
 msgid "js.params.Custom.Groups.groupDates"
 msgstr ""
 

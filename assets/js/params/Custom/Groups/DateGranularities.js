@@ -1,107 +1,94 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import DateGranularity from './DateGranularity'
 import { Trans } from '@lingui/macro'
 
-function DateGranularityList ({ isReadOnly, name, colnames, value, onChange }) {
+export default function DateGranularities (props) {
+  const {
+    isReadOnly,
+    name,
+    value,
+    colnames,
+    applyQuickFix
+  } = props
+
+  const handleClickUpgrade = React.useCallback(
+    ev => {
+      const byGranularity = {}
+      colnames.forEach(colname => {
+        const granularity = value[colname]
+        if (granularity) {
+          if (!(granularity in byGranularity)) {
+            byGranularity[granularity] = []
+          }
+          byGranularity[granularity].push(colname)
+        }
+      })
+      Object.keys(byGranularity).forEach(granularity => {
+        const colnames = byGranularity[granularity]
+        if ('STH'.indexOf(granularity) !== -1) {
+          const operation = { S: 'startofsecond', T: 'startofminute', H: 'startofhour' }[granularity]
+          colnames.forEach(colname => {
+            applyQuickFix({
+              type: 'prependStep',
+              moduleSlug: 'timestampmath',
+              partialParams: {
+                operation,
+                colname1: colname,
+                outcolname: colname
+              }
+            })
+          })
+        } else {
+          const unit = { D: 'day', W: 'week', M: 'month', Q: 'quarter', Y: 'year' }[granularity]
+          applyQuickFix({
+            type: 'prependStep',
+            moduleSlug: 'converttimestamptodate',
+            partialParams: { colnames, unit }
+          })
+        }
+      })
+    },
+    [applyQuickFix, colnames, value]
+  )
+
   return (
-    <ul>
-      {colnames.map(colname => (
-        <li key={colname}>
-          <DateGranularity
-            isReadOnly={isReadOnly}
-            name={`${name}[${colname}]`}
-            colname={colname}
-            value={value[colname] || null}
-            onChange={onChange}
-          />
-        </li>
-      ))}
-    </ul>
+    <div className='date-granularities'>
+      {!isReadOnly
+        ? (
+          <div className='date-granularities-deprecated'>
+            <p>
+              <Trans id='js.params.Custom.Groups.DateGranularities.deprecated'>
+                The “Group Dates” option has changed. Please upgrade from Timestamps
+                to Dates. Workbench will force-upgrade in January 2022.
+              </Trans>
+            </p>
+            <button type='button' onClick={handleClickUpgrade}>
+              <Trans id='js.params.Custom.Groups.DateGranularities.upgrade'>
+                Upgrade to Dates
+              </Trans>
+            </button>
+          </div>
+          )
+        : null}
+      <ul>
+        {colnames.map(colname => (
+          <li key={colname}>
+            <DateGranularity
+              name={`${name}[${colname}]`}
+              colname={colname}
+              value={value[colname] || null}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
-
-export default class DateGranularities extends PureComponent {
-  static propTypes = {
-    isReadOnly: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired, // for <select> names
-    value: PropTypes.objectOf(PropTypes.oneOf('STHDWMQY'.split('')).isRequired)
-      .isRequired,
-    colnames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    dateColnames: PropTypes.arrayOf(PropTypes.string.isRequired), // null if unknown
-    onChange: PropTypes.func.isRequired, // func(newObject) => undefined
-    addConvertToDateModule: PropTypes.func.isRequired // func() => undefined
-  }
-
-  handleChangeDateGranularity = (colname, granularity) => {
-    const { value, onChange } = this.props
-    const newValue = { ...value }
-    if (granularity) {
-      newValue[colname] = granularity
-    } else {
-      delete newValue[colname]
-    }
-    onChange(newValue)
-  }
-
-  render () {
-    const {
-      isReadOnly,
-      name,
-      value,
-      colnames,
-      dateColnames,
-      addConvertToDateModule
-    } = this.props
-
-    const focusColnames = colnames.filter(
-      c => dateColnames !== null && dateColnames.includes(c)
-    )
-
-    return (
-      <div className='date-granularities'>
-        {focusColnames.length > 0
-          ? (
-            <DateGranularityList
-              isReadOnly={isReadOnly}
-              name={name}
-              colnames={focusColnames}
-              value={value}
-              onChange={this.handleChangeDateGranularity}
-            />
-            )
-          : (
-            <div className='no-date-selected'>
-              {dateColnames !== null && dateColnames.length === 0
-                ? (
-                  <>
-                    <p>
-                      <Trans id='js.params.Custom.Groups.DateGranularities.noTimestampToGroup'>
-                        There are no Date and Time columns to group by date{' '}
-                      </Trans>
-                    </p>
-                    <button
-                      type='button'
-                      name={`${name}[add-module]`}
-                      className='quick-fix action-button button-blue'
-                      onClick={addConvertToDateModule}
-                    >
-                      <Trans id='js.params.Custom.Groups.DateGranularities.convertColumns'>
-                        Convert columns
-                      </Trans>
-                    </button>
-                  </>
-                  )
-                : (
-                  <p>
-                    <Trans id='js.params.Custom.Groups.DateGranularities.selectTimestampToGroup'>
-                      Select a Date and Time column to group it by date
-                    </Trans>
-                  </p>
-                  )}
-            </div>
-            )}
-      </div>
-    )
-  }
+DateGranularities.propTypes = {
+  isReadOnly: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired, // for <select> names
+  value: PropTypes.objectOf(PropTypes.oneOf('STHDWMQY'.split('')).isRequired).isRequired,
+  colnames: PropTypes.arrayOf(PropTypes.string.isRequired), // null if unknown
+  applyQuickFix: PropTypes.func.isRequired // func(newObject) => undefined
 }

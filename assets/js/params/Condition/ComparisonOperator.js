@@ -217,6 +217,6 @@ ComparisonOperator.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   value: ComparisonOperatorPropType.isRequired, // may be ''
-  dtype: PropTypes.oneOf(['text', 'timestamp', 'number']).isRequired,
+  dtype: PropTypes.oneOf(['date', 'text', 'timestamp', 'number']).isRequired,
   onChange: PropTypes.func.isRequired // func('text_is_exactly' or other) => undefined
 }

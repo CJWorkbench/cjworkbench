@@ -23,15 +23,37 @@
     }
   }
 
+  .selected-temporal-column {
+    font-size: 1.2rem;
+    color: $text-muted;
+
+    &>* {
+      display: inline;
+    }
+
+    p {
+      padding-right: .5rem;
+    }
+
+    button {
+      @include action-link;
+    }
+  }
+
   .date-granularities {
     margin-top: 2.5rem;
+    background: $brand-workspace--light;
+    padding: 1rem;
+    @include content-1;
 
-    .custom-select {
-      @extend %custom-select;
+    button {
+      @include action-button;
+      @include button-blue;
+      margin-bottom: 1rem;
     }
 
     .date-granularity h5 {
-      @extend %content-1;
+      font: inherit;
       color: $placeholder;
       margin: 0;
     }
@@ -47,15 +69,6 @@
       margin: 0;
       font: inherit;
       font-size: 1.4rem;
-    }
-    .no-date-selected {
-      margin-top: 2.5rem;
-      padding: 1.5rem;
-      background-color: $brand-workspace--light;
-      color: $brand-workspace;
-      @extend .content-1;
-      text-align: left;
-      word-wrap: break-word;
     }
   }
 }

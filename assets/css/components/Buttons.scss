@@ -383,6 +383,8 @@ button:focus {
   padding: 0;
   cursor: pointer;
   color: $workspace-action;
+  background: transparent;
+  font: inherit;
   font-weight: bold;
   &:hover {
     color: #2d9daa;

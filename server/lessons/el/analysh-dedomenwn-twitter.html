@@ -61,16 +61,35 @@
         && subfilter.value.toLowerCase() === 'science'
       )
     "
-    >Επιλέξτε τη στήλη <kbd>text (κείμενο)</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.<p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
+    >Επιλέξτε τη στήλη <kbd>text (κείμενο)</kbd> για το φιλτράρισμα. Επιλέξτε <kbd>Το κείμενο περιέχει</kbd> ως συνθήκη και αναζητήστε <code>science</code>.
+    <p class="instruction-detail">Ας ομαδοποιήσουμε τώρα βάσει ημερομηνίας τα τουίτ που προέκυψαν.</p>
   </li>
   <li
-    data-highlight='[{"type":"Module","index":2,"id_name":"groupby"}]'
-    data-test="return workflow.tabs[0].stepModuleIds[2] === 'groupby'"
-    >Προσθέστε το βήμα &quot;Ομαδοποίηση&quot;.</li>
+    data-highlight='[{"type":"Module","index":2,"id_name":"converttimestamptodate"}]'
+    data-test="return workflow.tabs[0].stepModuleIds[2] === 'converttimestamptodate'"
+    >Add the step 'Convert timestamp to date'.
+  </li>
+  <li
+    data-highlight='[{"type":"Step","moduleIdName":"converttimestamptodate"}]'
+    data-test="
+      const params = workflow.tabs[0].steps[2].params
+      return (
+        params.colnames.join('|') === 'created_at'
+        &amp;&amp; params.unit === 'year'
+      )
+    "
+    >Choose <kbd>created_at</kbd>, and set the "Unit" to <kbd>year</kbd>.
+  </li>
+  <li
+    data-highlight='[{"type":"Module","index":3,"id_name":"groupby"}]'
+    data-test="return workflow.tabs[0].stepModuleIds[3] === 'groupby'"
+    >Add the step 'Group'.
+  </li>
   <li
     data-highlight='[{"type":"Step","moduleIdName":"groupby"}]'
-    data-test="const params = workflow.tabs[0].steps[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
-    >Επιλέξτε <kbd>created_at (που_δημιουργήθηκαν_στις)</kbd> ως στήλη ημερομηνίας. Τσεκάρετε την <kbd>Ομαδοποίηση ημερομηνιών</kbd> και ομαδοποιήστε τις σειρές <kbd>βάσει έτους</kbd>. Ορίστε το όνομα της στήλης εξόδου &quot;Count&quot; (Πλήθος) σε <code>Number of tweets</code></li>
+    data-test="const params = workflow.tabs[0].steps[3].params; return params.groups.colnames.join('|') === 'created_at' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    >Choose <kbd>created_at</kbd> as the date column. Set the "Count" output column name to <code>Number of tweets</code>
+  </li>
 </ol>
 </section>
 <section>
