@@ -4,9 +4,9 @@ cjwpandasmodule==0.2.0
   cjwmodule==4.1.9
     google-re2==0.1.20210401
       six==1.15.0
-    httpx==0.18.0
+    httpx==0.18.1
       certifi==2020.12.5
-      httpcore==0.13.0
+      httpcore==0.13.2
         h11==0.12.0
         sniffio==1.2.0
       rfc3986==1.4.0
@@ -34,9 +34,9 @@ cjwparse==2.0.1
   cjwmodule==4.1.9
     google-re2==0.1.20210401
       six==1.15.0
-    httpx==0.18.0
+    httpx==0.18.1
       certifi==2020.12.5
-      httpcore==0.13.0
+      httpcore==0.13.2
         h11==0.12.0
         sniffio==1.2.0
       rfc3986==1.4.0
