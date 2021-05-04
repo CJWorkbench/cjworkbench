@@ -18,5 +18,5 @@ POD="$($KUBECTL get pods -lapp=frontend-app -o name | head -n1)"
 echo " $POD" >&2
 
 echo -n "Importing..." >&2
-$KUBECTL exec -it $POD -c frontend -- python ./manage.py import-modules $MODULES >&2
+$KUBECTL exec -it $POD -c frontend -- /opt/venv/django/bin/python ./manage.py import-modules $MODULES >&2
 echo " done" >&2

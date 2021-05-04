@@ -6,7 +6,9 @@ columnchart
 colwiseproportion
 concattabs
 convert-date
+converttexttodate
 converttexttonumber
+converttimestamptodate
 converttotext
 countbydate
 dropna
