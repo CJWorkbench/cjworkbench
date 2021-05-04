@@ -25,9 +25,6 @@ class TestQuickFix(LoggedInIntegrationTest):
             b.assert_element(".column-key", text=expected_colname_and_type, wait=True)
 
     def test_quick_fix_convert_to_date(self):
-        """
-        Tests that a module's `column_types` gets users to click "Convert".
-        """
         # https://www.pivotaltracker.com/story/show/160700316
         self._create_simple_workflow(
             csv_data="A,B\n2012-01-01,1\n2012-02-03,3\n2012-01-01,2",
@@ -43,12 +40,8 @@ class TestQuickFix(LoggedInIntegrationTest):
 
         # Wait for error to occur
         b = self.browser
-        b.assert_element(
-            ".step-error-msg",
-            text="The column “A” must be converted from Text to Timestamps.",
-            wait=True,
-        )
-        b.click_button("Convert Text to Timestamps")
+        b.assert_element(".step-error-msg", text="“A” is Text.", wait=True)
+        b.click_button("Convert to Timestamp")
 
         # Wait for module to appear
         b.assert_element(".module-name", text="Convert to timestamp", wait=True)
@@ -61,9 +54,6 @@ class TestQuickFix(LoggedInIntegrationTest):
         b.assert_element(".column-key", text="count number", wait=True)
 
     def test_quick_fix_convert_to_numbers(self):
-        """
-        Tests that a module's `column_types` gets users to click "Convert".
-        """
         b = self.browser
 
         # "Accidentally" create a column, 'Num' of type Text.
@@ -80,14 +70,10 @@ class TestQuickFix(LoggedInIntegrationTest):
         b.select("format", "Currency")
         self.submit_step()
         # Wait for error
-        b.assert_element(
-            ".step-error-msg",
-            text="The column “Num” must be converted from Text to Numbers.",
-            wait=True,
-        )
+        b.assert_element(".step-error-msg", text="“Num” is Text.", wait=True)
 
         # Fix the error by clicking the "Quick Fix" button.
-        b.click_button("Convert Text to Numbers")
+        b.click_button("Convert to Number")
         # Wait for module to appear
         b.assert_element(".module-name", text="Convert to number", wait=True)
         # The conversion won't work until we check an option.
@@ -122,15 +108,6 @@ class TestQuickFix(LoggedInIntegrationTest):
         self.submit_step()
 
         # Wait for errors
-        b.assert_element(
-            ".step-error-msg",
-            text="The column “Num1” must be converted from Text to Numbers.",
-            wait=True,
-        )
-        b.assert_element("button", text="Convert Text to Numbers")
-        b.assert_element(
-            ".step-error-msg",
-            text="The column “Num2” must be converted from Timestamps to Numbers.",
-            wait=True,
-        )
-        b.assert_element("button", "Convert Timestamps to Numbers")
+        b.assert_element(".step-error-msg", text="“Num1” is Text.", wait=True)
+        b.assert_element(".step-error-msg", text="“Num2” is Timestamp.", wait=True)
+        b.assert_element("button", "Convert to Number")

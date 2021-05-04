@@ -19,7 +19,7 @@ export class TableView extends React.PureComponent {
     columns: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+        type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
       }).isRequired
     ), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table

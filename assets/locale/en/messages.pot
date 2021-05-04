@@ -1058,22 +1058,22 @@ msgid "js.params.Condition.Comparison.caseSensitive"
 msgstr ""
 
 #. default-message: Cell is empty
-#: assets/js/params/Condition/ComparisonOperator.js:157
+#: assets/js/params/Condition/ComparisonOperator.js:202
 msgid "js.params.Condition.Comparison.cellIsEmpty"
 msgstr ""
 
 #. default-message: Cell is not empty
-#: assets/js/params/Condition/ComparisonOperator.js:163
+#: assets/js/params/Condition/ComparisonOperator.js:208
 msgid "js.params.Condition.Comparison.cellIsNotEmpty"
 msgstr ""
 
 #. default-message: Cell is not null
-#: assets/js/params/Condition/ComparisonOperator.js:151
+#: assets/js/params/Condition/ComparisonOperator.js:196
 msgid "js.params.Condition.Comparison.cellIsNotNull"
 msgstr ""
 
 #. default-message: Cell is null
-#: assets/js/params/Condition/ComparisonOperator.js:145
+#: assets/js/params/Condition/ComparisonOperator.js:190
 msgid "js.params.Condition.Comparison.cellIsNull"
 msgstr ""
 
@@ -1082,33 +1082,63 @@ msgstr ""
 msgid "js.params.Condition.Comparison.column.placeholder"
 msgstr ""
 
+#. default-message: Date is
+#: assets/js/params/Condition/ComparisonOperator.js:109
+msgid "js.params.Condition.Comparison.dateIs"
+msgstr ""
+
+#. default-message: Date is after
+#: assets/js/params/Condition/ComparisonOperator.js:121
+msgid "js.params.Condition.Comparison.dateIsAfter"
+msgstr ""
+
+#. default-message: Date is after or equals
+#: assets/js/params/Condition/ComparisonOperator.js:127
+msgid "js.params.Condition.Comparison.dateIsAfterOrEquals"
+msgstr ""
+
+#. default-message: Date is before
+#: assets/js/params/Condition/ComparisonOperator.js:133
+msgid "js.params.Condition.Comparison.dateIsBefore"
+msgstr ""
+
+#. default-message: Date is before or equals
+#: assets/js/params/Condition/ComparisonOperator.js:139
+msgid "js.params.Condition.Comparison.dateIsBeforeOrEquals"
+msgstr ""
+
+#. default-message: Date is not
+#: assets/js/params/Condition/ComparisonOperator.js:115
+msgid "js.params.Condition.Comparison.dateIsNot"
+msgstr ""
+
 #. default-message: Number is
-#: assets/js/params/Condition/ComparisonOperator.js:106
+#: assets/js/params/Condition/ComparisonOperator.js:151
 msgid "js.params.Condition.Comparison.numberIs"
 msgstr ""
 
 #. default-message: Number is greater than
-#: assets/js/params/Condition/ComparisonOperator.js:118
+#: assets/js/params/Condition/ComparisonOperator.js:163
 msgid "js.params.Condition.Comparison.numberIsGreaterThan"
 msgstr ""
 
 #. default-message: Number is greater than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:124
+#: assets/js/params/Condition/ComparisonOperator.js:169
 msgid "js.params.Condition.Comparison.numberIsGreaterThanOrEqual"
 msgstr ""
 
 #. default-message: Number is less than
-#: assets/js/params/Condition/ComparisonOperator.js:130
+#: assets/js/params/Condition/ComparisonOperator.js:175
 msgid "js.params.Condition.Comparison.numberIsLessThan"
 msgstr ""
 
 #. default-message: Number is less than or equals
-#: assets/js/params/Condition/ComparisonOperator.js:136
+#: assets/js/params/Condition/ComparisonOperator.js:181
 msgid "js.params.Condition.Comparison.numberIsLessThanOrEqual"
 msgstr ""
 
 #. default-message: Number is not
-#: assets/js/params/Condition/ComparisonOperator.js:112
+#: assets/js/params/Condition/ComparisonOperator.js:157
 msgid "js.params.Condition.Comparison.numberIsNot"
 msgstr ""
 
@@ -2331,57 +2361,67 @@ msgid "js.settings.billing.Subscription.renewedAt"
 msgstr ""
 
 #. default-message: Clean Text
-#: assets/js/table/ColumnContextMenu.js:104
+#: assets/js/table/ColumnContextMenu.js:122
 msgid "js.table.ColumnContextMenu.cleanText"
 msgstr ""
 
+#. default-message: Convert date unit
+#: assets/js/table/ColumnContextMenu.js:135
+msgid "js.table.ColumnContextMenu.convertDateUnit"
+msgstr ""
+
+#. default-message: Convert to date
+#: assets/js/table/ColumnContextMenu.js:140
+msgid "js.table.ColumnContextMenu.convertToDate"
+msgstr ""
+
 #. default-message: Convert to number
-#: assets/js/table/ColumnContextMenu.js:121
+#: assets/js/table/ColumnContextMenu.js:151
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr ""
 
 #. default-message: Convert to text
-#: assets/js/table/ColumnContextMenu.js:130
+#: assets/js/table/ColumnContextMenu.js:161
 msgid "js.table.ColumnContextMenu.convertToText"
 msgstr ""
 
 #. default-message: Convert to timestamp
-#: assets/js/table/ColumnContextMenu.js:112
+#: assets/js/table/ColumnContextMenu.js:171
 msgid "js.table.ColumnContextMenu.convertToTimestamp"
 msgstr ""
 
 #. default-message: Delete column
-#: assets/js/table/ColumnContextMenu.js:151
+#: assets/js/table/ColumnContextMenu.js:196
 msgid "js.table.ColumnContextMenu.deleteColumn"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/table/ColumnContextMenu.js:70
+#: assets/js/table/ColumnContextMenu.js:88
 msgid "js.table.ColumnContextMenu.duplicate"
 msgstr ""
 
 #. default-message: Filter
-#: assets/js/table/ColumnContextMenu.js:97
+#: assets/js/table/ColumnContextMenu.js:115
 msgid "js.table.ColumnContextMenu.filter"
 msgstr ""
 
 #. default-message: Format numbers
-#: assets/js/table/ColumnContextMenu.js:141
+#: assets/js/table/ColumnContextMenu.js:184
 msgid "js.table.ColumnContextMenu.formatNumbers"
 msgstr ""
 
 #. default-message: Rename
-#: assets/js/table/ColumnContextMenu.js:63
+#: assets/js/table/ColumnContextMenu.js:81
 msgid "js.table.ColumnContextMenu.rename."
 msgstr ""
 
 #. default-message: Sort ascending
-#: assets/js/table/ColumnContextMenu.js:78
+#: assets/js/table/ColumnContextMenu.js:96
 msgid "js.table.ColumnContextMenu.sortAscending"
 msgstr ""
 
 #. default-message: Sort descending
-#: assets/js/table/ColumnContextMenu.js:87
+#: assets/js/table/ColumnContextMenu.js:105
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr ""
 
@@ -2493,6 +2533,24 @@ msgstr ""
 msgid "js.util.timeDifference.now"
 msgstr ""
 
+#. i18n: The parameters {found_type} and {best_wanted_type} will have values
+#. among "date", "text", "number", "timestamp"; however, including an (possibly
+#. empty) "other" case is mandatory.
+#. default-message: Convert {found_type, select, date {Dates} text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, date {Dates} text {Text} number {Numbers} timestamp {Timestamps} other{}}
+#: _deprecated_i18n_messages.py:12
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
+msgstr ""
+
+#. i18n: The parameter {columns} will contain the total number of columns that
+#. need to be converted; you will also receive the column names: {0}, {1}, {2},
+#. etc. The parameters {found_type} and {best_wanted_type} will have values
+#. among "date", "text", "number", "timestamp"; however, including a (possibly
+#. empty) "other" case is mandatory.
+#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}
+#: _deprecated_i18n_messages.py:21
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
+msgstr ""
+
 #. default-message: Truncated output from {old_number} rows to {new_number}
 #: cjwkernel/pandas/types.py:439
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
@@ -2569,44 +2627,47 @@ msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 
 #. default-message: “{value}” is not a number. Please enter a number.
-#: renderer/execute/types.py:77
+#: renderer/execute/types.py:90
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
 msgstr ""
 
 #. default-message: “{value}” is not a timestamp. Please enter a value with the format “YYYY-MM-DD” or “YYYY-MM-DDThh:mmZ”.
-#: renderer/execute/types.py:95
+#: renderer/execute/types.py:105
 msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
-msgstr ""
-
-#. default-message: Convert to Text
-#: renderer/execute/types.py:148
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
-msgstr ""
-
-#. i18n: The parameters {found_type} and {best_wanted_type} will have values
-#. among "text", "number", "timestamp"; however, including an (possibly empty)
-#. "other" case is mandatory.
-#. default-message: Convert {found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}
-#: renderer/execute/types.py:154
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.general"
 msgstr ""
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names as {0}, {1},
 #. {2}, etc.
-#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted to Text.} =2 {The columns “{0}” and “{1}” must be converted to Text.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted to Text.} other {The columns “{0}”, “{1}” and # others must be converted to Text.}}
-#: renderer/execute/types.py:197
+#. default-message: { columns, plural, offset:2 =1 {“{0}” is not Text.} =2 {“{0}” and “{1}” are not Text.} =3 {“{0}”, “{1}” and “{2}” are not Text.} other {“{0}”, “{1}” and # others are not Text.}}
+#: renderer/execute/types.py:175
 msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
+msgstr ""
+
+#. default-message: Convert to Text
+#: renderer/execute/types.py:188
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
+msgstr ""
+
+#. i18n: The parameter {wanted_type} will have values among "text", "number",
+#. "date", "timestamp" or "other". ("other" may translate to "".)
+#. default-message: Convert to {wanted_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}
+#: renderer/execute/types.py:211
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.quick_fix"
 msgstr ""
 
 #. i18n: The parameter {columns} will contain the total number of columns that
 #. need to be converted; you will also receive the column names: {0}, {1}, {2},
-#. etc. The parameters {found_type} and {best_wanted_type} will have values
-#. among "text", "number", "timestamp"; however, including a (possibly empty)
-#. "other" case is mandatory.
-#. default-message: { columns, plural, offset:2 =1 {The column “{0}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}}.} =2 {The columns “{0}” and “{1}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps}  other{}}.} =3 {The columns “{0}”, “{1}” and “{2}” must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.} other {The columns “{0}”, “{1}” and # others must be converted from { found_type, select, text {Text} number {Numbers} timestamp {Timestamps} other {}} to {best_wanted_type, select, text {Text} number {Numbers} timestamp {Timestamps} other{}}.}}
-#: renderer/execute/types.py:210
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.general"
+#. etc. The parameter {found_type} will be "date", "text", "number",
+#. "timestamp" or "other". ("other" may translate to "".)
+#. default-message: {columns, plural, offset:2 =1 {“{0}” is {found_type, select, text {Text} number {Number} timestamp {Timestamp} date {Date} other {}}.} =2 {“{0}” and “{1}” are {found_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} =3 {“{0}”, “{1}” and “{2}” are {found_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} other {“{0}”, “{1}” and # others are {found_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.}}
+#: renderer/execute/types.py:224
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.message.before_convert_buttons"
+msgstr ""
+
+#. default-message: {columns, plural, offset:2 =1 {“{0}” is {found_type, select, text {Text} number {Number} timestamp {Timestamp} date {Date} other {}}. Select {best_wanted_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} =2 {“{0}” and “{1}” are {found_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}. Select {best_wanted_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} =3 {“{0}”, “{1}” and “{2}” are {found_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}. Select {best_wanted_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} other {“{0}”, “{1}” and # others are {found_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}. Select {best_wanted_type, select, text {Text} number {Number} date {Date} timestamp {Timestamp} other {}}.}}
+#: renderer/execute/types.py:242
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.message.without_convert_buttons"
 msgstr ""
 
 #. default-message: 403 Forbidden

@@ -12,6 +12,33 @@ import {
 } from '../components/Dropdown'
 import { Trans } from '@lingui/macro'
 
+const ColumnConverters = {
+  text: {
+    number: 'converttexttonumber',
+    date: 'converttexttodate',
+    timestamp: 'converttexttotimestamp',
+    text: null
+  },
+  number: {
+    text: 'converttotext',
+    date: null,
+    timestamp: null,
+    number: null
+  },
+  date: {
+    text: 'converttotext',
+    date: 'convertdatetodate', // special case!
+    timestamp: null,
+    number: null
+  },
+  timestamp: {
+    text: 'converttotext',
+    date: 'converttimestamptodate',
+    timestamp: null,
+    number: null
+  }
+}
+
 export default class ColumnContextMenu extends Component {
   static propTypes = {
     onClickAction: PropTypes.func.isRequired, // func(idName, forceNewModule, params)
@@ -27,24 +54,15 @@ export default class ColumnContextMenu extends Component {
     this.props.onClickAction(idName, true, extraParams)
   }
 
-  handleRenameColumn = (...args) => {
-    this.props.renameColumn(...args)
-  }
-
-  handleDuplicateColumn = () => this.createOrUpdate('duplicatecolumns')
-  handleSortAscending = () =>
-    this.createOrUpdate('sort', { is_ascending: true })
-
-  handleSortDescending = () =>
-    this.createOrUpdate('sort', { is_ascending: false })
-
   handleAddNewFilter = () => this.create('filter')
-  handleExtractNumbers = () => this.createOrUpdate('converttexttonumber')
   handleCleanText = () => this.createOrUpdate('clean-text')
+  handleConvert = ev => this.createOrUpdate(ev.target.value)
   handleDropColumn = () => this.createOrUpdate('selectcolumns', { keep: false })
-  handleConvertDate = () => this.createOrUpdate('convert-date')
-  handleConvertText = () => this.createOrUpdate('converttotext')
+  handleDuplicateColumn = () => this.createOrUpdate('duplicatecolumns')
   handleFormatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
+  handleRenameColumn = (...args) => this.props.renameColumn(...args)
+  handleSortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
+  handleSortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
 
   render () {
     const { columnType } = this.props
@@ -103,19 +121,31 @@ export default class ColumnContextMenu extends Component {
           >
             <Trans id='js.table.ColumnContextMenu.cleanText'>Clean Text</Trans>
           </DropdownItem>
+
           <DropdownDivider />
+
           <DropdownItem
-            onClick={this.handleConvertDate}
-            className='convert-date'
+            onClick={this.handleConvert}
+            value={ColumnConverters[columnType].date || ''}
+            disabled={ColumnConverters[columnType].date === null}
             icon='icon-calendar'
           >
-            <Trans id='js.table.ColumnContextMenu.convertToTimestamp'>
-              Convert to timestamp
-            </Trans>
+            {columnType === 'date'
+              ? (
+                <Trans id='js.table.ColumnContextMenu.convertDateUnit'>
+                  Convert date unit
+                </Trans>
+                )
+              : (
+                <Trans id='js.table.ColumnContextMenu.convertToDate'>
+                  Convert to date
+                </Trans>
+                )}
           </DropdownItem>
           <DropdownItem
-            onClick={this.handleExtractNumbers}
-            className='converttexttonumber'
+            onClick={this.handleConvert}
+            value={ColumnConverters[columnType].number || ''}
+            disabled={ColumnConverters[columnType].number === null}
             icon='icon-number'
           >
             <Trans id='js.table.ColumnContextMenu.convertToNumbers'>
@@ -123,15 +153,28 @@ export default class ColumnContextMenu extends Component {
             </Trans>
           </DropdownItem>
           <DropdownItem
-            onClick={this.handleConvertText}
-            className='converttotext'
+            onClick={this.handleConvert}
+            value={ColumnConverters[columnType].text || ''}
+            disabled={ColumnConverters[columnType].text === null}
             icon='icon-text'
           >
             <Trans id='js.table.ColumnContextMenu.convertToText'>
               Convert to text
             </Trans>
           </DropdownItem>
+          <DropdownItem
+            onClick={this.handleConvert}
+            value={ColumnConverters[columnType].timestamp || ''}
+            disabled={ColumnConverters[columnType].timestamp === null}
+            icon='icon-calendar'
+          >
+            <Trans id='js.table.ColumnContextMenu.convertToTimestamp'>
+              Convert to timestamp
+            </Trans>
+          </DropdownItem>
+
           <DropdownDivider />
+
           <DropdownItem
             onClick={this.handleFormatNumbers}
             className='formatnumbers'
@@ -142,7 +185,9 @@ export default class ColumnContextMenu extends Component {
               Format numbers
             </Trans>
           </DropdownItem>
+
           <DropdownDivider />
+
           <DropdownItem
             onClick={this.handleDropColumn}
             className='drop-column'

@@ -18,7 +18,7 @@ export default class JoinColumns extends PureComponent {
     inputColumns: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+        type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
       }).isRequired
     ),
     tabs: PropTypes.arrayOf(
@@ -28,7 +28,7 @@ export default class JoinColumns extends PureComponent {
         outputColumns: PropTypes.arrayOf(
           PropTypes.shape({
             name: PropTypes.string.isRequired,
-            type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+            type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
           }).isRequired
         ) // null while rendering
       }).isRequired

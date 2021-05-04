@@ -22,7 +22,7 @@ export class OutputPane extends React.Component {
       columns: PropTypes.arrayOf(
         PropTypes.shape({
           name: PropTypes.string.isRequired,
-          type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+          type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
         }).isRequired
       ), // or null
       nRows: PropTypes.number // or null
@@ -36,7 +36,7 @@ export class OutputPane extends React.Component {
       columns: PropTypes.arrayOf(
         PropTypes.shape({
           name: PropTypes.string.isRequired,
-          type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+          type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
         }).isRequired
       ), // or null
       nRows: PropTypes.number // or null

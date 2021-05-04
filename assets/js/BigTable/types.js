@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 
 const columnDefinitionType = PropTypes.shape({
-  type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired,
+  type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired,
   width: PropTypes.number.isRequired,
   headerComponent: PropTypes.elementType.isRequired,
   valueComponent: PropTypes.elementType.isRequired

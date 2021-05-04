@@ -35,12 +35,9 @@ function buildEmptyRow (columns) {
       case 'text':
         value = ''
         break
+      case 'date':
       case 'number':
-        value = null
-        break
       case 'timestamp':
-        value = null
-        break
       default:
         value = null
         break
@@ -109,7 +106,7 @@ export default class DataGrid extends PureComponent {
     columns: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+        type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
       }).isRequired
     ), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table

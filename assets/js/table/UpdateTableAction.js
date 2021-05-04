@@ -24,17 +24,20 @@ import {
  */
 export const moduleParamsBuilders = {
   selectcolumns: buildSelectColumnsParams,
-  duplicatecolumns: genericAddColumn('colnames'),
+  duplicatecolumns: genericAddColumnToColnames,
   filter: buildFilterParams,
   editcells: buildEditCellsParams,
   renamecolumns: buildRenameColumnsParams,
   reordercolumns: buildReorderColumnsParams,
   sort: buildSortColumnsParams,
-  converttexttonumber: genericAddColumn('colnames'),
-  'clean-text': genericAddColumn('colnames'),
-  'convert-date': genericAddColumn('colnames'),
-  converttotext: genericAddColumn('colnames'),
-  formatnumbers: genericAddColumn('colnames')
+  converttexttonumber: genericAddColumnToColnames,
+  'clean-text': genericAddColumnToColnames,
+  'convert-date': genericAddColumnToColnames,
+  converttimestamptodate: genericAddColumnToColnames,
+  convertdatetodate: genericAddColumnToColnames,
+  converttexttodate: genericAddColumnToColnames,
+  converttotext: genericAddColumnToColnames,
+  formatnumbers: genericAddColumnToColnames
 }
 
 /**
@@ -228,26 +231,24 @@ function newParamsUnlessNoChange (oldParams, newParams) {
   return null
 }
 
-function genericAddColumn (key) {
-  return (oldParams, params) => {
-    const colnames = oldParams ? oldParams[key] || [] : []
-    if (!params.columnKey) throw new Error('Expected "columnKey" column to add')
-    const colname = params.columnKey
+function genericAddColumnToColnames (oldParams, params) {
+  if (!params.columnKey) throw new Error('Expected "columnKey" column to add')
+  const colnames = oldParams ? oldParams.colnames || [] : []
+  const colname = params.columnKey
 
-    if (!colname) {
-      throw new Error('Unexpected params: ' + JSON.stringify(params))
-    }
+  if (!colname) {
+    throw new Error('Unexpected params: ' + JSON.stringify(params))
+  }
 
-    if (colnames.includes(colname)) {
-      return null
-    } else {
-      const newParams = { ...params }
-      const colname = newParams.columnKey
-      delete newParams.columnKey
-      newParams[key] = [...colnames, colname]
+  if (colnames.includes(colname)) {
+    return null
+  } else {
+    const newParams = { ...params }
+    const colname = newParams.columnKey
+    delete newParams.columnKey
+    newParams.colnames = [...colnames, colname]
 
-      return newParamsUnlessNoChange(oldParams, newParams)
-    }
+    return newParamsUnlessNoChange(oldParams, newParams)
   }
 }
 

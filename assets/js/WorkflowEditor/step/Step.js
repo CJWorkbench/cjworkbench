@@ -76,7 +76,7 @@ export class Step extends React.PureComponent {
       output_columns: PropTypes.arrayOf(
         PropTypes.shape({
           name: PropTypes.string.isRequired,
-          type: PropTypes.oneOf(['text', 'number', 'timestamp']).isRequired
+          type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
         })
       ) // or null
     }), // or null
