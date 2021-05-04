@@ -12,7 +12,7 @@ lz4
 nltk
 oauthlib
 pandas~=0.25.0
-pyarrow~=3.0
+pyarrow~=4.0
 pyroute2==0.5.9
 pyspawner~=0.9.2
 pytz
