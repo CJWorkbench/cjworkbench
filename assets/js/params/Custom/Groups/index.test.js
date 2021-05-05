@@ -24,7 +24,7 @@ test('show pseudo-quick-fix when group_dates:true and there are no date columns'
     inputColumns: [{ name: 'A', type: 'text' }]
   })
 
-  fireEvent.click(getByText("Convert columns"))
+  fireEvent.click(getByText('Convert columns'))
   expect(applyQuickFix).toHaveBeenCalledWith({
     type: 'prependStep',
     moduleSlug: 'convert-date',
@@ -60,8 +60,8 @@ test('show dropdown only for selected dates', () => {
     ]
   })
 
-  expect(queryByLabelText("Granularity of “A”")).not.toBe(null)
-  expect(queryByLabelText("Granularity of “B”")).toBe(null)
+  expect(queryByLabelText('Granularity of “A”')).not.toBe(null)
+  expect(queryByLabelText('Granularity of “B”')).toBe(null)
 })
 
 test('set date granularity when there is no value', () => {
@@ -76,7 +76,7 @@ test('set date granularity when there is no value', () => {
     ]
   })
 
-  fireEvent.change(getByLabelText("Granularity of “A”"), { target: { value: 'H' } })
+  fireEvent.change(getByLabelText('Granularity of “A”'), { target: { value: 'H' } })
   expect(onChange).toHaveBeenCalledWith({
     colnames: ['A'],
     group_dates: true,
