@@ -1374,78 +1374,8 @@ msgstr ""
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
-#. default-message: Convert columns
-#: assets/js/params/Custom/Groups/DateGranularities.js:89
-msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
-msgstr ""
-
-#. default-message: There are no Date and Time columns to group by date
-#: assets/js/params/Custom/Groups/DateGranularities.js:79
-msgid "js.params.Custom.Groups.DateGranularities.noTimestampToGroup"
-msgstr ""
-
-#. default-message: Select a Date and Time column to group it by date
-#: assets/js/params/Custom/Groups/DateGranularities.js:97
-msgid "js.params.Custom.Groups.DateGranularities.selectTimestampToGroup"
-msgstr ""
-
-#. default-message: as is
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
-msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
-msgstr ""
-
-#. default-message: by day
-#: assets/js/params/Custom/Groups/DateGranularity.js:65
-msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
-msgstr ""
-
-#. default-message: by hour
-#: assets/js/params/Custom/Groups/DateGranularity.js:59
-msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
-msgstr ""
-
-#. default-message: by minute
-#: assets/js/params/Custom/Groups/DateGranularity.js:53
-msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
-msgstr ""
-
-#. default-message: by month
-#: assets/js/params/Custom/Groups/DateGranularity.js:77
-msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
-msgstr ""
-
-#. default-message: by quarter
-#: assets/js/params/Custom/Groups/DateGranularity.js:83
-msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
-msgstr ""
-
-#. default-message: by second
-#: assets/js/params/Custom/Groups/DateGranularity.js:47
-msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
-msgstr ""
-
-#. default-message: by week
-#: assets/js/params/Custom/Groups/DateGranularity.js:71
-msgid "js.params.Custom.Groups.DateGranularity.byWeek.option"
-msgstr ""
-
-#. default-message: Weeks begin Monday at midnight UTC.
-#: assets/js/params/Custom/Groups/DateGranularity.js:98
-msgid "js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday"
-msgstr ""
-
-#. default-message: by year
-#: assets/js/params/Custom/Groups/DateGranularity.js:89
-msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
-msgstr ""
-
-#. default-message: Granularity of “{colname}”
-#: assets/js/params/Custom/Groups/DateGranularity.js:29
-msgid "js.params.Custom.Groups.DateGranularity.heading.title"
-msgstr ""
-
 #. default-message: Group dates
-#: assets/js/params/Custom/Groups/index.js:78
+#: assets/js/params/Custom/Groups.js:40
 msgid "js.params.Custom.Groups.groupDates"
 msgstr ""
 

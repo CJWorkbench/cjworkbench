@@ -1138,63 +1138,7 @@ msgstr "API"
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Open upload API instructions"
 
-#: assets/js/params/Custom/Groups/DateGranularities.js:89
-msgid "js.params.Custom.Groups.DateGranularities.convertColumns"
-msgstr "Convert columns"
-
-#: assets/js/params/Custom/Groups/DateGranularities.js:79
-msgid "js.params.Custom.Groups.DateGranularities.noTimestampToGroup"
-msgstr "There are no Date and Time columns to group by date"
-
-#: assets/js/params/Custom/Groups/DateGranularities.js:97
-msgid "js.params.Custom.Groups.DateGranularities.selectTimestampToGroup"
-msgstr "Select a Date and Time column to group it by date"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:41
-msgid "js.params.Custom.Groups.DateGranularity.asIs.option"
-msgstr "as is"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:65
-msgid "js.params.Custom.Groups.DateGranularity.byDay.option"
-msgstr "by day"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:59
-msgid "js.params.Custom.Groups.DateGranularity.byHour.option"
-msgstr "by hour"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:53
-msgid "js.params.Custom.Groups.DateGranularity.byMinute.option"
-msgstr "by minute"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:77
-msgid "js.params.Custom.Groups.DateGranularity.byMonth.option"
-msgstr "by month"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:83
-msgid "js.params.Custom.Groups.DateGranularity.byQuarter.option"
-msgstr "by quarter"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:47
-msgid "js.params.Custom.Groups.DateGranularity.bySecond.option"
-msgstr "by second"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:71
-msgid "js.params.Custom.Groups.DateGranularity.byWeek.option"
-msgstr "by week"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:98
-msgid "js.params.Custom.Groups.DateGranularity.byWeek.weekStartsMonday"
-msgstr "Weeks begin Monday at midnight UTC."
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:89
-msgid "js.params.Custom.Groups.DateGranularity.byYear.option"
-msgstr "by year"
-
-#: assets/js/params/Custom/Groups/DateGranularity.js:29
-msgid "js.params.Custom.Groups.DateGranularity.heading.title"
-msgstr "Granularity of “{colname}”"
-
-#: assets/js/params/Custom/Groups/index.js:78
+#: assets/js/params/Custom/Groups.js:40
 msgid "js.params.Custom.Groups.groupDates"
 msgstr "Group dates"
 
