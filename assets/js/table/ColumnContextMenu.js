@@ -16,7 +16,7 @@ const ColumnConverters = {
   text: {
     number: 'converttexttonumber',
     date: 'converttexttodate',
-    timestamp: 'converttexttotimestamp',
+    timestamp: 'convert-date', // FIXME rename module
     text: null
   },
   number: {
