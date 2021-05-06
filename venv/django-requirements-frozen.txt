@@ -3,25 +3,25 @@ Babel==2.9.1
   pytz==2021.1
 beautifulsoup4==4.7.1
   soupsieve==2.2.1
-boto3==1.17.64
-  botocore==1.20.64
+boto3==1.17.67
+  botocore==1.20.67
     jmespath==0.10.0
     python-dateutil==2.8.1
-      six==1.15.0
+      six==1.16.0
     urllib3==1.26.4
   jmespath==0.10.0
   s3transfer==0.4.2
-    botocore==1.20.64
+    botocore==1.20.67
       jmespath==0.10.0
       python-dateutil==2.8.1
-        six==1.15.0
+        six==1.16.0
       urllib3==1.26.4
 channels-rabbitmq==3.0.0
   carehare==0.0.10
     pamqp==3.0.1
   channels==3.0.3
     asgiref==3.3.4
-    Django==3.1.9
+    Django==3.1.10
       asgiref==3.3.4
       pytz==2021.1
       sqlparse==0.4.1
@@ -31,9 +31,9 @@ cjwparquet==2.2.1
     numpy==1.20.2
 cjwparse==2.0.2
   cchardet==2.1.7
-  cjwmodule==4.1.11
+  cjwmodule==4.1.12
     google-re2==0.1.20210401
-      six==1.15.0
+      six==1.16.0
     httpx==0.18.1
       certifi==2020.12.5
       httpcore==0.13.2
@@ -42,10 +42,10 @@ cjwparse==2.0.2
       rfc3986==1.4.0
       sniffio==1.2.0
     jsonschema==3.0.2
-      attrs==20.3.0
+      attrs==21.1.0
       pyrsistent==0.17.3
-      setuptools==54.2.0
-      six==1.15.0
+      setuptools==54.1.1
+      six==1.16.0
     pyarrow==4.0.0
       numpy==1.20.2
     pytz==2021.1
@@ -54,7 +54,7 @@ cjwparse==2.0.2
   pyarrow==4.0.0
     numpy==1.20.2
 django-allauth==0.44.0
-  Django==3.1.9
+  Django==3.1.10
     asgiref==3.3.4
     pytz==2021.1
     sqlparse==0.4.1
@@ -74,18 +74,18 @@ django-allauth==0.44.0
       idna==2.10
       urllib3==1.26.4
 django-user-accounts==2.1.0
-  Django==3.1.9
+  Django==3.1.10
     asgiref==3.3.4
     pytz==2021.1
     sqlparse==0.4.1
   django-appconf==1.0.4
-    Django==3.1.9
+    Django==3.1.10
       asgiref==3.3.4
       pytz==2021.1
       sqlparse==0.4.1
   pytz==2021.1
 html5lib==1.0.1
-  six==1.15.0
+  six==1.16.0
   webencodings==0.5.1
 iso8601==0.1.14
 natsort==7.1.1
@@ -94,7 +94,7 @@ psycopg2==2.8.6
 pycmarkgfm==1.1.0
   cffi==1.14.5
     pycparser==2.20
-PyICU==2.7.2
+PyICU==2.7.3
 pyspawner==0.9.2
   pyroute2==0.5.9
 python-dotenv==0.17.1
@@ -107,7 +107,7 @@ python-intercom==3.1.0
     chardet==4.0.0
     idna==2.10
     urllib3==1.26.4
-  six==1.15.0
+  six==1.16.0
 stripe==2.56.0
   requests==2.25.1
     certifi==2020.12.5
@@ -115,7 +115,7 @@ stripe==2.56.0
     idna==2.10
     urllib3==1.26.4
 thrift==0.13.0
-  six==1.15.0
+  six==1.16.0
 uvicorn==0.13.4
   click==7.1.2
   h11==0.12.0
