@@ -10,10 +10,10 @@
     Data types tell computers how to interpret and use values.
   </p>
   <p>
-    Different columns have different types: text, numbers, dates, locations, and so on. Some operations only work on specific types. For example, you can’t subtract text from a number.
+    Each Workbench column has a type: text, numbers, dates or timestamps. Each type empowers you to use a certain set of steps. Use "text" to search for keywords; use "numbers" to subtract.
   </p>
   <p>
-    In this lesson we will use data on incidents reported by the New York City police to learn how to convert columns between types.
+    In this lesson, we will use data on incidents reported by the New York City police to learn how to convert columns between types.
   </p>
 </section>
 
@@ -86,28 +86,38 @@ tabs:
 <section class="fullscreen">
   <h2>Data types</h2>
   <p>
-     Workbench supports three column types. The type of each column is displayed below the column name:
+     Workbench supports four column types. The type of each column is displayed below the column name:
   </p>
   <figure>
     <img class="half-width" alt="Inspect element" src="./type-header.png">
   </figure>
   <h3>Text</h3>
   <p>
-    Also known as “string”, this type can contain any character and can be of any length. Text is great for names, descriptions, notes and categories.
+    Each value is a sequence of characters, also known as “string”. Text is great for names, descriptions, notes and categories. CSV files store text exclusively.
   </p>
   <h3>Number</h3>
   <p>
-    This type is used for whole numbers (such as 8, 22 or 268) and decimals (such as 1.5 or 3.14). Numbers are great for sorting and math.
+    Each value can be a whole number (such as 8 or -268) or a decimal (such as 1.5 or 3.14). Numbers are great for sorting and math.
   </p>
   <h3>Timestamp</h3>
   <p>
-    This type stores points in time, with nanosecond precision. Timestamps are great for sorting and grouping records.
+    Each value is an “instant” in time, with nanosecond precision. Timestamps are great for sorting and math.
   </p>
   <p>
-    Timestamps do not have timezones: they are always in UTC.
+    Timestamps have no timezone: an event happens at the same timestamp everywhere in the world, regardless of local clocks. Timestamps are stored in Coordinated Universal Time (UTC), a cousin of Greenwich Mean Time.
   </p>
   <p>
-    Workbench displays timestamps in ISO-8601 format: “2019–01-23 11:42:00”.
+    Workbench displays timestamps in ISO-8601 format: “2019–01-23T11:42:00Z”.
+  </p>
+  <h3>Date</h3>
+  <p>
+    Each value is a calendar day. Dates are great for grouping and charting.
+  </p>
+  <p>
+    Unlike timestamps, date values <em>do</em> have a timezone. Workbench does not store the timezone, though, because common sense is usually enough. For example, everybody reading a Workbench report on traffic stops in New York should assume dates are in Eastern Time.
+  </p>
+  <p>
+    A Date column has a <em>unit</em>: day, week, month, quarter, or year. A column with a unit of “week” only stores Mondays. The unit determines how Workbench displays dates in tables and charts.
   </p>
 </section>
 <section>
@@ -119,22 +129,20 @@ tabs:
     <img alt="Inspect element" src="./type.png">
   </figure>
   <p>
-    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to timestamp.
+    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date.
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
       data-test="
         const step = workflow.tabs[0].steps[3]
-        return step && step.moduleSlug === 'convert-date' &&
+        return step &amp;&amp; step.moduleSlug === 'converttexttodate' &amp;&amp;
                step.params.colnames.join('|').toLowerCase() === 'complaint date'
-               && step.params.input_format === 'auto'"
-      >In the column menu<span>
-        <img class="icon-insert" src="images/lesson-icons/menu.svg">
-      </span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to timestamp</kbd>.
-      This will add a conversion step.
+               &amp;&amp; step.params.format === 'YYYY-MM-DD'
+    ">
+      In the column menu <span><img class="icon-insert" src="images/lesson-icons/menu.svg" /></span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to date</kbd>. This will add a conversion step.
       <p class="instruction-detail">
-        Now this column has “Timestamp” type. We'll use this cleaned column in the next lesson.
+        Now this column has “Date” type. We'll use this cleaned column in the next lesson.
       </p>
     </li>
   </ol>
@@ -142,7 +150,7 @@ tabs:
 <footer>
   <h2>Lesson Complete!</h2>
   <div class="completed">
-    <p class="summary">Next, we’ll learn about grouping by dates, and grouping by multiple columns.</p>
+    <p class="summary">Next, we’ll learn about grouping by month.</p>
   </div>
   <div class="next">
     <h2>Next</h2>

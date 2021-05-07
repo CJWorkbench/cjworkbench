@@ -5,8 +5,12 @@
 <section class="fullscreen">
   <h2>Εισαγωγή</h2>
   <p>Οι τύποι των δεδομένων χρησιμοποιούνται για να πουν στον υπολογιστή πώς να ερμηνεύσει και να χρησιμοποιήσει τις τιμές.</p>
-  <p>Διαφορετικές στήλες μπορούν να περιέχουν διαφορετικούς τύπους: κείμενο, αριθμούς. ημερομηνίες, τοποθεσίες κ.λπ. Ορισμένες λειτουργίες ισχύουν μόνο για συγκεκριμένους τύπους δεδομένων. Για παράδειγμα, δεν μπορείτε να αφαιρέσετε κείμενο από έναν αριθμό.</p>
-  <p>Σε αυτό το μάθημα θα χρησιμοποιήσουμε δεδομένα σχετικά με συμβάντα που καταγράφονται από την αστυνομία της Πόλης της Νέας Υόρκης με σκοπό να μάθουμε πώς να μετατρέπουμε στήλες από έναν τύπο σε έναν άλλο.</p>
+  <p>
+    Each Workbench column has a type: text, numbers, dates or timestamps. Each type empowers you to use a certain set of steps. Use "text" to search for keywords; use "numbers" to subtract.
+  </p>
+  <p>
+    In this lesson, we will use data on incidents reported by the New York City police to learn how to convert columns between types.
+  </p>
 </section><!-- Section 1 --><script id="initialWorkflow">
 tabs:
 - name: Lesson
@@ -62,32 +66,62 @@ tabs:
   </ol>
 </section>
 <section class="fullscreen">
-  <h2>Τύποι δεδομένων</h2>
-  <p>Το Workbench υποστηρίζει τρεις τύπους δεδομένων. Ο τύπος κάθε στήλης εμφανίζεται κάτω από το όνομα της στήλης:</p>
-  <figure><img class="half-width" alt="Εξέταση στοιχείου" src="./type-header.png"></figure>
-  <h3>Κείμενο</h3>
-  <p>Γνωστός και σαν &quot;συμβολοσειρά&quot; ή &quot;αλφαριθμητικό&quot;, αυτός ο τύπος μπορεί να περιέχει οποιονδήποτε χαρακτήρα και μπορεί να έχει οποιοδήποτε μήκος. Το κείμενο είναι ό,τι πρέπει για ονόματα, περιγραφές, σημειώσεις και κατηγορίες.</p>
-  <h3>Αριθμός</h3>
-  <p>Αυτός ο τύπος χρησιμοποιείται για ακέραιους αριθμούς (π.χ. 8, 22 ή 268) και δεκαδικούς (π.χ. 1.5 ή 3.14). Οι αριθμοί είναι ό,τι πρέπει για ταξινόμηση και αριθμητικές πράξεις,</p>
-  <h3>Ημερομηνία &amp; ώρα</h3>
-  <p>Αυτός ο τύπος αποθηκεύει τον χρόνο με ακρίβεια νανοδευτερολέπτου, Τα δεδομένα τύπου ημερομηνία &amp; ώρα είναι κατάλληλα για την ταξινόμηση και ομαδοποίηση δεδομένων.</p>
-  <p>Μια τιμή τύπου &quot;Ημερομηνία και ώρα&quot; μπορεί να γραφτεί με διαφορετικές μορφές, όπως &quot;23 January 2019 11:42&quot;. Προς το παρόν, η ημερομηνία και ώρα στο Workbench εμφανίζεται με τη μορφή &quot;2019&ndash;01-23 11:42:00&quot;.</p>
-  <p>Το Workbench δεν υποστηρίζει ακόμη ζώνες ώρας.</p>
+  <h2>Data types</h2>
+  <p>
+     Workbench supports four column types. The type of each column is displayed below the column name:
+  </p>
+  <figure>
+    <img class="half-width" alt="Inspect element" src="./type-header.png">
+  </figure>
+  <h3>Text</h3>
+  <p>
+    Each value is a sequence of characters, also known as “string”. Text is great for names, descriptions, notes and categories. CSV files store text exclusively.
+  </p>
+  <h3>Number</h3>
+  <p>
+    Each value can be a whole number (such as 8 or -268) or a decimal (such as 1.5 or 3.14). Numbers are great for sorting and math.
+  </p>
+  <h3>Timestamp</h3>
+  <p>
+    Each value is an “instant” in time, with nanosecond precision. Timestamps are great for sorting and math.
+  </p>
+  <p>
+    Timestamps have no timezone: an event happens at the same timestamp everywhere in the world, regardless of local clocks. Timestamps are stored in Coordinated Universal Time (UTC), a cousin of Greenwich Mean Time.
+  </p>
+  <p>
+    Workbench displays timestamps in ISO-8601 format: “2019–01-23T11:42:00Z”.
+  </p>
+  <h3>Date</h3>
+  <p>
+    Each value is a calendar day. Dates are great for grouping and charting.
+  </p>
+  <p>
+    Unlike timestamps, date values <em>do</em> have a timezone. Workbench does not store the timezone, though, because common sense is usually enough. For example, everybody reading a Workbench report on traffic stops in New York should assume dates are in Eastern Time.
+  </p>
+  <p>
+    A Date column has a <em>unit</em>: day, week, month, quarter, or year. A column with a unit of “week” only stores Mondays. The unit determines how Workbench displays dates in tables and charts.
+  </p>
 </section>
 <section>
   <h2>Μετατροπή ημερομηνιών</h2>
   <p>Αν και η στήλη <kbd>Complaint date (Ημερομηνία καταγγελίας)</kbd> μοιάζει με ημερομηνία, μπορείτε να δείτε ότι έχει φορτωθεί σαν κείμενο.</p>
   <figure class="half-width"><img alt="Εξέταση στοιχείου" src="./type.png"></figure>
-  <p>Ας καθαρίσουμε αυτά τα δεδομένα ορίζοντας τον τύπο της στήλης <kbd>Complaint date</kbd> σε ημερομηνία &amp; ώρα.</p>
+  <p>
+    Let’s clean this data by setting the type of the <kbd>Complaint date</kbd> column to date.
+  </p>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
     <li
       data-test="
         const step = workflow.tabs[0].steps[3]
-        return step && step.moduleSlug === 'convert-date' &&
+        return step &amp;&amp; step.moduleSlug === 'converttexttodate' &amp;&amp;
                step.params.colnames.join('|').toLowerCase() === 'complaint date'
-               && step.params.input_format === 'auto'"
-      >Στο μενού στήλης<span><img class="icon-insert" src="images/lesson-icons/menu.svg"></span> για τη στήλη <kbd>Complaint date</kbd> επιλέξτε <kbd>Μετατροπή σε ημερομηνία &amp; ώρα</kbd>. Αυτό θα προσθέσει ένα ακόμα βήμα μετατροπής.<p class="instruction-detail">Τώρα η στήλη αυτή είναι του τύπου &quot;Ημερομηνία &amp; ώρα&quot;. Θα χρησιμοποιήσουμε αυτή την τακτοποιημένη στήλη στο επόμενο μάθημα.</p>
+               &amp;&amp; step.params.format === 'YYYY-MM-DD'
+    ">
+      In the column menu <span><img class="icon-insert" src="images/lesson-icons/menu.svg" /></span> for the <kbd>Complaint date</kbd> column, select <kbd>Convert to date</kbd>. This will add a conversion step.
+      <p class="instruction-detail">
+        Now this column has “Date” type. We'll use this cleaned column in the next lesson.
+      </p>
     </li>
   </ol>
 </section>
