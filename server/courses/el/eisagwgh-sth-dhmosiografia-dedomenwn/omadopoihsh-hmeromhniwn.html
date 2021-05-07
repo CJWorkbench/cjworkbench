@@ -28,8 +28,8 @@ tabs:
     params:
       renames: { "boro_nm": "Borough", "cmplnt_fr_dt": "Complaint date" }
     collapsed: true
-  - module: convert-date
-    slug: step-convert-date
+  - module: converttexttodate
+    slug: step-converttexttodate
     params:
       colnames: [ "Complaint date" ]
     collapsed: true
@@ -50,29 +50,26 @@ tabs:
   <p>Η πρώτη μας ερώτηση είναι &quot;Πόσα συμβάντα καταγράφηκαν κάθε μήνα σε ολόκληρη την πόλη;&quot;</p>
   <h3 class="instructions">Οδηγίες</h3>
   <ol class="steps">
-    <li
-      data-test="
-        if (workflow.tabs[0].stepModuleIds[4] !== 'groupby') return false
+    <li data-test="
+      if (workflow.tabs[0].stepModuleIds[4] !== 'convertdatetodate') return false
 
-        // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
-        // the 'add Borough' step in the last section doesn't undo this test.
-        // (Every test for the entire lesson is evaluated in order)
-        return workflow.tabs[0].steps[4].params.groups.colnames.includes('Complaint date')
-      ">Προσθέστε την <kbd>Ομαδοποίηση</kbd> και επιλέξτε τη στήλη <kbd>Complaint date</kbd></li>
+      const params = workflow.tabs[0].steps[4].params
+      // You would think we'd want to check for month granularity here, but we can't
+      // because it will break in the next section where we ask user to switch to week.
+      // (Every test for the entire lesson is evaluated in order)
+      return params.colnames.join('|') === 'Complaint date' && ['week', 'month'].includes(params.unit)
+    ">
+      Open the <kbd>Complaint date</kbd> column's context menu and choose <kbd>Convert date unit</kbd>. Select <kbd>Month</kbd>.
+    </li>
     <li
       data-test="
-        const groups = workflow.tabs[0].steps[4].params.groups
-        // You would think we'd want to check for month granularity here, but we can't
-        // because it will break in the next section where we ask user to switch to day granularity.
-        // (Every test for the entire lesson is evaluated in order)
-        return (
-          groups.group_dates
-          && ['M', 'D'].includes(groups.date_granularities['Complaint date'])
-        )
-      ">Στο βήμα <kbd>Ομαδοποίηση</kbd>, τσεκάρετε την επιλογή <kbd>Ομαδοποίηση ημερομηνιών</kbd> και επιλέξτε <kbd>ανά μήνα</kbd> ως προς τη λεπτομέρεια</li>
+        return workflow.tabs[0].stepModuleIds[5] === 'groupby' &amp;&amp; workflow.tabs[0].steps[5].params.groups.colnames.join('|') === 'Complaint date'
+    ">
+      Add a <kbd>Group</kbd> step and select the column <kbd>Complaint date</kbd>
+    </li>
     <li
       data-test="
-        const agg = workflow.tabs[0].steps[4].params.aggregations
+        const agg = workflow.tabs[0].steps[5].params.aggregations
         return (
           agg[0]
           && agg[0].operation === 'size'
@@ -88,9 +85,9 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].stepModuleIds[5] !== 'linechart') return false
+        if (workflow.tabs[0].stepModuleIds[6] !== 'linechart') return false
 
-        const params = workflow.tabs[0].steps[5].params
+        const params = workflow.tabs[0].steps[6].params
         return (
           params.x_column === 'Complaint date'
           && params.y_columns[0]
@@ -98,17 +95,9 @@ tabs:
         )
       ">Δημιουργήστε ένα γραμμικό γράφημα. Επιλέξτε <kbd>Complaint date</kbd> για τον άξονα Χ και σχεδιάστε <kbd>Count of incidents</kbd> (Αριθμός συμβάντων) στον άξονα Y.<p class="instruction-detail">Τα γραφήματα με δύο σημεία δεδομένων δεν είναι πολύ ενημερωτικά. Για να οπτικοποιήσουμε τα ίδια δεδομένα αλλά για κάθε μέρα, μπορούμε να αλλάξουμε το επίπεδο λεπτομέρειας της ομάδας.</p>
     </li>
-    <li
-      data-test="
-        const params = workflow.tabs[0].steps[4].params
-        return (
-          params.groups.date_granularities['Complaint date'] === 'D'
-          // We test for day granularity ... _BUT_ later in the lesson we'll ask the
-          // user to switch back to month; so we'll need to test: either the user
-          // chose 'D', or the user is further along in the lesson
-          || params.groups.colnames.includes('Borough')
-        )
-      ">Στην Ομαδοποίηση στο βήμα 5, αλλάξτε τη Λεπτομέρεια σε <kbd>ανά ημέρα</kbd><p class="instruction-detail">Επιλέξτε το βήμα 6 για να εμφανιστεί το νέο σας γράφημα.</p>
+    <li data-test="return workflow.tabs[0].steps[4].params.unit === 'week'">
+      In step 5 (<kbd>Convert date unit</kbd>), change the unit to <kbd>Week</kbd>.
+      <p class="instruction-detail">Επιλέξτε το βήμα 6 για να εμφανιστεί το νέο σας γράφημα.</p>
     </li>
   </ol>
 </section>

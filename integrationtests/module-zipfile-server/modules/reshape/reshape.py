@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from cjwmodule import i18n
 from cjwmodule.util.colnames import gen_unique_clean_colnames_and_warn
-from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
+from pandas.api.types import is_datetime64_dtype, is_numeric_dtype, is_period_dtype
 
 
 class Settings(Protocol):
@@ -46,7 +46,7 @@ def wide_to_long(
         return (None, errors)
 
     # Check all values are the same type
-    value_table = table[set(table.columns).difference(key_colnames)]
+    value_table = table[(c for c in table.columns if c not in key_colnames)]
 
     if value_table.empty:
         # Avoids 'No objects to concatenate' when colname is categorical and
@@ -60,10 +60,16 @@ def wide_to_long(
         )
 
     value_dtypes = value_table.dtypes
+    are_date = value_dtypes.map(is_period_dtype)
     are_numeric = value_dtypes.map(is_numeric_dtype)
-    are_datetime = value_dtypes.map(is_datetime64_dtype)
-    are_text = ~are_numeric & ~are_datetime
-    if not are_numeric.all() and not are_datetime.all() and not are_text.all():
+    are_timestamp = value_dtypes.map(is_datetime64_dtype)
+    are_text = ~are_numeric & ~are_timestamp & ~are_date
+    if (
+        not are_numeric.all()
+        and not are_date.all()
+        and not are_timestamp.all()
+        and not are_text.all()
+    ):
         # Convert mixed values so they're all text. Values must all be the same
         # type.
         to_convert = value_table.columns[~are_text]

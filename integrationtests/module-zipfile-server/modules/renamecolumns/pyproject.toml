@@ -3,21 +3,21 @@ requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "pythoncode"
+name = "renamecolumns"
 version = "0.0.1"
-description = "Workbench module to run arbitrary Python code"
+description = "Workbench module to edit column names"
 authors = ["Adam Hooper <adam@adamhooper.com>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "~=3.8.0"
-cjwmodule = "~=4.0"
-cjwpandasmodule = "~=0.2.0"
+cjwmodule = "~=4.1"
+pyarrow = "~=4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "~=6.0"
-pytest-cov = "~=2.10"
+pytest-cov = "~= 2.10"
 
 [tool.isort]
 # Black compatibility
@@ -40,7 +40,6 @@ ignore = E123,E128,E266,E402,W503,E731,W601
 max-line-length = 88
 
 [testenv]
-skip_install = true
 deps =
   pyflakes: pyflakes>=2.2
   black: black
@@ -49,8 +48,8 @@ deps =
 commands_pre =
   pytest: poetry install -v
 commands =
-  pyflakes: pyflakes pythoncode.py tests
-  black: black --check pythoncode.py tests
-  isort: isort --check --diff pythoncode.py tests
-  pytest: poetry run pytest --cov=pythoncode --cov-report term-missing -vv
+  pyflakes: pyflakes renamecolumns.py tests
+  black: black --check renamecolumns.py tests
+  isort: isort --check --diff renamecolumns.py tests
+  pytest: poetry run pytest --cov=renamecolumns --cov-report term-missing -v
 """

@@ -2,6 +2,7 @@ import datetime
 from typing import Literal, NamedTuple, Optional
 
 import pandas as pd
+from pandas.testing import assert_series_equal
 
 from linechart import XSeries
 
@@ -9,6 +10,48 @@ from linechart import XSeries
 class Column(NamedTuple):
     type: Literal["timestamp", "number", "text"]
     format: Optional[str] = None
+
+
+def test_json_compatible_values_timestamp():
+    assert_series_equal(
+        XSeries(
+            pd.Series(
+                ["2020-11-30", "2020-12-07", "2020-12-14", "2020-12-21", "2020-12-28"],
+                dtype="datetime64[ns]",
+            ),
+            Column("timestamp"),
+        ).json_compatible_values,
+        pd.Series(
+            [
+                "2020-11-30T00:00:00Z",
+                "2020-12-07T00:00:00Z",
+                "2020-12-14T00:00:00Z",
+                "2020-12-21T00:00:00Z",
+                "2020-12-28T00:00:00Z",
+            ]
+        ),
+    )
+
+
+def test_json_compatible_values_date():
+    assert_series_equal(
+        XSeries(
+            pd.Series(
+                ["2020-11-30", "2020-12-07", "2020-12-14", "2020-12-21", "2020-12-28"],
+                dtype="period[D]",
+            ),
+            Column("date", "week"),
+        ).json_compatible_values,
+        pd.Series(
+            [
+                "2020-11-30",
+                "2020-12-07",
+                "2020-12-14",
+                "2020-12-21",
+                "2020-12-28",
+            ]
+        ),
+    )
 
 
 def test_timestamp_ticks_weeks():

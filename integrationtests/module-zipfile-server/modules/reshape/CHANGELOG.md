@@ -1,3 +1,11 @@
+2021-04-23.01
+-------------
+
+* wide-to-long: support date columns
+* wide-to-long: when suggesting "convert to text" in a Quick Fix, show the
+  first column name. (Previously, because of Python `set()` semantics, we
+  showed a random column name.)
+
 2021-01-25.01
 -------------
 

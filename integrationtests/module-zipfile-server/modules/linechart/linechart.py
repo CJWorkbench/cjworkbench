@@ -107,7 +107,7 @@ class XSeries(NamedTuple):
 
     @property
     def vega_data_type(self) -> str:
-        if self.column.type == "timestamp":
+        if self.column.type in {"date", "timestamp"}:
             return "temporal"
         elif self.column.type == "number":
             return "quantitative"
@@ -125,10 +125,12 @@ class XSeries(NamedTuple):
     def json_compatible_values(self) -> pd.Series:
         """Array of str or int or float values for the X axis of the chart.
 
-        In particular: datetime64 values will be converted to str.
+        In particular: date+timestamp values will be converted to str.
         """
         if self.column.type == "timestamp":
             return self.series.map(pd.Timestamp.isoformat) + "Z"
+        elif self.column.type == "date":
+            return self.series.dt.strftime("%Y-%m-%d")
         else:
             return self.series
 
@@ -151,49 +153,76 @@ class XSeries(NamedTuple):
               fewer ticks. Make sure the _last_ date is always a tick, and
               impute a start tick that may come before all dates in the series.
         """
-        if self.column.type != "timestamp":
+        if self.column.type not in {"timestamp", "date"}:
             return None
 
-        if not self.series.dt.normalize().equals(self.series):
+        if self.column.type == "timestamp" and not self.series.dt.normalize().equals(
+            self.series
+        ):
             # Dates with times. Fallback to vega-lite (D3) defaults
             return None
 
         # Okay, we have whole dates.
 
-        if self.series.dt.is_year_start.all():
+        if self.column.type == "date":
+
+            def ordinal(v: pd.Period, freq: str) -> int:
+                return v.asfreq(freq).ordinal
+
+        else:
+
+            def ordinal(v: pd.Timestamp, freq: str) -> int:
+                return v.to_period(freq).ordinal
+
+        def date(v: Union[pd.Period, pd.Timestamp]) -> datetime.date:
+            return datetime.date(v.year, v.month, v.day)
+
+        if (self.column.type == "date" and self.column.format == "year") or (
+            self.column.type == "timestamp" and self.series.dt.is_year_start.all()
+        ):
             # All dates are the first of the year. Treat this as "years".
             series_min = self.series.min()
             series_max = self.series.max()
             period = relativedelta(years=1)  # Python doesn't do year math
-            n_periods_in_domain = (
-                series_max.to_period("Y") - series_min.to_period("Y")
-            ).n
+            n_periods_in_domain = ordinal(series_max, "Y") - ordinal(series_min, "Y")
             return (
-                _nice_date_ticks(series_max.date(), n_periods_in_domain, period),
+                _nice_date_ticks(date(series_max), n_periods_in_domain, period),
                 "%Y",  # "2020"
             )
 
-        if self.series.dt.is_month_start.all():
+        if self.column.type == "date" and self.column.format == "quarter":
+            series_min = self.series.min()
+            series_max = self.series.max()
+            period = relativedelta(months=3)
+            n_periods_in_domain = ordinal(series_max, "Q") - ordinal(series_min, "Q")
+            return (
+                _nice_date_ticks(date(series_max), n_periods_in_domain, period),
+                "Q%q %Y",  # "Q2 2020"
+            )
+
+        if (self.column.type == "date" and self.column.format == "month") or (
+            self.column.type == "timestamp" and self.series.dt.is_month_start.all()
+        ):
             # All dates are the first of the month. Treat this as "months".
             series_min = self.series.min()
             series_max = self.series.max()
             period = relativedelta(months=1)  # Python doesn't do month math
-            n_periods_in_domain = (
-                series_max.to_period("M") - series_min.to_period("M")
-            ).n
+            n_periods_in_domain = ordinal(series_max, "M") - ordinal(series_min, "M")
             return (
-                _nice_date_ticks(series_max.date(), n_periods_in_domain, period),
+                _nice_date_ticks(date(series_max), n_periods_in_domain, period),
                 "%b %Y",  # "Jan 2020"
             )
 
-        if self.series.dt.dayofweek.nunique() == 1:
+        if (self.column.type == "date" and self.column.format == "week") or (
+            self.column.type == "timestamp" and self.series.dt.dayofweek.nunique() == 1
+        ):
             # All dates fall on the same weekday. Treat this as "weeks".
-            min_date = self.series.min().date()
-            max_date = self.series.max().date()
+            series_min = self.series.min()
+            series_max = self.series.max()
             period = datetime.timedelta(weeks=1)
-            n_periods_in_domain = (max_date - min_date) / period
+            n_periods_in_domain = ordinal(series_max, "W") - ordinal(series_min, "W")
             return (
-                _nice_date_ticks(max_date, n_periods_in_domain, period),
+                _nice_date_ticks(date(series_max), n_periods_in_domain, period),
                 "%b %-d, %Y",  # "Jan 3, 2020"
             )
 
@@ -301,6 +330,18 @@ class Chart(NamedTuple):
     def to_vega(self) -> Dict[str, Any]:
         """Build a Vega line chart."""
 
+        x_encoding = self.to_vega_x_encoding()
+        if "labelExpr" in x_encoding["axis"]:
+            tooltip_extras = {
+                "scale": {"type": "utc"},
+                # 'utcFormat(datum.value, "%Y-%m")' => "%Y-%m"
+                "format": x_encoding["axis"]["labelExpr"].split('"')[1],
+            }
+        elif self.x_series.vega_data_type == "temporal":
+            tooltip_extras = {"scale": {"type": "utc"}}
+        else:
+            tooltip_extras = {}
+
         LABEL_COLOR = "#383838"
         TITLE_COLOR = "#686768"
         HOVER_COLOR = TITLE_COLOR
@@ -337,12 +378,13 @@ class Chart(NamedTuple):
                 "values": self.to_vega_inline_data(),
             },
             "encoding": {
-                "x": self.to_vega_x_encoding(),  # for all layers
+                "x": x_encoding,  # for all layers
                 "y": self.to_vega_y_encoding(),  # for all layers
                 "tooltip": [
                     {
                         "field": "x",
                         "type": self.x_series.vega_data_type,
+                        **tooltip_extras,
                     },
                     *[
                         {

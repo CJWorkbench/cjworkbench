@@ -11,13 +11,14 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "~=3.8"
-cjwmodule = "~=3.1"
-pyarrow = "~=2.0"
+python = "~=3.8.0"
+cjwmodule = "~=4.1"
+pyarrow = "~=4.0"
 pandas = "~=0.25.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "~=6.0"
+pytest-cov = "~= 2.10"
 
 [tool.isort]
 # Black compatibility
@@ -26,7 +27,6 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 line_length = 88
-known_third_party = ["cjwmodule", "pyarrow", "pytest"]
 
 [tool.tox]
 legacy_tox_ini = """
@@ -45,15 +45,12 @@ deps =
   pyflakes: pyflakes>=2.2
   black: black
   isort: isort
+  pytest: poetry
+commands_pre =
+  pytest: poetry install -v
 commands =
   pyflakes: pyflakes reshape.py tests
   black: black --check reshape.py tests
   isort: isort --check --diff reshape.py tests
-
-[testenv:py38-pytest]
-deps =
-  pytest~=6.0
-commands =
-  pip install -q .
-  pytest -v
+  pytest: poetry run pytest --cov=reshape --cov-report term-missing -v
 """

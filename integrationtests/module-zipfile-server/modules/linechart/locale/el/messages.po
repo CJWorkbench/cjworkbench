@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-03-15 15:08+0000\n"
+"POT-Creation-Date: 2021-04-22 15:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -48,11 +48,14 @@ msgstr "Ετικέτα"
 msgid "_spec.parameters.y_columns.name"
 msgstr "Στήλη"
 
-#: linechart.py:513
+msgid "_spec.parameters.y_columns.placeholder"
+msgstr ""
+
+#: linechart.py:555
 msgid "noXAxisError.message"
 msgstr "Επιλέξτε μια στήλη για τον άξονα X"
 
-#: linechart.py:530
+#: linechart.py:572
 msgid "tooManyTextValuesError.message"
 msgstr ""
 "Η στήλη \"{x_column}\" έχει {n_safe_x_values} τιμές κειμένου. Δεν μπορούν"
@@ -60,34 +63,34 @@ msgstr ""
 "10 ή λιγότερες σειρές ή μετατρέψτε τη στήλη \"{x_column}\" σε αριθμό ή "
 "ημερομηνία."
 
-#: linechart.py:537
+#: linechart.py:579
 msgid "noValuesError.message"
 msgstr "Η στήλη \"{column_name}\" δεν έχει τιμές. Επιλέξτε μια στήλη με δεδομένα."
 
-#: linechart.py:546
+#: linechart.py:588
 msgid "onlyOneValueError.message"
 msgstr ""
 "Η στήλη \"{column_name}\" έχει μόνο 1 τιμή. Επιλέξτε μια στήλη με 2 ή "
 "περισσότερες τιμές."
 
-#: linechart.py:576
+#: linechart.py:618
 msgid "noYAxisError.message"
 msgstr "Επιλέξτε μια στήλη για τον άξονα Y"
 
-#: linechart.py:583
+#: linechart.py:625
 msgid "sameAxesError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y {column_name} επειδή "
 "είναι η στήλη του άξονα X"
 
-#: linechart.py:594
+#: linechart.py:636
 msgid "axisNotNumericError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης \"{column_name}\" του άξονα Y "
 "επειδή δεν είναι αριθμητική. Μετατρέψτε την σε αριθμούς πριν τη "
 "σχεδιάσετε."
 
-#: linechart.py:610
+#: linechart.py:652
 msgid "emptyAxisError.message"
 msgstr ""
 "Δεν είναι δυνατή η σχεδίαση της στήλης του άξονα Y \"{column_name}\" "

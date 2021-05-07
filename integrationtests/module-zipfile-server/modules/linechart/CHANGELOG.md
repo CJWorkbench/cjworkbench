@@ -1,3 +1,9 @@
+2021-04-22.01
+-------------
+
+* Fix off-by-one dates in tooltips
+* X axis: support Date columns (in addition to Timestamp columns)
+
 2020-03-18.01
 -------------
 

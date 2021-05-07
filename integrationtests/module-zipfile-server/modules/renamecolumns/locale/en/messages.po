@@ -1,14 +1,14 @@
 # English translations for PROJECT.
-# Copyright (C) 2020 ORGANIZATION
+# Copyright (C) 2021 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-09-14 19:40+0000\n"
+"POT-Creation-Date: 2021-05-07 13:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 msgid "_spec.name"
 msgstr "Rename columns"
@@ -31,7 +31,7 @@ msgstr "Paste list of new names"
 msgid "_spec.parameters.list_string.placeholder"
 msgstr "Paste column names (comma- or newline-separated)"
 
-#: renamecolumns.py:109
+#: renamecolumns.py:88
 msgid "badParam.custom_list.wrongNumberOfNames"
 msgstr ""
 "You supplied {n_names, plural, other {# column names} one {# column "

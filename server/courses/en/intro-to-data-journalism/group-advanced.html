@@ -35,8 +35,8 @@ tabs:
     params:
       renames: { "boro_nm": "Borough", "cmplnt_fr_dt": "Complaint date" }
     collapsed: true
-  - module: convert-date
-    slug: step-convert-date
+  - module: converttexttodate
+    slug: step-converttexttodate
     params:
       colnames: [ "Complaint date" ]
     collapsed: true
@@ -61,31 +61,26 @@ tabs:
   </p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
-    <li
-      data-test="
-        if (workflow.tabs[0].stepModuleIds[4] !== 'groupby') return false
+    <li data-test="
+      if (workflow.tabs[0].stepModuleIds[4] !== 'convertdatetodate') return false
 
-        // Ensure 'Complaint date' is in the colnames, but allow other cols too, so that
-        // the 'add Borough' step in the last section doesn't undo this test.
-        // (Every test for the entire lesson is evaluated in order)
-        return workflow.tabs[0].steps[4].params.groups.colnames.includes('Complaint date')
-      ">Add <kbd>Group</kbd> and select the column <kbd>Complaint date</kbd>
+      const params = workflow.tabs[0].steps[4].params
+      // You would think we'd want to check for month granularity here, but we can't
+      // because it will break in the next section where we ask user to switch to week.
+      // (Every test for the entire lesson is evaluated in order)
+      return params.colnames.join('|') === 'Complaint date' && ['week', 'month'].includes(params.unit)
+    ">
+      Open the <kbd>Complaint date</kbd> column's context menu and choose <kbd>Convert date unit</kbd>. Select <kbd>Month</kbd>.
     </li>
     <li
       data-test="
-        const groups = workflow.tabs[0].steps[4].params.groups
-        // You would think we'd want to check for month granularity here, but we can't
-        // because it will break in the next section where we ask user to switch to day granularity.
-        // (Every test for the entire lesson is evaluated in order)
-        return (
-          groups.group_dates
-          && ['M', 'D'].includes(groups.date_granularities['Complaint date'])
-        )
-      ">In the <kbd>Group</kbd> step, check the option <kbd>Group dates</kbd> and select <kbd>by month</kbd> as granularity
+        return workflow.tabs[0].stepModuleIds[5] === 'groupby' &amp;&amp; workflow.tabs[0].steps[5].params.groups.colnames.join('|') === 'Complaint date'
+    ">
+      Add a <kbd>Group</kbd> step and select the column <kbd>Complaint date</kbd>
     </li>
     <li
       data-test="
-        const agg = workflow.tabs[0].steps[4].params.aggregations
+        const agg = workflow.tabs[0].steps[5].params.aggregations
         return (
           agg[0]
           && agg[0].operation === 'size'
@@ -104,28 +99,20 @@ tabs:
   <ol class="steps">
     <li
       data-test="
-        if (workflow.tabs[0].stepModuleIds[5] !== 'linechart') return false
+        if (workflow.tabs[0].stepModuleIds[6] !== 'linechart') return false
 
-        const params = workflow.tabs[0].steps[5].params
+        const params = workflow.tabs[0].steps[6].params
         return (
           params.x_column === 'Complaint date'
           && params.y_columns[0]
           && params.y_columns[0].column.toLowerCase() === 'count of incidents'
         )
-      ">Add a Line chart. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count of incidents</kbd> on the Y-axis.
-      <p class="instruction-detail">Charts with two data points are not very informative. To visualize the same data but for each day, we can change the granularity of the group.</p>
+    ">
+      Add a <kbd>Line chart</kbd> step. Choose <kbd>Complaint date</kbd> as the X axis and plot <kbd>Count of incidents</kbd> on the Y-axis.
+      <p class="instruction-detail">To visualize the same data grouped by week, we can change the date unit.</p>
     </li>
-    <li
-      data-test="
-        const params = workflow.tabs[0].steps[4].params
-        return (
-          params.groups.date_granularities['Complaint date'] === 'D'
-          // We test for day granularity ... _BUT_ later in the lesson we'll ask the
-          // user to switch back to month; so we'll need to test: either the user
-          // chose 'D', or the user is further along in the lesson
-          || params.groups.colnames.includes('Borough')
-        )
-      ">In the Group in step 5, change the granularity to <kbd>by day</kbd>
+    <li data-test="return workflow.tabs[0].steps[4].params.unit === 'week'">
+      In step 5 (<kbd>Convert date unit</kbd>), change the unit to <kbd>Week</kbd>.
       <p class="instruction-detail">
         Select step 6 to display your new chart.
       </p>

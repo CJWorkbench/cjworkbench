@@ -1,48 +1,25 @@
-import itertools
 import json
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
+
+import pyarrow as pa
 from cjwmodule import i18n
+from cjwmodule.arrow.types import ArrowRenderResult
+from cjwmodule.types import RenderError
 from cjwmodule.util.colnames import Settings, gen_unique_clean_colnames_and_warn
 
 
-class UserVisibleError(Exception):
-    """An error that has an `i18n.I18nMessage` as its first argument"""
+class RenderErrorException(Exception):
+    """An error that has a `RenderError` as its first argument"""
 
     @property
-    def i18n_message(self):
+    def render_error(self) -> RenderError:
         return self.args[0]
-
-
-def _uniquify(colnames: List[str]):
-    """
-    Return `colnames`, renaming non-unique names to be unique.
-
-    The logic: walk the list from left to right. When we see a column name,
-    for the first time, blacklist it. If we see a blacklisted column name,
-    rename it by adding a unique digit and blacklist the new name.
-    """
-    seen = set()
-    ret = []
-
-    for colname in colnames:
-        if colname in seen:
-            # Modify `colname` by adding a number to it.
-            for n in itertools.count():
-                try_colname = f"{colname} {n + 1}"
-                if try_colname not in seen:
-                    colname = try_colname
-                    break
-        ret.append(colname)
-        seen.add(colname)
-
-    return ret
 
 
 def _parse_renames(
     renames: Dict[str, str], table_columns: List[str], *, settings: Settings
-) -> Tuple[Dict[str, str], List[i18n.I18nMessage]]:
-    """
-    Convert `renames` into a valid mapping for `table_columns`, plus warnings.
+) -> Tuple[Dict[str, str], List[RenderError]]:
+    """Convert `renames` into a valid mapping for `table_columns`, plus warnings.
 
     Ignore any renames to "". That column name is not allowed.
 
@@ -67,14 +44,15 @@ def _parse_renames(
     new_colnames, errors = gen_unique_clean_colnames_and_warn(
         try_new_colnames, existing_names=existing_colnames, settings=settings
     )
-    return {k: v for k, v in zip(nix_colnames, new_colnames)}, errors
+    return {k: v for k, v in zip(nix_colnames, new_colnames)}, [
+        RenderError(message) for message in errors
+    ]
 
 
 def _parse_custom_list(
     custom_list: str, table_columns: List[str], *, settings: Settings
 ) -> Tuple[Dict[str, str], List[i18n.I18nMessage]]:
-    """
-    Convert `custom_list` into a valid mapping for `table_columns`.
+    """Convert `custom_list` into a valid mapping for `table_columns`.
 
     Return a minimal and valid dict from old colname to new colname.
 
@@ -101,12 +79,14 @@ def _parse_custom_list(
     try:
         renames = {table_columns[i]: s for i, s in enumerate(rename_list) if s}
     except IndexError:
-        raise UserVisibleError(
-            i18n.trans(
-                "badParam.custom_list.wrongNumberOfNames",
-                "You supplied {n_names, plural, other {# column names} one {# column name}}, "
-                "but the table has {n_columns, plural, other {# columns} one {# column}}.",
-                {"n_names": len(rename_list), "n_columns": len(table_columns)},
+        raise RenderErrorException(
+            RenderError(
+                i18n.trans(
+                    "badParam.custom_list.wrongNumberOfNames",
+                    "You supplied {n_names, plural, other {# column names} one {# column name}}, "
+                    "but the table has {n_columns, plural, other {# columns} one {# column}}.",
+                    {"n_names": len(rename_list), "n_columns": len(table_columns)},
+                )
             )
         )
 
@@ -114,37 +94,26 @@ def _parse_custom_list(
     return _parse_renames(renames, table_columns, settings=settings)
 
 
-def _do_renames(table, input_columns, renames):
-    # Edit in-place
-    table.rename(columns=renames, inplace=True)
-    return {
-        "dataframe": table,
-        # Every new (or overwritten) column name gets a format
-        "column_formats": {
-            new: input_columns[old].format for old, new in renames.items()
-        },
-    }
-
-
-def render(table, params, *, settings: Settings, input_columns):
-    columns = list(table.columns)
+def render_arrow_v1(
+    table: pa.Table, params: Dict[str, Any], *, settings: Settings, **kwargs
+) -> ArrowRenderResult:
     if params["custom_list"]:
         try:
             renames, errors = _parse_custom_list(
-                params["list_string"], columns, settings=settings
+                params["list_string"], table.column_names, settings=settings
             )
-        except UserVisibleError as err:
-            return [err.i18n_message]
+        except RenderErrorException as err:
+            return ArrowRenderResult(pa.table({}), errors=[err.render_error])
     else:
-        renames, errors = _parse_renames(params["renames"], columns, settings=settings)
+        renames, errors = _parse_renames(
+            params["renames"], table.column_names, settings=settings
+        )
 
-    if not renames:
-        return table  # no-op
-
-    return {
-        **_do_renames(table, input_columns, renames),
-        "errors": errors,
-    }
+    renamed_fields = [
+        field.with_name(renames.get(field.name, field.name)) for field in table.schema
+    ]
+    renamed_table = pa.table(table.columns, pa.schema(renamed_fields))
+    return ArrowRenderResult(renamed_table, errors=errors)
 
 
 def _migrate_params_v0_to_v1(params):

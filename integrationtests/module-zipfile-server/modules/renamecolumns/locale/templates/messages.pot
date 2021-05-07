@@ -15,7 +15,7 @@ msgid "_spec.parameters.list_string.placeholder"
 msgstr ""
 
 #. default-message: You supplied {n_names, plural, other {# column names} one {# column name}}, but the table has {n_columns, plural, other {# columns} one {# column}}.
-#: renamecolumns.py:109
+#: renamecolumns.py:88
 msgid "badParam.custom_list.wrongNumberOfNames"
 msgstr ""
 

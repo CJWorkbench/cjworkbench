@@ -42,6 +42,8 @@ def P(
 
 
 class TestReshape(unittest.TestCase):
+    maxDiff = None
+
     def test_defaults(self):
         # should NOP when first applied
         out = render(pd.DataFrame({"A": [1, 2]}), P(), **DefaultKwargs)
@@ -91,15 +93,35 @@ class TestReshape(unittest.TestCase):
         )
 
     def test_wide_to_long_mixed_value_types(self):
-        in_table = pd.DataFrame({"X": ["x", "y"], "A": [1, 2], "B": ["y", np.nan]})
+        in_table = pd.DataFrame(
+            {
+                "X": ["x", "y"],
+                "int": [1, 2],
+                "str": ["y", np.nan],
+                "date32": [pd.Period("2021-04-23", "D"), pd.Period("2021-05-01", "D")],
+                "timestamp": [
+                    np.datetime64("2021-04-23").astype("datetime64[ns]"),
+                    np.datetime64("2021-05-23T12:32").astype("datetime64[ns]"),
+                ],
+            }
+        )
         result = render(in_table, P("widetolong", ["X"]), **DefaultKwargs)
         assert_frame_equal(
             result[0],
             pd.DataFrame(
                 {
-                    "X": ["x", "x", "y", "y"],
-                    "variable": ["A", "B", "A", "B"],
-                    "value": ["1", "y", "2", np.nan],
+                    "X": ["x", "x", "x", "x", "y", "y", "y", "y"],
+                    "variable": ["int", "str", "date32", "timestamp"] * 2,
+                    "value": [
+                        "1",
+                        "y",
+                        "2021-04-23",
+                        "2021-04-23 00:00:00",
+                        "2",
+                        None,
+                        "2021-05-01",
+                        "2021-05-23 12:32:00",
+                    ],
                 }
             ),
         )
@@ -108,16 +130,19 @@ class TestReshape(unittest.TestCase):
             {
                 "message": i18n_message(
                     "wide_to_long.badColumns.mixedTypes.message",
-                    {"n_columns": 1, "first_colname": "A"},
+                    {"n_columns": 3, "first_colname": "int"},
                 ),
                 "quickFixes": [
                     {
                         "text": i18n_message(
                             "wide_to_long.badColumns.mixedTypes.quick_fix.text",
-                            {"n_columns": 1},
+                            {"n_columns": 3},
                         ),
                         "action": "prependModule",
-                        "args": ["converttotext", {"colnames": ["A"]}],
+                        "args": [
+                            "converttotext",
+                            {"colnames": ["int", "date32", "timestamp"]},
+                        ],
                     }
                 ],
             },

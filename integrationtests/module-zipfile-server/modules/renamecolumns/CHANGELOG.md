@@ -1,3 +1,8 @@
+2021-05-07.01
+-------------
+
+* Use Arrow instead of Pandas. Logic remains identical.
+
 2020-09-14.01
 -------------
 

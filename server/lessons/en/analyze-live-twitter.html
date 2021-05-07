@@ -77,14 +77,25 @@
     </p>
   </li>
   <li
-    data-highlight='[{"type":"Module","index":2,"id_name":"groupby"}]'
-    data-test="return workflow.tabs[0].stepModuleIds[2] === 'groupby'"
+    data-highlight='[{"type":"Module","index":2,"id_name":"converttimestamptodate"}]'
+    data-test="return workflow.tabs[0].stepModuleIds[2] === 'converttimestamptodate'"
+    >Add the step 'Convert timestamp to date'.
+  </li>
+  <li
+    data-highlight='[{"type":"Step","moduleIdName":"converttimestamptodate"}]'
+    data-test="const params = workflow.tabs[0].steps[2].params; return params.colnames.join('|') === 'created_at' && params.unit === 'year'"
+  >
+    Choose <kbd>created_at</kbd> as the timestamp column and <kbd>Year</kbd> as the unit.
+  </li>
+  <li
+    data-highlight='[{"type":"Module","index":3,"id_name":"groupby"}]'
+    data-test="return workflow.tabs[0].stepModuleIds[3] === 'groupby'"
     >Add the step 'Group'.
   </li>
   <li
     data-highlight='[{"type":"Step","moduleIdName":"groupby"}]'
-    data-test="const params = workflow.tabs[0].steps[2].params; return params.groups.colnames.join('|') === 'created_at' && params.groups.group_dates && params.groups.date_granularities.created_at === 'Y' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
-    >Choose <kbd>created_at</kbd> as the date column. Check <kbd>Group dates</kbd> and group rows <kbd>by year</kbd>. Set the "Count" output column name to <code>Number of tweets</code>
+    data-test="const params = workflow.tabs[0].steps[3].params; return params.groups.colnames.join('|') === 'created_at' && params.aggregations.length === 1 && params.aggregations[0].operation === 'size' && params.aggregations[0].outname.toLowerCase() === 'number of tweets'"
+    >Choose <kbd>created_at</kbd> as the date column. Set the "Count" output column name to <code>Number of tweets</code>.
   </li>
 </ol>
 </section>
@@ -94,18 +105,18 @@
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"Module","index":3,"id_name":"linechart"}]'
-    data-test="return workflow.tabs[0].stepModuleIds[3] === 'linechart'"
+    data-highlight='[{"type":"Module","index":4,"id_name":"linechart"}]'
+    data-test="return workflow.tabs[0].stepModuleIds[4] === 'linechart'"
     >Add the step 'Line Chart'.
   </li>
   <li
     data-highlight='[{"type":"Step","moduleIdName":"linechart"}]'
-    data-test="const p = workflow.tabs[0].steps[3].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
+    data-test="const p = workflow.tabs[0].steps[4].params; return p.x_column === 'created_at' && (p.y_columns[0] && p.y_columns[0].column || '').toLowerCase() === 'number of tweets'"
     >Select <kbd>created_at</kbd> for the X axis and <kbd>Number of tweets</kbd> for the Y axis.
   </li>
   <li
     data-highlight='[{"type":"Step","moduleIdName":"linechart"}]'
-    data-test="const p = workflow.tabs[0].steps[3].params; return !!p.title"
+    data-test="const p = workflow.tabs[0].steps[4].params; return !!p.title"
     >Add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail">
       Next, let's make this chart update every time our user tweets contain the word we chose.
