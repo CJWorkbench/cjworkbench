@@ -112,7 +112,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
         workflow = Workflow.create_and_init(has_custom_report=False)
         tab = workflow.tabs.first()
-        step1 = tab.steps.create(order=0, slug="step-1", module_id_name="nochart")
+        tab.steps.create(order=0, slug="step-1", module_id_name="nochart")
         step2 = tab.steps.create(order=1, slug="step-2", module_id_name="chart")
         step3 = tab.steps.create(order=2, slug="step-3", module_id_name="chart")
 

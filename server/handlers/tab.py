@@ -47,6 +47,19 @@ def _loading_tab(func):
     return inner
 
 
+SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
+
+
+def _parse_slug(slug: str):
+    """Return `slug` or raise ValueError."""
+    slug = str(slug)  # cannot error from JSON params
+    if not SlugRegex.match(slug):
+        raise HandlerError(
+            f'BadRequest: slug must match regex "[-a-zA-Z0-9_]+"; got "{slug}"'
+        )
+    return slug
+
+
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_tab
@@ -89,26 +102,7 @@ async def add_module(
     except ValueError as err:
         raise HandlerError("BadRequest: param validation failed: %s" % str(err))
 
-    # TODO switch Intercom around and log by moduleIdName, not module name
-    # (Currently, we end up with two events every time we change names)
-    module_zipfile = await _load_module_zipfile(moduleIdName)
-    name = module_zipfile.get_spec().name
-    server.utils.log_user_event_from_scope(
-        scope, f"ADD STEP {name}", {"name": name, "id_name": moduleIdName}
-    )
-
-
-SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
-
-
-def _parse_slug(slug: str):
-    """Return `slug` or raise ValueError."""
-    slug = str(slug)  # cannot error from JSON params
-    if not SlugRegex.match(slug):
-        raise HandlerError(
-            f'BadRequest: slug must match regex "[-a-zA-Z0-9_]+"; got "{slug}"'
-        )
-    return slug
+    server.utils.log_user_event_from_scope(scope, f"ADD STEP {moduleIdName}")
 
 
 @register_websockets_handler
@@ -120,7 +114,7 @@ async def reorder_steps(
     if not isinstance(mutationId, str):
         raise HandlerError("BadRequest: mutationId must be String")
     if not isinstance(slugs, list):
-        raise HandlerError(f'BadRequest: slugs must be an Array of "[-a-zA-Z0-9_]+"')
+        raise HandlerError('BadRequest: slugs must be an Array of "[-a-zA-Z0-9_]+"')
     slugs = [_parse_slug(slug) for slug in slugs]
     try:
         await commands.do(

@@ -9,6 +9,7 @@ from .init_workflow import InitWorkflow
 from .reorder_blocks import ReorderBlocks
 from .reorder_steps import ReorderSteps
 from .reorder_tabs import ReorderTabs
+from .replace_step import ReplaceStep
 from .set_step_data_version import SetStepDataVersion
 from .set_step_note import SetStepNote
 from .set_step_params import SetStepParams
@@ -33,6 +34,7 @@ NAME_TO_COMMAND = {
         ReorderBlocks,
         ReorderSteps,
         ReorderTabs,
+        ReplaceStep,
         SetBlockMarkdown,
         SetStepDataVersion,
         SetStepNote,

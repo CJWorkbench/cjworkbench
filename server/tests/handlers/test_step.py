@@ -10,7 +10,7 @@ from django.test import override_settings
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import DeleteStep, SetStepNote, SetStepParams
+from cjwstate.models.commands import DeleteStep, SetStepParams
 from cjwstate.models.fields import Role
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
@@ -23,6 +23,7 @@ from server.handlers.step import (
     fetch,
     generate_secret_access_token,
     get_file_upload_api_token,
+    replace,
     reset_file_upload_api_token,
     set_collapsed,
     set_notes,
@@ -63,6 +64,109 @@ TestStringSecret = {
 
 
 class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "queue_render", async_noop)
+    @patch("server.utils.log_user_event_from_scope")
+    def test_replace(self, log_user_event):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)  # with tab-1
+        workflow.tabs.first().steps.create(order=0, slug="step-1")
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
+        )
+
+        response = self.run_handler(
+            replace,
+            user=user,
+            workflow=workflow,
+            oldSlug="step-1",
+            slug="step-1a",
+            moduleIdName="amodule",
+            paramValues={"foo": "bar"},
+        )
+        self.assertResponse(response, data=None)
+
+        delta = workflow.deltas.last()
+        self.assertEquals(delta.step2.order, 0)
+        self.assertEquals(delta.step2.module_id_name, "amodule")
+        self.assertEquals(delta.step2.params, {"foo": "bar"})
+        self.assertEquals(delta.step2.tab.slug, "tab-1")
+        self.assertEquals(delta.workflow_id, workflow.id)
+
+        log_user_event.assert_called()
+
+    def test_replace_viewer_access_denied(self):
+        workflow = Workflow.create_and_init(public=True)  # tab-1
+        response = self.run_handler(
+            replace,
+            workflow=workflow,
+            oldSlug="step-1",
+            slug="step-2",
+            moduleIdName="amodule",
+            paramValues={"foo": "bar"},
+        )
+
+        self.assertResponse(response, error="AuthError: no write access to workflow")
+
+    def test_replace_param_values_not_object(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
+        )
+
+        response = self.run_handler(
+            replace,
+            user=user,
+            workflow=workflow,
+            oldSlug="step-1",
+            slug="step-1a",
+            moduleIdName="amodule",
+            paramValues="foobar",
+        )
+        self.assertResponse(response, error="BadRequest: paramValues must be an Object")
+
+    def test_replace_invalid_param_values(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)  # tab-1
+        workflow.tabs.first().steps.create(order=0, slug="step-1")
+        create_module_zipfile(
+            "amodule",
+            spec_kwargs={"parameters": [{"id_name": "foo", "type": "string"}]},
+        )
+
+        response = self.run_handler(
+            replace,
+            user=user,
+            workflow=workflow,
+            oldSlug="step-1",
+            slug="step-1a",
+            moduleIdName="amodule",
+            paramValues={"foo": 3},
+        )
+        self.assertResponse(
+            response,
+            error=("BadRequest: param validation failed: Value 3 is not a string"),
+        )
+
+    def test_replace_missing_module_version(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)
+        workflow.tabs.first().steps.create(order=0, slug="step-1")
+
+        response = self.run_handler(
+            replace,
+            user=user,
+            workflow=workflow,
+            oldSlug="step-1",
+            slug="step-1a",
+            moduleIdName="notamodule",
+            paramValues={"foo": "bar"},
+        )
+        self.assertResponse(response, error="BadRequest: module does not exist")
+
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_set_params(self):

@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import functools
+import re
 import secrets
 from typing import Any, Dict, List, Optional
 
@@ -13,10 +14,11 @@ from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
 from cjwstate.models import Workflow, Step
 from cjwstate.models.commands import (
-    SetStepParams,
     DeleteStep,
+    ReplaceStep,
     SetStepDataVersion,
     SetStepNote,
+    SetStepParams,
 )
 from cjwstate.models.module_registry import MODULE_REGISTRY
 import server.utils
@@ -74,6 +76,19 @@ def _postgresize_str(s: str) -> str:
         * `"\u0000"` is replaced with `""`
     """
     return s.replace("\x00", "")
+
+
+SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")
+
+
+def _parse_slug(slug: str):
+    """Return `slug` or raise ValueError."""
+    slug = str(slug)  # cannot error from JSON params
+    if not SlugRegex.match(slug):
+        raise HandlerError(
+            f'BadRequest: slug must match regex "[-a-zA-Z0-9_]+"; got "{slug}"'
+        )
+    return slug
 
 
 @database_sync_to_async
@@ -137,6 +152,45 @@ async def set_params(workflow: Workflow, step: Step, values: Dict[str, Any], **k
 @_loading_step_by_id
 async def delete(workflow: Workflow, step: Step, **kwargs):
     await commands.do(DeleteStep, workflow_id=workflow.id, step=step)
+
+
+@register_websockets_handler
+@websockets_handler("write")
+async def replace(
+    scope,
+    workflow: Workflow,
+    oldSlug: str,
+    slug: str,
+    moduleIdName: str,
+    paramValues: Dict[str, Any],
+    **kwargs,
+):
+    oldSlug = _parse_slug(oldSlug)
+    slug = _parse_slug(slug)
+    moduleIdName = str(moduleIdName)
+
+    # don't allow python code module in anonymous workflow
+    if moduleIdName == "pythoncode" and workflow.is_anonymous:
+        return None
+
+    if not isinstance(paramValues, dict):
+        raise HandlerError("BadRequest: paramValues must be an Object")
+
+    try:
+        await commands.do(
+            ReplaceStep,
+            workflow_id=workflow.id,
+            old_slug=oldSlug,
+            slug=slug,
+            module_id_name=moduleIdName,
+            param_values=paramValues,
+        )
+    except KeyError:
+        raise HandlerError("BadRequest: module does not exist")
+    except ValueError as err:
+        raise HandlerError("BadRequest: param validation failed: %s" % str(err))
+
+    server.utils.log_user_event_from_scope(scope, f"REPLACE STEP with {moduleIdName}")
 
 
 @database_sync_to_async

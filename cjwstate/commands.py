@@ -22,9 +22,7 @@ longer exists! Don't panic: this is fine. Indeed, the default
 `workflow.last_delta_id` is 0.
 """
 import datetime
-from typing import Any, Dict, Optional, Tuple
-
-from django.db.models import Q
+from typing import Optional, Tuple
 
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq

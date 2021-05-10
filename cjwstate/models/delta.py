@@ -1,10 +1,8 @@
 import datetime
-from typing import List, Tuple
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
-from cjwstate import clientside
 from .commands import NAME_TO_COMMAND
 
 # TODO rename database field so we can use the "datetime" module
@@ -91,10 +89,24 @@ class Delta(models.Model):
     This is only set and used by some Commands.
     """
 
-    step = models.ForeignKey("Step", null=True, on_delete=models.PROTECT)
+    step = models.ForeignKey(
+        "Step", null=True, on_delete=models.PROTECT, related_name="+"
+    )
     """Step affected by this Delta.
 
     This is only set and used by some Commands.
+    """
+
+    step2 = models.ForeignKey(
+        "Step", null=True, on_delete=models.PROTECT, related_name="+"
+    )
+    """Another Step affected by this Delta.
+
+    This is only set and used by the ReplaceStep Command.
+
+    TODO revamp deletion. At worst, this should be many-to-many. At best, Step
+    data should be stored in the Delta itself (and uploaded_files+stored_objects
+    data could be attached to the Delta).
     """
 
     step_delta_ids = ArrayField(ArrayField(models.IntegerField(), size=2), default=list)

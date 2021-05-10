@@ -10,12 +10,11 @@ from server.handlers.tab import (
 )
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.commands import AddStep, ReorderSteps
-from .util import HandlerTestCase
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
 )
+from .util import HandlerTestCase
 
 
 async def async_noop(*args, **kwargs):
@@ -186,8 +185,8 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         tab = workflow.tabs.first()  # tab-1
-        step1 = tab.steps.create(order=0, slug="step-1")
-        step2 = tab.steps.create(order=1, slug="step-2")
+        tab.steps.create(order=0, slug="step-1")
+        tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_steps,
@@ -208,8 +207,8 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     def test_reorder_steps_viewer_denied_access(self):
         workflow = Workflow.create_and_init(public=True)
         tab = workflow.tabs.first()  # tab-1
-        step1 = tab.steps.create(order=0, slug="step-1")
-        step2 = tab.steps.create(order=1, slug="step-2")
+        tab.steps.create(order=0, slug="step-1")
+        tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_steps,
@@ -224,8 +223,8 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         tab = workflow.tabs.first()  # tab-1
-        step1 = tab.steps.create(order=0, slug="step-1")
-        step2 = tab.steps.create(order=1, slug="step-2")
+        tab.steps.create(order=0, slug="step-1")
+        tab.steps.create(order=1, slug="step-2")
 
         response = self.run_handler(
             reorder_steps,
