@@ -29,8 +29,9 @@ export default class QuickFix extends PureComponent {
 
     return (
       <button
+        type='button'
         disabled={disabled}
-        className='quick-fix action-button button-orange'
+        className='quick-fix'
         onClick={this.handleClick}
       >
         {buttonText}

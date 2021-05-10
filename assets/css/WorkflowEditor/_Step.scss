@@ -437,9 +437,17 @@
       li {
         margin-top: 1rem;
       }
+    }
 
-      button {
-        @include button-red;
+    button.quick-fix {
+      // Can appear on red ("error") background and blue ("warning") background
+      // https://www.pivotaltracker.com/story/show/178051665
+      @include action-button;
+      color: inherit;
+      border-color: currentColor;
+      background: transparent;
+      &:hover:not(:active) {
+        background: rgba(255, 255, 255, 0.2);
       }
     }
   }
