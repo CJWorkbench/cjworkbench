@@ -4,6 +4,7 @@ import DataVersionModal from '../../../WorkflowEditor/DataVersionModal'
 import { connect } from 'react-redux'
 import { t, Trans } from '@lingui/macro'
 import selectIsReadOnly from '../../../selectors/selectIsReadOnly'
+import selectStepsById from '../../../selectors/selectStepsById'
 
 export class DataVersionSelect extends PureComponent {
   static propTypes = {
@@ -85,8 +86,7 @@ export class DataVersionSelect extends PureComponent {
 
 function mapStateToProps (state, { stepId }) {
   const isReadOnly = selectIsReadOnly(state)
-
-  const step = state.steps[String(stepId)]
+  const step = selectStepsById(state)[stepId]
   if (!step || !step.versions || !step.versions.selected) {
     return {
       currentVersionIndex: null,

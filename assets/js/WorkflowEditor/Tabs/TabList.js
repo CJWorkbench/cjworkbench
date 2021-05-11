@@ -8,8 +8,7 @@ export default class TabList extends PureComponent {
     tabs: PropTypes.arrayOf(
       PropTypes.shape({
         slug: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        isPending: PropTypes.bool // or undefined
+        name: PropTypes.string.isRequired
       }).isRequired
     ).isRequired,
     selectedPane: propTypes.selectedPane.isRequired,
@@ -94,12 +93,11 @@ export default class TabList extends PureComponent {
         className={dragging ? 'dragging' : ''}
         onDragLeave={this.handleDragLeave}
       >
-        {tabs.map(({ slug, name, isPending }, index) => (
+        {tabs.map(({ slug, name }, index) => (
           <Tab
             key={slug}
             index={index}
             slug={slug}
-            isPending={isPending}
             isReadOnly={isReadOnly}
             isSelected={
               selectedPane.pane === 'tab' && selectedPane.tabSlug === slug

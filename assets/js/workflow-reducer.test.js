@@ -67,7 +67,8 @@ describe('Reducer actions', () => {
     workflow: testWorkflow,
     tabs: testTabs,
     steps: testSteps,
-    modules: testModules
+    modules: testModules,
+    selectedPane: {}
   }
 
   it('sets the workflow name', async () => {
@@ -388,44 +389,50 @@ describe('Reducer actions', () => {
     expect(state.tabs).toEqual({})
   })
 
-  it('moves a tab from pendingTabs to tabs', () => {
-    // This "pendingTabs" thing is half-baked. Really, we're trying to simulate
-    // a "command queue" on the client  -- that is, commands the user sees that
-    // haven't been applied on the server yet. TODO nix pendingTabs when we
-    // have a sane way of doing that.
-    const oldTab = { slug: 'tab-1', name: 'Old' }
-    const newTab = {
-      slug: 'tab-NEW',
-      name: 'New',
-      step_ids: [],
-      selected_step_position: null
-    }
-    const realNewTab = {
-      slug: 'tab-NEW',
-      name: 'New',
-      step_ids: [1, 2],
-      selected_step_position: 1
-    } // e.g., from 'duplicate'
-
+  it('sets selectedPane when clearing a selected Tab', () => {
     const state = wfr.workflowReducer(
       {
+        ...testState,
         workflow: {
-          tab_slugs: ['tab-1', 'tab-NEW']
+          ...testWorkflow,
+          tab_slugs: ['tab-1', 'tab-2']
         },
-        tabs: { 'tab-1': oldTab },
-        pendingTabs: { 'tab-NEW': newTab }
+        tabs: {
+          'tab-1': { slug: 'tab-1', step_ids: [], selected_step_position: null },
+          'tab-2': { slug: 'tab-2', step_ids: [], selected_step_position: null }
+        },
+        steps: {},
+        selectedPane: { pane: 'tab', tabSlug: 'tab-2' }
       },
       wfr.applyDeltaAction({
-        updateTabs: { 'tab-NEW': realNewTab }
+        updateWorkflow: { tab_slugs: ['tab-1'] },
+        clearTabSlugs: ['tab-2']
       })
     )
+    expect(state.selectedPane).toEqual({ pane: 'tab', tabSlug: 'tab-1' })
+  })
 
-    expect(state.tabs).toEqual({
-      'tab-1': oldTab,
-      'tab-NEW': realNewTab
-    })
-
-    expect(state.pendingTabs).toEqual({})
+  it('sets selectedPane when clearing the first Tab and it is selected', () => {
+    const state = wfr.workflowReducer(
+      {
+        ...testState,
+        workflow: {
+          ...testWorkflow,
+          tab_slugs: ['tab-1', 'tab-2']
+        },
+        tabs: {
+          'tab-1': { slug: 'tab-1', step_ids: [], selected_step_position: null },
+          'tab-2': { slug: 'tab-2', step_ids: [], selected_step_position: null }
+        },
+        steps: {},
+        selectedPane: { pane: 'tab', tabSlug: 'tab-1' }
+      },
+      wfr.applyDeltaAction({
+        updateWorkflow: { tab_slugs: ['tab-2'] },
+        clearTabSlugs: ['tab-1']
+      })
+    )
+    expect(state.selectedPane).toEqual({ pane: 'tab', tabSlug: 'tab-2' })
   })
 
   it('sets the module collapse state', () => {

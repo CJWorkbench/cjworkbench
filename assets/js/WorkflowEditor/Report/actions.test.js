@@ -29,7 +29,8 @@ describe('Report.actions', () => {
           blocks: {
             'block-1': { type: 'text', markdown: 'hi' },
             'block-2': { type: 'text', markdown: 'bye' }
-          }
+          },
+          selectedPane: {}
         },
         api
       )
@@ -106,7 +107,8 @@ describe('Report.actions', () => {
           modules: {
             chart: { has_html_output: true }
           },
-          blocks: {}
+          blocks: {},
+          selectedPane: {}
         },
         api
       )
@@ -189,7 +191,8 @@ describe('Report.actions', () => {
           blocks: {
             'block-1': { type: 'text', markdown: 'hi' },
             'block-2': { type: 'text', markdown: 'bye' }
-          }
+          },
+          selectedPane: {}
         },
         api
       )
@@ -254,7 +257,8 @@ describe('Report.actions', () => {
           modules: {
             chart: { has_html_output: true }
           },
-          blocks: {}
+          blocks: {},
+          selectedPane: {}
         },
         api
       )
@@ -330,7 +334,8 @@ describe('Report.actions', () => {
           blocks: {
             'block-1': { type: 'text', markdown: 'hi' },
             'block-2': { type: 'text', markdown: 'bye' }
-          }
+          },
+          selectedPane: {}
         },
         api
       )
@@ -395,7 +400,8 @@ describe('Report.actions', () => {
           modules: {
             chart: { has_html_output: true }
           },
-          blocks: {}
+          blocks: {},
+          selectedPane: {}
         },
         api
       )
@@ -443,7 +449,8 @@ describe('Report.actions', () => {
           updateBlocks: {
             'block-auto-step-1': { type: 'chart', stepSlug: 'step-1' },
             'block-auto-step-2': { type: 'chart', stepSlug: 'step-2' }
-          }
+          },
+          selectedPane: {}
         })
       )
       // Optimistic update is gone: the real update took its place
@@ -472,7 +479,8 @@ describe('Report.actions', () => {
           },
           blocks: {
             'block-1': { type: 'text', markdown: 'foo' }
-          }
+          },
+          selectedPane: {}
         },
         api
       )
@@ -536,7 +544,8 @@ describe('Report.actions', () => {
           },
           blocks: {
             'block-1': { type: 'text', markdown: 'foo' }
-          }
+          },
+          selectedPane: {}
         },
         api
       )

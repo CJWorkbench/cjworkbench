@@ -1,8 +1,10 @@
 import { connect } from 'react-redux'
-import { selectReportPaneAction } from './actions'
 import WorkflowEditor from './WorkflowEditor'
+import { selectReportPaneAction } from './actions'
+import selectOptimisticState from '../selectors/selectOptimisticState'
 
-const mapStateToProps = ({ selectedPane }) => {
+function mapStateToProps (state) {
+  const { selectedPane } = selectOptimisticState(state)
   return { selectedPane }
 }
 

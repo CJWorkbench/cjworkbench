@@ -3,10 +3,11 @@ import { reorderStep } from './actions'
 import { deleteStepAction } from '../../workflow-reducer'
 import { connect } from 'react-redux'
 import selectIsReadOnly from '../../selectors/selectIsReadOnly'
+import selectOptimisticState from '../../selectors/selectOptimisticState'
 import lessonSelector from '../../lessons/lessonSelector'
 
-const mapStateToProps = state => {
-  const { modules, selectedPane, steps, tabs } = state
+function mapStateToProps (state) {
+  const { modules, selectedPane, steps, tabs } = selectOptimisticState(state)
   const { testHighlight } = lessonSelector(state)
   const tabSlug = selectedPane.tabSlug
   const tab = tabs[tabSlug]
@@ -23,7 +24,7 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+function mapDispatchToProps (dispatch) {
   return {
     reorderStep (tabSlug, stepSlug, newIndex) {
       const action = reorderStep(tabSlug, stepSlug, newIndex)

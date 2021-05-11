@@ -23,12 +23,7 @@ class TestTabs(WorkbenchBase):
         # the tab name as an <input> _value_; 'Tab 2' also appears as text but
         # that text is _invisible_, used only to size the <input>.
         b = self.browser
-        b.click_whatever(
-            "div.tabs>ul>li:not(.pending)>.tab",
-            text=tab_name,
-            visible=False,
-            wait=True,  # in case it was .pending
-        )
+        b.click_whatever("div.tabs>ul>li>.tab", text=tab_name, visible=False)
 
     def test_tabs_have_distinct_modules(self):
         b = self.browser
@@ -101,8 +96,6 @@ class TestTabs(WorkbenchBase):
 
         # Create Tab 2, and make Tab 1 depend on it
         b.click_button("Create tab")
-        # wait for server to add it
-        b.assert_no_element(".tabs>ul>li.pending", wait=True)
 
         # make Tab 1 depend on Tab 2
         self.add_data_step("Start from tab")
@@ -131,8 +124,6 @@ class TestTabs(WorkbenchBase):
 
         # Create Tab 2, and make Tab 1 depend on it
         b.click_button("Create tab")
-        # wait for server to add it
-        b.assert_no_element(".tabs>ul>li.pending", wait=True)
 
         # make Tab 1 depend on Tab 2
         self.add_data_step("Start from tab")
@@ -157,8 +148,6 @@ class TestTabs(WorkbenchBase):
         b.click_whatever(".tabs>ul>li.selected button.toggle")
         with b.scope(".dropdown-menu"):
             b.click_button("Duplicate")
-        # wait for server to add it
-        b.assert_no_element(".tabs>ul>li.pending", wait=True)
 
         self._select_tab("Tab 1 (1)")  # assume this is how it's named
         # Make sure everything's there.

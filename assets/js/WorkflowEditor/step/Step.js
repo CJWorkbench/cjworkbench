@@ -27,6 +27,8 @@ import { i18n } from '@lingui/core'
 import { t } from '@lingui/macro'
 import selectIsAnonymous from '../../selectors/selectIsAnonymous'
 import selectIsReadOnly from '../../selectors/selectIsReadOnly'
+import selectStepsById from '../../selectors/selectStepsById'
+import selectOptimisticState from '../../selectors/selectOptimisticState'
 import selectLoggedInUserRole from '../../selectors/selectLoggedInUserRole'
 
 /**
@@ -633,40 +635,18 @@ class StepCollapseButton extends React.PureComponent {
   }
 }
 
-const getWorkflow = ({ workflow }) => workflow
-const getReadyTabs = ({ tabs }) => tabs
-const getPendingTabs = ({ pendingTabs }) => pendingTabs || {}
-const getReadyAndPendingTabs = createSelector(
-  [getReadyTabs, getPendingTabs],
-  (readyTabs, pendingTabs) => {
-    return {
-      ...pendingTabs,
-      ...readyTabs
-    }
-  }
-)
-const getSteps = ({ steps }) => steps
-const getSelectedPane = ({ selectedPane }) => selectedPane
+const getWorkflow = createSelector([selectOptimisticState], ({ workflow }) => workflow)
+const getTabsBySlug = createSelector([selectOptimisticState], ({ tabs }) => tabs)
+const getSelectedPane = createSelector([selectOptimisticState], ({ selectedPane }) => selectedPane)
 const getTabs = createSelector(
-  [getWorkflow, getReadyAndPendingTabs, getSteps],
+  [getWorkflow, getTabsBySlug, selectStepsById],
   (workflow, tabs, steps) => {
     return workflow.tab_slugs.map(slug => {
       const tab = tabs[slug]
-      let outputColumns = null
-      if (tab.step_ids.length > 0) {
-        const lastIndex = tab.step_ids.length - 1
-        if (lastIndex >= 0) {
-          const lastStepId = tab.step_ids[lastIndex]
-          const lastStep = steps[lastStepId] // null if placeholder
-          if (
-            lastStep &&
-            lastStep.last_relevant_delta_id ===
-              lastStep.cached_render_result_delta_id
-          ) {
-            outputColumns = lastStep.output_columns
-          }
-        }
-      }
+      const lastStep = tab.step_ids[tab.step_ids.length - 1] // undefined if tab.step_ids.length == 0
+      const outputColumns = lastStep && lastStep.last_relevant_delta_id === lastStep.cached_render_result_delta_id
+        ? lastStep.output_columns
+        : null
       return {
         slug,
         name: tab.name,
@@ -676,10 +656,9 @@ const getTabs = createSelector(
   }
 )
 const getCurrentTab = createSelector(
-  [getSelectedPane, getReadyAndPendingTabs],
+  [getSelectedPane, getTabsBySlug],
   (selectedPane, tabs) => {
-    const tabSlug = selectedPane.tabSlug
-    return tabs[tabSlug]
+    return tabs[selectedPane.tabSlug]
   }
 )
 const getModules = ({ modules }) => modules
@@ -688,7 +667,7 @@ const getModules = ({ modules }) => modules
  * Find first Step index that has a `.loads_data` ModuleVersion, or `null`
  */
 const firstFetchIndex = createSelector(
-  [getCurrentTab, getSteps, getModules],
+  [getCurrentTab, selectStepsById, getModules],
   (tab, steps, modules) => {
     const index = tab.step_ids.findIndex(id => {
       const step = steps[String(id)]

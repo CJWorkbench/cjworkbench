@@ -144,9 +144,7 @@ describe('StepList.actions', () => {
       )
 
       // Optimistic update is a no-op
-      expect(store.getState().pendingMutations.map(u => u.id)).toEqual([
-        'mutation-1'
-      ])
+      expect(store.getState().pendingMutations.map(u => u.id)).toEqual(['mutation-1'])
       expect(selectStepSlugLists(store.getState())).toEqual([
         { tabSlug: 'tab-1', stepSlugs: ['step-2', 'step-3'] }
       ])

@@ -130,19 +130,28 @@ async def reorder_steps(
 
 @register_websockets_handler
 @websockets_handler("write")
-async def create(workflow: Workflow, slug: str, name: str, **kwargs):
+async def create(workflow: Workflow, slug: str, name: str, mutationId: str, **kwargs):
+    if not isinstance(mutationId, str):
+        raise HandlerError("BadRequest: mutationId must be String")
     slug = _parse_slug(slug)
     name = str(name)  # JSON values can't lead to error
-    await commands.do(AddTab, workflow_id=workflow.id, slug=slug, name=name)
+    await commands.do(
+        AddTab, mutation_id=mutationId, workflow_id=workflow.id, slug=slug, name=name
+    )
 
 
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_tab
-async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs):
+async def duplicate(
+    workflow: Workflow, tab: Tab, slug: str, name: str, mutationId: str, **kwargs
+):
+    if not isinstance(mutationId, str):
+        raise HandlerError("BadRequest: mutationId must be String")
     try:
         await commands.do(
             DuplicateTab,
+            mutation_id=mutationId,
             workflow_id=workflow.id,
             from_tab=tab,
             slug=slug,
@@ -155,13 +164,25 @@ async def duplicate(workflow: Workflow, tab: Tab, slug: str, name: str, **kwargs
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_tab
-async def delete(workflow: Workflow, tab: Tab, **kwargs):
-    await commands.do(DeleteTab, workflow_id=workflow.id, tab=tab)
+async def delete(workflow: Workflow, tab: Tab, mutationId: str, **kwargs):
+    if not isinstance(mutationId, str):
+        raise HandlerError("BadRequest: mutationId must be String")
+    await commands.do(
+        DeleteTab, workflow_id=workflow.id, tab=tab, mutation_id=mutationId
+    )
 
 
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_tab
-async def set_name(workflow: Workflow, tab: Tab, name: str, **kwargs):
+async def set_name(workflow: Workflow, tab: Tab, name: str, mutationId: str, **kwargs):
+    if not isinstance(mutationId, str):
+        raise HandlerError("BadRequest: mutationId must be String")
     name = str(name)  # JSON values can't lead to error
-    await commands.do(SetTabName, workflow_id=workflow.id, tab=tab, new_name=name)
+    await commands.do(
+        SetTabName,
+        workflow_id=workflow.id,
+        tab=tab,
+        new_name=name,
+        mutation_id=mutationId,
+    )

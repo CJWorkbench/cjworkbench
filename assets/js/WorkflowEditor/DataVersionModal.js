@@ -2,7 +2,6 @@ import { PureComponent } from 'react'
 import { i18n } from '@lingui/core'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
-import memoize from 'memoize-one'
 import {
   setDataVersionAction,
   setStepNotificationsAction
@@ -11,6 +10,8 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { Trans } from '@lingui/macro'
 import selectIsAnonymous from '../selectors/selectIsAnonymous'
+import selectOptimisticState from '../selectors/selectOptimisticState'
+import selectStepsById from '../selectors/selectStepsById'
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -272,17 +273,16 @@ export class DataVersionModal extends PureComponent {
   }
 }
 
-const getTabs = ({ tabs }) => tabs
-const getSelectedPane = ({ selectedPane }) => selectedPane
+const getTabs = createSelector(selectOptimisticState, ({ tabs }) => tabs)
+const getSelectedPane = createSelector(selectOptimisticState, ({ selectedPane }) => selectedPane)
 const getSelectedTab = createSelector(
   [getTabs, getSelectedPane],
   (tabs, selectedPane) => {
     return tabs[selectedPane.tabSlug]
   }
 )
-const getSteps = ({ steps }) => steps
 const getSelectedTabSteps = createSelector(
-  [getSelectedTab, getSteps],
+  [getSelectedTab, selectStepsById],
   (tab, steps) => {
     return tab.step_ids.map(id => steps[String(id)] || null)
   }
@@ -311,7 +311,7 @@ const getFetchStep = createSelector(
  * step.versions.versions is an Array of [ dateString, isSeen ]
  * pairs.
  */
-const getFetchVersions = memoize(versions => {
+function getFetchVersions (versions) {
   return versions.map(version => {
     const [id, isSeen] = version
     return {
@@ -320,11 +320,11 @@ const getFetchVersions = memoize(versions => {
       date: new Date(id)
     }
   })
-})
+}
 
 function mapStateToProps (state, { stepId }) {
   const fetchStep = getFetchStep(state)
-  const step = state.steps[String(stepId)]
+  const step = selectStepsById(state)[stepId]
   const notificationsEnabled = step ? step.notifications : false
 
   return {

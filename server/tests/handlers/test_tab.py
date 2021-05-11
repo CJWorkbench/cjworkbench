@@ -242,7 +242,12 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init(owner=user)
 
         response = self.run_handler(
-            create, user=user, workflow=workflow, slug="tab-ab13", name="Foo"
+            create,
+            user=user,
+            mutationId="mutation-1",
+            workflow=workflow,
+            slug="tab-ab13",
+            name="Foo",
         )
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 2)
@@ -261,7 +266,11 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
 
         response = self.run_handler(
-            delete, user=user, workflow=workflow, tabSlug="tab-2"
+            delete,
+            user=user,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-2",
         )
         self.assertResponse(response, data=None)
         self.assertEqual(workflow.live_tabs.count(), 1)
@@ -271,14 +280,20 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     def test_delete_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)
         workflow.tabs.create(position=1, slug="tab-2")
-        response = self.run_handler(delete, workflow=workflow, tabSlug="tab-2")
+        response = self.run_handler(
+            delete, mutationId="mutation-1", workflow=workflow, tabSlug="tab-2"
+        )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
     def test_delete_missing_tab(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         response = self.run_handler(
-            delete, user=user, workflow=workflow, tabSlug="tab-2"
+            delete,
+            user=user,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-2",
         )
         self.assertResponse(response, error="DoesNotExist: Tab not found")
 
@@ -286,7 +301,11 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         response = self.run_handler(
-            delete, user=user, workflow=workflow, tabSlug="tab-1"
+            delete,
+            user=user,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-1",
         )
         # No-op
         self.assertResponse(response, data=None)
@@ -300,6 +319,7 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         response = self.run_handler(
             duplicate,
             user=user,
+            mutationId="mutation-1",
             workflow=workflow,
             tabSlug="tab-1",
             slug="tab-2",
@@ -314,7 +334,12 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init(public=True)
         workflow.tabs.create(position=1, slug="tab-2")
         response = self.run_handler(
-            duplicate, workflow=workflow, tabSlug="tab-1", slug="tab-2", name="Tab 2"
+            duplicate,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-1",
+            slug="tab-2",
+            name="Tab 2",
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
@@ -324,6 +349,7 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         response = self.run_handler(
             duplicate,
             user=user,
+            mutationId="mutation-1",
             workflow=workflow,
             tabSlug="tab-missing",
             slug="tab-2",
@@ -339,6 +365,7 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         response = self.run_handler(
             duplicate,
             user=user,
+            mutationId="mutation-1",
             workflow=workflow,
             tabSlug=tab.slug,
             slug="tab-2",
@@ -355,7 +382,12 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         tab = workflow.tabs.first()  # tab-1
 
         response = self.run_handler(
-            set_name, user=user, workflow=workflow, tabSlug="tab-1", name="B"
+            set_name,
+            user=user,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-1",
+            name="B",
         )
         self.assertResponse(response, data=None)
         tab.refresh_from_db()
@@ -364,7 +396,11 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     def test_set_name_viewer_access_denied(self):
         workflow = Workflow.create_and_init(public=True)  # tab-1
         response = self.run_handler(
-            set_name, workflow=workflow, tabSlug="tab-1", name="B"
+            set_name,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-1",
+            name="B",
         )
         self.assertResponse(response, error="AuthError: no write access to workflow")
 
@@ -372,6 +408,11 @@ class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # tab-1
         response = self.run_handler(
-            set_name, user=user, workflow=workflow, tabSlug="tab-2", name="B"
+            set_name,
+            user=user,
+            mutationId="mutation-1",
+            workflow=workflow,
+            tabSlug="tab-2",
+            name="B",
         )
         self.assertResponse(response, error="DoesNotExist: Tab not found")

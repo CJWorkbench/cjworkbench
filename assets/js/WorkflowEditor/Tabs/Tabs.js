@@ -10,8 +10,7 @@ export default class Tabs extends PureComponent {
     tabs: PropTypes.arrayOf(
       PropTypes.shape({
         slug: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        isPending: PropTypes.bool // or undefined
+        name: PropTypes.string.isRequired
       }).isRequired
     ).isRequired,
     selectedPane: propTypes.selectedPane.isRequired,

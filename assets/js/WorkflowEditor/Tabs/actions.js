@@ -1,32 +1,73 @@
 import * as util from './util'
 import { generateSlug } from '../../utils'
+import addLocalMutation from '../../reducers/addLocalMutation'
+import addPendingMutation from '../../reducers/addPendingMutation'
+import removePendingMutation from '../../reducers/removePendingMutation'
 import selectIsReadOnly from '../../selectors/selectIsReadOnly'
+import selectOptimisticState from '../../selectors/selectOptimisticState'
 
-const TAB_SET_NAME = 'TAB_SET_NAME'
-const TAB_DESTROY = 'TAB_DESTROY'
-const TAB_CREATE = 'TAB_CREATE'
+import {
+  TAB_CREATE,
+  TAB_DESTROY,
+  TAB_SELECT,
+  TAB_SET_ORDER,
+  TAB_SET_NAME,
+  createCreateMutation,
+  createDestroyMutation,
+  createSelectMutation,
+  createSetNameMutation,
+  createSetOrderMutation
+} from './mutations'
+
 const TAB_DUPLICATE = 'TAB_DUPLICATE'
-const TAB_SELECT = 'TAB_SELECT'
-const TAB_SET_ORDER = 'TAB_SET_ORDER'
+const TAB_REMOVE_PENDING_MUTATION = 'TAB_REMOVE_PENDING_MUTATION'
+
+function reduceRemovePendingMutation (state, action) {
+  return removePendingMutation(state, action.payload.id)
+}
+
+async function removePendingMutationOnError (apiPromise, dispatch, mutationId) {
+  try {
+    await apiPromise
+  } catch (err) {
+    dispatch({
+      type: TAB_REMOVE_PENDING_MUTATION,
+      payload: { id: mutationId, error: err }
+    })
+    throw err
+  }
+}
 
 export function setName (slug, name) {
+  const mutationId = generateSlug('mutation-')
+
   return (dispatch, getState, api) => {
     return dispatch({
       type: TAB_SET_NAME,
       payload: {
-        promise: api.setTabName(slug, name),
-        data: { slug, name }
+        promise: removePendingMutationOnError(
+          api.setTabName(slug, name, mutationId),
+          dispatch,
+          mutationId
+        ),
+        data: { slug, name, mutationId }
       }
     })
   }
 }
 
 export function setOrder (tabSlugs) {
+  const mutationId = generateSlug('mutation-')
+
   return (dispatch, getState, api) => {
     return dispatch({
       type: TAB_SET_ORDER,
       payload: {
-        promise: api.setTabOrder(tabSlugs),
+        promise: removePendingMutationOnError(
+          api.setTabOrder(tabSlugs, mutationId),
+          dispatch,
+          mutationId
+        ),
         data: { tabSlugs }
       }
     })
@@ -35,15 +76,21 @@ export function setOrder (tabSlugs) {
 
 export function destroy (slug) {
   return (dispatch, getState, api) => {
-    if (getState().workflow.tab_slugs.length === 1) {
+    if (selectOptimisticState(getState()).workflow.tab_slugs.length <= 1) {
       return
     }
+
+    const mutationId = generateSlug('mutation-')
 
     return dispatch({
       type: TAB_DESTROY,
       payload: {
-        promise: api.deleteTab(slug),
-        data: { slug }
+        promise: removePendingMutationOnError(
+          api.deleteTab(slug, mutationId),
+          dispatch,
+          mutationId
+        ),
+        data: { slug, mutationId }
       }
     })
   }
@@ -51,10 +98,10 @@ export function destroy (slug) {
 
 export function select (slug) {
   return (dispatch, getState, api) => {
-    const state = getState()
+    const state = selectOptimisticState(getState())
 
     if (!state.workflow.tab_slugs.includes(slug)) {
-      // This happens if the user clicks a "delete" button on the module:
+      // This happens if the user clicks a "delete" button on the step:
       // 2. Browser dispatches "delete", which removes the tab
       // 1. Browser dispatches "click", which tries to select it
       // https://www.pivotaltracker.com/story/show/162803752
@@ -77,16 +124,13 @@ export function select (slug) {
 
 export function create (tabPrefix) {
   return (dispatch, getState, api) => {
-    const state = getState()
-    const { workflow, tabs } = state
-    const pendingTabs = state.pendingTabs || {}
+    const state = selectOptimisticState(getState())
+    const mutationId = generateSlug('mutation-')
+    const { workflow, tabs } = selectOptimisticState(state)
 
     const tabNames = []
     for (const k in tabs) {
       tabNames.push(tabs[k].name)
-    }
-    for (const k in pendingTabs) {
-      tabNames.push(pendingTabs[k].name)
     }
 
     const slug = generateSlug('tab-')
@@ -99,8 +143,17 @@ export function create (tabPrefix) {
     return dispatch({
       type: TAB_CREATE,
       payload: {
-        promise: api.createTab(slug, name).then(() => ({ slug, name })),
-        data: { slug, name, position: workflow.tab_slugs.length } // append
+        promise: removePendingMutationOnError(
+          api.createTab(slug, name, mutationId).then(() => ({ slug, name })),
+          dispatch,
+          mutationId
+        ),
+        data: {
+          slug,
+          name,
+          mutationId,
+          position: workflow.tab_slugs.length
+        } // append
       }
     })
   }
@@ -108,17 +161,11 @@ export function create (tabPrefix) {
 
 export function duplicate (oldSlug) {
   return (dispatch, getState, api) => {
-    const state = getState()
-    const { workflow, tabs } = state
-    const pendingTabs = state.pendingTabs || {}
+    const { workflow, tabs } = selectOptimisticState(getState())
+    const mutationId = generateSlug('mutation-')
 
     const tabNames = []
-    for (const k in tabs) {
-      tabNames.push(tabs[k].name)
-    }
-    for (const k in pendingTabs) {
-      tabNames.push(pendingTabs[k].name)
-    }
+    Object.values(tabs).forEach(tab => { tabNames.push(tab.name) })
 
     const oldTab = tabs[oldSlug]
     const oldNameBase = oldTab.name.replace(/ \((\d+)\)$/, '')
@@ -132,12 +179,15 @@ export function duplicate (oldSlug) {
     return dispatch({
       type: TAB_DUPLICATE,
       payload: {
-        promise: api
-          .duplicateTab(oldSlug, slug, name)
-          .then(() => ({ slug, name })),
+        promise: removePendingMutationOnError(
+          api.duplicateTab(oldSlug, slug, name, mutationId).then(() => ({ slug, name })),
+          dispatch,
+          mutationId
+        ),
         data: {
           slug,
           name,
+          mutationId,
           // Insert after oldTab.
           //
           // This is what the server will do; we must mimic it or the user will
@@ -151,118 +201,32 @@ export function duplicate (oldSlug) {
 }
 
 function reduceCreatePending (state, action) {
-  const { workflow, pendingTabs } = state
-  const { position, slug, name } = action.payload
-  const tabSlugs = workflow.tab_slugs.slice() // shallow copy
-  tabSlugs.splice(position, 0, slug)
-
-  return {
-    ...state,
-    workflow: {
-      ...workflow,
-      tab_slugs: tabSlugs
-    },
-    pendingTabs: {
-      ...pendingTabs,
-      [slug]: {
-        slug,
-        name,
-        step_ids: [],
-        selected_step_position: null
-      }
-    }
-  }
+  return addPendingMutation(state, createCreateMutation(action.payload))
 }
 
-const reduceDuplicatePending = reduceCreatePending
+function reduceDuplicatePending (state, action) {
+  // BUG: this doesn't add the modules to the new tab.
+  //
+  // One way to solve this would be to add all the steps in a single action
+  // on the client side (instead of letting the server side compute what to
+  // duplicate and how).
+  return reduceCreatePending(state, action)
+}
 
 function reduceDestroyPending (state, action) {
-  const { slug } = action.payload
-  const { workflow, tabs } = state
-  const pendingTabs = state.pendingTabs || {}
-
-  const newTabs = { ...tabs }
-  delete newTabs[slug]
-
-  const newPendingTabs = { ...pendingTabs }
-  delete newPendingTabs[slug]
-
-  const newTabSlugs = [...workflow.tab_slugs]
-  const deleteIndex = workflow.tab_slugs.indexOf(slug)
-  newTabSlugs.splice(deleteIndex, 1)
-
-  // If we're deleting the current tab, select the tab to its left; or if
-  // there are none to the left, select the tab to the right. (Assume we never
-  // delete the last tab.)
-  let selectedPane = state.selectedPane
-  if (selectedPane.pane === 'tab' && selectedPane.tabSlug === slug) {
-    selectedPane = {
-      pane: 'tab',
-      tabSlug: deleteIndex === 0 ? newTabSlugs[0] : newTabSlugs[deleteIndex - 1]
-    }
-  }
-
-  return {
-    ...state,
-    selectedPane,
-    workflow: {
-      ...workflow,
-      tab_slugs: newTabSlugs,
-      selected_tab_position: newTabSlugs.indexOf(selectedPane.tabSlug)
-    },
-    pendingTabs: newPendingTabs,
-    tabs: newTabs
-  }
+  return addPendingMutation(state, createDestroyMutation(action.payload))
 }
 
 function reduceSetNamePending (state, action) {
-  const { slug, name } = action.payload
-  const { tabs } = state
-  const tab = tabs[slug]
-
-  return {
-    ...state,
-    tabs: {
-      ...tabs,
-      [slug]: {
-        ...tab,
-        name
-      }
-    }
-  }
+  return addPendingMutation(state, createSetNameMutation(action.payload))
 }
 
 function reduceSelectPending (state, action) {
-  const { workflow } = state
-  const { slug } = action.payload
-
-  return {
-    ...state,
-    selectedPane: { pane: 'tab', tabSlug: slug },
-    workflow: {
-      ...workflow,
-      selected_tab_position: workflow.tab_slugs.indexOf(slug)
-    }
-  }
+  return addLocalMutation(state, createSelectMutation(action.payload))
 }
 
 function reduceSetOrderPending (state, action) {
-  const { tabSlugs } = action.payload
-  const { workflow } = state
-
-  // find new selected_tab_position. Ignore selectedPane: we aren't trying to
-  // cause user-visible stuff here, we're only trying to predict what the
-  // server will do.
-  const tabSlug = workflow.tab_slugs[workflow.selected_tab_position]
-
-  return {
-    ...state,
-    workflow: {
-      ...workflow,
-      tab_slugs: tabSlugs,
-      selected_tab_position: tabSlugs.indexOf(tabSlug)
-    }
-  }
+  return addPendingMutation(state, createSetOrderMutation(action.payload))
 }
 
 export const reducerFunctions = {
@@ -271,5 +235,6 @@ export const reducerFunctions = {
   [TAB_DESTROY + '_PENDING']: reduceDestroyPending,
   [TAB_SET_NAME + '_PENDING']: reduceSetNamePending,
   [TAB_SELECT + '_PENDING']: reduceSelectPending,
-  [TAB_SET_ORDER + '_PENDING']: reduceSetOrderPending
+  [TAB_SET_ORDER + '_PENDING']: reduceSetOrderPending,
+  [TAB_REMOVE_PENDING_MUTATION]: reduceRemovePendingMutation
 }

@@ -1,6 +1,7 @@
 import { generateSlug } from '../../utils'
 import addPendingMutation from '../../reducers/addPendingMutation'
 import removePendingMutation from '../../reducers/removePendingMutation'
+import selectOptimisticState from '../../selectors/selectOptimisticState'
 
 import {
   STEP_LIST_REORDER_STEPS,
@@ -32,7 +33,7 @@ export function reorderStep (tabSlug, stepSlug, position) {
   const mutationId = generateSlug('mutation-')
 
   return (dispatch, getState, api) => {
-    const { tabs, steps } = getState()
+    const { tabs, steps } = selectOptimisticState(getState())
     const oldSlugs = tabs[tabSlug].step_ids.map(id => steps[String(id)].slug)
     const slugs = oldSlugs.filter(slug => slug !== stepSlug) // we'll mutate it
     slugs.splice(position, 0, stepSlug)

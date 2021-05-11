@@ -122,10 +122,8 @@ export default class WorkbenchAPI {
     )
   }
 
-  setTabOrder (tabSlugs) {
-    return this._callExpectingNull('workflow.set_tab_order', {
-      tabSlugs
-    })
+  setTabOrder (tabSlugs, mutationId) {
+    return this._callExpectingNull('workflow.set_tab_order', { tabSlugs, mutationId })
   }
 
   reorderSteps ({ mutationId, tabSlug, slugs }) {
@@ -146,23 +144,23 @@ export default class WorkbenchAPI {
     })
   }
 
-  createTab (slug, name) {
-    return this._callExpectingNull('tab.create', { slug, name })
+  createTab (slug, name, mutationId) {
+    return this._callExpectingNull('tab.create', { slug, name, mutationId })
   }
 
   /**
    * Ask server to duplicate the tab `tabSlug`, creating new `slug` and `name`.
    */
-  duplicateTab (tabSlug, slug, name) {
-    return this._callExpectingNull('tab.duplicate', { tabSlug, slug, name })
+  duplicateTab (tabSlug, slug, name, mutationId) {
+    return this._callExpectingNull('tab.duplicate', { tabSlug, slug, name, mutationId })
   }
 
   deleteStep (stepId) {
     return this._callExpectingNull('step.delete', { stepId })
   }
 
-  deleteTab (tabSlug) {
-    return this._callExpectingNull('tab.delete', { tabSlug })
+  deleteTab (tabSlug, mutationId) {
+    return this._callExpectingNull('tab.delete', { tabSlug, mutationId })
   }
 
   addBlock (args) {
@@ -247,10 +245,11 @@ export default class WorkbenchAPI {
     )
   }
 
-  setTabName (tabSlug, name) {
+  setTabName (tabSlug, name, mutationId) {
     return this._callExpectingNull('tab.set_name', {
       tabSlug,
-      name
+      name,
+      mutationId
     })
   }
 

@@ -29,16 +29,7 @@ export function reorderSteps (state, { tabSlug, slugs }) {
   if (oldSlugs.join('|') === slugs.join('|')) {
     return state // no-op
   }
-  if (
-    oldSlugs
-      .slice()
-      .sort()
-      .join('|') !==
-    slugs
-      .slice()
-      .sort()
-      .join('|')
-  ) {
+  if (oldSlugs.slice().sort().join('|') !== slugs.slice().sort().join('|')) {
     return state // list of valid steps has changed; server will reject request
   }
   return {

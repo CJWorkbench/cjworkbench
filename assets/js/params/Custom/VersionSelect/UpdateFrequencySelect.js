@@ -12,6 +12,7 @@ import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
 import selectIsAnonymous from '../../../selectors/selectIsAnonymous'
 import selectIsReadOnly from '../../../selectors/selectIsReadOnly'
+import selectStepsById from '../../../selectors/selectStepsById'
 
 export class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
@@ -142,7 +143,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => {
   const workflow = state.workflow || {}
-  const step = state.steps[String(ownProps.stepId)] || {}
+  const step = selectStepsById(state)[ownProps.stepId] || {}
   // We need a "default" value for everything: step might be a placeholder
 
   const lastCheckString = step.last_update_check // JSON has no date -- that's a STring

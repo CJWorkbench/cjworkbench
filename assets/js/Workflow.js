@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import { setWorkflowNameAction } from './workflow-reducer'
 import selectIsAnonymous from './selectors/selectIsAnonymous'
 import selectIsReadOnly from './selectors/selectIsReadOnly'
+import selectOptimisticState from './selectors/selectOptimisticState'
 import { Trans } from '@lingui/macro'
 
 export function MaybeNotYourWorkflow (props) {
@@ -100,7 +101,7 @@ Workflow.propTypes = {
 // Handles addStep (and any other actions that change top level workflow state)
 const mapStateToProps = state => {
   return {
-    workflow: state.workflow,
+    workflow: selectOptimisticState(state).workflow,
     loggedInUser: state.loggedInUser,
     isAnonymous: selectIsAnonymous(state),
     isReadOnly: selectIsReadOnly(state)

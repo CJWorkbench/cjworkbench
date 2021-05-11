@@ -5,7 +5,6 @@ import TabDropdown from './TabDropdown'
 export default class Tab extends PureComponent {
   static propTypes = {
     slug: PropTypes.string.isRequired,
-    isPending: PropTypes.bool, // or undefined
     isReadOnly: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
@@ -145,20 +144,7 @@ export default class Tab extends PureComponent {
   }
 
   handleClick = () => {
-    const { slug, select, isPending } = this.props
-
-    if (isPending) {
-      // Don't allow selecting the tab yet. It _would_ work, but _other_ parts
-      // of the client side will break because of it. For instance, we can't
-      // add a module to pending tabs.
-      //
-      // TODO nix "pendingTabs" and build a more comprehensive store. If the
-      // store queues uncommitted actions in a separate place from the current
-      // state, we can nix this if-clause: the user won't care whether a tab
-      // is pending.
-      return
-    }
-
+    const { slug, select } = this.props
     select(slug)
   }
 
@@ -168,12 +154,11 @@ export default class Tab extends PureComponent {
   }
 
   render () {
-    const { isPending, isReadOnly, isSelected } = this.props
+    const { isReadOnly, isSelected } = this.props
     const droppingClassName = this.droppingClassName
     const name = this.state.name === null ? this.props.name : this.state.name
 
     const classNames = []
-    if (isPending) classNames.push('pending')
     if (isSelected) classNames.push('selected')
     if (droppingClassName) classNames.push(droppingClassName)
     if (this.isDragging) classNames.push('dragging')

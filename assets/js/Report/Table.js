@@ -6,6 +6,7 @@ import BigTable from '../BigTable'
 import useTiles from '../BigTable/useTiles'
 import ColumnType from '../BigTable/ColumnType'
 import { columnToCellFormatter } from './CellFormatters2'
+import selectStepsBySlug from '../selectors/selectStepsBySlug'
 
 function ColumnHeader ({ name, type, dateUnit }) {
   return (
@@ -78,9 +79,7 @@ Table.propTypes = {
 }
 
 function mapStateToProps (state, { stepSlug }) {
-  const step = Object.values(state.steps).filter(
-    step => step.slug === stepSlug
-  )[0]
+  const step = selectStepsBySlug(state)[stepSlug]
   return {
     deltaId: step.cached_render_result_delta_id,
     nRows: step.output_n_rows,

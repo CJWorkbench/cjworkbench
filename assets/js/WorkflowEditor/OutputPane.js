@@ -7,6 +7,7 @@ import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
 import OutputIframe from '../OutputIframe'
 import selectIsReadOnly from '../selectors/selectIsReadOnly'
 import selectWorkflowIdOrSecretId from '../selectors/selectWorkflowIdOrSecretId'
+import selectOptimisticState from '../selectors/selectOptimisticState'
 
 /**
  * Output of currently-selected module.
@@ -158,7 +159,7 @@ function stepStatus (step) {
 }
 
 function mapStateToProps (state) {
-  const { workflow, steps, tabs, modules, selectedPane } = state
+  const { workflow, steps, tabs, modules, selectedPane } = selectOptimisticState(state)
   const tabSlug = selectedPane.tabSlug
   const tab = tabs[tabSlug]
   const stepArray = tab.step_ids.map(id => steps[String(id)])
