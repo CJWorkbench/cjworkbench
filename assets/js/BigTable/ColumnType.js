@@ -16,7 +16,7 @@ export default function ColumnType (props) {
         case 'year':
           return <Trans id='js.BigTable.ColumnType.date.year'>date – year</Trans>
         default:
-          return <Trans id='js.BigTable.ColumnType.date.day'>date</Trans>
+          return <Trans id='js.BigTable.ColumnType.date.day'>date – day</Trans>
       }
     case 'text':
       return <Trans id='js.BigTable.ColumnType.text'>text</Trans>

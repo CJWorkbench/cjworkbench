@@ -20,7 +20,7 @@ msgstr "null"
 
 #: assets/js/BigTable/ColumnType.js:19
 msgid "js.BigTable.ColumnType.date.day"
-msgstr "date"
+msgstr "date – day"
 
 #: assets/js/BigTable/ColumnType.js:13
 msgid "js.BigTable.ColumnType.date.month"
