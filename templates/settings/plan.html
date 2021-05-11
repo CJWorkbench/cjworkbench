@@ -2,7 +2,7 @@
 {% load bundle_path from webpack %}
 
 {% block headscripts %}
-  <script defer src="{% bundle_path 'plan.js' %}"></script>
+  <script defer crossorigin src="{% bundle_path 'plan.js' %}"></script>
 {% endblock %}
 
 {% block body %}

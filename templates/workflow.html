@@ -5,7 +5,7 @@
 {% block title %}{% trans_html "py.templates.workflow.title" default="Workbench" %}{% endblock %}
 
 {% block headscripts %}
-  <script defer src="{% bundle_path 'workflow.js' %}"></script>
+  <script defer crossorigin src="{% bundle_path 'workflow.js' %}"></script>
 {% endblock %}
 
 {% block body %}
