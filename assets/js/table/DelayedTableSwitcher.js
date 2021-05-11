@@ -1,15 +1,8 @@
-/* global requestAnimationFrame */
 import React from 'react'
 import PropTypes from 'prop-types'
 import propTypes from '../propTypes'
 import TableSwitcher from './TableSwitcher'
-
-function areSameTable (props1, props2) {
-  if (props1 === null && props2 === null) return true // both null => true
-  if ((props1 === null) !== (props2 === null)) return false // one null => false
-
-  return props1.stepSlug === props2.stepSlug && props1.deltaId === props2.deltaId
-}
+import Spinner from '../Spinner'
 
 /**
  * Given props, return the React "key".
@@ -19,13 +12,6 @@ function areSameTable (props1, props2) {
  */
 function tableKey ({ stepSlug, deltaId }) {
   return `table-${stepSlug}-${deltaId}`
-}
-
-/**
- * Given props, return the props we'll pass to <TableSwitcher>.
- */
-function tableProps ({ workflowIdOrSecretId, stepSlug, stepId, deltaId, columns, nRows, status }) {
-  return { workflowIdOrSecretId, stepSlug, stepId, deltaId, columns, nRows, status }
 }
 
 /**
@@ -48,154 +34,112 @@ function tableProps ({ workflowIdOrSecretId, stepSlug, stepId, deltaId, columns,
  *
  * this.state holds the _loaded_ table. this.props holds the _loading_ table.
  *
- * Behind the state, a table in `this.props` goes through three stages:
+ * Behind the state, a table in `this.props` goes through two stages:
  *
- * 1. Rendered straight from props to `"loading-table"`. This table should be
- *    invisible: <DataGrid> waits a tick before rendering, so the <Spinner>
- *    will appear to the user before <ReactDataGrid> starts drawing columns
- *    (which can be painfully slow -- >1s).
- * 2. One tick later: <DataGrid> actually sets <ReactDataGrid> size correctly.
- *    At this point, if `nRows>0` we're "loading"; otherwise we're...:
- * 3. In `state.loaded`.
+ * 1. Loading. The old data should still be visible; the new table should
+ *    display as a spinner.
+ * 2. In `state.loaded`. That is, `state.loaded` is equivalent to `this.props`.
  *
- * This file calls the phase between stages 1 and 2 `state.oneTickFromLoaded`.
+ * We call the table in `this.props` the "current table". The table in state (if
+ * any) is the "loaded table".
  */
-export default class DelayedTableSwitcher extends React.PureComponent {
-  isUnmounted = false
+export default function DelayedTableSwitcher (props) {
+  const {
+    isReadOnly,
+    workflowIdOrSecretId,
+    stepSlug,
+    stepId,
+    deltaId,
+    status,
+    columns,
+    nRows
+  } = props
 
-  static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    isReadOnly: PropTypes.bool.isRequired,
-    workflowIdOrSecretId: propTypes.workflowId.isRequired,
-    stepSlug: PropTypes.string, // or null, if no selection
-    stepId: PropTypes.number, // or null, if no selection; deprecated
-    deltaId: PropTypes.number, // or null, if status!=ok
-    status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
-    columns: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['date', 'text', 'timestamp', 'number']).isRequired
-      }).isRequired
-    ), // or null, if status!=ok
-    nRows: PropTypes.number // or null, if status!=ok
+  const [loadedTable, setLoadedTable] = React.useState(null)
+  const currentTable = {
+    isReadOnly,
+    workflowIdOrSecretId,
+    stepSlug,
+    stepId,
+    deltaId,
+    status,
+    columns,
+    nRows
   }
 
-  state = {
-    loaded: null, // { stepId, deltaId, status, nRows, columns } of a table that has rendered something, sometime
-    oneTickFromLoaded: null // { stepId, deltaId, status, nRows, columns } of a table for which data is already loaded, but we need to render it for a tick otherwise <DataGrid> will flicker
-  }
+  const handleTableLoaded = React.useCallback(
+    ({ stepSlug, deltaId }) => {
+      if (tableKey(currentTable) === tableKey({ stepSlug, deltaId })) {
+        setLoadedTable(currentTable)
+      }
+    },
+    [setLoadedTable, currentTable]
+  )
 
-  _afterOneTickFromLoaded = () => {
-    const { oneTickFromLoaded } = this.state
-    // TODO nix react-data-grid, so we don't have to do this deferred-render
-    // hack and we can nix the this.isUnmounted check.
-    if (oneTickFromLoaded && !this.isUnmounted) {
-      this.setState({
-        loaded: oneTickFromLoaded,
-        oneTickFromLoaded: null
-      })
+  let className = 'table-switcher'
+
+  // Show the last table that has data visible (from state)
+  //
+  // If input props have stepId=null, that's a "loaded" table -- an
+  // empty-looking one.
+  if (loadedTable) className += ' has-loaded'
+
+  // Show requested table afterwards -- styled differently (and on top)
+  //
+  // It's always the case that `!!loading || !!loaded`
+  const loading = loadedTable === null || tableKey(loadedTable) !== tableKey(currentTable)
+  if (loading) className += ' has-loading'
+
+  const waiting = loading || currentTable.status === 'busy'
+
+  React.useEffect(() => {
+    if (currentTable.nRows === 0) {
+      setLoadedTable(currentTable)
     }
-  }
+  }, [setLoadedTable, currentTable])
 
-  componentDidUpdate (_, prevState) {
-    if (this.state.oneTickFromLoaded && !prevState.oneTickFromLoaded) {
-      requestAnimationFrame(this._afterOneTickFromLoaded)
-    }
-  }
-
-  componentDidMount () {
-    this._afterOneTickFromLoaded()
-  }
-
-  componentWillUnmount () {
-    this.isUnmounted = true
-  }
-
-  static getDerivedStateFromProps (props, state) {
-    // If new props aren't changing the table, don't change the state
-    if (areSameTable(props, state.loaded)) return { oneTickFromLoaded: null }
-
-    if (props.status === 'ok' && props.nRows > 0) {
-      return { oneTickFromLoaded: null } // table needs loading; loadRows() will set state.loaded
-    } else if (props.status === 'busy') {
-      return { oneTickFromLoaded: null } // table needs rendering (and maybe _after_ that, loading); we'll set new status later
-    } else {
-      return { oneTickFromLoaded: tableProps(props) } // table just needs a single tick; then we'll move it to .loaded
-    }
-  }
-
-  /**
-   * Call this.prop.loadRows() and ensure state.loaded is set after it returns.
-   */
-  loadRows = (stepSlug, deltaId, startRow, endRow) => {
-    return this.props
-      .loadRows(stepSlug, deltaId, startRow, endRow)
-      .finally(() => {
-        if (
-          stepSlug === this.props.stepSlug &&
-          deltaId === this.props.deltaId &&
-          !areSameTable(this.props, this.state.loaded) &&
-          // TODO nix react-data-grid, so we don't have to do this deferred-render
-          // hack and we can nix the this.isUnmounted check.
-          !this.isUnmounted
-        ) {
-          // We have data for our currently-loading table. Mark it "loaded".
-          this.setState({ loaded: tableProps(this.props) })
-        }
-      })
-  }
-
-  render () {
-    const { isReadOnly } = this.props
-    const { loaded } = this.state
-
-    let className = 'table-switcher'
-
-    // Show the last table that has data visible (from state)
-    //
-    // If input props have stepId=null, that's a "loaded" table -- an
-    // empty-looking one.
-    if (loaded) className += ' has-loaded'
-
-    // Show requested table afterwards -- styled differently (and on top)
-    //
-    // It's always the case that `!!loading || !!loaded`
-    const loading = !areSameTable(this.props, loaded)
-    if (loading) className += ' has-loading'
-
-    // Notice the nifty optimization: we make sure React will not redraw a
-    // table when switching from "loading" to "loaded": its `key` will remain
-    // the same.
-    //
-    // TODO when we switch off react-data-grid, the "loading" table should be
-    // read-only no matter what. Currently we can't do that, because
-    // react-data-grid won't notice the change if we start with isReadOnly=true
-    // and later set isReadOnly=false
-    return (
-      <div className={className}>
-        {loaded
-          ? (
-            <TableSwitcher
-              isReadOnly={isReadOnly}
-              isLoaded
-              key={tableKey(loaded)}
-              loadRows={this.loadRows}
-              {...loaded}
-            />
-            )
-          : null}
-        {loading
-          ? (
-            <TableSwitcher
-              isReadOnly={isReadOnly}
-              isLoaded={false}
-              key={tableKey(this.props)}
-              loadRows={this.loadRows}
-              {...tableProps(this.props)}
-            />
-            )
-          : null}
-      </div>
-    )
-  }
+  // Notice the nifty optimization: we make sure React will not redraw a
+  // table when switching from "loading" to "loaded": its `key` will remain
+  // the same.
+  return (
+    <div className={className}>
+      {loadedTable
+        ? (
+          <TableSwitcher
+            {...loadedTable}
+            isReadOnly={isReadOnly || loading}
+            isLoaded
+            key={tableKey(loadedTable)}
+          />
+          )
+        : null}
+      {loading
+        ? (
+          <TableSwitcher
+            {...currentTable}
+            isReadOnly
+            isLoaded={false}
+            key={tableKey(currentTable)}
+            onTableLoaded={handleTableLoaded}
+          />
+          )
+        : null}
+      {waiting ? <Spinner /> : null}
+    </div>
+  )
+}
+DelayedTableSwitcher.propTypes = {
+  isReadOnly: PropTypes.bool.isRequired,
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
+  stepSlug: PropTypes.string, // or null, if no selection
+  stepId: PropTypes.number, // or null, if no selection; deprecated
+  deltaId: PropTypes.number, // or null, if status!=ok
+  status: PropTypes.oneOf(['ok', 'busy', 'unreachable']), // null if no selection
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['date', 'text', 'timestamp', 'number']).isRequired
+    }).isRequired
+  ), // or null, if status!=ok
+  nRows: PropTypes.number // or null, if status!=ok
 }

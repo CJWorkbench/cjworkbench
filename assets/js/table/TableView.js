@@ -5,13 +5,9 @@ import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
 import { connect } from 'react-redux'
 import { updateTableAction } from './UpdateTableAction'
-import { Trans } from '@lingui/macro'
-
-export const NMaxColumns = 100
 
 export class TableView extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepSlug: PropTypes.string, // null for placeholder table
     stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
@@ -24,6 +20,7 @@ export class TableView extends React.PureComponent {
     ), // immutable; null for placeholder table
     nRows: PropTypes.number, // immutable; null for placeholder table
     isReadOnly: PropTypes.bool.isRequired,
+    onTableLoaded: PropTypes.func, // func({ stepSlug, deltaId }) => undefined
     ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
     reorderColumn: PropTypes.func.isRequired // func(stepId, colname, fromIndex, toIndex) => undefined
   }
@@ -53,47 +50,18 @@ export class TableView extends React.PureComponent {
   render () {
     // Make a table component if we have the data
     const { selectedRowIndexes } = this.state
-    const { loadRows, workflowIdOrSecretId, stepSlug, stepId, deltaId, isReadOnly, columns, nRows } = this.props
-    const tooWide = columns.length > NMaxColumns
-
-    let gridView
-    if (tooWide) {
-      // TODO nix all the <div>s
-      gridView = (
-        <div className='overlay'>
-          <div>
-            <div className='text'>
-              <Trans id='js.table.TableView.maxOf100ColumnsCanbeDIsplayed'>
-                A maximum of 100 columns can be displayed
-              </Trans>
-            </div>
-            <button
-              className='add-select-module'
-              onClick={this.handleClickSelectColumns}
-            >
-              <Trans id='js.table.TableView.selectColumns.button'>
-                Select columns
-              </Trans>
-            </button>
-          </div>
-        </div>
-      )
-    } else {
-      gridView = (
-        <DataGrid
-          loadRows={loadRows}
-          isReadOnly={isReadOnly}
-          stepId={stepId}
-          columns={columns}
-          nRows={nRows}
-          editCell={this.editCell}
-          reorderColumn={this.reorderColumn}
-          selectedRowIndexes={selectedRowIndexes}
-          onSetSelectedRowIndexes={this.handleSetSelectedRowIndexes}
-          key={stepId + '-' + deltaId}
-        />
-      )
-    }
+    const {
+      workflowIdOrSecretId,
+      stepSlug,
+      stepId,
+      deltaId,
+      isReadOnly,
+      columns,
+      nRows,
+      nRowsPerTile,
+      nColumnsPerTile,
+      onTableLoaded
+    } = this.props
 
     return (
       <div className='outputpane-table'>
@@ -106,9 +74,31 @@ export class TableView extends React.PureComponent {
           nColumns={stepSlug && columns ? columns.length : null}
           selectedRowIndexes={selectedRowIndexes}
         />
-        <div className='outputpane-data'>{gridView}</div>
+        <div className='outputpane-data'>
+          <DataGrid
+            workflowIdOrSecretId={workflowIdOrSecretId}
+            stepSlug={stepSlug}
+            stepId={stepId}
+            deltaId={deltaId}
+            nRows={nRows}
+            columns={columns}
+            nRowsPerTile={nRowsPerTile}
+            nColumnsPerTile={nColumnsPerTile}
+            selectedRowIndexes={selectedRowIndexes}
+            onSetSelectedRowIndexes={this.handleSetSelectedRowIndexes}
+            onTableLoaded={onTableLoaded}
+            isReadOnly={isReadOnly}
+          />
+        </div>
       </div>
     )
+  }
+}
+
+function mapStateToProps (state) {
+  return {
+    nColumnsPerTile: state.settings.bigTableColumnsPerTile,
+    nRowsPerTile: state.settings.bigTableRowsPerTile
   }
 }
 
@@ -138,4 +128,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(null, mapDispatchToProps)(TableView)
+export default connect(mapStateToProps, mapDispatchToProps)(TableView)

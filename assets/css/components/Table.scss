@@ -32,15 +32,15 @@
     &.has-loaded .loading-table {
       // Hide the DataGrid of the loading table: we'll show the current table
       // instead.
-      .react-grid-Container {
-        pointer-events: none;
-        opacity: 0;
-      }
+      //
+      // Keep its size: DataGrid should to know its size to load correctly.
+      pointer-events: none;
+      opacity: 0;
     }
 
     &.has-loading .loaded-table {
       // Subtly fade out old data. The user doesn't want it.
-      opacity: 0.9;
+      opacity: 0.8;
     }
   }
 
@@ -53,111 +53,30 @@
 
     .outputpane-data {
       flex: 1 1 auto; // consume maximum height (unlike header, which is fixed-height)
-      position: relative; // for .react-grid-Container
+      position: relative;
 
-      .data-grid-sizer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-      }
-
-      // DataGrid is the heaviest DOM tree we have, and it effects the
+      // DataGrid is the heaviest DOM tree we have, and it affects the
       // performance of the custom drag layer (and probably everything else). By
       // putting a no-op translate3d property on it, we coerce browsers into
       // rendering it and all of its children in a seperate compositing layer,
       // improving the rendering of everything else in the app.
       transform: translate3d(0, 0, 0);
 
-      .overlay {
+      .big-table {
         position: absolute;
-        background-color: $light-overlay;
-        display: flex;
-        //justify-content: center; cancelling justification because it should be positioned over the table, not the canvas -- same for the spinner
-        height: 100%;
-        width: 100%;
-        bottom: 0;
-        padding: 0;
-
-        div {
-          border-radius: 0.5rem;
-          width: 40rem;
-          margin: 8rem 16rem;
-          padding: 2rem;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-
-          .text {
-            @extend .title-2;
-            color: $brand-text--dark;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-          }
-
-          button {
-            @extend .action-button;
-            @extend .button-blue--fill;
-            margin-top: 3rem;
-            text-transform: uppercase;
-          }
-        }
-      }
-
-      .react-grid-Container {
-        // Do not influence the height of .outputpane-data.
-        position: absolute;
-        top: 0;
-        left: 0;
+        max-height: 100%;
         width: 100%;
         height: 100%;
-
-        .react-grid-Main {
-          outline: none;
-
-          .react-grid-Grid {
-            border: none;
-          }
-        }
       }
 
-      .react-grid-Canvas {
-        background-color: $table-background;
-        padding-bottom: 10rem;
-      }
-
-      .react-grid-HeaderRow {
-        background-color: $table-background;
-
-        .react-grid-HeaderCell:not(:last-child)
-          .column-reorder-drop-zone.align-right {
-          // We place a dropzone at the beginning and end of each header cell
-          // because it's easy. However, each .react-grid-HeaderCell has
-          // position:absolute set in its style by react-data-grid. That gives
-          // each subsequent cell a higher effective z-index than the previous
-          // one. We want our .align-right dropzone to extend _past_ the right
-          // of the cell, but that will only work on the final cell: in all other
-          // cells, the next .react-grid-HeaderCell will appear on top.
-          //
-          // So we hide the .align-right dropzone on all but the final cell. We
-          // trust DataGrid.js to place a .align-left dropzone in the next cell
-          // in the same place ... and the .align-left dropzone will be on top,
-          // just the way we want.
-          display: none;
-        }
-      }
-
-      .react-grid-HeaderCell {
-        @extend .content-1;
+      thead th {
+        @include content-1();
         color: white;
         background-color: $heading-bg;
         border-right: 1px solid $dark-accent--strong;
         border-bottom: 0px;
         border-left: 0px;
         padding: 0;
-        display: flex;
 
         .column-reorder-drop-zone {
           position: absolute;
@@ -220,12 +139,13 @@
             }
 
             .column-type {
-              @extend .info-2;
+              @include info-2;
               position: relative;
             }
           }
 
           .dropdown {
+            // TODO use Popper
             position: absolute;
             flex: 0 0 auto;
             display: flex;
@@ -285,35 +205,21 @@
             }
           }
         }
-      }
 
-      .react-grid-HeaderCell:hover .context-menu {
-        opacity: 1;
-      }
-
-      .react-grid-HeaderCell:active {
-        background-color: $header-hover;
-        cursor: grabbing;
-        cursor: -moz-grabbing;
-        cursor: -webkit-grabbing;
-
-        .dropdown {
-          opacity: 0;
+        &:hover .context-menu {
+          opacity: 1;
         }
-      }
 
-      .react-grid-HeaderCell__draggable {
-        z-index: 2;
-        width: 8px !important;
-      }
+        &:active {
+          background-color: $header-hover;
+          cursor: grabbing;
+          cursor: -moz-grabbing;
+          cursor: -webkit-grabbing;
 
-      .react-grid-HeaderCell__draggable:hover,
-      .react-grid-HeaderCell__draggable:active {
-        background-color: $header-hover;
-      }
-
-      .react-grid-Row {
-        height: 3.5rem;
+          .dropdown {
+            opacity: 0;
+          }
+        }
       }
 
       // Your average cell in the table
@@ -334,96 +240,14 @@
           text-overflow: ellipsis;
         }
 
-        .cell-number {
-          text-align: right;
-          padding: 0 1rem;
-
-          .number-prefix,
-          .number-suffix {
-            @include font-sans-light;
-          }
-
-          .number-suffix {
-            padding-left: 0.2rem;
-          }
-
-          .number-prefix {
-            padding-right: 0.2rem;
-          }
-        }
-
-        .cell-text {
-          // The value is already mangled to take only one line. Now, preserve
-          // the whitespace within that one line.
-          white-space: pre;
-          padding: 0 0.2rem 0 1rem;
-        }
-
-        .cell-date, .cell-timestamp {
-          text-align: left;
-          padding: 0 1rem;
-        }
-
-        // when a cell value cannot be rendered
-        .cell-null {
-          // .cell-null is sometimes added to .cell-text, .cell-timestamp and .cell-number
-          &::before {
-            // Add 'null' text in CSS, not React, so copy/paste won't copy it
-            @include font-sans-light;
-            content: 'null';
-            color: lighten($brand-text--dark, 30%);
-            font-style: italic; // FIXME we don't ship this font as italic
-            font-weight: 200;
-          }
-        }
-
         .react-grid-Cell__value > .cell-null {
           // "overflow: hidden" seems to crop the fake-italics 'null' in number cells on
           // Chrome 73 on Mac/Linux. TODO fix the font to correct this problem
           overflow: visible;
         }
 
-        // fix number column on the left
-        .row-number {
-          color: $labels;
-          font-weight: 400;
-          text-align: center;
-          font-size: 1.2rem;
-          line-height: 35px; // 35px is react-data-grid's hard-coded row height
-        }
-
-        // Shrinking font sizes based on number of digits
-        .row-number-3 {
-          font-size: 1rem;
-        }
-        .row-number-4 {
-          font-size: 0.9rem;
-        }
-        .row-number-5 {
-          font-size: 0.8rem;
-        }
-        .row-number-6,
-        .row-number-7,
-        .row-number-8 {
-          font-size: 0.7rem;
-        }
-
         // cell #
         &:last-child {
-          border-left: 1px solid transparent;
-          border-right: 1px solid $table-border;
-
-          &,
-          * {
-            // react-data-grid adds lots of children. We want them _all_ to
-            // take up all the space
-            display: block;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 3.5rem;
-          }
-
           label.is-row-selected {
             display: block;
             position: relative;
@@ -483,27 +307,6 @@
           font-weight: normal;
         }
       }
-
-      // Entire Row styling
-
-      .react-grid-Row--odd .react-grid-Cell {
-        background-color: $table-row-background-odd;
-      }
-
-      .react-grid-Row:hover .react-grid-Cell {
-        background-color: $table-row-background-hover;
-      }
-
-      .react-grid-Row:hover .react-grid-Cell:last-child {
-        border-left: 1px solid $table-border;
-        border-right: 1px solid $dark-accent--medium;
-
-        .row-number {
-          color: lighten($brand-text--dark, 5%);
-        }
-      }
-
-      // Selected rows
 
       // cancel row background - we style cells
       .react-grid-Row.row-selected {

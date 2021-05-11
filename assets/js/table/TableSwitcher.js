@@ -13,10 +13,8 @@ const NoStepTableColumns = [
   { name: '   ', type: 'text' },
   { name: '    ', type: 'text' }
 ]
-const NoStepLoadRows = () => Promise.resolve([])
 const NoStepTable = (props) => (
   <TableView
-    loadRows={NoStepLoadRows}
     isReadOnly
     workflowIdOrSecretId={props.workflowIdOrSecretId}
     stepSlug={null}
@@ -42,26 +40,19 @@ const OkStepTable = React.memo(function OkStepTable ({
   deltaId,
   columns,
   nRows,
-  loadRows
+  onTableLoaded
 }) {
-  const loadThisTableRows = React.useCallback(
-    (startRow, endRow) => loadRows(stepSlug, deltaId, startRow, endRow),
-    [loadRows, stepSlug, deltaId]
-  )
   return (
-    <>
-      <TableView
-        isReadOnly={isReadOnly}
-        loadRows={loadThisTableRows}
-        workflowIdOrSecretId={workflowIdOrSecretId}
-        stepSlug={stepSlug}
-        stepId={stepId}
-        deltaId={deltaId}
-        columns={columns}
-        nRows={nRows}
-      />
-      {isLoaded ? null : <Spinner />}
-    </>
+    <TableView
+      isReadOnly={isReadOnly}
+      workflowIdOrSecretId={workflowIdOrSecretId}
+      stepSlug={stepSlug}
+      stepId={stepId}
+      deltaId={deltaId}
+      columns={columns}
+      nRows={nRows}
+      onTableLoaded={onTableLoaded}
+    />
   )
 })
 
@@ -96,7 +87,6 @@ const TableSwitcherContents = React.memo(function TableSwitcherContents ({
  */
 export default class TableSwitcher extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
     workflowIdOrSecretId: propTypes.workflowId.isRequired,
@@ -110,7 +100,8 @@ export default class TableSwitcher extends React.PureComponent {
         type: PropTypes.oneOf(['date', 'text', 'timestamp', 'number']).isRequired
       }).isRequired
     ), // or null, if status!=ok
-    nRows: PropTypes.number // or null, if status!=ok
+    nRows: PropTypes.number, // or null, if status!=ok
+    onTableLoaded: PropTypes.func // func({ stepSlug, deltaId }) => undefined
   }
 
   render () {

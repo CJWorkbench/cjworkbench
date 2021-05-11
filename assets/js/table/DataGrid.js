@@ -3,17 +3,38 @@
 // Contains all logic that interfaces with react-data-grid
 // Paged loading and other logic is in TableView, which is typically our parent
 
-import { createRef, PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import ReactDataGrid from 'react-data-grid'
-import debounce from 'debounce'
+import BigTable from '../BigTable'
+import useTiles from '../BigTable/useTiles'
+import { columnToCellFormatter } from '../Report/CellFormatters2'
+import ColumnType from '../BigTable/ColumnType'
 import memoize from 'memoize-one'
 import Spinner from '../Spinner'
 import ColumnHeader from './ColumnHeader'
 import Row from './Row'
 import RowActionsCell from './RowActionsCell'
-import { columnToCellFormatter } from './CellFormatters'
+import propTypes from '../propTypes'
 
+function stub () {}
+
+function buildColumnHeaderComponent ({ name, type, dateUnit }, index) {
+  return () => (
+    <ColumnHeader
+      columnKey={name}
+      columnType={type}
+      dateUnit={dateUnit}
+      index={index}
+      onRename={stub}
+      onDragStartColumnIndex={stub}
+      onDragEnd={stub}
+      onDropColumnIndexAtIndex={stub}
+      isReadOnly={false}
+    />
+  )
+}
+
+/*
 export const NRowsPerPage = 200 // exported to help tests
 export const FetchTimeout = 0 // ms after scroll before fetch
 
@@ -80,9 +101,6 @@ function mergeSortedArrays (a, b) {
   return c
 }
 
-/**
- * ReactDataGrid, with a thinner hard-coded actions-column width.
- */
 class ReactDataGridWithThinnerActionsColumn extends ReactDataGrid {
   _superSetupGridColumns = this.setupGridColumns
 
@@ -155,19 +173,6 @@ export default class DataGrid extends PureComponent {
   // initial value, for initial load()
   scheduleLoadTimeout = 'init' // initial load() doesn't take a timeout
 
-  // After the component mounts, and on any change, set the height to parent div height
-  updateSize = () => {
-    const domNode = this.sizerRef.current
-    if (domNode && domNode.parentElement) {
-      const gridHeight = Math.max(100, domNode.offsetHeight)
-      const gridWidth = Math.max(100, domNode.offsetWidth)
-      window.setTimeout(() => {
-        if (this.unmounted) return
-        this.setState({ gridWidth, gridHeight })
-      }, 0)
-    }
-  }
-
   load () {
     const min = this.firstMissingRowIndex
     const max = Math.min(min + NRowsPerPage, this.props.nRows || 10)
@@ -210,21 +215,6 @@ export default class DataGrid extends PureComponent {
         }
       })
     })
-  }
-
-  componentDidMount () {
-    if (this.props.nRows > 0) {
-      this.load()
-    }
-
-    this._resizeListener = debounce(this.updateSize, 50)
-    window.addEventListener('resize', this._resizeListener)
-    this.updateSize()
-  }
-
-  componentWillUnmount () {
-    window.removeEventListener('resize', this._resizeListener)
-    this.unmounted = true
   }
 
   handleGridRowsUpdated = data => {
@@ -406,4 +396,71 @@ export default class DataGrid extends PureComponent {
       </div>
     )
   }
+}
+*/
+
+export default function DataGrid (props) {
+  const {
+    workflowIdOrSecretId,
+    stepSlug,
+    deltaId,
+    columns,
+    nRows,
+    nColumnsPerTile,
+    nRowsPerTile,
+    onTableLoaded
+  } = props
+
+  const nTileRows = Math.ceil(nRows / nRowsPerTile)
+  const nTileColumns = Math.ceil(columns.length / nColumnsPerTile)
+  const fetchTile = React.useCallback(
+    (tileRow, tileColumn, fetchOptions) => {
+      const url = `/workflows/${workflowIdOrSecretId}/tiles/${stepSlug}/delta-${deltaId}/${tileRow},${tileColumn}.json`
+      return global.fetch(url, fetchOptions)
+    },
+    [workflowIdOrSecretId, stepSlug, deltaId]
+  )
+  const { sparseTileGrid, setWantedTileRange } = useTiles({ fetchTile, nTileRows, nTileColumns })
+  const bigColumns = React.useMemo(
+    () => columns.map((column, index) => ({
+      ...column,
+      width: 180,
+      headerComponent: buildColumnHeaderComponent(column, index),
+      valueComponent: columnToCellFormatter(column)
+    })),
+    [columns]
+  )
+
+  React.useEffect(() => {
+    if (sparseTileGrid.length && sparseTileGrid[0][0] !== null && onTableLoaded) {
+      onTableLoaded({ stepSlug, deltaId })
+    }
+  }, [sparseTileGrid, onTableLoaded, stepSlug, deltaId])
+
+  return (
+    <BigTable
+      sparseTileGrid={sparseTileGrid}
+      nRows={nRows}
+      columns={bigColumns}
+      nRowsPerTile={nRowsPerTile}
+      nColumnsPerTile={nColumnsPerTile}
+      setWantedTileRange={setWantedTileRange}
+    />
+  )
+}
+DataGrid.propTypes = {
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
+  stepSlug: PropTypes.string.isRequired,
+  stepId: PropTypes.number.isRequired,
+  deltaId: PropTypes.number.isRequired,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
+    }).isRequired
+  ), // immutable; null for placeholder table
+  nRows: PropTypes.number, // immutable; null for placeholder table
+  nColumnsPerTile: PropTypes.number.isRequired,
+  nRowsPerTile: PropTypes.number.isRequired,
+  onTableLoaded: PropTypes.func // func({ stepSlug, deltaId }) => undefined
 }
