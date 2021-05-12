@@ -6,6 +6,7 @@ columnchart
 colwiseproportion
 concattabs
 convert-date
+convertdatetodate
 converttexttodate
 converttexttonumber
 converttimestamptodate
