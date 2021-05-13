@@ -79,7 +79,7 @@ describe('Step, not read-only mode', () => {
         workflowId={99}
         step={step}
         deleteStep={jest.fn()}
-        inputStep={{ id: 123, last_relevant_delta_id: 707 }}
+        inputStep={{ id: 123, last_relevant_delta_id: 707, cached_render_result_delta_id: null }}
         isSelected
         isAfterSelected={false}
         api={mockApi}

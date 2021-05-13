@@ -581,11 +581,7 @@ export class Step extends React.PureComponent {
                       isStepBusy={this.stepStatus === 'busy'}
                       inputStepSlug={inputStep ? inputStep.slug : null}
                       inputStepId={inputStep ? inputStep.id : null}
-                      inputDeltaId={
-                      inputStep
-                        ? inputStep.cached_render_result_delta_id || null
-                        : null
-                    }
+                      inputDeltaId={inputStep ? inputStep.cached_render_result_delta_id : null}
                       inputColumns={inputStep ? inputStep.output_columns : null}
                       tabs={tabs}
                       currentTab={currentTab}
