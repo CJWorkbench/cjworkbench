@@ -6,11 +6,9 @@ import msgpack
 async def main():
     """Fetch, forever."""
     # import AFTER django.setup()
-    from django.conf import settings
     import cjwstate.modules
     from cjwstate import rabbitmq
     from cjwstate.rabbitmq.connection import open_global_connection
-    from cjworkbench.pg_render_locker import PgRenderLocker
     from .fetch import handle_fetch
 
     cjwstate.modules.init_module_system()

@@ -346,7 +346,7 @@ async def fetch(
     # 2. Calculate result
     #    2a. Build fetch kwargs
     #    2b. Call fetch (no errors possible -- LoadedModule catches them)
-    # 3. Save result (and send delta)
+    # 3. Save result (and create SetStepDataVersion => queueing a render)
     #    - database errors? Raise
     #    - rabbitmq errors? Raise
     #    - other error (bug in `save`)? Raise

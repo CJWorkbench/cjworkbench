@@ -1,9 +1,9 @@
 import asyncio
 import logging
-import os
 from enum import Enum
-from typing import Any, Awaitable, Callable, Dict
+from typing import Any, Dict
 
+import carehare
 from django.db import DatabaseError, InterfaceError
 
 from cjwstate import rabbitmq
@@ -41,8 +41,9 @@ async def render_workflow_once(workflow: Workflow, delta_id: int):
       to render again.
     * Raise asyncio.CancelledError if there was a cancellation. (This is always
       a bug -- we can't handle cancellation, and it isn't worth our effort.)
-    * Re-raise DatabaseError, InterfaceError -- our caller should die when it
-      sees these.
+    * Re-raise basically any error we have vetted -- mostly DatabaseError. The
+      process should exit (and log) when services fail, so it will restart and
+      reconnect to them.
     * Catch _every other exception_ (!!!); email us. Return MUST_NOT_REQUEUE:
       we want to leave the workflow in an indeterminate state rather than cause
       this error over and over again.
@@ -62,8 +63,28 @@ async def render_workflow_once(workflow: Workflow, delta_id: int):
         return RenderResult.MUST_REQUEUE
     except asyncio.CancelledError:
         raise
-    except (DatabaseError, InterfaceError):
-        # handled in outer try (which also handles PgRenderLocker)
+    except (
+        carehare.ChannelClosedByServer,
+        carehare.ConnectionClosed,
+        carehare.ServerSentNack,
+        DatabaseError,
+        InterfaceError,
+    ):
+        # These errors should cause a crash. A crash will restart this renderer
+        # ... and the workflow will be picked up by another renderer.
+        #
+        # Why? Because...:
+        #
+        # * DatabaseError: network disconnect. Restart, reconnect.
+        # * InterfaceError: postgres closed the connection. Restart, reconnect.
+        # * carehare.ChannelClosedByServer: publish() from a Delta failed
+        #       because e.g. missing exchange. Restart, reconnect -- we
+        #       redeclare exchanges on startup.
+        # * carehare.ServerSentNack: publish() from a Delta failed because a
+        #       queue was full. Restart, reconnect -- we've never seen this,
+        #       and hopefully if it ever happens it's transient.
+        # * carehare.ConnectionClosed: publish() from a Delta failed because
+        #       RabbitMQ is away. Restart, reconnect.
         raise
     except Exception:
         logger.exception("Error during render of workflow %d", workflow.id)
@@ -138,7 +159,7 @@ async def handle_render(
     try:
         workflow_id = int(message["workflow_id"])
         delta_id = int(message["delta_id"])
-    except Exception:
+    except (TypeError, ValueError, KeyError):
         # Message has invalid types. Ignore it.
         logger.info(
             (
