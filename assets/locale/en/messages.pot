@@ -1374,7 +1374,7 @@ msgstr ""
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
-#. default-message: Group dates
+#. default-message: Help with dates
 #: assets/js/params/Custom/Groups.js:40
 msgid "js.params.Custom.Groups.groupDates"
 msgstr ""

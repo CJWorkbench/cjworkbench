@@ -1140,7 +1140,7 @@ msgstr "Open upload API instructions"
 
 #: assets/js/params/Custom/Groups.js:40
 msgid "js.params.Custom.Groups.groupDates"
-msgstr "Group dates"
+msgstr "Help with dates"
 
 #: assets/js/params/Custom/JoinColumns.js:140
 msgid "js.params.Custom.JoinColumns.addAllColumns"

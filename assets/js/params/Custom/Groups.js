@@ -37,7 +37,7 @@ export default function Groups (props) {
       <div className='param param-checkbox'>
         <Checkbox
           isReadOnly={isReadOnly}
-          label={t({ id: 'js.params.Custom.Groups.groupDates', message: 'Group dates' })}
+          label={t({ id: 'js.params.Custom.Groups.groupDates', message: 'Help with dates' })}
           name={`${name}[group_dates]`}
           fieldId={`${fieldId}_group_dates`}
           value={value.group_dates}

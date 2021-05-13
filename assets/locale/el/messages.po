@@ -1177,6 +1177,7 @@ msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
 #: assets/js/params/Custom/Groups.js:40
+#, fuzzy
 msgid "js.params.Custom.Groups.groupDates"
 msgstr "Ομαδοποίηση ημερομηνιών"
 
