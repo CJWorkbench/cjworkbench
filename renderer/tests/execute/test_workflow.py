@@ -17,7 +17,11 @@ from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.rendercache import open_cached_render_result
 from cjwstate.rendercache.testing import write_to_rendercache
-from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistry,
+    create_module_zipfile,
+    create_test_user,
+)
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
 
@@ -285,7 +289,8 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     @patch("renderer.notifications.email_output_delta")
     def test_email_delta(self, email):
-        workflow = Workflow.objects.create()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.create(position=0)
         create_module_zipfile(
             "mod",

@@ -14,7 +14,11 @@ from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.storedobjects import create_stored_object
 from cjwstate.models import Workflow
-from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
+from cjwstate.tests.utils import (
+    DbTestCaseWithModuleRegistry,
+    create_module_zipfile,
+    create_test_user,
+)
 from renderer import notifications
 from renderer.execute.step import execute_step
 
@@ -80,7 +84,8 @@ class StepTests(DbTestCaseWithModuleRegistry):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(notifications, "email_output_delta")
     def test_email_delta(self, email_delta):
-        workflow = Workflow.create_and_init()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,
@@ -124,10 +129,54 @@ class StepTests(DbTestCaseWithModuleRegistry):
         self.assertEqual(delta.step, step)
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
+    @patch.object(notifications, "email_output_delta")
+    def test_do_not_email_delta_for_anonymous_user(self, email_delta):
+        workflow = Workflow.create_and_init(
+            owner_id=None, anonymous_owner_session_key="sess"
+        )
+        tab = workflow.tabs.first()
+        step = tab.steps.create(
+            order=0,
+            slug="step-1",
+            module_id_name="x",
+            last_relevant_delta_id=workflow.last_delta_id,
+            notifications=True,
+        )
+        write_to_rendercache(
+            workflow,
+            step,
+            workflow.last_delta_id - 1,  # stale
+            make_table(make_column("A", [1])),
+        )
+
+        module_zipfile = create_module_zipfile(
+            "x",
+            spec_kwargs={"loads_data": True},
+            python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [2]})',
+        )
+        with self.assertLogs(level=logging.INFO):
+            self.run_with_async_db(
+                execute_step(
+                    chroot_context=self.chroot_context,
+                    workflow=workflow,
+                    step=step,
+                    module_zipfile=module_zipfile,
+                    params={},
+                    tab_name=tab.name,
+                    input_path=self.empty_table_path,
+                    input_table_columns=[],
+                    tab_results={},
+                    output_path=self.output_path,
+                )
+            )
+        email_delta.assert_not_called()
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(rendercache, "downloaded_parquet_file")
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_ignore_corrupt_cache_error(self, email_delta, read_cache):
-        workflow = Workflow.create_and_init()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,
@@ -175,7 +224,8 @@ class StepTests(DbTestCaseWithModuleRegistry):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_when_errors_change(self, email_delta):
-        workflow = Workflow.create_and_init()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,
@@ -225,7 +275,8 @@ class StepTests(DbTestCaseWithModuleRegistry):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(notifications, "email_output_delta")
     def test_email_no_delta_when_errors_stay_the_same(self, email_delta):
-        workflow = Workflow.create_and_init()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,
@@ -268,7 +319,8 @@ class StepTests(DbTestCaseWithModuleRegistry):
     @patch.object(rendercache, "downloaded_parquet_file")
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_when_stale_crr_is_unreachable(self, email_delta, read_cache):
-        workflow = Workflow.create_and_init()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,
@@ -309,7 +361,8 @@ class StepTests(DbTestCaseWithModuleRegistry):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", noop)
     @patch.object(notifications, "email_output_delta")
     def test_email_delta_when_fresh_crr_is_unreachable(self, email_delta):
-        workflow = Workflow.create_and_init()
+        user = create_test_user()
+        workflow = Workflow.create_and_init(owner_id=user.id)
         tab = workflow.tabs.first()
         step = tab.steps.create(
             order=0,

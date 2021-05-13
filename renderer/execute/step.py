@@ -562,7 +562,7 @@ async def execute_step(
     # Email notification if data has changed. Do this outside of the database
     # lock, because SMTP can be slow, and Django's email backend is
     # synchronous.
-    if output_delta:
+    if output_delta and workflow.owner_id is not None:
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(
             None,
