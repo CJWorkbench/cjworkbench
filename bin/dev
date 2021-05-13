@@ -234,7 +234,7 @@ case "$COMMAND" in
     ;;
 
   "stop")
-    docker_compose_with_commands down -t0
+    docker_compose_with_commands down -t0 --remove-orphans
     docker_compose_with_commands rm -f -v # -v removes _anonymous_ volumes
     ;;
 

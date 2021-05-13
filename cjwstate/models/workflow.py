@@ -107,6 +107,9 @@ class Workflow(models.Model):
 
     If set, this Workflow is the user's journey through a lesson in
     `server/lessons/` or `server/courses/`.
+
+    If you ever change this to NOT NULL, edit `cron/lessonworkflowdeleter`!
+    Otherwise most workflows will be deleted :).
     """
 
     # there is always a tab

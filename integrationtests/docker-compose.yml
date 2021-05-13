@@ -153,10 +153,10 @@ services:
     depends_on: [ 'db', 'minio' ]
     environment: *common_env
 
-  cron-lesson-autoupdate-disabler:
+  cron-lesson-workflow-deleter:
     #image:
     #build:
-    command: [ 'bin/cron-lesson-autoupdate-disabler' ]
+    command: [ 'bin/cron-lesson-workflow-deleter' ]
     depends_on: [ 'db' ]
     environment: *common_env
 
@@ -200,7 +200,7 @@ services:
       - cron
       - cron-delta-deleter
       - cron-expired-session-deleter
-      - cron-lesson-autoupdate-disabler
+      - cron-lesson-workflow-deleter
       - db
       - fetcher
       - frontend

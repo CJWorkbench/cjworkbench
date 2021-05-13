@@ -233,7 +233,7 @@ services:
       '--exec', 'bin/cron-expired-session-deleter'
     ]
 
-  cron-lesson-autoupdate-disabler:
+  cron-lesson-workflow-deleter:
     <<: *cron
     depends_on: [ 'database' ]
     command: [
@@ -241,7 +241,7 @@ services:
       'bin/watch-and-restart',
       '--exclude', '**/*.pyc', '**/tests/**/*',
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
-      '--exec', 'bin/cron-lesson-autoupdate-disabler'
+      '--exec', 'bin/cron-lesson-workflow-deleter'
     ]
 
   cron-delta-deleter:

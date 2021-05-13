@@ -37,7 +37,7 @@ services:
       context: ..
       target: cron
 
-  cron-lesson-autoupdate-disabler:
+  cron-lesson-workflow-deleter:
     build:
       context: ..
       target: cron

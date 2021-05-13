@@ -46,11 +46,11 @@ $KUBECTL set image deployment/frontend-deployment frontend=$repo/frontend:$SHA s
 $KUBECTL set image deployment/cron-delta-deleter-deployment cron=$repo/cron:$SHA >/dev/null
 $KUBECTL set image deployment/cron-deployment cron=$repo/cron:$SHA >/dev/null
 $KUBECTL set image deployment/cron-expired-session-deleter-deployment cron=$repo/cron:$SHA >/dev/null
-$KUBECTL set image deployment/cron-lesson-autoupdate-disabler-deployment cron=$repo/cron:$SHA >/dev/null
+$KUBECTL set image deployment/cron-lesson-workflow-deleter-deployment cron=$repo/cron:$SHA >/dev/null
 echo ' done' >&2
 
 echo -n 'Waiting for rollout to finish' >&2
-for service in cron cron-delta-deleter cron-expired-session-deleter cron-lesson-autoupdate-disabler fetcher renderer frontend; do
+for service in cron cron-delta-deleter cron-expired-session-deleter cron-lesson-workflow-deleter fetcher renderer frontend; do
   $KUBECTL rollout status deployment/$service-deployment >/dev/null
   echo -n '.' >&2
 done

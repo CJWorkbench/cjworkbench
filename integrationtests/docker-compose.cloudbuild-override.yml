@@ -27,7 +27,7 @@ services:
   cron-expired-session-deleter:
     image: 'gcr.io/${PROJECT_ID}/cron:${COMMIT_SHA}'
 
-  cron-lesson-autoupdate-disabler:
+  cron-lesson-workflow-deleter:
     image: 'gcr.io/${PROJECT_ID}/cron:${COMMIT_SHA}'
 
   frontend:
