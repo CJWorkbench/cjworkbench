@@ -14,7 +14,6 @@ to all HTTP connections listening on a workflow, they _send_ using
 `cjwstate.rabbitmq` ... and then the web server _receives_ those messages over
 its Django Channels channel layer.
 """
-import functools
 import logging
 import pickle
 
@@ -48,50 +47,6 @@ def _workflow_group_name(workflow_id: int) -> str:
     this workflow.
     """
     return f"workflow-{str(workflow_id)}"
-
-
-def acking_callback(fn):
-    """
-    Decorate a callback to ack when finished or crash on error.
-
-    Usage:
-
-        @rabbitmq.acking_callback
-        async def handle_render_message(message: Dict[str, Any]):
-            pass
-
-        # Begin consuming
-        await connection.consume(rabbitmq.Render, handle_render_message, 3)
-    """
-
-    @functools.wraps(fn)
-    async def inner(message):
-        channel = message.channel
-        delivery_tag = message.delivery.delivery_tag
-
-        try:
-            body = msgpack.unpackb(message.body)
-            await fn(body)
-            await channel.basic_ack(delivery_tag)
-        except Exception as err:
-            # [2021-02-11, adamhooper] The errors we see on production might
-            # be different than in dev mode; so we'll always re-raise them.
-            # The behavior we want: on production, _any_ error causes the
-            # whole fetch to crash without acking. Not-acking means RabbitMQ
-            # won't send us any more messages. So let's shut down, leading to
-            # a restart of the whole process.
-            #
-            # In the case of `fn()` raising an exception, we _want_ that message
-            # logged. Ditto when `channel.basic_ack()` fails.
-            #
-            # We don't want to log exceptions during graceful shutdown, though.
-            logger.exception("Failed to consume a message; shutting down")
-            try:
-                await get_connection().close()
-            finally:
-                raise err
-
-    return inner
 
 
 async def queue_render(workflow_id: int, delta_id: int) -> None:
@@ -149,7 +104,7 @@ async def _queue_for_group(*, workflow_id: int, **kwargs) -> None:
     except carehare.ServerSentNack:
         logger.warning(
             "Did not deliver to all queues on group %r: a queue is at capacity",
-            group_name,
+            (group_name,),
         )
 
 

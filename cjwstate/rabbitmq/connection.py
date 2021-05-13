@@ -6,7 +6,6 @@ import logging
 from typing import AsyncContextManager, Awaitable, Callable, Optional
 
 import carehare
-import msgpack
 from django.conf import settings
 
 
