@@ -331,11 +331,16 @@ class Kernel:
             output_filename=output_filename,
             input_filename=input_filename,
         )
+        if compiled_module.module_slug in {"pythoncode", "ACS2016"}:
+            # TODO disallow networking; make network_config always None
+            network_config = pyspawner.NetworkConfig()
+        else:
+            network_config = None
         try:
             with chroot_context.writable_file(basedir / output_filename):
                 result = self._run_in_child(
                     chroot_dir=chroot_dir,
-                    network_config=pyspawner.NetworkConfig(),  # TODO disallow networking
+                    network_config=network_config,
                     compiled_module=compiled_module,
                     timeout=self.render_timeout,
                     result=ttypes.RenderResult(),
