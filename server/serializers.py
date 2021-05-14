@@ -572,9 +572,7 @@ def jsonize_i18n_message(message: I18nMessage, ctx: JsonizeModuleContext) -> str
     try:
         localizer = _i18n_message_source_to_localizer(message, ctx)
     except NotInternationalizedError:
-        logger.exception(
-            "I18nMessage source %s does not support localization", message.source
-        )
+        logger.exception("Module %s does not support localization", ctx.module_id)
         return repr(message)
 
     # Attempt to localize in the locale given by `ctx`.
