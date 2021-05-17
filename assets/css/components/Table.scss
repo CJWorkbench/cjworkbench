@@ -50,6 +50,7 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    background: $table-background;
 
     .outputpane-data {
       flex: 1 1 auto; // consume maximum height (unlike header, which is fixed-height)
@@ -67,6 +68,11 @@
         max-height: 100%;
         width: 100%;
         height: 100%;
+      }
+
+      table {
+        border-bottom: 1px solid $table-border;
+        border-right: 1px solid $table-border;
       }
 
       thead th {
@@ -112,35 +118,46 @@
           text-align: center;
           padding-top: 0.3rem;
           color: white;
-          height: 1.6rem;
           font-size: 1.2rem;
           cursor: grab;
         }
 
         .data-grid-column-header {
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-
           .column-key {
-            padding: 0.6rem 1rem; // .8rem dictated by react-data-grid JS
-            display: block;
-            flex: 1 1 auto;
-            overflow: hidden;
-            height: 100%;
-            cursor: text;
-            height: 4.5rem;
-
             .value {
+              padding: 0 rem(0.625);
+              height: rem(1.5);
               text-overflow: ellipsis;
               white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
               overflow: hidden;
-              margin-bottom: 0.2rem;
+              position: relative;
+
+              &.editing {
+                overflow: visible;
+              }
+
+              input[name='new-column-key'] {
+                position: absolute;
+                left: 0;
+                width: 100%;
+                top: rem(-0.375);
+                bottom: rem(-0.375);
+                padding: rem(0.375) rem(0.625);
+                border: 2px solid $brand-orange;
+                border-radius: 5px;
+
+                & + .dropdown {
+                  display: none;
+                }
+              }
             }
 
             .column-type {
               @include info-2;
               position: relative;
+              &:empty::before {
+                content: '\00a0';
+              }
             }
           }
 
@@ -185,23 +202,6 @@
               i {
                 margin-left: 1px;
               }
-            }
-          }
-
-          input[name='new-column-key'] {
-            padding: 0.2rem 0.8rem;
-            margin-top: 0.5rem;
-            // padding-left: .8rem;
-            // padding-right: .8rem;
-            border-radius: 5px;
-            height: 3rem;
-            width: 100%;
-            flex: 1 1 auto;
-            border: 0;
-            border: 2px solid $brand-orange;
-
-            & + .dropdown {
-              //  display: none; -- un-comment to hide menu when text field input is selected
             }
           }
         }

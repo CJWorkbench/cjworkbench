@@ -42,8 +42,7 @@ const ColumnConverters = {
 export default class ColumnContextMenu extends Component {
   static propTypes = {
     onClickAction: PropTypes.func.isRequired, // func(idName, forceNewModule, params)
-    columnType: PropTypes.string.isRequired,
-    renameColumn: PropTypes.func.isRequired
+    columnType: PropTypes.string.isRequired
   }
 
   createOrUpdate (idName, extraParams = {}) {
@@ -60,7 +59,6 @@ export default class ColumnContextMenu extends Component {
   handleDropColumn = () => this.createOrUpdate('selectcolumns', { keep: false })
   handleDuplicateColumn = () => this.createOrUpdate('duplicatecolumns')
   handleFormatNumbers = () => this.create('formatnumbers', { format: '{:,}' })
-  handleRenameColumn = (...args) => this.props.renameColumn(...args)
   handleSortAscending = () => this.createOrUpdate('sort', { is_ascending: true })
   handleSortDescending = () => this.createOrUpdate('sort', { is_ascending: false })
 
@@ -73,13 +71,6 @@ export default class ColumnContextMenu extends Component {
           <i className='icon-caret-down' />
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem
-            onClick={this.handleRenameColumn}
-            className='rename-column-header'
-            icon='icon-edit'
-          >
-            <Trans id='js.table.ColumnContextMenu.rename.'>Rename</Trans>
-          </DropdownItem>
           <DropdownItem
             onClick={this.handleDuplicateColumn}
             className='duplicatecolumns'

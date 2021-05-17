@@ -128,31 +128,30 @@ export class EditableColumnName extends Component {
   }
 
   render () {
-    if (this.state.editMode) {
-      // The class name 'column-key-input' is used in
-      // the code to prevent dragging while editing,
-      // please keep it as-is.
-      return (
-        <input
-          name='new-column-key'
-          type='prout'
-          ref={this.props.inputRef}
-          value={this.state.newName}
-          onChange={this.handleInputChange}
-          onBlur={this.handleInputBlur}
-          onKeyDown={this.handleInputKeyDown}
-        />
-      )
-    } else {
-      return (
-        <span className='column-key' onClick={this.handleEnterEditMode}>
-          <div className='value'>{this.state.newName}</div>
-          <div className='column-type'>
-            <ColumnType type={this.props.columnType} dateUnit={this.props.dateUnit} />
-          </div>
-        </span>
-      )
-    }
+    const { columnType, dateUnit } = this.props
+    const { editMode, newName } = this.state
+
+    return (
+      <div className='column-key' onClick={this.handleEnterEditMode}>
+        {editMode
+          ? (
+            <div className='value editing'>
+              <input
+                name='new-column-key'
+                type='prout'
+                ref={this.props.inputRef}
+                value={this.state.newName}
+                onChange={this.handleInputChange}
+                onBlur={this.handleInputBlur}
+                onKeyDown={this.handleInputKeyDown}
+              />
+            </div>)
+          : <div className='value'>{newName}</div>}
+        <div className='column-type'>
+          <ColumnType type={columnType} dateUnit={dateUnit} />
+        </div>
+      </div>
+    )
   }
 }
 
@@ -218,11 +217,6 @@ export class ColumnHeader extends PureComponent {
       return
     }
 
-    if (ev.target.classList.contains('column-key-input')) {
-      ev.preventDefault()
-      return
-    }
-
     this.props.onDragStartColumnIndex(this.props.index)
 
     ev.dataTransfer.effectAllowed = ['move']
@@ -230,24 +224,8 @@ export class ColumnHeader extends PureComponent {
     ev.dataTransfer.setData('text/plain', this.props.columnKey)
   }
 
-  renderColumnMenu () {
-    if (this.props.isReadOnly) {
-      return null
-    }
-
-    return (
-      <ColumnContextMenu
-        columnType={this.props.columnType}
-        renameColumn={this.startRename}
-        onClickAction={this.handleClickAction}
-      />
-    )
-  }
-
   render () {
-    const { columnKey, columnType, dateUnit, index, draggingColumnIndex } = this.props
-
-    const columnMenuSection = this.renderColumnMenu()
+    const { columnKey, columnType, dateUnit, index, isReadOnly, draggingColumnIndex } = this.props
 
     const maybeDropZone = (leftOrRight, toIndex) => {
       if (draggingColumnIndex === null || draggingColumnIndex === undefined) {
@@ -291,10 +269,17 @@ export class ColumnHeader extends PureComponent {
             columnType={columnType}
             dateUnit={dateUnit}
             onRename={this.handleRename}
-            isReadOnly={this.props.isReadOnly}
+            isReadOnly={isReadOnly}
             inputRef={this.inputRef}
           />
-          {columnMenuSection}
+          {this.props.isReadOnly
+            ? null
+            : (
+              <ColumnContextMenu
+                columnType={columnType}
+                renameColumn={this.startRename}
+                onClickAction={this.handleClickAction}
+              />)}
           {maybeDropZone('right', index + 1)}
         </div>
       </>

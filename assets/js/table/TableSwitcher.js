@@ -1,35 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import propTypes from '../propTypes'
-import Spinner from '../Spinner'
 import TableView from './TableView'
-
-// NoStepTable: shown when no Step is selected
-// Do not render zero-row tables: render a placeholder instead
-// Helps #161166382, hinders #160865813
-const NoStepTableColumns = [
-  { name: ' ', type: 'text' },
-  { name: '  ', type: 'text' },
-  { name: '   ', type: 'text' },
-  { name: '    ', type: 'text' }
-]
-const NoStepTable = (props) => (
-  <TableView
-    isReadOnly
-    workflowIdOrSecretId={props.workflowIdOrSecretId}
-    stepSlug={null}
-    stepId={null}
-    deltaId={null}
-    columns={NoStepTableColumns}
-    nRows={10}
-  />
-)
-
-// BusyStepTable: shown when Step render() has not yet been called
-const BusyStepTable = () => <Spinner />
-
-// UnreachableStepTable: shown when selected Step comes after an error
-const UnreachableStepTable = NoStepTable
+import PlaceholderTable from './PlaceholderTable'
 
 const OkStepTable = React.memo(function OkStepTable ({
   isLoaded,
@@ -54,22 +27,6 @@ const OkStepTable = React.memo(function OkStepTable ({
       onTableLoaded={onTableLoaded}
     />
   )
-})
-
-const TableSwitcherContents = React.memo(function TableSwitcherContents ({
-  status,
-  nRows,
-  ...props
-}) {
-  if (status === null) {
-    return <NoStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
-  } else if (status === 'busy') {
-    return <BusyStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
-  } else if (status === 'unreachable') {
-    return <UnreachableStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
-  } else {
-    return <OkStepTable nRows={nRows} {...props} />
-  }
 })
 
 /**
@@ -105,11 +62,20 @@ export default class TableSwitcher extends React.PureComponent {
   }
 
   render () {
-    const { isLoaded } = this.props
-    return (
-      <div className={`${isLoaded ? 'loaded-table' : 'loading-table'}`}>
-        <TableSwitcherContents {...this.props} />
-      </div>
-    )
+    const { status, isLoaded, ...innerProps } = this.props
+
+    if (status === 'ok') {
+      return (
+        <div className={`${isLoaded ? 'loaded-table' : 'loading-table'}`}>
+          <OkStepTable {...innerProps} />
+        </div>
+      )
+    } else {
+      return (
+        <div className={`${status === 'busy' ? 'loading-table' : 'loaded-table'}`}>
+          <PlaceholderTable />
+        </div>
+      )
+    }
   }
 }

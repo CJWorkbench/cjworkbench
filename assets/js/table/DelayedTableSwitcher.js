@@ -56,16 +56,28 @@ export default function DelayedTableSwitcher (props) {
   } = props
 
   const [loadedTable, setLoadedTable] = React.useState(null)
-  const currentTable = {
-    isReadOnly,
-    workflowIdOrSecretId,
-    stepSlug,
-    stepId,
-    deltaId,
-    status,
-    columns,
-    nRows
-  }
+  const currentTable = React.useMemo(
+    () => ({
+      isReadOnly,
+      workflowIdOrSecretId,
+      stepSlug,
+      stepId,
+      deltaId,
+      status,
+      columns,
+      nRows
+    }),
+    [
+      isReadOnly,
+      workflowIdOrSecretId,
+      stepSlug,
+      stepId,
+      deltaId,
+      status,
+      columns,
+      nRows
+    ]
+  )
 
   const handleTableLoaded = React.useCallback(
     ({ stepSlug, deltaId }) => {
@@ -93,10 +105,13 @@ export default function DelayedTableSwitcher (props) {
   const waiting = loading || currentTable.status === 'busy'
 
   React.useEffect(() => {
-    if (currentTable.nRows === 0) {
+    if (
+      (currentTable.status !== 'busy' && currentTable.stepSlug === null) || // empty tab is loaded table
+      (currentTable.status !== 'busy' && currentTable.nRows === 0) // 0-row table is loaded table
+    ) {
       setLoadedTable(currentTable)
     }
-  }, [setLoadedTable, currentTable])
+  }, [setLoadedTable, currentTable, loadedTable])
 
   // Notice the nifty optimization: we make sure React will not redraw a
   // table when switching from "loading" to "loaded": its `key` will remain

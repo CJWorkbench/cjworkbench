@@ -8,22 +8,20 @@ import PropTypes from 'prop-types'
 import BigTable from '../BigTable'
 import useTiles from '../BigTable/useTiles'
 import { columnToCellFormatter } from '../Report/CellFormatters2'
-import ColumnType from '../BigTable/ColumnType'
-import memoize from 'memoize-one'
-import Spinner from '../Spinner'
 import ColumnHeader from './ColumnHeader'
-import Row from './Row'
-import RowActionsCell from './RowActionsCell'
+// import RowActionsCell from './RowActionsCell'
 import propTypes from '../propTypes'
 
 function stub () {}
 
-function buildColumnHeaderComponent ({ name, type, dateUnit }, index) {
+function buildColumnHeaderComponent ({ name, type, dateUnit }, index, stepId, stepSlug) {
   return () => (
     <ColumnHeader
       columnKey={name}
       columnType={type}
       dateUnit={dateUnit}
+      stepId={stepId}
+      stepSlug={stepSlug}
       index={index}
       onRename={stub}
       onDragStartColumnIndex={stub}
@@ -402,6 +400,7 @@ export default class DataGrid extends PureComponent {
 export default function DataGrid (props) {
   const {
     workflowIdOrSecretId,
+    stepId,
     stepSlug,
     deltaId,
     columns,
@@ -425,10 +424,10 @@ export default function DataGrid (props) {
     () => columns.map((column, index) => ({
       ...column,
       width: 180,
-      headerComponent: buildColumnHeaderComponent(column, index),
+      headerComponent: buildColumnHeaderComponent(column, index, stepId, stepSlug),
       valueComponent: columnToCellFormatter(column)
     })),
-    [columns]
+    [columns, stepId, stepSlug]
   )
 
   React.useEffect(() => {
