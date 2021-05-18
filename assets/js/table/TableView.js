@@ -3,96 +3,93 @@ import PropTypes from 'prop-types'
 import propTypes from '../propTypes'
 import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
+import {
+  FocusCellContext,
+  FocusCellSetterContext,
+  RowSelectionContext,
+  RowSelectionSetterContext
+} from '../BigTable/state'
 import { connect } from 'react-redux'
 import { updateTableAction } from './UpdateTableAction'
 
-export class TableView extends React.PureComponent {
-  static propTypes = {
-    workflowIdOrSecretId: propTypes.workflowId.isRequired,
-    stepSlug: PropTypes.string, // null for placeholder table
-    stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
-    deltaId: PropTypes.number, // immutable; null for placeholder table
-    columns: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
-      }).isRequired
-    ), // immutable; null for placeholder table
-    nRows: PropTypes.number, // immutable; null for placeholder table
-    isReadOnly: PropTypes.bool.isRequired,
-    onTableLoaded: PropTypes.func, // func({ stepSlug, deltaId }) => undefined
-    ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
-    reorderColumn: PropTypes.func.isRequired // func(stepId, colname, fromIndex, toIndex) => undefined
-  }
+export function TableView (props) {
+  const {
+    workflowIdOrSecretId,
+    stepSlug,
+    stepId,
+    deltaId,
+    isReadOnly,
+    columns,
+    nRows,
+    nRowsPerTile,
+    nColumnsPerTile,
+    onTableLoaded
+  } = props
 
-  // componentDidMount will trigger first load
-  state = {
-    selectedRowIndexes: []
-  }
-
-  handleSetSelectedRowIndexes = selectedRowIndexes => {
-    this.setState({ selectedRowIndexes })
-  }
+  const [focusCell, setFocusCell] = React.useState({ row: null, column: null })
+  const [rowSelection, setRowSelection] = React.useState(new Uint8Array())
 
   // When a cell is edited we need to 1) update our own state 2) add this edit to an Edit Cells module
-  editCell = (rowIndex, colname, newValue) => {
-    this.props.editCell(this.props.stepId, rowIndex, colname, newValue)
-  }
+  // const editCell = (rowIndex, colname, newValue) => {
+  //   this.props.editCell(this.props.stepId, rowIndex, colname, newValue)
+  // }
 
-  handleClickSelectColumns = () => {
-    this.props.ensureSelectColumnsModule(this.props.stepId)
-  }
+  // const reorderColumn = (column, fromIndex, toIndex) => {
+  //   this.props.reorderColumn(this.props.stepId, column, fromIndex, toIndex)
+  // }
 
-  reorderColumn = (column, fromIndex, toIndex) => {
-    this.props.reorderColumn(this.props.stepId, column, fromIndex, toIndex)
-  }
-
-  render () {
-    // Make a table component if we have the data
-    const { selectedRowIndexes } = this.state
-    const {
-      workflowIdOrSecretId,
-      stepSlug,
-      stepId,
-      deltaId,
-      isReadOnly,
-      columns,
-      nRows,
-      nRowsPerTile,
-      nColumnsPerTile,
-      onTableLoaded
-    } = this.props
-
-    return (
-      <div className='outputpane-table'>
-        <TableInfo
-          isReadOnly={isReadOnly}
-          workflowIdOrSecretId={workflowIdOrSecretId}
-          stepId={stepId}
-          stepSlug={stepSlug}
-          nRows={stepSlug ? nRows : null}
-          nColumns={stepSlug && columns ? columns.length : null}
-          selectedRowIndexes={selectedRowIndexes}
-        />
-        <div className='outputpane-data'>
-          <DataGrid
-            workflowIdOrSecretId={workflowIdOrSecretId}
-            stepSlug={stepSlug}
-            stepId={stepId}
-            deltaId={deltaId}
-            nRows={nRows}
-            columns={columns}
-            nRowsPerTile={nRowsPerTile}
-            nColumnsPerTile={nColumnsPerTile}
-            selectedRowIndexes={selectedRowIndexes}
-            onSetSelectedRowIndexes={this.handleSetSelectedRowIndexes}
-            onTableLoaded={onTableLoaded}
-            isReadOnly={isReadOnly}
-          />
-        </div>
-      </div>
-    )
-  }
+  return (
+    <FocusCellContext.Provider value={focusCell}>
+      <FocusCellSetterContext.Provider value={setFocusCell}>
+        <RowSelectionContext.Provider value={rowSelection}>
+          <RowSelectionSetterContext.Provider value={setRowSelection}>
+            <div className='outputpane-table'>
+              <TableInfo
+                isReadOnly={isReadOnly}
+                workflowIdOrSecretId={workflowIdOrSecretId}
+                stepId={stepId}
+                stepSlug={stepSlug}
+                nRows={stepSlug ? nRows : null}
+                nColumns={stepSlug && columns ? columns.length : null}
+                rowSelection={rowSelection.slice(0, nRows || 0)}
+              />
+              <div className='outputpane-data'>
+                <DataGrid
+                  workflowIdOrSecretId={workflowIdOrSecretId}
+                  stepSlug={stepSlug}
+                  stepId={stepId}
+                  deltaId={deltaId}
+                  nRows={nRows}
+                  columns={columns}
+                  nRowsPerTile={nRowsPerTile}
+                  nColumnsPerTile={nColumnsPerTile}
+                  onTableLoaded={onTableLoaded}
+                  isReadOnly={isReadOnly}
+                />
+              </div>
+            </div>
+          </RowSelectionSetterContext.Provider>
+        </RowSelectionContext.Provider>
+      </FocusCellSetterContext.Provider>
+    </FocusCellContext.Provider>
+  )
+}
+TableView.propTypes = {
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
+  stepSlug: PropTypes.string, // null for placeholder table
+  stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
+  deltaId: PropTypes.number, // immutable; null for placeholder table
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
+    }).isRequired
+  ), // immutable; null for placeholder table
+  nRows: PropTypes.number, // immutable; null for placeholder table
+  isReadOnly: PropTypes.bool.isRequired,
+  onTableLoaded: PropTypes.func, // func({ stepSlug, deltaId }) => undefined
+  ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
+  reorderColumn: PropTypes.func.isRequired // func(stepId, colname, fromIndex, toIndex) => undefined
 }
 
 function mapStateToProps (state) {

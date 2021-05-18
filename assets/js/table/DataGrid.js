@@ -14,20 +14,17 @@ import propTypes from '../propTypes'
 
 function stub () {}
 
-function buildColumnHeaderComponent ({ name, type, dateUnit }, index, stepId, stepSlug) {
+function buildColumnHeaderComponent (props) {
+  const { column, ...rest } = props
   return () => (
     <ColumnHeader
-      columnKey={name}
-      columnType={type}
-      dateUnit={dateUnit}
-      stepId={stepId}
-      stepSlug={stepSlug}
-      index={index}
-      onRename={stub}
+      columnKey={column.name}
+      columnType={column.type}
+      dateUnit={column.dateUnit}
       onDragStartColumnIndex={stub}
       onDragEnd={stub}
       onDropColumnIndexAtIndex={stub}
-      isReadOnly={false}
+      {...rest}
     />
   )
 }
@@ -128,8 +125,6 @@ export default class DataGrid extends PureComponent {
     nRows: PropTypes.number, // immutable; null for placeholder table
     editCell: PropTypes.func.isRequired, // func(fromRow, cellKey, newValue) => undefined
     reorderColumn: PropTypes.func.isRequired, // func(colname, fromIndex, toIndex) => undefined
-    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired)
-      .isRequired, // may be empty
     onSetSelectedRowIndexes: PropTypes.func.isRequired // func([idx, ...]) => undefined
   }
 
@@ -257,27 +252,6 @@ export default class DataGrid extends PureComponent {
     })
   }
 
-  onRowsSelected = newRows => {
-    // Merge is O(n lg n), better than O(n^2) of naive algo
-    const newIndexes = newRows.map(r => r.rowIdx).sort()
-    const oldIndexes = this.props.selectedRowIndexes.slice().sort()
-    const indexes = mergeSortedArrays(oldIndexes, newIndexes)
-    this.props.onSetSelectedRowIndexes(indexes)
-  }
-
-  onRowsDeselected = rows => {
-    // Nix by hash-map is slow, but it scales O(n) and we need that
-    const nix = {}
-    for (let i = 0; i < rows.length; i++) {
-      nix[String(rows[i].rowIdx)] = null
-    }
-
-    const selectedRowIndexes = this.props.selectedRowIndexes.filter(
-      i => !Object.prototype.hasOwnProperty.call(nix, String(i))
-    )
-    this.props.onSetSelectedRowIndexes(selectedRowIndexes)
-  }
-
   getRow = i => {
     // Be careful. This gets called during render(), so make sure there's
     // nothing in its innards that can ever call setState().
@@ -344,15 +318,10 @@ export default class DataGrid extends PureComponent {
 
   renderGrid () {
     const { gridWidth, gridHeight } = this.state
-    const { selectedRowIndexes, nRows } = this.props
+    const { nRows } = this.props
 
     const formattedColumns = this.makeFormattedCols(
       this.state.draggingColumnIndex
-    )
-    const rowSelection = getRowSelection(
-      selectedRowIndexes,
-      this.onRowsSelected,
-      this.onRowsDeselected
     )
 
     return (
@@ -370,7 +339,6 @@ export default class DataGrid extends PureComponent {
         onGridRowsUpdated={this.handleGridRowsUpdated}
         enableRowSelect
         rowRenderer={Row}
-        rowSelection={rowSelection}
       />
     )
   }
@@ -407,7 +375,8 @@ export default function DataGrid (props) {
     nRows,
     nColumnsPerTile,
     nRowsPerTile,
-    onTableLoaded
+    onTableLoaded,
+    isReadOnly
   } = props
 
   const nTileRows = Math.ceil(nRows / nRowsPerTile)
@@ -424,10 +393,10 @@ export default function DataGrid (props) {
     () => columns.map((column, index) => ({
       ...column,
       width: 180,
-      headerComponent: buildColumnHeaderComponent(column, index, stepId, stepSlug),
+      headerComponent: buildColumnHeaderComponent({ column, index, stepId, stepSlug, isReadOnly }),
       valueComponent: columnToCellFormatter(column)
     })),
-    [columns, stepId, stepSlug]
+    [columns, stepId, stepSlug, isReadOnly]
   )
 
   React.useEffect(() => {

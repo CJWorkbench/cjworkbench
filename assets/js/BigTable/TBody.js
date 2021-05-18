@@ -1,10 +1,11 @@
-import { useMemo, forwardRef } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
+import { RowSelectionContext } from './state'
 import RowNumber from './RowNumber'
 
 function SkipRows ({ nRows, nColumns }) {
-  const trStyle = useMemo(
+  const trStyle = React.useMemo(
     () => ({ height: `calc(${nRows} * var(--row-height)` }),
     [nRows]
   )
@@ -45,10 +46,11 @@ function ValueTd ({ value, valueType, component }) {
   )
 }
 
-const TBody = forwardRef(function TBody (
+const TBody = React.forwardRef(function TBody (
   { columns, nRows, nSkipRows, nSkipColumns, cells },
   ref
 ) {
+  const rowSelection = React.useContext(RowSelectionContext)
   const nRowsAfter = nRows - nSkipRows - cells.length
   const nColumnsAfter =
     cells.length === 0
@@ -61,7 +63,7 @@ const TBody = forwardRef(function TBody (
         ? <SkipRowsAtStart nRows={nSkipRows} nColumns={columns.length} />
         : null}
       {cells.map((row, i) => (
-        <tr key={nSkipRows + i}>
+        <tr key={nSkipRows + i} className={rowSelection && rowSelection[i + nSkipRows] ? 'selected' : undefined}>
           <th>
             <RowNumber rowIndex={i + nSkipRows} />
           </th>

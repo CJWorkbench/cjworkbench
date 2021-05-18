@@ -37,8 +37,7 @@ class Action extends PureComponent {
 
 export class SelectedRowsActions extends PureComponent {
   static propTypes = {
-    selectedRowIndexes: PropTypes.arrayOf(PropTypes.number.isRequired)
-      .isRequired,
+    rowSelection: PropTypes.instanceOf(Uint8Array).isRequired,
     stepId: PropTypes.number, // or null/undefined if none selected
     rowActionModules: PropTypes.arrayOf(
       PropTypes.shape({
@@ -50,26 +49,13 @@ export class SelectedRowsActions extends PureComponent {
   }
 
   get rowString () {
-    const indexes = this.props.selectedRowIndexes
-    const maxIndex = indexes.reduce((s, i) => Math.max(s, i))
-
-    // Create `bools`, array of booleans, starts empty
-    // Think of this like a bitmap
-    const bools = []
-    for (let i = 0; i <= maxIndex; i++) {
-      bools[i] = false
-    }
-
-    // Fill in the selected indexes
-    for (const selectedIndex of indexes) {
-      bools[selectedIndex] = true
-    }
+    const { rowSelection } = this.props
 
     // Fill `parts`, an Array of [start,end] (inclusive) pairs
     const parts = []
     let curStart = null
-    for (let i = 0; i <= maxIndex; i++) {
-      const bool = bools[i]
+    for (let i = 0; i <= rowSelection.length; i++) {
+      const bool = rowSelection[i]
       if (curStart === null && bool) {
         curStart = i
       } else if (curStart !== null && !bool) {
@@ -78,7 +64,7 @@ export class SelectedRowsActions extends PureComponent {
       }
     }
     if (curStart !== null) {
-      parts.push([curStart, maxIndex])
+      parts.push([curStart, rowSelection.length])
     }
 
     const partStrings = parts.map(([start, end]) => {
@@ -99,7 +85,7 @@ export class SelectedRowsActions extends PureComponent {
   }
 
   render () {
-    const { selectedRowIndexes, stepId, rowActionModules } = this.props
+    const { rowSelection, stepId, rowActionModules } = this.props
 
     const actions = rowActionModules.map(({ idName, title }) => (
       <Action
@@ -110,7 +96,7 @@ export class SelectedRowsActions extends PureComponent {
       />
     ))
 
-    const disabled = !stepId || selectedRowIndexes.length === 0
+    const disabled = !stepId || rowSelection.indexOf(1) === -1
 
     const rowSelect = disabled ? 'table-action disabled' : 'table-action'
 
@@ -125,7 +111,7 @@ export class SelectedRowsActions extends PureComponent {
         >
           <Plural
             id='js.table.SelectedRowsActions.numberOfSelectedRows'
-            value={disabled ? 0 : selectedRowIndexes.length}
+            value={disabled ? 0 : rowSelection.reduce((acc, v) => acc + v, 0) /* 1 means selected; so sum = nSelected */}
             _0='No rows selected'
             one='# row selected'
             other='# rows selected'

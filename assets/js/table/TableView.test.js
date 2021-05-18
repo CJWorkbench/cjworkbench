@@ -1,35 +1,46 @@
-/* global describe, it, expect, jest */
+/* global beforeEach, describe, it, expect, jest */
+import '../__mocks__/ResizeObserver'
+import { act } from 'react-dom/test-utils'
 import { mountWithI18n } from '../i18n/test-utils'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from '../test-utils'
 import { generateSlug } from '../utils'
-import TableView from './TableView'
+import ConnectedTableView from './TableView'
 
 jest.mock('../utils')
 
-// Ugly hack - let us setProps() on the mounted component
-// See https://github.com/airbnb/enzyme/issues/947
-//
-// The problem is: we _must_ use mount() and not shallow() because we want to
-// test TableView's componentDidMount() behavior (the loading of data). And
-// since one of TableView's descendents uses react-redux, we must use a
-// <Provider> to make mount() succeed.
-//
-// We want to test setProps(), because we do things when props change. But
-// mounted components' setProps() only work on the root component.
-//
-// So here's a root component that handles setProps() and the <Provider>, all
-// in one.
-function ConnectedTableView (props) {
-  props = { ...props } // clone
-  const store = props.store
-  delete props.store
+global.fetch = jest.fn(() => Promise.reject(new Error('Mock me')))
+beforeEach(() => global.fetch.mockClear())
 
-  return (
-    <Provider store={store}>
-      <TableView {...props} />
-    </Provider>
-  )
+/*
+ * Help BigTable/Viewport.js calculate the wanted parts of the table.
+ *
+ * These are globals! They apply to all tests in this file.
+ *
+ * <th> -- has width=60, height=30; also, has a non-null .offsetParent
+ * <div> (viewport) -- has width=650, height=200
+ *
+ * Each non-header cell has width=180. That's a magic number somewhere....
+ */
+global.HTMLTableCellElement.prototype.getBoundingClientRect = () => (
+  { width: 60, height: 30 }
+)
+Object.defineProperty(global.HTMLTableCellElement.prototype, 'offsetParent', {
+  get () { return 'not null' }
+})
+Object.defineProperty(global.HTMLDivElement.prototype, 'offsetWidth', {
+  get () { return 650 }
+})
+Object.defineProperty(global.HTMLDivElement.prototype, 'offsetHeight', {
+  get () { return 1000 }
+})
+
+class MockHttpResponse {
+  constructor (status, json) {
+    this.status = status
+    this.ok = this.status >= 200 && this.status < 300
+    this.json = () => Promise.resolve(json)
+  }
 }
 
 describe('TableView', () => {
@@ -37,6 +48,10 @@ describe('TableView', () => {
     // mock store for <SelectedRowsActions>, a descendent
     if (store === null) {
       store = mockStore({
+        settings: {
+          bigTableColumnsPerTile: 4,
+          bigTableRowsPerTile: 5
+        },
         modules: {},
         workflow: {
           steps: [99, 100, 101]
@@ -45,35 +60,24 @@ describe('TableView', () => {
     }
 
     return mountWithI18n(
-      <ConnectedTableView
-        store={store}
-        isReadOnly={false}
-        workflowIdOrSecretId={123}
-        stepSlug='step-1'
-        stepId={100}
-        deltaId={1}
-        status='ok'
-        loadRows={makeRenderResponse(0, 3, 5)}
-        columns={[
-          { name: 'a', type: 'number', format: '{:,d}' },
-          { name: 'b', type: 'number', format: '{:,d}' },
-          { name: 'c', type: 'number', format: '{:,d}' }
-        ]}
-        nRows={2}
-        {...extraProps}
-      />
+      <Provider store={store}>
+        <ConnectedTableView
+          isReadOnly={false}
+          workflowIdOrSecretId='w123'
+          stepSlug='step-1'
+          stepId={100}
+          deltaId={2}
+          status='ok'
+          columns={[
+            { name: 'A', type: 'text' },
+            { name: 'B', type: 'text' },
+            { name: 'C', type: 'text' }
+          ]}
+          nRows={0}
+          {...extraProps}
+        />
+      </Provider>
     )
-  }
-
-  // Mocks json response (promise) returning part of a larger table
-  function makeRenderResponse (start, end, totalRows) {
-    const nRows = end - start - 1
-    const data = {
-      start_row: start,
-      end_row: end,
-      rows: Array(nRows).fill({ a: 1, b: 2, c: 3 })
-    }
-    return jest.fn(() => Promise.resolve(data))
   }
 
   it('reorders columns', async () => {
@@ -83,6 +87,10 @@ describe('TableView', () => {
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore(
       {
+        settings: {
+          bigTableColumnsPerTile: 4,
+          bigTableRowsPerTile: 5
+        },
         workflow: {
           tab_slugs: ['tab-1']
         },
@@ -130,6 +138,10 @@ describe('TableView', () => {
     generateSlug.mockImplementationOnce(prefix => prefix + 'X')
     const store = mockStore(
       {
+        settings: {
+          bigTableColumnsPerTile: 4,
+          bigTableRowsPerTile: 5
+        },
         workflow: {
           tab_slugs: ['tab-1']
         },
@@ -173,13 +185,6 @@ describe('TableView', () => {
     await tick() // let things settle
   })
 
-  it('blanks table when no module id', () => {
-    const tree = wrapper(null, {}, { stepSlug: null, stepId: undefined })
-    expect(tree.find('.outputpane-header')).toHaveLength(1)
-    expect(tree.find('.outputpane-data')).toHaveLength(1)
-    // And we can see it did not call api.render, because that does not exist
-  })
-
   // TODO move this to TableSwitcher.js/DelayedTableSwitcher.js:
   // it('shows a spinner on initial load', async () => {
   //  const testData = {
@@ -199,18 +204,47 @@ describe('TableView', () => {
   //  expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
   // })
 
-  it('renders a message (and no table) when >100 columns', async () => {
-    // This is because react-data-grid is so darned slow to render columns
-    const columns = []
-    for (let i = 0; i < 101; i++) {
-      columns[i] = { name: String(i), type: 'number' }
-    }
+  it('should edit a cell', async () => {
+    // Copy `testRows`: react-data-grid modifies things AARGH why do we still use it
+    const tree = await wrapper(null)
+    await tick()
+    tree.update() // load data
+    // weird incantation to simulate double-click
+    tree.find('.react-grid-Cell').first().simulate('click')
+    tree.find('.react-grid-Cell').first().simulate('doubleClick')
+    const input = tree.find('EditorContainer')
+    input.find('input').instance().value = 'X' // react-data-grid has a weird way of editing cells
+    input.simulate('keyDown', { key: 'Enter' })
+    expect(tree.find('DataGrid').prop('editCell')).toHaveBeenCalledWith(0, 'aaa', 'X')
+  })
 
-    const loadData = jest.fn()
-    const tree = wrapper(null, { loadData, columns })
+  it('should not edit a cell when its value does not change', async () => {
+    const tree = await wrapper(null)
+    await tick()
+    tree.update() // load data
+    // weird incantation to simulate double-click
+    tree.find('.react-grid-Cell').first().simulate('click')
+    tree.find('.react-grid-Cell').first().simulate('doubleClick')
+    const input = tree.find('EditorContainer')
+    input.simulate('keyDown', { key: 'Enter' })
+    expect(tree.find('DataGrid').prop('editCell')).not.toHaveBeenCalled()
+  })
 
-    const overlay = tree.find('.overlay')
-    expect(overlay).toHaveLength(1)
-    expect(loadData).not.toHaveBeenCalled()
+  it('should select a row', async () => {
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['b1', 'b2', 'b3']
+      ]
+    })))
+    const tree = await wrapper(null, { nRows: 2 })
+    await act(async () => await tick())
+    expect(tree.find('input[type="checkbox"]').at(1).prop('value')).toBe(false)
+    await act(async () => {
+      tree.find('input[type="checkbox"]').at(1).simulate('click')
+      await tick()
+      tree.update()
+    })
+    expect(tree.find('input[type="checkbox"]').at(1).prop('value')).toBe(true)
   })
 })

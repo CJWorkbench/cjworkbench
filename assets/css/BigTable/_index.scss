@@ -52,6 +52,18 @@
       &:hover {
         background: $table-row-background-hover;
       }
+
+      &.selected {
+        background: $table-row-selected-background-even;
+
+        &:nth-child(2n) {
+          background: $table-row-selected-background-odd;
+        }
+
+        &:hover {
+          background: $table-row-selected-background-hover;
+        }
+      }
     }
 
     td,
@@ -67,6 +79,8 @@
       text-align: center;
       font-size: rem(0.4375); // smallest possible -- this is the fallback
       border-right: 1px solid $table-border;
+      line-height: var(--row-height);
+      padding: 0;
 
       [data-n-chars='1'],
       [data-n-chars='2'] {
@@ -83,6 +97,23 @@
 
       [data-n-chars='5'] {
         font-size: rem(0.5);
+      }
+
+      label {
+        display: block;
+        margin: 0;
+        vertical-align: middle;
+        cursor: pointer;
+
+        input {
+          display: none;
+        }
+
+        span {
+          // display: inline-block (default) gives parent height=var(--row-height) + 2px
+          // on Chrome 90.0.4430.93 (Linux). display: block does what we expect
+          display: block;
+        }
       }
     }
 

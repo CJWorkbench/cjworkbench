@@ -20,7 +20,7 @@ describe('TableInfo', () => {
           workflowIdOrSecretId={123}
           stepId={99}
           stepSlug='step-99'
-          selectedRowIndexes={[]}
+          rowSelection={new Uint8Array([])}
           onClickRowsAction={jest.fn()}
           {...extraProps}
         />

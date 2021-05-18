@@ -232,43 +232,10 @@
         color: $brand-text--darker;
         border: 0px solid transparent;
 
-        .react-grid-Cell__value > * {
-          // .cell-date, .cell-text, .cell-timestamp, .cell-number, .cell-null
-          @include table-content;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-
         .react-grid-Cell__value > .cell-null {
           // "overflow: hidden" seems to crop the fake-italics 'null' in number cells on
           // Chrome 73 on Mac/Linux. TODO fix the font to correct this problem
           overflow: visible;
-        }
-
-        // cell #
-        &:last-child {
-          label.is-row-selected {
-            display: block;
-            position: relative;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-
-            // To avoid shift-click selecting text, we'll position the input on
-            // top of the text and make it invisible. Users can still select it
-            // by dragging _through_ the number; they just can't drag _on_ the
-            // number.
-            input {
-              // We already set display+width+height in our "*" selector
-              position: absolute;
-              top: 0;
-              left: 0;
-              cursor: pointer;
-              opacity: 0;
-            }
-          }
         }
 
         // Click a cell
@@ -287,15 +254,15 @@
           outline: none;
         }
 
-        input {
-          position: relative;
-          background-color: white;
-          border-radius: 5px;
-          outline: none;
-          border-color: $brand-orange;
-          padding: 0 0.8rem;
-          left: 0;
-        }
+        // input {
+        //   position: relative;
+        //   background-color: white;
+        //   border-radius: 5px;
+        //   outline: none;
+        //   border-color: $brand-orange;
+        //   padding: 0 0.8rem;
+        //   left: 0;
+        // }
       }
 
       .react-grid-Row.row-selected .react-grid-Cell:last-child {
@@ -320,35 +287,6 @@
         }
       }
 
-      // Cells in selected rows:
-
-      .react-grid-Row--even.row-selected .react-grid-Cell {
-        background-color: lighten($brand-orange, 23%);
-      }
-      .react-grid-Row--odd.row-selected .react-grid-Cell {
-        background-color: lighten($brand-orange, 19%);
-      }
-
-      .row-selected:hover .react-grid-Cell {
-        background-color: lighten($brand-orange, 15%);
-      }
-
-      // Cells in last row have a bottom border to form the table's bottom border
-      .react-grid-Row:last-of-type .react-grid-Cell {
-        border-bottom: 1px solid $table-border;
-
-        &:focus {
-          border: 2px solid $brand-orange;
-          .react-grid-Cell__value > * {
-            margin-bottom: 0.1rem; // to compensate for 1px border in parent
-          }
-        }
-      }
-      // Last row selected has orange border at the bottom -- not working as intended, what we want is the last row *selected* not the last row *if selected *
-      .row-selected:last-of-type .react-grid-Cell {
-        border-bottom: 1px solid $brand-orange;
-      }
-
       // Last cells in any row have a right border to form the table's right border
       .react-grid-Row .react-grid-Cell:nth-last-child(2) {
         border-right: 1px solid $table-border;
@@ -360,9 +298,6 @@
             margin-right: 0.7rem; // to compensate for 1px border in parent
           }
         }
-      }
-      .react-grid-Row.row-selected .react-grid-Cell:nth-last-child(2) {
-        border-right: 1px solid $brand-orange;
       }
     }
   }
