@@ -76,14 +76,6 @@
       }
 
       thead th {
-        @include content-1();
-        color: white;
-        background-color: $heading-bg;
-        border-right: 1px solid $dark-accent--strong;
-        border-bottom: 0px;
-        border-left: 0px;
-        padding: 0;
-
         .column-reorder-drop-zone {
           position: absolute;
           top: 0;

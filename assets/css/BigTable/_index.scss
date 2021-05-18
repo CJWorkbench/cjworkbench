@@ -24,9 +24,11 @@
       top: 0;
       color: white;
       background: $heading-bg;
+      border: 0;
+      padding: 0;
+      @include content-1;
 
       .column-name {
-        @include content-1;
         padding: rem(0.625) rem(0.625) rem(0.3125) rem(0.625);
         white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
         text-overflow: ellipsis;
