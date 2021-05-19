@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 
 TIMEOUT = 600  # seconds
-DEAD_PROCESS_N_WAITS = 50  # number of waitpid() calls after process exits
+DEAD_PROCESS_N_WAITS = 500  # number of waitpid() calls after process exits
 DEAD_PROCESS_WAIT_POLL_INTERVAL = 0.02  # seconds between waitpid() calls
 LOG_BUFFER_MAX_BYTES = 100 * 1024  # waaaay too much log output
 OUTPUT_BUFFER_MAX_BYTES = (
