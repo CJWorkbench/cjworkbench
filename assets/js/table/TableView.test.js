@@ -28,10 +28,10 @@ global.HTMLTableCellElement.prototype.getBoundingClientRect = () => (
 Object.defineProperty(global.HTMLTableCellElement.prototype, 'offsetParent', {
   get () { return 'not null' }
 })
-Object.defineProperty(global.HTMLDivElement.prototype, 'offsetWidth', {
+Object.defineProperty(global.HTMLDivElement.prototype, 'clientWidth', {
   get () { return 650 }
 })
-Object.defineProperty(global.HTMLDivElement.prototype, 'offsetHeight', {
+Object.defineProperty(global.HTMLDivElement.prototype, 'clientHeight', {
   get () { return 1000 }
 })
 
@@ -51,10 +51,6 @@ describe('TableView', () => {
         settings: {
           bigTableColumnsPerTile: 4,
           bigTableRowsPerTile: 5
-        },
-        modules: {},
-        workflow: {
-          steps: [99, 100, 101]
         }
       })
     }
@@ -185,25 +181,6 @@ describe('TableView', () => {
     await tick() // let things settle
   })
 
-  // TODO move this to TableSwitcher.js/DelayedTableSwitcher.js:
-  // it('shows a spinner on initial load', async () => {
-  //  const testData = {
-  //    start_row: 0,
-  //    end_row: 2,
-  //    rows: [
-  //      { a: 1, b: 2, c: 3 },
-  //      { a: 4, b: 5, c: 6 }
-  //    ]
-  //  }
-
-  //  const tree = wrapper(null, { loadData: jest.fn(() => Promise.resolve(testData)) })
-
-  //  expect(tree.find('#spinner-container-transparent')).toHaveLength(1)
-  //  await tick()
-  //  tree.update()
-  //  expect(tree.find('#spinner-container-transparent')).toHaveLength(0)
-  // })
-
   it('should edit a cell', async () => {
     // Copy `testRows`: react-data-grid modifies things AARGH why do we still use it
     const tree = await wrapper(null)
@@ -246,5 +223,155 @@ describe('TableView', () => {
       tree.update()
     })
     expect(tree.find('input[type="checkbox"]').at(1).prop('value')).toBe(true)
+  })
+
+  it('should focus a row (not cell) when clicking the <th>', async () => {
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['b1', 'b2', 'b3']
+      ]
+    })))
+    const tree = await wrapper(null, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      // The focus happens on click, not mousedown: when shift-clicking to
+      // select, the selection logic (which happens on click) inspects the
+      // pre-setFocusCell() value.
+      tree.find('input[type="checkbox"]').at(1).simulate('click')
+      await tick()
+      tree.update()
+    })
+    expect(tree.find('tbody th').at(1).prop('className')).toEqual('focus')
+  })
+
+  it('should clear selection when clicking a <td>', async () => {
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['b1', 'b2', 'b3']
+      ]
+    })))
+    const tree = await wrapper(null, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      tree.find('input[type="checkbox"]').at(1).simulate('click')
+      await tick()
+      tree.update()
+    })
+    await act(async () => {
+      tree.find('tbody td').at(2).simulate('mousedown', { button: 0 })
+      await tick()
+      tree.update()
+    })
+    expect(tree.find('input[type="checkbox"]').at(1).prop('value')).toBe(false)
+  })
+
+  it('should focus a cell after tabbing in, using only the keyboard', async () => {
+    // When we design a nice keyboard-usability feature, rewrite this sequence.
+    // For now, we're merely testing that it is *possible* to focus with keyboard.
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['b1', 'b2', 'b3']
+      ]
+    })))
+    const tree = await wrapper(null, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      tree.find('tbody').at(0).simulate('keydown', { key: 'ArrowDown' })
+      await tick()
+      tree.find('tbody').at(0).simulate('keydown', { key: 'ArrowRight' })
+    })
+    tree.update()
+    expect(tree.find('tbody td').at(0).prop('className')).toEqual('type-text focus')
+  })
+
+  it('should focus a row after tabbing in, using only the keyboard', async () => {
+    // When we design a nice keyboard-usability feature, rewrite this sequence.
+    // For now, we're merely testing that it is *possible* to focus with keyboard.
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['b1', 'b2', 'b3']
+      ]
+    })))
+    const tree = await wrapper(null, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      tree.find('tbody').at(0).simulate('keydown', { key: 'ArrowDown' })
+    })
+    tree.update()
+    expect(tree.find('tbody th').at(0).prop('className')).toEqual('focus')
+  })
+
+  it('should focus a cell on mousedown', async () => {
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['b1', 'b2', 'b3']
+      ]
+    })))
+    const tree = await wrapper(null, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      tree.find('tbody td').at(4).simulate('mousedown', { button: 0 })
+    })
+    tree.update()
+    expect(tree.find('tbody td').at(4).prop('className')).toEqual('type-text focus')
+  })
+
+  it('should focus 20 rows up/down on PageUp/PageDown', async () => {
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['a2', 'b2', 'c2'],
+        ['a3', 'b3', 'c3'],
+        ['a4', 'b4', 'c4'],
+        ['a5', 'b5', 'c5'],
+        ['a6', 'b6', 'c6'],
+        ['a7', 'b7', 'c7'],
+        ['a8', 'b8', 'c8'],
+        ['a9', 'b9', 'c9'],
+        ['a10', 'b10', 'c10'],
+        ['a11', 'b11', 'c11'],
+        ['a12', 'b12', 'c12'],
+        ['a13', 'b13', 'c13'],
+        ['a14', 'b14', 'c14'],
+        ['a15', 'b15', 'c15'],
+        ['a16', 'b16', 'c16'],
+        ['a17', 'b17', 'c17'],
+        ['a18', 'b18', 'c18'],
+        ['a19', 'b19', 'c19'],
+        ['a20', 'b20', 'c20'],
+        ['a21', 'b21', 'c21'],
+        ['a22', 'b22', 'c22'],
+        ['a23', 'b23', 'c23'],
+        ['a24', 'b24', 'c24'],
+        ['a25', 'b25', 'c25'],
+        ['a26', 'b26', 'c26'],
+        ['a27', 'b27', 'c27'],
+      ]
+    })))
+    const tree = await wrapper(
+      mockStore({ settings: { bigTableRowsPerTile: 50, bigTableColumnsPerTile: 5 } }),
+      { nRows: 27 }
+    )
+    await act(async () => await tick()) // load data
+    await act(async () => {
+      tree.find('tbody td').at(0).simulate('mousedown', { button: 0 })
+    })
+    await act(async () => {
+      tree.find('tbody').simulate('keydown', { key: 'PageDown' })
+    })
+    tree.update()
+    expect(tree.find('tbody td').at(60).prop('className')).toEqual('type-text focus')
+    await act(async () => {
+      tree.find('tbody').simulate('keydown', { key: 'ArrowDown' })
+      await tick()
+      tree.find('tbody').simulate('keydown', { key: 'PageUp' })
+      tree.update()
+    })
+    expect(tree.find('tbody td').at(3).prop('className')).toEqual('type-text focus')
   })
 })

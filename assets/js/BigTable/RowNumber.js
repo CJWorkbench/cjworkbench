@@ -9,7 +9,7 @@ import {
 } from './state'
 
 function handleMouseDown (ev) {
-  if (ev.shiftKey) {
+  if (ev.button === 0 && ev.shiftKey) {
     // Don't select table data as text
     ev.preventDefault()
   }
@@ -29,14 +29,13 @@ export default function RowNumber (props) {
       const newSelection = new Uint8Array(Math.max(rowSelection.length, rowIndex + 1))
       newSelection.set(rowSelection)
 
+      const checked = !(rowSelection && rowSelection[rowIndex])
       if (ev.shiftKey && focusCell && focusCell.column === null && focusCell.row !== null) {
-        const checked = rowSelection && rowSelection[(focusCell.row)]
         const [begin, end] = focusCell.row < rowIndex ? [focusCell.row, rowIndex + 1] : [rowIndex, focusCell.row + 1]
         for (let i = begin; i < end; i++) {
           newSelection[i] = checked
         }
       } else {
-        const checked = !(rowSelection && rowSelection[rowIndex])
         newSelection[rowIndex] = checked
       }
       setRowSelection(newSelection)
@@ -48,17 +47,19 @@ export default function RowNumber (props) {
   }, [rowIndex, focusCell, setFocusCell, rowSelection, setRowSelection])
 
   return (
-    <label data-n-chars={s.length} onMouseDown={handleMouseDown}>
-      {rowSelection && setRowSelection
-        ? (
-          <input
-            type='checkbox'
-            value={Boolean(rowSelection && rowSelection[rowIndex])}
-            onClick={handleClick /* onChange doesn't have ev.shiftKey */}
-          />)
-        : null}
-      {s}
-    </label>
+    <th className={focusCell && focusCell.column === null && focusCell.row === rowIndex ? 'focus' : undefined}>
+      <label data-n-chars={s.length} onMouseDown={handleMouseDown}>
+        {rowSelection && setRowSelection
+          ? (
+            <input
+              type='checkbox'
+              value={Boolean(rowSelection && rowSelection[rowIndex])}
+              onClick={handleClick /* onChange doesn't have ev.shiftKey */}
+            />)
+          : null}
+        {s}
+      </label>
+    </th>
   )
 }
 RowNumber.propTypes = {

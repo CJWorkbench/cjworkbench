@@ -25,10 +25,10 @@ global.HTMLTableCellElement.prototype.getBoundingClientRect = () => (
 Object.defineProperty(global.HTMLTableCellElement.prototype, 'offsetParent', {
   get () { return 'not null' }
 })
-Object.defineProperty(global.HTMLDivElement.prototype, 'offsetWidth', {
+Object.defineProperty(global.HTMLDivElement.prototype, 'clientWidth', {
   get () { return 650 }
 })
-Object.defineProperty(global.HTMLDivElement.prototype, 'offsetHeight', {
+Object.defineProperty(global.HTMLDivElement.prototype, 'clientHeight', {
   get () { return 1000 }
 })
 

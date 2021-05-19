@@ -15,6 +15,8 @@
   table {
     position: relative; // for sticky headers
     table-layout: fixed; // for speed
+    border-collapse: separate;
+    border-spacing: 0;
     width: 1px; // to make table-layout: fixed work
   }
 
@@ -26,7 +28,18 @@
       background: $heading-bg;
       border: 0;
       padding: 0;
+      border-right: 1px solid composite-colors($dark-accent--strong, $heading-bg);
       @include content-1;
+
+      // show up above the tbody>tr>th: that also has position:sticky and it's
+      // later in the DOM. Must apply to all thead>tr>th, in case we scroll
+      // horizontally and the tbody>tr>th "follows" us
+      z-index: 1;
+
+      &:first-child {
+        left: 0; // stick to the left, like tbody>tr>th
+        z-index: 2; // appear above all other thead>tr>th
+      }
 
       .column-name {
         padding: rem(0.625) rem(0.625) rem(0.3125) rem(0.625);
@@ -80,9 +93,11 @@
       font-weight: 400;
       text-align: center;
       font-size: rem(0.4375); // smallest possible -- this is the fallback
-      border-right: 1px solid $table-border;
       line-height: var(--row-height);
       padding: 0;
+      position: sticky;
+      left: 0;
+      background: inherit;
 
       [data-n-chars='1'],
       [data-n-chars='2'] {
@@ -106,6 +121,8 @@
         margin: 0;
         vertical-align: middle;
         cursor: pointer;
+        border: 1px solid transparent;
+        border-right-color: $table-border;
 
         input {
           display: none;
@@ -117,19 +134,30 @@
           display: block;
         }
       }
+
+      &.focus label {
+        border-color: $brand-orange;
+      }
     }
 
     td {
       color: $brand-text--darker;
-      @include table-content;
-      padding: 0 rem(0.625);
+      font-size: rem(.875);
+      line-height: rem(1.2);
+      padding: 0 rem(0.5);
+      border: 1px solid transparent;
+
+      &.focus {
+        border-color: $brand-orange;
+      }
 
       &.type-number {
         text-align: right; // even nulls, which aren't .cell-number
       }
 
       &.type-text {
-        padding: 0 rem(0.125) 0 rem(0.625); // override regular padding to squeeze in a few pixels
+        // override regular padding to squeeze in a few pixels
+        padding-right: 0;
       }
 
       & > * {

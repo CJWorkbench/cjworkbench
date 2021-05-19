@@ -67,13 +67,6 @@
   @include content-2;
 } // deprecated: use mixin instead
 
-@mixin table-content {
-  // Only for content in the table -- do not use anywhere else
-  font-size: badrem(1.4);
-  line-height: badrem(2);
-  font-weight: normal;
-}
-
 @mixin code-1 {
   // used in code snipets
   @include content-1; // TODO nix
