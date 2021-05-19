@@ -10,7 +10,8 @@ export default function Table ({
   nRows,
   nSkipRows,
   nSkipColumns,
-  cells
+  cells,
+  onEdit
 }) {
   return (
     <table>
@@ -23,6 +24,7 @@ export default function Table ({
         nSkipRows={nSkipRows}
         nSkipColumns={nSkipColumns}
         cells={cells}
+        onEdit={onEdit}
       />
     </table>
   )
@@ -33,5 +35,6 @@ Table.propTypes = {
   nRows: PropTypes.number.isRequired,
   nSkipRows: PropTypes.number.isRequired,
   nSkipColumns: PropTypes.number.isRequired,
-  cells: PropTypes.array.isRequired
+  cells: PropTypes.array.isRequired,
+  onEdit: PropTypes.func // func({ row, column, oldValue, newValue }) => undefined, or null
 }

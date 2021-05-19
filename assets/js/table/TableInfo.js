@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import propTypes from '../propTypes'
 import ExportModal from '../ExportModal'
 import SelectedRowsActions from './SelectedRowsActions'
+import { useRowSelection } from '../BigTable/state'
 import { Trans } from '@lingui/macro'
 
 const numberFormat = new Intl.NumberFormat('en-US')
@@ -26,9 +27,9 @@ export default function TableInfo (props) {
     workflowIdOrSecretId,
     stepSlug,
     stepId,
-    rowSelection,
     isReadOnly
   } = props
+  const rowSelection = useRowSelection().slice(0, nRows || 0)
 
   const nRowsString = nRows === null
     ? ''
@@ -102,6 +103,5 @@ TableInfo.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   workflowIdOrSecretId: propTypes.workflowId.isRequired,
   stepId: PropTypes.number, // or null if none selected
-  stepSlug: PropTypes.string, // or null if none selected
-  rowSelection: PropTypes.instanceOf(Uint8Array).isRequired
+  stepSlug: PropTypes.string // or null if none selected
 }

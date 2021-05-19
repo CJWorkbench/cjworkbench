@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import useThrottledRequestAnimationFrame from './useThrottledRequestAnimationFrame'
 import Table from './Table'
-import { FocusCellContext } from './state'
+import { useFocusCell } from './state'
 
 function getRowThMeasurementsFromTbody (tbody) {
   if (tbody === null) {
@@ -32,9 +32,10 @@ export default function Viewport ({
   cells,
   nSkipRows,
   nSkipColumns,
-  setFocusCellRange
+  setFocusCellRange,
+  onEdit
 }) {
-  const focusCell = React.useContext(FocusCellContext)
+  const focusCell = useFocusCell()
   const [viewport, setViewport] = React.useState(null)
   const [tbody, setTbody] = React.useState(null)
   const columnOffsetsAfterTh = React.useMemo(() => {
@@ -159,6 +160,7 @@ export default function Viewport ({
         nSkipColumns={nSkipColumns}
         cells={cells}
         tbodyRef={setTbody}
+        onEdit={onEdit}
       />
     </div>
   )
@@ -177,5 +179,6 @@ Viewport.propTypes = {
       ]) // or null
     ).isRequired
   ).isRequired,
-  setFocusCellRange: PropTypes.func.isRequired
+  setFocusCellRange: PropTypes.func.isRequired,
+  onEdit: PropTypes.func // func({ row, column, oldValue, newValue }) => undefined, or null
 }

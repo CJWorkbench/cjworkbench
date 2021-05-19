@@ -1,8 +1,8 @@
-import { memo } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
 
-const THead = memo(function THead ({ columns }) {
+const THead = React.memo(function THead ({ columns }) {
   return (
     <thead>
       <tr>

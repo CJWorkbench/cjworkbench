@@ -1,12 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { i18n } from '@lingui/core'
-import {
-  FocusCellContext,
-  FocusCellSetterContext,
-  RowSelectionContext,
-  RowSelectionSetterContext
-} from './state'
+import { useFocusCell, useFocusCellSetter, useRowSelection, useRowSelectionSetter } from './state'
 
 function handleMouseDown (ev) {
   if (ev.button === 0 && ev.shiftKey) {
@@ -15,11 +10,11 @@ function handleMouseDown (ev) {
   }
 }
 
-export default function RowNumber (props) {
-  const focusCell = React.useContext(FocusCellContext)
-  const setFocusCell = React.useContext(FocusCellSetterContext)
-  const rowSelection = React.useContext(RowSelectionContext)
-  const setRowSelection = React.useContext(RowSelectionSetterContext)
+const RowNumber = React.memo(function RowNumber (props) {
+  const focusCell = useFocusCell()
+  const setFocusCell = useFocusCellSetter()
+  const rowSelection = useRowSelection()
+  const setRowSelection = useRowSelectionSetter()
 
   const { rowIndex } = props
   const s = i18n.number(rowIndex + 1)
@@ -61,7 +56,8 @@ export default function RowNumber (props) {
       </label>
     </th>
   )
-}
+})
 RowNumber.propTypes = {
   rowIndex: PropTypes.number.isRequired
 }
+export default RowNumber

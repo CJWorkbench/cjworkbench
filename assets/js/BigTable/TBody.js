@@ -1,11 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
-import {
-  FocusCellContext,
-  FocusCellSetterContext,
-  RowSelectionContext
-} from './state'
+import { useFocusCell, useFocusCellSetter, useRowSelection } from './state'
 import RowNumber from './RowNumber'
 import Td from './Td'
 
@@ -42,13 +38,11 @@ function SkipRowsAtStart ({ nRows, nColumns }) {
   }
 }
 
-const TBody = React.forwardRef(function TBody (
-  { columns, nRows, nSkipRows, nSkipColumns, cells },
-  ref
-) {
-  const rowSelection = React.useContext(RowSelectionContext)
-  const focusCell = React.useContext(FocusCellContext)
-  const setFocusCell = React.useContext(FocusCellSetterContext)
+const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
+  const { columns, nRows, nSkipRows, nSkipColumns, cells, onEdit } = props
+  const rowSelection = useRowSelection()
+  const focusCell = useFocusCell()
+  const setFocusCell = useFocusCellSetter()
 
   const nRowsAfter = nRows - nSkipRows - cells.length
   const nColumnsAfter =
@@ -120,6 +114,7 @@ const TBody = React.forwardRef(function TBody (
               row={indexRow(i)}
               column={indexColumn(j)}
               focus={focusCell && focusCell.row === indexRow(i) && focusCell.column === indexColumn(j)}
+              onEdit={onEdit}
               Component={columns[indexColumn(j)].valueComponent}
             />
           ))}
@@ -133,12 +128,13 @@ const TBody = React.forwardRef(function TBody (
         : null}
     </tbody>
   )
-})
+}))
 TBody.propTypes = {
   columns: PropTypes.arrayOf(columnDefinitionType).isRequired,
   nRows: PropTypes.number.isRequired,
   nSkipRows: PropTypes.number.isRequired,
   nSkipColumns: PropTypes.number.isRequired,
-  cells: PropTypes.array.isRequired
+  cells: PropTypes.array.isRequired,
+  onEdit: PropTypes.func // func({ row, column, oldValue, newValue }) => undefined, or null
 }
 export default TBody

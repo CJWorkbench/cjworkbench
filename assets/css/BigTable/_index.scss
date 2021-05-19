@@ -146,6 +146,7 @@
       line-height: rem(1.2);
       padding: 0 rem(0.5);
       border: 1px solid transparent;
+      position: relative; // for <input> positioning
 
       &.focus {
         border-color: $brand-orange;
@@ -160,43 +161,54 @@
         padding-right: 0;
       }
 
-      & > * {
+      input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border: 1px solid $brand-orange; // yup, doubling borders
+        font: inherit;
+        padding: 0 calc(#{rem(0.5)} - 1px); // 1px from border
+      }
+
+      & > div {
         max-height: var(--row-height);
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-      }
 
-      .cell-number {
-        .number-prefix,
-        .number-suffix {
+        &.cell-number {
+          .number-prefix,
+          .number-suffix {
+            @include font-sans-light;
+          }
+
+          .number-suffix {
+            padding-left: rem(0.125);
+          }
+
+          .number-prefix {
+            padding-right: rem(0.125);
+          }
+        }
+
+        &.cell-text {
+          // The value is already mangled to take only one line. Now, preserve
+          // the whitespace within that one line.
+          white-space: pre;
+        }
+
+        &.cell-null {
+          &::before {
+            content: attr(data-text);
+          }
           @include font-sans-light;
+          color: lighten($brand-text--dark, 30%);
+          font-style: italic; // FIXME we don't ship this font as italic
+          font-weight: 200;
         }
-
-        .number-suffix {
-          padding-left: rem(0.125);
-        }
-
-        .number-prefix {
-          padding-right: rem(0.125);
-        }
-      }
-
-      .cell-text {
-        // The value is already mangled to take only one line. Now, preserve
-        // the whitespace within that one line.
-        white-space: pre;
-      }
-
-      .cell-null {
-        &::before {
-          content: attr(data-text);
-        }
-        @include font-sans-light;
-        color: lighten($brand-text--dark, 30%);
-        font-style: italic; // FIXME we don't ship this font as italic
-        font-weight: 200;
       }
     }
   }

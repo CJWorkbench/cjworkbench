@@ -125,7 +125,7 @@ describe('TableView', () => {
     await tick() // let things settle
   })
 
-  it('edits cells', async () => {
+  it('should edit a cell', async () => {
     // integration-test style -- these moving parts tend to rely on one another
     // lots: ignoring workflow-reducer means tests miss bugs.
     const api = {
@@ -142,10 +142,10 @@ describe('TableView', () => {
           tab_slugs: ['tab-1']
         },
         tabs: {
-          'tab-1': { step_ids: [2, 3], selected_step_position: 0 }
+          'tab-1': { step_ids: [100, 3], selected_step_position: 0 }
         },
         steps: {
-          2: { slug: 'step-2', tab_slug: 'tab-1' },
+          100: { slug: 'step-2', tab_slug: 'tab-1' },
           3: {}
         },
         modules: {
@@ -154,64 +154,101 @@ describe('TableView', () => {
       },
       api
     )
-
-    const tree = wrapper(store, { stepSlug: 'step-2', stepId: 2 })
-    await tick() // load data
-    tree
-      .find('DataGrid')
-      .instance()
-      .handleGridRowsUpdated({
-        fromRow: 0,
-        fromRowData: { a: 'a1', b: 'b1', c: 'c1' },
-        toRow: 0,
-        cellKey: 'b',
-        updated: { b: 'b2' }
-      })
-
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['a2', 'b2', 'c2']
+      ]
+    })))
+    const tree = await wrapper(store, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      tree.find('tbody td').at(2).simulate('click')
+      await tick()
+      tree.update()
+      tree.find('tbody td').at(2).simulate('doubleclick')
+      await tick()
+      tree.update()
+    })
+    expect(tree.find('tbody td input')).toHaveLength(1)
+    await act(async () => {
+      tree.find('tbody td input').simulate('change', { target: { value: 'c1 - edited' } })
+      await tick()
+      tree.find('tbody td input').simulate('blur')
+      await tick()
+    })
     expect(api.addStep).toHaveBeenCalledWith(
       'tab-1',
       'step-X',
       'editcells',
       1,
       {
-        celledits: [{ row: 0, col: 'b', value: 'b2' }]
+        celledits: [{ row: 0, col: 'C', value: 'c1 - edited' }]
       }
     )
-
-    await tick() // let things settle
-  })
-
-  it('should edit a cell', async () => {
-    // Copy `testRows`: react-data-grid modifies things AARGH why do we still use it
-    const tree = await wrapper(null)
-    await tick()
-    tree.update() // load data
-    // weird incantation to simulate double-click
-    tree.find('.react-grid-Cell').first().simulate('click')
-    tree.find('.react-grid-Cell').first().simulate('doubleClick')
-    const input = tree.find('EditorContainer')
-    input.find('input').instance().value = 'X' // react-data-grid has a weird way of editing cells
-    input.simulate('keyDown', { key: 'Enter' })
-    expect(tree.find('DataGrid').prop('editCell')).toHaveBeenCalledWith(0, 'aaa', 'X')
+    expect(tree.find('tbody td').at(2).text()).toEqual('c1 - edited') // don't revert to "c2" after we stop editing
   })
 
   it('should not edit a cell when its value does not change', async () => {
-    const tree = await wrapper(null)
-    await tick()
-    tree.update() // load data
-    // weird incantation to simulate double-click
-    tree.find('.react-grid-Cell').first().simulate('click')
-    tree.find('.react-grid-Cell').first().simulate('doubleClick')
-    const input = tree.find('EditorContainer')
-    input.simulate('keyDown', { key: 'Enter' })
-    expect(tree.find('DataGrid').prop('editCell')).not.toHaveBeenCalled()
+    // integration-test style -- these moving parts tend to rely on one another
+    // lots: ignoring workflow-reducer means tests miss bugs.
+    const api = {
+      addStep: jest.fn().mockImplementation(() => Promise.resolve(null))
+    }
+    generateSlug.mockImplementationOnce(prefix => prefix + 'X')
+    const store = mockStore(
+      {
+        settings: {
+          bigTableColumnsPerTile: 4,
+          bigTableRowsPerTile: 5
+        },
+        workflow: {
+          tab_slugs: ['tab-1']
+        },
+        tabs: {
+          'tab-1': { step_ids: [100, 3], selected_step_position: 0 }
+        },
+        steps: {
+          100: { slug: 'step-2', tab_slug: 'tab-1' },
+          3: {}
+        },
+        modules: {
+          editcells: {}
+        }
+      },
+      api
+    )
+    global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+      rows: [
+        ['a1', 'b1', 'c1'],
+        ['a2', 'b2', 'c2']
+      ]
+    })))
+    const tree = await wrapper(store, { nRows: 2 })
+    await act(async () => await tick())
+    await act(async () => {
+      tree.find('tbody td').at(2).simulate('click')
+      await tick()
+      tree.update()
+      tree.find('tbody td').at(2).simulate('doubleclick')
+      await tick()
+      tree.update()
+    })
+    expect(tree.find('tbody td input')).toHaveLength(1)
+    await act(async () => {
+      tree.find('tbody td input').simulate('change', { target: { value: 'c1' } })
+      await tick()
+      tree.find('tbody td input').simulate('blur')
+      await tick()
+    })
+    expect(api.addStep).not.toHaveBeenCalled()
   })
 
   it('should select a row', async () => {
     global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
       rows: [
         ['a1', 'b1', 'c1'],
-        ['b1', 'b2', 'b3']
+        ['a2', 'b2', 'c2']
       ]
     })))
     const tree = await wrapper(null, { nRows: 2 })
@@ -229,7 +266,7 @@ describe('TableView', () => {
     global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
       rows: [
         ['a1', 'b1', 'c1'],
-        ['b1', 'b2', 'b3']
+        ['a2', 'b2', 'c2']
       ]
     })))
     const tree = await wrapper(null, { nRows: 2 })
@@ -249,7 +286,7 @@ describe('TableView', () => {
     global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
       rows: [
         ['a1', 'b1', 'c1'],
-        ['b1', 'b2', 'b3']
+        ['a2', 'b2', 'c2']
       ]
     })))
     const tree = await wrapper(null, { nRows: 2 })
@@ -273,7 +310,7 @@ describe('TableView', () => {
     global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
       rows: [
         ['a1', 'b1', 'c1'],
-        ['b1', 'b2', 'b3']
+        ['a2', 'b2', 'c2']
       ]
     })))
     const tree = await wrapper(null, { nRows: 2 })
@@ -293,7 +330,7 @@ describe('TableView', () => {
     global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
       rows: [
         ['a1', 'b1', 'c1'],
-        ['b1', 'b2', 'b3']
+        ['a2', 'b2', 'c2']
       ]
     })))
     const tree = await wrapper(null, { nRows: 2 })
@@ -309,7 +346,7 @@ describe('TableView', () => {
     global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
       rows: [
         ['a1', 'b1', 'c1'],
-        ['b1', 'b2', 'b3']
+        ['a2', 'b2', 'c2']
       ]
     })))
     const tree = await wrapper(null, { nRows: 2 })
