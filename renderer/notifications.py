@@ -48,7 +48,7 @@ def email_output_delta(output_delta: OutputDelta, updated_at: datetime.datetime)
         **get_i18n_context(user=user),
         "user_name": user_display(user),
         "module_name": output_delta.module_name,
-        "workflow_nname": output_delta.workflow_name,
+        "workflow_name": output_delta.workflow_name,
         "workflow_url": output_delta.workflow_url,
         "date": updated_at,
     }
