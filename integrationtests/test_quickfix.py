@@ -21,14 +21,17 @@ class TestQuickFix(LoggedInIntegrationTest):
         self.submit_step()
 
         # Wait for table to load
-        for expected_colname_and_type in expected_colnames_and_types:
-            b.assert_element(".column-key", text=expected_colname_and_type, wait=True)
+        for expected_colname, expected_type in expected_colnames_and_types:
+            b.assert_element(
+                ".big-table th .column-key", text=expected_colname, wait=True
+            )
+            b.assert_element(".big-table th .column-type", text=expected_type)
 
     def test_quick_fix_convert_to_date(self):
         # https://www.pivotaltracker.com/story/show/160700316
         self._create_simple_workflow(
             csv_data="A,B\n2012-01-01,1\n2012-02-03,3\n2012-01-01,2",
-            expected_colnames_and_types=["A text"],
+            expected_colnames_and_types=[("A", "text")],
         )
 
         self.import_module("convert-date")
@@ -51,14 +54,15 @@ class TestQuickFix(LoggedInIntegrationTest):
         # Wait for render
         b.assert_no_element(".step-error-msg", wait=True)
         # Wait for table render
-        b.assert_element(".column-key", text="count number", wait=True)
+        b.assert_element(".big-table th .column-key", text="count number", wait=True)
 
     def test_quick_fix_convert_to_numbers(self):
         b = self.browser
 
         # "Accidentally" create a column, 'Num' of type Text.
         self._create_simple_workflow(
-            csv_data="T,Num\nX,$1\nY,$2\nZ,$3", expected_colnames_and_types=["T text"]
+            csv_data="T,Num\nX,$1\nY,$2\nZ,$3",
+            expected_colnames_and_types=[("T", "text")],
         )
 
         self.import_module("formatnumbers")
@@ -90,7 +94,7 @@ class TestQuickFix(LoggedInIntegrationTest):
         # "Accidentally" create two column, 'Num' and 'Num2', of type Text.
         self._create_simple_workflow(
             csv_data="T,Num1,Num2\nX,$1,$3\nY,$2,$5\nZ,$3,$7",
-            expected_colnames_and_types=["Num1 text", "Num2 text"],
+            expected_colnames_and_types=[("Num1", "text"), ("Num2", "text")],
         )
 
         # 'Accidentally' convert 'Num2' to Timestamp

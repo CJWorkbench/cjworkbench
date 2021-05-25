@@ -18,8 +18,8 @@ class TestUpload(LoggedInIntegrationTest):
         )  # Wait for file input to exist
         # submit happens automatically
 
-        self.browser.wait_for_element(
-            ".react-grid-Row:nth-child(1) .react-grid-Cell:nth-child(1)", text="1"
+        self.browser.assert_element(
+            ".big-table tbody tr:nth-child(1) td:nth-child(2)", text="1", wait=True
         )
 
     def test_upload_bigger_file(self):
@@ -37,7 +37,8 @@ class TestUpload(LoggedInIntegrationTest):
         )  # Wait for file input to exist
         # submit happens automatically
 
-        self.browser.wait_for_element(
-            ".react-grid-Row:nth-child(1) .react-grid-Cell:nth-child(1)",
+        self.browser.assert_element(
+            ".big-table tbody tr:nth-child(1) td:nth-child(2)",
             text="This file is >8MB",
+            wait=True,
         )
