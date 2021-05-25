@@ -15,7 +15,6 @@
   table {
     position: relative; // for sticky headers
     table-layout: fixed; // for speed
-    border-collapse: separate;
     border-spacing: 0;
     width: 1px; // to make table-layout: fixed work
   }
@@ -85,6 +84,7 @@
     th {
       // [2020-11-10, adamhooper] attr(data-n-rows integer) can't be used in calc in latest Chrome/Firefox
       height: var(--row-height);
+      padding: 0;
     }
 
     th {
@@ -93,7 +93,6 @@
       font-weight: 400;
       text-align: center;
       font-size: rem(0.4375); // smallest possible -- this is the fallback
-      line-height: var(--row-height);
       padding: 0;
       position: sticky;
       left: 0;
@@ -121,6 +120,7 @@
         margin: 0;
         vertical-align: middle;
         cursor: pointer;
+        line-height: calc(var(--row-height) - 2px); // subtract border
         border: 1px solid transparent;
         border-right-color: $table-border;
 
@@ -143,22 +143,10 @@
     td {
       color: $brand-text--darker;
       font-size: rem(.875);
-      line-height: rem(1.2);
-      padding: 0 rem(0.5);
-      border: 1px solid transparent;
       position: relative; // for <input> positioning
 
-      &.focus {
-        border-color: $brand-orange;
-      }
-
-      &.type-number {
+      &.type-number>div {
         text-align: right; // even nulls, which aren't .cell-number
-      }
-
-      &.type-text {
-        // override regular padding to squeeze in a few pixels
-        padding-right: 0;
       }
 
       input {
@@ -167,13 +155,17 @@
         left: 0;
         height: 100%;
         width: 100%;
-        border: 1px solid $brand-orange; // yup, doubling borders
+        border: 2px solid $brand-orange;
         font: inherit;
-        padding: 0 calc(#{rem(0.5)} - 1px); // 1px from border
+        padding: 0 calc(#{rem(0.5)} - 2px); // 2px from border
       }
 
-      & > div {
+      &>div {
+        padding: 0 rem(0.5);
+        border: 1px solid transparent;
         max-height: var(--row-height);
+        height: var(--row-height);
+        line-height: calc(var(--row-height) - 2px); // minus border width
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -209,6 +201,16 @@
           font-style: italic; // FIXME we don't ship this font as italic
           font-weight: 200;
         }
+      }
+
+      &.type-text>div {
+        // override regular padding to squeeze in a few pixels
+        padding-right: 0;
+      }
+
+      &.focus>div {
+        border-color: $brand-orange;
+        background: white;
       }
     }
   }

@@ -216,45 +216,11 @@
 
       // Your average cell in the table
       .react-grid-Cell {
-        position: absolute;
-        contain: layout;
-        height: 3.5rem;
-        padding-right: 0;
-        padding-left: 0;
-        color: $brand-text--darker;
-        border: 0px solid transparent;
-
         .react-grid-Cell__value > .cell-null {
           // "overflow: hidden" seems to crop the fake-italics 'null' in number cells on
           // Chrome 73 on Mac/Linux. TODO fix the font to correct this problem
           overflow: visible;
         }
-
-        // Click a cell
-        &:focus {
-          outline: none;
-          border: 2px solid $brand-orange;
-          border-radius: 5px;
-          background-color: white !important;
-
-          .react-grid-Cell__value > * {
-            padding: 0 0.8rem;
-          }
-        }
-
-        &:last-child:focus {
-          outline: none;
-        }
-
-        // input {
-        //   position: relative;
-        //   background-color: white;
-        //   border-radius: 5px;
-        //   outline: none;
-        //   border-color: $brand-orange;
-        //   padding: 0 0.8rem;
-        //   left: 0;
-        // }
       }
 
       .react-grid-Row.row-selected .react-grid-Cell:last-child {
