@@ -19,7 +19,8 @@ export function TableView (props) {
     nRowsPerTile,
     nColumnsPerTile,
     onTableLoaded,
-    editCell
+    editCell,
+    reorderColumn
   } = props
 
   const handleEdit = React.useMemo(() => {
@@ -29,9 +30,12 @@ export function TableView (props) {
     }
   }, [columns, editCell, stepId, isReadOnly])
 
-  // const reorderColumn = (column, fromIndex, toIndex) => {
-  //   this.props.reorderColumn(this.props.stepId, column, fromIndex, toIndex)
-  // }
+  const handleReorder = React.useCallback(
+    (column, fromIndex, toIndex) => {
+      reorderColumn(stepId, column, fromIndex, toIndex)
+    },
+    [reorderColumn, stepId]
+  )
 
   return (
     <FocusCellProvider>
@@ -58,6 +62,7 @@ export function TableView (props) {
               onTableLoaded={onTableLoaded}
               isReadOnly={isReadOnly}
               onEdit={handleEdit}
+              onReorder={handleReorder}
             />
           </div>
         </div>

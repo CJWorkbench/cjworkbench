@@ -4,6 +4,7 @@ const columnDefinitionType = PropTypes.shape({
   type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired,
   width: PropTypes.number.isRequired,
   headerComponent: PropTypes.elementType.isRequired,
+  headerProps: PropTypes.object, // or undefined
   valueComponent: PropTypes.elementType.isRequired
 })
 

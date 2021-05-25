@@ -1,7 +1,7 @@
 /* global beforeEach, describe, it, expect, jest, test */
 import '../__mocks__/ResizeObserver'
 import { act } from 'react-dom/test-utils'
-import { fireEvent } from '@testing-library/react'
+import { createEvent, fireEvent } from '@testing-library/react'
 import { renderWithI18n } from '../i18n/test-utils'
 import { Provider } from 'react-redux'
 import { mockStore, tick } from '../test-utils'
@@ -103,26 +103,52 @@ test('reorder columns', async () => {
     },
     api
   )
+  global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+    rows: [
+      ['a1', 'b1', 'c1'],
+      ['a2', 'b2', 'c2']
+    ]
+  })))
+  const { getByText, debug } = renderWithDefaults({
+    store,
+    stepId: 2,
+    nRows: 2,
+    columns: [
+      { name: 'ColA', type: 'text' },
+      { name: 'ColB', type: 'text' },
+      { name: 'ColC', type: 'text' }
+    ]
+  })
+  await act(async () => await tick()) // load data
 
-  const tree = wrapper(store, { stepSlug: 'step-2', stepId: 2 })
-  tree
-    .find('DataGrid')
-    .instance()
-    .handleDropColumnIndexAtIndex(0, 2)
+  const dragStartEvent = createEvent.dragStart(getByText('C'))
+  Object.defineProperty(
+    dragStartEvent,
+    'dataTransfer',
+    {
+      value: {
+        effectAllowed: [],
+        dropEffect: 'copy',
+        setData: jest.fn()
+      }
+    }
+  )
+  fireEvent(getByText('C'), dragStartEvent) // start dragging letter
+  expect(dragStartEvent.dataTransfer.effectAllowed).toEqual(['move'])
+  expect(dragStartEvent.dataTransfer.dropEffect).toBe('move')
+  expect(dragStartEvent.dataTransfer.setData).toHaveBeenCalledWith('text/plain', 'ColC')
 
-  await tick()
-
+  fireEvent.drop(getByText('A').closest('th').querySelector('.column-reorder-drop-zone.align-right'))
+  fireEvent.dragEnd(getByText('C'))
   expect(api.addStep).toHaveBeenCalledWith(
     'tab-1',
     'step-X',
     'reordercolumns',
     1,
     {
-      'reorder-history': JSON.stringify([{ column: 'a', to: 1, from: 0 }])
+      'reorder-history': '[{"column":"ColC","to":1,"from":2}]'
     }
   )
-
-  await tick() // let things settle
 })
 
 test('edit a cell', async () => {
@@ -255,7 +281,7 @@ it('should not edit a Number cell when its value does not change', async () => {
   global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, { rows: [[99]] })))
   const { getByDisplayValue, getByText } = renderWithDefaults({
     store,
-    columns: [{ name: 'A', type: 'number', format: '{:,}'}],
+    columns: [{ name: 'A', type: 'number'}],
     nRows: 1
   })
   await act(async () => await tick()) // load data

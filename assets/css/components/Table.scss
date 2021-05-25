@@ -1,5 +1,3 @@
-/* Output Pane */
-
 .outputpane {
   flex: 1 1 auto;
   position: relative;
@@ -90,7 +88,7 @@
             right: -0.25rem;
           }
 
-          &.drag-hover {
+          &.dragging-over {
             background-color: $brand-orange;
           }
 
@@ -112,104 +110,91 @@
           color: white;
           font-size: 1.2rem;
           cursor: grab;
+
+          &:active {
+            background-color: $header-hover;
+            cursor: grabbing;
+          }
         }
 
-        .data-grid-column-header {
-          .column-key {
-            .value {
-              padding: 0 rem(0.625);
-              height: rem(1.5);
-              text-overflow: ellipsis;
-              white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
-              overflow: hidden;
-              position: relative;
+        .column-key {
+          .value {
+            padding: 0 rem(0.625);
+            height: rem(1.5);
+            text-overflow: ellipsis;
+            white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
+            overflow: hidden;
+            position: relative;
 
-              &.editing {
-                overflow: visible;
-              }
-
-              input[name='new-column-key'] {
-                position: absolute;
-                left: 0;
-                width: 100%;
-                top: rem(-0.375);
-                bottom: rem(-0.375);
-                padding: rem(0.375) rem(0.625);
-                border: 2px solid $brand-orange;
-                border-radius: 5px;
-
-                & + .dropdown {
-                  display: none;
-                }
-              }
+            &.editing {
+              overflow: visible;
             }
 
-            .column-type {
-              @include info-2;
-              position: relative;
-              &:empty::before {
-                content: '\00a0';
+            input[name='new-column-key'] {
+              position: absolute;
+              left: 0;
+              width: 100%;
+              top: rem(-0.375);
+              bottom: rem(-0.375);
+              padding: rem(0.375) rem(0.625);
+              border: 2px solid $brand-orange;
+              border-radius: 5px;
+
+              & + .dropdown {
+                display: none;
               }
             }
           }
 
-          .dropdown {
-            // TODO use Popper
-            position: absolute;
+          .column-type {
+            @include info-2;
+            position: relative;
+            &:empty::before {
+              content: '\00a0';
+            }
+          }
+        }
+
+        .dropdown {
+          position: absolute;
+          flex: 0 0 auto;
+          display: flex;
+          width: 3rem;
+          height: 100%;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          opacity: 0;
+          z-index: 1;
+          right: 1px; // th>* has border-right: 1px
+          top: 0;
+          bottom: 0;
+          border-left: 1px solid $dark-accent--medium;
+          background-color: $heading-bg;
+
+          &:hover,
+          &.active {
+            opacity: 1;
+          }
+
+          button {
             flex: 0 0 auto;
-            display: flex;
-            width: 3rem;
-            height: 100%;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            opacity: 0;
-            z-index: 1;
-            right: 1px; // th>* has border-right: 1px
-            top: 0;
-            bottom: 0;
-            border-left: 1px solid $dark-accent--medium;
-            background-color: $heading-bg;
-
-            &:hover,
-            &.active {
-              opacity: 1;
+            height: 2.5rem;
+            width: 2.5rem;
+            font-size: 0.7rem;
+            border: 0;
+            background-color: transparent;
+            color: inherit;
+            position: relative;
+            opacity: 0.9;
+            color: $brand-orange;
+            &:hover {
+              background-color: $brand-orange;
+              color: white;
             }
-
-            button {
-              flex: 0 0 auto;
-              height: 2.5rem;
-              width: 2.5rem;
-              font-size: 0.7rem;
-              border: 0;
-              background-color: transparent;
-              color: inherit;
-              position: relative;
-              opacity: 0.9;
-              color: $brand-orange;
-              &:hover {
-                background-color: $brand-orange;
-                color: white;
-              }
-              i {
-                margin-left: 1px;
-              }
+            i {
+              margin-left: 1px;
             }
-          }
-        }
-
-        &:hover .context-menu {
-          opacity: 1;
-        }
-
-        &:active {
-          background-color: $header-hover;
-          cursor: grabbing;
-          cursor: -moz-grabbing;
-          cursor: -webkit-grabbing;
-
-          .dropdown {
-            opacity: 0;
           }
         }
       }
@@ -220,41 +205,6 @@
           // "overflow: hidden" seems to crop the fake-italics 'null' in number cells on
           // Chrome 73 on Mac/Linux. TODO fix the font to correct this problem
           overflow: visible;
-        }
-      }
-
-      .react-grid-Row.row-selected .react-grid-Cell:last-child {
-        //background-color: lighten($brand-orange, 10%)!important;
-        border-right: 1px solid $brand-orange;
-
-        span {
-          color: darken($brand-orange, 18%) !important;
-          font-weight: normal;
-        }
-      }
-
-      // cancel row background - we style cells
-      .react-grid-Row.row-selected {
-        // Selected row and hover
-        &:hover .react-grid-Cell:last-child {
-          border-right: 1px solid $brand-orange;
-
-          .row-number {
-            color: darken($brand-orange, 22%) !important;
-          }
-        }
-      }
-
-      // Last cells in any row have a right border to form the table's right border
-      .react-grid-Row .react-grid-Cell:nth-last-child(2) {
-        border-right: 1px solid $table-border;
-
-        &:focus {
-          border: 2px solid $brand-orange;
-
-          .react-grid-Cell__value > * {
-            margin-right: 0.7rem; // to compensate for 1px border in parent
-          }
         }
       }
     }
