@@ -9,7 +9,7 @@ const RowSelectionSetterContext = React.createContext()
 RowSelectionSetterContext.displayName = 'RowSelectionSetterContext'
 
 const EmptyRowSelection = new Uint8Array()
-function zeroPad(uint8Array, length) {
+function zeroPad (uint8Array, length) {
   if (uint8Array.length === length) {
     return uint8Array
   } else {
@@ -28,7 +28,6 @@ function setRowSelectionIfChanged (value, newValue) {
     : newValue
 }
 
-
 /**
  * Empower useRowSelection() and useRowSelectionSetter().
  *
@@ -36,7 +35,7 @@ function setRowSelectionIfChanged (value, newValue) {
  * for true.
  */
 export function RowSelectionProvider (props) {
-  const [rowSelection, setRowSelection] = React.useReducer(setRowSelectionIfChanged, new Uint8Array(0))
+  const [rowSelection, setRowSelection] = React.useReducer(setRowSelectionIfChanged, EmptyRowSelection)
 
   return (
     <RowSelectionSetterContext.Provider value={setRowSelection}>

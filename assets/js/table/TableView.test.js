@@ -223,6 +223,52 @@ it('should not edit a cell when its value does not change', async () => {
   expect(api.addStep).not.toHaveBeenCalled()
 })
 
+it('should not edit a Number cell when its value does not change', async () => {
+  // integration-test style -- these moving parts tend to rely on one another
+  // lots: ignoring workflow-reducer means tests miss bugs.
+  const api = {
+    addStep: jest.fn().mockImplementation(() => Promise.resolve(null))
+  }
+  generateSlug.mockImplementationOnce(prefix => prefix + 'X')
+  const store = mockStore(
+    {
+      settings: {
+        bigTableColumnsPerTile: 4,
+        bigTableRowsPerTile: 5
+      },
+      workflow: {
+        tab_slugs: ['tab-1']
+      },
+      tabs: {
+        'tab-1': { step_ids: [100, 3], selected_step_position: 0 }
+      },
+      steps: {
+        100: { slug: 'step-2', tab_slug: 'tab-1' },
+        3: {}
+      },
+      modules: {
+        editcells: {}
+      }
+    },
+    api
+  )
+  global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, { rows: [[99]] })))
+  const { getByDisplayValue, getByText } = renderWithDefaults({
+    store,
+    columns: [{ name: 'A', type: 'number', format: '{:,}'}],
+    nRows: 1
+  })
+  await act(async () => await tick()) // load data
+  fireEvent.mouseDown(getByText('99'))
+  fireEvent.doubleClick(getByText('99'))
+  fireEvent.change(getByDisplayValue('99'), { target: { value: '100' } })
+  fireEvent.change(getByDisplayValue('100'), { target: { value: '99' } })
+  // Number blur has different logic from text blur. 2021-05-25 this led to
+  // a crash when comparing.
+  fireEvent.blur(getByDisplayValue('99'))
+  expect(api.addStep).not.toHaveBeenCalled()
+})
+
 test('select a row', async () => {
   global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
     rows: [

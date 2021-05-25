@@ -4,6 +4,7 @@ import { columnDefinitionType } from './types'
 import { useFocusCell, useFocusCellSetter, useRowSelection } from './state'
 import RowNumber from './RowNumber'
 import Td from './Td'
+import TextCell from './Cell/TextCell'
 
 function SkipRows ({ nRows, nColumns }) {
   const trStyle = React.useMemo(
@@ -86,7 +87,7 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
         setEditing({
           row: focusCell.row,
           column: focusCell.column,
-          value,
+          value: value === null ? '' : String(value),
           submitting: false
         })
       }
@@ -146,6 +147,14 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
     return nSkipColumns + index
   }
 
+  function isEditing (i, j) {
+    return editing && i === indexRow(editing.row) && j === indexColumn(editing.column) && !editing.submitting
+  }
+
+  function isSubmitting (i, j) {
+    return editing && i === indexRow(editing.row) && j === indexColumn(editing.column) && editing.submitting
+  }
+
   return (
     <tbody tabIndex='0' onKeyDown={handleKeyDown} ref={ref}>
       {nSkipRows > 0
@@ -161,16 +170,16 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
             <Td
               key={indexColumn(j)}
               valueType={columns[indexColumn(j)].type}
-              value={editing && editing.row === indexRow(i) && editing.column === indexColumn(j) && editing.submitting ? editing.value : value}
+              value={isSubmitting(i, j) ? editing.value : value}
+              editValue={isEditing(i, j) ? editing.value : null}
               row={indexRow(i)}
               column={indexColumn(j)}
               focus={focusCell && focusCell.row === indexRow(i) && focusCell.column === indexColumn(j)}
-              editValue={editing && editing.row === indexRow(i) && editing.column === indexColumn(j) && !editing.submitting ? editing.value : null}
               onChange={handleChangeEdit}
               onSubmit={handleSubmitEdit}
               onCancel={handleCancelEdit}
               onDoubleClick={handleDoubleClickTd}
-              Component={columns[indexColumn(j)].valueComponent}
+              Component={isSubmitting(i, j) ? TextCell : columns[indexColumn(j)].valueComponent}
             />
           ))}
           {nColumnsAfter > 0

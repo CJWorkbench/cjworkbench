@@ -22,7 +22,6 @@ const Td = React.memo(function Td (props) {
   } = props
   const setFocusCell = useFocusCellSetter()
   const setRowSelection = useRowSelectionSetter()
-  const [submitting, setSubmitting] = React.useState(false)
 
   const handleMouseDown = React.useMemo(() => {
     if (!setFocusCell) return undefined
@@ -50,10 +49,10 @@ const Td = React.memo(function Td (props) {
       ev.stopPropagation() // Prevent <TBody> from moving focus
 
       switch (ev.key) {
-        case "Escape":
+        case 'Escape':
           onCancel()
           break
-        case "Enter":
+        case 'Enter':
           ev.target.blur()
           break
       }
@@ -63,13 +62,13 @@ const Td = React.memo(function Td (props) {
 
   return (
     <td
-      className={`type-${valueType}${focus ? ' focus' : ''}${submitting ? ' submitting' : ''}`}
+      className={`type-${valueType}${focus ? ' focus' : ''}`}
       onMouseDown={handleMouseDown}
       onDoubleClick={onDoubleClick}
     >
-      <Component value={editValue === null ? value : editValue} />
-      {editValue !== null && !submitting
-        ? <input autoFocus type="text" value={editValue} onChange={onChange} onFocus={handleFocus} onBlur={handleBlur} onKeyDown={handleInputKeyDown} />
+      <Component value={value} />
+      {editValue !== null
+        ? <input autoFocus type='text' value={editValue} onChange={onChange} onFocus={handleFocus} onBlur={handleBlur} onKeyDown={handleInputKeyDown} />
         : null}
     </td>
   )
