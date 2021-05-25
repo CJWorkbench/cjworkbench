@@ -1,4 +1,4 @@
-/* global beforeEach, describe, it, expect, jest, test */
+/* global beforeEach, expect, jest, test */
 import '../__mocks__/ResizeObserver'
 import { act } from 'react-dom/test-utils'
 import { createEvent, fireEvent } from '@testing-library/react'
@@ -109,7 +109,7 @@ test('reorder columns', async () => {
       ['a2', 'b2', 'c2']
     ]
   })))
-  const { getByText, debug } = renderWithDefaults({ store, stepId: 2, nRows: 2 })
+  const { getByText } = renderWithDefaults({ store, stepId: 2, nRows: 2 })
   await act(async () => await tick()) // load data
 
   const dragStartEvent = createEvent.dragStart(getByText('C'))
@@ -240,7 +240,7 @@ test('not edit a cell when its value does not change', async () => {
   expect(api.addStep).not.toHaveBeenCalled()
 })
 
-it('should not edit a Number cell when its value does not change', async () => {
+test('do not edit a Number cell when its value does not change', async () => {
   // integration-test style -- these moving parts tend to rely on one another
   // lots: ignoring workflow-reducer means tests miss bugs.
   const api = {
@@ -272,7 +272,7 @@ it('should not edit a Number cell when its value does not change', async () => {
   global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, { rows: [[99]] })))
   const { getByDisplayValue, getByText } = renderWithDefaults({
     store,
-    columns: [{ name: 'A', type: 'number'}],
+    columns: [{ name: 'A', type: 'number' }],
     nRows: 1
   })
   await act(async () => await tick()) // load data
@@ -302,7 +302,6 @@ test('resize a column', async () => {
   await act(async () => await tick()) // load data
   expect(container.querySelectorAll('col')[1].getAttribute('style')).toEqual('width: 100px;')
 })
-
 
 test('select a row', async () => {
   global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
@@ -420,7 +419,7 @@ test('focus 20 rows up/down on PageUp/PageDown', async () => {
       ['a24', 'b24', 'c24'],
       ['a25', 'b25', 'c25'],
       ['a26', 'b26', 'c26'],
-      ['a27', 'b27', 'c27'],
+      ['a27', 'b27', 'c27']
     ]
   })))
   const { getByText } = await renderWithDefaults({
