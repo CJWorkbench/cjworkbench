@@ -27,7 +27,6 @@
       background: $heading-bg;
       border: 0;
       padding: 0;
-      border-right: 1px solid composite-colors($dark-accent--strong, $heading-bg);
       @include content-1;
 
       // show up above the tbody>tr>th: that also has position:sticky and it's
@@ -38,6 +37,10 @@
       &:first-child {
         left: 0; // stick to the left, like tbody>tr>th
         z-index: 2; // appear above all other thead>tr>th
+      }
+
+      &>* {
+        border-right: 1px solid composite-colors($dark-accent--strong, $heading-bg);
       }
 
       .column-name {
@@ -97,6 +100,7 @@
       position: sticky;
       left: 0;
       background: inherit;
+      z-index: 1; // above tbody>tr>td: td has position:relative and it's later in the DOM
 
       [data-n-chars='1'],
       [data-n-chars='2'] {

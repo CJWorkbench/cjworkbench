@@ -165,7 +165,7 @@
             cursor: pointer;
             opacity: 0;
             z-index: 1;
-            right: 0;
+            right: 1px; // th>* has border-right: 1px
             top: 0;
             bottom: 0;
             border-left: 1px solid $dark-accent--medium;
