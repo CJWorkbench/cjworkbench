@@ -13,12 +13,15 @@ const Td = React.memo(function Td (props) {
     focus,
     row,
     column,
-    onEdit,
+    editValue,
+    onChange,
+    onSubmit,
+    onCancel,
+    onDoubleClick,
     Component
   } = props
   const setFocusCell = useFocusCellSetter()
   const setRowSelection = useRowSelectionSetter()
-  const [editValue, setEditValue] = React.useState(null) // null means, "not editing"
   const [submitting, setSubmitting] = React.useState(false)
 
   const handleMouseDown = React.useMemo(() => {
@@ -31,29 +34,15 @@ const Td = React.memo(function Td (props) {
     }
   }, [setFocusCell])
 
-  const handleDoubleClick = React.useMemo(() => {
-    if (!onEdit) return null
-    return ev => { setEditValue(value === null ? '' : String(value)) }
-  }, [onEdit, value, setEditValue])
-
   const handleBlur = React.useCallback(
     ev => {
       if (editValue === (value === null ? '' : String(value))) {
-        setEditValue(null) // cancel
+        onCancel()
       } else {
-        onEdit({ row, column, oldValue: value, newValue: editValue })
-        // onEdit() will lead to a whole new table being created -- and in that
-        // new table, the new value will exist. But _this_ table is immutable! Set
-        // submitting=True, to render the interim state.
-        setSubmitting(true)
+        onSubmit({ oldValue: value, newValue: editValue })
       }
     },
-    [onEdit, row, column, value, editValue, setSubmitting, setEditValue]
-  )
-
-  const handleChange = React.useCallback(
-    ev => setEditValue(ev.target.value),
-    [setEditValue]
+    [value, editValue, onCancel, onSubmit]
   )
 
   const handleInputKeyDown = React.useCallback(
@@ -62,25 +51,25 @@ const Td = React.memo(function Td (props) {
 
       switch (ev.key) {
         case "Escape":
-          setEditValue(null)
+          onCancel()
           break
         case "Enter":
           ev.target.blur()
           break
       }
     },
-    [setEditValue]
+    [onCancel]
   )
 
   return (
     <td
       className={`type-${valueType}${focus ? ' focus' : ''}${submitting ? ' submitting' : ''}`}
       onMouseDown={handleMouseDown}
-      onDoubleClick={handleDoubleClick}
+      onDoubleClick={onDoubleClick}
     >
       <Component value={editValue === null ? value : editValue} />
       {editValue !== null && !submitting
-        ? <input autoFocus type="text" value={editValue} onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} onKeyDown={handleInputKeyDown} />
+        ? <input autoFocus type="text" value={editValue} onChange={onChange} onFocus={handleFocus} onBlur={handleBlur} onKeyDown={handleInputKeyDown} />
         : null}
     </td>
   )
@@ -92,6 +81,10 @@ Td.propTypes = {
   row: PropTypes.number.isRequired,
   column: PropTypes.number.isRequired,
   Component: PropTypes.elementType.isRequired,
-  onEdit: PropTypes.func // func({ row, column, oldValue, newValue }) => undefined, or null
+  onDoubleClick: PropTypes.func, // or undefined
+  editValue: PropTypes.string, // or null. When set, onChange+onSubmit+onCancel may be called.
+  onSubmit: PropTypes.func.isRequired, // func({ oldValue, newValue }) => undefined; only called when editValue is non-null and different from value
+  onCancel: PropTypes.func.isRequired, // func() => undefined; only called when editValue is non-null
+  onChange: PropTypes.func.isRequired // func(ev) => undefined; only called when editValue is non-null
 }
 export default Td

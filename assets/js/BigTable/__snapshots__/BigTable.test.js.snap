@@ -35,7 +35,9 @@ exports[`Table with a gap 1`] = `
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        tabindex="0"
+      >
         <tr>
           <th>
             <label

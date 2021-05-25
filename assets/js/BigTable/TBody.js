@@ -40,6 +40,7 @@ function SkipRowsAtStart ({ nRows, nColumns }) {
 
 const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
   const { columns, nRows, nSkipRows, nSkipColumns, cells, onEdit } = props
+  const [editing, setEditing] = React.useState(null) // { row, column, value, submitting }
   const rowSelection = useRowSelection()
   const focusCell = useFocusCell()
   const setFocusCell = useFocusCellSetter()
@@ -73,6 +74,25 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
     }
   }, [nRows, columns.length, focusCell, setFocusCell])
 
+  const maybeEnterEditMode = React.useMemo(() => {
+    if (!focusCell || focusCell.row === null || focusCell.column === null || editing) return undefined
+
+    return () => {
+      const i = focusCell.row - nSkipRows
+      const j = focusCell.column - nSkipColumns
+
+      if (i >= 0 && i < cells.length && j >= 0 && j < cells[i].length) {
+        const value = cells[i][j]
+        setEditing({
+          row: focusCell.row,
+          column: focusCell.column,
+          value,
+          submitting: false
+        })
+      }
+    }
+  }, [editing, focusCell, cells, nSkipRows, nSkipColumns])
+
   const handleKeyDown = React.useMemo(() => {
     if (!moveFocus) return undefined
     return ev => {
@@ -83,9 +103,40 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
         case 'ArrowUp': return moveFocus(ev, -1, null)
         case 'PageDown': return moveFocus(ev, 20, null)
         case 'PageUp': return moveFocus(ev, -20, null)
+        case 'Enter': return maybeEnterEditMode ? maybeEnterEditMode() : undefined
       }
     }
-  }, [moveFocus])
+  }, [maybeEnterEditMode, moveFocus])
+
+  const handleDoubleClickTd = React.useMemo(() => {
+    if (!maybeEnterEditMode) return undefined
+
+    return ev => {
+      if (ev.button === 0) {
+        maybeEnterEditMode() // double-click always fires on focused cell
+      }
+    }
+  }, [maybeEnterEditMode])
+
+  const handleChangeEdit = React.useCallback(ev => {
+    if (!editing.submitting) {
+      const { row, column } = editing
+      setEditing({ row, column, value: ev.target.value, submitting: false })
+    }
+  }, [editing, setEditing])
+
+  const handleSubmitEdit = React.useCallback(({ oldValue, newValue }) => {
+    if (!editing) return // e.g., we just called onCancel()
+    const { row, column } = editing
+    setEditing({ row, column, value: newValue, submitting: true })
+    onEdit({ row, column, oldValue, newValue })
+  }, [editing, setEditing, columns, onEdit])
+
+  const handleCancelEdit = React.useCallback(() => {
+    if (editing && !editing.submitting) {
+      setEditing(null)
+    }
+  }, [editing, setEditing])
 
   function indexRow (index) {
     return nSkipRows + index
@@ -110,11 +161,15 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
             <Td
               key={indexColumn(j)}
               valueType={columns[indexColumn(j)].type}
-              value={value}
+              value={editing && editing.row === indexRow(i) && editing.column === indexColumn(j) && editing.submitting ? editing.value : value}
               row={indexRow(i)}
               column={indexColumn(j)}
               focus={focusCell && focusCell.row === indexRow(i) && focusCell.column === indexColumn(j)}
-              onEdit={onEdit}
+              editValue={editing && editing.row === indexRow(i) && editing.column === indexColumn(j) && !editing.submitting ? editing.value : null}
+              onChange={handleChangeEdit}
+              onSubmit={handleSubmitEdit}
+              onCancel={handleCancelEdit}
+              onDoubleClick={handleDoubleClickTd}
               Component={columns[indexColumn(j)].valueComponent}
             />
           ))}
