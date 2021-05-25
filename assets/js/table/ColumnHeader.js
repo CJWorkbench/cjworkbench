@@ -6,6 +6,8 @@ import { connect } from 'react-redux'
 import idxToColumnLetter from '../utils/idxToColumnLetter'
 import { updateTableAction } from './UpdateTableAction'
 
+const MinWidthPx = 50 // if too narrow, the dropdown menu button overlaps the previous-column resizer
+
 function preventDefault (ev) {
   ev.preventDefault()
 }
@@ -37,6 +39,47 @@ ReorderColumnDropZone.propTypes = {
   leftOrRight: PropTypes.oneOf(['left', 'right']).isRequired,
   index: PropTypes.number.isRequired,
   onDropColumnIndex: PropTypes.func.isRequired // func(index) => undefined
+}
+
+function ResizeHandle (props) {
+  const { index, onResize } = props
+  const [x0, setX0] = React.useState(null) // when set, leftmost viewport X of column
+
+  const handleMouseDown = React.useCallback(
+    ev => {
+      if (ev.button === 0) {
+        setX0(ev.target.closest('th').getBoundingClientRect().x)
+        ev.preventDefault() // avoid calling dragstart on .column-letter
+      }
+    },
+    [setX0]
+  )
+
+  React.useEffect(() => {
+    if (x0 === null) return undefined
+
+    const handleMouseMove = ev => {
+      const width = Math.max(MinWidthPx, ev.clientX - x0)
+      onResize(index, width)
+      ev.stopPropagation()
+      ev.preventDefault() // prevent selecting text
+    }
+
+    const handleMouseUp = ev => {
+      setX0(null)
+      ev.stopPropagation()
+      ev.preventDefault() // prevent clicking column name to rename it
+    }
+
+    document.addEventListener('mousemove', handleMouseMove, true)
+    document.addEventListener('mouseup', handleMouseUp, true)
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove, true)
+      document.removeEventListener('mouseup', handleMouseUp, true)
+    }
+  }, [x0, setX0, index, onResize])
+
+  return <div className='resize-handle' onMouseDown={handleMouseDown} />
 }
 
 export class EditableColumnName extends React.Component {
@@ -146,6 +189,7 @@ export class ColumnHeader extends React.PureComponent {
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndex: PropTypes.func.isRequired, // func(from, to) => undefined
+    onResize: PropTypes.func.isRequired, // func(index, nPixels) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
     dispatchTableAction: PropTypes.func.isRequired // func(stepId, moduleIdName, forceNewModule, params)
   }
@@ -195,7 +239,17 @@ export class ColumnHeader extends React.PureComponent {
   }
 
   render () {
-    const { columnKey, columnType, dateUnit, index, isReadOnly, onDropColumnIndex, draggingColumnIndex } = this.props
+    const {
+      columnKey,
+      columnType,
+      dateUnit,
+      index,
+      isReadOnly,
+      onDropColumnIndex,
+      onDragEnd,
+      onResize,
+      draggingColumnIndex
+    } = this.props
 
     return (
       <>
@@ -206,7 +260,7 @@ export class ColumnHeader extends React.PureComponent {
           className='column-letter'
           draggable
           onDragStart={this.handleDragStart}
-          onDragEnd={this.props.onDragEnd}
+          onDragEnd={onDragEnd}
         >
           {idxToColumnLetter(index)}
         </div>
@@ -228,7 +282,7 @@ export class ColumnHeader extends React.PureComponent {
             />)}
         {draggingColumnIndex !== null && draggingColumnIndex !== index && draggingColumnIndex !== index + 1
           ? <ReorderColumnDropZone leftOrRight='right' index={index + 1} onDropColumnIndex={onDropColumnIndex} />
-          : null}
+          : <ResizeHandle index={index} onResize={onResize} />}
       </>
     )
   }

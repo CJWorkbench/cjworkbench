@@ -18,13 +18,13 @@ beforeEach(() => global.fetch.mockClear())
  *
  * These are globals! They apply to all tests in this file.
  *
- * <th> -- has width=60, height=30; also, has a non-null .offsetParent
+ * <th> -- has x=0, width=60, height=30; also, has a non-null .offsetParent
  * <div> (viewport) -- has width=650, height=200
  *
  * Each non-header cell has width=180. That's a magic number somewhere....
  */
 global.HTMLTableCellElement.prototype.getBoundingClientRect = () => (
-  { width: 60, height: 30 }
+  { x: 0, width: 60, height: 30 }
 )
 Object.defineProperty(global.HTMLTableCellElement.prototype, 'offsetParent', {
   get () { return 'not null' }
@@ -65,9 +65,9 @@ function renderWithDefaults ({ store, ...props }) {
         deltaId={2}
         status='ok'
         columns={[
-          { name: 'A', type: 'text' },
-          { name: 'B', type: 'text' },
-          { name: 'C', type: 'text' }
+          { name: 'ColA', type: 'text' },
+          { name: 'ColB', type: 'text' },
+          { name: 'ColC', type: 'text' }
         ]}
         nRows={0}
         {...props}
@@ -109,16 +109,7 @@ test('reorder columns', async () => {
       ['a2', 'b2', 'c2']
     ]
   })))
-  const { getByText, debug } = renderWithDefaults({
-    store,
-    stepId: 2,
-    nRows: 2,
-    columns: [
-      { name: 'ColA', type: 'text' },
-      { name: 'ColB', type: 'text' },
-      { name: 'ColC', type: 'text' }
-    ]
-  })
+  const { getByText, debug } = renderWithDefaults({ store, stepId: 2, nRows: 2 })
   await act(async () => await tick()) // load data
 
   const dragStartEvent = createEvent.dragStart(getByText('C'))
@@ -198,13 +189,13 @@ test('edit a cell', async () => {
     'editcells',
     1,
     {
-      celledits: [{ row: 0, col: 'C', value: 'c1 - edited' }]
+      celledits: [{ row: 0, col: 'ColC', value: 'c1 - edited' }]
     }
   )
   getByText('c1 - edited') // don't revert to "c1" after we stop editing
 })
 
-it('should not edit a cell when its value does not change', async () => {
+test('not edit a cell when its value does not change', async () => {
   // integration-test style -- these moving parts tend to rely on one another
   // lots: ignoring workflow-reducer means tests miss bugs.
   const api = {
@@ -294,6 +285,24 @@ it('should not edit a Number cell when its value does not change', async () => {
   fireEvent.blur(getByDisplayValue('99'))
   expect(api.addStep).not.toHaveBeenCalled()
 })
+
+test('resize a column', async () => {
+  global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {
+    rows: [
+      ['a1', 'b1', 'c1'],
+      ['a2', 'b2', 'c2']
+    ]
+  })))
+  const { container, getByText } = renderWithDefaults({ nRows: 2 })
+  await act(async () => await tick()) // load data
+  const handle = getByText('A').closest('th').querySelector('.resize-handle')
+  fireEvent.mouseDown(handle, { button: 0, target: handle })
+  await act(async () => await tick()) // load data
+  fireEvent.mouseMove(document, { clientX: 100 })
+  await act(async () => await tick()) // load data
+  expect(container.querySelectorAll('col')[1].getAttribute('style')).toEqual('width: 100px;')
+})
+
 
 test('select a row', async () => {
   global.fetch.mockReturnValueOnce(Promise.resolve(new MockHttpResponse(200, {

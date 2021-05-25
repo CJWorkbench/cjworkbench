@@ -6,6 +6,26 @@ import { columnToCellFormatter } from '../Report/CellFormatters2'
 import ColumnHeader from './ColumnHeader'
 import propTypes from '../propTypes'
 
+const DefaultWidthPx = 180
+
+function reduceResize (state, { index, width }) {
+  if (width === DefaultWidthPx) {
+    if (index in state) {
+      const newState = { ...state }
+      delete newState[index]
+      return newState
+    } else {
+      return state
+    }
+  } else {
+    if (state[index] === width) {
+      return state
+    } else {
+      return { ...state, [index]: width }
+    }
+  }
+}
+
 export default function DataGrid (props) {
   const {
     workflowIdOrSecretId,
@@ -23,6 +43,7 @@ export default function DataGrid (props) {
   } = props
 
   const [draggingColumnIndex, setDraggingColumnIndex] = React.useState(null)
+  const [resizes /* index => width */, dispatchResize] = React.useReducer(reduceResize, { })
   const nTileRows = Math.ceil(nRows / nRowsPerTile)
   const nTileColumns = Math.ceil(columns.length / nColumnsPerTile)
   const fetchTile = React.useCallback(
@@ -43,11 +64,15 @@ export default function DataGrid (props) {
     index => { onReorder(columns[draggingColumnIndex].name, draggingColumnIndex, index) },
     [onReorder, columns, draggingColumnIndex]
   )
+  const handleResize = React.useCallback(
+    (index, width) => { dispatchResize({ index, width }) },
+    [dispatchResize]
+  )
 
   const bigColumns = React.useMemo(
     () => columns.map((column, index) => ({
       ...column,
-      width: 180,
+      width: resizes[index] || DefaultWidthPx,
       headerComponent: ColumnHeader,
       headerProps: {
         columnKey: column.name,
@@ -60,11 +85,12 @@ export default function DataGrid (props) {
         draggingColumnIndex,
         onDragStartColumnIndex: handleDragStartColumnIndex,
         onDragEnd: handleDragEnd,
-        onDropColumnIndex: handleDropColumnIndex
+        onDropColumnIndex: handleDropColumnIndex,
+        onResize: handleResize
       },
       valueComponent: columnToCellFormatter(column)
     })),
-    [columns, stepId, stepSlug, draggingColumnIndex, handleDragStartColumnIndex, handleDropColumnIndex, handleDragEnd, isReadOnly]
+    [columns, stepId, stepSlug, draggingColumnIndex, handleDragStartColumnIndex, handleDropColumnIndex, handleDragEnd, resizes, isReadOnly, handleResize]
   )
 
   React.useEffect(() => {
