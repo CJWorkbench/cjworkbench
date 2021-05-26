@@ -1,3 +1,5 @@
+@use "sass:math";
+
 // Override Bootstrap fonts
 $font-family-sans-serif: 'Roboto', sans-serif;
 $font-family-monospace: 'Roboto Mono', monospace;
@@ -161,7 +163,7 @@ $module-popover-border-width: 2px;
 @function rem($n) {
   @if global-variable-exists(we-changed-what-rem-means-and-now-we-regret-it) {
     // Assumes the browser's default is 16px per rem
-    @return $n * 1rem * 16px / $we-changed-what-rem-means-and-now-we-regret-it;
+    @return math.div($n * 1rem * 16px, $we-changed-what-rem-means-and-now-we-regret-it);
   } @else {
     @return $n * 1rem;
   }
@@ -172,6 +174,6 @@ $module-popover-border-width: 2px;
     @return $n * 1rem;
   } @else {
     // Assumes the browser's default is 16px per rem, and the variable is 10
-    @return $n * 1rem * 10 / 16;
+    @return math.div($n * 1rem * 10, 16);
   }
 }
