@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from os.path import abspath, dirname, join, normpath
+from os.path import abspath, dirname
 from typing import Dict, Optional
 
 from dotenv import load_dotenv

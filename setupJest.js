@@ -22,9 +22,5 @@ global.console.error = function thisTestFailsBecauseItCallsConsoleError (...args
 const originalWarn = global.console.warn
 global.console.warn = function thisTestFailsBecauseItCallsConsoleWarn (...args) {
   originalWarn(...args)
-  if (/\b(componentWillMount|componentWillReceiveProps)\b/.test(args[0]) && /\bCanvas\b/.test(args[1])) {
-    // TODO nix react-data-grid and its obsolete lifecycle method calls
-    return // allow warnings -- for now!
-  }
   throw new LoggedToConsoleError(format(...args))
 }

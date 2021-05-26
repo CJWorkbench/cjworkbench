@@ -2,6 +2,7 @@ import asyncio
 import io
 import json
 import subprocess
+import zipfile
 from http import HTTPStatus as status
 from typing import Awaitable, Literal, Tuple, Union
 
