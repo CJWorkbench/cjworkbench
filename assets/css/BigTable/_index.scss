@@ -153,24 +153,26 @@
         text-align: right; // even nulls, which aren't .cell-number
       }
 
+      &>div, &>input {
+        border: 2px solid transparent;
+        border-radius: 4px;
+        padding: 0 calc(#{rem(0.5)} - 2px); // 2px from border
+      }
+
       input {
         position: absolute;
         top: 0;
         left: 0;
         height: 100%;
         width: 100%;
-        border: 2px solid $brand-orange;
+        border-color: $brand-orange;
         font: inherit;
-        padding: 0 calc(#{rem(0.5)} - 2px); // 2px from border
       }
 
       &>div {
-        padding: 0 rem(0.5);
-        border: 1px solid transparent;
         max-height: var(--row-height);
         height: var(--row-height);
         line-height: calc(var(--row-height) - 2px); // minus border width
-        display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -214,7 +216,6 @@
 
       &.focus>div {
         border-color: $brand-orange;
-        background: white;
       }
     }
   }
