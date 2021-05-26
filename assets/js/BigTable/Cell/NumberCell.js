@@ -1,7 +1,14 @@
 import PropTypes from 'prop-types'
 import { formatLocale as d3FormatLocale } from 'd3-format'
-import EnUsLocale from 'd3-format/locale/en-US.json'
 import NullCell from './NullCell'
+
+const EnUsLocale = {
+  // d3-format/locale/en-US.json
+  decimal: '.',
+  thousands: ',',
+  grouping: [3],
+  currency: ['$', '']
+}
 
 /**
  * Build { prefix, specifierString, suffix } from Python format string.

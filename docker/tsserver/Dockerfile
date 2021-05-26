@@ -1,4 +1,4 @@
-FROM node:12.14.1-buster
+FROM node:14-buster-slim
 
 RUN true \
       && npm install -g typescript

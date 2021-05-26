@@ -146,7 +146,7 @@ VOLUME /var/lib/cjwkernel/chroot
 
 # 2. Node deps -- completely independent
 # 2.1 jsbase: what we use in dev-in-docker
-FROM node:12.14.1-buster-slim as jsbase
+FROM node:14-buster-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app
