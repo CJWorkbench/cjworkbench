@@ -55,8 +55,8 @@ export default function PlaceholderTable () {
           sparseTileGrid={EmptyTileGrid}
           nRows={10}
           columns={EmptyColumns}
-          nRowsPerTile={EmptyTileGrid[0][0][0].length}
-          nColumnsPerTile={EmptyTileGrid[0][0].length}
+          nRowsPerTile={EmptyTileGrid[0][0].length}
+          nColumnsPerTile={EmptyTileGrid[0][0][0].length}
           setWantedTileRange={doNothing}
         />
       </div>
