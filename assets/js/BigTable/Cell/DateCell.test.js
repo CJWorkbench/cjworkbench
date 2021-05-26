@@ -1,27 +1,27 @@
 /* globals expect, test */
 import { renderWithI18n } from '../../i18n/test-utils'
-import { makeDateCellComponent } from './DateCell'
+import { getDateCellComponent } from './DateCell'
 
 test('day', () => {
-  const DateCell = makeDateCellComponent('day')
+  const DateCell = getDateCellComponent('day')
   const { container } = renderWithI18n(<DateCell value='2021-04-07' />)
   expect(container.textContent).toEqual('2021-04-07')
 })
 
 test('week', () => {
-  const DateCell = makeDateCellComponent('week')
+  const DateCell = getDateCellComponent('week')
   const { container } = renderWithI18n(<DateCell value='2021-04-05' />)
   expect(container.textContent).toEqual('2021-04-05')
 })
 
 test('month', () => {
-  const DateCell = makeDateCellComponent('month')
+  const DateCell = getDateCellComponent('month')
   const { container } = renderWithI18n(<DateCell value='2021-04-01' />)
   expect(container.textContent).toEqual('2021-04')
 })
 
 test('quarter', () => {
-  const DateCell = makeDateCellComponent('quarter')
+  const DateCell = getDateCellComponent('quarter')
   let { container } = renderWithI18n(<DateCell value='2021-01-01' />)
   expect(container.textContent).toEqual('2021 Q1')
   container = renderWithI18n(<DateCell value='2021-04-01' />).container
@@ -33,13 +33,13 @@ test('quarter', () => {
 })
 
 test('year', () => {
-  const DateCell = makeDateCellComponent('year')
+  const DateCell = getDateCellComponent('year')
   const { container } = renderWithI18n(<DateCell value='2021-01-01' />)
   expect(container.textContent).toEqual('2021')
 })
 
 test('null => NullCell', () => {
-  const DateCell = makeDateCellComponent('day')
+  const DateCell = getDateCellComponent('day')
   const { container } = renderWithI18n(<DateCell value={null} />)
   expect(container.firstChild.className).toEqual('cell-date cell-null')
 })

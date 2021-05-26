@@ -1,11 +1,11 @@
-import { makeDateCellComponent } from './DateCell'
+import { getDateCellComponent } from './DateCell'
 import { makeNumberCellComponent } from './NumberCell'
 import NullCell from './NullCell'
 import TextCell from './TextCell'
 import TimestampCell from './TimestampCell'
 
 export {
-  makeDateCellComponent,
+  getDateCellComponent,
   makeNumberCellComponent,
   NullCell,
   TextCell,

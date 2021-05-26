@@ -1,7 +1,7 @@
-import { NullCell, TextCell, TimestampCell, makeDateCellComponent, makeNumberCellComponent } from '../BigTable/Cell'
+import { NullCell, TextCell, TimestampCell, getDateCellComponent, makeNumberCellComponent } from '../BigTable/Cell'
 
 const TypeToCellFormatter = {
-  date: ({ unit }) => makeDateCellComponent(unit),
+  date: ({ unit }) => getDateCellComponent(unit),
   number: ({ format }) => makeNumberCellComponent(format),
   text: () => TextCell,
   timestamp: () => TimestampCell
