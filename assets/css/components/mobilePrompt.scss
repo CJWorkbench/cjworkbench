@@ -36,11 +36,6 @@
       font-size: 1.3rem;
     }
   }
-
-  .nav-tabs .tab-group .nav-item .nav-link {
-    padding: 1.4rem 2rem 1rem !important;
-    font-size: 1.2rem !important;
-  }
 }
 
 @media screen and (max-width: 710px) {
@@ -109,8 +104,8 @@
       }
 
       .warning {
-        width: 80%;
-        font-size: 3.5rem;
+        width: 90%;
+        font-size: 2.5rem;
         text-align: center;
         margin-top: 1rem;
         margin-bottom: 1rem;
@@ -118,13 +113,11 @@
 
       .detail {
         margin-top: 0.5rem;
-        font-size: 2rem;
+        font-size: 1.2rem;
       }
 
       .action-button {
         width: 11rem;
-        height: 5rem;
-        font-size: 2rem;
         margin-top: 3rem;
         color: $brand-learn;
         font-weight: bold;

@@ -36,10 +36,9 @@
         })
       </script>
       <div class="warning">{% trans_html "py.templates.workflow.widerScreen" default="You need a wider screen to enjoy Workbench" %}</div>
-      <div class="detail">{% trans_html "py.templates.workflow.minimumRequirement" default="Min 650px wide" %}</div>
-      <div class="detail">{% trans_html "py.templates.workflow.optimizedForDesktop" default="Experience optimized for web browsers" %}</div>
+      <div class="detail">{% trans_html "py.templates.workflow.minimumRequirement" default="Minimum width: 650px" %}</div>
+      <div class="detail">{% trans_html "py.templates.workflow.optimizedForDesktop" default="Experience optimized for desktop" %}</div>
       <a href="{% url "account_login" %}" class="button-white--fill action-button mx-auto">{% trans_html "py.templates.workflow.signupLink.link" default="Signup" %}</a>
-      {% include "locale_switcher.html" %}
     </div>
   </div>
 {% endblock %}

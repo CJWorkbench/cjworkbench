@@ -63,6 +63,13 @@
 
     & > .dropdown {
       display: inline-block;
+
+      button.context-button {
+        color: white;
+        &:hover {
+          background-color: $light-accent--medium;
+        }
+      }
     }
   }
 
@@ -219,12 +226,6 @@
     .metadata-container {
       cursor: default;
     }
-  }
-
-  //No navbar at login / signup
-
-  .navbar-login {
-    display: none;
   }
 
   //// Readonly signout navbar

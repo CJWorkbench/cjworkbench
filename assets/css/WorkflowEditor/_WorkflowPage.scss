@@ -3,27 +3,6 @@
 /* Contains all of Workflow page */
 
 .workflow-root {
-  &.in-lesson {
-    display: flex;
-    flex-direction: row;
-
-    .workflow-container {
-      flex: 1 1 auto;
-    }
-  }
-
-  .navbar .dropdown button.context-button {
-    color: white;
-    &:hover {
-      background-color: $light-accent--medium;
-    }
-  }
-
-  .workflows-page {
-    background-color: $Vlight-gray;
-    padding-bottom: 20em;
-  }
-
   /* Contains Navbar, StepList, and Outputpane */
   .workflow-container {
     display: flex;
@@ -77,18 +56,16 @@
     }
   }
 
-  .workflow-root.in-lesson .workflow-columns {
-    border-left: 1px solid $dark-accent--soft;
-  }
+  &.in-lesson {
+    display: flex;
+    flex-direction: row;
 
-  // contain iframe
-  .data-reactroot {
-    background-color: $WF-background;
-  }
-}
+    .workflow-container {
+      flex: 1 1 auto;
+    }
 
-.workflow-root.in-lesson {
-  .help-shortcut {
-    display: none;
+    .workflow-columns {
+      border-left: 1px solid $dark-accent--soft;
+    }
   }
 }
