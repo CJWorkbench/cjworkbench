@@ -78,7 +78,7 @@ class TestTabs(WorkbenchBase):
         self.select_tab_param("Start from tab", "tab", "Tab 1")
         self.submit_step()
         # Wait for data to load from tab 1
-        b.assert_element(".data-grid-column-header", text="bar", wait=True)
+        b.assert_element(".big-table thead .column-key", text="bar", wait=True)
 
         # Confirm changes to tab 1 affect tab 2
         # We'll change the Tab1 colnames from "foo,bar" to "bar,baz" and check
@@ -88,8 +88,8 @@ class TestTabs(WorkbenchBase):
         self.submit_step()
         self._select_tab("Tab 2")
         # Wait for tab1's data to go away (in case there's a race somewhere)
-        b.assert_no_element(".data-grid-column-header", text="foo", wait=True)
-        b.assert_element(".data-grid-column-header", text="baz", wait=True)
+        b.assert_no_element(".big-table thead .column-key", text="foo", wait=True)
+        b.assert_element(".big-table thead .column-key", text="baz", wait=True)
 
     def test_tab_cycle(self):
         b = self.browser

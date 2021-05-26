@@ -60,6 +60,9 @@ def _get_singleton_http_server() -> HTTPServer:
             self.end_headers()
             self.wfile.write(entry.body)
 
+        def log_message(self, *args):
+            pass
+
     server = HTTPServer(("module-zipfile-server", 0), Handler)
     thread = threading.Thread(
         target=server.serve_forever, kwargs={"poll_interval": 0.005}
