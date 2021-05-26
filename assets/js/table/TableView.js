@@ -3,112 +3,95 @@ import PropTypes from 'prop-types'
 import propTypes from '../propTypes'
 import DataGrid from './DataGrid'
 import TableInfo from './TableInfo'
+import { FocusCellProvider, RowSelectionProvider } from '../BigTable/state'
 import { connect } from 'react-redux'
 import { updateTableAction } from './UpdateTableAction'
-import { Trans } from '@lingui/macro'
 
-export const NMaxColumns = 100
+export function TableView (props) {
+  const {
+    workflowIdOrSecretId,
+    stepSlug,
+    stepId,
+    deltaId,
+    isReadOnly,
+    columns,
+    nRows,
+    nRowsPerTile,
+    nColumnsPerTile,
+    onTableLoaded,
+    editCell,
+    reorderColumn
+  } = props
 
-export class TableView extends React.PureComponent {
-  static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
-    workflowIdOrSecretId: propTypes.workflowId.isRequired,
-    stepSlug: PropTypes.string, // null for placeholder table
-    stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
-    deltaId: PropTypes.number, // immutable; null for placeholder table
-    columns: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
-      }).isRequired
-    ), // immutable; null for placeholder table
-    nRows: PropTypes.number, // immutable; null for placeholder table
-    isReadOnly: PropTypes.bool.isRequired,
-    ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
-    reorderColumn: PropTypes.func.isRequired // func(stepId, colname, fromIndex, toIndex) => undefined
-  }
+  const handleEdit = React.useMemo(() => {
+    if (isReadOnly) return null
+    return ({ row, column, newValue }) => {
+      editCell(stepId, row, columns[column].name, newValue)
+    }
+  }, [columns, editCell, stepId, isReadOnly])
 
-  // componentDidMount will trigger first load
-  state = {
-    selectedRowIndexes: []
-  }
+  const handleReorder = React.useCallback(
+    (column, fromIndex, toIndex) => {
+      reorderColumn(stepId, column, fromIndex, toIndex)
+    },
+    [reorderColumn, stepId]
+  )
 
-  handleSetSelectedRowIndexes = selectedRowIndexes => {
-    this.setState({ selectedRowIndexes })
-  }
-
-  // When a cell is edited we need to 1) update our own state 2) add this edit to an Edit Cells module
-  editCell = (rowIndex, colname, newValue) => {
-    this.props.editCell(this.props.stepId, rowIndex, colname, newValue)
-  }
-
-  handleClickSelectColumns = () => {
-    this.props.ensureSelectColumnsModule(this.props.stepId)
-  }
-
-  reorderColumn = (column, fromIndex, toIndex) => {
-    this.props.reorderColumn(this.props.stepId, column, fromIndex, toIndex)
-  }
-
-  render () {
-    // Make a table component if we have the data
-    const { selectedRowIndexes } = this.state
-    const { loadRows, workflowIdOrSecretId, stepSlug, stepId, deltaId, isReadOnly, columns, nRows } = this.props
-    const tooWide = columns.length > NMaxColumns
-
-    let gridView
-    if (tooWide) {
-      // TODO nix all the <div>s
-      gridView = (
-        <div className='overlay'>
-          <div>
-            <div className='text'>
-              <Trans id='js.table.TableView.maxOf100ColumnsCanbeDIsplayed'>
-                A maximum of 100 columns can be displayed
-              </Trans>
-            </div>
-            <button
-              className='add-select-module'
-              onClick={this.handleClickSelectColumns}
-            >
-              <Trans id='js.table.TableView.selectColumns.button'>
-                Select columns
-              </Trans>
-            </button>
+  return (
+    <FocusCellProvider>
+      <RowSelectionProvider>
+        <div className='outputpane-table'>
+          <TableInfo
+            isReadOnly={isReadOnly}
+            workflowIdOrSecretId={workflowIdOrSecretId}
+            stepId={stepId}
+            stepSlug={stepSlug}
+            nRows={stepSlug ? nRows : null}
+            nColumns={stepSlug && columns ? columns.length : null}
+          />
+          <div className='outputpane-data'>
+            <DataGrid
+              workflowIdOrSecretId={workflowIdOrSecretId}
+              stepSlug={stepSlug}
+              stepId={stepId}
+              deltaId={deltaId}
+              nRows={nRows}
+              columns={columns}
+              nRowsPerTile={nRowsPerTile}
+              nColumnsPerTile={nColumnsPerTile}
+              onTableLoaded={onTableLoaded}
+              isReadOnly={isReadOnly}
+              onEdit={handleEdit}
+              onReorder={handleReorder}
+            />
           </div>
         </div>
-      )
-    } else {
-      gridView = (
-        <DataGrid
-          loadRows={loadRows}
-          isReadOnly={isReadOnly}
-          stepId={stepId}
-          columns={columns}
-          nRows={nRows}
-          editCell={this.editCell}
-          reorderColumn={this.reorderColumn}
-          selectedRowIndexes={selectedRowIndexes}
-          onSetSelectedRowIndexes={this.handleSetSelectedRowIndexes}
-          key={stepId + '-' + deltaId}
-        />
-      )
-    }
+      </RowSelectionProvider>
+    </FocusCellProvider>
+  )
+}
+TableView.propTypes = {
+  workflowIdOrSecretId: propTypes.workflowId.isRequired,
+  stepSlug: PropTypes.string, // null for placeholder table
+  stepId: PropTypes.number, // immutable; null for placeholder table; deprecated
+  deltaId: PropTypes.number, // immutable; null for placeholder table
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['date', 'text', 'number', 'timestamp']).isRequired
+    }).isRequired
+  ), // immutable; null for placeholder table
+  nRows: PropTypes.number, // immutable; null for placeholder table
+  isReadOnly: PropTypes.bool.isRequired,
+  onTableLoaded: PropTypes.func, // func({ stepSlug, deltaId }) => undefined
+  ensureSelectColumnsModule: PropTypes.func.isRequired, // func(stepId) => undefined
+  reorderColumn: PropTypes.func.isRequired // func(stepId, colname, fromIndex, toIndex) => undefined
+}
 
-    return (
-      <div className='outputpane-table'>
-        <TableInfo
-          isReadOnly={isReadOnly}
-          workflowIdOrSecretId={workflowIdOrSecretId}
-          stepId={stepId}
-          stepSlug={stepSlug}
-          nRows={stepSlug ? nRows : null}
-          nColumns={stepSlug && columns ? columns.length : null}
-          selectedRowIndexes={selectedRowIndexes}
-        />
-        <div className='outputpane-data'>{gridView}</div>
-      </div>
-    )
+function mapStateToProps (state) {
+  return {
+    nColumnsPerTile: state.settings.bigTableColumnsPerTile,
+    nRowsPerTile: state.settings.bigTableRowsPerTile
   }
 }
 
@@ -138,4 +121,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(null, mapDispatchToProps)(TableView)
+export default connect(mapStateToProps, mapDispatchToProps)(TableView)

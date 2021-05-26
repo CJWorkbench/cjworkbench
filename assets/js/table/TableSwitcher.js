@@ -1,37 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import propTypes from '../propTypes'
-import Spinner from '../Spinner'
 import TableView from './TableView'
-
-// NoStepTable: shown when no Step is selected
-// Do not render zero-row tables: render a placeholder instead
-// Helps #161166382, hinders #160865813
-const NoStepTableColumns = [
-  { name: ' ', type: 'text' },
-  { name: '  ', type: 'text' },
-  { name: '   ', type: 'text' },
-  { name: '    ', type: 'text' }
-]
-const NoStepLoadRows = () => Promise.resolve([])
-const NoStepTable = (props) => (
-  <TableView
-    loadRows={NoStepLoadRows}
-    isReadOnly
-    workflowIdOrSecretId={props.workflowIdOrSecretId}
-    stepSlug={null}
-    stepId={null}
-    deltaId={null}
-    columns={NoStepTableColumns}
-    nRows={10}
-  />
-)
-
-// BusyStepTable: shown when Step render() has not yet been called
-const BusyStepTable = () => <Spinner />
-
-// UnreachableStepTable: shown when selected Step comes after an error
-const UnreachableStepTable = NoStepTable
+import PlaceholderTable from './PlaceholderTable'
 
 const OkStepTable = React.memo(function OkStepTable ({
   isLoaded,
@@ -42,43 +13,20 @@ const OkStepTable = React.memo(function OkStepTable ({
   deltaId,
   columns,
   nRows,
-  loadRows
+  onTableLoaded
 }) {
-  const loadThisTableRows = React.useCallback(
-    (startRow, endRow) => loadRows(stepSlug, deltaId, startRow, endRow),
-    [loadRows, stepSlug, deltaId]
-  )
   return (
-    <>
-      <TableView
-        isReadOnly={isReadOnly}
-        loadRows={loadThisTableRows}
-        workflowIdOrSecretId={workflowIdOrSecretId}
-        stepSlug={stepSlug}
-        stepId={stepId}
-        deltaId={deltaId}
-        columns={columns}
-        nRows={nRows}
-      />
-      {isLoaded ? null : <Spinner />}
-    </>
+    <TableView
+      isReadOnly={isReadOnly}
+      workflowIdOrSecretId={workflowIdOrSecretId}
+      stepSlug={stepSlug}
+      stepId={stepId}
+      deltaId={deltaId}
+      columns={columns}
+      nRows={nRows}
+      onTableLoaded={onTableLoaded}
+    />
   )
-})
-
-const TableSwitcherContents = React.memo(function TableSwitcherContents ({
-  status,
-  nRows,
-  ...props
-}) {
-  if (status === null) {
-    return <NoStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
-  } else if (status === 'busy') {
-    return <BusyStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
-  } else if (status === 'unreachable') {
-    return <UnreachableStepTable workflowIdOrSecretId={props.workflowIdOrSecretId} />
-  } else {
-    return <OkStepTable nRows={nRows} {...props} />
-  }
 })
 
 /**
@@ -96,7 +44,6 @@ const TableSwitcherContents = React.memo(function TableSwitcherContents ({
  */
 export default class TableSwitcher extends React.PureComponent {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     isLoaded: PropTypes.bool.isRequired, // true unless we haven't loaded any data at all yet
     isReadOnly: PropTypes.bool.isRequired,
     workflowIdOrSecretId: propTypes.workflowId.isRequired,
@@ -110,15 +57,25 @@ export default class TableSwitcher extends React.PureComponent {
         type: PropTypes.oneOf(['date', 'text', 'timestamp', 'number']).isRequired
       }).isRequired
     ), // or null, if status!=ok
-    nRows: PropTypes.number // or null, if status!=ok
+    nRows: PropTypes.number, // or null, if status!=ok
+    onTableLoaded: PropTypes.func // func({ stepSlug, deltaId }) => undefined
   }
 
   render () {
-    const { isLoaded } = this.props
-    return (
-      <div className={`${isLoaded ? 'loaded-table' : 'loading-table'}`}>
-        <TableSwitcherContents {...this.props} />
-      </div>
-    )
+    const { status, isLoaded, ...innerProps } = this.props
+
+    if (status === 'ok') {
+      return (
+        <div className={`${isLoaded ? 'loaded-table' : 'loading-table'}`}>
+          <OkStepTable {...innerProps} />
+        </div>
+      )
+    } else {
+      return (
+        <div className={`${status === 'busy' ? 'loading-table' : 'loaded-table'}`}>
+          <PlaceholderTable />
+        </div>
+      )
+    }
   }
 }

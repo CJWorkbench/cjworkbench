@@ -91,7 +91,7 @@ class TestExampleWorkflow(WorkbenchBase):
         # We can edit them
         b.fill_in("csv", "A,B\n1,2")
         self.submit_step()
-        b.assert_element(".column-key", text="A", wait=True)
+        b.assert_element(".big-table th .column-key", text="A", wait=True)
 
         # We can view collaborators, read-only
         b.click_button("Share")

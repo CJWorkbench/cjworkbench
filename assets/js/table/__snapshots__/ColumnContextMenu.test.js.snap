@@ -5,7 +5,6 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
   columnKey="columnKey"
   columnType="text"
   onClickAction={[MockFunction]}
-  renameColumn={[MockFunction]}
 >
   <UncontrolledDropdown>
     <Dropdown

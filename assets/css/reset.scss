@@ -71,39 +71,31 @@ input:focus {
 input[type='checkbox'] {
   -webkit-appearance: none;
   background-color: transparent;
-  border: 1px solid $dark-accent--strong;
   padding: 0.7rem;
   border-radius: 3px;
   display: inline-block;
   position: relative;
   margin-right: 0.5rem;
-  -ms-transform: scale(1.3); /* IE */
-  -moz-transform: scale(1.3); /* FF */
-  -o-transform: scale(1.3); /* Opera */
-}
+  border: 1px solid $table-border;
 
-input[type='checkbox']:active,
-input[type='checkbox']:checked:active {
-  box-shadow: inset 0px 1px 0px $brand-orange;
-}
+  &:checked {
+    background: $brand-orange;
+    border-color: $brand-orange;
 
-input[type='checkbox']:checked {
-  background-color: $brand-orange;
-  border: 1px solid $brand-orange;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05),
-    inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05),
-    inset 15px 10px -12px rgba(255, 255, 255, 0.1);
-  color: #99a1a7;
-}
+    &:after {
+      font-family: 'Workbench';
+      content: '\e94a';
+      font-size: 0.8rem;
+      position: absolute;
+      top: 1.5px;
+      left: 2.5px;
+      color: $white;
+    }
+  }
 
-input[type='checkbox']:checked:after {
-  font-family: 'Workbench';
-  content: '\e94a';
-  font-size: 0.8rem;
-  position: absolute;
-  top: 1.5px;
-  left: 2.5px;
-  color: $white;
+  &:active {
+    box-shadow: inset 0 0 2px $medium-gray;
+  }
 }
 
 input[type='search'] {

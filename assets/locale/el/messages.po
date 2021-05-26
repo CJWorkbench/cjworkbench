@@ -1954,91 +1954,79 @@ msgstr ""
 msgid "js.settings.billing.Subscription.renewedAt"
 msgstr ""
 
-#: assets/js/table/ColumnContextMenu.js:122
+#: assets/js/table/ColumnContextMenu.js:113
 msgid "js.table.ColumnContextMenu.cleanText"
 msgstr "Καθάρισμα κειμένου"
 
-#: assets/js/table/ColumnContextMenu.js:135
+#: assets/js/table/ColumnContextMenu.js:126
 msgid "js.table.ColumnContextMenu.convertDateUnit"
 msgstr ""
 
-#: assets/js/table/ColumnContextMenu.js:140
+#: assets/js/table/ColumnContextMenu.js:131
 msgid "js.table.ColumnContextMenu.convertToDate"
 msgstr ""
 
-#: assets/js/table/ColumnContextMenu.js:151
+#: assets/js/table/ColumnContextMenu.js:142
 #, fuzzy
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr "Μετατροπή σε αριθμούς"
 
-#: assets/js/table/ColumnContextMenu.js:161
+#: assets/js/table/ColumnContextMenu.js:152
 msgid "js.table.ColumnContextMenu.convertToText"
 msgstr "Μετατροπή σε κείμενο"
 
-#: assets/js/table/ColumnContextMenu.js:171
+#: assets/js/table/ColumnContextMenu.js:162
 msgid "js.table.ColumnContextMenu.convertToTimestamp"
 msgstr "Μετατροπή σε ημερομηνία & ώρα"
 
-#: assets/js/table/ColumnContextMenu.js:196
+#: assets/js/table/ColumnContextMenu.js:187
 msgid "js.table.ColumnContextMenu.deleteColumn"
 msgstr "Διαγραφή στήλης"
 
-#: assets/js/table/ColumnContextMenu.js:88
+#: assets/js/table/ColumnContextMenu.js:79
 msgid "js.table.ColumnContextMenu.duplicate"
 msgstr "Δημιουργία αντιγράφου"
 
-#: assets/js/table/ColumnContextMenu.js:115
+#: assets/js/table/ColumnContextMenu.js:106
 msgid "js.table.ColumnContextMenu.filter"
 msgstr "Φίλτρο"
 
-#: assets/js/table/ColumnContextMenu.js:184
+#: assets/js/table/ColumnContextMenu.js:175
 msgid "js.table.ColumnContextMenu.formatNumbers"
 msgstr "Μορφοποίηση αριθμών"
 
-#: assets/js/table/ColumnContextMenu.js:81
-msgid "js.table.ColumnContextMenu.rename."
-msgstr "Μετονομασία"
-
-#: assets/js/table/ColumnContextMenu.js:96
+#: assets/js/table/ColumnContextMenu.js:87
 msgid "js.table.ColumnContextMenu.sortAscending"
 msgstr "Αύξουσα ταξινόμηση"
 
-#: assets/js/table/ColumnContextMenu.js:105
+#: assets/js/table/ColumnContextMenu.js:96
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr "Φθίνουσα ταξινόμηση"
 
-#: assets/js/table/SelectedRowsActions.js:120
+#: assets/js/table/SelectedRowsActions.js:106
 msgid "js.table.SelectedRowsActions.menu"
 msgstr "μενού"
 
-#: assets/js/table/SelectedRowsActions.js:126
+#: assets/js/table/SelectedRowsActions.js:112
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
 "{0, plural, =0 {Δεν επιλέχτηκαν σειρές} one {Επιλέχτηκε # σειρά} other "
 "{Επιλέχτηκαν # σειρές}}"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:68
+#: assets/js/table/TableInfo.js:57
 msgid "js.table.TableInfo.columns"
 msgstr "ΣΤΗΛΕΣ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:93
+#: assets/js/table/TableInfo.js:82
 msgid "js.table.TableInfo.export"
 msgstr "ΕΞΑΓΩΓΗ"
 
 #. This should be all-caps for styling reasons
-#: assets/js/table/TableInfo.js:57
+#: assets/js/table/TableInfo.js:46
 msgid "js.table.TableInfo.rows"
 msgstr "ΣΕΙΡΕΣ"
-
-#: assets/js/table/TableView.js:66
-msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
-msgstr "Μπορούν να εμφανιστούν 100 στήλες το πολύ"
-
-#: assets/js/table/TableView.js:74
-msgid "js.table.TableView.selectColumns.button"
-msgstr "Επιλογή στηλών"
 
 #: assets/js/WorkflowEditor/ModuleSearch/ModuleCategoryName.js:41
 msgid "js.util.ModuleCategoryName.CategoryNames.AddData"
@@ -2072,27 +2060,27 @@ msgstr "Συλλογή (Scrape)"
 msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr "Οπτικοποίηση"
 
-#: assets/js/utils.js:51
+#: assets/js/utils/index.js:38
 msgid "js.util.timeDifference.ago.days"
 msgstr "{days}ημ πριν"
 
-#: assets/js/utils.js:57
+#: assets/js/utils/index.js:44
 msgid "js.util.timeDifference.ago.hours"
 msgstr "{hours}ώρ πριν"
 
-#: assets/js/utils.js:63
+#: assets/js/utils/index.js:50
 msgid "js.util.timeDifference.ago.minutes"
 msgstr "{minutes}λε πριν"
 
-#: assets/js/utils.js:69
+#: assets/js/utils/index.js:56
 msgid "js.util.timeDifference.ago.seconds"
 msgstr "{seconds}δευτ πριν"
 
-#: assets/js/utils.js:45
+#: assets/js/utils/index.js:32
 msgid "js.util.timeDifference.ago.years"
 msgstr "{years}έτη πριν"
 
-#: assets/js/utils.js:75
+#: assets/js/utils/index.js:62
 msgid "js.util.timeDifference.now"
 msgstr "μόλις τώρα"
 

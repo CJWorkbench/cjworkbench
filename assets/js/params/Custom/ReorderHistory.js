@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
-import { idxToLetter } from '../../utils'
+import idxToColumnLetter from '../../utils/idxToColumnLetter'
 import { withJsonStringValues } from '../util'
 import { Trans } from '@lingui/macro'
 
@@ -54,8 +54,8 @@ export class ReorderHistory extends Component {
             <tr key={idx}>
               <td className='reorder-idx'>{idx + 1}</td>
               <td className='reorder-column'>{column}</td>
-              <td className='reorder-from'>{idxToLetter(from)}</td>
-              <td className='reorder-to'>{idxToLetter(to)}</td>
+              <td className='reorder-from'>{idxToColumnLetter(from)}</td>
+              <td className='reorder-to'>{idxToColumnLetter(to)}</td>
             </tr>
           ))}
         </tbody>

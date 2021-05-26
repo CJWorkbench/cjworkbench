@@ -23,7 +23,7 @@ class TestTable(LoggedInIntegrationTest):
         self.submit_step()
 
         # Wait for table to load
-        b.assert_element(".column-key", text="string", wait=True)
+        b.assert_element(".big-table th .column-key", text="string", wait=True)
 
     def test_rename_column(self):
         b = self.browser
@@ -31,7 +31,7 @@ class TestTable(LoggedInIntegrationTest):
         self._create_simple_workflow()
         self.import_module("renamecolumns")
 
-        b.click_whatever(".column-key", text="string")
+        b.click_whatever(".big-table th .column-key", text="string")
         # wait for span to become input
         b.fill_in("new-column-key", "Column A", wait=True)
         b.send_keys("new-column-key", Keys.ENTER)
@@ -52,7 +52,7 @@ class TestTable(LoggedInIntegrationTest):
 
         # Edit another column
         # Wait for spinner to disappear first
-        b.click_whatever(".column-key", text="int")
+        b.click_whatever(".big-table th .column-key", text="int")
         # wait for span to become input
         b.fill_in("new-column-key", "Column B", wait=True)
         b.send_keys("new-column-key", Keys.ENTER)
@@ -64,14 +64,12 @@ class TestTable(LoggedInIntegrationTest):
 
         # Select previous output to check old column names
         b.click_whatever(".module-name", text="Paste data")
-        b.assert_element(
-            ".react-grid-Header", text=re.compile("string.*int"), wait=True
-        )
+        b.assert_element(".big-table thead", text=re.compile("string.*int"), wait=True)
 
         # Select new output to check new column names
         b.click_whatever(".module-name", text="Rename columns")
         b.assert_element(
-            ".react-grid-Header", text=re.compile("Column A.*Column B"), wait=True
+            ".big-table thead", text=re.compile("Column A.*Column B"), wait=True
         )
 
     # def _carefully_double_click_element(self, *selector, **kwargs):

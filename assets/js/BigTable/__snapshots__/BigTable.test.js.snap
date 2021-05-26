@@ -35,14 +35,16 @@ exports[`Table with a gap 1`] = `
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody
+        tabindex="0"
+      >
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               1
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -59,11 +61,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               2
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -80,11 +82,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               3
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -101,11 +103,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               4
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -122,11 +124,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               5
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -143,11 +145,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               6
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -164,11 +166,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               7
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -185,11 +187,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               8
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -206,11 +208,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="1"
             >
               9
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -227,11 +229,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="2"
             >
               10
-            </span>
+            </label>
           </th>
           <td
             class="type-number"
@@ -248,11 +250,11 @@ exports[`Table with a gap 1`] = `
         </tr>
         <tr>
           <th>
-            <span
+            <label
               data-n-chars="2"
             >
               11
-            </span>
+            </label>
           </th>
           <td
             class="type-number"

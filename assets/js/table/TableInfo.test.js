@@ -3,6 +3,7 @@ import { mountWithI18n } from '../i18n/test-utils'
 import configureStore from 'redux-mock-store'
 import { Provider } from 'react-redux'
 import TableInfo from './TableInfo'
+import { RowSelectionProvider } from '../BigTable/state'
 
 describe('TableInfo', () => {
   const mockStore = configureStore()
@@ -13,17 +14,18 @@ describe('TableInfo', () => {
 
     return mountWithI18n(
       <Provider store={store}>
-        <TableInfo
-          nRows={10}
-          nColumns={3}
-          isReadOnly={false}
-          workflowIdOrSecretId={123}
-          stepId={99}
-          stepSlug='step-99'
-          selectedRowIndexes={[]}
-          onClickRowsAction={jest.fn()}
-          {...extraProps}
-        />
+        <RowSelectionProvider>
+          <TableInfo
+            nRows={10}
+            nColumns={3}
+            isReadOnly={false}
+            workflowIdOrSecretId={123}
+            stepId={99}
+            stepSlug='step-99'
+            onClickRowsAction={jest.fn()}
+            {...extraProps}
+          />
+        </RowSelectionProvider>
       </Provider>
     )
   }

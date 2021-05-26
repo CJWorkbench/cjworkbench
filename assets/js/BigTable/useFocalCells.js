@@ -43,8 +43,7 @@ export default function useFocalCells ({
 
   const cellRange = fixedCellRange === null ? dynamicCellRange : fixedCellRange
   const cells = useMemo(
-    () =>
-      getCellRange(sparseTileGrid, nRowsPerTile, nColumnsPerTile, ...cellRange),
+    () => getCellRange(sparseTileGrid, nRowsPerTile, nColumnsPerTile, ...cellRange),
     [sparseTileGrid, nRowsPerTile, nColumnsPerTile, ...cellRange]
   )
 

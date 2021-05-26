@@ -26,7 +26,7 @@ class DuplicateTest(LoggedInIntegrationTest):
         # will not be there.
         b.assert_no_element(".column-key", text="baz", wait=True)
         # Wait for the _data_ to load -- not just the headers
-        b.assert_element(".react-grid-Cell", text="2", wait=True)
+        b.assert_element("td", text="2", wait=True)
 
         url1 = b.get_url()
 
@@ -42,4 +42,4 @@ class DuplicateTest(LoggedInIntegrationTest):
         b.assert_element(
             "textarea[name=csv]", text="foo,bar,baz\n1,2,\n2,3,\n3,4,", wait=True
         )
-        b.assert_element(".react-grid-Cell", text="2", wait=True)
+        b.assert_element("td", text="2", wait=True)

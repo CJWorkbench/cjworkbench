@@ -38,8 +38,8 @@ def process(table):
 
         b = self.browser
         # wait for values to arrive from server
-        b.assert_element("span.column-key", text="a", wait=True)
-        b.assert_element(".react-grid-Cell", text="1", wait=True)
+        b.assert_element(".big-table th .column-key", text="a", wait=True)
+        b.assert_element(".big-table td", text="1", wait=True)
 
     def test_error_message(self):
         self._execute_code(

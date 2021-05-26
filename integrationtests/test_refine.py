@@ -52,8 +52,7 @@ yxyx,1
         self.submit_step()  # actually submit
 
     def _wait_for_table_value(self, row, column, value):
-        """
-        Wait for the table to show a value.
+        """Wait for the table to show a value.
 
         This is the easiest way to wait for the table to update. The table
         updates _after_ the rest of the UI, and if it's adding a new value then
@@ -61,8 +60,8 @@ yxyx,1
         complete
         """
         self.browser.wait_for_element(
-            f".react-grid-Row:nth-child({row + 1}) "
-            f".react-grid-Cell:nth-child({column + 1}) ",
+            # There is no td:nth-child(1): that's a <th>.
+            f"tbody tr:nth-child({row + 1}) td:nth-child({column + 2})",
             text=value,
         )
 

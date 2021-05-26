@@ -1,15 +1,17 @@
-import { memo } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { columnDefinitionType } from './types'
 
-const THead = memo(function THead ({ columns }) {
+const EmptyProps = {}
+
+const THead = React.memo(function THead ({ columns }) {
   return (
     <thead>
       <tr>
         <th className='row-number' scope='col' />
-        {columns.map(({ headerComponent: Header }, i) => (
+        {columns.map(({ headerComponent: Header, headerProps = EmptyProps }, i) => (
           <th key={i} scope='col'>
-            <Header />
+            <Header {...headerProps} />
           </th>
         ))}
       </tr>

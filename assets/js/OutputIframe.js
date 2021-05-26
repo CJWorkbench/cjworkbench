@@ -260,14 +260,6 @@ export function OutputIframe (props) {
     setHeightFromIframe(height)
   }, [setHeightFromIframe])
 
-  // Send our window a "resize" event each time the height of the iframe may
-  // change. This hack forces react-data-grid to resize itself.
-  React.useLayoutEffect(() => {
-    const resizeEvent = document.createEvent('Event')
-    resizeEvent.initEvent('resize', true, true)
-    window.dispatchEvent(resizeEvent)
-  }, [heightFromIframe])
-
   const style = React.useMemo(
     () => heightFromIframe === null ? null : { height: Math.ceil(heightFromIframe) },
     [heightFromIframe]

@@ -15,7 +15,7 @@ describe('SelectedRowsActions', () => {
     const wrapper = (extraProps = {}) => {
       return mountWithI18n(
         <SelectedRowsActions
-          selectedRowIndexes={[3, 1, 4]}
+          rowSelection={new Uint8Array([0, 1, 0, 1, 1])}
           stepId={99}
           rowActionModules={[
             { idName: 'dofoo', title: 'Foo these rows' },
@@ -28,7 +28,7 @@ describe('SelectedRowsActions', () => {
     }
 
     it('should render number of selected columns', () => {
-      const w = wrapper({ selectedRowIndexes: [2, 5, 6] })
+      const w = wrapper({ rowSelection: new Uint8Array([0, 0, 1, 0, 0, 1, 1]) })
       expect(
         w
           .find('Trans[id="js.table.SelectedRowsActions.numberOfSelectedRows"]')
@@ -37,19 +37,14 @@ describe('SelectedRowsActions', () => {
     })
 
     it('should invoke an action with rows as a string, 1-based', async () => {
-      const w = wrapper({
-        selectedRowIndexes: [2, 3, 4, 5, 8000, 8001, 8002, 9]
-      })
+      const rowSelection = new Uint8Array(8003)
+      ;
+      [2, 3, 4, 5, 8000, 8001, 8002, 9].forEach(i => { rowSelection[i] = 1 })
+      const w = wrapper({ rowSelection })
       w.find('button.table-action').simulate('click') // open the menu
       await act(async () => await null) // Popper update() - https://github.com/popperjs/react-popper/issues/350
-      w.find('button')
-        .at(1)
-        .simulate('click')
-      expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(
-        99,
-        'dofoo',
-        '3-6, 10, 8001-8003'
-      )
+      w.find('button').at(1).simulate('click')
+      expect(w.prop('onClickRowsAction')).toHaveBeenCalledWith(99, 'dofoo', '3-6, 10, 8001-8003')
     })
   })
 
@@ -69,7 +64,7 @@ describe('SelectedRowsActions', () => {
       return mountWithI18n(
         <Provider store={store}>
           <ConnectedSelectedRowsActions
-            selectedRowIndexes={[3, 1, 4]}
+            rowSelection={new Uint8Array([0, 1, 0, 1, 1])}
             stepId={2}
             onClickRowsAction={jest.fn()}
             {...extraProps}

@@ -1,66 +1,88 @@
-import { PureComponent, Component, createRef } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnContextMenu from './ColumnContextMenu'
 import ColumnType from '../BigTable/ColumnType'
 import { connect } from 'react-redux'
-import { idxToLetter } from '../utils'
+import idxToColumnLetter from '../utils/idxToColumnLetter'
 import { updateTableAction } from './UpdateTableAction'
 
-class ReorderColumnDropZone extends PureComponent {
-  static propTypes = {
-    leftOrRight: PropTypes.oneOf(['left', 'right']).isRequired,
-    fromIndex: PropTypes.number.isRequired,
-    toIndex: PropTypes.number.isRequired,
-    onDropColumnIndexAtIndex: PropTypes.func.isRequired // func(fromIndex, toIndex) => undefined
-  }
+const MinWidthPx = 50 // if too narrow, the dropdown menu button overlaps the previous-column resizer
 
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      isDragHover: false
-    }
-  }
-
-  handleDragEnter = ev => {
-    this.setState({
-      isDragHover: true
-    })
-  }
-
-  handleDragLeave = ev => {
-    this.setState({
-      isDragHover: false
-    })
-  }
-
-  handleDragOver = ev => {
-    ev.preventDefault() // allow drop by preventing the default, which is "no drop"
-  }
-
-  handleDrop = ev => {
-    const { fromIndex, toIndex, onDropColumnIndexAtIndex } = this.props
-    onDropColumnIndexAtIndex(fromIndex, toIndex)
-  }
-
-  render () {
-    let className = 'column-reorder-drop-zone'
-    className += ' align-' + this.props.leftOrRight
-    if (this.state.isDragHover) className += ' drag-hover'
-
-    return (
-      <div
-        className={className}
-        onDragEnter={this.handleDragEnter}
-        onDragLeave={this.handleDragLeave}
-        onDragOver={this.handleDragOver}
-        onDrop={this.handleDrop}
-      />
-    )
-  }
+function preventDefault (ev) {
+  ev.preventDefault()
 }
 
-export class EditableColumnName extends Component {
+function ReorderColumnDropZone (props) {
+  const { leftOrRight, index, onDropColumnIndex } = props
+  const [draggingOver, setDraggingOver] = React.useState(false)
+  const handleDragEnter = React.useCallback(() => setDraggingOver(true), [setDraggingOver])
+  const handleDragLeave = React.useCallback(() => setDraggingOver(false), [setDraggingOver])
+
+  const className = `column-reorder-drop-zone align-${leftOrRight}${draggingOver ? ' dragging-over' : ''}`
+
+  const handleDrop = React.useCallback(
+    ev => { onDropColumnIndex(index) },
+    [onDropColumnIndex, index]
+  )
+
+  return (
+    <div
+      className={className}
+      onDragOver={preventDefault /* default is, "disable drop" */}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    />
+  )
+}
+ReorderColumnDropZone.propTypes = {
+  leftOrRight: PropTypes.oneOf(['left', 'right']).isRequired,
+  index: PropTypes.number.isRequired,
+  onDropColumnIndex: PropTypes.func.isRequired // func(index) => undefined
+}
+
+function ResizeHandle (props) {
+  const { index, onResize } = props
+  const [x0, setX0] = React.useState(null) // when set, leftmost viewport X of column
+
+  const handleMouseDown = React.useCallback(
+    ev => {
+      if (ev.button === 0) {
+        setX0(ev.target.closest('th').getBoundingClientRect().x)
+        ev.preventDefault() // avoid calling dragstart on .column-letter
+      }
+    },
+    [setX0]
+  )
+
+  React.useEffect(() => {
+    if (x0 === null) return undefined
+
+    const handleMouseMove = ev => {
+      const width = Math.max(MinWidthPx, ev.clientX - x0)
+      onResize(index, width)
+      ev.stopPropagation()
+      ev.preventDefault() // prevent selecting text
+    }
+
+    const handleMouseUp = ev => {
+      setX0(null)
+      ev.stopPropagation()
+      ev.preventDefault() // prevent clicking column name to rename it
+    }
+
+    document.addEventListener('mousemove', handleMouseMove, true)
+    document.addEventListener('mouseup', handleMouseUp, true)
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove, true)
+      document.removeEventListener('mouseup', handleMouseUp, true)
+    }
+  }, [x0, setX0, index, onResize])
+
+  return <div className='resize-handle' onMouseDown={handleMouseDown} />
+}
+
+export class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
@@ -128,36 +150,35 @@ export class EditableColumnName extends Component {
   }
 
   render () {
-    if (this.state.editMode) {
-      // The class name 'column-key-input' is used in
-      // the code to prevent dragging while editing,
-      // please keep it as-is.
-      return (
-        <input
-          name='new-column-key'
-          type='prout'
-          ref={this.props.inputRef}
-          value={this.state.newName}
-          onChange={this.handleInputChange}
-          onBlur={this.handleInputBlur}
-          onKeyDown={this.handleInputKeyDown}
-        />
-      )
-    } else {
-      return (
-        <span className='column-key' onClick={this.handleEnterEditMode}>
-          <div className='value'>{this.state.newName}</div>
-          <div className='column-type'>
-            <ColumnType type={this.props.columnType} dateUnit={this.props.dateUnit} />
-          </div>
-        </span>
-      )
-    }
+    const { columnType, dateUnit } = this.props
+    const { editMode, newName } = this.state
+
+    return (
+      <div className='column-key' onClick={this.handleEnterEditMode}>
+        {editMode
+          ? (
+            <div className='value editing'>
+              <input
+                name='new-column-key'
+                type='prout'
+                ref={this.props.inputRef}
+                value={this.state.newName}
+                onChange={this.handleInputChange}
+                onBlur={this.handleInputBlur}
+                onKeyDown={this.handleInputKeyDown}
+              />
+            </div>)
+          : <div className='value'>{newName}</div>}
+        <div className='column-type'>
+          <ColumnType type={columnType} dateUnit={dateUnit} />
+        </div>
+      </div>
+    )
   }
 }
 
 // Sort arrows, A-Z letter identifiers
-export class ColumnHeader extends PureComponent {
+export class ColumnHeader extends React.PureComponent {
   static propTypes = {
     stepId: PropTypes.number,
     columnKey: PropTypes.string.isRequired,
@@ -167,15 +188,15 @@ export class ColumnHeader extends PureComponent {
     index: PropTypes.number.isRequired,
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
-    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
+    onDropColumnIndex: PropTypes.func.isRequired, // func(from, to) => undefined
+    onResize: PropTypes.func.isRequired, // func(index, nPixels) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
     dispatchTableAction: PropTypes.func.isRequired // func(stepId, moduleIdName, forceNewModule, params)
   }
 
-  inputRef = createRef()
+  inputRef = React.createRef()
 
   state = {
-    isHovered: false,
     newName: this.props.columnKey
   }
 
@@ -204,21 +225,8 @@ export class ColumnHeader extends PureComponent {
     })
   }
 
-  handleMouseEnter = () => {
-    this.setState({ isHovered: true })
-  }
-
-  handleMouseLeave = () => {
-    this.setState({ isHovered: false })
-  }
-
   handleDragStart = ev => {
     if (this.props.isReadOnly) {
-      ev.preventDefault()
-      return
-    }
-
-    if (ev.target.classList.contains('column-key-input')) {
       ev.preventDefault()
       return
     }
@@ -230,73 +238,51 @@ export class ColumnHeader extends PureComponent {
     ev.dataTransfer.setData('text/plain', this.props.columnKey)
   }
 
-  renderColumnMenu () {
-    if (this.props.isReadOnly) {
-      return null
-    }
-
-    return (
-      <ColumnContextMenu
-        columnType={this.props.columnType}
-        renameColumn={this.startRename}
-        onClickAction={this.handleClickAction}
-      />
-    )
-  }
-
   render () {
-    const { columnKey, columnType, dateUnit, index, draggingColumnIndex } = this.props
-
-    const columnMenuSection = this.renderColumnMenu()
-
-    const maybeDropZone = (leftOrRight, toIndex) => {
-      if (draggingColumnIndex === null || draggingColumnIndex === undefined) {
-        return null
-      }
-      if (draggingColumnIndex === toIndex) return null
-
-      // Also, dragging to fromIndex+1 is a no-op
-      if (draggingColumnIndex === toIndex - 1) return null
-
-      return (
-        <ReorderColumnDropZone
-          leftOrRight={leftOrRight}
-          fromIndex={draggingColumnIndex}
-          toIndex={toIndex}
-          onDropColumnIndexAtIndex={this.props.onDropColumnIndexAtIndex}
-        />
-      )
-    }
-
-    const draggingClass = draggingColumnIndex === index ? 'dragging' : ''
+    const {
+      columnKey,
+      columnType,
+      dateUnit,
+      index,
+      isReadOnly,
+      onDropColumnIndex,
+      onDragEnd,
+      onResize,
+      draggingColumnIndex
+    } = this.props
 
     return (
       <>
+        {draggingColumnIndex !== null && draggingColumnIndex !== index && draggingColumnIndex !== index - 1
+          ? <ReorderColumnDropZone leftOrRight='left' index={index} onDropColumnIndex={onDropColumnIndex} />
+          : null}
         <div
           className='column-letter'
           draggable
           onDragStart={this.handleDragStart}
-          onDragEnd={this.props.onDragEnd}
+          onDragEnd={onDragEnd}
         >
-          {idxToLetter(this.props.index)}
+          {idxToColumnLetter(index)}
         </div>
-        <div
-          className={`data-grid-column-header ${draggingClass}`}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-        >
-          {maybeDropZone('left', index)}
-          <EditableColumnName
-            columnKey={columnKey}
-            columnType={columnType}
-            dateUnit={dateUnit}
-            onRename={this.handleRename}
-            isReadOnly={this.props.isReadOnly}
-            inputRef={this.inputRef}
-          />
-          {columnMenuSection}
-          {maybeDropZone('right', index + 1)}
-        </div>
+        <EditableColumnName
+          columnKey={columnKey}
+          columnType={columnType}
+          dateUnit={dateUnit}
+          onRename={this.handleRename}
+          isReadOnly={isReadOnly}
+          inputRef={this.inputRef}
+        />
+        {isReadOnly || draggingColumnIndex !== null
+          ? null
+          : (
+            <ColumnContextMenu
+              columnType={columnType}
+              renameColumn={this.startRename}
+              onClickAction={this.handleClickAction}
+            />)}
+        {draggingColumnIndex !== null && draggingColumnIndex !== index && draggingColumnIndex !== index + 1
+          ? <ReorderColumnDropZone leftOrRight='right' index={index + 1} onDropColumnIndex={onDropColumnIndex} />
+          : <ResizeHandle index={index} onResize={onResize} />}
       </>
     )
   }

@@ -46,7 +46,7 @@ export default function TextBlock (props) {
       {editedMarkdown === null
         ? (
           <div className='markdown'>
-            <Markdown source={markdown} />
+            <Markdown>{markdown}</Markdown>
           </div>
           )
         : (

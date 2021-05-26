@@ -11,7 +11,8 @@ export default function BigTable ({
   nRowsPerTile,
   nColumnsPerTile,
   setWantedTileRange,
-  fixedCellRange = null
+  fixedCellRange = null,
+  onEdit = null
 }) {
   const { nSkipRows, nSkipColumns, cells, setFocusCellRange } = useFocalCells({
     sparseTileGrid,
@@ -29,6 +30,7 @@ export default function BigTable ({
       nSkipColumns={nSkipColumns}
       cells={cells}
       setFocusCellRange={setFocusCellRange}
+      onEdit={onEdit}
     />
   )
 }
@@ -39,5 +41,6 @@ BigTable.propTypes = {
   nRowsPerTile: PropTypes.number.isRequired,
   nColumnsPerTile: PropTypes.number.isRequired,
   fixedCellRange: PropTypes.arrayOf(PropTypes.number.isRequired), // [rowBegin, rowEnd, columnBegin, columnEnd] ... leave null unless unit-testing
-  setWantedTileRange: PropTypes.func.isRequired // func(r1, r2, c1, c2) => undefined
+  setWantedTileRange: PropTypes.func.isRequired, // func(r1, r2, c1, c2) => undefined
+  onEdit: PropTypes.func // func({ row, column, oldValue, newValue }) => undefined, or null
 }

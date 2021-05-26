@@ -1,7 +1,7 @@
 // https://github.com/facebook/jest/issues/6121#issuecomment-529591574
 import { format } from 'util'
 import Enzyme from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17'
 
 import AbortController from 'abort-controller'
 

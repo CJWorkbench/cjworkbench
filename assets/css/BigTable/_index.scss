@@ -15,6 +15,7 @@
   table {
     position: relative; // for sticky headers
     table-layout: fixed; // for speed
+    border-spacing: 0;
     width: 1px; // to make table-layout: fixed work
   }
 
@@ -24,9 +25,25 @@
       top: 0;
       color: white;
       background: $heading-bg;
+      border: 0;
+      padding: 0;
+      @include content-1;
+
+      // show up above the tbody>tr>th: that also has position:sticky and it's
+      // later in the DOM. Must apply to all thead>tr>th, in case we scroll
+      // horizontally and the tbody>tr>th "follows" us
+      z-index: 1;
+
+      &:first-child {
+        left: 0; // stick to the left, like tbody>tr>th
+        z-index: 2; // appear above all other thead>tr>th
+      }
+
+      &>* {
+        border-right: 1px solid composite-colors($dark-accent--strong, $heading-bg);
+      }
 
       .column-name {
-        @include content-1;
         padding: rem(0.625) rem(0.625) rem(0.3125) rem(0.625);
         white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
         text-overflow: ellipsis;
@@ -52,12 +69,25 @@
       &:hover {
         background: $table-row-background-hover;
       }
+
+      &.selected {
+        background: $table-row-selected-background-even;
+
+        &:nth-child(2n) {
+          background: $table-row-selected-background-odd;
+        }
+
+        &:hover {
+          background: $table-row-selected-background-hover;
+        }
+      }
     }
 
     td,
     th {
       // [2020-11-10, adamhooper] attr(data-n-rows integer) can't be used in calc in latest Chrome/Firefox
       height: var(--row-height);
+      padding: 0;
     }
 
     th {
@@ -66,7 +96,11 @@
       font-weight: 400;
       text-align: center;
       font-size: rem(0.4375); // smallest possible -- this is the fallback
-      border-right: 1px solid $table-border;
+      padding: 0;
+      position: sticky;
+      left: 0;
+      background: inherit;
+      z-index: 1; // above tbody>tr>td: td has position:relative and it's later in the DOM
 
       [data-n-chars='1'],
       [data-n-chars='2'] {
@@ -84,58 +118,103 @@
       [data-n-chars='5'] {
         font-size: rem(0.5);
       }
+
+      label {
+        display: block;
+        margin: 0;
+        vertical-align: middle;
+        cursor: pointer;
+        line-height: calc(var(--row-height) - 2px); // subtract border
+        border: 1px solid transparent;
+        border-right-color: $table-border;
+
+        input {
+          display: none;
+        }
+
+        span {
+          // display: inline-block (default) gives parent height=var(--row-height) + 2px
+          // on Chrome 90.0.4430.93 (Linux). display: block does what we expect
+          display: block;
+        }
+      }
+
+      &.focus label {
+        border-color: $brand-orange;
+      }
     }
 
     td {
       color: $brand-text--darker;
-      @include table-content;
-      padding: 0 rem(0.625);
+      font-size: rem(.875);
+      position: relative; // for <input> positioning
 
-      &.type-number {
+      &.type-number>div {
         text-align: right; // even nulls, which aren't .cell-number
       }
 
-      &.type-text {
-        padding: 0 rem(0.125) 0 rem(0.625); // override regular padding to squeeze in a few pixels
+      input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border: 2px solid $brand-orange;
+        font: inherit;
+        padding: 0 calc(#{rem(0.5)} - 2px); // 2px from border
       }
 
-      & > * {
+      &>div {
+        padding: 0 rem(0.5);
+        border: 1px solid transparent;
         max-height: var(--row-height);
+        height: var(--row-height);
+        line-height: calc(var(--row-height) - 2px); // minus border width
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-      }
 
-      .cell-number {
-        .number-prefix,
-        .number-suffix {
+        &.cell-number {
+          .number-prefix,
+          .number-suffix {
+            @include font-sans-light;
+          }
+
+          .number-suffix {
+            padding-left: rem(0.125);
+          }
+
+          .number-prefix {
+            padding-right: rem(0.125);
+          }
+        }
+
+        &.cell-text {
+          // The value is already mangled to take only one line. Now, preserve
+          // the whitespace within that one line.
+          white-space: pre;
+        }
+
+        &.cell-null {
+          &::before {
+            content: attr(data-text);
+          }
           @include font-sans-light;
-        }
-
-        .number-suffix {
-          padding-left: rem(0.125);
-        }
-
-        .number-prefix {
-          padding-right: rem(0.125);
+          color: lighten($brand-text--dark, 30%);
+          font-style: italic; // FIXME we don't ship this font as italic
+          font-weight: 200;
         }
       }
 
-      .cell-text {
-        // The value is already mangled to take only one line. Now, preserve
-        // the whitespace within that one line.
-        white-space: pre;
+      &.type-text>div {
+        // override regular padding to squeeze in a few pixels
+        padding-right: 0;
       }
 
-      .cell-null {
-        &::before {
-          content: attr(data-text);
-        }
-        @include font-sans-light;
-        color: lighten($brand-text--dark, 30%);
-        font-style: italic; // FIXME we don't ship this font as italic
-        font-weight: 200;
+      &.focus>div {
+        border-color: $brand-orange;
+        background: white;
       }
     }
   }

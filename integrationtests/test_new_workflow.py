@@ -7,15 +7,10 @@ class TestNewWorkflow(LoggedInIntegrationTest):
 
         b.click_button("Create your first workflow")
 
-        # Empty step list
-        b.wait_for_element(".step-list", wait=True)
+        self.import_module("pastecsv")
 
-        # nav bar
-        with b.scope(".navbar"):
-            b.assert_element("button", text="Duplicate")
-            b.assert_element("button", text="Share")
+        # empty output pane
+        b.assert_element(".add-data-modal h5", text="CHOOSE A DATA SOURCE")
 
-        # output pane
-        with b.scope(".outputpane-table"):
-            b.assert_element(".outputpane-header div", text="ROWS")
-            b.assert_element(".outputpane-header div", text="COLUMNS")
+        b.click_link("Paste data")
+        b.assert_element(".cell-text", wait=True)

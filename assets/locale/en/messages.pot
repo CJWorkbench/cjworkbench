@@ -2291,106 +2291,91 @@ msgid "js.settings.billing.Subscription.renewedAt"
 msgstr ""
 
 #. default-message: Clean Text
-#: assets/js/table/ColumnContextMenu.js:122
+#: assets/js/table/ColumnContextMenu.js:113
 msgid "js.table.ColumnContextMenu.cleanText"
 msgstr ""
 
 #. default-message: Convert date unit
-#: assets/js/table/ColumnContextMenu.js:135
+#: assets/js/table/ColumnContextMenu.js:126
 msgid "js.table.ColumnContextMenu.convertDateUnit"
 msgstr ""
 
 #. default-message: Convert to date
-#: assets/js/table/ColumnContextMenu.js:140
+#: assets/js/table/ColumnContextMenu.js:131
 msgid "js.table.ColumnContextMenu.convertToDate"
 msgstr ""
 
 #. default-message: Convert to number
-#: assets/js/table/ColumnContextMenu.js:151
+#: assets/js/table/ColumnContextMenu.js:142
 msgid "js.table.ColumnContextMenu.convertToNumbers"
 msgstr ""
 
 #. default-message: Convert to text
-#: assets/js/table/ColumnContextMenu.js:161
+#: assets/js/table/ColumnContextMenu.js:152
 msgid "js.table.ColumnContextMenu.convertToText"
 msgstr ""
 
 #. default-message: Convert to timestamp
-#: assets/js/table/ColumnContextMenu.js:171
+#: assets/js/table/ColumnContextMenu.js:162
 msgid "js.table.ColumnContextMenu.convertToTimestamp"
 msgstr ""
 
 #. default-message: Delete column
-#: assets/js/table/ColumnContextMenu.js:196
+#: assets/js/table/ColumnContextMenu.js:187
 msgid "js.table.ColumnContextMenu.deleteColumn"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/table/ColumnContextMenu.js:88
+#: assets/js/table/ColumnContextMenu.js:79
 msgid "js.table.ColumnContextMenu.duplicate"
 msgstr ""
 
 #. default-message: Filter
-#: assets/js/table/ColumnContextMenu.js:115
+#: assets/js/table/ColumnContextMenu.js:106
 msgid "js.table.ColumnContextMenu.filter"
 msgstr ""
 
 #. default-message: Format numbers
-#: assets/js/table/ColumnContextMenu.js:184
+#: assets/js/table/ColumnContextMenu.js:175
 msgid "js.table.ColumnContextMenu.formatNumbers"
 msgstr ""
 
-#. default-message: Rename
-#: assets/js/table/ColumnContextMenu.js:81
-msgid "js.table.ColumnContextMenu.rename."
-msgstr ""
-
 #. default-message: Sort ascending
-#: assets/js/table/ColumnContextMenu.js:96
+#: assets/js/table/ColumnContextMenu.js:87
 msgid "js.table.ColumnContextMenu.sortAscending"
 msgstr ""
 
 #. default-message: Sort descending
-#: assets/js/table/ColumnContextMenu.js:105
+#: assets/js/table/ColumnContextMenu.js:96
 msgid "js.table.ColumnContextMenu.sortDescending"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/table/SelectedRowsActions.js:120
+#: assets/js/table/SelectedRowsActions.js:106
 msgid "js.table.SelectedRowsActions.menu"
 msgstr ""
 
 #. default-message: {0, plural, =0 {No rows selected} one {# row selected} other {# rows selected}}
-#: assets/js/table/SelectedRowsActions.js:126
+#: assets/js/table/SelectedRowsActions.js:112
 msgid "js.table.SelectedRowsActions.numberOfSelectedRows"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: COLUMNS
-#: assets/js/table/TableInfo.js:68
+#: assets/js/table/TableInfo.js:57
 msgid "js.table.TableInfo.columns"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: EXPORT
-#: assets/js/table/TableInfo.js:93
+#: assets/js/table/TableInfo.js:82
 msgid "js.table.TableInfo.export"
 msgstr ""
 
 #. This should be all-caps for styling reasons
 #. default-message: ROWS
-#: assets/js/table/TableInfo.js:57
+#: assets/js/table/TableInfo.js:46
 msgid "js.table.TableInfo.rows"
-msgstr ""
-
-#. default-message: A maximum of 100 columns can be displayed
-#: assets/js/table/TableView.js:66
-msgid "js.table.TableView.maxOf100ColumnsCanbeDIsplayed"
-msgstr ""
-
-#. default-message: Select columns
-#: assets/js/table/TableView.js:74
-msgid "js.table.TableView.selectColumns.button"
 msgstr ""
 
 #. default-message: Add data
@@ -2434,32 +2419,32 @@ msgid "js.util.ModuleCategoryName.CategoryNames.Visualize"
 msgstr ""
 
 #. default-message: {days}d ago
-#: assets/js/utils.js:51
+#: assets/js/utils/index.js:38
 msgid "js.util.timeDifference.ago.days"
 msgstr ""
 
 #. default-message: {hours}h ago
-#: assets/js/utils.js:57
+#: assets/js/utils/index.js:44
 msgid "js.util.timeDifference.ago.hours"
 msgstr ""
 
 #. default-message: {minutes}m ago
-#: assets/js/utils.js:63
+#: assets/js/utils/index.js:50
 msgid "js.util.timeDifference.ago.minutes"
 msgstr ""
 
 #. default-message: {seconds}s ago
-#: assets/js/utils.js:69
+#: assets/js/utils/index.js:56
 msgid "js.util.timeDifference.ago.seconds"
 msgstr ""
 
 #. default-message: {years}y ago
-#: assets/js/utils.js:45
+#: assets/js/utils/index.js:32
 msgid "js.util.timeDifference.ago.years"
 msgstr ""
 
 #. default-message: just now
-#: assets/js/utils.js:75
+#: assets/js/utils/index.js:62
 msgid "js.util.timeDifference.now"
 msgstr ""
 
