@@ -65,7 +65,7 @@ export default function Viewport ({
     const y1 = y0 + Math.max(0, viewport.clientHeight - headerHeight)
 
     const r0 = Math.floor(y0 / rowHeight)
-    const r1 = Math.min(Math.ceil(y1 / rowHeight), nRows)
+    const r1 = Math.max(r0 + 1, Math.min(Math.ceil(y1 / rowHeight), nRows))
     let c0 = 0
     let c1 = columnOffsetsAfterTh.length
     for (let i = 0; i < columnOffsetsAfterTh.length; i++) {

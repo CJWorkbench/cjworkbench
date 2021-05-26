@@ -3,16 +3,16 @@ import BigTable from '../BigTable'
 import TextCell from '../BigTable/Cell/TextCell'
 
 const EmptyTileGrid = [[[
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', ''],
-  ['', '', '', '', '', '', '', '', '', '']
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', ''],
+  ['', '', '', '']
 ]]]
 
 function EmptyColumnHeader (props) {
@@ -21,11 +21,9 @@ function EmptyColumnHeader (props) {
   return (
     <>
       <div className='column-letter'>{columnLetter}</div>
-      <div className='data-grid-column-header'>
-        <div className='column-key'>
-          <div className='value' />
-          <div className='column-type' />
-        </div>
+      <div className='column-key'>
+        <div className='value' />
+        <div className='column-type' />
       </div>
     </>
   )
