@@ -77,7 +77,7 @@ export default function DataGrid (props) {
       headerProps: {
         columnKey: column.name,
         columnType: column.type,
-        dateUnit: column.dateUnit,
+        dateUnit: column.unit,
         index,
         stepId,
         stepSlug,
