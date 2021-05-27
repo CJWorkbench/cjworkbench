@@ -160,7 +160,7 @@ export class EditableColumnName extends React.Component {
             <div className='value editing'>
               <input
                 name='new-column-key'
-                type='prout'
+                type='text'
                 ref={this.props.inputRef}
                 value={this.state.newName}
                 onChange={this.handleInputChange}
