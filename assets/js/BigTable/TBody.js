@@ -148,11 +148,11 @@ const TBody = React.memo(React.forwardRef(function TBody (props, ref) {
   }
 
   function isEditing (i, j) {
-    return editing && i === indexRow(editing.row) && j === indexColumn(editing.column) && !editing.submitting
+    return editing && indexRow(i) === editing.row && indexColumn(j) === editing.column && !editing.submitting
   }
 
   function isSubmitting (i, j) {
-    return editing && i === indexRow(editing.row) && j === indexColumn(editing.column) && editing.submitting
+    return editing && indexRow(i) === editing.row && indexColumn(j) === editing.column && editing.submitting
   }
 
   return (
