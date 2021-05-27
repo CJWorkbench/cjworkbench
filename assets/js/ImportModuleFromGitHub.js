@@ -95,7 +95,6 @@ class StaffImportModuleFromGitHub extends PureComponent {
                   target='_blank'
                   rel='noopener noreferrer'
                   href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module'
-                  className='action-link'
                 >
                   here
                 </a>
@@ -136,7 +135,6 @@ function PublicImportModuleFromGitHub ({ closeModal }) {
               target='_blank'
               rel='noopener noreferrer'
               href='https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module'
-              className='action-link'
             >
               here
             </a>

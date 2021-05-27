@@ -18,4 +18,8 @@
   .import-github-success {
     color: $link-hover-success;
   }
+
+  a {
+    @include action-link;
+  }
 }

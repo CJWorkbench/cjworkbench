@@ -11,7 +11,7 @@ describe('UpdateFrequencySelect', () => {
     const defaultProps = {
       workflowId: 123,
       stepId: 212,
-      isReadOnly: false,
+      isOwner: true,
       isAnonymous: false, // DELETEME
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
       isAutofetch: false, // start in Manual mode
@@ -41,8 +41,8 @@ describe('UpdateFrequencySelect', () => {
       expect(wrapper().find('UpdateFrequencySelectModal')).toHaveLength(0)
     })
 
-    it('does not open modal when not read-only', () => {
-      const w = wrapper({ isReadOnly: true })
+    it('does not open modal when not owner', () => {
+      const w = wrapper({ isOwner: false })
       w.find('a[title="change auto-update settings"]').simulate('click')
       expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
     })

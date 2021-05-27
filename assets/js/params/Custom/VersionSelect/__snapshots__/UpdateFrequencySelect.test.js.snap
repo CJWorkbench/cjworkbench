@@ -6,7 +6,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
   isAnonymous={false}
   isAutofetch={false}
   isEmailUpdates={false}
-  isReadOnly={false}
+  isOwner={true}
   lastCheckDate={2018-05-28T19:00:54.154Z}
   setEmailUpdates={[MockFunction]}
   stepId={212}
@@ -33,7 +33,6 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
          
       </span>
       <a
-        className="content-1 ml-1 action-link"
         href="#"
         onClick={[Function]}
         title="change auto-update settings"

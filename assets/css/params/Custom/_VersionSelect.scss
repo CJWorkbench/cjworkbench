@@ -11,17 +11,19 @@
       font-size: 1.3rem;
     }
 
+    a {
+      @include content-1;
+      @include action-link;
+
+      &:not(:link) {
+        cursor: inherit;
+        color: $text-muted;
+      }
+    }
+
     .last-checked {
       @include content-2;
       color: $text-muted;
-    }
-
-    .update-option {
-      top: 1rem;
-
-      action-link {
-        color: red;
-      }
     }
   }
 

@@ -186,6 +186,16 @@ describe('Step, not read-only mode', () => {
     expect(w.find(DataVersionModal).length).toBe(0)
   })
 
+  it('hides notifications when !isOwner', () => {
+    const w = wrapper({
+      fetchModuleExists: true,
+      isReadOnly: false,
+      isOwner: false,
+      isAnonymous: false
+    })
+    expect(w.find('button.notifications').length).toBe(0)
+  })
+
   it('hides notifications when isAnonymous', () => {
     const w = wrapper({
       fetchModuleExists: true,

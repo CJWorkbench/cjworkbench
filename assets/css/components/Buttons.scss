@@ -378,19 +378,17 @@ button:focus {
 // Application links
 
 @mixin action-link {
-  border: 0;
   display: inline;
+  border: 0;
   padding: 0;
   cursor: pointer;
   color: $workspace-action;
   font-weight: bold;
+
   &:hover {
     color: #2d9daa;
     text-decoration: none;
   }
-}
-.action-link {
-  @include action-link;
 }
 
 @mixin export-link {

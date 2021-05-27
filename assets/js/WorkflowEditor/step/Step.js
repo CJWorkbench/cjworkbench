@@ -388,7 +388,7 @@ export class Step extends React.PureComponent {
     let alertButton = null
     if (
       this.props.fetchModuleExists &&
-      !isReadOnly &&
+      this.props.isOwner &&
       !this.props.isAnonymous
     ) {
       const notifications = step.notifications

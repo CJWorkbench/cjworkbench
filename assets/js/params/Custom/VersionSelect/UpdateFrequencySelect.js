@@ -11,14 +11,14 @@ import { connect } from 'react-redux'
 import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
 import selectIsAnonymous from '../../../selectors/selectIsAnonymous'
-import selectIsReadOnly from '../../../selectors/selectIsReadOnly'
+import selectLoggedInUserRole from '../../../selectors/selectLoggedInUserRole'
 
 export class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
     workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
-    isReadOnly: PropTypes.bool.isRequired,
+    isOwner: PropTypes.bool.isRequired,
     lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
     isAutofetch: PropTypes.bool.isRequired,
     fetchInterval: PropTypes.number.isRequired,
@@ -34,7 +34,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
 
   handleClickOpenModal = ev => {
     if (ev && ev.preventDefault) ev.preventDefault() // <a> => do not change URL
-    if (this.props.isReadOnly) return
+    if (!this.props.isOwner) return
     if (this.props.isAnonymous) return
 
     this.setState({
@@ -65,6 +65,8 @@ export class UpdateFrequencySelect extends React.PureComponent {
       fetchInterval,
       isEmailUpdates,
       workflowId,
+      isOwner,
+      isAnonymous,
       stepId
     } = this.props
     const { isModalOpen } = this.state
@@ -78,13 +80,12 @@ export class UpdateFrequencySelect extends React.PureComponent {
             </Trans>{' '}
           </span>
           <a
-            href='#'
+            href={isOwner && !isAnonymous ? '#' : undefined}
             title={t({
               id:
                 'js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText',
               message: 'change auto-update settings'
             })}
-            className='content-1 ml-1 action-link'
             onClick={this.handleClickOpenModal}
           >
             {isAutofetch
@@ -153,7 +154,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     lastCheckDate,
     workflowId: workflow.id,
-    isReadOnly: selectIsReadOnly(state),
+    isOwner: selectLoggedInUserRole(state) === 'owner',
     isAnonymous: selectIsAnonymous(state),
     isEmailUpdates: step.notifications || false,
     isAutofetch: step.auto_update_data || false,
