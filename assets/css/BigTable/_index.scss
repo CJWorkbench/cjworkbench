@@ -153,7 +153,7 @@
         text-align: right; // even nulls, which aren't .cell-number
       }
 
-      &>div, &>time, &>input {
+      &>div, &>time, &>a, &>input {
         border: 2px solid transparent;
         border-radius: 4px;
         padding: 0 calc(#{rem(0.5)} - 2px); // 2px from border
@@ -169,7 +169,7 @@
         font: inherit;
       }
 
-      &>div, &>time {
+      &>div, &>a, &>time {
         display: block;
         max-height: var(--row-height);
         height: var(--row-height);
@@ -177,6 +177,10 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+
+      &>a {
+        color: inherit;
       }
 
       .cell-number {
