@@ -128,13 +128,16 @@
         }
 
         .column-key {
+          .value, .column-type {
+            text-overflow: ellipsis;
+            white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
+            overflow: hidden;
+          }
+
           .value {
             padding: 0 rem(0.625);
             height: rem(1.5);
             line-height: rem(1.5);
-            text-overflow: ellipsis;
-            white-space: pre; // don't wrap; on all-space colnames, consume 1 line height
-            overflow: hidden;
             position: relative;
 
             &.editing {
@@ -162,12 +165,8 @@
             }
           }
 
-          .column-type {
-            @include info-2;
-            position: relative;
-            &:empty::before {
-              content: '\00a0';
-            }
+          .column-type:empty::before {
+            content: '\00a0';
           }
         }
 
