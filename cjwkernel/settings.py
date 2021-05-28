@@ -6,15 +6,15 @@ MAX_ROWS_PER_TABLE = 1_000_000
 """
 How much table can we parse?
 
-Modules should truncate their results to conform to the row-number limit. The
+Modules must truncate their results to conform to the row-number limit. The
 default `render_pandas()` implementation does this.
 """
 
-MAX_COLUMNS_PER_TABLE = 500
+MAX_COLUMNS_PER_TABLE = 600
 """
 How many columns do we allow?
 
-Modules should truncate their results to conform to the column-number limit. The
+Modules must truncate their results to conform to the column-number limit. The
 default `render_pandas()` implementation does this.
 """
 
