@@ -125,6 +125,7 @@ gcloud beta container node-pools create main-pool-v2 \
   --machine-type=n1-standard-2 \
   --enable-autoupgrade \
   --enable-autoscaling \
+  --image-type=COS_CONTAINERD \
   --num-nodes 1 \
   --min-nodes 1 \
   --max-nodes 9 \
@@ -135,7 +136,7 @@ gcloud beta container node-pools create main-pool-v2 \
 gcloud beta container node-pools delete default-pool --zone=us-central1-b
 
 
-## Build a pre-emptible "web" node pool for web servers
+## Build a non-pre-emptible "web" node pool for web servers
 #
 # Web servers run user code, so they must run with SMT disabled. Also, we
 # allocate CPU/RAM such that a one pod == one node, to cut costs. (No-SMT is
@@ -159,6 +160,7 @@ gcloud beta container node-pools create web-pool \
   --machine-type=custom-4-3840 \
   --enable-autoupgrade \
   --enable-autoscaling \
+  --image-type=COS_CONTAINERD \
   --num-nodes 1 \
   --min-nodes 1 \
   --max-nodes 9 \
@@ -180,6 +182,9 @@ gcloud beta container node-pools create web-pool \
 # * size 1-9 machines
 # * disable hyperthreading, because we run untrusted code
 #   see https://cloud.google.com/kubernetes-engine/docs/security-bulletins#may-14-2019
+# * n2 machines: ~30% faster than n1 as per
+#   https://cloud.google.com/compute/docs/benchmarks-linux, and ~10%
+#   pricier as per https://cloud.google.com/compute/vm-instance-pricing
 # * 6-vCPU machines because after we disable hyperthreading, it's really 3.
 #   4-vCPU would prevent us from scheduling two renderers on the same node
 #   because we lose a bit of CPU to overhead. For instance, 4-vCPU would give
@@ -190,13 +195,14 @@ gcloud beta container node-pools create web-pool \
 #   https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
 # * Node taint preemptible=true: only pods tolerating the taint will run here
 #   (so database/RabbitMQ/frontend won't)
-gcloud beta container node-pools create worker-pool \
+gcloud beta container node-pools create worker-pool-2 \
   --cluster=$CLUSTER_NAME \
   --service-account=$CLUSTER_NAME-least-privilege-sa@$PROJECT_NAME.iam.gserviceaccount.com \
-  --machine-type=custom-6-12288 \
+  --machine-type=n2-custom-6-12288 \
   --enable-autoupgrade \
   --enable-autoscaling \
   --preemptible \
+  --image-type=COS_CONTAINERD \
   --num-nodes 1 \
   --min-nodes 1 \
   --max-nodes 9 \
