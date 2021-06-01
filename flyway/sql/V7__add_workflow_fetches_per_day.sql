@@ -1,0 +1,2 @@
+ALTER TABLE workflow
+ADD COLUMN fetches_per_day FLOAT NOT NULL DEFAULT 0.0;

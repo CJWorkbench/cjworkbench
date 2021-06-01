@@ -137,7 +137,7 @@ class Workflow(models.Model):
 
     has_custom_report = models.BooleanField(default=False)
 
-    fetches_per_day = models.FloatField(default=0.0)
+    fetches_per_day = models.FloatField(null=False, default=0.0)
     """Cached summary count of fetches per day.
 
     This is `sum(86400 / step.update_interval for step in workflow.active_steps)`

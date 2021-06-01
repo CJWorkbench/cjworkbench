@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 from cjwmodule.spec.paramfield import ParamField
 from dateutil.parser import isoparse
 from django.conf import settings
-from django.db import transaction
+from django.db.models import F, Sum, Value
 
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
@@ -21,8 +21,9 @@ from cjwstate.models.commands import (
 from cjwstate.models.module_registry import MODULE_REGISTRY
 import server.utils
 from . import autofetch
-from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
+from .util import lock_workflow_for_role
+from .types import HandlerError
 
 
 class AutofetchQuotaExceeded(Exception):
@@ -85,13 +86,15 @@ def _load_step_by_id(workflow: Workflow, step_id: int) -> Step:
         raise HandlerError("DoesNotExist: Step not found")
 
 
-@database_sync_to_async
-def _load_step_by_slug(workflow: Workflow, step_slug: str) -> Step:
-    """Return a Step or raises HandlerError."""
+def _load_step_by_slug_sync(workflow: Workflow, step_slug: str) -> Step:
+    """Return a Step or raise HandlerError."""
     try:
         return Step.live_in_workflow(workflow).get(slug=step_slug)
     except Step.DoesNotExist:
         raise HandlerError("DoesNotExist: Step not found")
+
+
+_load_step_by_slug = database_sync_to_async(_load_step_by_slug_sync)
 
 
 def _loading_step_by_id(func):
@@ -252,21 +255,30 @@ async def clear_unseen_notifications(step: Step, **kwargs):
 
 @database_sync_to_async
 def _do_try_set_autofetch(
-    scope, step: Step, auto_update_data: bool, update_interval: int
-):
-    # We may ROLLBACK; if we do, we need to remember the old values
-    old_auto_update_data = step.auto_update_data
-    old_update_interval = step.update_interval
-
-    check_quota = (
-        auto_update_data
-        and step.auto_update_data
-        and update_interval < step.update_interval
-    ) or (auto_update_data and not step.auto_update_data)
-
-    quota_exceeded = None
+    scope,
+    workflow: Workflow,
+    step_slug: str,
+    auto_update_data: bool,
+    update_interval: int,
+) -> Dict[str, Any]:
     try:
-        with transaction.atomic():
+        with lock_workflow_for_role(workflow, scope, role="owner"):
+            step = _load_step_by_slug_sync(workflow, step_slug)  # or raise HandlerError
+
+            # We may ROLLBACK; if we do, we need to remember the old values
+            old_auto_update_data = step.auto_update_data
+            old_update_interval = step.update_interval
+            old_next_update = step.next_update
+            old_fetches_per_day = workflow.fetches_per_day
+
+            check_quota = (
+                auto_update_data
+                and step.auto_update_data
+                and update_interval < step.update_interval
+            ) or (auto_update_data and not step.auto_update_data)
+
+            quota_exceeded = None
+
             step.auto_update_data = auto_update_data
             step.update_interval = update_interval
             if auto_update_data:
@@ -278,6 +290,15 @@ def _do_try_set_autofetch(
             step.save(
                 update_fields=["auto_update_data", "update_interval", "next_update"]
             )
+
+            result = (
+                Step.live_in_workflow(workflow)
+                .filter(auto_update_data=True, update_interval__gt=0)
+                .aggregate(fetches_per_day=Sum(Value(86400.0) / F("update_interval")))
+            )
+            # Did You Know: SQL SUM() of empty set is NULL, not 0? Hence "or 0.0" here
+            workflow.fetches_per_day = result["fetches_per_day"] or 0.0
+            workflow.save(update_fields=["fetches_per_day"])
 
             # Now before we commit, let's see if we've surpassed the user's limit;
             # roll back if we have.
@@ -291,7 +312,9 @@ def _do_try_set_autofetch(
                     raise AutofetchQuotaExceeded(autofetches)
     except AutofetchQuotaExceeded as err:
         step.auto_update_data = old_auto_update_data
+        step.next_update = old_next_update
         step.update_interval = old_update_interval
+        workflow.fetches_per_day = old_fetches_per_day
         quota_exceeded = err.autofetches
 
     retval = {
@@ -304,17 +327,24 @@ def _do_try_set_autofetch(
 
 
 @register_websockets_handler
-@websockets_handler("owner")
-@_loading_step_by_id
+@websockets_handler(role=None)  # we'll check "owner" in _do_try_set_autofetch
 async def try_set_autofetch(
-    step: Step, isAutofetch: bool, fetchInterval: int, scope, **kwargs
+    workflow: Workflow,
+    stepSlug: str,
+    isAutofetch: bool,
+    fetchInterval: int,
+    scope,
+    **kwargs,
 ):
+    step_slug = str(stepSlug)
     auto_update_data = bool(isAutofetch)
     try:
         update_interval = max(settings.MIN_AUTOFETCH_INTERVAL, int(fetchInterval))
     except (ValueError, TypeError):
         return HandlerError("BadRequest: fetchInterval must be an integer")
-    return await _do_try_set_autofetch(scope, step, auto_update_data, update_interval)
+    return await _do_try_set_autofetch(
+        scope, workflow, step_slug, auto_update_data, update_interval
+    )
 
 
 @database_sync_to_async
