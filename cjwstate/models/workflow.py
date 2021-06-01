@@ -349,7 +349,7 @@ class Workflow(models.Model):
                 selected_tab_position=self.selected_tab_position,
                 has_custom_report=self.has_custom_report,
                 public=False,
-                fetches_per_day=self.fetches_per_day,
+                fetches_per_day=0,  # duplicated steps are manual-update
                 last_delta_id=0,  # SECURITY don't clone info we don't need
             )
 
