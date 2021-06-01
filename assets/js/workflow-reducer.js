@@ -532,26 +532,26 @@ registerReducerFunc(SET_STEP_NOTIFICATIONS + '_PENDING', (state, action) => {
  * the request, a `quotaExceeded` object with { maxFetchesPerDay,
  * nFetchesPerDay, autofetches }.
  */
-export function trySetStepAutofetchAction (stepId, isAutofetch, fetchInterval) {
+export function trySetStepAutofetchAction (stepSlug, isAutofetch, fetchInterval) {
   return (dispatch, _, api) => {
     return dispatch({
       type: TRY_SET_STEP_AUTOFETCH,
       payload: {
         promise: api
-          .trySetStepAutofetch(stepId, isAutofetch, fetchInterval)
-          .then(obj => ({ stepId, ...obj }))
+          .trySetStepAutofetch(stepSlug, isAutofetch, fetchInterval)
+          .then(obj => ({ stepSlug, ...obj }))
       }
     })
   }
 }
 registerReducerFunc(TRY_SET_STEP_AUTOFETCH + '_FULFILLED', (state, action) => {
-  const { stepId, isAutofetch, fetchInterval } = action.payload
-  const step = state.steps[String(stepId)]
+  const { stepSlug, isAutofetch, fetchInterval } = action.payload
+  const step = Object.values(state.steps).find(s => s.slug === stepSlug)
   return {
     ...state,
     steps: {
       ...state.steps,
-      [String(stepId)]: {
+      [String(step.id)]: {
         ...step,
         auto_update_data: isAutofetch,
         update_interval: fetchInterval

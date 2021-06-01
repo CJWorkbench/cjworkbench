@@ -12,6 +12,7 @@ import UpdateFrequencySelect from './UpdateFrequencySelect'
 export default class VersionSelect extends PureComponent {
   static propTypes = {
     stepId: PropTypes.number.isRequired,
+    stepSlug: PropTypes.string.isRequired,
     isStepBusy: PropTypes.bool.isRequired,
     isReadOnly: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired, // e.g., "version_select"
@@ -32,11 +33,11 @@ export default class VersionSelect extends PureComponent {
   }
 
   render () {
-    const { stepId, isReadOnly } = this.props
+    const { stepId, stepSlug, isReadOnly } = this.props
 
     return (
       <div className='version-select'>
-        <UpdateFrequencySelect stepId={stepId} isReadOnly={isReadOnly} />
+        <UpdateFrequencySelect stepId={stepId} stepSlug={stepSlug} isReadOnly={isReadOnly} />
         <div className='version-row'>
           <DataVersionSelect stepId={stepId} />
           {this.renderMaybeButton()}

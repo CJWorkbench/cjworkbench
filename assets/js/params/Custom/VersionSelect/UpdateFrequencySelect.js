@@ -17,6 +17,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
   static propTypes = {
     workflowId: propTypes.workflowId.isRequired,
     stepId: PropTypes.number.isRequired,
+    stepSlug: PropTypes.string.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     isOwner: PropTypes.bool.isRequired,
     lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
@@ -24,7 +25,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
     fetchInterval: PropTypes.number.isRequired,
     isEmailUpdates: PropTypes.bool.isRequired,
     setEmailUpdates: PropTypes.func.isRequired, // func(stepId, isEmailUpdates) => undefined
-    trySetAutofetch: PropTypes.func.isRequired // func(stepId, isAutofetch, fetchInterval) => Promise[response]
+    trySetAutofetch: PropTypes.func.isRequired // func(stepSlug, isAutofetch, fetchInterval) => Promise[response]
   }
 
   state = {
@@ -54,8 +55,8 @@ export class UpdateFrequencySelect extends React.PureComponent {
   }
 
   trySetAutofetch = (isAutofetch, fetchInterval) => {
-    const { trySetAutofetch, stepId } = this.props
-    return trySetAutofetch(stepId, isAutofetch, fetchInterval)
+    const { trySetAutofetch, stepSlug } = this.props
+    return trySetAutofetch(stepSlug, isAutofetch, fetchInterval)
   }
 
   render () {
@@ -67,7 +68,8 @@ export class UpdateFrequencySelect extends React.PureComponent {
       workflowId,
       isOwner,
       isAnonymous,
-      stepId
+      stepId,
+      stepSlug
     } = this.props
     const { isModalOpen } = this.state
 
@@ -127,6 +129,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
             <UpdateFrequencySelectModal
               workflowId={workflowId}
               stepId={stepId}
+              stepSlug={stepSlug}
               isEmailUpdates={isEmailUpdates}
               isAutofetch={isAutofetch}
               fetchInterval={fetchInterval}

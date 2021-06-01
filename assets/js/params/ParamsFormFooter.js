@@ -48,6 +48,7 @@ export default function ParamsFormFooter ({
     return (
       <VersionSelect
         stepId={stepId}
+        stepSlug={stepSlug}
         isStepBusy={isStepBusy}
         isReadOnly={isReadOnly}
         name={versionSelectField.idName}

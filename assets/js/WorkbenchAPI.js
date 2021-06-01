@@ -188,9 +188,9 @@ export default class WorkbenchAPI {
     )
   }
 
-  trySetStepAutofetch (stepId, isAutofetch, fetchInterval) {
+  trySetStepAutofetch (stepSlug, isAutofetch, fetchInterval) {
     return this.websocket.callServerHandler('step.try_set_autofetch', {
-      stepId,
+      stepSlug,
       isAutofetch,
       fetchInterval
     })

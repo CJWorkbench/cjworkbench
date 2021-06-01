@@ -11,6 +11,7 @@ describe('UpdateFrequencySelect', () => {
     const defaultProps = {
       workflowId: 123,
       stepId: 212,
+      stepSlug: 'step-1',
       isOwner: true,
       isAnonymous: false, // DELETEME
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
@@ -89,7 +90,7 @@ describe('UpdateFrequencySelect', () => {
       }
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} lastCheckDate={null} />
+          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' lastCheckDate={null} />
         </Provider>
       )
       const time = wrapper
@@ -121,7 +122,7 @@ describe('UpdateFrequencySelect', () => {
       }
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} />
+          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
@@ -137,13 +138,13 @@ describe('UpdateFrequencySelect', () => {
       const store = mockStore(sampleState, api)
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} lastCheckDate={null} />
+          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' lastCheckDate={null} />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')
       const modal = wrapper.find('UpdateFrequencySelectModal')
       modal.prop('trySetAutofetch')(true, 7600)
-      expect(api.trySetStepAutofetch).toHaveBeenCalledWith(212, true, 7600)
+      expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-x', true, 7600)
     })
 
     it('should dispatch setNotifications (and call the API method)', () => {
@@ -153,7 +154,7 @@ describe('UpdateFrequencySelect', () => {
       const store = mockStore(sampleState, api)
       wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} lastCheckDate={null} />
+          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' lastCheckDate={null} />
         </Provider>
       )
       wrapper.find('a[title="change auto-update settings"]').simulate('click')

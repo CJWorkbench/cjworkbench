@@ -10,6 +10,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
   lastCheckDate={2018-05-28T19:00:54.154Z}
   setEmailUpdates={[MockFunction]}
   stepId={212}
+  stepSlug="step-1"
   trySetAutofetch={[MockFunction]}
   workflowId={123}
 >
