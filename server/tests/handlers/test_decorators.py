@@ -28,6 +28,11 @@ async def handle_owner(workflow, **kwargs):
     return {"role": "owner"}
 
 
+@decorators.websockets_handler(role=None)
+async def handle_none(**kwargs):
+    return {"role": None}
+
+
 DefaultKwargs = {
     "user": AnonymousUser(),
     "session": Session(),
@@ -118,8 +123,7 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
         self.assertHandlerResponse(ret, error="ValueError: bad value")
 
     def test_passthrough_cancellederror(self):
-        """
-        CancelledError must be re-raised.
+        """CancelledError must be re-raised.
 
         Async functions may raise CancelledError at any time It must be
         re-raised. There's no way to avoid it. (asyncio.shield() in particular
@@ -138,7 +142,9 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
     # Auth is a bit weird: we already know the user has access to the workflow
     # because the WebSockets connection didn't close. But we'd like to update
     # the auth with each request, so if Alice grants Bob new rights Bob should
-    # get them right away.
+    # get them right away. Also, the WebSockets connection only implies read
+    # access; it doesn't imply owner/editor access.
+
     def test_auth_read_owner(self):
         user = User()
         ret = self.run_handler(handle_read, user=user, workflow=Workflow(owner=user))
@@ -274,6 +280,16 @@ class WebsocketsHandlerDecoratorTest(HandlerTestCase):
         self.assertHandlerResponse(
             ret, error=("AuthError: no owner access to workflow")
         )
+
+    def test_auth_role_none(self):
+        # Hopefully, the only way to get here is a race:
+        #
+        # 1. Server receives request and authorizes that the user still has
+        #    access to the workflow;
+        # 2. Another process revokes access
+        # 3. Server invokes handler
+        ret = self.run_handler(handle_none, workflow=Workflow(owner=User()))
+        self.assertHandlerResponse(ret, {"role": None})
 
     def test_register(self):
         @decorators.register_websockets_handler

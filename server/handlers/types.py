@@ -1,11 +1,11 @@
-from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from __future__ import annotations
+from typing import Any, Dict, Optional, NamedTuple
+
+from cjwstate.models.workflow import Workflow
 
 
-@dataclass(frozen=True)
-class HandlerRequest:
-    """
-    A WebSockets request to the server.
+class HandlerRequest(NamedTuple):
+    """A WebSockets request to the server.
 
     This is akin to an HTTP request: a `request_id` ties a response to the
     request. The server must respond to every request.
@@ -13,19 +13,15 @@ class HandlerRequest:
 
     request_id: int
     scope: Dict[str, Any]
-    workflow: "cjwstate.models.Workflow"  # import would cause recursion
+    workflow: Workflow
     path: str
     arguments: Dict[str, Any]
 
     @classmethod
     def parse_json_data(
-        cls,
-        scope: Dict[str, Any],
-        workflow: "cjwstate.models.Workflow",
-        data: Dict[str, Any],
-    ) -> "HandlerRequest":
-        """
-        Parse JSON into a Request, or raise ValueError.
+        cls, scope: Dict[str, Any], workflow: Workflow, data: Dict[str, Any]
+    ) -> HandlerRequest:
+        """Parse JSON into a Request, or raise ValueError.
 
         JSON format:
 
@@ -58,11 +54,8 @@ class HandlerRequest:
         return cls(request_id, scope, workflow, path, arguments)
 
 
-@dataclass(frozen=True)
-class HandlerResponse:
-    """
-    A response destined for the WebSockets client that sent a HandlerRequest.
-    """
+class HandlerResponse(NamedTuple):
+    """Response destined for the WebSockets client that sent a HandlerRequest."""
 
     request_id: int
     data: Optional[Dict[str, Any]] = None
@@ -76,12 +69,4 @@ class HandlerResponse:
 
 
 class HandlerError(Exception):
-    """
-    An error a handler can raise that is _not_ a bug in the handler.
-    """
-
-    pass
-
-
-class AuthError(Exception):
-    pass
+    """Error a handler can raise that is _not_ a bug in the handler."""

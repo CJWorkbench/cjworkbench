@@ -1,4 +1,3 @@
-import json
 import logging
 import pickle
 from collections import namedtuple
@@ -6,7 +5,6 @@ from typing import Any, ContextManager, Dict
 
 from channels.exceptions import DenyConnection
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from channels.layers import get_channel_layer
 
 import websockets
 from cjworkbench.sync import database_sync_to_async

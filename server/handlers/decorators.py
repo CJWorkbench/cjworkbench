@@ -1,8 +1,10 @@
-import asyncio
 import functools
 import logging
+from typing import Optional
+
 from cjworkbench.sync import database_sync_to_async
-from .types import AuthError, HandlerRequest, HandlerResponse, HandlerError
+from .types import HandlerRequest, HandlerResponse, HandlerError
+from .util import is_workflow_authorized
 
 
 Handlers = {}
@@ -12,6 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 ParentModuleName = ".".join(__name__.split(".")[:-1])
+
+
+_is_workflow_authorized_async = database_sync_to_async(is_workflow_authorized)
 
 
 def register_websockets_handler(func):
@@ -24,21 +29,12 @@ def register_websockets_handler(func):
     return func
 
 
-@database_sync_to_async
-def _authorize(user, session, has_secret, workflow, role):
-    if role == "read":
-        if not (has_secret or workflow.user_session_authorized_read(user, session)):
-            raise AuthError("no read access to workflow")
-    elif role == "write":
-        if not workflow.user_session_authorized_write(user, session):
-            raise AuthError("no write access to workflow")
-    elif role == "owner":
-        if not workflow.user_session_authorized_owner(user, session):
-            raise AuthError("no owner access to workflow")
-
-
-def websockets_handler(role: str = "read"):
+def websockets_handler(role: Optional[str]):
     """Augment a function with auth, logging and error handling.
+
+    The `role=None` only makes sense if A) the request doesn't really pertain to
+    the workflow; or B) the decorated function does its own authentication, e.g.
+    with `util.lock_workflow_for_role()`.
 
     Usage:
 
@@ -76,6 +72,12 @@ def websockets_handler(role: str = "read"):
             # Exceptions in handlers are all bugs, _except_ HandlerError which
             # is a response for the client.
             raise HandlerError('error message')
+
+        @websocket_handler(role=None)
+        async def authenticate_separately(scope, workflow, **kwargs):
+            with lock_workflow_for_role(workflow, scope, 'owner'):  # or HandlerError
+                workflow.title = 'Changed!'
+                workflow.save(update_fields=['title'])
     """
 
     def decorator_websockets_handler(func):
@@ -83,22 +85,12 @@ def websockets_handler(role: str = "read"):
         async def inner(request: HandlerRequest) -> HandlerResponse:
             logger.info("%s(workflow=%d)", request.path, request.workflow.id)
 
-            try:
-                await _authorize(
-                    request.scope["user"],
-                    request.scope["session"],
-                    isinstance(
-                        request.scope["url_route"]["kwargs"][
-                            "workflow_id_or_secret_id"
-                        ],
-                        str,
-                    ),
-                    request.workflow,
-                    role,
-                )
-            except AuthError as err:
+            if role is not None and not await _is_workflow_authorized_async(
+                request.workflow, request.scope, role
+            ):
                 return HandlerResponse(
-                    request.request_id, error=f"AuthError: {str(err)}"
+                    request.request_id,
+                    error="AuthError: no %s access to workflow" % (role,),
                 )
 
             try:
@@ -115,7 +107,7 @@ def websockets_handler(role: str = "read"):
             except HandlerError as err:
                 return HandlerResponse(request.request_id, error=str(err))
             except Exception as err:
-                logger.exception(f"Error in handler")
+                logger.exception("Error in handler")
                 message = f"{type(err).__name__}: {str(err)}"
                 return HandlerResponse(request.request_id, error=message)
 

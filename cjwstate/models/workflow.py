@@ -137,6 +137,12 @@ class Workflow(models.Model):
 
     has_custom_report = models.BooleanField(default=False)
 
+    fetches_per_day = models.FloatField(default=0.0)
+    """Cached summary count of fetches per day.
+
+    This is `sum(86400 / step.update_interval for step in workflow.active_steps)`
+    """
+
     @contextmanager
     def cooperative_lock(self):
         """Yields in a database transaction with self selected FOR UPDATE.
@@ -343,6 +349,7 @@ class Workflow(models.Model):
                 selected_tab_position=self.selected_tab_position,
                 has_custom_report=self.has_custom_report,
                 public=False,
+                fetches_per_day=self.fetches_per_day,
                 last_delta_id=0,  # SECURITY don't clone info we don't need
             )
 

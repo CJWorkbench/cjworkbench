@@ -1,5 +1,4 @@
-"""
-Mini-framework for handling Websockets requests on /workflows.
+"""Mini-framework for handling Websockets requests on /workflows.
 
 Calling convention
 ------------------
@@ -54,7 +53,6 @@ the database directly. Instead, make them await methods decorated with
 """
 
 from .types import (
-    AuthError,
     HandlerRequest,
     HandlerResponse,
     HandlerError,
