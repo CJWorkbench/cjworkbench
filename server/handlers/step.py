@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional
 from cjwmodule.spec.paramfield import ParamField
 from dateutil.parser import isoparse
 from django.conf import settings
-from django.db.models import F, Sum, Value
 
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
@@ -291,13 +290,7 @@ def _do_try_set_autofetch(
                 update_fields=["auto_update_data", "update_interval", "next_update"]
             )
 
-            result = (
-                Step.live_in_workflow(workflow)
-                .filter(auto_update_data=True, update_interval__gt=0)
-                .aggregate(fetches_per_day=Sum(Value(86400.0) / F("update_interval")))
-            )
-            # Did You Know: SQL SUM() of empty set is NULL, not 0? Hence "or 0.0" here
-            workflow.fetches_per_day = result["fetches_per_day"] or 0.0
+            workflow.recalculate_fetches_per_day()
             workflow.save(update_fields=["fetches_per_day"])
 
             # Now before we commit, let's see if we've surpassed the user's limit;

@@ -8,7 +8,7 @@ from typing import ContextManager, Dict, FrozenSet, List, Set, Tuple
 from cjwmodule.spec.paramschema import ParamSchema
 from django.contrib.auth.models import User
 from django.db import connection, models, transaction
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, F, OuterRef, Q, Sum, Value
 from django.http import HttpRequest
 from django.urls import reverse
 
@@ -416,12 +416,24 @@ class Workflow(models.Model):
 
     def are_all_render_results_fresh(self):
         """Query whether all live Steps are rendered."""
-        from .Step import Step
+        from .step import Step
 
         for step in Step.live_in_workflow(self):
             if step.cached_render_result is None:
                 return False
         return True
+
+    def recalculate_fetches_per_day(self):
+        """Run database query to update self.fetches_per_day; do not save."""
+        from .step import Step
+
+        result = (
+            Step.live_in_workflow(self)
+            .filter(auto_update_data=True, update_interval__gt=0)
+            .aggregate(fetches_per_day=Sum(Value(86400.0) / F("update_interval")))
+        )
+        # Did You Know: SQL SUM() of empty set is NULL, not 0? Hence "or 0.0" here
+        self.fetches_per_day = result["fetches_per_day"] or 0.0
 
     def delete_orphan_soft_deleted_tabs(self):
         return (
@@ -511,6 +523,7 @@ class Workflow(models.Model):
             block_slugs=block_slugs,
             public=self.public,
             updated_at=self.updated_at,
+            fetches_per_day=self.fetches_per_day,
             acl=acl,
         )
 

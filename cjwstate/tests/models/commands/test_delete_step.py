@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 from unittest.mock import patch
 
 from cjwstate import clientside, commands
@@ -129,6 +130,34 @@ class DeleteStepTest(DbTestCase):
         self.run_with_async_db(commands.redo(workflow.id))
         block2.refresh_from_db()
         self.assertEqual(block2.position, 0)
+
+    @patch.object(commands, "websockets_notify")
+    def test_update_workflow_fetches_per_day(self, send_update):
+        send_update.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(fetches_per_day=3.0)
+        tab = workflow.tabs.first()
+        tab.steps.create(
+            slug="step-1",
+            order=0,
+            auto_update_data=True,
+            update_interval=86400,
+            next_update=datetime.datetime.now(),
+        )
+        step2 = tab.steps.create(
+            slug="step-2",
+            order=1,
+            auto_update_data=True,
+            update_interval=43200,
+            next_update=datetime.datetime.now(),
+        )
+
+        self.run_with_async_db(
+            commands.do(DeleteStep, workflow_id=workflow.id, step=step2)
+        )
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 1.0)
+        self.run_with_async_db(commands.undo(workflow.id))
 
 
 #      @patch.object(commands, "websockets_notify")

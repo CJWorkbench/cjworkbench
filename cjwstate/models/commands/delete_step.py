@@ -68,6 +68,9 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
         delta.step.save(update_fields=["is_deleted"])
         tab.live_steps.filter(order__gt=delta.step.order).update(order=F("order") - 1)
 
+        delta.workflow.recalculate_fetches_per_day()
+        delta.workflow.save(update_fields=["fetches_per_day"])
+
         self.forward_affected_delta_ids(delta)
 
     def backward(self, delta):
@@ -88,6 +91,9 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
 
         # Don't set tab.selected_step_position. We can't restore it, and
         # this operation can't invalidate any value that was there previously.
+
+        delta.workflow.recalculate_fetches_per_day()
+        delta.workflow.save(update_fields=["fetches_per_day"])
 
         self.backward_affected_delta_ids(delta)
 
