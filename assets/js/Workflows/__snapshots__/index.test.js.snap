@@ -147,6 +147,15 @@ exports[`render Examples correctly 1`] = `
                 Owner
               </th>
               <th
+                class="fetches-per-day"
+              >
+                <a
+                  href="#"
+                >
+                  Auto updates
+                </a>
+              </th>
+              <th
                 class="updated"
               >
                 <a
@@ -182,6 +191,13 @@ exports[`render Examples correctly 1`] = `
                 >
                   Workbench
                 </a>
+              </td>
+              <td
+                class="fetches-per-day"
+              >
+                <a
+                  href="/workflows/10"
+                />
               </td>
               <td
                 class="updated"
@@ -373,6 +389,15 @@ exports[`render My workflows correctly 1`] = `
                 Owner
               </th>
               <th
+                class="fetches-per-day"
+              >
+                <a
+                  href="#"
+                >
+                  Auto updates
+                </a>
+              </th>
+              <th
                 class="updated"
               >
                 <a
@@ -411,6 +436,13 @@ exports[`render My workflows correctly 1`] = `
                 >
                   Fred Frederson
                 </a>
+              </td>
+              <td
+                class="fetches-per-day"
+              >
+                <a
+                  href="/workflows/3"
+                />
               </td>
               <td
                 class="updated"
@@ -468,6 +500,13 @@ exports[`render My workflows correctly 1`] = `
                 </a>
               </td>
               <td
+                class="fetches-per-day"
+              >
+                <a
+                  href="/workflows/1"
+                />
+              </td>
+              <td
                 class="updated"
               >
                 <a
@@ -521,6 +560,13 @@ exports[`render My workflows correctly 1`] = `
                 >
                   Fred Frederson
                 </a>
+              </td>
+              <td
+                class="fetches-per-day"
+              >
+                <a
+                  href="/workflows/2"
+                />
               </td>
               <td
                 class="updated"
@@ -713,6 +759,15 @@ exports[`render Shared correctly 1`] = `
                 Owner
               </th>
               <th
+                class="fetches-per-day"
+              >
+                <a
+                  href="#"
+                >
+                  Auto updates
+                </a>
+              </th>
+              <th
                 class="updated"
               >
                 <a
@@ -748,6 +803,13 @@ exports[`render Shared correctly 1`] = `
                 >
                   Sally Sallerson
                 </a>
+              </td>
+              <td
+                class="fetches-per-day"
+              >
+                <a
+                  href="/workflows/8"
+                />
               </td>
               <td
                 class="updated"
@@ -788,6 +850,13 @@ exports[`render Shared correctly 1`] = `
                 >
                   John Johnson
                 </a>
+              </td>
+              <td
+                class="fetches-per-day"
+              >
+                <a
+                  href="/workflows/7"
+                />
               </td>
               <td
                 class="updated"
