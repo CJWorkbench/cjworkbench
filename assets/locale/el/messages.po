@@ -108,22 +108,22 @@ msgstr "CSV"
 msgid "js.ExportModal.type.JSON"
 msgstr "ΡΟΗ JSON"
 
-#: assets/js/ImportModuleFromGitHub.js:153
+#: assets/js/ImportModuleFromGitHub.js:151
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr "Κλείσιμο"
 
-#: assets/js/ImportModuleFromGitHub.js:113
+#: assets/js/ImportModuleFromGitHub.js:112
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr "Εισαγωγή"
 
-#: assets/js/ImportModuleFromGitHub.js:133
+#: assets/js/ImportModuleFromGitHub.js:132
 #, fuzzy
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 "Μάθετε πώς μπορείτε να δημιουργήσετε τη δική σας μονάδα (module) "
 "<0>εδώ</0>"
 
-#: assets/js/ImportModuleFromGitHub.js:127
+#: assets/js/ImportModuleFromGitHub.js:126
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr "Εισαγωγή Προσαρμοσμένης Μονάδας (Module)"
 
@@ -772,19 +772,23 @@ msgstr ""
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:92
+#: assets/js/Workflows/WorkflowList.js:118
+msgid "js.Workflows.WorkflowList.fetchesPerDay"
+msgstr ""
+
+#: assets/js/Workflows/WorkflowList.js:109
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:105
+#: assets/js/Workflows/WorkflowList.js:132
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:88
+#: assets/js/Workflows/WorkflowList.js:105
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:101
+#: assets/js/Workflows/WorkflowList.js:128
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -814,6 +818,10 @@ msgstr "Δημοσίευση νέων συνταγών μέσω του διαχ�
 #: assets/js/Workflows/WorkflowsSharedWithMeMain.js:19
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr "Οι ροές εργασιών στις οποίες έχετε συνεργαστεί θα εμφανίζονται εδώ"
+
+#: assets/js/Workflows/Workflow.js:83
+msgid "js.Workflows.WorkflowMetadata.fetchesPerDay"
+msgstr ""
 
 #: assets/js/Workflows/Workflow.js:37
 msgid "js.Workflows.WorkflowMetadata.visibility.private"
@@ -1167,12 +1175,12 @@ msgstr "ή"
 msgid "js.params.Custom.File.replace"
 msgstr "Αντικατάσταση"
 
-#: assets/js/params/ParamsFormFooter.js:77
+#: assets/js/params/ParamsFormFooter.js:78
 #, fuzzy
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr "API"
 
-#: assets/js/params/ParamsFormFooter.js:72
+#: assets/js/params/ParamsFormFooter.js:73
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr "Ανοίξτε τις οδηγίες για API ανεβάσματος"
 
@@ -1468,27 +1476,27 @@ msgstr "Ροή εργασιών"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:92
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:95
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr "Αυτόματη"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:82
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:86
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr "αλλαγή ρυθμίσεων αυτόματης ενημέρωσης"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:112
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:115
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr "Ελέγχθηκε <0>{0}</0>"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:100
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:103
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr "Μη αυτόματο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr "Ενημέρωση"
 
@@ -2397,10 +2405,12 @@ msgid "py.templates.workflow.widerScreen"
 msgstr "Χρειάζεστε μια ευρύτερη οθόνη για να απολαύσετε το Workbench"
 
 #: templates/workflow.html:39
+#, fuzzy
 msgid "py.templates.workflow.minimumRequirement"
 msgstr "Ελάχιστο πλάτος 650px"
 
 #: templates/workflow.html:40
+#, fuzzy
 msgid "py.templates.workflow.optimizedForDesktop"
 msgstr "Εμπειρία βελτιστοποιημένη για προγράμματα περιήγησης"
 

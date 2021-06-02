@@ -111,22 +111,22 @@ msgid "js.ExportModal.type.JSON"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/ImportModuleFromGitHub.js:153
+#: assets/js/ImportModuleFromGitHub.js:151
 msgid "js.ImportModuleFromGithub.footer.closeButton"
 msgstr ""
 
 #. default-message: Import
-#: assets/js/ImportModuleFromGitHub.js:113
+#: assets/js/ImportModuleFromGitHub.js:112
 msgid "js.ImportModuleFromGithub.footer.importButton"
 msgstr ""
 
 #. default-message: Learn about how to build your own module<0>here</0>
-#: assets/js/ImportModuleFromGitHub.js:133
+#: assets/js/ImportModuleFromGitHub.js:132
 msgid "js.ImportModuleFromGithub.public.buildingModuleTutorialLink"
 msgstr ""
 
 #. default-message: Import Custom Module
-#: assets/js/ImportModuleFromGitHub.js:127
+#: assets/js/ImportModuleFromGitHub.js:126
 msgid "js.ImportModuleFromGithub.public.header.title"
 msgstr ""
 
@@ -889,23 +889,28 @@ msgstr ""
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
+#. default-message: Auto updates
+#: assets/js/Workflows/WorkflowList.js:118
+msgid "js.Workflows.WorkflowList.fetchesPerDay"
+msgstr ""
+
 #. default-message: Owner
-#: assets/js/Workflows/WorkflowList.js:92
+#: assets/js/Workflows/WorkflowList.js:109
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
 #. default-message: Privacy
-#: assets/js/Workflows/WorkflowList.js:105
+#: assets/js/Workflows/WorkflowList.js:132
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
 #. default-message: Title
-#: assets/js/Workflows/WorkflowList.js:88
+#: assets/js/Workflows/WorkflowList.js:105
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
 #. default-message: Updated
-#: assets/js/Workflows/WorkflowList.js:101
+#: assets/js/Workflows/WorkflowList.js:128
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -937,6 +942,11 @@ msgstr ""
 #. default-message: Workflows shared with you as collaborator will appear here
 #: assets/js/Workflows/WorkflowsSharedWithMeMain.js:19
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
+msgstr ""
+
+#. default-message: {fetchesPerDay} / day
+#: assets/js/Workflows/Workflow.js:83
+msgid "js.Workflows.WorkflowMetadata.fetchesPerDay"
 msgstr ""
 
 #. default-message: private
@@ -1365,12 +1375,12 @@ msgid "js.params.Custom.File.replace"
 msgstr ""
 
 #. default-message: API
-#: assets/js/params/ParamsFormFooter.js:77
+#: assets/js/params/ParamsFormFooter.js:78
 msgid "js.params.Custom.File.uploadApi.button"
 msgstr ""
 
 #. default-message: Open upload API instructions
-#: assets/js/params/ParamsFormFooter.js:72
+#: assets/js/params/ParamsFormFooter.js:73
 msgid "js.params.Custom.File.uploadApi.hoverText"
 msgstr ""
 
@@ -1696,31 +1706,31 @@ msgstr ""
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
 #. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:92
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:95
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr ""
 
 #. default-message: change auto-update settings
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:82
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:86
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr ""
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
 #. default-message: Checked <0>{0}</0>
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:112
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:115
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr ""
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
 #. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:100
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:103
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr ""
 
 #. default-message: Update
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr ""
 
@@ -2776,12 +2786,12 @@ msgstr ""
 msgid "py.templates.workflow.widerScreen"
 msgstr ""
 
-#. default-message: Min 650px wide
+#. default-message: Minimum width: 650px
 #: templates/workflow.html:39
 msgid "py.templates.workflow.minimumRequirement"
 msgstr ""
 
-#. default-message: Experience optimized for web browsers
+#. default-message: Experience optimized for desktop
 #: templates/workflow.html:40
 msgid "py.templates.workflow.optimizedForDesktop"
 msgstr ""

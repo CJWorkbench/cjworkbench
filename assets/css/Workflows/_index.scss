@@ -31,6 +31,7 @@ main.workflows {
 
   table {
     width: 100%;
+    height: 1px; // td>a height:100% in Chrome+Firefox: https://stackoverflow.com/a/56913789
     border-collapse: separate; // so th { position:sticky } keeps border
     border-spacing: 0;
 
@@ -59,9 +60,14 @@ main.workflows {
     }
 
     tbody {
+      tr {
+        height: 100%; // td>a height:100% in Chrome+Firefox: https://stackoverflow.com/a/56913789
+      }
+
       td {
         border-bottom: 1px solid $item-border;
         padding: 0;
+        height: 100%; // td>a height:100% in Chrome+Firefox: https://stackoverflow.com/a/56913789
 
         a {
           display: block;
@@ -97,6 +103,7 @@ main.workflows {
       }
 
       &.owner,
+      &.fetches-per-day,
       &.updated,
       &.privacy {
         // These columns are "optional". We only show them:
@@ -121,7 +128,7 @@ main.workflows {
         }
 
         @include media-when-we-pin-main-nav-sidebar {
-          &.privacy {
+          &.privacy, &.fetches-per-day {
             display: table-cell;
           }
         }

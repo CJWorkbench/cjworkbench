@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { i18n } from '@lingui/core'
-import { Trans } from '@lingui/macro'
+import { Trans, t } from '@lingui/macro'
 import { timeDifference } from '../utils'
 import WorkflowContextMenu from './WorkflowContextMenu'
 
@@ -76,6 +76,17 @@ export default function Workflow (props) {
       </td>
       <td className='owner'>
         <a href={href}>{workflow.owner_name}</a>
+      </td>
+      <td className='fetches-per-day'>
+        <a href={href}>
+          {workflow.fetchesPerDay
+            ? t({
+                id: 'js.Workflows.WorkflowMetadata.fetchesPerDay',
+                message: '{fetchesPerDay}\u202f/\u202fday',
+                values: { fetchesPerDay: i18n.number(workflow.fetchesPerDay, { maximumFractionDigits: 1 }) }
+              })
+            : null}
+        </a>
       </td>
       <td className='updated'>
         <a href={href}>

@@ -20,8 +20,7 @@ function SortableColumnName (props) {
   const handleClickSort = useCallback(
     ev => {
       ev.preventDefault()
-      const ascending =
-        sort.key === sortKey ? !sort.ascending : defaultAscending
+      const ascending = sort.key === sortKey ? !sort.ascending : defaultAscending
       onChangeSort({ key: sortKey, ascending })
     },
     [sort, sortKey, defaultAscending, onChangeSort]
@@ -47,6 +46,27 @@ SortableColumnName.propTypes = {
   children: PropTypes.node.isRequired
 }
 
+function compareNumbers (a, b) {
+  return a - b
+}
+
+function compareIso8601 (a, b) {
+  return a < b
+    ? -1
+    : (b < a ? 1 : 0)
+}
+
+function createComparator (sortKey) {
+  switch (sortKey) {
+    case 'fetchesPerDay': return compareNumbers
+    case 'last_update': return compareIso8601
+    case 'name': {
+      const collator = new Intl.Collator()
+      return collator.compare.bind(collator)
+    }
+  }
+}
+
 export default function WorkflowList (props) {
   const {
     className,
@@ -61,12 +81,9 @@ export default function WorkflowList (props) {
   const [sort, setSort] = useState({ key: 'last_update', ascending: false })
   const showActions = Boolean(api)
   const sortedWorkflows = useMemo(() => {
-    const TextComparator = new Intl.Collator() // locale alphabetical
     const { key, ascending } = sort
-    // workflow.last_update is ISO8601 Date. We can sort it lexicographically.
-    const ret = workflows
-      .slice()
-      .sort((a, b) => TextComparator.compare(a[key], b[key]))
+    const compare = createComparator(key)
+    const ret = workflows.slice().sort((a, b) => compare(a[key], b[key]))
     if (!ascending) {
       ret.reverse()
     }
@@ -90,6 +107,16 @@ export default function WorkflowList (props) {
             </th>
             <th className='owner'>
               <Trans id='js.Workflows.WorkflowList.owner'>Owner</Trans>
+            </th>
+            <th className='fetches-per-day'>
+              <SortableColumnName
+                sort={sort}
+                sortKey='fetchesPerDay'
+                defaultAscending={false}
+                onChangeSort={setSort}
+              >
+                <Trans id='js.Workflows.WorkflowList.fetchesPerDay'>Auto updates</Trans>
+              </SortableColumnName>
             </th>
             <th className='updated'>
               <SortableColumnName
