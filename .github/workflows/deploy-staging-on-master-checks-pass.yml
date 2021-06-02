@@ -24,7 +24,7 @@ jobs:
       - name: Install GCloud API
         uses: google-github-actions/setup-gcloud@master
         with:
-          version: '290.0.1'
+          version: '343.0.0'
           service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT }}
