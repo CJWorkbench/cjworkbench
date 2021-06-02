@@ -10,7 +10,7 @@ else
   CLUSTER="gke_workbench-staging_us-central1-b_workbench"
 fi
 
-KUBECTL="kubectl.1.18 --cluster $CLUSTER"
+KUBECTL="kubectl.1.19 --cluster $CLUSTER"
 MODULES="$(cat "$(dirname "$0")"/../cjwstate/modules/suggested-modules.txt)"
 
 echo -n "Finding frontend to run on..." >&2

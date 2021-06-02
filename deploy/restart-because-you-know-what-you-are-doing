@@ -56,9 +56,9 @@ else
 fi
 
 echo -n "Triggering rollout of $SERVICE on $ENV..." >&2
-kubectl.1.15 --cluster $CLUSTER rollout restart deployment $SERVICE-deployment
+kubectl.1.19 --cluster $CLUSTER rollout restart deployment $SERVICE-deployment
 echo -n 'Waiting for rollout to finish...' >&2
-kubectl.1.15 --cluster $CLUSTER rollout status deployment/$SERVICE-deployment >/dev/null
+kubectl.1.19 --cluster $CLUSTER rollout status deployment/$SERVICE-deployment >/dev/null
 echo ' done' >&2
 
 echo >&2

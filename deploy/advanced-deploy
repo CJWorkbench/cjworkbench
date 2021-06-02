@@ -11,7 +11,7 @@ else
   CLUSTER="gke_workbenchdata-production_us-central1-b_workbench"
 fi
 
-KUBECTL="kubectl.1.15 --cluster $CLUSTER"
+KUBECTL="kubectl.1.19 --cluster $CLUSTER"
 
 run_migrations() {
   echo "Uploading assets for $SHA on $ENV..." >&2
