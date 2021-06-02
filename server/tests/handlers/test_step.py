@@ -486,24 +486,28 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             workflow=workflow,
             stepSlug="step-1",
             isAutofetch=True,
-            fetchInterval=3600,
+            fetchInterval=19200,
         )
-        self.assertResponse(response, data={"isAutofetch": True, "fetchInterval": 3600})
+        self.assertResponse(
+            response, data={"isAutofetch": True, "fetchInterval": 19200}
+        )
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
-        self.assertEqual(step.update_interval, 3600)
+        self.assertEqual(step.update_interval, 19200)
         self.assertLess(
-            step.next_update, datetime.datetime.now() + datetime.timedelta(seconds=3602)
+            step.next_update,
+            datetime.datetime.now() + datetime.timedelta(seconds=19202),
         )
         self.assertGreater(
-            step.next_update, datetime.datetime.now() + datetime.timedelta(seconds=3598)
+            step.next_update,
+            datetime.datetime.now() + datetime.timedelta(seconds=19198),
         )
         workflow.refresh_from_db()
-        self.assertEqual(workflow.fetches_per_day, 24)
+        self.assertEqual(workflow.fetches_per_day, 4.5)
 
     def test_try_set_autofetch_disable_autofetch(self):
         user = User.objects.create(username="a", email="a@example.org")
-        workflow = Workflow.create_and_init(owner=user, fetches_per_day=72)
+        workflow = Workflow.create_and_init(owner=user, fetches_per_day=72.0)
         step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
@@ -526,7 +530,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.update_interval, 300)
         self.assertIsNone(step.next_update)
         workflow.refresh_from_db()
-        self.assertEqual(workflow.fetches_per_day, 0)
+        self.assertEqual(workflow.fetches_per_day, 0.0)
 
     def test_try_set_autofetch_exceed_quota(self):
         user = User.objects.create(username="a", email="a@example.org")
@@ -551,12 +555,12 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, False)
         workflow.refresh_from_db()
-        self.assertEqual(workflow.fetches_per_day, 0)
+        self.assertEqual(workflow.fetches_per_day, 0.0)
 
     def test_try_set_autofetch_allow_exceed_quota_when_reducing(self):
         user = User.objects.create(username="a", email="a@example.org")
         UserProfile.objects.create(user=user, max_fetches_per_day=10)
-        workflow = Workflow.create_and_init(owner=user, fetches_per_day=288)
+        workflow = Workflow.create_and_init(owner=user, fetches_per_day=288.0)
         step = workflow.tabs.first().steps.create(
             order=0,
             slug="step-1",
@@ -576,7 +580,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step.refresh_from_db()
         self.assertEqual(step.update_interval, 600)
         workflow.refresh_from_db()
-        self.assertEqual(workflow.fetches_per_day, 144)
+        self.assertEqual(workflow.fetches_per_day, 144.0)
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_fetch")

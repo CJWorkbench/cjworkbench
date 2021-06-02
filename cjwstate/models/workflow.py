@@ -9,6 +9,7 @@ from cjwmodule.spec.paramschema import ParamSchema
 from django.contrib.auth.models import User
 from django.db import connection, models, transaction
 from django.db.models import Exists, F, OuterRef, Q, Sum, Value
+from django.db.models.functions import Cast
 from django.http import HttpRequest
 from django.urls import reverse
 
@@ -430,7 +431,12 @@ class Workflow(models.Model):
         result = (
             Step.live_in_workflow(self)
             .filter(auto_update_data=True, update_interval__gt=0)
-            .aggregate(fetches_per_day=Sum(Value(86400.0) / F("update_interval")))
+            .aggregate(
+                fetches_per_day=Sum(
+                    Value(86400.0, output_field=models.FloatField())
+                    / Cast(F("update_interval"), output_field=models.FloatField())
+                )
+            )
         )
         # Did You Know: SQL SUM() of empty set is NULL, not 0? Hence "or 0.0" here
         self.fetches_per_day = result["fetches_per_day"] or 0.0
