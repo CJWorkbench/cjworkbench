@@ -139,6 +139,7 @@ exports[`render Examples correctly 1`] = `
                   href="#"
                 >
                   Title
+                  /app/assets/icons/nothing.svg
                 </a>
               </th>
               <th
@@ -153,6 +154,7 @@ exports[`render Examples correctly 1`] = `
                   href="#"
                 >
                   Auto updates
+                  /app/assets/icons/nothing.svg
                 </a>
               </th>
               <th
@@ -381,6 +383,7 @@ exports[`render My workflows correctly 1`] = `
                   href="#"
                 >
                   Title
+                  /app/assets/icons/nothing.svg
                 </a>
               </th>
               <th
@@ -395,6 +398,7 @@ exports[`render My workflows correctly 1`] = `
                   href="#"
                 >
                   Auto updates
+                  /app/assets/icons/nothing.svg
                 </a>
               </th>
               <th
@@ -751,6 +755,7 @@ exports[`render Shared correctly 1`] = `
                   href="#"
                 >
                   Title
+                  /app/assets/icons/nothing.svg
                 </a>
               </th>
               <th
@@ -765,6 +770,7 @@ exports[`render Shared correctly 1`] = `
                   href="#"
                 >
                   Auto updates
+                  /app/assets/icons/nothing.svg
                 </a>
               </th>
               <th

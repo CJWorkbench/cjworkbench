@@ -4,6 +4,7 @@ import { Trans } from '@lingui/macro'
 import Workflow from './Workflow'
 import SortAscendingIcon from '../../icons/sort-ascending.svg'
 import SortDescendingIcon from '../../icons/sort-descending.svg'
+import NothingIcon from '../../icons/nothing.svg'
 
 const WorkflowListPropType = PropTypes.arrayOf(
   PropTypes.shape({
@@ -31,7 +32,7 @@ function SortableColumnName (props) {
       {children}
       {sort.key === sortKey
         ? (sort.ascending ? <SortAscendingIcon /> : <SortDescendingIcon />)
-        : null}
+        : <NothingIcon />}
     </a>
   )
 }
@@ -83,7 +84,7 @@ export default function WorkflowList (props) {
   const sortedWorkflows = useMemo(() => {
     const { key, ascending } = sort
     const compare = createComparator(key)
-    const ret = workflows.slice().sort((a, b) => compare(a[key], b[key]))
+    const ret = workflows.slice().sort((a, b) => compare(a[key], b[key]) || compareIso8601(a.last_update, b.last_update))
     if (!ascending) {
       ret.reverse()
     }

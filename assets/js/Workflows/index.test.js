@@ -11,7 +11,8 @@ const testOwnedWorkflows = [
     owner_name: 'Fred Frederson',
     public: true,
     acl: [],
-    last_update: '2010-10-18T00:30:00'
+    last_update: '2010-10-18T00:30:00',
+    fetchesPerDay: null
   },
   {
     id: 2,
@@ -19,7 +20,8 @@ const testOwnedWorkflows = [
     owner_name: 'Fred Frederson',
     public: false,
     acl: [],
-    last_update: '2010-10-18T00:20:00'
+    last_update: '2010-10-18T00:20:00',
+    fetchesPerDay: null
   },
   {
     id: 3,
@@ -27,7 +29,8 @@ const testOwnedWorkflows = [
     owner_name: 'Fred Frederson',
     public: false,
     acl: [],
-    last_update: '2010-10-18T07:45:00'
+    last_update: '2010-10-18T07:45:00',
+    fetchesPerDay: null
   }
 ]
 
@@ -38,7 +41,8 @@ const testSharedWorkflows = [
     owner_name: 'John Johnson',
     public: false,
     acl: [],
-    last_update: '2010-10-18T00:30:00'
+    last_update: '2010-10-18T00:30:00',
+    fetchesPerDay: null
   },
   {
     id: 8,
@@ -46,7 +50,8 @@ const testSharedWorkflows = [
     owner_name: 'Sally Sallerson',
     public: true,
     acl: [],
-    last_update: '2010-10-18T00:45:00'
+    last_update: '2010-10-18T00:45:00',
+    fetchesPerDay: null
   }
 ]
 
@@ -57,7 +62,8 @@ const testExampleWorkflows = [
     owner_name: 'Workbench',
     public: false,
     acl: [],
-    last_update: '2010-10-18T00:30:00'
+    last_update: '2010-10-18T00:30:00',
+    fetchesPerDay: null
   }
 ]
 
@@ -226,7 +232,7 @@ test('sort by name', async () => {
     workflows: testOwnedWorkflows
   })
   expect(container.textContent).toMatch(/Analysis.*Cleaning.*Charting/)
-  fireEvent.click(getByText('Title'))
+  fireEvent.click(getByText(/Title.*nothing.svg/))
   expect(container.textContent).toMatch(/Analysis.*Charting.*Cleaning/)
   fireEvent.click(getByText(/Title.*sort-ascending.svg/))
   expect(container.textContent).toMatch(/Cleaning.*Charting.*Analysis/)

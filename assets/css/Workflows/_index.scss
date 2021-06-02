@@ -55,6 +55,8 @@ main.workflows {
       }
 
       svg {
+        font-size: rem(1);
+        color: $text-muted;
         margin-left: rem(0.5);
       }
     }
@@ -102,6 +104,11 @@ main.workflows {
         padding: 0 0 0 rem(1);
       }
 
+      &.fetches-per-day,
+      &.updated {
+        text-align: right;
+      }
+
       &.owner,
       &.fetches-per-day,
       &.updated,
@@ -111,11 +118,26 @@ main.workflows {
         // * when they fit (e.g., on mobile they may not fit)
         // Override this using &.owned, &.shared-with-me and &.example selectors below
         display: none;
+        width: 1px;
+        white-space: nowrap;
       }
     }
 
     td.title {
       padding: 0;
+    }
+
+    td.fetches-per-day,
+    td.updated {
+      &>* {
+        // svg width + svg margin
+        padding-right: rem(1.5);
+      }
+    }
+
+    td.fetches-per-day a:empty::before {
+      content: '–';
+      color: $text-muted;
     }
   }
 
