@@ -128,6 +128,13 @@ class WorkflowUpdate:
     updated_at: Optional[datetime.datetime] = None
     """Time of last modification."""
 
+    fetches_per_day: Optional[float] = None
+    """Number of fetches per day.
+
+    Currently, this is only maintained on the "/workflows" pages, not the
+    "/workflow/:id" pages.
+    """
+
     acl: Optional[List[AclEntry]] = None
     """Non-owners' permissions."""
 
