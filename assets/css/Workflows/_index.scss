@@ -64,46 +64,15 @@ main.workflows {
     tbody {
       tr {
         height: 100%; // td>a height:100% in Chrome+Firefox: https://stackoverflow.com/a/56913789
-      }
 
-      td {
-        border-bottom: 1px solid $item-border;
-        padding: 0;
-        height: 100%; // td>a height:100% in Chrome+Firefox: https://stackoverflow.com/a/56913789
-
-        a {
-          display: block;
-          height: 100%;
-          color: inherit;
-          text-decoration: none;
-          padding: rem(1.25) rem(1) rem(1) rem(1);
+        &:hover td>* {
+          background: $hover-background;
         }
-      }
-
-      td.title a {
-        padding-left: 0;
-      }
-
-      tr:hover td a {
-        background: $hover-background;
       }
     }
 
     td,
     th {
-      // Anything but the .title may be the last column. Set its right padding to 0.
-      padding: rem(1) 0 rem(1) rem(1);
-      &:first-child {
-        padding-left: 0;
-      }
-
-      &.actions {
-        // .actions is present when workflows are editable
-        // don't affect height ... and take minimal width
-        width: 1px;
-        padding: 0 0 0 rem(1);
-      }
-
       &.fetches-per-day,
       &.updated {
         text-align: right;
@@ -118,13 +87,46 @@ main.workflows {
         // * when they fit (e.g., on mobile they may not fit)
         // Override this using &.owned, &.shared-with-me and &.example selectors below
         display: none;
-        width: 1px;
         white-space: nowrap;
       }
     }
 
-    td.title {
+    th {
+      // Anything but the .title may be the last column. Set its right padding to 0.
+      padding: rem(1) 0 rem(1) rem(1);
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+
+    td {
+      border-bottom: 1px solid $item-border;
       padding: 0;
+      height: 100%; // td>a height:100% in Chrome+Firefox: https://stackoverflow.com/a/56913789
+      line-height: rem(1);
+
+      &>* {
+        display: block;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
+        padding: rem(1.25) rem(1) rem(1) rem(1);
+      }
+
+      &.title>* {
+        padding-left: 0;
+      }
+
+      &.actions {
+        text-align: right;
+
+        &>* {
+          // .actions is present when workflows are editable; it contains a .dropdown
+          padding-right: 0;
+          padding-top: rem(0.5); // button already has padding-top of rem(0.5); and we're not vertically aligned with text because [2021-06-03, adamhooper] I dunno, but it's been that way for months
+          padding-bottom: 0; // don't take up extra space compared to other cells on this row
+        }
+      }
     }
 
     td.fetches-per-day,

@@ -77,6 +77,11 @@ export default function Workflow (props) {
       <td className='owner'>
         <a href={href}>{workflow.owner_name}</a>
       </td>
+      <td className='privacy'>
+        <a href={href}>
+          <WorkflowPrivacy workflow={workflow} user={user} />
+        </a>
+      </td>
       <td className='fetches-per-day'>
         <a href={href}>
           {workflow.fetchesPerDay
@@ -91,11 +96,6 @@ export default function Workflow (props) {
       <td className='updated'>
         <a href={href}>
           <time dateTime={workflow.last_updated}>{timeAgo}</time>
-        </a>
-      </td>
-      <td className='privacy'>
-        <a href={href}>
-          <WorkflowPrivacy workflow={workflow} user={user} />
         </a>
       </td>
       {showActions

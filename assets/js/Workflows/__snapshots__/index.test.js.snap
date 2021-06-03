@@ -148,6 +148,11 @@ exports[`render Examples correctly 1`] = `
                 Owner
               </th>
               <th
+                class="privacy"
+              >
+                Privacy
+              </th>
+              <th
                 class="fetches-per-day"
               >
                 <a
@@ -166,11 +171,6 @@ exports[`render Examples correctly 1`] = `
                   Updated
                   /app/assets/icons/sort-descending.svg
                 </a>
-              </th>
-              <th
-                class="privacy"
-              >
-                Privacy
               </th>
             </tr>
           </thead>
@@ -195,6 +195,15 @@ exports[`render Examples correctly 1`] = `
                 </a>
               </td>
               <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/10"
+                >
+                  private
+                </a>
+              </td>
+              <td
                 class="fetches-per-day"
               >
                 <a
@@ -210,15 +219,6 @@ exports[`render Examples correctly 1`] = `
                   <time>
                     10y ago
                   </time>
-                </a>
-              </td>
-              <td
-                class="privacy"
-              >
-                <a
-                  href="/workflows/10"
-                >
-                  private
                 </a>
               </td>
             </tr>
@@ -392,6 +392,11 @@ exports[`render My workflows correctly 1`] = `
                 Owner
               </th>
               <th
+                class="privacy"
+              >
+                Privacy
+              </th>
+              <th
                 class="fetches-per-day"
               >
                 <a
@@ -410,11 +415,6 @@ exports[`render My workflows correctly 1`] = `
                   Updated
                   /app/assets/icons/sort-descending.svg
                 </a>
-              </th>
-              <th
-                class="privacy"
-              >
-                Privacy
               </th>
               <th
                 class="actions"
@@ -442,6 +442,15 @@ exports[`render My workflows correctly 1`] = `
                 </a>
               </td>
               <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/3"
+                >
+                  private
+                </a>
+              </td>
+              <td
                 class="fetches-per-day"
               >
                 <a
@@ -457,15 +466,6 @@ exports[`render My workflows correctly 1`] = `
                   <time>
                     10y ago
                   </time>
-                </a>
-              </td>
-              <td
-                class="privacy"
-              >
-                <a
-                  href="/workflows/3"
-                >
-                  private
                 </a>
               </td>
               <td
@@ -504,6 +504,15 @@ exports[`render My workflows correctly 1`] = `
                 </a>
               </td>
               <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/1"
+                >
+                  public
+                </a>
+              </td>
+              <td
                 class="fetches-per-day"
               >
                 <a
@@ -519,15 +528,6 @@ exports[`render My workflows correctly 1`] = `
                   <time>
                     10y ago
                   </time>
-                </a>
-              </td>
-              <td
-                class="privacy"
-              >
-                <a
-                  href="/workflows/1"
-                >
-                  public
                 </a>
               </td>
               <td
@@ -566,6 +566,15 @@ exports[`render My workflows correctly 1`] = `
                 </a>
               </td>
               <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/2"
+                >
+                  private
+                </a>
+              </td>
+              <td
                 class="fetches-per-day"
               >
                 <a
@@ -581,15 +590,6 @@ exports[`render My workflows correctly 1`] = `
                   <time>
                     10y ago
                   </time>
-                </a>
-              </td>
-              <td
-                class="privacy"
-              >
-                <a
-                  href="/workflows/2"
-                >
-                  private
                 </a>
               </td>
               <td
@@ -764,6 +764,11 @@ exports[`render Shared correctly 1`] = `
                 Owner
               </th>
               <th
+                class="privacy"
+              >
+                Privacy
+              </th>
+              <th
                 class="fetches-per-day"
               >
                 <a
@@ -782,11 +787,6 @@ exports[`render Shared correctly 1`] = `
                   Updated
                   /app/assets/icons/sort-descending.svg
                 </a>
-              </th>
-              <th
-                class="privacy"
-              >
-                Privacy
               </th>
             </tr>
           </thead>
@@ -811,6 +811,15 @@ exports[`render Shared correctly 1`] = `
                 </a>
               </td>
               <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/8"
+                >
+                  public
+                </a>
+              </td>
+              <td
                 class="fetches-per-day"
               >
                 <a
@@ -826,15 +835,6 @@ exports[`render Shared correctly 1`] = `
                   <time>
                     10y ago
                   </time>
-                </a>
-              </td>
-              <td
-                class="privacy"
-              >
-                <a
-                  href="/workflows/8"
-                >
-                  public
                 </a>
               </td>
             </tr>
@@ -858,6 +858,15 @@ exports[`render Shared correctly 1`] = `
                 </a>
               </td>
               <td
+                class="privacy"
+              >
+                <a
+                  href="/workflows/7"
+                >
+                  private
+                </a>
+              </td>
+              <td
                 class="fetches-per-day"
               >
                 <a
@@ -873,15 +882,6 @@ exports[`render Shared correctly 1`] = `
                   <time>
                     10y ago
                   </time>
-                </a>
-              </td>
-              <td
-                class="privacy"
-              >
-                <a
-                  href="/workflows/7"
-                >
-                  private
                 </a>
               </td>
             </tr>

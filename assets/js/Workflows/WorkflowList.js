@@ -109,6 +109,9 @@ export default function WorkflowList (props) {
             <th className='owner'>
               <Trans id='js.Workflows.WorkflowList.owner'>Owner</Trans>
             </th>
+            <th className='privacy'>
+              <Trans id='js.Workflows.WorkflowList.privacy'>Privacy</Trans>
+            </th>
             <th className='fetches-per-day'>
               <SortableColumnName
                 sort={sort}
@@ -128,9 +131,6 @@ export default function WorkflowList (props) {
               >
                 <Trans id='js.Workflows.WorkflowList.updated'>Updated</Trans>
               </SortableColumnName>
-            </th>
-            <th className='privacy'>
-              <Trans id='js.Workflows.WorkflowList.privacy'>Privacy</Trans>
             </th>
             {showActions ? <th className='actions' /> : null}
           </tr>
