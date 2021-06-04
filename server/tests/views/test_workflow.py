@@ -99,8 +99,10 @@ class WorkflowViewTests(DbTestCase):
         self.queue_render = self.queue_render_patcher.start()
         self.queue_render.side_effect = async_noop
 
-        self.log_patcher = patch("server.utils.log_user_event_from_request")
-        self.log_patch = self.log_patcher.start()
+        self.queue_intercom_message_patcher = patch.object(
+            rabbitmq, "queue_intercom_message", async_noop
+        )
+        self.queue_intercom_message_patcher.start()
 
         self.user = create_user("user", "user@example.com")
 
@@ -111,7 +113,7 @@ class WorkflowViewTests(DbTestCase):
         self.otheruser = create_user("user2", "user2@example.com")
 
     def tearDown(self):
-        self.log_patcher.stop()
+        self.queue_intercom_message_patcher.stop()
         self.queue_render_patcher.stop()
         super().tearDown()
 
@@ -374,8 +376,10 @@ class SecretLinkTests(DbTestCase):
         self.queue_render = self.queue_render_patcher.start()
         self.queue_render.side_effect = async_noop
 
-        self.log_patcher = patch("server.utils.log_user_event_from_request")
-        self.log_patch = self.log_patcher.start()
+        self.queue_intercom_message_patcher = patch.object(
+            rabbitmq, "queue_intercom_message", async_noop
+        )
+        self.queue_intercom_message_patcher.start()
 
         self.owner = create_user("owner", "owner@example.com")
         self.viewer = create_user("viewer", "viewer@example.com")
@@ -389,7 +393,7 @@ class SecretLinkTests(DbTestCase):
         )
 
     def tearDown(self):
-        self.log_patcher.stop()
+        self.queue_intercom_message_patcher.stop()
         self.queue_render_patcher.stop()
         super().tearDown()
 
@@ -484,7 +488,7 @@ class SecretLinkTests(DbTestCase):
     def test_secret_link_private_workflow(self):
         self._set_public_and_secret_id(False, "wanyoldsecret")
         self._assert_responses(
-            f"/workflows/wanyoldsecret/",
+            "/workflows/wanyoldsecret/",
             expected_owner_response=302,
             expected_viewer_response=302,
             expected_report_viewer_response=200,
@@ -495,7 +499,7 @@ class SecretLinkTests(DbTestCase):
     def test_secret_report_link_private_workflow(self):
         self._set_public_and_secret_id(False, "wanyoldsecret")
         self._assert_responses(
-            f"/workflows/wanyoldsecret/report",
+            "/workflows/wanyoldsecret/report",
             expected_owner_response=302,
             expected_viewer_response=302,
             expected_report_viewer_response=302,
@@ -506,7 +510,7 @@ class SecretLinkTests(DbTestCase):
     def test_secret_link_public_workflow(self):
         self._set_public_and_secret_id(True, "wanyoldsecret")
         self._assert_responses(
-            f"/workflows/wanyoldsecret/",
+            "/workflows/wanyoldsecret/",
             expected_owner_response=302,
             expected_viewer_response=302,
             expected_report_viewer_response=302,
@@ -517,7 +521,7 @@ class SecretLinkTests(DbTestCase):
     def test_empty_string_is_not_secret_link(self):
         self._set_public_and_secret_id(False, "")
         self._assert_responses(
-            f"/workflows//",
+            "/workflows//",
             expected_owner_response=404,
             expected_viewer_response=404,
             expected_report_viewer_response=404,
@@ -535,8 +539,10 @@ class ReportViewTests(DbTestCase):
         self.queue_render = self.queue_render_patcher.start()
         self.queue_render.side_effect = async_noop
 
-        self.log_patcher = patch("server.utils.log_user_event_from_request")
-        self.log_patch = self.log_patcher.start()
+        self.queue_intercom_message_patcher = patch.object(
+            rabbitmq, "queue_intercom_message", async_noop
+        )
+        self.queue_intercom_message_patcher.start()
 
         self.user = create_user("user", "user@example.com")
 
@@ -547,7 +553,7 @@ class ReportViewTests(DbTestCase):
         self.otheruser = create_user("user2", "user2@example.com")
 
     def tearDown(self):
-        self.log_patcher.stop()
+        self.queue_intercom_message_patcher.stop()
         self.queue_render_patcher.stop()
         super().tearDown()
 

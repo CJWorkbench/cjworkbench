@@ -191,6 +191,13 @@ services:
       '-s3-bucket=integrationtest-upload',
     ]
 
+  intercom-sink:
+    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:98677d4a4fa499982b0dedf31a0c2fe1e1ab5467
+    environment:
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_INTERCOM_API_TOKEN: mock
+      CJW_INTERCOM_QUEUE_NAME: intercom
+
 
   integration-test:
     #image:
@@ -202,6 +209,7 @@ services:
       - cron-expired-session-deleter
       - cron-lesson-workflow-deleter
       - db
+      - intercom-sink
       - fetcher
       - frontend
       - renderer

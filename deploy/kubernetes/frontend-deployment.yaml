@@ -83,11 +83,6 @@ spec:
                 secretKeyRef:
                   name: cjw-intercom-secret
                   key: APP_ID
-            - name: CJW_INTERCOM_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: cjw-intercom-secret
-                  key: ACCESS_TOKEN
             - name: CJW_SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:

@@ -24,8 +24,7 @@ class UserProfile(models.Model):
     get_newsletter = models.BooleanField(default=False)
     """True iff the user is requesting to be part of our newsletter.
 
-    There is a race here. TODO delete this field and query our mass-mail
-    service instead.
+    This is sent to Intercom during sign-up, then it's ignored. Don't trust it.
     """
 
     max_fetches_per_day = models.IntegerField(

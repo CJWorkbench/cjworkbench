@@ -1,8 +1,7 @@
-import asyncio
-from typing import Any, Dict, List
 from unittest.mock import patch
+
 from cjwstate import rabbitmq
-from cjwstate.models import Workflow, ModuleVersion
+from cjwstate.models import Workflow
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
@@ -15,7 +14,7 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch("server.utils.log_user_event_from_request", lambda *a: None)
+@patch.object(rabbitmq, "queue_intercom_message", async_noop)
 class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def log_in(self):
         self.user = create_test_user()

@@ -1,13 +1,13 @@
-import os
-import time
 import logging
+import time
 from typing import Any, Dict, Iterable, Optional, Tuple
+
+from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.http.request import HttpRequest
-from intercom.client import Client
-import intercom.errors
-import requests.exceptions  # we don't depend on `requests`, but intercom does
+
+from cjwstate import rabbitmq
 
 
 logger = logging.getLogger(__name__)
@@ -15,33 +15,6 @@ logger = logging.getLogger(__name__)
 
 def get_absolute_url(abs_url):
     return "https://%s%s" % (Site.objects.get_current().domain, abs_url)
-
-
-# --- Logging ---
-class NullIntercomClient:
-    class Events:
-        def create(self, **kwargs):
-            logger.info(
-                "Error logging Intercom event: client not initialized "
-                "(bad CJW_INTERCOM_ACCESS_TOKEN?)"
-            )
-
-    def __init__(self):
-        self.events = NullIntercomClient.Events()
-
-
-def _setup_intercom_client():
-    try:
-        token = os.environ["CJW_INTERCOM_ACCESS_TOKEN"]
-        return Client(personal_access_token=token)
-    except KeyError:
-        return NullIntercomClient()
-    except Exception as e:
-        logger.info("Error creating Intercom client: " + str(e))
-        return NullIntercomClient()
-
-
-_intercom_client = _setup_intercom_client()
 
 
 class Headers:
@@ -90,8 +63,11 @@ class Headers:
         return cls(data)
 
 
-def _log_user_event(
-    user: User, headers: Headers, event: str, metadata: Optional[Dict[str, Any]] = None
+async def _log_user_event(
+    user: User,
+    headers: Headers,
+    event_name: str,
+    metadata: Optional[Dict[str, Any]] = None,
 ) -> None:
     if headers.get("DNT", "0") == "1":
         # Don't be evil. The user has specifically asked to _not_ be tracked.
@@ -103,7 +79,7 @@ def _log_user_event(
 
     if "/lessons/" in headers.get("REFERER", ""):
         # https://www.pivotaltracker.com/story/show/160041803
-        logger.debug("Not logging event '%s' because it is from a lesson", event)
+        logger.debug("Not logging event '%s' because it is from a lesson", event_name)
         return
 
     if not user.is_authenticated:
@@ -117,59 +93,38 @@ def _log_user_event(
         # And lest we forget: Intercom is about tracking _users_, not _clicks_.
         # It may be nice to see the whole story of an anonymous user creating a
         # workflow, but Intercom isn't made to do that.
-        logger.debug("Not logging event '%s' for anonymous user", event)
+        logger.debug("Not logging event '%s' for anonymous user", event_name)
         return
 
-    logger.debug("Logging Intercom event '%s' with metadata %r", event, metadata)
+    logger.debug("Queueing Intercom event '%s' with metadata %r", event_name, metadata)
 
-    email = user.email
-    user_id = user.id
-
-    if not metadata:
+    if metadata is None:
         metadata = {}
 
-    try:
-        _intercom_client.events.create(
-            event_name=event,
-            email=email,
-            user_id=user_id,
+    await rabbitmq.queue_intercom_message(
+        http_method="POST",
+        http_path="/events",
+        data=dict(
+            user_id=user.id,
+            event_name=event_name,
             created_at=int(time.time()),
             metadata=metadata,
-        )
-    except (
-        intercom.errors.ServiceUnavailableError,
-        intercom.errors.ResourceNotFound,
-        requests.exceptions.RequestException,
-    ) as err:
-        # on production, these happen every day or two:
-        #
-        # intercom.errors.ServiceUnavailableError: Sorry, the API service is
-        # temporarily unavailable
-        #
-        # intercom.errors.ResourceNotFound: User Not Found
-        #
-        # requests.exceptions.ConnectionError: ('Connection aborted.',
-        # RemoteDisconnected('Remote end closed connection without response',))
-        #
-        # _log_ the problem, but don't logger.exception(): we don't want to
-        # receive an email about it.
-        logger.info("(known) error logging Intercom event '%s': %r", event, err)
-        pass
-    except Exception:
-        logger.exception("Error logging Intercom event '%s'", event)
+        ),
+    )
 
 
-def log_user_event_from_request(
+@async_to_sync
+async def log_user_event_from_request(
     request: HttpRequest, event: str, metadata: Optional[Dict[str, Any]] = None
 ) -> None:
-    return _log_user_event(
+    await _log_user_event(
         request.user, Headers.from_META(request.META), event, metadata
     )
 
 
-def log_user_event_from_scope(
+async def log_user_event_from_scope(
     scope: Dict[str, Any], event: str, metadata: Optional[Dict[str, Any]] = None
 ) -> None:
-    return _log_user_event(
+    await _log_user_event(
         scope["user"], Headers.from_http(scope["headers"]), event, metadata
     )

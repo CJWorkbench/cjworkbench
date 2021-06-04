@@ -46,11 +46,13 @@ class StepViewTestCase(DbTestCaseWithModuleRegistryAndMockKernel):
         self.user = create_test_user()
         self.client.force_login(self.user)
 
-        self.log_patcher = patch("server.utils.log_user_event_from_request")
-        self.log_patch = self.log_patcher.start()
+        self.intercom_patcher = patch.object(
+            rabbitmq, "queue_intercom_message", async_noop
+        )
+        self.intercom_patcher.start()
 
     def tearDown(self):
-        self.log_patcher.stop()
+        self.intercom_patcher.stop()
         super().tearDown()
 
 
@@ -83,7 +85,7 @@ class RenderTableSliceTest(StepViewTestCase):
             self.workflow,
             self.step2,
             self.step2.last_relevant_delta_id,
-            make_table(make_column("A", [1], pa.int64())),
+            make_table(make_column("A", [int64], pa.int64())),
         )
         self.step2.save()
 
@@ -791,7 +793,7 @@ class CurrentTableTest(StepViewTestCase):
 
         # ... but secret link does!
         response = self.client.get(
-            f"/workflows/wsecret/steps/step-2/current-result-table.csv"
+            "/workflows/wsecret/steps/step-2/current-result-table.csv"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")

@@ -245,6 +245,10 @@ kubectl create secret generic cjw-intercom-secret \
   --from-literal=APP_ID=$CJW_INTERCOM_APP_ID \
   --from-literal=ACCESS_TOKEN=$CJW_INTERCOM_ACCESS_TOKEN
 
+: ${CJW_INTERCOM_ACCESS_TOKEN:?"Must set CJW_INTERCOM_ACCESS_TOKEN"}
+kubectl create secret generic cjw-intercom-sink-intercom-secret \
+  --from-literal=ACCESS_TOKEN=$CJW_INTERCOM_ACCESS_TOKEN
+
 : ${CJW_SENDGRID_API_KEY:?"Muset set CJW_SENDGRID_API_KEY"}
 kubectl create secret generic cjw-sendgrid-api-key \
   --from-literal=value=$CJW_SENDGRID_API_KEY

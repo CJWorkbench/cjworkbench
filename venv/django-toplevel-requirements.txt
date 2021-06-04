@@ -24,7 +24,6 @@ pyjwt
 pyroute2==0.5.9  # ??? - ought to be only transitive, related to pyspawner
 pyspawner~=0.9.2
 python-dotenv
-python-intercom~=3.1.0
 pytz
 pyyaml
 requests
@@ -33,4 +32,4 @@ rfc3987  # for jsonschema 'uri' format
 stripe~=2.54
 thrift~=0.13.0
 uvicorn~=0.13
-websockets~=8.0
+websockets~=9.1

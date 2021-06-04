@@ -318,6 +318,7 @@ LOGGING = {
             "level": ("WARNING" if I_AM_TESTING else "INFO")
         },
         "cjworkbench.pg_render_locker": {"level": "INFO"},
+        "server.utils": {"level": "INFO"},
         "stripe": {"level": "INFO"},
     },
 }

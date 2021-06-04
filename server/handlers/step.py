@@ -223,10 +223,6 @@ async def set_collapsed(workflow: Workflow, step: Step, isCollapsed: bool, **kwa
 def _do_set_notifications(scope, step: Step, notifications: bool):
     step.notifications = notifications
     step.save(update_fields=["notifications"])
-    if notifications:
-        server.utils.log_user_event_from_scope(
-            scope, "Enabled email notifications", {"stepId": step.id}
-        )
 
 
 @register_websockets_handler
@@ -237,6 +233,10 @@ async def set_notifications(
 ):
     notifications = bool(notifications)  # cannot error from JSON input
     await _do_set_notifications(scope, step, notifications)
+    if notifications:
+        await server.utils.log_user_event_from_scope(
+            scope, "Enabled email notifications", {"stepId": step.id}
+        )
 
 
 @database_sync_to_async

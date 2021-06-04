@@ -42,6 +42,7 @@ async def _create_rabbitmq_maintainer() -> asyncio.Task:
         await connection.exchange_declare("groups")
         await connection.queue_declare(rabbitmq.Render, durable=True)
         await connection.queue_declare(rabbitmq.Fetch, durable=True)
+        await connection.queue_declare(rabbitmq.Intercom, durable=True)
         connected_once.set_result(None)
 
     async def maintainer():

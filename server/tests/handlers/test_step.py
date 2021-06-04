@@ -433,8 +433,10 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step.refresh_from_db()
         self.assertEqual(step.is_collapsed, True)
 
-    @patch("server.utils.log_user_event_from_scope")
-    def test_set_notifications_to_false(self, log_event):
+    @patch.object(rabbitmq, "queue_intercom_message")
+    def test_set_notifications_to_false(self, queue_intercom_message):
+        queue_intercom_message.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(
@@ -452,10 +454,12 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
         step.refresh_from_db()
         self.assertEqual(step.notifications, False)
-        log_event.assert_not_called()  # only log if setting to true
+        queue_intercom_message.assert_not_called()  # only log if setting to true
 
-    @patch("server.utils.log_user_event_from_scope")
-    def test_set_notifications(self, log_event):
+    @patch.object(rabbitmq, "queue_intercom_message")
+    def test_set_notifications(self, queue_intercom_message):
+        queue_intercom_message.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(
@@ -473,7 +477,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
         step.refresh_from_db()
         self.assertEqual(step.notifications, True)
-        log_event.assert_called()
+        queue_intercom_message.assert_called()
 
     def test_try_set_autofetch_happy_path(self):
         user = User.objects.create(username="a", email="a@example.org")

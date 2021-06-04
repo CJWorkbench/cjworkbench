@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intercom-sink-deployment
+spec:
+  selector:
+    matchLabels:
+      app: intercom-sink-app
+  template:
+    metadata:
+      labels:
+        app: intercom-sink-app
+    spec:
+      containers:
+        - name: cjw-intercom-sink
+          image: "gcr.io/workbenchdata-ci/cjw-intercom-sink:98677d4a4fa499982b0dedf31a0c2fe1e1ab5467"
+          resources:
+            requests:
+              cpu: 150m
+              memory: 300Mi
+            limits:
+              cpu: 150m
+              memory: 300Mi
+          env:
+            - name: CJW_INTERCOM_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-intercom-sink-intercom-secret
+                  key: ACCESS_TOKEN
+            - name: _RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-1-rabbitmq-secret
+                  key: rabbitmq-pass
+            - name: CJW_RABBITMQ_HOST
+              value: "amqp://rabbit:$(_RABBITMQ_PASSWORD)@rabbitmq-1-rabbitmq-svc/"
+            - name: CJW_INTERCOM_QUEUE_NAME
+              value: intercom

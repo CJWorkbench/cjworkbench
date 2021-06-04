@@ -114,7 +114,7 @@ services:
       S3_BUCKET_NAME_PATTERN: "dev-%s"
     ports: [ '8000:8080' ]
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'rabbitmq', 'minio', 'tusd' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio', 'tusd', 'intercom-sink' ]
     command: [
       'sh',
       '-c',
@@ -254,6 +254,14 @@ services:
       '--pattern', 'cjworkbench/**/*.py', 'cron/**/*.py', 'cjwstate/models/**/*.*',
       '--exec', 'bin/cron-delta-deleter'
     ]
+
+  intercom-sink:
+    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:98677d4a4fa499982b0dedf31a0c2fe1e1ab5467
+    networks: [ 'dev' ]
+    environment:
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_INTERCOM_API_TOKEN: mock
+      CJW_INTERCOM_QUEUE_NAME: intercom
 
   tusd:
     image: tusproject/tusd:v1.4.0

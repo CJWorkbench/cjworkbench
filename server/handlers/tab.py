@@ -1,6 +1,7 @@
 import functools
 import re
 from typing import Any, Dict, List
+
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import commands
 from cjwstate.models import Workflow, Tab
@@ -14,9 +15,10 @@ from cjwstate.models.commands import (
     SetTabName,
 )
 from cjwstate.modules.types import ModuleZipfile
+import server.utils
+
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
-import server.utils
 
 
 @database_sync_to_async
@@ -89,12 +91,8 @@ async def add_module(
     except ValueError as err:
         raise HandlerError("BadRequest: param validation failed: %s" % str(err))
 
-    # TODO switch Intercom around and log by moduleIdName, not module name
-    # (Currently, we end up with two events every time we change names)
-    module_zipfile = await _load_module_zipfile(moduleIdName)
-    name = module_zipfile.get_spec().name
-    server.utils.log_user_event_from_scope(
-        scope, f"ADD STEP {name}", {"name": name, "id_name": moduleIdName}
+    await server.utils.log_user_event_from_scope(
+        scope, "add step", dict(module=moduleIdName)
     )
 
 
@@ -120,7 +118,7 @@ async def reorder_steps(
     if not isinstance(mutationId, str):
         raise HandlerError("BadRequest: mutationId must be String")
     if not isinstance(slugs, list):
-        raise HandlerError(f'BadRequest: slugs must be an Array of "[-a-zA-Z0-9_]+"')
+        raise HandlerError('BadRequest: slugs must be an Array of "[-a-zA-Z0-9_]+"')
     slugs = [_parse_slug(slug) for slug in slugs]
     try:
         await commands.do(
