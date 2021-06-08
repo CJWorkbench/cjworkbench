@@ -3,6 +3,7 @@ from http import HTTPStatus as status
 from unittest.mock import patch
 
 from django.contrib.auth.models import User
+from django.test import override_settings
 from cjwmodule.arrow.testing import make_table, make_column
 
 from cjwstate import rabbitmq
@@ -224,11 +225,11 @@ class WorkflowViewTests(DbTestCase):
     @patch.dict(
         "os.environ",
         {
-            "CJW_INTERCOM_APP_ID": "myIntercomId",
             "CJW_GOOGLE_ANALYTICS": "myGaId",
             "CJW_HEAP_ANALYTICS_ID": "myHeapId",
         },
     )
+    @override_settings(INTERCOM_APP_ID="myIntercomId")
     def test_workflow_init_state(self):
         self.client.force_login(self.user)
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
