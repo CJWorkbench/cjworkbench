@@ -4,5 +4,5 @@
 #
 # A longer-term solution: nix django-channels entirely. (Historically, we
 # have constantly fought with its every supposed feature.)
-channels-rabbitmq~=3.0
+channels-rabbitmq~=4.0
 channels~=3.0

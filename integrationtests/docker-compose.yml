@@ -112,7 +112,7 @@ services:
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: db
       CJW_DB_PASSWORD: cjworkbench
-      CJW_RABBITMQ_HOST: 'amqp://guest:guest@rabbitmq/'
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_SECRET_KEY: a-secret-key
       CJW_MOCK_EMAIL: 'True'
       AWS_ACCESS_KEY_ID: minio_access
@@ -192,7 +192,7 @@ services:
     ]
 
   intercom-sink:
-    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:98677d4a4fa499982b0dedf31a0c2fe1e1ab5467
+    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:38d0dfbb2dc90a1c978b4bb80ea5b145cdfe3591
     environment:
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_INTERCOM_API_TOKEN: mock

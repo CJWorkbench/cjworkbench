@@ -2,7 +2,7 @@ asyncpg
 babel
 beautifulsoup4~=4.7.1  # TODO nix, use html5lib
 boto3  # TODO replace with something async
-carehare~=0.0.10
+carehare~=1.0
 cjwmodule~=4.1.8
 cjwparse~=2.0.1  # for i18n strings
 cjwparquet~=2.2.0

@@ -103,7 +103,7 @@ services:
       PYTHONPYCACHEPREFIX: /tmp/pycache
       ASGI_THREADS: '3'
       CJW_DB_HOST: database
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       TUS_CREATE_UPLOAD_URL: http://tusd/files/
@@ -256,10 +256,10 @@ services:
     ]
 
   intercom-sink:
-    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:98677d4a4fa499982b0dedf31a0c2fe1e1ab5467
+    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:38d0dfbb2dc90a1c978b4bb80ea5b145cdfe3591
     networks: [ 'dev' ]
     environment:
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
+      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_INTERCOM_API_TOKEN: mock
       CJW_INTERCOM_QUEUE_NAME: intercom
 
