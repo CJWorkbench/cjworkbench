@@ -25,7 +25,6 @@ from django.conf import settings
 from typing import Union, Optional, Dict, Tuple
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 import jwt
-import requests
 import requests_oauthlib
 from requests_oauthlib.oauth1_session import TokenRequestDenied
 import json
@@ -70,9 +69,9 @@ class OAuthService:
         expect_state = request.session['oauth-state'] # _our_ CSRF check
         service = OAuthService.lookup_or_none('google')
         token = service.acquire_refresh_token_or_str_error(request.GET, expect_state)
-        if isinstance(token, str): return token
-        email = service.extract_email_from_token(token)
-        do_something_with(token, email)
+        if isinstance(token, str):
+            return token
+        do_something_with(token)
 
     Step 3 -- use service offline
     =============================
@@ -82,11 +81,9 @@ class OAuthService:
     .. code-block:: python
 
         service = OAuthService.lookup_or_none('google')
-        token = get_token_we_saved_in_step_2()
-        requests = service.requests_or_str_error(token)
-        if isinstance(requests, str): return HttpResponseForbidden(requests)
-        # requests is the entire "requests" Python module API
-        response = requests.get('https://some.api.server/endpoint')
+        offline_token = get_token_we_saved_in_step_2()
+        token = service.generate_access_token_or_str_error(offline_token)
+        # Now pass `token` to the user's web browser
     """
 
     def generate_redirect_url_and_state(self) -> Tuple[str, str]:
@@ -113,26 +110,6 @@ class OAuthService:
 
         Return a str message on error. Caller should present this error to
         the user.
-        """
-        raise NotImplementedError
-
-    def extract_email_from_token(self, token: OfflineToken) -> str:
-        """
-        Extract the user account name from the token.
-
-        This is fast: it not require an HTTP request.
-        """
-        raise NotImplementedError
-
-    def requests_or_str_error(
-        self, token: OfflineToken
-    ) -> Union[requests.Session, str]:
-        """Build a requests.Session logged in as the user, or return an error
-        if not possible.
-
-        This requires an HTTP request to exchange the token for an
-        OfflineToken. Return an str error message if that request fails.
-        Obvious failures: network error, or the user revoked the token.
         """
         raise NotImplementedError
 
@@ -313,14 +290,6 @@ class OAuth2(OAuthService):
             self.refresh_url, client_id=self.client_id, client_secret=self.client_secret
         )  # TODO handle errors: HTTP error, access-revoked error
         return access_token
-
-    def requests_or_str_error(
-        self, token: OfflineToken
-    ) -> Union[requests.Session, str]:
-        access_token = self.generate_access_token_or_str_error(token)
-        if isinstance(access_token, str):
-            return access_token
-        return self._session(token=access_token)
 
 
 _classes = {"OAuth2": OAuth2, "OAuth1a": OAuth1a}
