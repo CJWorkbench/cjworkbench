@@ -18,12 +18,18 @@
     {% block headscripts_globals %}{% endblock %}
     {% block headscripts %}{% endblock %}
     {% block headscripts_init_state %}{% endblock %}
-    {% block analytics %}
-      {% include 'tracking.html' %}
+    {% block google_analytics %}
+      {% include 'google_analytics.html' %}
+    {% endblock %}
+    {% block heap_analytics %}
+      {% include 'heap_analytics.html' %}
     {% endblock %}
     {% block stylesheets %}{% endblock %}
   </head>
   <body>
     {% block body %}{% endblock %}
+    {% block intercom %}
+      {% include 'intercom.html' %}
+    {% endblock %}
   </body>
 </html>

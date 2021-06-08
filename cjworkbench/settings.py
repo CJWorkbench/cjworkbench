@@ -351,6 +351,12 @@ except FileNotFoundError:
     pass
 
 
+INTERCOM_APP_ID = os.environ.get("CJW_INTERCOM_APP_ID")
+INTERCOM_IDENTITY_VERIFICATION_SECRET = os.environ.get(
+    "CJW_INTERCOM_IDENTITY_VERIFICATION_SECRET"
+)
+
+
 if "STRIPE_API_KEY" in os.environ:
     STRIPE_API_KEY = os.environ["STRIPE_API_KEY"]
     STRIPE_PUBLIC_API_KEY = os.environ["STRIPE_PUBLIC_API_KEY"]

@@ -17,15 +17,3 @@ ReactDOM.render(
   </InternationalizedPage>,
   document.getElementById('root')
 )
-
-// Start Intercom, if we're that sort of installation
-if (window.APP_ID) {
-  window.Intercom('boot', {
-    app_id: window.APP_ID,
-    email: window.initState.loggedInUser.email,
-    user_id: window.initState.loggedInUser.id,
-    alignment: 'right',
-    horizontal_padding: 20,
-    vertical_padding: 20
-  })
-}

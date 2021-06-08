@@ -1,4 +1,4 @@
-{%  extends 'base_no_intercom.html' %}
+{%  extends 'minimum.html' %}
 {% load i18n_icu %}
 {% load bundle_path from webpack %}
 
@@ -22,4 +22,7 @@
       {% trans_html "py.templates.oauth_token_request_denied.contactUs" default="Otherwise, please contact us so we can figure out what's wrong." %}
     </p>
   </div>
+{% endblock %}
+
+{% block intercom %}
 {% endblock %}

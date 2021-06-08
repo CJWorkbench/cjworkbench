@@ -1,4 +1,4 @@
-{% extends 'base_no_intercom.html' %}
+{% extends 'minimum.html' %}
 {% load bundle_path from webpack %}
 {% load account %}
 {% load i18n_icu %}
@@ -27,4 +27,7 @@
       </div>
     </div>
   <div>
+{% endblock %}
+
+{% block intercom %}
 {% endblock %}

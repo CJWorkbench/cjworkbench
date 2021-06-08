@@ -35,25 +35,3 @@ Array.prototype.forEach.call(tables, el => {
     el
   )
 })
-
-// Start Intercom, if we're that sort of installation
-if (window.APP_ID) {
-  if (window.initState.loggedInUser) {
-    window.Intercom('boot', {
-      app_id: window.APP_ID,
-      email: window.initState.loggedInUser.email,
-      user_id: window.initState.loggedInUser.id,
-      alignment: 'right',
-      horizontal_padding: 30,
-      vertical_padding: 20
-    })
-  } else {
-    // no one logged in -- viewing read only workflow
-    window.Intercom('boot', {
-      app_id: window.APP_ID,
-      alignment: 'right',
-      horizontal_padding: 30,
-      vertical_padding: 20
-    })
-  }
-}

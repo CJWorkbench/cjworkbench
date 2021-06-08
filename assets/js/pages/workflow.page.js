@@ -54,26 +54,3 @@ ReactDOM.render(
   </InternationalizedPage>,
   document.getElementById('root')
 )
-
-// Start Intercom, if we're that sort of installation
-// We are indeed: Very mission, much business!
-if (window.APP_ID) {
-  if (window.initState.loggedInUser) {
-    window.Intercom('boot', {
-      app_id: window.APP_ID,
-      email: window.initState.loggedInUser.email,
-      user_id: window.initState.loggedInUser.id,
-      alignment: 'right',
-      horizontal_padding: 30,
-      vertical_padding: 20
-    })
-  } else {
-    // no one logged in -- viewing read only workflow
-    window.Intercom('boot', {
-      app_id: window.APP_ID,
-      alignment: 'right',
-      horizontal_padding: 30,
-      vertical_padding: 20
-    })
-  }
-}

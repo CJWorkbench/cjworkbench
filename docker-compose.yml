@@ -106,6 +106,8 @@ services:
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
+      CJW_INTERCOM_APP_ID: fs80154z
+      CJW_INTERCOM_IDENTITY_VERIFICATION_SECRET: sfrVVkJJhMHyLrecJDxLrJAefmV_1COh2NJbjP3G
       TUS_CREATE_UPLOAD_URL: http://tusd/files/
       TUS_EXTERNAL_URL_PREFIX_OVERRIDE: http://localhost:8002/files/
       AWS_ACCESS_KEY_ID: minio_access
