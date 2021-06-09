@@ -136,7 +136,7 @@ FROM pybase AS pydev
 #
 # None of these libraries require build-essential
 COPY venv/django-dev-requirements.txt /app/venv/
-RUN /opt/venv/django/bin/python -m pip install --no-cache -r /app/venv/django-dev-requirements.txt
+RUN /opt/venv/django/bin/python -m pip install --no-cache-dir -r /app/venv/django-dev-requirements.txt
 
 COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
 
@@ -194,14 +194,14 @@ COPY assets/locale/ /app/assets/locale/
 # This catches style errors that accidentally got past somebody's
 # pre-commit hook.
 FROM python:3.8.8-slim-buster AS pylint
-RUN python -m pip install black==20.8b1
+RUN python -m pip install --no-cache-dir black==20.8b1
 COPY --from=base /app /app
 RUN black --check /app
 
 # Like pydev, plus code
 FROM base AS unittest
 COPY venv/django-dev-requirements.txt /app/venv/
-RUN /opt/venv/django/bin/python -m pip install --no-cache -r /app/venv/django-dev-requirements.txt
+RUN /opt/venv/django/bin/python -m pip install --no-cache-dir -r /app/venv/django-dev-requirements.txt
 COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
 COPY daphne/ /app/daphne/
 COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
