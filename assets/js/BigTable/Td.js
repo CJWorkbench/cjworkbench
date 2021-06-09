@@ -66,7 +66,7 @@ const Td = React.memo(function Td (props) {
       onMouseDown={handleMouseDown}
       onDoubleClick={onDoubleClick}
     >
-      <Component value={value} />
+      <Component value={value} focus={focus} />
       {editValue !== null
         ? <input autoFocus type='text' value={editValue} onChange={onChange} onFocus={handleFocus} onBlur={handleBlur} onKeyDown={handleInputKeyDown} />
         : null}

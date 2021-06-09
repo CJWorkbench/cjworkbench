@@ -145,6 +145,9 @@
     }
 
     td {
+      $cell-border-width: 2px;
+      $cell-border-radius: 4px;
+
       color: $brand-text--darker;
       font-size: rem(.875);
       position: relative; // for <input> positioning
@@ -153,10 +156,10 @@
         text-align: right; // even nulls, which aren't .cell-number
       }
 
-      &>div, &>time, &>input {
-        border: 2px solid transparent;
-        border-radius: 4px;
-        padding: 0 calc(#{rem(0.5)} - 2px); // 2px from border
+      &>div, &>time, &>a, &>input {
+        border: $cell-border-width solid transparent;
+        border-radius: $cell-border-radius;
+        padding: 0 calc(#{rem(0.5)} - #{$cell-border-width});
       }
 
       input {
@@ -169,14 +172,18 @@
         font: inherit;
       }
 
-      &>div, &>time {
+      &>div, &>a, &>time {
         display: block;
         max-height: var(--row-height);
         height: var(--row-height);
-        line-height: calc(var(--row-height) - 2px); // minus border width
+        line-height: calc(var(--row-height) - #{2 * $cell-border-width});
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+
+      &>a {
+        color: inherit;
       }
 
       .cell-number {
@@ -198,6 +205,23 @@
         // The value is already mangled to take only one line. Now, preserve
         // the whitespace within that one line.
         white-space: pre;
+
+        a {
+          position: absolute;
+          font-size: rem(1); // for icon
+          right: $cell-border-width;
+          top: $cell-border-width;
+          bottom: $cell-border-width;
+          border-top-right-radius: $cell-border-radius;
+          border-bottom-right-radius: $cell-border-radius;
+          border-left: 1px solid $brand-orange;
+          padding: 0 rem(.5);
+          background: white;
+          color: $brand-text--medium;
+          &:hover {
+            color: inherit;
+          }
+        }
       }
 
       .cell-null {
