@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import NullCell from './NullCell'
+import OpenLinkIcon from '../../../icons/open-link.svg'
 
 // Line breaks: https://www.unicode.org/reports/tr14/tr14-32.html#BK
 const UnicodeWhitespace = /(?:\r\n|[\r\n\f\v\u0085\u2028\u2029])/g
@@ -17,6 +18,13 @@ const UnicodeWhitespaceReplacements = {
 const ValidSchemes = /^https?:\/\/[^/]/
 const UrlCodePointOrPercentEscape = "(?:[-!$&'()*+,./:;=?@_~0-9a-zA-Z\u{00a0}-\u{10fffd}]|%[0-9a-fA-F]{2})"
 const AllUrlCodePointsOrPercentEscapes = new RegExp(`^${UrlCodePointOrPercentEscape}*(?:#${UrlCodePointOrPercentEscape}*)?$`, 'u')
+
+function handleDoubleClickA (ev) {
+  // In a BigTable <td>, double-click on a cell would normally mean, "edit".
+  // If the user clicks a link during double-click, we don't want that.
+  ev.preventDefault()
+  ev.stopPropagation()
+}
 
 function parseValidUrl (s) {
   // https://url.spec.whatwg.org/#concept-basic-url-parser
@@ -54,24 +62,12 @@ function parseValidUrl (s) {
 }
 
 export default function TextCell (props) {
-  const { value } = props
+  const { value, focus } = props
   if (value === null) {
     return <NullCell type='text' />
   }
 
-  const href = parseValidUrl(value)
-  if (href !== null) {
-    return (
-      <a
-        className='cell-text'
-        target='_blank'
-        rel='noopener noreferrer'
-        href={href}
-      >
-        {value}
-      </a>
-    )
-  }
+  const href = focus && value !== null ? parseValidUrl(value) : null
 
   // Make a one-line value: we'll style it with white-space: pre so the user
   // can see spaces.
@@ -80,8 +76,24 @@ export default function TextCell (props) {
     x => UnicodeWhitespaceReplacements[x]
   )
 
-  return <div className='cell-text' title={value}>{oneLineValue}</div>
+  return (
+    <div className='cell-text' title={value}>
+      {oneLineValue}
+      {href
+        ? (
+          <a
+            href={href}
+            target='_blank'
+            rel='noopener noreferrer'
+            onDoubleClick={handleDoubleClickA}
+          >
+            <OpenLinkIcon />
+          </a>)
+        : null}
+    </div>
+  )
 }
 TextCell.propTypes = {
-  value: PropTypes.string // or null
+  value: PropTypes.string, // or null
+  focus: PropTypes.bool.isRequired
 }
