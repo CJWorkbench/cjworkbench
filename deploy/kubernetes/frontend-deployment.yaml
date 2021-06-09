@@ -81,8 +81,13 @@ spec:
             - name: CJW_INTERCOM_APP_ID
               valueFrom:
                 secretKeyRef:
-                  name: cjw-intercom-secret
+                  name: frontend-intercom-secret
                   key: APP_ID
+            - name: CJW_INTERCOM_IDENTITY_VERIFICATION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: frontend-intercom-secret
+                  key: IDENTITY_VERIFICATION_SECRET
             - name: CJW_SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:

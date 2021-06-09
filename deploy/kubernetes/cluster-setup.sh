@@ -240,10 +240,10 @@ kubectl create secret generic cjw-secret-key \
   --from-literal=value=$CJW_SECRET_KEY
 
 : ${CJW_INTERCOM_APP_ID:?"Must set CJW_INTERCOM_APP_ID"}
-: ${CJW_INTERCOM_ACCESS_TOKEN:?"Must set CJW_INTERCOM_ACCESS_TOKEN"}
-kubectl create secret generic cjw-intercom-secret \
+: ${CJW_INTERCOM_IDENTITY_VERIFICATION_SECRET:?"Must set CJW_INTERCOM_IDENTITY_VERIFICATION_SECRET"}
+kubectl create secret generic frontend-intercom-secret \
   --from-literal=APP_ID=$CJW_INTERCOM_APP_ID \
-  --from-literal=ACCESS_TOKEN=$CJW_INTERCOM_ACCESS_TOKEN
+  --from-literal=IDENTITY_VERIFICATION_SECRET=$CJW_INTERCOM_IDENTITY_VERIFICATION_SECRET
 
 : ${CJW_INTERCOM_ACCESS_TOKEN:?"Must set CJW_INTERCOM_ACCESS_TOKEN"}
 kubectl create secret generic cjw-intercom-sink-intercom-secret \
