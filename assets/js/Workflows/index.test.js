@@ -10,6 +10,7 @@ const testOwnedWorkflows = [
     name: 'Cleaning',
     owner_name: 'Fred Frederson',
     public: true,
+    secret_id: '',
     acl: [],
     last_update: '2010-10-18T00:30:00',
     fetchesPerDay: null
@@ -19,6 +20,7 @@ const testOwnedWorkflows = [
     name: 'Charting',
     owner_name: 'Fred Frederson',
     public: false,
+    secret_id: '',
     acl: [],
     last_update: '2010-10-18T00:20:00',
     fetchesPerDay: null
@@ -28,6 +30,7 @@ const testOwnedWorkflows = [
     name: 'Analysis',
     owner_name: 'Fred Frederson',
     public: false,
+    secret_id: 'wsecret',
     acl: [],
     last_update: '2010-10-18T07:45:00',
     fetchesPerDay: null
@@ -40,6 +43,7 @@ const testSharedWorkflows = [
     name: 'Messy data cleanup',
     owner_name: 'John Johnson',
     public: false,
+    secret_id: '',
     acl: [],
     last_update: '2010-10-18T00:30:00',
     fetchesPerDay: null
@@ -49,6 +53,7 @@ const testSharedWorkflows = [
     name: 'Document search',
     owner_name: 'Sally Sallerson',
     public: true,
+    secret_id: '',
     acl: [],
     last_update: '2010-10-18T00:45:00',
     fetchesPerDay: null
@@ -61,6 +66,7 @@ const testExampleWorkflows = [
     name: 'Demo 1',
     owner_name: 'Workbench',
     public: false,
+    secret_id: '',
     acl: [],
     last_update: '2010-10-18T00:30:00',
     fetchesPerDay: null
@@ -185,6 +191,7 @@ test('duplicate a workflow', async () => {
     name: 'Copied!',
     owner_name: 'Fred Frederson',
     public: false,
+    secret_id: '',
     acl: [],
     last_update: '2021-02-08T15:56.000Z'
   })
@@ -238,6 +245,20 @@ test('sort by name', async () => {
   expect(container.textContent).toMatch(/Cleaning.*Charting.*Analysis/)
   fireEvent.click(getByText(/Title.*sort-descending.svg/))
   expect(container.textContent).toMatch(/Analysis.*Charting.*Cleaning/)
+})
+
+test('sort by privacy', async () => {
+  const { container, getByText } = renderUi({
+    currentPath: '/workflows',
+    workflows: testOwnedWorkflows
+  })
+  expect(container.textContent).toMatch(/Analysis.*Cleaning.*Charting/)
+  fireEvent.click(getByText(/Privacy.*nothing.svg/))
+  expect(container.textContent).toMatch(/Cleaning.*Analysis.*Charting/)
+  fireEvent.click(getByText(/Privacy.*sort-ascending.svg/))
+  expect(container.textContent).toMatch(/Charting.*Analysis.*Cleaning/)
+  fireEvent.click(getByText(/Privacy.*sort-descending.svg/))
+  expect(container.textContent).toMatch(/Cleaning.*Analysis.*Charting/)
 })
 
 test('ban delete of shared-with-me workflows', () => {

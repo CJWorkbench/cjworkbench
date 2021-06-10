@@ -8,6 +8,7 @@ test('render a public workflow', () => {
       id: 1,
       name: 'Workflow 1',
       public: true,
+      secret_id: '',
       last_update: '2021-03-29T19:56:12.123Z',
       acl: []
     }
@@ -26,6 +27,7 @@ test('render a private workflow', () => {
       id: 1,
       name: "Alice's Workflow",
       public: false,
+      secret_id: '',
       last_update: '2021-03-29T19:56:12.123Z',
       acl: [{ email: 'bob@example.com', role: 'editor' }]
     }
@@ -45,6 +47,7 @@ test('render a report-only private workflow', () => {
       id: 1,
       name: "Alice's Workflow",
       public: false,
+      secret_id: '',
       last_update: '2021-03-29T19:56:12.123Z',
       acl: [{ email: 'bob@example.com', role: 'report-viewer' }]
     }

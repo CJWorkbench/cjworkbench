@@ -150,7 +150,12 @@ exports[`render Examples correctly 1`] = `
               <th
                 class="privacy"
               >
-                Privacy
+                <a
+                  href="#"
+                >
+                  Privacy
+                  /app/assets/icons/nothing.svg
+                </a>
               </th>
               <th
                 class="fetches-per-day"
@@ -394,7 +399,12 @@ exports[`render My workflows correctly 1`] = `
               <th
                 class="privacy"
               >
-                Privacy
+                <a
+                  href="#"
+                >
+                  Privacy
+                  /app/assets/icons/nothing.svg
+                </a>
               </th>
               <th
                 class="fetches-per-day"
@@ -447,7 +457,7 @@ exports[`render My workflows correctly 1`] = `
                 <a
                   href="/workflows/3"
                 >
-                  private
+                  secret link
                 </a>
               </td>
               <td
@@ -766,7 +776,12 @@ exports[`render Shared correctly 1`] = `
               <th
                 class="privacy"
               >
-                Privacy
+                <a
+                  href="#"
+                >
+                  Privacy
+                  /app/assets/icons/nothing.svg
+                </a>
               </th>
               <th
                 class="fetches-per-day"

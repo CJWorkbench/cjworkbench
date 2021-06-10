@@ -10,7 +10,9 @@ const WorkflowListPropType = PropTypes.arrayOf(
   PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    last_update: PropTypes.string.isRequired // ISO8601 String
+    last_update: PropTypes.string.isRequired, // ISO8601 String
+    public: PropTypes.bool.isRequired,
+    secret_id: PropTypes.string.isRequired // maybe empty string
   }).isRequired
 )
 export { WorkflowListPropType }
@@ -57,13 +59,39 @@ function compareIso8601 (a, b) {
     : (b < a ? 1 : 0)
 }
 
-function createComparator (sortKey) {
+function privacyLevel (workflow) {
+  if (workflow.public) {
+    return 0
+  }
+  if (workflow.secret_id) {
+    return 1
+  }
+  return 2
+}
+
+function comparePrivacy (a, b) {
+  // least-private to most-private
+  return privacyLevel(a) - privacyLevel(b)
+}
+
+function sortWorkflows (workflows, { key, ascending }) {
+  const partialComparator = createPartialComparator(key)
+  const fullComparator = (a, b) => partialComparator(a, b) || compareIso8601(a.last_update, b.last_update)
+  const result = workflows.slice().sort(fullComparator)
+  if (!ascending) {
+    result.reverse()
+  }
+  return result
+}
+
+function createPartialComparator (sortKey) {
   switch (sortKey) {
-    case 'fetchesPerDay': return compareNumbers
-    case 'last_update': return compareIso8601
+    case 'fetchesPerDay': return (a, b) => compareNumbers(a.fetchesPerDay, b.fetchesPerDay)
+    case 'last_update': return (a, b) => 0
+    case 'privacy': return (a, b) => comparePrivacy(a, b)
     case 'name': {
       const collator = new Intl.Collator()
-      return collator.compare.bind(collator)
+      return (a, b) => collator.compare(a.name, b.name)
     }
   }
 }
@@ -81,15 +109,7 @@ export default function WorkflowList (props) {
   } = props
   const [sort, setSort] = useState({ key: 'last_update', ascending: false })
   const showActions = Boolean(api)
-  const sortedWorkflows = useMemo(() => {
-    const { key, ascending } = sort
-    const compare = createComparator(key)
-    const ret = workflows.slice().sort((a, b) => compare(a[key], b[key]) || compareIso8601(a.last_update, b.last_update))
-    if (!ascending) {
-      ret.reverse()
-    }
-    return ret
-  }, [workflows, sort])
+  const sortedWorkflows = useMemo(() => sortWorkflows(workflows, sort), [workflows, sort])
 
   return (
     <div className={`workflow-list ${className}`}>
@@ -110,7 +130,14 @@ export default function WorkflowList (props) {
               <Trans id='js.Workflows.WorkflowList.owner'>Owner</Trans>
             </th>
             <th className='privacy'>
-              <Trans id='js.Workflows.WorkflowList.privacy'>Privacy</Trans>
+              <SortableColumnName
+                sort={sort}
+                sortKey='privacy'
+                defaultAscending
+                onChangeSort={setSort}
+              >
+                <Trans id='js.Workflows.WorkflowList.privacy'>Privacy</Trans>
+              </SortableColumnName>
             </th>
             <th className='fetches-per-day'>
               <SortableColumnName
