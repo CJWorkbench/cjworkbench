@@ -252,17 +252,32 @@
   }
 
   form.social-signup {
-    // A form with two buttons: "subscribe" and "don't subscribe"
-    display: flex;
-    justify-content: space-between;
+    legend, p {
+      text-align: left;
+      margin: rem(1) 0;
+    }
+
+    legend {
+      @include title-1;
+    }
+
+    p {
+      @include content-1;
+    }
+
+    label {
+      @include content-2;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      vertical-align: badrem(-.4);
+    }
 
     button {
+      margin-top: rem(1);
       @include action-button;
-      @include button-gray;
-
-      &[value="on"] {
-        @include button-orange--fill;
-      }
+      @include button-primary;
     }
   }
 }

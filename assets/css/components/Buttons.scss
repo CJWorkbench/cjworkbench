@@ -189,6 +189,20 @@ button:focus {
   }
 }
 
+@mixin button-primary {
+  color: white;
+  border-color: $primary;
+  background: $primary;
+  &:hover {
+    color: $primary;
+    background: white;
+  }
+  &:active {
+    color: $primary;
+    background: $SuperLightGray;
+  }
+}
+
 @mixin button-white {
   color: white;
   border-color: $white;

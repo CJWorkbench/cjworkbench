@@ -22,21 +22,19 @@
       </a>
     {%  endwith %}
   {% else %}
-    <p class='content-1 t-d-gray text-center mb-5'>
-      {% trans_html "py.templates.socialaccount.signup.form" default="Subscribe to our newsletter? We announce features and offer tips to help tame your data." %}
-    </p>
-
     <form class="signup social-signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
-      <legend>{% trans_html "py.templates.socialaccount.signup.legend" default="Welcome" %}</legend>
       {% csrf_token %}
       {% if redirect_field_value %}
-      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
       {% endif %}
-      <button type="submit" name="get_newsletter" value="on">
-        {% trans_html "py.templates.socialaccount.signup.submitWithNewsletter" default="Okay, an email per month" %}
-      </button>
+      <legend>{% trans_html "py.templates.socialaccount.signup.legend" default="Thanks for signing up!" %}</legend>
+      <p>{% trans_html "py.templates.socialaccount.signup.form" default="Is it okay to send you product news from time to time? We announce features and send tips to tame your data." %}</p>
+      <label>
+        <input type="checkbox" name="get_newsletter" value="on" autofocus />
+        {% trans_html "py.templates.socialaccount.signup.get_newsletter.label" default="Sure, email me occasional product news and tips." %}
+      </label>
       <button type="submit"><!-- no get_newsletter value => false -->
-        {% trans_html "py.templates.socialaccount.signup.submitWithoutNewsletter" default="No emails" %}
+        {% trans_html "py.templates.socialaccount.signup.button" default="Create my account" %}
       </button>
     </form>
   {% endif %}
