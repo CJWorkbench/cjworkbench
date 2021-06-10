@@ -1,5 +1,3 @@
-/* ---- Login ---- */
-
 .account-fullscreen-container {
   height: 100vh;
   display: flex;
@@ -251,5 +249,20 @@
     //   display: none;
     //   margin: 1rem;
     // }
+  }
+
+  form.social-signup {
+    // A form with two buttons: "subscribe" and "don't subscribe"
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      @include action-button;
+      @include button-gray;
+
+      &[value="on"] {
+        @include button-orange--fill;
+      }
+    }
   }
 }
