@@ -1,8 +1,74 @@
-import { createRef, PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import TabDropdown from './TabDropdown'
 
-export default class Tab extends PureComponent {
+function EditableTabName (props) {
+  const {
+    inputRef,
+    isReadOnly,
+    placeholder,
+    slug,
+    value,
+    onSubmit
+  } = props
+
+  const ignoreBlur = React.useRef(false)
+
+  const [newValue, setNewValue] = React.useState(null)
+
+  const submitIfChanged = () => {
+    if (newValue !== null && newValue !== '' && newValue !== value) {
+      onSubmit(slug, newValue) // caller's <EditableTabName key> will change, unmounting us
+    }
+  }
+
+  const handleChange = React.useCallback(ev => { setNewValue(ev.target.value) }, [setNewValue])
+
+  const handleBlur = () => {
+    if (!ignoreBlur.current) {
+      submitIfChanged()
+    }
+  }
+
+  const blurWithoutEventHandler = () => {
+    ignoreBlur.current = true
+    inputRef.current.blur()
+    ignoreBlur.current = false
+  }
+
+  const handleKeyDown = ev => {
+    switch (ev.key) {
+      case 'Enter':
+        submitIfChanged()
+        blurWithoutEventHandler()
+        break
+      case 'Escape':
+        setNewValue(null)
+        blurWithoutEventHandler()
+        break
+    }
+  }
+
+  const editedValue = newValue === null ? value : newValue
+
+  return (
+    <div className='editable-tab-name'>
+      <span className='invisible-size-setter'>{editedValue || placeholder}</span>
+      <input
+        name='tab-name'
+        placeholder={placeholder}
+        ref={inputRef}
+        value={editedValue}
+        disabled={isReadOnly}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
+      />
+    </div>
+  )
+}
+
+export default class Tab extends React.PureComponent {
   static propTypes = {
     slug: PropTypes.string.isRequired,
     isPending: PropTypes.bool, // or undefined
@@ -24,49 +90,8 @@ export default class Tab extends PureComponent {
     select: PropTypes.func.isRequired // func(slug) => undefined
   }
 
-  state = {
-    name: null
-  }
-
-  inputRef = createRef()
-
-  liRef = createRef()
-
-  handleClickRename = () => {
-    if (this.props.isReadOnly) return
-
-    this.inputRef.current.focus()
-    this.inputRef.current.select()
-  }
-
-  handleNameChange = ev => {
-    this.setState({ name: ev.target.value })
-  }
-
-  handleNameKeyDown = ev => {
-    switch (ev.key) {
-      case 'Enter':
-        this.props.setName(this.props.slug, this.state.name)
-        this.setState({ name: null }) // for handleNameBlur()
-        this.inputRef.current.blur()
-        return
-      case 'Escape':
-        this.setState({ name: null }) // for handleNameBlur()
-        this.inputRef.current.blur()
-    }
-  }
-
-  handleNameBlur = () => {
-    // handleKeyDown may have set value=null. If it did, we'll only detect that
-    // within the setState() _callback_.
-    this.setState(({ name }) => {
-      if (name === null) {
-        // handleKeyDown already handled this (or there was no edit)
-      } else {
-        this.props.setName(this.props.slug, name)
-      }
-    })
-  }
+  inputRef = React.createRef()
+  liRef = React.createRef()
 
   handleClickDelete = () => {
     const { destroy, slug } = this.props
@@ -76,6 +101,13 @@ export default class Tab extends PureComponent {
   handleClickDuplicate = () => {
     const { duplicate, slug } = this.props
     duplicate(slug)
+  }
+
+  handleClickRename = () => {
+    if (this.props.isReadOnly) return
+
+    this.inputRef.current.focus()
+    this.inputRef.current.select()
   }
 
   get isDragMode () {
@@ -168,9 +200,8 @@ export default class Tab extends PureComponent {
   }
 
   render () {
-    const { isPending, isReadOnly, isSelected } = this.props
+    const { isPending, isReadOnly, isSelected, slug, name, setName } = this.props
     const droppingClassName = this.droppingClassName
-    const name = this.state.name === null ? this.props.name : this.state.name
 
     const classNames = []
     if (isPending) classNames.push('pending')
@@ -195,22 +226,23 @@ export default class Tab extends PureComponent {
           onDragEnd={this.handleDragEnd}
           onDrop={this.handleDrop}
         >
-          <span className='size-calculator'>{name}</span>
-          <input
-            name='tab-name'
+          <EditableTabName
             placeholder='…'
-            ref={this.inputRef}
+            slug={slug}
+            key={name /* reset when name changes */}
+            inputRef={this.inputRef}
             value={name}
-            disabled={isReadOnly || !isSelected}
-            onChange={this.handleNameChange}
-            onKeyDown={this.handleNameKeyDown}
-            onBlur={this.handleNameBlur}
+            onSubmit={setName}
+            isReadOnly={isReadOnly || !isSelected}
           />
-          <TabDropdown
-            onClickRename={this.handleClickRename}
-            onClickDelete={this.handleClickDelete}
-            onClickDuplicate={this.handleClickDuplicate}
-          />
+          {isSelected && !isReadOnly
+            ? (
+              <TabDropdown
+                onClickRename={this.handleClickRename}
+                onClickDelete={this.handleClickDelete}
+                onClickDuplicate={this.handleClickDuplicate}
+              />)
+            : null}
         </div>
       </li>
     )

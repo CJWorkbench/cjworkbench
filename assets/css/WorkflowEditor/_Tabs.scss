@@ -1,8 +1,48 @@
+@mixin autosize-with-input {
+  // HTML <div> with the following structure:
+  // <div class="this-div">
+  //   <span class="invisible-size-setter">Value value value</span>
+  //   <input ... value="Value value value" />
+  // </div>
+  //
+  // That is, the _contents_ of .invisible-size-setter and input are the
+  // same. We set position=relative and input position absolute -- this
+  // makes the input take the size of its contents.
+  position: relative;
+  white-space: nowrap;
+
+  .invisible-size-setter {
+    display: block;
+    visibility: hidden;
+
+    &:empty::before {
+      // Never let invisible-size-setter be empty: that will change the height
+      // of the <span>, which will affect the height of the <input>
+      content: '…';
+      display: inline;
+    }
+  }
+
+  input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font: inherit;
+    line-height: inherit;
+    color: inherit;
+    background: inherit;
+    border: 0;
+    outline: 0;
+  }
+}
+
 .tabs {
   // If you're editing these, consider editing paddings and widths in
   // _PaneSelect.scss.
   $tab-button-padding: 0.8rem 0.5rem 0.6rem;
-  $tab-name-padding: 0.8rem 0.5rem 0.6rem 1.5rem;
+  $tab-name-padding: 0.8rem 0 0.6rem 1.5rem;
   $tab-button-width: 3rem; // for an absolute-positioning hack
   $overlap-width: 3px;
 
@@ -26,16 +66,7 @@
       position: relative; // for .dropping-left and .dropping-right
 
       .tab {
-        // We'll use .size-calculator to calculate size, and then we'll position
-        // input[name=tab-name] and .dropdown absolutely.
-        //
-        // The structure:
-        // <div class="tab">
-        //   <span class="size-calculator"/>
-        //   <input name="tab-name"/>
-        //   <div class="dropdown">...</div>
-        // </div>
-        position: relative;
+        display: flex;
         cursor: pointer;
 
         background: $pane-select-tab-bg;
@@ -46,54 +77,37 @@
         font-size: 1.4rem;
         line-height: 1.5; // 2.1rem
 
-        .size-calculator,
-        input[name='tab-name'] {
-          white-space: pre; // do not collapse whitespace
-          padding: $tab-name-padding;
-        }
+        .editable-tab-name {
+          flex: 1 1 auto;
+          @include autosize-with-input;
+          max-width: 50vw; // so crazy-long tab names don't break the world
 
-        .size-calculator {
-          opacity: 0;
-          display: block; // so it has the same height even when it contains no text
-          padding-right: $tab-button-width; // _exclude_ $tab-name-padding
-
-          &:empty::before {
-            // Never let size-calculator be empty: that will change the height
-            // of the <span>, which will affect the height of the <input>
-            content: '…';
-          }
-        }
-
-        input[name='tab-name'] {
-          display: block;
-          font: inherit;
-          line-height: inherit;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: transparent;
-          border: 0;
-          outline: 0;
-
-          ::placeholder {
-            color: white;
+          &>* {
+            padding: $tab-name-padding;
           }
 
-          &:disabled {
-            // Every unselected tab's input is :disabled. That lets the user
-            // drag by the _parent_.
-            color: inherit;
-            background: inherit;
-            pointer-events: none;
+          &:last-child>* {
+            // When there's no dropdown, add right padding
+            padding-right: 1rem;
+          }
+
+          input[name='tab-name'] {
+            display: block;
+
+            ::placeholder {
+              color: white;
+            }
+
+            &:disabled {
+              // Every unselected tab's input is :disabled. That lets the user
+              // drag by the _parent_.
+              pointer-events: none;
+            }
           }
         }
 
         .dropdown {
-          position: absolute;
-          right: 0;
-          top: 0;
+          flex: 0 0 auto;
           height: 100%;
 
           button.toggle {
@@ -103,26 +117,20 @@
             color: inherit;
             background: transparent; // override bootstrap
             height: 100%;
+            opacity: 0.5;
 
-            i {
+            svg {
               display: inline-block;
-              // icon font's caret is hard to size and position...:
-              font-size: 0.6rem;
-              width: 2rem;
-              height: 2rem;
-              padding-top: 0.7rem;
-              padding-left: 0.1rem;
+              font-size: rem(1);
               line-height: 1;
               border-radius: 50%;
-              opacity: 0.5;
-              outline: 0; // even when :focusing in Webkit
             }
 
-            &:hover i {
+            &:hover {
               opacity: 1;
             }
 
-            &:focus i {
+            &:focus {
               color: $brand-text--darker;
               background-color: $dark-accent--soft;
               opacity: 1;

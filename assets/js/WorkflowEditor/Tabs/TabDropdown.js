@@ -6,6 +6,7 @@ import {
   DropdownItem
 } from '../../components/Dropdown'
 import { Trans } from '@lingui/macro'
+import DropdownToggleIcon from '../../../icons/dropdown-toggle.svg'
 
 export default function TabDropdown ({
   onClickRename,
@@ -15,7 +16,7 @@ export default function TabDropdown ({
   return (
     <UncontrolledDropdown>
       <DropdownToggle className='toggle'>
-        <i className='icon-caret-down' />
+        <DropdownToggleIcon />
       </DropdownToggle>
       <DropdownMenu>
         <DropdownItem onClick={onClickRename} icon='icon-edit'>
