@@ -133,6 +133,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_USER_DISPLAY = workbench_user_display
 ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.accounts.forms.WorkbenchSignupForm"
 SOCIALACCOUNT_ADAPTER = "cjworkbench.socialaccounts.adapter.SocialAccountAdapter"
+SOCIALACCOUNT_EMAIL_VERIFICATION = False
 SOCIALACCOUNT_FORMS = {
     "signup": "cjworkbench.socialaccounts.forms.WorkbenchSocialaccountSignupForm"
 }
