@@ -61,8 +61,11 @@
 
     // Single tab: ul > li > div.tab
     & > li {
+      flex: 0 0 auto;
+      max-width: 50vw; // so crazy-long tab names don't break the world
       display: inline-block;
       position: relative; // for .dropping-left and .dropping-right
+      overflow: hidden; // shrink contents within flexbox
 
       .tab {
         display: flex;
@@ -79,13 +82,12 @@
         .editable-tab-name {
           flex: 1 1 auto;
           @include autosize-with-input;
-          max-width: 50vw; // so crazy-long tab names don't break the world
 
           &>* {
             padding: $tab-name-padding;
           }
 
-          &:last-child>* {
+          &:last-child {
             // When there's no dropdown, add right padding
             padding-right: 1rem;
           }
@@ -112,17 +114,20 @@
           button.toggle {
             cursor: pointer;
             border: 0;
-            padding: $tab-button-padding;
+            padding: 0;
+            margin: $tab-button-padding;
             color: inherit;
             background: transparent; // override bootstrap
             height: 100%;
             opacity: 0.5;
+            border-radius: 50%;
+            font-size: rem(1);
+            width: 2.1rem;
+            height: 2.1rem;
+            line-height: 1;
 
             svg {
               display: inline-block;
-              font-size: rem(1);
-              line-height: 1;
-              border-radius: 50%;
             }
 
             &:hover {
@@ -139,8 +144,7 @@
       }
 
       &:not(.selected) {
-        flex-shrink: 1; // too many tabs? Shrink unselected ones
-        overflow: hidden; // to shrink within the flexbox
+        flex: 0 1 auto; // too many tabs? Shrink unselected ones
 
         // flex-shrink doesn't _really_ do what we'd like. Ideally, we'd shrink
         // only the largest boxes. But _actually_, flex-shrink will shrink _all_
