@@ -40,8 +40,8 @@
 .tabs {
   // If you're editing these, consider editing paddings and widths in
   // _PaneSelect.scss.
-  $tab-button-padding: 0.8rem 0.5rem 0.6rem;
-  $tab-name-padding: 0.8rem 0 0.6rem 1.5rem;
+  $tab-button-padding: 0.8rem 0.5rem 0.6rem 0;
+  $tab-name-padding: 0.8rem 0.5rem 0.6rem 1.5rem;
   $tab-button-width: 3rem; // for an absolute-positioning hack
   $overlap-width: 3px;
 
@@ -82,6 +82,7 @@
         .editable-tab-name {
           flex: 1 1 auto;
           @include autosize-with-input;
+          max-width: 100%; // shrink unselected tabs
 
           &>* {
             padding: $tab-name-padding;
