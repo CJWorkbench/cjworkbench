@@ -890,27 +890,27 @@ msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
 #. default-message: Auto updates
-#: assets/js/Workflows/WorkflowList.js:118
+#: assets/js/Workflows/WorkflowList.js:122
 msgid "js.Workflows.WorkflowList.fetchesPerDay"
 msgstr ""
 
 #. default-message: Owner
-#: assets/js/Workflows/WorkflowList.js:109
+#: assets/js/Workflows/WorkflowList.js:110
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
 #. default-message: Privacy
-#: assets/js/Workflows/WorkflowList.js:132
+#: assets/js/Workflows/WorkflowList.js:113
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
 #. default-message: Title
-#: assets/js/Workflows/WorkflowList.js:105
+#: assets/js/Workflows/WorkflowList.js:106
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
 #. default-message: Updated
-#: assets/js/Workflows/WorkflowList.js:128
+#: assets/js/Workflows/WorkflowList.js:132
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -945,7 +945,7 @@ msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr ""
 
 #. default-message: {fetchesPerDay} / day
-#: assets/js/Workflows/Workflow.js:83
+#: assets/js/Workflows/Workflow.js:88
 msgid "js.Workflows.WorkflowMetadata.fetchesPerDay"
 msgstr ""
 
@@ -2482,12 +2482,22 @@ msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warn
 msgstr ""
 
 #. default-message: First name
-#: cjworkbench/forms/signup.py:24
+#: cjworkbench/accounts/forms.py:20
+msgid "py.forms.signup.firstName.label"
+msgstr ""
+
+#. default-message: First name
+#: cjworkbench/accounts/forms.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr ""
 
 #. default-message: Last name
-#: cjworkbench/forms/signup.py:31
+#: cjworkbench/accounts/forms.py:32
+msgid "py.forms.signup.lastName.label"
+msgstr ""
+
+#. default-message: Last name
+#: cjworkbench/accounts/forms.py:36
 msgid "py.forms.signup.lastName.placeholder"
 msgstr ""
 
@@ -2646,12 +2656,12 @@ msgid "py.templates._base.signOut"
 msgstr ""
 
 #. default-message: Sign In
-#: templates/_base.html:30 templates/account/email_confirm.html:21
+#: templates/_base.html:30 templates/account/email_confirm.html:19
 msgid "py.templates._base.signIn"
 msgstr ""
 
 #. default-message: Sign Up
-#: templates/_base.html:31 templates/account/email_confirm.html:22
+#: templates/_base.html:31 templates/account/email_confirm.html:20
 msgid "py.templates._base.signUp"
 msgstr ""
 
@@ -2828,17 +2838,17 @@ msgid "py.templates.account.email_confirm.confirmEmail"
 msgstr ""
 
 #. default-message: Confirm
-#: templates/account/email_confirm.html:14
+#: templates/account/email_confirm.html:13
 msgid "py.templates.account.email_confirm.confirm.button"
 msgstr ""
 
 #. default-message: This e-mail confirmation link expired or is invalid. Usually, this means you confirmed already. You can sign in now.
-#: templates/account/email_confirm.html:18
+#: templates/account/email_confirm.html:16
 msgid "py.templates.account.email_confirm.notFound1"
 msgstr ""
 
 #. default-message: (If you know you never clicked any confirmation link before, <a0>sign up</a0> to start over.)
-#: templates/account/email_confirm.html:19
+#: templates/account/email_confirm.html:17
 msgid "py.templates.account.email_confirm.notFound2"
 msgstr ""
 
@@ -3042,25 +3052,19 @@ msgstr ""
 msgid "py.templates.account.signup.linkToSignIn"
 msgstr ""
 
-#. The a0 tag is a link to the login page
-#. default-message: If you have already created an account, then please <a0>log in</a0>.
-#: templates/account/signup.html:26
-msgid "py.templates.account.signup.loginPrompt"
-msgstr ""
-
 #. default-message: It's ok to send me occasional news
-#: templates/account/signup.html:44
+#: templates/account/signup.html:40
 msgid "py.templates.account.signup.sendMeNews.label"
 msgstr ""
 
 #. The tags are urls to the respective pages
 #. default-message: I agree to Workbench's <a0>Terms of service</a0> and <a1>Privacy policy</a1>.
-#: templates/account/signup.html:51
+#: templates/account/signup.html:47
 msgid "py.templates.account.signup.agreeToTerms"
 msgstr ""
 
 #. default-message: Register
-#: templates/account/signup.html:53
+#: templates/account/signup.html:49
 msgid "py.templates.account.signup.registerButton"
 msgstr ""
 
@@ -3223,17 +3227,27 @@ msgid "py.templates.socialaccount.signup.thereIsAlreadyAccount"
 msgstr ""
 
 #. default-message: Sign in and connect your existing account.
-#: templates/socialaccount/signup.html:19
+#: templates/socialaccount/signup.html:21
 msgid "py.templates.socialaccount.signup.connectExistingAccount"
 msgstr ""
 
-#. default-message: You are about to use your {provider_name} account to login to {site_name}. As a final step, please complete the following form:
-#: templates/socialaccount/signup.html:24
-msgid "py.templates.socialaccount.signup.specificAccountToLogin"
+#. default-message: Thanks for signing up!
+#: templates/socialaccount/signup.html:30
+msgid "py.templates.socialaccount.signup.legend"
 msgstr ""
 
-#. default-message: Sign Up
-#: templates/socialaccount/signup.html:32
+#. default-message: Is it okay to send you product news from time to time? We announce features and send tips to tame your data.
+#: templates/socialaccount/signup.html:31
+msgid "py.templates.socialaccount.signup.form"
+msgstr ""
+
+#. default-message: Sure, email me occasional product news and tips.
+#: templates/socialaccount/signup.html:34
+msgid "py.templates.socialaccount.signup.get_newsletter.label"
+msgstr ""
+
+#. default-message: Create my account
+#: templates/socialaccount/signup.html:37
 msgid "py.templates.socialaccount.signup.button"
 msgstr ""
 

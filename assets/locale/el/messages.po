@@ -772,23 +772,23 @@ msgstr ""
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:118
+#: assets/js/Workflows/WorkflowList.js:122
 msgid "js.Workflows.WorkflowList.fetchesPerDay"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:109
+#: assets/js/Workflows/WorkflowList.js:110
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:132
+#: assets/js/Workflows/WorkflowList.js:113
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:105
+#: assets/js/Workflows/WorkflowList.js:106
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:128
+#: assets/js/Workflows/WorkflowList.js:132
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -819,7 +819,7 @@ msgstr "Δημοσίευση νέων συνταγών μέσω του διαχ�
 msgid "js.Workflows.WorkflowLists.workflowsWillAppearHere"
 msgstr "Οι ροές εργασιών στις οποίες έχετε συνεργαστεί θα εμφανίζονται εδώ"
 
-#: assets/js/Workflows/Workflow.js:83
+#: assets/js/Workflows/Workflow.js:88
 msgid "js.Workflows.WorkflowMetadata.fetchesPerDay"
 msgstr ""
 
@@ -2133,11 +2133,19 @@ msgstr ""
 msgid "py.cjwkernel.pandas.types.ProcessResult.truncate_in_place_if_too_big.warning"
 msgstr "Έγινε περικοπή της εξόδου από {old_number} σε {new_number} σειρές"
 
-#: cjworkbench/forms/signup.py:24
+#: cjworkbench/accounts/forms.py:20
+msgid "py.forms.signup.firstName.label"
+msgstr ""
+
+#: cjworkbench/accounts/forms.py:24
 msgid "py.forms.signup.firstName.placeholder"
 msgstr "Όνομα"
 
-#: cjworkbench/forms/signup.py:31
+#: cjworkbench/accounts/forms.py:32
+msgid "py.forms.signup.lastName.label"
+msgstr ""
+
+#: cjworkbench/accounts/forms.py:36
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Επώνυμο"
 
@@ -2287,11 +2295,11 @@ msgstr "Αλλαγή email"
 msgid "py.templates._base.signOut"
 msgstr "Αποσύνδεση"
 
-#: templates/_base.html:30 templates/account/email_confirm.html:21
+#: templates/_base.html:30 templates/account/email_confirm.html:19
 msgid "py.templates._base.signIn"
 msgstr "Σύνδεση"
 
-#: templates/_base.html:31 templates/account/email_confirm.html:22
+#: templates/_base.html:31 templates/account/email_confirm.html:20
 msgid "py.templates._base.signUp"
 msgstr "Εγγραφή"
 
@@ -2441,15 +2449,15 @@ msgstr "Επιβεβαίωση email"
 msgid "py.templates.account.email_confirm.confirmEmail"
 msgstr "Επιβεβαίωση email"
 
-#: templates/account/email_confirm.html:14
+#: templates/account/email_confirm.html:13
 msgid "py.templates.account.email_confirm.confirm.button"
 msgstr "Επιβεβαίωση"
 
-#: templates/account/email_confirm.html:18
+#: templates/account/email_confirm.html:16
 msgid "py.templates.account.email_confirm.notFound1"
 msgstr ""
 
-#: templates/account/email_confirm.html:19
+#: templates/account/email_confirm.html:17
 msgid "py.templates.account.email_confirm.notFound2"
 msgstr ""
 
@@ -2622,25 +2630,18 @@ msgstr "Εγγραφή"
 msgid "py.templates.account.signup.linkToSignIn"
 msgstr "Σύνδεση"
 
-#. The a0 tag is a link to the login page
-#: templates/account/signup.html:26
-msgid "py.templates.account.signup.loginPrompt"
-msgstr ""
-"Αν έχετε ήδη δημιουργήσει λογαριασμό, τότε παρακαλούμε να "
-"<a0>συνδεθείτε</a0>."
-
-#: templates/account/signup.html:44
+#: templates/account/signup.html:40
 msgid "py.templates.account.signup.sendMeNews.label"
 msgstr "Δέχομαι να μου στέλνετε ειδήσεις κατά καιρούς"
 
 #. The tags are urls to the respective pages
-#: templates/account/signup.html:51
+#: templates/account/signup.html:47
 msgid "py.templates.account.signup.agreeToTerms"
 msgstr ""
 "Συμφωνώ με τους <a0>Όρους Παροχής Υπηρεσιών</a0> και την <a1>Πολιτική "
 "Απορρήτου</a1> του Workbench."
 
-#: templates/account/signup.html:53
+#: templates/account/signup.html:49
 msgid "py.templates.account.signup.registerButton"
 msgstr "Εγγραφή"
 
@@ -2796,20 +2797,25 @@ msgstr ""
 "Υπάρχει ήδη ένας λογαριασμός που έχει καταχωρηθεί με τη συγκεκριμένη "
 "διεύθυνση ηλ. ταχυδρομείου."
 
-#: templates/socialaccount/signup.html:19
+#: templates/socialaccount/signup.html:21
 msgid "py.templates.socialaccount.signup.connectExistingAccount"
 msgstr "Συνδεθείτε με τον υπάρχοντα λογαριασμό σας."
 
-#: templates/socialaccount/signup.html:24
-msgid "py.templates.socialaccount.signup.specificAccountToLogin"
+#: templates/socialaccount/signup.html:30
+msgid "py.templates.socialaccount.signup.legend"
 msgstr ""
-"Πρόκειται να χρησιμοποιήσετε το λογαριασμό σας {provider_name} για να "
-"συνδεθείτε στο {site_name}. Ως τελικό βήμα, συμπληρώστε την παρακάτω "
-"φόρμα:"
 
-#: templates/socialaccount/signup.html:32
+#: templates/socialaccount/signup.html:31
+msgid "py.templates.socialaccount.signup.form"
+msgstr ""
+
+#: templates/socialaccount/signup.html:34
+msgid "py.templates.socialaccount.signup.get_newsletter.label"
+msgstr ""
+
+#: templates/socialaccount/signup.html:37
 msgid "py.templates.socialaccount.signup.button"
-msgstr "Εγγραφή"
+msgstr ""
 
 #: templates/socialaccount/messages/account_connected.txt:2
 msgid "py.templates.socialaccount.messages.account_connected.text"

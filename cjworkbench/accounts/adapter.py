@@ -1,12 +1,11 @@
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from cjworkbench.i18n.templates import context_processor
-from cjworkbench.models.userprofile import UserProfile
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.template import TemplateDoesNotExist
 from django.contrib import messages
+
+from ..i18n.templates import context_processor
 
 
 class AccountAdapter(DefaultAccountAdapter):
@@ -56,16 +55,4 @@ class AccountAdapter(DefaultAccountAdapter):
             except TemplateDoesNotExist:
                 pass
 
-
-class SocialAccountAdapter(DefaultSocialAccountAdapter):
-    def save_user(self, request, sociallogin, form=None):
-        """
-        Saves a newly signed up social login. In case of auto-signup,
-        the signup form is not available.
-        """
-        u = super().save_user(request, sociallogin, form=None)
-        # User profile
-        UserProfile.objects.update_or_create(
-            user=u, defaults={"locale_id": request.locale_id}
-        )
-        return u
+    # save_user() is not used: logic is in cjworkbench.accounts.forms.SignupForm

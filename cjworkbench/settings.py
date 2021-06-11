@@ -125,8 +125,18 @@ CHANNEL_LAYERS = {
 }
 
 # For django-allauth
-ACCOUNT_ADAPTER = "cjworkbench.allauth_account_adapter.AccountAdapter"
-SOCIALACCOUNT_ADAPTER = "cjworkbench.allauth_account_adapter.SocialAccountAdapter"
+ACCOUNT_ADAPTER = "cjworkbench.accounts.adapter.AccountAdapter"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_USER_DISPLAY = workbench_user_display
+ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.accounts.forms.WorkbenchSignupForm"
+SOCIALACCOUNT_ADAPTER = "cjworkbench.socialaccounts.adapter.SocialAccountAdapter"
+SOCIALACCOUNT_FORMS = {
+    "signup": "cjworkbench.socialaccounts.forms.WorkbenchSocialaccountSignupForm"
+}
+SOCIALACCOUNT_AUTO_SIGNUP = False
 
 # EMAIL_BACKEND
 #
@@ -323,15 +333,6 @@ LOGGING = {
     },
 }
 
-# User accounts
-
-ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_USER_DISPLAY = workbench_user_display
-ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.forms.signup.WorkbenchSignupForm"
 
 AUTHENTICATION_BACKENDS = ["allauth.account.auth_backends.AuthenticationBackend"]
 
