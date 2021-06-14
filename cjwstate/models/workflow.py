@@ -178,12 +178,7 @@ class Workflow(models.Model):
             # versions.
             # https://code.djangoproject.com/ticket/28344#comment:10
             self.refresh_from_db()
-            workflow_lock = DbObjectCooperativeLock("workflow", self)
-            yield workflow_lock
-
-        # If we reach here, COMMIT was called and we're returning whatever
-        # the `yield` block returned.
-        workflow_lock._invoke_after_commit_callbacks()
+            yield
 
     @property
     def live_tabs(self):
