@@ -23,8 +23,7 @@ def delete_workflow_stale_deltas(
     from cjwstate.models.workflow import Workflow
 
     try:
-        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
             with django.db.connections["default"].cursor() as cursor:
                 cursor.execute(
                     """

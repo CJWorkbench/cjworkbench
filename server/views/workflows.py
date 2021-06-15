@@ -384,8 +384,7 @@ class ApiDetail(View):
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
                 "owner", request.user, request.session, pk=workflow_id
-            ) as workflow_lock:
-                workflow = workflow_lock.workflow
+            ) as workflow:
                 workflow.delete()
             return HttpResponse(status=status.NO_CONTENT)
         except Workflow.DoesNotExist as err:

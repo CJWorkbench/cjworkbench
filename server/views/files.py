@@ -33,9 +33,9 @@ def get_request_bearer_token(request: HttpRequest) -> str:
 @database_sync_to_async
 def _raise_if_unauthorized(workflow_id: int, step_slug: str, api_token: str) -> None:
     with upload.locked_and_loaded_step(workflow_id, step_slug) as (
-        workflow_lock,
-        step,
         _,
+        step,
+        __,
     ):  # raise UploadError
         upload.raise_if_api_token_is_wrong(step, api_token)  # raise UploadError
 

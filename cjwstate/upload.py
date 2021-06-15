@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 import httpx
 from django.conf import settings
 
-from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.models.step import Step
 from cjwstate.models.workflow import Workflow
@@ -50,8 +49,8 @@ def raise_if_api_token_is_wrong(step: Step, api_token: str) -> None:
 @contextlib.contextmanager
 def locked_and_loaded_step(
     workflow_id: int, step_slug: str
-) -> ContextManager[Tuple[DbObjectCooperativeLock, Step, str]]:
-    """Yield `WorkflowLock`, `step` and `file_param_id_name`.
+) -> ContextManager[Tuple[Workflow, Step, str]]:
+    """Yield `workflow`, `step` and `file_param_id_name`.
 
     SECURITY: the caller may want to test the Step's `file_upload_api_token`.
 
@@ -64,8 +63,7 @@ def locked_and_loaded_step(
     Raise UploadError(400, "step-has-no-file-param") on a Step with no File param.
     """
     try:
-        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
             try:
                 step = Step.live_in_workflow(workflow).get(slug=step_slug)
             except Step.DoesNotExist:
@@ -87,7 +85,7 @@ def locked_and_loaded_step(
             except StopIteration:
                 raise UploadError(400, "step-has-no-file-param")
 
-            yield workflow_lock, step, file_param_id_name
+            yield workflow, step, file_param_id_name
     except Workflow.DoesNotExist:
         raise UploadError(404, "workflow-not-found")
 

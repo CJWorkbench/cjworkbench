@@ -27,8 +27,7 @@ def create_checkout_session(
 
     Re-raise Stripe error if creating a Customer or CheckoutSession fails.
     """
-    with UserProfile.lookup_and_cooperative_lock(user_id=user_id) as lock:
-        user_profile = lock.user_profile
+    with UserProfile.lookup_and_cooperative_lock(user_id=user_id) as user_profile:
         user = user_profile.user
         if user_profile.stripe_customer_id is None:
             stripe_customer = stripe.Customer.create(
@@ -67,8 +66,8 @@ def create_billing_portal_session(
     # raises UserProfile.DoesNotExist
     with UserProfile.lookup_and_cooperative_lock(
         user_id=user_id, stripe_customer_id__isnull=False
-    ) as lock:
-        stripe_customer_id = lock.user_profile.stripe_customer_id
+    ) as user_profile:
+        stripe_customer_id = user_profile.stripe_customer_id
 
     return stripe.billing_portal.Session.create(
         customer=stripe_customer_id,
@@ -109,8 +108,8 @@ def handle_checkout_session_completed(
 
     with UserProfile.lookup_and_cooperative_lock(
         stripe_customer_id=stripe_customer_id
-    ) as lock:  # raise UserProfile.NotFound
-        user = lock.user_profile.user
+    ) as user_profile:  # raise UserProfile.NotFound
+        user = user_profile.user
         user.subscriptions.update_or_create(
             stripe_subscription_id=stripe_subscription_id,
             defaults=dict(

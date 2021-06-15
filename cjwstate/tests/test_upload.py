@@ -71,9 +71,7 @@ class LockedAndLoadedStepTest(DbTestCaseWithModuleRegistry):
             params={"file": None},
         )
         with locked_and_loaded_step(workflow.id, "step-123") as x:
-            self.assertEqual(x[0].workflow, workflow)
-            self.assertEqual(x[1], step)
-            self.assertEqual(x[2], "file")
+            self.assertEqual(x, (workflow, step, "file"))
 
 
 class RaiseIfApiTokenIsWrongTest(unittest.TestCase):

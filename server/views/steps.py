@@ -63,8 +63,7 @@ def _load_workflow_and_step_sync(
             search = {"secret_id": workflow_id_or_secret_id}
             has_secret = True
 
-        with Workflow.lookup_and_cooperative_lock(**search) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with Workflow.lookup_and_cooperative_lock(**search) as workflow:
             if (
                 has_secret
                 or workflow.public

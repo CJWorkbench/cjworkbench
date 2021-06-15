@@ -101,9 +101,9 @@ def load_database_objects(workflow_id: int, step_id: int) -> DatabaseObjects:
     Catch a `ModuleError` from migrate_params() and return it as part of the
     `DatabaseObjects`.
     """
-    with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
+    with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
         # raise Step.DoesNotExist
-        step = Step.live_in_workflow(workflow_lock.workflow).get(id=step_id)
+        step = Step.live_in_workflow(workflow).get(id=step_id)
 
         # module_zipfile
         try:

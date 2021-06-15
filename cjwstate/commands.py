@@ -114,8 +114,7 @@ def _first_forward_and_save_returning_clientside_update(
     command = NAME_TO_COMMAND[cls.__name__]
     try:
         # raise Workflow.DoesNotExist
-        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
             create_kwargs = command.amend_create_kwargs(workflow=workflow, **kwargs)
             if not create_kwargs:
                 return None, None, None
@@ -169,9 +168,7 @@ def _call_forward_and_load_clientside_update(
     now = datetime.datetime.now()
 
     try:
-        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
-
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
             delta = workflow.deltas.filter(id__gt=workflow.last_delta_id).first()
             if delta is None:
                 # Nothing to redo: we're at the end of the delta chain
@@ -203,8 +200,7 @@ def _call_backward_and_load_clientside_update(
     now = datetime.datetime.now()
 
     try:
-        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
             # raise Delta.DoesNotExist if we're at the beginning of the undo chain
             delta = workflow.deltas.exclude(command_name=InitWorkflow.__name__).get(
                 id=workflow.last_delta_id

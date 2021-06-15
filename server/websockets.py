@@ -11,7 +11,6 @@ from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
 
@@ -33,7 +32,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     def _lookup_requested_workflow_with_auth_and_cooperative_lock(
         self,
-    ) -> ContextManager[DbObjectCooperativeLock]:
+    ) -> ContextManager[Workflow]:
         """Either yield the requested workflow, or raise Workflow.DoesNotExist
 
         Workflow.DoesNotExist means "permission denied" or "workflow does not exist".
@@ -55,8 +54,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def _read_requested_workflow_with_auth(self):
-        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow_lock:
-            return workflow_lock.workflow
+        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow:
+            return workflow
 
     @database_sync_to_async
     def _get_workflow_as_clientside_update(self) -> WorkflowUpdateData:
@@ -64,8 +63,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         Raise Workflow.DoesNotExist if a race deletes the Workflow.
         """
-        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow_lock:
-            workflow = workflow_lock.workflow
+        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow:
             update = clientside.Update(
                 workflow=workflow.to_clientside(),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},

@@ -13,10 +13,6 @@ from django.db.models.functions import Cast
 from django.http import HttpRequest
 from django.urls import reverse
 
-from cjworkbench.models.db_object_cooperative_lock import (
-    DbObjectCooperativeLock,
-    lookup_and_cooperative_lock,
-)
 from cjwstate import clientside, s3
 from cjwstate.models.fields import Role
 from cjwstate.modules.util import gather_param_tab_slugs
@@ -273,53 +269,80 @@ class Workflow(models.Model):
         return cls.objects.filter(mask)
 
     @classmethod
-    def lookup_and_cooperative_lock(
-        cls, **kwargs
-    ) -> ContextManager[DbObjectCooperativeLock]:
+    @contextmanager
+    def lookup_and_cooperative_lock(cls, **kwargs) -> ContextManager[Workflow]:
         """Efficiently lookup and lock a Workflow in one operation.
 
         Usage:
 
-            with Workflow.lookup_and_cooperative_lock(pk=123) as workflow_lock:
-                workflow = workflow_lock.workflow
+            with Workflow.lookup_and_cooperative_lock(pk=123) as workflow:
                 # ... do stuff
-                workflow.after_commit(lambda: print("called after commit, before True is returned"))
                 return True
 
         This is equivalent to:
 
             workflow = Workflow.objects.get(pk=123)
-            with workflow.cooperative_lock() as workflow_lock:
+            with workflow.cooperative_lock()
                 # ... do stuff
 
         But the latter runs three SQL queries, and this method uses just one.
 
-        Raises Workflow.DoesNotExist.
+        This is _cooperative_. It only works if every write uses this method.
+        _Always_ use this method: writing without it is a bug.
+
+        It is safe to call cooperative_lock() within a cooperative_lock(). The
+        inner one will behave as a no-op.
+
+        Take care with async functions. Transactions don't cross async
+        boundaries, anything you `await` while you hold the cooperative lock
+        won't be rolled back with the same rules as non-awaited code. You
+        should still use cooperative_lock(); but instead of behaving like a
+        database transaction, it will behave like a simple advisory lock; and
+        _it cannot be nested_.
+
+        Raise Workflow.DoesNotExist if it does not exist.
         """
-        return lookup_and_cooperative_lock(cls.objects, "workflow", **kwargs)
+        with transaction.atomic():
+            workflow = Workflow.objects.select_for_update().get(**kwargs)
+            yield workflow
 
     @classmethod
     @contextmanager
-    def authorized_lookup_and_cooperative_lock(cls, level, user, session, **kwargs):
-        """Efficiently lookup and lock a Workflow in one operation.
+    def authorized_lookup_and_cooperative_lock(
+        cls, level, user, session, **kwargs
+    ) -> ContextManager[Workflow]:
+        """Efficiently lookup, lock and authenticate a Workflow in one operation.
 
         Usage:
 
-            with Workflow.authorized_lookup_and_cooperative_lock('read', request.user,
-                                                                 request.session,
-                                                                 pk=123) as workflow_lock:
-                # ... do stuff with workflow_lock.workflow
+            with Workflow.authorized_lookup_and_cooperative_lock(
+                'read', request.user, request.session, id=123
+            ) as workflow:
+                # ... do stuff with workflow
 
-        Raise Workflow.DoesNotExist when it does not exist. (To check if access was
-        denied, check `err.args[0].endswith('access denied')`. TODO revisit this oddity.)
+        This is _cooperative_. It only works if every write uses this method.
+        _Always_ use this method: writing without it is a bug.
+
+        It is safe to call cooperative_lock() within a cooperative_lock(). The
+        inner one will behave as a no-op.
+
+        Take care with async functions. Transactions don't cross async
+        boundaries, anything you `await` while you hold the cooperative lock
+        won't be rolled back with the same rules as non-awaited code. You
+        should still use cooperative_lock(); but instead of behaving like a
+        database transaction, it will behave like a simple advisory lock; and
+        _it cannot be nested_.
+
+        Raise Workflow.DoesNotExist if it does not exist or if access is denied.
+        To check for access-denied, test whether
+        `err.args[0].endswith('access denied')`. (TODO revisit this oddity.)
         """
-        with cls.lookup_and_cooperative_lock(**kwargs) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with cls.lookup_and_cooperative_lock(**kwargs) as workflow:
             access = getattr(workflow, "user_session_authorized_%s" % level)
             if not access(user, session):
                 raise cls.DoesNotExist("%s access denied" % level)
 
-            yield workflow_lock
+            yield workflow
 
     @staticmethod
     def create_and_init(**kwargs):
