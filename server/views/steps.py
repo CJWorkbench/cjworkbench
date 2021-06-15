@@ -383,8 +383,6 @@ async def embed(request: HttpRequest, workflow_id: int, step_slug: str):
             raise Http404("Module has no HTML")
 
         ctx = JsonizeContext(
-            user=AnonymousUser(),
-            user_profile=None,
             locale_id=request.locale_id,
             module_zipfiles={module_zipfile.module_id: module_zipfile},
         )
@@ -456,8 +454,6 @@ async def deprecated_embed(request: HttpRequest, step_id: int):
     @database_sync_to_async
     def build_init_state():
         ctx = JsonizeContext(
-            user=AnonymousUser(),
-            user_profile=None,
             locale_id=request.locale_id,
             module_zipfiles={module_zipfile.module_id: module_zipfile},
         )

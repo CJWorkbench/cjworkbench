@@ -28,6 +28,7 @@ import server.utils
 from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
+from cjwstate.models.dbutil import query_clientside_user
 from cjwstate.models import Step, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -38,8 +39,8 @@ from server.models.lesson import LessonLookup
 from server.serializers import (
     JsonizeContext,
     jsonize_clientside_init,
+    jsonize_clientside_user,
     jsonize_clientside_workflow,
-    jsonize_user,
 )
 from server.settingsutils import workbench_user_display
 
@@ -163,11 +164,7 @@ def authorized_report_viewer(
 def _get_request_jsonize_context(
     request: HttpRequest, module_zipfiles: Dict[str, ModuleZipfile]
 ) -> JsonizeContext:
-    # Anonymous has no user_profile
-    user_profile = UserProfile.objects.filter(user_id=request.user.id).first()
     return JsonizeContext(
-        user=request.user,
-        user_profile=user_profile,
         locale_id=request.locale_id,
         module_zipfiles=module_zipfiles,
     )
@@ -182,12 +179,17 @@ def make_init_state(
 
     Side-effect: update workflow.last_viewed_at.
     """
+    if user.is_anonymous:
+        user = None
+    else:
+        user = query_clientside_user(request.user)  # TODO lock to avoid races?
     try:
         with workflow.cooperative_lock():  # raise DoesNotExist on race
             workflow.last_viewed_at = datetime.datetime.now()
             workflow.save(update_fields=["last_viewed_at"])
 
             state = clientside.Init(
+                user=user,
                 workflow=workflow.to_clientside(),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
@@ -212,12 +214,12 @@ def make_init_state(
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = _get_request_jsonize_context(request, modules)
+    ctx = JsonizeContext(request.locale_id, modules)
     return jsonize_clientside_init(state, ctx)
 
 
 def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
-    ctx = _get_request_jsonize_context(request, {})
+    ctx = JsonizeContext(request.lcoale_id, {})
 
     workflows = (
         Workflow.objects.filter(**kwargs)
@@ -238,7 +240,7 @@ def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
         "loggedInUser": (
             None
             if request.user.is_anonymous
-            else jsonize_user(request.user, ctx.user_profile)
+            else jsonize_clientside_user(query_clientside_user(request.user))
         ),
         "workflows": json_workflows,
     }
@@ -407,7 +409,7 @@ class Duplicate(View):
             authorized_read, workflow_id_or_secret_id, request
         )
         workflow2 = workflow.duplicate(request.user)
-        ctx = _get_request_jsonize_context(request, MODULE_REGISTRY.all_latest())
+        ctx = JsonizeContext(request.locale_id, MODULE_REGISTRY.all_latest())
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
         )

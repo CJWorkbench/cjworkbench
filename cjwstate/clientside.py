@@ -67,6 +67,36 @@ class Module:
 
 
 @dataclass(frozen=True)
+class UserUpdate:
+    """Updates to clients' `loggedInUser` state.
+
+    Every field of an Update is Optional, default `None`. `None` means there
+    is no update, and the client should keep whichever value it already had.
+    """
+
+    display_name: Optional[str] = None
+    """Name the user entered on sign-up, or 'Anonymous' or email address."""
+
+    email: Optional[str] = None
+    """Email address."""
+
+    is_staff: Optional[bool] = None
+    """If True, let user import modules from GitHub.
+
+    TODO revamp module-import process so it doesn't happen on the frontend.
+    """
+
+    stripe_customer_id: Optional[Union[_Null, str]] = None
+    """Stripe customer ID."""
+
+    limits: Optional[UserLimits] = None
+    """Limits that apply to the user, usually based on plan."""
+
+    usage: Optional[UserUsage] = None
+    """User's current usage, usually based on plan."""
+
+
+@dataclass(frozen=True)
 class WorkflowUpdate:
     """Updates to clients' `workflow` state.
 
@@ -438,6 +468,7 @@ class Init:
     * The creator must ensure no Update values are `None`.
     """
 
+    user: Optional[UserUpdate]  # None means anonymous user
     workflow: WorkflowUpdate
     modules: Dict[str, Module]
     steps: Dict[int, StepUpdate]  # TODO key by slug, not ID

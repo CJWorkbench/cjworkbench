@@ -72,8 +72,6 @@ def _camelize_value(v: Any) -> Any:
 
 
 class JsonizeContext(NamedTuple):
-    user: User
-    user_profile: Optional[UserProfile]
     locale_id: str
     module_zipfiles: Dict[str, "ModuleZipFile"]
 
@@ -729,6 +727,23 @@ def jsonize_clientside_step(
     return d
 
 
+def jsonize_clientside_user(user: clientside.UserUpdate) -> Dict[str, Any]:
+    d = {}
+    for k, v in (
+        ("display_name", user.display_name),
+        ("email", user.email),
+        ("is_staff", user.is_staff),
+        ("stripeCustomerId", user.stripe_customer_id),
+    ):
+        _maybe_set(d, k, v)
+
+    if user.limits:
+        d["limits"] = user.limits._asdict()
+    if user.usage:
+        d["usage"] = user.usage._asdict()
+    return d
+
+
 def jsonize_clientside_init(
     state: clientside.Init, ctx: JsonizeContext
 ) -> Dict[str, Any]:
@@ -738,9 +753,7 @@ def jsonize_clientside_init(
     some i18n code invoked here.)
     """
     return {
-        "loggedInUser": None
-        if ctx.user.is_anonymous
-        else jsonize_user(ctx.user, ctx.user_profile),
+        "loggedInUser": jsonize_clientside_user(state.user) if state.user else None,
         "modules": {
             k: jsonize_clientside_module(v, ctx) for k, v in state.modules.items()
         },
@@ -768,6 +781,8 @@ def jsonize_clientside_update(
     r = {}
     if update.mutation_id:
         r["mutationId"] = update.mutation_id
+    if update.user:
+        r["updateUser"] = jsonize_clientside_workflow(update.user)
     if update.workflow:
         r["updateWorkflow"] = jsonize_clientside_workflow(
             update.workflow, ctx, is_init=False

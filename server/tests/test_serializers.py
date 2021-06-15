@@ -35,8 +35,6 @@ def create_module_zipfile_with_catalogs(
 
 
 def mock_jsonize_context(
-    user=None,
-    user_profile=None,
     locale_id=None,
     module_catalogs_data: List[Tuple[str, Dict[str, Catalog]]] = [],
 ):
@@ -47,8 +45,6 @@ def mock_jsonize_context(
                 module_id_name, catalogs
             )
     return JsonizeContext(
-        user=user,
-        user_profile=user_profile,
         locale_id=locale_id,
         module_zipfiles=module_zipfiles,
     )
@@ -1710,9 +1706,7 @@ class JsonizeBlocksTest(unittest.TestCase):
     def test_text_block(self):
         self.assertEqual(
             jsonize_clientside_update(
-                Update(
-                    blocks={"block-1": TextBlock(markdown="# header")},
-                ),
+                Update(blocks={"block-1": TextBlock(markdown="# header")}),
                 mock_jsonize_context(),
             ),
             {

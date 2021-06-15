@@ -140,8 +140,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         logger.debug("Send update to Workflow %d", self.workflow_id)
         module_zipfiles = await _load_latest_modules()
         ctx = JsonizeContext(
-            user=self.scope["user"],
-            user_profile=None,  # [2021-02-05] no updates read it
             locale_id=self.scope["locale_id"],
             module_zipfiles=module_zipfiles,
         )
