@@ -37,7 +37,6 @@ def create_module_zipfile_with_catalogs(
 def mock_jsonize_context(
     user=None,
     user_profile=None,
-    session=None,
     locale_id=None,
     module_catalogs_data: List[Tuple[str, Dict[str, Catalog]]] = [],
 ):
@@ -50,7 +49,6 @@ def mock_jsonize_context(
     return JsonizeContext(
         user=user,
         user_profile=user_profile,
-        session=session,
         locale_id=locale_id,
         module_zipfiles=module_zipfiles,
     )

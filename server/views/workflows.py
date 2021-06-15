@@ -168,7 +168,6 @@ def _get_request_jsonize_context(
     return JsonizeContext(
         user=request.user,
         user_profile=user_profile,
-        session=request.session,
         locale_id=request.locale_id,
         module_zipfiles=module_zipfiles,
     )

@@ -34,7 +34,7 @@ Fetch = "fetch"
 """Name of queue that 'fetcher' listens to."""
 
 GroupsExchange = "groups"
-"""Name of exchange upon which we publish workflow updates.
+"""Name of exchange upon which we publish user/workflow updates.
 
 This magic string is described at
 https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.

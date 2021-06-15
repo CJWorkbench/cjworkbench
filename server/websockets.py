@@ -142,7 +142,6 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         ctx = JsonizeContext(
             user=self.scope["user"],
             user_profile=None,  # [2021-02-05] no updates read it
-            session=self.scope["session"],
             locale_id=self.scope["locale_id"],
             module_zipfiles=module_zipfiles,
         )

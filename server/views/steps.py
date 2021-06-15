@@ -385,7 +385,6 @@ async def embed(request: HttpRequest, workflow_id: int, step_slug: str):
         ctx = JsonizeContext(
             user=AnonymousUser(),
             user_profile=None,
-            session=None,
             locale_id=request.locale_id,
             module_zipfiles={module_zipfile.module_id: module_zipfile},
         )
@@ -459,7 +458,6 @@ async def deprecated_embed(request: HttpRequest, step_id: int):
         ctx = JsonizeContext(
             user=AnonymousUser(),
             user_profile=None,
-            session=None,
             locale_id=request.locale_id,
             module_zipfiles={module_zipfile.module_id: module_zipfile},
         )

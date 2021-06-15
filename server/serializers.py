@@ -17,6 +17,7 @@ from cjworkbench.i18n.trans import (
     NotInternationalizedError,
 )
 from cjworkbench.models.userlimits import UserLimits
+from cjworkbench.models.userprofile import UserProfile
 from cjworkbench.settings import KB_ROOT_URL
 from cjwstate import clientside
 from server.settingsutils import workbench_user_display
@@ -72,8 +73,7 @@ def _camelize_value(v: Any) -> Any:
 
 class JsonizeContext(NamedTuple):
     user: User
-    user_profile: Optional["UserProfile"]
-    session: Optional["Session"]
+    user_profile: Optional[UserProfile]
     locale_id: str
     module_zipfiles: Dict[str, "ModuleZipFile"]
 
@@ -94,7 +94,7 @@ def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
         return dt_or_none.isoformat() + "Z"
 
 
-def jsonize_user(user: User, user_profile: Optional["UserProfile"]) -> Dict[str, Any]:
+def jsonize_user(user: User, user_profile: Optional[UserProfile]) -> Dict[str, Any]:
     return {
         "display_name": user_display(user),
         "email": user.email,
