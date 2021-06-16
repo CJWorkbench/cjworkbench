@@ -15,14 +15,22 @@ instead.
 from __future__ import annotations
 
 import datetime
-from dataclasses import dataclass, field, replace
-from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Optional, Union
+from typing import (
+    Any,
+    Dict,
+    FrozenSet,
+    Iterable,
+    List,
+    Literal,
+    NamedTuple,
+    Optional,
+    Union,
+)
 
 from cjwstate.modules.types import ModuleSpec
 
 
-@dataclass(frozen=True)
-class _Null:
+class _Null(NamedTuple):
     pass
 
 
@@ -34,40 +42,34 @@ We don't use `None` for this purpose: `None` means there is no update.
 """
 
 
-@dataclass(frozen=True)
-class AclEntry:
+class AclEntry(NamedTuple):
     email: str
     role: Literal["editor", "viewer", "report-viewer"]
 
 
-@dataclass(frozen=True)
-class UploadedFile:
+class UploadedFile(NamedTuple):
     name: str
     uuid: str
     size: int
     created_at: datetime.datetime
 
 
-@dataclass(frozen=True)
-class FetchedVersion:
+class FetchedVersion(NamedTuple):
     created_at: datetime.datetime
     is_seen: bool
 
 
-@dataclass(frozen=True)
-class FetchedVersionList:
+class FetchedVersionList(NamedTuple):
     versions: List[FetchedVersion]
     selected: Optional[datetime.datetime]
 
 
-@dataclass(frozen=True)
-class Module:
+class Module(NamedTuple):
     spec: ModuleSpec
     js_module: str
 
 
-@dataclass(frozen=True)
-class UserUpdate:
+class UserUpdate(NamedTuple):
     """Updates to clients' `loggedInUser` state.
 
     Every field of an Update is Optional, default `None`. `None` means there
@@ -96,8 +98,7 @@ class UserUpdate:
     """User's current usage, usually based on plan."""
 
 
-@dataclass(frozen=True)
-class WorkflowUpdate:
+class WorkflowUpdate(NamedTuple):
     """Updates to clients' `workflow` state.
 
     The following fields cannot be represented here:
@@ -179,8 +180,7 @@ class WorkflowUpdate:
     """Non-owners' permissions."""
 
 
-@dataclass(frozen=True)
-class StepUpdate:
+class StepUpdate(NamedTuple):
     """Data for a new or existing Step with the given id (TODO use slug, nix id).
 
     Every field of an Update is Optional, default `None`. `None` means there
@@ -299,8 +299,7 @@ class StepUpdate:
             assert self.module_slug is not None  # (otherwise i18n will break)
 
 
-@dataclass(frozen=True)
-class TabUpdate:
+class TabUpdate(NamedTuple):
     """Data for a new or existing Tab with the given slug.
 
     Every field of an Update is Optional, default `None`. `None` means there
@@ -332,20 +331,17 @@ class TabUpdate:
     """
 
 
-@dataclass(frozen=True)
-class TextBlock:
+class TextBlock(NamedTuple):
     markdown: str
     type: Literal["text"] = "text"
 
 
-@dataclass(frozen=True)
-class ChartBlock:
+class ChartBlock(NamedTuple):
     step_slug: str
     type: Literal["chart"] = "chart"
 
 
-@dataclass(frozen=True)
-class TableBlock:
+class TableBlock(NamedTuple):
     tab_slug: str
     type: Literal["table"] = "table"
 
@@ -353,8 +349,7 @@ class TableBlock:
 Block = Union[TextBlock, ChartBlock, TableBlock]
 
 
-@dataclass(frozen=True)
-class Update:
+class Update(NamedTuple):
     """New data to pass to the client.
 
     Every field of an Update is Optional, default `None`. `None` means there
@@ -388,44 +383,44 @@ class Update:
     workflow: Optional[WorkflowUpdate] = None
     """Workflow-wide data to replace."""
 
-    modules: Dict[str, Module] = field(default_factory=dict)
+    modules: Dict[str, Module] = {}
     """Modules to add or replace, keyed by slug."""
 
-    steps: Dict[int, StepUpdate] = field(default_factory=dict)
+    steps: Dict[int, StepUpdate] = {}
     """Steps to add or update, keyed by ID. TODO key by slug, not ID."""
 
-    tabs: Dict[str, TabUpdate] = field(default_factory=dict)
+    tabs: Dict[str, TabUpdate] = {}
     """Tabs to add or update, keyed by slug."""
 
-    blocks: Dict[str, Block] = field(default_factory=dict)
+    blocks: Dict[str, Block] = {}
     """Report blocks to add or update, keyed by slug."""
 
-    clear_tab_slugs: FrozenSet[str] = field(default_factory=frozenset)
+    clear_tab_slugs: FrozenSet[str] = frozenset()
     """Tab slugs the client should forget about."""
 
-    clear_step_ids: FrozenSet[int] = field(default_factory=frozenset)
+    clear_step_ids: FrozenSet[int] = frozenset()
     """Step IDs the client should forget about. TODO use slugs, not IDs."""
 
-    clear_block_slugs: FrozenSet[str] = field(default_factory=frozenset)
+    clear_block_slugs: FrozenSet[str] = frozenset()
     """Block slugs the client should forget about."""
 
     def replace_mutation_id(self, mutation_id: str) -> Update:
         """Return an Update with added/modified mutation_id."""
-        return replace(self, mutation_id=mutation_id)
+        return self._replace(mutation_id=mutation_id)
 
     def update_tab(self, slug: str, **kwargs) -> Update:
         """Return an Update with added/modified tab values."""
         tabs = dict(self.tabs)  # shallow copy
         old_tab = tabs.get(slug, TabUpdate())
-        tabs[slug] = replace(old_tab, **kwargs)
-        return replace(self, tabs=tabs)
+        tabs[slug] = old_tab._replace(**kwargs)
+        return self._replace(tabs=tabs)
 
     def update_step(self, id: int, **kwargs) -> Update:
         """Return an Update with added/modified step values. TODO key by slug, not id."""
         steps = dict(self.steps)  # shallow copy
         old_step = steps.get(id, StepUpdate())
-        steps[id] = replace(old_step, **kwargs)
-        return replace(self, steps=steps)
+        steps[id] = old_step._replace(**kwargs)
+        return self._replace(steps=steps)
 
     def update_workflow(self, **kwargs) -> Update:
         """Return an Update with modified workflow values."""
@@ -433,45 +428,44 @@ class Update:
             workflow = WorkflowUpdate()
         else:
             workflow = self.workflow
-        return replace(self, workflow=replace(workflow, **kwargs))
+        return self._replace(workflow=workflow._replace(**kwargs))
 
     def replace_tab(self, slug: str, update: TabUpdate) -> Update:
         """Return an Update with a new Tab."""
         assert slug == update.slug
-        return replace(self, tabs={**self.tabs, update.slug: update})
+        return self._replace(tabs={**self.tabs, update.slug: update})
 
     def replace_step(self, id: int, update: StepUpdate) -> Update:
         """Return an Update with a new Step."""
         assert id == update.id
-        return replace(self, steps={**self.steps, id: update})
+        return self._replace(steps={**self.steps, id: update})
 
     def replace_blocks(self, updates: Dict[str, Block]) -> Update:
         """Return an Update with added/modified block."""
-        return replace(self, blocks={**self.blocks, **updates})
+        return self._replace(blocks={**self.blocks, **updates})
 
     def replace_steps(self, updates: Dict[int, StepUpdate]) -> Update:
         """Return an Update with new or replaced Steps. TODO key by slug, not id."""
-        return replace(self, steps={**self.steps, **updates})
+        return self._replace(steps={**self.steps, **updates})
 
     def clear_tab(self, slug: str) -> Update:
         """Return an Update that clears a Tab."""
-        return replace(self, clear_tab_slugs=self.clear_tab_slugs.union([slug]))
+        return self._replace(clear_tab_slugs=self.clear_tab_slugs.union([slug]))
 
     def clear_step(self, id: int) -> Update:
         """Return an Update that clears a Step. TODO key by slug, not id."""
-        return replace(self, clear_step_ids=self.clear_step_ids.union([id]))
+        return self._replace(clear_step_ids=self.clear_step_ids.union([id]))
 
     def clear_steps(self, ids: Iterable[int]) -> Update:
         """Return an Update that clears Steps. TODO key by slug, not id."""
-        return replace(self, clear_step_ids=self.clear_step_ids.union(ids))
+        return self._replace(clear_step_ids=self.clear_step_ids.union(ids))
 
     def clear_blocks(self, slugs: Iterable[str]) -> Update:
         """Return an Update that clears report Blocks."""
-        return replace(self, clear_block_slugs=self.clear_block_slugs.union(slugs))
+        return self._replace(clear_block_slugs=self.clear_block_slugs.union(slugs))
 
 
-@dataclass(frozen=True)
-class Init:
+class Init(NamedTuple):
     """Initial state to pass to the client.
 
     This is modeled after `Update`, with these differences:
