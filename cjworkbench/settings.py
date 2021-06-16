@@ -129,9 +129,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_USER_MODEL_USERNAME_FIELD = (
-    "email"  # "you are already logged in as {{user_display}}"
-)
+ACCOUNT_USER_DISPLAY = lambda user: user.email
 ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.accounts.forms.WorkbenchSignupForm"
 SOCIALACCOUNT_ADAPTER = "cjworkbench.socialaccounts.adapter.SocialAccountAdapter"
 SOCIALACCOUNT_EMAIL_VERIFICATION = False
