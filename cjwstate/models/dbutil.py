@@ -1,5 +1,6 @@
 from typing import List
 
+from django.db import connection
 from django.db.models import F, QuerySet, Sum
 from django.contrib.auth.models import User
 
@@ -76,6 +77,37 @@ def reorder_list_by_slugs(queryset: QuerySet, field: str, slugs: List[str]) -> N
 
 def user_display_name(user: User) -> str:
     return (user.first_name + " " + user.last_name).strip() or user.email
+
+
+def lock_user_by_id(user_id: int, *, for_write: bool) -> None:
+    """Lock the given user until the end of the transaction.
+
+    The user must be locked whenever reading or writing data pertaining to
+    itself or its profile.
+
+    As an illustrative example: since Alice sees "used fetches/day" as a
+    property of her "user" object, lock her user object for_write whenever you
+    delete a Workflow that has auto-fetches.
+
+    ref: https://github.com/CJWorkbench/cjworkbench/wiki/Locks-and-Races#user-updates
+
+    Raise User.DoesNotExist if the User does not exist.
+
+    Raise RuntimeError if the caller didn't wrap us in `transaction.atomic()`.
+    """
+    if not connection.in_atomic_block:
+        raise RuntimeError(
+            "lock_user_by_id() must be called within transaction.atomic()"
+        )
+
+    with connection.cursor() as cursor:
+        if for_write:
+            sql = "SELECT 1 FROM auth_user WHERE id = %s FOR UPDATE"
+        else:
+            sql = "SELECT 1 FROM auth_user WHERE id = %s FOR SHARE"
+        cursor.execute(sql, [user_id])
+        if not cursor.fetchall():
+            raise User.DoesNotExist
 
 
 def query_user_usage(user: User) -> UserUsage:

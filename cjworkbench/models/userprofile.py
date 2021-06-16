@@ -5,7 +5,7 @@ from typing import ContextManager
 
 from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
-from django.db import models, transaction
+from django.db import models
 
 from cjworkbench import i18n
 
@@ -79,34 +79,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return user_display(self.user) + " (" + self.user.email + ")"
-
-    @classmethod
-    @contextmanager
-    def lookup_and_cooperative_lock(cls, **kwargs) -> ContextManager[UserProfile]:
-        """Yield in a database transaction with an object selected FOR UPDATE.
-
-        Example:
-
-            with UserProfile.lookup_and_cooperative_lock(user_id=123) as user_profile:
-                # ... do stuff
-                return True
-
-        This is _cooperative_. It only works if every write uses this method.
-
-        It is safe to call cooperative_lock() within a cooperative_lock(). The inner
-        one will behave as a no-op.
-
-        If the context-managed block raises an error, that error will be re-raised.
-
-        Take care with async functions. Transactions don't cross async boundaries;
-        anything you `await` while you hold the cooperative lock won't be rolled
-        back with the same rules as non-awaited code. You can still use
-        cooperative locking; but instead of behaving like a database transaction,
-        it will behave like a simple advisory lock; and _it cannot be nested_.
-
-        Raises UserProfile.DoesNotExist. Re-raises any error from the inner code
-        block.
-        """
-        with transaction.atomic():
-            user_profile = cls.objects.select_for_update().get(**kwargs)
-            yield user_profile
