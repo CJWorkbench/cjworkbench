@@ -126,7 +126,9 @@ def query_user_usage(user_id: int) -> UserUsage:
             """,
             [user_id],
         )
-        return cursor.fetchall()[0][0]
+        fetches_per_day = cursor.fetchall()[0][0]
+
+    return UserUsage(fetches_per_day=fetches_per_day)
 
 
 def query_clientside_user(user_id: int) -> UserUpdate:
