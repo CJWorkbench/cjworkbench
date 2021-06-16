@@ -57,6 +57,16 @@ def _workflow_group_name(workflow_id: int) -> str:
     return f"workflow-{str(workflow_id)}"
 
 
+def _user_group_name(user_id: int) -> str:
+    """Build a channel_layer group name, given a user ID.
+
+    Messages sent to this group will be sent to all clients connected to
+    this user. (For instance, if a user has Workbench open in multiple
+    tabs....)
+    """
+    return f"user-{str(user_id)}"
+
+
 async def queue_render(workflow_id: int, delta_id: int) -> None:
     """Queue render in RabbitMQ.
 
@@ -116,10 +126,9 @@ async def queue_intercom_message(
     )
 
 
-async def _queue_for_group(*, workflow_id: int, **kwargs) -> None:
+async def _queue_for_group(group_name, **kwargs) -> None:
     connection = await get_global_connection()
-    group_name = _workflow_group_name(workflow_id)
-    data = dict(__asgi_group__=group_name, workflow_id=workflow_id, **kwargs)
+    data = dict(__asgi_group__=group_name, **kwargs)
     try:
         await connection.publish(
             msgpack.packb(data),
@@ -133,11 +142,8 @@ async def _queue_for_group(*, workflow_id: int, **kwargs) -> None:
         )
 
 
-async def send_update_to_workflow_clients(
-    workflow_id: int, update: clientside.Update
-) -> None:
-    """
-    Send a message *from* any async service *to* a Django Channels group.
+async def send_update_to_user_clients(user_id: int, update: clientside.Update) -> None:
+    """Send a message *from* any async service *to* a Django Channels group.
 
     `maintain_global_connection()` must be running.
 
@@ -154,10 +160,35 @@ async def send_update_to_workflow_clients(
     shut down our process in that case.)
     """
     pickled_update = pickle.dumps(update)
+    group = _user_group_name(user_id)
     await _queue_for_group(
-        workflow_id=workflow_id,
-        type="send_pickled_update",
-        pickled_update=pickled_update,
+        group, type="send_pickled_update", pickled_update=pickled_update
+    )
+
+
+async def send_update_to_workflow_clients(
+    workflow_id: int, update: clientside.Update
+) -> None:
+    """Send a message *from* any async service *to* a Django Channels group.
+
+    `maintain_global_connection()` must be running.
+
+    Django Channels will call Websockets consumers' `send_pickled_update()`
+    method.
+
+    If one of those queues is full, we may warn about a DeliveryError
+    error. The message will still be delivered to other queues. (See
+    https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
+    "full queue" usually means "shaky HTTP connection" or "stalled web
+    browser", the user probably won't notice that we drop the message.
+
+    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
+    shut down our process in that case.)
+    """
+    pickled_update = pickle.dumps(update)
+    group = _workflow_group_name(workflow_id)
+    await _queue_for_group(
+        group, type="send_pickled_update", pickled_update=pickled_update
     )
 
 
@@ -185,6 +216,5 @@ async def queue_render_if_consumers_are_listening(
     Raise if our RabbitMQ connection is in turmoil. (Some other caller should
     shut down our process in that case.)
     """
-    await _queue_for_group(
-        workflow_id=workflow_id, type="queue_render", delta_id=delta_id
-    )
+    group = _workflow_group_name(workflow_id)
+    await _queue_for_group(group, type="queue_render", delta_id=delta_id)

@@ -157,7 +157,13 @@ class DeleteStepTest(DbTestCase):
         )
         workflow.refresh_from_db()
         self.assertEqual(workflow.fetches_per_day, 1.0)
+
+        # Undo doesn't increase usage (user might not expect it to)
         self.run_with_async_db(commands.undo(workflow.id))
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 1.0)
+        step2.refresh_from_db()
+        self.assertEqual(step2.auto_update_data, False)
 
 
 #      @patch.object(commands, "websockets_notify")

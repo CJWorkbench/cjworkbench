@@ -96,7 +96,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         # 4. User connects over Websockets
         #
         # Expected results: user sees completed render
-        await self.send_whole_workflow_to_client()
+        await self._send_whole_workflow_to_client()
 
     async def disconnect(self, code):
         if hasattr(self, "workflow_channel_name"):
@@ -105,7 +105,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             )
             logger.debug("Discarded from channel %s", self.workflow_channel_name)
 
-    async def send_whole_workflow_to_client(self):
+    async def _send_whole_workflow_to_client(self):
         try:
             update, delta_id = await self._get_workflow_as_clientside_update()
         except Workflow.DoesNotExist:
@@ -129,11 +129,11 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             await rabbitmq.queue_render(self.workflow_id, delta_id)
 
     async def send_pickled_update(self, message: Dict[str, Any]) -> None:
-        # It's a bit of a security concern that we use pickle to send
-        # dataclasses, through RabbitMQ, as opposed to protobuf. It's also
-        # inefficient and makes for races when deploying new versions. But
-        # it's _so_ much less code!  Let's only add complexity if we detect
-        # a problem.
+        # It's a bit ugly that we use pickle (as opposed to protobuf) to send
+        # through RabbitMQ. It's also inefficient and makes races when deploying
+        # new versions. And security-wise, we're vulnerable to "AMQP injection"
+        # attacks (arbitrary code execution if someone controls RabbitMQ). But
+        # it's _so_ much less code! So there we have it.
         await self.send_update(pickle.loads(message["pickled_update"]))
 
     async def send_update(self, update: clientside.Update) -> None:

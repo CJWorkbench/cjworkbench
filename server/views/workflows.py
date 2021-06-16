@@ -31,6 +31,7 @@ from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
 from cjwstate.models.dbutil import (
     lock_user_by_id,
+    query_user_usage,
     query_clientside_user,
     user_display_name,
 )
@@ -395,8 +396,17 @@ class ApiDetail(View):
             with Workflow.authorized_lookup_and_cooperative_lock(
                 "owner", request.user, request.session, pk=workflow_id
             ) as workflow:
+                if workflow.owner_id:
+                    lock_user_by_id(workflow.owner_id, for_write=True)
+
                 workflow.delete()
-            return HttpResponse(status=status.NO_CONTENT)
+
+                if workflow.owner_id:
+                    update = clientside.Update(
+                        user=clientside.UserUpdate(
+                            usage=query_user_usage(workflow.owner_id)
+                        )
+                    )
         except Workflow.DoesNotExist as err:
             if err.args[0] == "owner access denied":
                 return JsonResponse(
@@ -408,6 +418,12 @@ class ApiDetail(View):
                     {"message": "Workflow not found", "status_code": 404},
                     status=status.NOT_FOUND,
                 )
+
+        if workflow.owner_id:
+            async_to_sync(rabbitmq.send_update_to_user_clients)(
+                workflow.owner_id, update
+            )
+        return HttpResponse(status=status.NO_CONTENT)
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list

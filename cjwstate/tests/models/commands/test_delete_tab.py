@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 from unittest.mock import patch
 
 from cjwstate import clientside, commands
@@ -121,6 +122,50 @@ class DeleteTabTest(DbTestCase):
 
         tab1.refresh_from_db()
         self.assertEqual(tab1.is_deleted, False)
+
+    @patch.object(commands, "websockets_notify")
+    def test_update_workflow_fetches_per_day(self, send_update):
+        send_update.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(fetches_per_day=7.0)
+        tab1 = workflow.tabs.first()
+        step1 = tab1.steps.create(
+            slug="step-1",
+            order=0,
+            auto_update_data=True,
+            update_interval=86400,
+            next_update=datetime.datetime.now(),
+        )
+        step2 = tab1.steps.create(
+            slug="step-2",
+            order=1,
+            auto_update_data=True,
+            update_interval=43200,
+            next_update=datetime.datetime.now(),
+        )
+        tab2 = workflow.tabs.create(position=1, slug="tab-2")
+        tab2.steps.create(
+            slug="step-3",
+            order=0,
+            auto_update_data=True,
+            update_interval=21600,
+            next_update=datetime.datetime.now(),
+        )
+
+        self.run_with_async_db(
+            commands.do(DeleteTab, workflow_id=workflow.id, tab=tab1)
+        )
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 4.0)
+
+        # Undo doesn't increase usage (user might not expect it to)
+        self.run_with_async_db(commands.undo(workflow.id))
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 4.0)
+        step1.refresh_from_db()
+        self.assertEqual(step1.auto_update_data, False)
+        step2.refresh_from_db()
+        self.assertEqual(step2.auto_update_data, False)
 
     @patch.object(commands, "websockets_notify")
     def test_clientside_update(self, send_update):

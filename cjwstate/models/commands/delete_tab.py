@@ -65,11 +65,20 @@ class DeleteTab(BaseCommand):
             position=F("position") - 1
         )
 
+        # Disable auto-fetch of all steps so Undo won't add auto-updates.
+        # (If we didn't do this, Undo might help a user exceed his/her limit.)
+        delta.tab.steps.filter(auto_update_data=True).update(
+            auto_update_data=False, next_update=None
+        )
+
+        delta.workflow.recalculate_fetches_per_day()
+        update_fields = ["fetches_per_day"]
         if delta.workflow.selected_tab_position >= delta.tab.position:
             delta.workflow.selected_tab_position = max(
                 delta.workflow.selected_tab_position - 1, 0
             )
-            delta.workflow.save(update_fields=["selected_tab_position"])
+            update_fields.append("selected_tab_position")
+        delta.workflow.save(update_fields=update_fields)
 
     def backward(self, delta):
         delta.workflow.live_tabs.filter(position__gte=delta.tab.position).update(
