@@ -100,31 +100,42 @@ def lock_user_by_id(user_id: int, *, for_write: bool) -> None:
             "lock_user_by_id() must be called within transaction.atomic()"
         )
 
+    if for_write:
+        sql = "SELECT 1 FROM auth_user WHERE id = %s FOR UPDATE"
+    else:
+        sql = "SELECT 1 FROM auth_user WHERE id = %s FOR SHARE"
+
     with connection.cursor() as cursor:
-        if for_write:
-            sql = "SELECT 1 FROM auth_user WHERE id = %s FOR UPDATE"
-        else:
-            sql = "SELECT 1 FROM auth_user WHERE id = %s FOR SHARE"
         cursor.execute(sql, [user_id])
         if not cursor.fetchall():
             raise User.DoesNotExist
 
 
-def query_user_usage(user: User) -> UserUsage:
-    return UserUsage(
-        fetches_per_day=user.owned_workflows.aggregate(
-            fetches_per_day=Sum("fetches_per_day")
-        )["fetches_per_day"]
-        or 0
-    )
+def query_user_usage(user_id: int) -> UserUsage:
+    """Return user's usage.
 
-
-def query_clientside_user(user: User) -> UserUpdate:
-    """Build a clientside.UserUpdate for `user`.
-
-    The user must not be anonymous. Also, you must wrap this in a
-    User.cooperative_lock.
+    You must call `lock_user_by_id()` before calling this.
     """
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT COALESCE(SUM(fetches_per_day), 0)
+            FROM workflow
+            WHERE owner_id = %s
+            """,
+            [user_id],
+        )
+        return cursor.fetchall()[0][0]
+
+
+def query_clientside_user(user_id: int) -> UserUpdate:
+    """Build a clientside.UserUpdate by querying the database.
+
+    You must call `lock_user_by_id()` before calling this.
+    """
+
+    user = User.objects.get(id=user_id)
 
     return UserUpdate(
         display_name=user_display_name(user),
@@ -132,5 +143,5 @@ def query_clientside_user(user: User) -> UserUpdate:
         is_staff=user.is_staff,
         stripe_customer_id=user.user_profile.stripe_customer_id or Null,
         limits=user.user_profile.effective_limits,
-        usage=query_user_usage(user),
+        usage=query_user_usage(user_id),
     )

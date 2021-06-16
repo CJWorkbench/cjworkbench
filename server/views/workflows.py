@@ -10,6 +10,7 @@ from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Q
 from django.http import (
     Http404,
@@ -28,7 +29,11 @@ import server.utils
 from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
-from cjwstate.models.dbutil import query_clientside_user, user_display_name
+from cjwstate.models.dbutil import (
+    lock_user_by_id,
+    query_clientside_user,
+    user_display_name,
+)
 from cjwstate.models import Step, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -178,12 +183,14 @@ def make_init_state(
 
     Side-effect: update workflow.last_viewed_at.
     """
-    if request.user.is_anonymous:
-        user = None
-    else:
-        user = query_clientside_user(request.user)  # TODO lock to avoid races?
     try:
         with workflow.cooperative_lock():  # raise DoesNotExist on race
+            if request.user.is_anonymous:
+                user = None
+            else:
+                lock_user_by_id(request.user.id, for_write=False)
+                user = query_clientside_user(request.user.id)
+
             workflow.last_viewed_at = datetime.datetime.now()
             workflow.save(update_fields=["last_viewed_at"])
 
@@ -235,12 +242,15 @@ def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
         for w in workflows
     ]
 
+    if request.user.is_anonymous:
+        json_user = None
+    else:
+        with transaction.atomic():
+            lock_user_by_id(request.user.id, for_write=False)
+            json_user = jsonize_clientside_user(query_clientside_user(request.user.id))
+
     init_state = {
-        "loggedInUser": (
-            None
-            if request.user.is_anonymous
-            else jsonize_clientside_user(query_clientside_user(request.user))
-        ),
+        "loggedInUser": json_user,
         "workflows": json_workflows,
     }
 

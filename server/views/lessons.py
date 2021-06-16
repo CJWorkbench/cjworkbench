@@ -12,7 +12,7 @@ from django.template.response import TemplateResponse
 import server.utils
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
-from cjwstate.models.dbutil import query_clientside_user
+from cjwstate.models.dbutil import lock_user_by_id, query_clientside_user
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from server.models.course import Course, CourseLookup, AllCoursesByLocale
 from server.models.lesson import (
@@ -242,7 +242,11 @@ def render_lesson_detail(request, locale_id, slug):
 def _render_course(request, course, lesson_url_prefix):
     logged_in_user = None
     if request.user and request.user.is_authenticated:
-        logged_in_user = jsonize_clientside_user(query_clientside_user(request.user))
+        with transaction.atomic():
+            lock_user_by_id(request.user.id, for_write=False)
+            logged_in_user = jsonize_clientside_user(
+                query_clientside_user(request.user.id)
+            )
 
     try:
         courses = AllCoursesByLocale[course.locale_id]
