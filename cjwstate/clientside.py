@@ -124,8 +124,18 @@ class WorkflowUpdate:
     knowing the real ID doesn't give access; but knowing the secret ID does.
     """
 
-    owner: Optional["User"] = None
-    """Workflow owner, maybe anonymous. (Django model -- TODO use something else.)
+    owner_email: Optional[str] = None
+    """Workflow owner email, None for anonymous.
+
+    Required for init, and must be None afterwards.
+
+    This does not follow the `Optional[_Null, ...]]` convention. The `owner` is
+    useful during `Init` and it must be `None` during `Update`. (An anonymous
+    workflow may have `owner is None`.)
+    """
+
+    owner_display_name: Optional[str] = None
+    """Workflow owner name, None for anonymous.
 
     Required for init, and must be None afterwards.
 
@@ -371,6 +381,9 @@ class Update:
     request this update) can ignore this `mutation_id`, because they didn't
     generate it. They can apply this Update normally.
     """
+
+    user: Optional[UserUpdate] = None
+    """User-wide data to replace."""
 
     workflow: Optional[WorkflowUpdate] = None
     """Workflow-wide data to replace."""

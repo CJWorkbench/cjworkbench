@@ -14,6 +14,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 
 from cjwstate import clientside, s3
+from cjwstate.models.dbutil import user_display_name
 from cjwstate.models.fields import Role
 from cjwstate.modules.util import gather_param_tab_slugs
 
@@ -539,7 +540,8 @@ class Workflow(models.Model):
         return clientside.WorkflowUpdate(
             id=self.id,
             secret_id=self.secret_id,  # if you can read it, you can link to it
-            owner=self.owner,
+            owner_email=self.owner.email if self.owner else None,
+            owner_display_name=user_display_name(self.owner) if self.owner else None,
             selected_tab_position=self.selected_tab_position,
             name=self.name,
             tab_slugs=tab_slugs,

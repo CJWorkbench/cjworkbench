@@ -28,7 +28,7 @@ import server.utils
 from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
-from cjwstate.models.dbutil import query_clientside_user
+from cjwstate.models.dbutil import query_clientside_user, user_display_name
 from cjwstate.models import Step, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -42,7 +42,6 @@ from server.serializers import (
     jsonize_clientside_user,
     jsonize_clientside_workflow,
 )
-from server.settingsutils import workbench_user_display
 
 
 class Http302(Exception):
@@ -179,7 +178,7 @@ def make_init_state(
 
     Side-effect: update workflow.last_viewed_at.
     """
-    if user.is_anonymous:
+    if request.user.is_anonymous:
         user = None
     else:
         user = query_clientside_user(request.user)  # TODO lock to avoid races?
@@ -219,7 +218,7 @@ def make_init_state(
 
 
 def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
-    ctx = JsonizeContext(request.lcoale_id, {})
+    ctx = JsonizeContext(request.locale_id, {})
 
     workflows = (
         Workflow.objects.filter(**kwargs)
@@ -453,7 +452,7 @@ class Report(View):
                 "workflow": workflow,
                 "workflow_path": workflow_path,
                 "blocks": blocks,
-                "owner_name": workbench_user_display(workflow.owner),
+                "owner_name": user_display_name(workflow.owner),
                 "can_view_workflow": can_view_workflow,
             },
         )

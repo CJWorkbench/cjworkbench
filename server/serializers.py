@@ -20,7 +20,6 @@ from cjworkbench.models.userlimits import UserLimits
 from cjworkbench.models.userprofile import UserProfile
 from cjworkbench.settings import KB_ROOT_URL
 from cjwstate import clientside
-from server.settingsutils import workbench_user_display
 
 User = get_user_model()
 
@@ -90,20 +89,6 @@ def jsonize_datetime(dt_or_none: Optional[datetime.datetime]) -> str:
         # microsecond precision, encoded as ISO-8601 with 'Z' as the time zone
         # specifier. Anything else and IDs won't match up!
         return dt_or_none.isoformat() + "Z"
-
-
-def jsonize_user(user: User, user_profile: Optional[UserProfile]) -> Dict[str, Any]:
-    return {
-        "display_name": user_display(user),
-        "email": user.email,
-        "is_staff": user.is_staff,
-        "stripeCustomerId": (
-            None if user_profile is None else user_profile.stripe_customer_id
-        ),
-        "limits": (
-            UserLimits() if user_profile is None else user_profile.effective_limits
-        )._asdict(),
-    }
 
 
 def _maybe_yield(value: Optional[Union[clientside._Null, Any]]) -> Iterable[Any]:
@@ -406,8 +391,8 @@ def jsonize_clientside_workflow(
     if is_init:
         d.update(
             {
-                "owner_email": workflow.owner.email if workflow.owner else None,
-                "owner_name": workbench_user_display(workflow.owner),
+                "owner_email": workflow.owner_email,
+                "owner_name": workflow.owner_display_name,
                 "selected_tab_position": workflow.selected_tab_position,
             }
         )

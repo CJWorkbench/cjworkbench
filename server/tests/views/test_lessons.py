@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from cjworkbench.models.userprofile import UserProfile
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from server.models.lesson import Lesson, LessonLookup, LessonInitialWorkflow
@@ -10,6 +11,12 @@ from cjwstate.tests.utils import (
 )
 
 
+def create_test_user_with_profile(**kwargs):
+    user = create_test_user(**kwargs)
+    UserProfile.objects.create(user=user)
+    return user
+
+
 async def async_noop(*args, **kwargs):
     pass
 
@@ -17,7 +24,7 @@ async def async_noop(*args, **kwargs):
 @patch.object(rabbitmq, "queue_intercom_message", async_noop)
 class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def log_in(self):
-        self.user = create_test_user()
+        self.user = create_test_user_with_profile()
         self.client.force_login(self.user)
 
     @property

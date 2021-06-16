@@ -1,6 +1,13 @@
 from typing import List
 
-from django.db.models import F, QuerySet
+from django.db.models import F, QuerySet, Sum
+from django.contrib.auth.models import User
+
+from cjworkbench.models.userlimits import UserLimits
+from cjworkbench.models.userprofile import UserProfile
+from cjworkbench.models.userusage import UserUsage
+
+from ..clientside import Null, UserUpdate
 
 
 def make_gap_in_list(queryset: QuerySet, field: str, position: int) -> None:
@@ -65,3 +72,33 @@ def reorder_list_by_slugs(queryset: QuerySet, field: str, slugs: List[str]) -> N
     queryset.update(**{field: -1 - F(field)})
     for position, slug in enumerate(slugs):
         queryset.filter(slug=slug).update(**{field: position})
+
+
+def user_display_name(user: User) -> str:
+    return (user.first_name + " " + user.last_name).strip() or user.email
+
+
+def query_user_usage(user: User) -> UserUsage:
+    return UserUsage(
+        fetches_per_day=user.owned_workflows.aggregate(
+            fetches_per_day=Sum("fetches_per_day")
+        )["fetches_per_day"]
+        or 0
+    )
+
+
+def query_clientside_user(user: User) -> UserUpdate:
+    """Build a clientside.UserUpdate for `user`.
+
+    The user must not be anonymous. Also, you must wrap this in a
+    User.cooperative_lock.
+    """
+
+    return UserUpdate(
+        display_name=user_display_name(user),
+        email=user.email,
+        is_staff=user.is_staff,
+        stripe_customer_id=user.user_profile.stripe_customer_id or Null,
+        limits=user.user_profile.effective_limits,
+        usage=query_user_usage(user),
+    )

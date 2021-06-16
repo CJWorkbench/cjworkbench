@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.test import override_settings
 from cjwmodule.arrow.testing import make_table, make_column
 
+from cjworkbench.models.userprofile import UserProfile
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.fields import Role
@@ -18,7 +19,9 @@ async def async_noop(*args, **kwargs):
 
 
 def create_user(username: str, email: str):
-    return User.objects.create(username=username, email=email)
+    user = User.objects.create(username=username, email=email)
+    UserProfile.objects.create(user=user)
+    return user
 
 
 class WorkflowListTest(DbTestCase):
