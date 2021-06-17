@@ -142,7 +142,9 @@ async def _queue_for_group(group_name, **kwargs) -> None:
         )
 
 
-async def send_update_to_user_clients(user_id: int, update: clientside.Update) -> None:
+async def send_user_update_to_user_clients(
+    user_id: int, user_update: clientside.UserUpdate
+) -> None:
     """Send a message *from* any async service *to* a Django Channels group.
 
     `maintain_global_connection()` must be running.
@@ -159,7 +161,7 @@ async def send_update_to_user_clients(user_id: int, update: clientside.Update) -
     Raise if our RabbitMQ connection is in turmoil. (Some other caller should
     shut down our process in that case.)
     """
-    pickled_update = pickle.dumps(update)
+    pickled_update = pickle.dumps(clientside.Update(user=user_update))
     group = _user_group_name(user_id)
     await _queue_for_group(
         group, type="send_pickled_update", pickled_update=pickled_update

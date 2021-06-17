@@ -1,9 +1,9 @@
 import asyncio
 from unittest.mock import patch
 
-from cjwstate import clientside, commands
-from cjwstate.models import Workflow
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models.commands import ReorderBlocks
+from cjwstate.models.workflow import Workflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -15,7 +15,7 @@ async def async_noop(*args, **kwargs):
 
 
 class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_value_error_on_wrong_slugs(self):
         workflow = Workflow.create_and_init(has_custom_report=True)
         workflow.blocks.create(
@@ -34,7 +34,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 )
             )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_none_on_no_change(self):
         workflow = Workflow.create_and_init(has_custom_report=True)
         workflow.blocks.create(
@@ -51,7 +51,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertIsNone(cmd)
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_reorder_blocks_on_custom_report(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -92,7 +92,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertIsNone(delta2.workflow.has_custom_report)
         self.assertEqual(delta2.workflow.block_slugs, ["block-1", "block-2", "block-3"])
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_value_error_on_wrong_auto_report_slugs(self):
         create_module_zipfile("chart", spec_kwargs={"html_output": True})
 
@@ -111,7 +111,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
                 )
             )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_none_on_no_auto_report_change(self):
         create_module_zipfile("chart", spec_kwargs={"html_output": True})
 
@@ -130,7 +130,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         )
         self.assertIsNone(cmd)
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_reorder_blocks_on_automatically_generated_report(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)

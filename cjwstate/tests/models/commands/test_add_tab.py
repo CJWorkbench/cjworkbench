@@ -1,8 +1,9 @@
 import asyncio
 from unittest.mock import patch
-from cjwstate import clientside, commands
-from cjwstate.models import Workflow
+
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models.commands import AddTab
+from cjwstate.models.workflow import Workflow
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -11,7 +12,7 @@ async def async_noop(*args, **kwargs):
 
 
 class AddTabTest(DbTestCase):
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_append_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
         self.run_with_async_db(
@@ -30,7 +31,7 @@ class AddTabTest(DbTestCase):
             list(workflow.live_tabs.values_list("slug", "position")), [("tab-1", 0)]
         )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_no_hard_or_soft_delete_when_deleting_applied_delta(self):
         workflow = Workflow.create_and_init()
         cmd = self.run_with_async_db(
@@ -39,7 +40,7 @@ class AddTabTest(DbTestCase):
         cmd.delete()
         self.assertEquals(workflow.live_tabs.count(), 2)
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_clientside_update(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)

@@ -13,6 +13,8 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
     of Workbench's API should pretend a soft-deleted Step does not exist.
     """
 
+    modifies_owner_usage = True
+
     def load_clientside_update(self, delta):
         ret = (
             super()

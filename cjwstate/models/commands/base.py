@@ -13,6 +13,15 @@ class BaseCommand:
     They may override other methods, too.
     """
 
+    modifies_owner_usage: bool = False
+    """If True, the first call to forward() may cost the workflow owner.
+
+    Owner usage isn't undoable: once you delete a step with auto-fetches,
+    un-delete will re-add the step but with auto-fetch disabled. This
+    restriction prevents users from hacking their way to exceeding their
+    limits.
+    """
+
     def amend_create_kwargs(self, **kwargs):
         """Look up additional objects.create() kwargs from the database.
 

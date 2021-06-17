@@ -206,6 +206,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertResponse(response, error="DoesNotExist: Step not found")
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_user_update_to_user_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_delete(self):
         user = User.objects.create(username="a", email="a@example.org")

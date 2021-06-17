@@ -20,6 +20,8 @@ class DeleteTab(BaseCommand):
     Workbench's API should pretend a soft-deleted Tab does not exist.
     """
 
+    modifies_owner_usage = True
+
     def load_clientside_update(self, delta):
         data = (
             super()

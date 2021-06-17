@@ -10,7 +10,7 @@ async def async_noop(*args, **kwargs):
 
 
 @patch.object(rabbitmq, "queue_render", async_noop)
-@patch.object(commands, "websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class ReorderStepsTest(DbTestCase):
     def setUp(self):
         super().setUp()

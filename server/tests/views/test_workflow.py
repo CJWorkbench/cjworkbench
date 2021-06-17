@@ -95,7 +95,7 @@ class WorkflowListTest(DbTestCase):
         )
 
 
-@patch("cjwstate.commands.websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class WorkflowViewTests(DbTestCase):
     def setUp(self):
         super().setUp()
@@ -314,7 +314,7 @@ class WorkflowViewTests(DbTestCase):
         response = self.client.post("/workflows/%d/duplicate" % self.workflow1.id)
         self.assertEqual(response.status_code, status.CREATED)
 
-    @patch.object(rabbitmq, "send_update_to_user_clients")
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
     def test_workflow_delete(self, send_update):
         send_update.side_effect = async_noop
 
@@ -324,7 +324,7 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(response.status_code, status.NO_CONTENT)
         self.assertEqual(Workflow.objects.filter(name="Workflow 1").count(), 0)
 
-    @patch.object(rabbitmq, "send_update_to_user_clients")
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
     def test_workflow_delete_send_user_update(self, send_update):
         send_update.side_effect = async_noop
 
@@ -335,10 +335,7 @@ class WorkflowViewTests(DbTestCase):
         self.assertEqual(response.status_code, status.NO_CONTENT)
 
         send_update.assert_called_with(
-            self.user.id,
-            clientside.Update(
-                user=clientside.UserUpdate(usage=UserUsage(fetches_per_day=3))
-            ),
+            self.user.id, clientside.UserUpdate(usage=UserUsage(fetches_per_day=3))
         )
 
     def test_workflow_delete_missing_is_404(self):
@@ -544,7 +541,7 @@ class SecretLinkTests(DbTestCase):
         )
 
 
-@patch("cjwstate.commands.websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class ReportViewTests(DbTestCase):
     def setUp(self):
         super().setUp()

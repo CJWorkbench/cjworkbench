@@ -14,7 +14,7 @@ async def async_noop(*args, **kwargs):
 
 
 class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_reorder_slugs(self):
         workflow = Workflow.create_and_init()  # tab slug: tab-1
@@ -45,7 +45,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
             [("tab-3", 0), ("tab-1", 1), ("tab-2", 2)],
         )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_adjust_selected_tab_position(self):
         # tab slug: tab-1
@@ -71,7 +71,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 0)
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_change_dependent_steps(self):
         # tab slug: tab-1
@@ -103,7 +103,7 @@ class ReorderTabsTest(DbTestCaseWithModuleRegistryAndMockKernel):
         step.refresh_from_db()
         self.assertEqual(step.last_relevant_delta_id, cmd.id)
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_clientside_update(self, send_delta):
         send_delta.side_effect = async_noop

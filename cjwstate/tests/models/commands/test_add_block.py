@@ -1,7 +1,7 @@
 import asyncio
 from unittest.mock import patch
 
-from cjwstate import clientside, commands
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import AddBlock
 from cjwstate.tests.utils import (
@@ -15,7 +15,7 @@ async def async_noop(*args, **kwargs):
 
 
 class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_add_block_to_empty_workflow(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -50,7 +50,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(delta2.clear_block_slugs, frozenset(["block-1"]))
         self.assertEqual(delta2.blocks, {})
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_add_block_to_custom_report(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -102,7 +102,7 @@ class AddBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(delta2.clear_block_slugs, frozenset(["block-new"]))
         self.assertEqual(delta2.blocks, {})
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_add_block_to_automatically_generated_report(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)

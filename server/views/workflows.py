@@ -396,16 +396,14 @@ class ApiDetail(View):
             with Workflow.authorized_lookup_and_cooperative_lock(
                 "owner", request.user, request.session, pk=workflow_id
             ) as workflow:
-                if workflow.owner_id:
-                    lock_user_by_id(workflow.owner_id, for_write=True)
-
                 workflow.delete()
 
                 if workflow.owner_id:
-                    update = clientside.Update(
-                        user=clientside.UserUpdate(
-                            usage=query_user_usage(workflow.owner_id)
-                        )
+                    # We lock after delete, but it's still correct. DB commits
+                    # are atomic: nothing is written yet.
+                    lock_user_by_id(workflow.owner_id, for_write=True)
+                    user_update = clientside.UserUpdate(
+                        usage=query_user_usage(workflow.owner_id)
                     )
         except Workflow.DoesNotExist as err:
             if err.args[0] == "owner access denied":
@@ -420,8 +418,8 @@ class ApiDetail(View):
                 )
 
         if workflow.owner_id:
-            async_to_sync(rabbitmq.send_update_to_user_clients)(
-                workflow.owner_id, update
+            async_to_sync(rabbitmq.send_user_update_to_user_clients)(
+                workflow.owner_id, user_update
             )
         return HttpResponse(status=status.NO_CONTENT)
 

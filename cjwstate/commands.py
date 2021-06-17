@@ -22,20 +22,20 @@ longer exists! Don't panic: this is fine. Indeed, the default
 `workflow.last_delta_id` is 0.
 """
 import datetime
-from typing import Optional, Tuple
+from typing import NamedTuple, Optional, Tuple
 
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Delta, Step, Workflow
+from cjwstate.models.delta import Delta
+from cjwstate.models.step import Step
+from cjwstate.models.workflow import Workflow
 from cjwstate.models.commands import NAME_TO_COMMAND, InitWorkflow, SetStepDataVersion
+from cjwstate.models.dbutil import lock_user_by_id, query_user_usage
 
 
-async def websockets_notify(workflow_id: int, update: clientside.Update) -> None:
-    """Notify Websockets clients of `update`; return immediately.
-
-    This is an alias; its main purpose is for white-box unit testing.
-    """
-    await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
+class PendingOwnerUpdate(NamedTuple):
+    user_id: int
+    user_update: clientside.UserUpdate
 
 
 @database_sync_to_async
@@ -96,9 +96,14 @@ async def _maybe_queue_render(
 
 
 @database_sync_to_async
-def _first_forward_and_save_returning_clientside_update(
+def _first_forward_and_save_returning_clientside_updates(
     cls, workflow_id: int, **kwargs
-) -> Tuple[Optional[Delta], Optional[clientside.Update], Optional[int]]:
+) -> Tuple[
+    Optional[Delta],
+    Optional[clientside.Update],
+    Optional[PendingOwnerUpdate],
+    Optional[int],
+]:
     """
     Create and execute `cls` command; return `(Delta, WebSocket data, render?)`.
 
@@ -117,7 +122,7 @@ def _first_forward_and_save_returning_clientside_update(
         with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
             create_kwargs = command.amend_create_kwargs(workflow=workflow, **kwargs)
             if not create_kwargs:
-                return None, None, None
+                return None, None, None, None
 
             # Lookup unapplied deltas to delete. That's the linked list that comes
             # _after_ `workflow.last_delta_id`.
@@ -152,13 +157,27 @@ def _first_forward_and_save_returning_clientside_update(
                 # to them.
                 workflow.delete_orphan_soft_deleted_models()
 
+            if cls.modifies_owner_usage and workflow.owner_id:
+                # We lock after running the command, but it's still correct. DB
+                # commits are atomic: nothing is written yet.
+                lock_user_by_id(workflow.owner_id, for_write=True)
+                pending_owner_update = PendingOwnerUpdate(
+                    user_id=workflow.owner_id,
+                    user_update=clientside.UserUpdate(
+                        usage=query_user_usage(workflow.owner_id)
+                    ),
+                )
+            else:
+                pending_owner_update = None
+
             return (
                 delta,
                 command.load_clientside_update(delta),
+                pending_owner_update,
                 delta.id if command.get_modifies_render_output(delta) else None,
             )
     except Workflow.DoesNotExist:
-        return None, None, None
+        return None, None, None, None
 
 
 @database_sync_to_async
@@ -262,8 +281,9 @@ async def do(
     (
         delta,
         update,
+        pending_owner_update,
         render_delta_id,
-    ) = await _first_forward_and_save_returning_clientside_update(
+    ) = await _first_forward_and_save_returning_clientside_updates(
         cls, workflow_id, **kwargs
     )
 
@@ -272,7 +292,12 @@ async def do(
     if update is not None:
         if mutation_id:
             update = update.replace_mutation_id(mutation_id)
-        await websockets_notify(workflow_id, update)
+        await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
+
+    if pending_owner_update is not None:
+        await rabbitmq.send_user_update_to_user_clients(
+            pending_owner_update.user_id, pending_owner_update.user_update
+        )
 
     if render_delta_id is not None:
         await _maybe_queue_render(workflow_id, render_delta_id, delta)
@@ -290,7 +315,7 @@ async def redo(workflow_id: int) -> None:
         workflow_id
     )
     if update is not None:
-        await websockets_notify(workflow_id, update)
+        await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
     if render_delta_id is not None:
         # Assume delta.workflow is cached and will not cause a database request
         await _maybe_queue_render(workflow_id, render_delta_id, delta)
@@ -306,7 +331,7 @@ async def undo(workflow_id: int) -> None:
         workflow_id
     )
     if update is not None:
-        await websockets_notify(workflow_id, update)
+        await rabbitmq.send_update_to_workflow_clients(workflow_id, update)
     if render_delta_id is not None:
         # Assume delta.workflow is cached and will not cause a database request
         await _maybe_queue_render(workflow_id, render_delta_id, delta)
