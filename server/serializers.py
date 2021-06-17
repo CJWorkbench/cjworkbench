@@ -725,7 +725,7 @@ def jsonize_clientside_user(user: clientside.UserUpdate) -> Dict[str, Any]:
     if user.limits:
         d["limits"] = user.limits._asdict()
     if user.usage:
-        d["usage"] = user.usage._asdict()
+        d["usage"] = dict(fetchesPerDay=user.usage.fetches_per_day)
     return d
 
 
@@ -767,7 +767,7 @@ def jsonize_clientside_update(
     if update.mutation_id:
         r["mutationId"] = update.mutation_id
     if update.user:
-        r["updateUser"] = jsonize_clientside_workflow(update.user)
+        r["updateUser"] = jsonize_clientside_user(update.user)
     if update.workflow:
         r["updateWorkflow"] = jsonize_clientside_workflow(
             update.workflow, ctx, is_init=False

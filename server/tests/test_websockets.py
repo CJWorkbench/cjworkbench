@@ -11,20 +11,21 @@ from django.contrib.auth.models import AnonymousUser, User
 
 import cjwstate.rabbitmq.connection
 from cjworkbench.asgi import _url_router
+from cjworkbench.models.userprofile import UserProfile
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.rabbitmq import (
     queue_render_if_consumers_are_listening,
     send_update_to_workflow_clients,
+    send_user_update_to_user_clients,
 )
 from cjwstate.tests.utils import DbTestCase
 from server import handlers
 
 
 def async_test(f):
-    """
-    Decorate a test to run in its own event loop.
+    """Decorate a test to run in its own event loop.
 
     Usage:
 
@@ -90,6 +91,7 @@ class ChannelTests(DbTestCase):
         super().setUp()
 
         self.user = User.objects.create(username="usual", email="usual@example.org")
+        UserProfile.objects.create(user=self.user)
         self.workflow = Workflow.create_and_init(name="Workflow 1", owner=self.user)
         self.application = self.mock_i18n_middleware(
             self.mock_auth_middleware(_url_router)
@@ -209,6 +211,7 @@ class ChannelTests(DbTestCase):
         data = json.loads(response)
         self.assertEqual(data["type"], "apply-delta")
         self.assertEqual(data["data"]["updateWorkflow"]["name"], self.workflow.name)
+        self.assertEqual(data["data"]["updateUser"]["usage"]["fetchesPerDay"], 0)
 
     @async_test
     async def test_message(self, communicate):
@@ -237,6 +240,34 @@ class ChannelTests(DbTestCase):
         self.assertEqual(json.loads(response1), {"type": "apply-delta", "data": {}})
         response2 = await comm2.receive_from()
         self.assertEqual(json.loads(response2), {"type": "apply-delta", "data": {}})
+
+    @async_test
+    async def test_two_clients_get_messages_on_same_user(self, communicate):
+        comm1 = communicate(self.application, f"/workflows/{self.workflow.id}")
+        workflow2 = await database_sync_to_async(Workflow.create_and_init)(
+            owner=self.user
+        )
+        comm2 = communicate(self.application, f"/workflows/{workflow2.id}")
+        connected1, _ = await comm1.connect()
+        self.assertTrue(connected1)
+        await comm1.receive_from()  # ignore initial workflow delta
+        connected2, _ = await comm2.connect()
+        self.assertTrue(connected2)
+        await comm2.receive_from()  # ignore initial workflow delta
+        async with self.global_rabbitmq_connection():
+            await send_user_update_to_user_clients(
+                self.user.id, clientside.UserUpdate(display_name="George")
+            )
+        response1 = await comm1.receive_from()
+        self.assertEqual(
+            json.loads(response1),
+            {"type": "apply-delta", "data": {"updateUser": {"display_name": "George"}}},
+        )
+        response2 = await comm2.receive_from()
+        self.assertEqual(
+            json.loads(response2),
+            {"type": "apply-delta", "data": {"updateUser": {"display_name": "George"}}},
+        )
 
     @async_test
     async def test_after_disconnect_client_gets_no_message(self, communicate):

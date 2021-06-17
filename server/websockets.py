@@ -3,13 +3,15 @@ import pickle
 from collections import namedtuple
 from typing import Any, ContextManager, Dict
 
+import websockets
 from channels.exceptions import DenyConnection
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
-import websockets
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Step, Workflow
+from cjwstate.models.dbutil import lock_user_by_id, query_clientside_user
+from cjwstate.models.step import Step
+from cjwstate.models.workflow import Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
@@ -64,7 +66,15 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         Raise Workflow.DoesNotExist if a race deletes the Workflow.
         """
         with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow:
+            if self.scope["user"].is_anonymous:
+                user = None
+            else:
+                user_id = self.scope["user"].id
+                lock_user_by_id(user_id, for_write=False)
+                user = query_clientside_user(user_id)
+
             update = clientside.Update(
+                user=user,
                 workflow=workflow.to_clientside(),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
@@ -86,6 +96,14 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             self.workflow_channel_name, self.channel_name
         )
         logger.debug("Added to channel %s", self.workflow_channel_name)
+
+        if self.scope["user"].is_authenticated:
+            self.user_channel_name = "user-%d" % self.scope["user"].id
+            await self.channel_layer.group_add(
+                self.user_channel_name, self.channel_name
+            )
+            logger.debug("Added to channel %s", self.user_channel_name)
+
         await self.accept()
 
         # Solve a race:
@@ -104,6 +122,11 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 self.workflow_channel_name, self.channel_name
             )
             logger.debug("Discarded from channel %s", self.workflow_channel_name)
+        if hasattr(self, "user_channel_name"):
+            await self.channel_layer.group_discard(
+                self.user_channel_name, self.channel_name
+            )
+            logger.debug("Discarded from channel %s", self.user_channel_name)
 
     async def _send_whole_workflow_to_client(self):
         try:
