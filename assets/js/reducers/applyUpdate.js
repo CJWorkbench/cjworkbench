@@ -5,8 +5,16 @@ export default function applyUpdate (state, update) {
     tabs,
     blocks,
     pendingTabs,
+    loggedInUser,
     pendingMutations = []
   } = state
+
+  if (update.updateUser) {
+    loggedInUser = {
+      ...loggedInUser,
+      ...update.updateUser
+    }
+  }
 
   if (update.updateWorkflow) {
     workflow = {
@@ -80,6 +88,7 @@ export default function applyUpdate (state, update) {
 
   return {
     ...state,
+    loggedInUser,
     tabs,
     pendingTabs,
     workflow,

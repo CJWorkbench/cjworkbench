@@ -138,6 +138,11 @@ def query_clientside_user(user_id: int) -> UserUpdate:
     """
 
     user = User.objects.get(id=user_id)
+    subscribed_stripe_product_ids = list(
+        user.subscriptions.select_related("price__product").values_list(
+            "price__product__stripe_product_id", flat=True
+        )
+    )
 
     return UserUpdate(
         display_name=user_display_name(user),
@@ -145,5 +150,6 @@ def query_clientside_user(user_id: int) -> UserUpdate:
         is_staff=user.is_staff,
         stripe_customer_id=user.user_profile.stripe_customer_id or Null,
         limits=user.user_profile.effective_limits,
+        subscribed_stripe_product_ids=subscribed_stripe_product_ids,
         usage=query_user_usage(user_id),
     )

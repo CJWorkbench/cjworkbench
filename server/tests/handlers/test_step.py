@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.test import override_settings
 
 from cjworkbench.models.userprofile import UserProfile
+from cjworkbench.models.userusage import UserUsage
 from cjwstate import clientside, oauth, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.commands import DeleteStep, SetStepParams
@@ -480,8 +481,14 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(step.notifications, True)
         queue_intercom_message.assert_called()
 
-    def test_try_set_autofetch_happy_path(self):
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
+    def test_try_set_autofetch_happy_path(self, update_user, update_workflow):
+        update_user.side_effect = async_noop
+        update_workflow.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
+        UserProfile.objects.create(user=user)
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
 
@@ -493,9 +500,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             isAutofetch=True,
             fetchInterval=19200,
         )
-        self.assertResponse(
-            response, data={"isAutofetch": True, "fetchInterval": 19200}
-        )
+        self.assertResponse(response, data=None)
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, True)
         self.assertEqual(step.update_interval, 19200)
@@ -510,8 +515,29 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         workflow.refresh_from_db()
         self.assertEqual(workflow.fetches_per_day, 4.5)
 
-    def test_try_set_autofetch_disable_autofetch(self):
+        update_user.assert_called_with(
+            user.id, clientside.UserUpdate(usage=UserUsage(fetches_per_day=4.5))
+        )
+        update_workflow.assert_called_with(
+            workflow.id,
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(fetches_per_day=4.5),
+                steps={
+                    step.id: clientside.StepUpdate(
+                        is_auto_fetch=True, fetch_interval=19200
+                    )
+                },
+            ),
+        )
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
+    def test_try_set_autofetch_disable_autofetch(self, update_user, update_workflow):
+        update_user.side_effect = async_noop
+        update_workflow.side_effect = async_noop
+
         user = User.objects.create(username="a", email="a@example.org")
+        UserProfile.objects.create(user=user)
         workflow = Workflow.create_and_init(owner=user, fetches_per_day=72.0)
         step = workflow.tabs.first().steps.create(
             order=0,
@@ -529,7 +555,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             isAutofetch=False,
             fetchInterval=300,
         )
-        self.assertResponse(response, data={"isAutofetch": False, "fetchInterval": 300})
+        self.assertResponse(response, data=None)
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, False)
         self.assertEqual(step.update_interval, 300)
@@ -537,7 +563,24 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         workflow.refresh_from_db()
         self.assertEqual(workflow.fetches_per_day, 0.0)
 
-    def test_try_set_autofetch_exceed_quota(self):
+        update_workflow.assert_called_with(
+            workflow.id,
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(fetches_per_day=0.0),
+                steps={
+                    step.id: clientside.StepUpdate(
+                        is_auto_fetch=False, fetch_interval=300
+                    )
+                },
+            ),
+        )
+        update_user.assert_called_with(
+            user.id, clientside.UserUpdate(usage=UserUsage(fetches_per_day=0.0))
+        )
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
+    def test_try_set_autofetch_exceed_quota(self, update_user, update_workflow):
         user = User.objects.create(username="a", email="a@example.org")
         UserProfile.objects.create(user=user, max_fetches_per_day=10)
         workflow = Workflow.create_and_init(owner=user)
@@ -550,18 +593,17 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             isAutofetch=True,
             fetchInterval=300,
         )
-        self.assertEqual(response.error, "")
-        self.assertEqual(response.data["quotaExceeded"]["maxFetchesPerDay"], 10)
-        self.assertEqual(response.data["quotaExceeded"]["nFetchesPerDay"], 288)
-        self.assertEqual(
-            response.data["quotaExceeded"]["autofetches"][0]["workflow"]["id"],
-            workflow.id,
-        )
+        self.assertEqual(response.error, "AutofetchQuotaExceeded")
         step.refresh_from_db()
         self.assertEqual(step.auto_update_data, False)
         workflow.refresh_from_db()
         self.assertEqual(workflow.fetches_per_day, 0.0)
 
+        update_user.assert_not_called()
+        update_workflow.assert_not_called()
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_user_update_to_user_clients", async_noop)
     def test_try_set_autofetch_allow_exceed_quota_when_reducing(self):
         user = User.objects.create(username="a", email="a@example.org")
         UserProfile.objects.create(user=user, max_fetches_per_day=10)
@@ -581,7 +623,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             isAutofetch=True,
             fetchInterval=600,
         )
-        self.assertResponse(response, data={"isAutofetch": True, "fetchInterval": 600})
+        self.assertResponse(response, data=None)
         step.refresh_from_db()
         self.assertEqual(step.update_interval, 600)
         workflow.refresh_from_db()

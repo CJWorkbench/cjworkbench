@@ -1,369 +1,383 @@
-import { PureComponent } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import { useDispatch, useSelector } from 'react-redux'
 import propTypes from '../../../propTypes'
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from '../../../components/Modal'
-import QuotaExceeded from './QuotaExceeded'
+import { useWorkbenchAPI } from '../../../WorkbenchAPI'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
+import Saving from '../../../components/Saving'
 import { Trans, t } from '@lingui/macro'
+import selectLoggedInUser from '../../../selectors/selectLoggedInUser'
+import selectLoggedInUserIsPaying from '../../../selectors/selectLoggedInUserIsPaying'
 
-const TimeUnits = {
-  minutes: 60,
-  hours: 3600,
-  days: 86400,
-  weeks: 604800
-}
+const Day = 86400
+const Hour = 3600
+const Minute = 60
 
-function findBestTimeUnitForNSeconds (nSeconds) {
-  for (const timeUnit of ['weeks', 'days', 'hours']) {
-    if (nSeconds % TimeUnits[timeUnit] === 0) {
-      return timeUnit
-    }
-  }
-  return 'minutes'
-}
+const StandardIntervals = [ Day, Hour, 10 * Minute ]
 
-function calculateFetchInterval ({ wantTimeUnitCount, timeUnit }) {
-  const value = parseFloat(wantTimeUnitCount) // may be NaN
-  if (value > 0) {
-    return Math.max(1, TimeUnits[timeUnit] * value)
-  } else {
-    return null
-  }
-}
+const PricePoint = PropTypes.oneOf(['ok', 'need-upgrade', 'over-limit'])
 
-export default class UpdateFrequencySelectModal extends PureComponent {
-  static propTypes = {
-    workflowId: propTypes.workflowId.isRequired,
-    stepId: PropTypes.number.isRequired,
-    isAutofetch: PropTypes.bool.isRequired,
-    fetchInterval: PropTypes.number.isRequired,
-    isEmailUpdates: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired, // func() => undefined
-    setEmailUpdates: PropTypes.func.isRequired, // func(isEmailUpdates) => undefined
-    trySetAutofetch: PropTypes.func.isRequired // func(isAutofetch, fetchInterval) => Promise[Optional[quotaExceeded]]
-  }
+function AutofetchToggle (props) {
+  const { checked, onChange, pricePoint } = props
 
-  state = {
-    isSettingAutofetch: false, // true means ignore quotaExceeded because we are going to change it
-    quotaExceeded: null, // JSON response piece -- set iff we exceeded quota
-    // "want" is what we show in the UI. The server can say no to autofetch
-    // requests; if it does, we need to keep a handle on what the user wanted.
-    // (Otherwise the user's input would disappear upon server response.)
-    wantAutofetch: this.props.isAutofetch,
-    timeUnit: findBestTimeUnitForNSeconds(this.props.fetchInterval),
-    // wantTimeUnitCount is string is so the user can type "1.5" ... or erase
-    // the value and type something new. this.wantFetchInterval is null when
-    // the user enters an invalid wantTimeUnitCount.
-    wantTimeUnitCount: String(
-      this.props.fetchInterval /
-        TimeUnits[findBestTimeUnitForNSeconds(this.props.fetchInterval)]
-    )
-  }
-
-  get wantFetchInterval () {
-    return calculateFetchInterval(this.state)
-  }
-
-  get isFetchIntervalSubmittable () {
-    return (
-      !this.state.isSettingAutofetch && // there's no pending request
-      this.wantFetchInterval && // the text box is valid
-      // we've edited
-      (this.wantFetchInterval !== this.props.fetchInterval ||
-        this.wantAutofetch !== this.props.isAutofetch)
-    )
-  }
-
-  handleChangeAutofetch = ev => {
-    this.setState(
-      {
-        wantAutofetch: ev.target.value === 'true'
-      },
-      this.handleSubmit
-    )
-  }
-
-  handleChangeEmailUpdates = ev => {
-    this.props.setEmailUpdates(ev.target.checked)
-  }
-
-  handleChangeTimeUnitCount = ev => {
-    this.setState({ wantTimeUnitCount: ev.target.value })
-  }
-
-  handleChangeTimeUnit = ev => {
-    this.setState({
-      timeUnit: ev.target.value
-    })
-  }
-
-  handleSubmit = ev => {
-    if (ev && ev.preventDefault) ev.preventDefault()
-    if (ev && ev.stopPropagation) ev.stopPropagation()
-
-    this.setState((state, props) => {
-      const {
-        isSettingAutofetch,
-        isAutofetch,
-        fetchInterval,
-        trySetAutofetch
-      } = props
-      const { wantAutofetch } = state
-      const wantFetchInterval = calculateFetchInterval(state) || fetchInterval
-
-      if (isSettingAutofetch) return // only one submit at a time, please
-      if (
-        wantAutofetch === isAutofetch &&
-        wantFetchInterval === fetchInterval
-      ) {
-        return
-      } // state == props
-
-      // "Lock" state against future submits (isSettingAutofetch); then submit
-      // and handle the response asynchronously.
-      trySetAutofetch(wantAutofetch, wantFetchInterval).then(
-        ({ value: { quotaExceeded, fetchInterval } }) => {
-          this.setState(state => {
-            const nextState = {
-              isSettingAutofetch: false,
-              quotaExceeded: quotaExceeded || null
-            }
-            if (!quotaExceeded) {
-              // If user asked for "5"s, replace with server-supplied "300"s.
-              nextState.wantTimeUnitCount = String(
-                fetchInterval / TimeUnits[state.timeUnit]
-              )
-            }
-            return nextState
-          })
-        }
-      )
-
-      return { isSettingAutofetch: true }
-    })
-  }
-
-  render () {
-    const { isEmailUpdates, onClose, workflowId, stepId } = this.props
-    const {
-      wantAutofetch,
-      wantTimeUnitCount,
-      isSettingAutofetch,
-      quotaExceeded,
-      timeUnit
-    } = this.state
-
-    return (
-      <Modal isOpen className='update-frequency-modal' toggle={onClose}>
-        <ModalHeader>
-          <Trans
-            id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-            comment='This should be all-caps for styling reasons'
-          >
-            WORKFLOW UPDATE
-          </Trans>
-        </ModalHeader>
-        <ModalBody>
-          <form
-            className='autofetch'
-            method='post'
-            action='#'
-            onSubmit={this.handleSubmit}
-          >
-            {/* disable fieldset if we're submitting -- the user can't submit during apply, and the user shouldn't be allowed to edit fields because that would be confusing. */}
-            <fieldset className='autofetch' disabled={isSettingAutofetch}>
-              <div
-                className={`big-radio big-radio-auto-update-true ${
-                  wantAutofetch ? 'big-radio-checked' : 'big-radio-unchecked'
-                }`}
-              >
-                <label>
-                  <input
-                    type='radio'
-                    name='isAutofetch'
-                    value='true'
-                    checked={wantAutofetch}
-                    onChange={this.handleChangeAutofetch}
-                  />
-                  <div className='radio'>
-                    <Trans
-                      id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label'
-                      comment="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
-                    >
-                      Auto
-                    </Trans>
-                  </div>
-                </label>
-                <div className='big-radio-details'>
-                  <p>
-                    <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>
-                      Automatically update this workflow with the newest data
-                      (old versions will be saved).
-                    </Trans>
-                  </p>
-                  <label htmlFor='updateFrequencySelectTimeUnitCount'>
-                    <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>
-                      Check for update every
-                    </Trans>
-                  </label>
-                  <fieldset
-                    className='fetch-interval'
-                    disabled={!wantAutofetch}
-                  >
-                    <div className='input-group'>
-                      <div className='input-group-prepend'>
-                        <input
-                          className='form-control'
-                          type='number'
-                          name='timeUnitCount'
-                          value={wantTimeUnitCount}
-                          onChange={this.handleChangeTimeUnitCount}
-                          min='1'
-                          id='updateFrequencySelectTimeUnitCount'
-                        />
-                      </div>
-                      <select
-                        className='custom-select'
-                        name='timeUnit'
-                        value={timeUnit}
-                        onChange={this.handleChangeTimeUnit}
-                      >
-                        <option value='weeks'>
-                          {t({
-                            id:
-                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option',
-                            message: 'weeks'
-                          })}
-                        </option>
-                        <option value='days'>
-                          {t({
-                            id:
-                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option',
-                            message: 'days'
-                          })}
-                        </option>
-                        <option value='hours'>
-                          {t({
-                            id:
-                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option',
-                            message: 'hours'
-                          })}
-                        </option>
-                        <option value='minutes'>
-                          {t({
-                            id:
-                              'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option',
-                            message: 'minutes'
-                          })}
-                        </option>
-                      </select>
-                      <div className='input-group-append'>
-                        <button
-                          className='form-control'
-                          type='submit'
-                          name='apply'
-                          disabled={!this.isFetchIntervalSubmittable}
-                        >
-                          {quotaExceeded
-                            ? (
-                              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry'>
-                                Retry
-                              </Trans>
-                              )
-                            : (
-                              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply'>
-                                Apply
-                              </Trans>
-                              )}
-                        </button>
-                      </div>
-                    </div>
-                    {/* input-group */}
-                  </fieldset>
-                </div>
-                {/* big-radio-details */}
-              </div>
-              {/* big-radio */}
-
-              {quotaExceeded
-                ? (
-                  <QuotaExceeded
-                    workflowId={workflowId}
-                    stepId={stepId}
-                    {...quotaExceeded}
-                  />
-                  )
-                : null}
-
-              <div
-                className={`big-radio big-radio-auto-update-false ${
-                  wantAutofetch ? 'big-radio-unchecked' : 'big-radio-checked'
-                }`}
-              >
-                <label>
-                  <input
-                    type='radio'
-                    name='isAutofetch'
-                    value='false'
-                    checked={!wantAutofetch}
-                    onChange={this.handleChangeAutofetch}
-                  />
-                  <div className='radio'>
-                    <Trans
-                      id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label'
-                      comment="Refers to 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'"
-                    >
-                      Manual
-                    </Trans>
-                  </div>
-                </label>
-                <div className='big-radio-details'>
-                  <p>
-                    <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description'>
-                      Check for new data manually.
-                    </Trans>
-                  </p>
-                </div>
-              </div>
-            </fieldset>
-          </form>
-
-          <div className='email-updates'>
-            <input
-              type='checkbox'
-              id='update-frequency-select-modal-is-email-updates-checkbox'
-              name='isEmailUpdates'
-              checked={isEmailUpdates}
-              onChange={this.handleChangeEmailUpdates}
-            />
-            <label htmlFor='update-frequency-select-modal-is-email-updates-checkbox'>
-              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label'>
-                Email me when data changes
-              </Trans>
-            </label>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <button
-            type='button'
-            className='close'
-            title={t({
-              id:
-                'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText',
-              message: 'Close'
-            })}
-            onClick={onClose}
-          >
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>
-              Close
+  return (
+    <div className='autofetch-toggle'>
+      <label>
+        <input
+          type='checkbox'
+          name='autofetch'
+          disabled={pricePoint !== 'ok'}
+          checked={checked}
+          onChange={onChange}
+        />
+        {checked
+          ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.on'>ON</Trans>
+          : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.off'>OFF</Trans>}
+      </label>
+      {pricePoint === 'need-upgrade'
+        ? (
+          <div className='need-upgrade'>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeLink'>
+              <a href="/settings/plan" target="_blank">Upgrade</a> to increase your limit
             </Trans>
-          </button>
-        </ModalFooter>
-      </Modal>
-    )
+          </div>)
+        : null}
+      {pricePoint === 'over-limit'
+        ? (
+          <div className='over-limit'>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimit'>
+              Reduce usage elsewhere to allow updates here
+            </Trans>
+          </div>
+        )
+        : null}
+    </div>
+  )
+}
+AutofetchToggle.propTypes = {
+  checked: PropTypes.bool.isRequired,
+  onChange: PropTypes.func.isRequired, // func(ev) => undefined
+  pricePoint: PricePoint.isRequired
+}
+
+function describeInterval (nSeconds) {
+  if (nSeconds % Day === 0) {
+    return t({
+      id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nDays',
+      message: '{n,plural,one {day} other {{n,number} days}}',
+      values: { n: nSeconds / Day }
+    })
   }
+  if (nSeconds % Hour === 0) {
+    return t({
+      id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nHours',
+      message: '{n,plural,one {hour} other {{n,number} hours}}',
+      values: { n: nSeconds / Hour }
+    })
+  }
+  return t({
+    id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nMinutes',
+    message: '{n,plural,one {minute} other {{n,number} minutes}}',
+    values: { n: nSeconds / Minute }
+  })
+}
+
+function IntervalOption (props) {
+  const { value, pricePoint } = props
+
+  return (
+    <option value={value} disabled={pricePoint != 'ok'}>
+      {describeInterval(value)}
+      {pricePoint === 'need-upgrade'
+        ? ` — ${t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgrade', message: 'upgrade' })}`
+        : null}
+      {pricePoint === 'over-limit'
+        ? ` — ${t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimit', message: 'over limit' })}`
+        : null}
+    </option>
+  )
+}
+IntervalOption.propTypes = {
+  value: PropTypes.number.isRequired, // seconds between updates
+  pricePoint: PricePoint.isRequired
+}
+
+function countFetchesPerDay (isAutofetch, interval) {
+  return isAutofetch ? 86400 / interval : 0
+}
+
+function handleSubmit (ev) {
+  ev.stopPropagation()
+  ev.preventDefault()
+}
+
+export default function UpdateFrequencySelectModal (props) {
+  const {
+    workflowId,
+    stepSlug,
+    isAutofetch,
+    fetchInterval,
+    isEmailUpdates,
+    delayMsAfterServerOk = 500,
+    onClose,
+    setEmailUpdates
+  } = props
+
+  const dispatch = useDispatch()
+  const api = useWorkbenchAPI()
+
+  // { data: {isAutofetch, fetchInterval}, staleData: { fetchesPerDay, usage }, failed: bool?}
+  const [submitting, setSubmitting] = React.useState(null)
+
+  const currentFetchInterval = submitting ? submitting.data.fetchInterval : fetchInterval
+  const currentIsAutofetch = submitting ? submitting.data.isAutofetch : isAutofetch
+
+  const loggedInUser = useSelector(selectLoggedInUser)
+  const loggedInUserIsPaying = useSelector(selectLoggedInUserIsPaying)
+
+  // Our submits are asynchronous: 1) submit a change; 2) wait for the server to
+  // catch up; 3) clear "submitting". During step 2, we _assume_ the usage based
+  // on the _original_ usage plus the submitted number of fetches/day.
+  const lastKnownUsage = submitting
+    ? submitting.staleData.usage
+    : loggedInUser.usage
+  const lastKnownFetchesPerDayOnThisStep = submitting
+    ? submitting.staleData.fetchesPerDay
+    : countFetchesPerDay(isAutofetch, fetchInterval)
+  const lastKnownFetchesElsewhere = lastKnownUsage.fetchesPerDay - lastKnownFetchesPerDayOnThisStep
+
+  const findPricePoint = React.useCallback(
+    fetchesPerDay => {
+      if (currentIsAutofetch && fetchesPerDay <= 86400 / currentFetchInterval) {
+        return 'ok'
+      }
+      if (fetchesPerDay + lastKnownFetchesElsewhere > loggedInUser.limits.fetches_per_day) {
+        return loggedInUserIsPaying ? 'over-limit' : 'need-upgrade'
+      }
+      return 'ok'
+    },
+    [loggedInUserIsPaying, currentIsAutofetch, currentFetchInterval, lastKnownFetchesElsewhere, loggedInUser.limits.fetches_per_day]
+  )
+
+  const allowedCurrentFetchInterval = [...StandardIntervals, currentFetchInterval].reverse().find(i => findPricePoint(86400 / i) === 'ok') || StandardIntervals[0]
+
+  React.useEffect(
+    () => {
+      if (submitting === null) return undefined
+      if (submitting.failed) return undefined
+
+      const { isAutofetch, fetchInterval } = submitting.data
+      // "cancel" helps with multiple pending edits:
+      //
+      // User makes edit A: we submit it
+      // User makes edit B: we submit it
+      // Server responds to edit A: ignore this message! Don't setState()
+      // Server responds to edit B: okay, we're happy
+      let cancel = false
+      let timeout = null
+      async function go () {
+        if (cancel) return
+        try {
+          await api.trySetStepAutofetch(stepSlug, isAutofetch, fetchInterval)
+        } catch (err) {
+          if (cancel) return
+
+          if (err.serverError && err.serverError === 'AutofetchQuotaExceeded') {
+            // If we got here, there's a race or bug in our logic or some-such.
+            // Snap back to previous values. The user may notice this; let's
+            // assume this doesn't happen often.
+            setSubmitting(null)
+          } else {
+            setSubmitting({ ...submitting, failed: true })
+          }
+        }
+        if (cancel) return
+        // The server says ok, but it doesn't guarantee that the Redux state
+        // is correct yet! Wait, then assume things have settled
+        timeout = window.setTimeout(
+          () => {
+            timeout = null
+            if (cancel) return
+            setSubmitting(null)
+          },
+          delayMsAfterServerOk
+        )
+      }
+      go()
+      return () => {
+        cancel = true
+        if (timeout !== null) {
+          window.clearTimeout(timeout)
+          timeout = null
+        }
+      }
+    },
+    [api, stepSlug, submitting]
+  )
+
+  const handleClickRetry = React.useCallback(
+    () => {
+      const { failed, data, staleData } = submitting
+      setSubmitting({ data, staleData, failed: false })
+    },
+    [submitting]
+  )
+
+  const handleToggleAutofetch = React.useCallback(
+    ev => {
+      setSubmitting({
+        data: {
+          isAutofetch: ev.target.checked,
+          fetchInterval: allowedCurrentFetchInterval
+        },
+        staleData: {
+          usage: lastKnownUsage,
+          fetchesPerDay: lastKnownFetchesPerDayOnThisStep
+        },
+        failed: false
+      })
+    },
+    [allowedCurrentFetchInterval, setSubmitting, lastKnownUsage, lastKnownFetchesPerDayOnThisStep]
+  )
+
+  const handleChangeFetchInterval = React.useCallback(
+    ev => {
+      setSubmitting({
+        data: {
+          isAutofetch: currentIsAutofetch,
+          fetchInterval: +ev.target.value
+        },
+        staleData: {
+          usage: lastKnownUsage,
+          fetchesPerDay: lastKnownFetchesPerDayOnThisStep
+        },
+        failed: false
+      })
+    },
+    [currentIsAutofetch, setSubmitting, lastKnownUsage, lastKnownFetchesPerDayOnThisStep]
+  )
+
+  const handleChangeEmailUpdates = React.useCallback(
+    ev => {
+      setEmailUpdates(ev.target.value)
+    },
+    [setEmailUpdates]
+  )
+
+  return (
+    <Modal isOpen className='update-frequency-modal' toggle={onClose}>
+      <ModalHeader>
+        <Trans
+          id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
+          comment='This should be all-caps for styling reasons'
+        >
+          AUTOMATIC UPDATES
+        </Trans>
+      </ModalHeader>
+      <ModalBody>
+        {submitting
+          ? <Saving failed={submitting.failed || false} onClickRetry={handleClickRetry} />
+          : null}
+        <form
+          className='autofetch'
+          method='post'
+          action='#'
+          onSubmit={handleSubmit}
+        >
+          <AutofetchToggle
+            checked={currentIsAutofetch}
+            onChange={handleToggleAutofetch}
+            pricePoint={currentIsAutofetch ? 'ok' : findPricePoint(1)}
+          />
+          <p className='description'>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>
+              Check for new data and update this workflow periodically.
+            </Trans>
+          </p>
+          <label>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>
+              Check for updates every
+            </Trans>
+            <select
+              name='fetch-interval'
+              value={allowedCurrentFetchInterval}
+              onChange={handleChangeFetchInterval}
+            >
+              {StandardIntervals.includes(allowedCurrentFetchInterval)
+                ? null
+                : (
+                  <IntervalOption
+                    value={allowedCurrentFetchInterval}
+                    pricePoint={findPricePoint(86400 / fetchInterval)}
+                  />
+                )}
+              {StandardIntervals.map(value => (
+                <IntervalOption
+                  key={value}
+                  value={value}
+                  pricePoint={findPricePoint(86400 / value)}
+                />
+              ))}
+            </select>
+          </label>
+        </form>
+
+        <label className='email-updates'>
+          <input
+            type='checkbox'
+            name='isEmailUpdates'
+            checked={isEmailUpdates}
+            onChange={handleChangeEmailUpdates}
+          />
+          <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label'>
+            Email me when data changes
+          </Trans>
+        </label>
+      </ModalBody>
+      <ModalFooter>
+        <div className='usage'>
+          {t({
+            id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.currentUsage',
+            message: '{fetchesPerDay,number} of {limit,number} updates/day',
+            values: {
+              fetchesPerDay: lastKnownFetchesElsewhere + countFetchesPerDay(currentIsAutofetch, currentFetchInterval),
+              limit: loggedInUser.limits.fetches_per_day
+            }
+          })}
+        </div>
+        {loggedInUserIsPaying
+          ? null
+          : (
+            <a href="/settings/plan" target="_blank">
+              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeButton'>
+                Upgrade
+              </Trans>
+            </a>)}
+        <button
+          type='button'
+          className='close'
+          title={t({
+            id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText',
+            message: 'Close'
+          })}
+          onClick={onClose}
+        >
+          <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton'>
+            Close
+          </Trans>
+        </button>
+      </ModalFooter>
+    </Modal>
+  )
+}
+UpdateFrequencySelectModal.propTypes = {
+  workflowId: propTypes.workflowId.isRequired,
+  stepId: PropTypes.number.isRequired,
+  stepSlug: PropTypes.string.isRequired,
+  isAutofetch: PropTypes.bool.isRequired,
+  fetchInterval: PropTypes.number.isRequired,
+  isEmailUpdates: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired, // func() => undefined
+  trySetAutofetch: PropTypes.func.isRequired, // func(stepSlug, isAutofetch, fetchInterval) => Promise[{}]
+  setEmailUpdates: PropTypes.func.isRequired // func(isEmailUpdates) => undefined
 }

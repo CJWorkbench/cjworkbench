@@ -91,6 +91,12 @@ class UserUpdate(NamedTuple):
     stripe_customer_id: Optional[Union[_Null, str]] = None
     """Stripe customer ID."""
 
+    subscribed_stripe_product_ids: Optional[List[str]] = None
+    """Stripe products the user pays for.
+
+    Empty list means the user is not paying.
+    """
+
     limits: Optional[UserLimits] = None
     """Limits that apply to the user, usually based on plan."""
 

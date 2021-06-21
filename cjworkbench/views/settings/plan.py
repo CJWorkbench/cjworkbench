@@ -23,6 +23,7 @@ FREE_PRODUCT = Product(
 
 
 def jsonize_user(user: User) -> Dict[str, Any]:
+    # TODO use dbutil + serializers
     if user.is_anonymous:
         return None
 

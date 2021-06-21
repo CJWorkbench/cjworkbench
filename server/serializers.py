@@ -724,6 +724,8 @@ def jsonize_clientside_user(user: clientside.UserUpdate) -> Dict[str, Any]:
 
     if user.limits:
         d["limits"] = user.limits._asdict()
+    if user.subscribed_stripe_product_ids is not None:
+        d["subscribedStripeProductIds"] = user.subscribed_stripe_product_ids
     if user.usage:
         d["usage"] = dict(fetchesPerDay=user.usage.fetches_per_day)
     return d
