@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import propTypes from '../../../propTypes'
 import { useWorkbenchAPI } from '../../../WorkbenchAPI'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../../../components/Modal'
@@ -13,7 +13,7 @@ const Day = 86400
 const Hour = 3600
 const Minute = 60
 
-const StandardIntervals = [ Day, Hour, 10 * Minute ]
+const StandardIntervals = [Day, Hour, 10 * Minute]
 
 const PricePoint = PropTypes.oneOf(['ok', 'need-upgrade', 'over-limit'])
 
@@ -22,14 +22,18 @@ function AutofetchToggle (props) {
 
   return (
     <div className='autofetch-toggle'>
-      <label>
+      <div className='toggle'>
         <input
+          id='updateFrequencySelectModalAutofetchToggle'
           type='checkbox'
           name='autofetch'
           disabled={pricePoint !== 'ok'}
           checked={checked}
           onChange={onChange}
         />
+        <label htmlFor='updateFrequencySelectModalAutofetchToggle' className='toggle' />
+      </div>
+      <label className='onoff' htmlFor='updateFrequencySelectModalAutofetchToggle'>
         {checked
           ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.on'>ON</Trans>
           : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.off'>OFF</Trans>}
@@ -38,18 +42,18 @@ function AutofetchToggle (props) {
         ? (
           <div className='need-upgrade'>
             <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeLink'>
-              <a href="/settings/plan" target="_blank">Upgrade</a> to increase your limit
+              <a href='/settings/plan' target='_blank'>Upgrade</a> to increase your limit
             </Trans>
           </div>)
         : null}
       {pricePoint === 'over-limit'
         ? (
           <div className='over-limit'>
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimit'>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimitDescription'>
               Reduce usage elsewhere to allow updates here
             </Trans>
           </div>
-        )
+          )
         : null}
     </div>
   )
@@ -86,7 +90,7 @@ function IntervalOption (props) {
   const { value, pricePoint } = props
 
   return (
-    <option value={value} disabled={pricePoint != 'ok'}>
+    <option value={value} disabled={pricePoint !== 'ok'}>
       {describeInterval(value)}
       {pricePoint === 'need-upgrade'
         ? ` — ${t({ id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgrade', message: 'upgrade' })}`
@@ -113,17 +117,13 @@ function handleSubmit (ev) {
 
 export default function UpdateFrequencySelectModal (props) {
   const {
-    workflowId,
     stepSlug,
     isAutofetch,
     fetchInterval,
-    isEmailUpdates,
     delayMsAfterServerOk = 500,
-    onClose,
-    setEmailUpdates
+    onClose
   } = props
 
-  const dispatch = useDispatch()
   const api = useWorkbenchAPI()
 
   // { data: {isAutofetch, fetchInterval}, staleData: { fetchesPerDay, usage }, failed: bool?}
@@ -131,6 +131,7 @@ export default function UpdateFrequencySelectModal (props) {
 
   const currentFetchInterval = submitting ? submitting.data.fetchInterval : fetchInterval
   const currentIsAutofetch = submitting ? submitting.data.isAutofetch : isAutofetch
+  const currentFetchesPerDayOnThisStep = currentIsAutofetch ? 86400 / currentFetchInterval : 0
 
   const loggedInUser = useSelector(selectLoggedInUser)
   const loggedInUserIsPaying = useSelector(selectLoggedInUserIsPaying)
@@ -151,15 +152,17 @@ export default function UpdateFrequencySelectModal (props) {
       if (currentIsAutofetch && fetchesPerDay <= 86400 / currentFetchInterval) {
         return 'ok'
       }
-      if (fetchesPerDay + lastKnownFetchesElsewhere > loggedInUser.limits.fetches_per_day) {
+      if (fetchesPerDay + lastKnownFetchesElsewhere > loggedInUser.limits.max_fetches_per_day) {
         return loggedInUserIsPaying ? 'over-limit' : 'need-upgrade'
       }
       return 'ok'
     },
-    [loggedInUserIsPaying, currentIsAutofetch, currentFetchInterval, lastKnownFetchesElsewhere, loggedInUser.limits.fetches_per_day]
+    [loggedInUserIsPaying, currentIsAutofetch, currentFetchInterval, lastKnownFetchesElsewhere, loggedInUser.limits.max_fetches_per_day]
   )
 
   const allowedCurrentFetchInterval = [...StandardIntervals, currentFetchInterval].reverse().find(i => findPricePoint(86400 / i) === 'ok') || StandardIntervals[0]
+
+  const isOverLimit = lastKnownFetchesElsewhere + currentFetchesPerDayOnThisStep > loggedInUser.limits.max_fetches_per_day
 
   React.useEffect(
     () => {
@@ -217,7 +220,7 @@ export default function UpdateFrequencySelectModal (props) {
 
   const handleClickRetry = React.useCallback(
     () => {
-      const { failed, data, staleData } = submitting
+      const { data, staleData } = submitting
       setSubmitting({ data, staleData, failed: false })
     },
     [submitting]
@@ -257,13 +260,6 @@ export default function UpdateFrequencySelectModal (props) {
     [currentIsAutofetch, setSubmitting, lastKnownUsage, lastKnownFetchesPerDayOnThisStep]
   )
 
-  const handleChangeEmailUpdates = React.useCallback(
-    ev => {
-      setEmailUpdates(ev.target.value)
-    },
-    [setEmailUpdates]
-  )
-
   return (
     <Modal isOpen className='update-frequency-modal' toggle={onClose}>
       <ModalHeader>
@@ -278,6 +274,20 @@ export default function UpdateFrequencySelectModal (props) {
         {submitting
           ? <Saving failed={submitting.failed || false} onClickRetry={handleClickRetry} />
           : null}
+        {isOverLimit
+          ? (
+            <div className='warn-cannot-undo-decrease'>
+              {loggedInUserIsPaying
+                ? (
+                  <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.warnCannotUndoDecreases'>
+                    You're using too many automatic updates. You cannot increase your usage.
+                  </Trans>)
+                : (
+                  <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeToUndoDecreases'>
+                    You're using too many automatic updates. <a href='/settings/plan' target='_blank'>Upgrade</a>
+                  </Trans>)}
+            </div>)
+          : null}
         <form
           className='autofetch'
           method='post'
@@ -289,66 +299,65 @@ export default function UpdateFrequencySelectModal (props) {
             onChange={handleToggleAutofetch}
             pricePoint={currentIsAutofetch ? 'ok' : findPricePoint(1)}
           />
-          <p className='description'>
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description'>
-              Check for new data and update this workflow periodically.
-            </Trans>
-          </p>
-          <label>
-            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>
-              Check for updates every
-            </Trans>
-            <select
-              name='fetch-interval'
-              value={allowedCurrentFetchInterval}
-              onChange={handleChangeFetchInterval}
-            >
-              {StandardIntervals.includes(allowedCurrentFetchInterval)
-                ? null
-                : (
+          <fieldset className='fetch-interval' disabled={!currentIsAutofetch}>
+            <label>
+              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>
+                Check for new data and update this step every:
+              </Trans>
+              <select
+                name='fetch-interval'
+                value={allowedCurrentFetchInterval}
+                onChange={handleChangeFetchInterval}
+              >
+                {StandardIntervals.includes(allowedCurrentFetchInterval)
+                  ? null
+                  : (
+                    <IntervalOption
+                      value={allowedCurrentFetchInterval}
+                      pricePoint={findPricePoint(86400 / fetchInterval)}
+                    />
+                    )}
+                {StandardIntervals.map(value => (
                   <IntervalOption
-                    value={allowedCurrentFetchInterval}
-                    pricePoint={findPricePoint(86400 / fetchInterval)}
+                    key={value}
+                    value={value}
+                    pricePoint={findPricePoint(86400 / value)}
                   />
-                )}
-              {StandardIntervals.map(value => (
-                <IntervalOption
-                  key={value}
-                  value={value}
-                  pricePoint={findPricePoint(86400 / value)}
-                />
-              ))}
-            </select>
-          </label>
-        </form>
+                ))}
+              </select>
+            </label>
 
-        <label className='email-updates'>
-          <input
-            type='checkbox'
-            name='isEmailUpdates'
-            checked={isEmailUpdates}
-            onChange={handleChangeEmailUpdates}
-          />
-          <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label'>
-            Email me when data changes
-          </Trans>
-        </label>
+            <div className='email-updates-tip'>
+              <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdatesTip'>
+                <strong>Tip</strong>: Use <i className='icon-notification' /> notifications on any step to receive an email when data changes.
+              </Trans>
+            </div>
+          </fieldset>
+        </form>
       </ModalBody>
       <ModalFooter>
+        <h6><Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.title'>Your usage</Trans></h6>
         <div className='usage'>
-          {t({
-            id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.currentUsage',
-            message: '{fetchesPerDay,number} of {limit,number} updates/day',
-            values: {
-              fetchesPerDay: lastKnownFetchesElsewhere + countFetchesPerDay(currentIsAutofetch, currentFetchInterval),
-              limit: loggedInUser.limits.fetches_per_day
-            }
-          })}
+          <div className={`counts${isOverLimit ? ' over-limit' : ''}`}>
+            {t({
+              id: 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.counts',
+              message: '{fetchesPerDay,number} of {limit,number} updates/day',
+              values: {
+                fetchesPerDay: lastKnownFetchesElsewhere + countFetchesPerDay(currentIsAutofetch, currentFetchInterval),
+                limit: loggedInUser.limits.max_fetches_per_day
+              }
+            })}
+          </div>
+          <div className='help'>
+            <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.countDescription'>
+              across all workflows
+            </Trans>
+          </div>
         </div>
         {loggedInUserIsPaying
           ? null
           : (
-            <a href="/settings/plan" target="_blank">
+            <a href='/settings/plan' target='_blank'>
               <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeButton'>
                 Upgrade
               </Trans>
@@ -376,8 +385,5 @@ UpdateFrequencySelectModal.propTypes = {
   stepSlug: PropTypes.string.isRequired,
   isAutofetch: PropTypes.bool.isRequired,
   fetchInterval: PropTypes.number.isRequired,
-  isEmailUpdates: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired, // func() => undefined
-  trySetAutofetch: PropTypes.func.isRequired, // func(stepSlug, isAutofetch, fetchInterval) => Promise[{}]
-  setEmailUpdates: PropTypes.func.isRequired // func(isEmailUpdates) => undefined
+  onClose: PropTypes.func.isRequired // func() => undefined
 }

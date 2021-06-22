@@ -5,13 +5,10 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
   fetchInterval={300}
   isAnonymous={false}
   isAutofetch={false}
-  isEmailUpdates={false}
   isOwner={true}
   lastCheckDate={2018-05-28T19:00:54.154Z}
-  setEmailUpdates={[MockFunction]}
   stepId={212}
   stepSlug="step-1"
-  trySetAutofetch={[MockFunction]}
   workflowId={123}
 >
   <div
@@ -26,10 +23,10 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
         <Trans
           components={Object {}}
           id="js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
-          message="Update"
+          message="Auto update"
           values={Object {}}
         >
-          Update
+          Auto update
         </Trans>
          
       </span>
@@ -42,10 +39,10 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
           comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
           components={Object {}}
           id="js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
-          message="Manual"
+          message="OFF"
           values={Object {}}
         >
-          Manual
+          OFF
         </Trans>
       </a>
     </div>

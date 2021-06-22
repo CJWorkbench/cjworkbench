@@ -144,178 +144,175 @@
 
 .update-frequency-modal {
   @include content-1; // because body font-size is 10px
+  $indent: rem(3);
 
-  .big-radio {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-
-    & > label {
-      width: 8rem;
-      margin-right: 1rem;
-      flex: 0 0 auto;
-
-      input {
-        display: none;
-      }
-      color: $brand-workspace;
-      font-weight: bold;
-      font-size: 1.5rem;
-      line-height: 1;
-      text-align: center;
-    }
-
-    .big-radio-details {
-      margin-left: 1rem;
-      label {
-        @include content-1;
-        color: $brand-text--dark;
-      }
-      button {
-        @include button-orange;
-      }
-    }
+  .modal-body {
+    position: relative; // for .saving
   }
 
-  .big-radio-checked > label .radio {
-    cursor: default;
-    @include action-button;
-    @include button-blue--fill;
-  }
-  .big-radio-unchecked > label .radio {
-    cursor: pointer;
-    @include action-button;
-    @include button-gray;
-  }
+  .saving {
+    position: absolute;
+    color: $text-muted;
+    top: 0;
+    left: 0;
+    padding: 0 $modal-inner-hpadding;
+    width: 100%;
+    background: white;
 
-  .big-radio-unchecked {
-    opacity: 0.6;
-  }
-
-  .big-radio-checked {
-    opacity: 1;
-  }
-
-  .big-radio-auto-update-false {
-    margin-top: 2rem;
-  }
-
-  .big-radio-auto-update-false .big-radio-details {
-    // Line up with label, which is ~2 lines high
-    padding-top: 0.75rem; // label padding
-  }
-
-  .big-radio-auto-update-true {
-    .input-group {
-      flex-wrap: nowrap;
-
-      .custom-select {
-        border-radius: 0.3rem;
-      }
-    }
-
-    input.form-control[type='number'] {
-      @include module-parameter;
-      width: 6rem;
-      margin-right: 1rem;
-      font: inherit;
-      text-align: right;
-    }
-
-    select {
-      @include module-parameter;
-      font: inherit;
+    &.save-failed {
+      background: $error-prompt--Vlight;
     }
 
     button {
-      @include action-button;
+      @include action-link;
       margin-left: 1rem;
     }
   }
 
-  .quota-exceeded {
-    margin-top: 3rem;
-    background-color: $Vlight-gray;
-    padding: 2rem;
-    border-radius: 5px;
+  .warn-cannot-undo-decrease {
+    margin-left: -$modal-inner-hpadding;
+    margin-right: -$modal-inner-hpadding;
+    padding: .5rem $modal-inner-hpadding;
+    margin-bottom: 1.5rem;
+    background: $brand-orange--light;
+    color: $dark-orange;
+  }
 
-    h5 {
-      @include title-3;
-      margin-bottom: 1rem;
-      color: $brand-red;
+  .autofetch-toggle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    label {
+      cursor: pointer;
+      margin: 0;
     }
 
-    table {
-      margin-top: 1rem;
-      border-collapse: collapse;
+    * {
+      display: inline-block;
     }
 
-    th,
-    td {
-      vertical-align: top;
-      padding: 0.5rem;
-      padding-bottom: 1rem;
+    div.toggle {
+      $toggle-size: rem(1);
+      $toggle-border: 1px;
+      width: $indent;
+
+      // https://codepen.io/mburnette/pen/LxNxNg
+      input {
+        height: 0;
+        width: 0;
+        visibility: hidden;
+        position: absolute;
+      }
+
+      label {
+        width: 2 * $toggle-size;
+        height: $toggle-size;
+        position: relative;
+        display: block;
+        background: $text-muted;
+        border-radius: $toggle-size / 2;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: $toggle-border;
+          left: $toggle-border;
+          width: calc(#{$toggle-size} - #{2 * $toggle-border});
+          height: calc(#{$toggle-size} - #{2 * $toggle-border});
+          background: white;
+          border-radius: calc(#{$toggle-size / 2} - #{$toggle-border / 2});
+          transition: 0.1s;
+        }
+      }
+
+      input:checked + label {
+        background: $primary;
+
+        &::after {
+          left: calc(100% - #{2 * $toggle-border});
+          transform: translateX(-100%);
+        }
+      }
+
+      label:active::after {
+        width: 1.25 * $toggle-size;
+      }
     }
 
-    .n-fetches-per-day {
-      padding-left: 0;
-      text-align: right;
+    label.onoff {
+      @include title-2;
     }
 
-    td.workflow {
-      padding-right: 0;
+    .need-upgrade, .over-limit {
+      margin-left: rem(1);
+    }
+  }
 
-      ul {
-        color: $brand-text--dark;
-        list-style: none;
-        margin: 0.5rem 0 0;
-        padding: 0;
+  fieldset.fetch-interval {
+    margin-top: 1.5rem;
+    padding-left: $indent;
+
+    &:disabled {
+      color: $text-muted;
+    }
+
+    select {
+      @include custom-select;
+      width: auto;
+      padding-right: badrem(3);
+      margin-top: badrem(.5);
+    }
+  }
+
+  .email-updates-tip {
+    margin-top: 1.5rem;
+  }
+
+  .modal-footer {
+    align-items: top;
+
+    h6 {
+      margin: 0;
+      font: inherit;
+      font-weight: bold;
+
+      &::after {
+        // Add no-text placeholder to size the same as .usage's .counts+.help
+        content: '​';
+        display: block;
+        @include content-1;
+        visibility: hidden;
+      }
+    }
+
+    .usage {
+      text-align: center;
+
+      .counts {
+        font-weight: bold;
+
+        &.over-limit {
+          color: $brand-orange;
+        }
+      }
+    }
+
+    .usage {
+      flex: 1 1 auto;
+
+      .help {
+        color: $text-muted;
       }
     }
 
     a {
-      color: $workspace-action;
-      font-weight: bold;
+      @include action-button;
+      @include button-blue--fill;
     }
 
-    .request-lift {
-      font-weight: bold;
-
-      a {
-        font-weight: normal;
-        @include action-button;
-        @include button-pink-fill;
-        margin-left: 1rem;
-      }
-    }
-  }
-
-  .email-updates {
-    margin-top: 2rem;
-    border-top: 1px solid $page-background;
-    padding-top: 2rem;
-
-    input {
-      // checkbox
-      margin-bottom: -0.2rem;
-      &::after {
-        top: -2px;
-      }
-    }
-
-    label {
-      @include content-1;
-      cursor: pointer;
-    }
-  }
-
-  button.close {
-    @include action-button;
-    border: 0;
-  }
-
-  .modal-footer {
     button.close {
+      @include action-button;
       border: 1px solid $brand-text--dark;
       color: $brand-text--dark;
     }

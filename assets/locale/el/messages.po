@@ -644,15 +644,15 @@ msgstr "Αυτή η καρτέλα δεν έχει βήματα."
 msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
 msgstr "Δημιουργία καρτέλας"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:32
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:33
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
 msgstr "Διαγραφή"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:27
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:28
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate"
 msgstr "Δημιουργία αντιγράφου"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:22
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:23
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
 msgstr "Μετονομασία"
 
@@ -772,23 +772,23 @@ msgstr ""
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:122
+#: assets/js/Workflows/WorkflowList.js:149
 msgid "js.Workflows.WorkflowList.fetchesPerDay"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:110
+#: assets/js/Workflows/WorkflowList.js:130
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:113
+#: assets/js/Workflows/WorkflowList.js:139
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:106
+#: assets/js/Workflows/WorkflowList.js:126
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
-#: assets/js/Workflows/WorkflowList.js:132
+#: assets/js/Workflows/WorkflowList.js:159
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -846,6 +846,18 @@ msgstr "Δημιουργία ροής εργασιών"
 #: assets/js/Workflows/WorkflowContextMenu.js:29
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Να διαγραφεί μόνιμα αυτή η ροή εργασιών;"
+
+#: assets/js/components/Saving.js:11
+msgid "js.components.Saving.failed"
+msgstr ""
+
+#: assets/js/components/Saving.js:17
+msgid "js.components.Saving.retry"
+msgstr ""
+
+#: assets/js/components/Saving.js:23
+msgid "js.components.Saving.saving"
+msgstr ""
 
 #: assets/js/components/ShareUrl.js:47
 msgid "js.components.ShareUrl.copy"
@@ -1424,148 +1436,115 @@ msgstr "Έκδοση"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} από {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:121
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
-msgstr "Επεξεργασία ροής εργασιών"
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
-msgstr "#/ημέρα"
-
-#. The {1} argument is a tab name
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:145
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
-msgstr "Το βήμα {0} στο {1} κάνει {2} ενημερώσεις κάθε ημέρα."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
-msgstr ""
-"Αυτά εδώ είναι τα βήματα που καταλογίζονται στο όριο σας. Ρυθμίστε τους "
-"χρόνους ενημέρωσής τους ή ρυθμίστε τους σε μη αυτόματους και, στη "
-"συνέχεια, κάντε κλικ στην \"Επανάληψη\" παραπάνω."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
-#, fuzzy
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
-msgstr "Χρειάζεστε υψηλότερο όριο; Στείλτε μας ένα σύντομο <0>email</0>."
-
-#. The two tags add emphasis
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:52
-#, fuzzy
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
-msgstr ""
-"Ζητάτε <0>{0}</0> ενημερώσεις κάθε ημέρα σε όλες τις ροές εργασιών σας. "
-"Το ημερήσιο όριο είναι <1>{1}</1>."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:136
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
-msgstr "Ζητήσατε να γίνονται {0} ενημερώσεις την ημέρα για αυτό το βήμα."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:106
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
-msgstr "Αυτή η ροή εργασιών"
-
-#. This must be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:44
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
-msgstr "ΞΕΠΕΡΑΣΤΗΚΕ ΤΟ ΟΡΙΟ ΤΩΝ ΑΥΤΟΜΑΤΩΝ ΕΝΗΜΕΡΩΣΕΩΝ"
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:87
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
-msgstr "Ροή εργασιών"
-
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:95
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
+#, fuzzy
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr "Αυτόματη"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:86
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:68
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr "αλλαγή ρυθμίσεων αυτόματης ενημέρωσης"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:115
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:96
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr "Ελέγχθηκε <0>{0}</0>"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:103
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:84
+#, fuzzy
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr "Μη αυτόματο"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:62
+#, fuzzy
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr "Ενημέρωση"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:278
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
-msgstr "Εφαρμογή"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:203
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:39
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.off"
 msgstr ""
-"Αυτόματη ενημέρωση αυτής της ροής εργασιών με τα πιο πρόσφατα δεδομένα "
-"(οι παλιότερες εκδόσεις θα αποθηκευτούν)."
 
-#. Refers to
-#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:193
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
-msgstr "Αυτόματη"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:38
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.on"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
-msgstr "ημέρες"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:250
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
-msgstr "ώρες"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:209
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:304
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
-msgstr "Ελέγξτε για ενημέρωση κάθε"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:257
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
-msgstr "λεπτά"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:69
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nDays"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:236
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
-msgstr "εβδομάδες"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:76
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nHours"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:344
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
-msgstr "Να μου στέλνετε ηλ. μήνυμα κάθε φορά που αλλάζουν τα δεδομένα"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:82
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nMinutes"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:331
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdatesTip"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:374
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
-msgstr "Κλείσιμο"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:354
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:368
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:266
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
-msgstr "ΕΝΗΜΕΡΩΣΗ ΡΟΗΣ ΕΡΓΑΣΙΩΝ"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:326
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
-msgstr "Ελέγξτε τα νέα δεδομένα με μη αυτόματο τρόπο."
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:99
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimit"
+msgstr ""
 
-#. Refers to
-#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:316
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
-msgstr "Μη αυτόματο"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:52
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimitDescription"
+msgstr ""
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:273
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
-msgstr "Προσπαθήστε ξανά"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:96
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgrade"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeButton"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:44
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeLink"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:286
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeToUndoDecreases"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:352
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.countDescription"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:342
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.counts"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:339
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.title"
+msgstr ""
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:282
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.warnCannotUndoDecreases"
+msgstr ""
 
 #: assets/js/params/String/Code/index.js:19
 msgid "js.params.Custom.code.loadingEditor"

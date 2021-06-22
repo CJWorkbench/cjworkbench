@@ -16,10 +16,13 @@
   @include modal-backdrop;
 }
 
+$modal-inner-hpadding: badrem(2.5);
+$modal-inner-vpadding: badrem(2);
+
 @mixin modal-header {
   border-radius: 0.5rem 0.5rem 0 0;
   height: 6rem;
-  padding: 2rem 2.5rem;
+  padding: $modal-inner-vpadding $modal-inner-hpadding;
   background-color: $modal-color;
   border-bottom: 0px;
   display: flex;
@@ -64,7 +67,7 @@
 
     .modal-body {
       background-color: white;
-      padding: 2rem 2.5rem;
+      padding: $modal-inner-vpadding $modal-inner-hpadding;
       overflow: auto; // scroll vertically if needed
       max-height: 70vh;
 
@@ -94,7 +97,7 @@
   .modal-footer {
     border-radius: 0 0 0.5rem 0.5rem;
     border-top: 0;
-    padding: 1.5rem 2rem;
+    padding: 1.5rem $modal-inner-hpadding;
     display: flex;
     justify-content: flex-end;
     background-color: $modal-footer;

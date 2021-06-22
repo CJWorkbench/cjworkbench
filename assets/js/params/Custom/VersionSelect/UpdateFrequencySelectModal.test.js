@@ -1,11 +1,11 @@
-/* globals describe, expect, it, jest, test */
+/* globals expect, jest, test */
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { WorkbenchAPIContext } from '../../../WorkbenchAPI'
 import { ErrorResponse } from '../../../WorkflowWebsocket'
 import { act, fireEvent, render, waitForElementToBeRemoved } from '@testing-library/react'
 import { I18nWrapper } from '../../../i18n/test-utils'
 import { mockStore } from '../../../test-utils'
-import { sleep, tick } from '../../../test-utils'
+
 import { Provider } from 'react-redux'
 
 const TypicalInitialProps = {
@@ -14,10 +14,7 @@ const TypicalInitialProps = {
   stepSlug: 'step-2',
   isAutofetch: false,
   fetchInterval: 86400, // 1/day
-  isEmailUpdates: false,
   onClose: jest.fn(),
-  trySetAutofetch: jest.fn(),
-  setEmailUpdates: jest.fn(),
   delayMsAfterServerOk: 1
 }
 
@@ -44,14 +41,14 @@ test('User turns on fetches', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 1 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
 
   const api = { trySetStepAutofetch: jest.fn(() => response) }
 
-  const { getByLabelText, getByText, queryByText, rerender } = renderWithStoreAndApi(
+  const { getByLabelText, getByText, rerender } = renderWithStoreAndApi(
     store,
     api,
     <UpdateFrequencySelectModal
@@ -107,14 +104,14 @@ test('User changes update interval', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 2 }, // one on this step, one elsewhere
-      limits: { fetches_per_day: 50 },
+      limits: { max_fetches_per_day: 50 },
       subscribedStripeProductIds: []
     }
   })
 
   const api = { trySetStepAutofetch: jest.fn(() => response) }
 
-  const { getByLabelText, getByText, queryByText, rerender } = renderWithStoreAndApi(
+  const { getByLabelText, getByText, rerender } = renderWithStoreAndApi(
     store,
     api,
     <UpdateFrequencySelectModal
@@ -124,7 +121,7 @@ test('User changes update interval', async () => {
     />
   )
 
-  fireEvent.change(getByLabelText('Check for updates every'), { target: { value: 3600 } })
+  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 3600 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 3600)
 
@@ -170,14 +167,14 @@ test('User turns off fetches', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 25 }, // 24 on this step, one elsewhere
-      limits: { fetches_per_day: 50 },
+      limits: { max_fetches_per_day: 50 },
       subscribedStripeProductIds: []
     }
   })
 
   const api = { trySetStepAutofetch: jest.fn(() => response) }
 
-  const { getByLabelText, getByText, queryByText, rerender } = renderWithStoreAndApi(
+  const { getByLabelText, getByText, rerender } = renderWithStoreAndApi(
     store,
     api,
     <UpdateFrequencySelectModal
@@ -230,7 +227,7 @@ test('User has a "X days" interval', () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 100 },
-      limits: { fetches_per_day: 200 },
+      limits: { max_fetches_per_day: 200 },
       subscribedStripeProductIds: []
     }
   })
@@ -253,7 +250,7 @@ test('User has a "X hours" interval', () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 100 },
-      limits: { fetches_per_day: 200 },
+      limits: { max_fetches_per_day: 200 },
       subscribedStripeProductIds: []
     }
   })
@@ -274,7 +271,7 @@ test('User has a "X minutes" interval', () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 100 },
-      limits: { fetches_per_day: 200 },
+      limits: { max_fetches_per_day: 200 },
       subscribedStripeProductIds: []
     }
   })
@@ -298,7 +295,7 @@ test('User changes update interval', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 2 }, // one on this step, one elsewhere
-      limits: { fetches_per_day: 50 },
+      limits: { max_fetches_per_day: 50 },
       subscribedStripeProductIds: []
     }
   })
@@ -315,7 +312,7 @@ test('User changes update interval', async () => {
     />
   )
 
-  fireEvent.change(getByLabelText('Check for updates every'), { target: { value: 3600 } })
+  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 3600 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 3600)
 
@@ -358,12 +355,12 @@ test('Unpaid user tries to turn on fetches but is over limit; upgrades and then 
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 5 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
 
-  const { baseElement, getByLabelText, getByText, queryByText, debug } = renderWithStoreAndApi(
+  const { baseElement, getByLabelText } = renderWithStoreAndApi(
     store,
     {},
     <UpdateFrequencySelectModal
@@ -375,7 +372,7 @@ test('Unpaid user tries to turn on fetches but is over limit; upgrades and then 
 
   expect(getByLabelText('OFF').disabled).toBe(true)
   expect(baseElement.querySelector('.need-upgrade')).not.toBe(null)
-  store.dispatch({ type: 'APPLY_DELTA', payload: { updateUser: { limits: { fetches_per_day: 20 }, subscribedStripeProductIds: ['prod-1'] } } })
+  store.dispatch({ type: 'APPLY_DELTA', payload: { updateUser: { limits: { max_fetches_per_day: 20 }, subscribedStripeProductIds: ['prod-1'] } } })
   expect(baseElement.querySelector('.need-upgrade')).toBe(null)
   expect(getByLabelText('OFF').disabled).toBe(false)
 })
@@ -384,7 +381,7 @@ test('Unpaid user tries to select hourly but is over limit; upgrades and then su
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 5 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
@@ -399,14 +396,14 @@ test('Unpaid user tries to select hourly but is over limit; upgrades and then su
     />
   )
 
-  const select = getByLabelText('Check for updates every')
+  const select = getByLabelText('Check for new data and update this step every:')
   const option = Array.from(select.childNodes).find(o => o.value === '3600')
 
   expect(option.disabled).toBe(true)
   expect(option.textContent).toEqual('hour — upgrade')
 
   getByText('Upgrade') // There's gotta be an Upgrade button; the user will click it....
-  store.dispatch({ type: 'APPLY_DELTA', payload: { updateUser: { limits: { fetches_per_day: 1000 }, subscribedStripeProductIds: ['prod-1'] } } })
+  store.dispatch({ type: 'APPLY_DELTA', payload: { updateUser: { limits: { max_fetches_per_day: 1000 }, subscribedStripeProductIds: ['prod-1'] } } })
   expect(queryByText('Upgrade')).toBe(null)
 
   expect(option.disabled).toBe(false)
@@ -417,12 +414,12 @@ test('Paid user tries to turn on fetches but is over limit', () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 5 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: ['prod-1']
     }
   })
 
-  const { baseElement, getByLabelText, getByText, queryByText, debug } = renderWithStoreAndApi(
+  const { baseElement, getByLabelText } = renderWithStoreAndApi(
     store,
     {},
     <UpdateFrequencySelectModal
@@ -440,22 +437,22 @@ test('Paid user tries to select hourly but is over limit', () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 5 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: ['prod-1']
     }
   })
 
-  const { baseElement, getByLabelText, getByText, queryByText, debug } = renderWithStoreAndApi(
+  const { getByLabelText } = renderWithStoreAndApi(
     store,
     {},
     <UpdateFrequencySelectModal
       {...TypicalInitialProps}
-      isAutofetch={true}
+      isAutofetch
       fetchInterval={86400}
     />
   )
 
-  const select = getByLabelText('Check for updates every')
+  const select = getByLabelText('Check for new data and update this step every:')
   const option = Array.from(select.childNodes).find(o => o.value === '3600')
   expect(option.disabled).toBe(true)
   expect(option.textContent).toEqual('hour — over limit')
@@ -468,7 +465,7 @@ test('User over limit decreases usage', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 25 }, // 24 on this step, one elsewhere
-      limits: { fetches_per_day: 10 },
+      limits: { max_fetches_per_day: 10 },
       subscribedStripeProductIds: []
     }
   })
@@ -485,11 +482,11 @@ test('User over limit decreases usage', async () => {
     />
   )
 
-  const select = getByLabelText('Check for updates every')
+  const select = getByLabelText('Check for new data and update this step every:')
   const optionHour = Array.from(select.childNodes).find(o => o.value === '3600')
   expect(optionHour.disabled).toBe(false)
 
-  fireEvent.change(getByLabelText('Check for updates every'), { target: { value: 86400 } })
+  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 86400 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 86400)
 
@@ -535,7 +532,7 @@ test('User over limit decreases usage and remains over limit', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 1024 }, // 24 on this step, 1,000 elsewhere
-      limits: { fetches_per_day: 10 },
+      limits: { max_fetches_per_day: 10 },
       subscribedStripeProductIds: []
     }
   })
@@ -552,11 +549,11 @@ test('User over limit decreases usage and remains over limit', async () => {
     />
   )
 
-  const select = getByLabelText('Check for updates every')
+  const select = getByLabelText('Check for new data and update this step every:')
   const optionHour = Array.from(select.childNodes).find(o => o.value === '3600')
   expect(optionHour.disabled).toBe(false)
 
-  fireEvent.change(getByLabelText('Check for updates every'), { target: { value: 86400 } })
+  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 86400 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 86400)
 
@@ -602,7 +599,7 @@ test('User over limit disables fetches', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 6 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
@@ -664,14 +661,14 @@ test('User over limit disables 24/day fetches, dropping below limit, and tries t
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 24 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
 
   const api = { trySetStepAutofetch: jest.fn(() => response) }
 
-  const { getByLabelText, getByDisplayValue, getByText, queryByText, rerender } = renderWithStoreAndApi(
+  const { getByLabelText, getByDisplayValue, rerender } = renderWithStoreAndApi(
     store,
     api,
     <UpdateFrequencySelectModal
@@ -702,7 +699,7 @@ test('User over limit disables 24/day fetches, dropping below limit, and tries t
   // Now, how does the user select "by day"?
   // We can't re-enable with fetchInterval=3600; but we _can_ re-enable with
   // fetchInterval=86400. So let's do that.
-  getByDisplayValue('day')  // Since "hour" can't be selected, we render "day"
+  getByDisplayValue('day') // Since "hour" can't be selected, we render "day"
   fireEvent.click(getByLabelText('OFF'))
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 86400)
   // ... now assume the rest of the update completes as we'd expect
@@ -715,14 +712,14 @@ test('User starts saving and then unplugs network; retries and it works', async 
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 1 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
 
   const api = { trySetStepAutofetch: jest.fn(() => response) }
 
-  const { getByLabelText, getByText, queryByText, rerender } = renderWithStoreAndApi(
+  const { getByLabelText, getByText } = renderWithStoreAndApi(
     store,
     api,
     <UpdateFrequencySelectModal
@@ -739,7 +736,7 @@ test('User starts saving and then unplugs network; retries and it works', async 
   getByText('Saving…')
   getByText('2 of 5 updates/day') // from state
 
-  await act(async () => { fail(new Error("foo")) })
+  await act(async () => { fail(new Error('foo')) })
 
   getByLabelText('ON') // exists
   getByText('2 of 5 updates/day') // from state
@@ -754,14 +751,14 @@ test('User edits but server says over-quota; UI resets', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 1 },
-      limits: { fetches_per_day: 5 },
+      limits: { max_fetches_per_day: 5 },
       subscribedStripeProductIds: []
     }
   })
 
   const api = { trySetStepAutofetch: jest.fn(() => response) }
 
-  const { getByLabelText, getByText, queryByText, rerender } = renderWithStoreAndApi(
+  const { getByLabelText, getByText } = renderWithStoreAndApi(
     store,
     api,
     <UpdateFrequencySelectModal
@@ -791,7 +788,7 @@ test('User edits twice before server responds', async () => {
   const store = mockStore({
     loggedInUser: {
       usage: { fetchesPerDay: 1 },
-      limits: { fetches_per_day: 50 },
+      limits: { max_fetches_per_day: 50 },
       subscribedStripeProductIds: []
     }
   })
@@ -814,7 +811,7 @@ test('User edits twice before server responds', async () => {
   getByText('Saving…')
   getByText('2 of 50 updates/day') // from state
 
-  fireEvent.change(getByLabelText('Check for updates every'), { target: { value: 3600 } })
+  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 3600 } })
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 3600)
   getByLabelText('ON') // exists
   getByText('Saving…')
@@ -833,8 +830,8 @@ test('User edits twice before server responds', async () => {
   getByText('25 of 50 updates/day') // from state
 
   // The other update: the workflow changes
-  rerender(<UpdateFrequencySelectModal {...TypicalInitialProps} isAutofetch={true} fetchInterval={86400} />)
-  rerender(<UpdateFrequencySelectModal {...TypicalInitialProps} isAutofetch={true} fetchInterval={3600} />)
+  rerender(<UpdateFrequencySelectModal {...TypicalInitialProps} isAutofetch fetchInterval={86400} />)
+  rerender(<UpdateFrequencySelectModal {...TypicalInitialProps} isAutofetch fetchInterval={3600} />)
   getByLabelText('ON') // exists
   getByText('Saving…')
   getByText('25 of 50 updates/day') // from state
