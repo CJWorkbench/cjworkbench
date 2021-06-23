@@ -71,7 +71,7 @@ class AutoupdateTest(DbTestCase):
         user.refresh_from_db()
         result = list_autofetches_json({"user": user, "session": None})
         self.assertEqual(
-            result, {"maxFetchesPerDay": 50, "nFetchesPerDay": 0, "autofetches": []}
+            result, {"maxFetchesPerDay": 5, "nFetchesPerDay": 0, "autofetches": []}
         )
 
     def test_list_autofetches_two_workflows(self):
@@ -212,7 +212,7 @@ class AutoupdateTest(DbTestCase):
         session = Session(session_key="foo")
         Workflow.create_and_init(anonymous_owner_session_key="foo")
         result = list_autofetches_json({"user": user, "session": session})
-        self.assertEqual(result["maxFetchesPerDay"], 50)
+        self.assertEqual(result["maxFetchesPerDay"], 5)
 
     def test_list_autofetches_ignore_other_session(self):
         user = AnonymousUser()
