@@ -31,8 +31,7 @@ describe('Reducer actions', () => {
           ['2018-02-21T03:09:10.214054Z', false]
         ]
       },
-      notifications: false,
-      has_unseen_notification: true
+      notifications: false
     },
     20: {
       id: 20,
@@ -507,16 +506,6 @@ describe('Reducer actions', () => {
     expect(state.steps['10'].versions.selected).toBe(
       '2018-02-21T03:09:10.214054Z'
     )
-  })
-
-  it('clears the notification count', () => {
-    const state = wfr.workflowReducer(testState, {
-      type: 'CLEAR_NOTIFICATIONS_PENDING',
-      payload: {
-        stepId: 10
-      }
-    })
-    expect(state.steps['10'].has_unseen_notification).toBe(false)
   })
 
   it('sets an error with the default error handler', async () => {

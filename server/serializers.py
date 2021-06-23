@@ -656,7 +656,6 @@ def jsonize_clientside_step(
         ("auto_update_data", step.is_auto_fetch),
         ("update_interval", step.fetch_interval),
         ("notifications", step.is_notify_on_change),
-        ("has_unseen_notification", step.has_unseen_notification),
     ):
         _maybe_set(d, k, v)
     for crr in _maybe_yield(step.render_result):

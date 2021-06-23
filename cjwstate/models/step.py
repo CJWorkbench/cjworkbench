@@ -110,9 +110,6 @@ class Step(models.Model):
     # true means, 'email owner when output changes'
     notifications = models.BooleanField(default=False)
 
-    # true means user has not acknowledged email
-    has_unseen_notification = models.BooleanField(default=False)
-
     cached_migrated_params = models.JSONField(null=True, blank=True)
     """Non-secret parameter values -- after a call to migrate_params().
 
@@ -565,7 +562,6 @@ class Step(models.Model):
             fetch_interval=self.update_interval,
             last_fetched_at=self.last_update_check,
             is_notify_on_change=self.notifications,
-            has_unseen_notification=self.has_unseen_notification,
             last_relevant_delta_id=self.last_relevant_delta_id,
             versions=self.get_clientside_fetched_version_list(),
         )

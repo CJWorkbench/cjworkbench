@@ -350,8 +350,6 @@ def _execute_step_save(
                 )
 
         if is_changed:
-            safe_step.has_unseen_notification = True
-            safe_step.save(update_fields=["has_unseen_notification"])
             maybe_delta = notifications.OutputDelta(
                 safe_step.workflow.owner,
                 safe_step.workflow,

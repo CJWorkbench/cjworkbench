@@ -33,7 +33,6 @@ const SET_STEP_SECRET = 'SET_STEP_SECRET'
 
 // Data versions/notifications
 const SET_DATA_VERSION = 'SET_DATA_VERSION'
-const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 
 // ---- Our Store ----
 // Master state for the workflow.
@@ -669,36 +668,6 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
           ...step.versions,
           selected: selectedVersion
         }
-      }
-    }
-  }
-})
-
-export function clearNotificationsAction (stepId) {
-  return (dispatch, getState, api) => {
-    return dispatch({
-      type: CLEAR_NOTIFICATIONS,
-      payload: {
-        promise: api.clearStepUnseenNotifications(stepId),
-        data: {
-          stepId
-        }
-      }
-    })
-  }
-}
-registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
-  const { stepId } = action.payload
-  const step = state.steps[String(stepId)]
-  if (!step) return state
-
-  return {
-    ...state,
-    steps: {
-      ...state.steps,
-      [String(stepId)]: {
-        ...step,
-        has_unseen_notification: false
       }
     }
   }

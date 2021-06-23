@@ -241,19 +241,6 @@ async def set_notifications(
 
 
 @database_sync_to_async
-def _do_clear_unseen_notification(step: Step):
-    step.has_unseen_notification = False
-    step.save(update_fields=["has_unseen_notification"])
-
-
-@register_websockets_handler
-@websockets_handler("write")
-@_loading_step_by_id
-async def clear_unseen_notifications(step: Step, **kwargs):
-    await _do_clear_unseen_notification(step)
-
-
-@database_sync_to_async
 def _do_try_set_autofetch(
     scope,
     workflow: Workflow,

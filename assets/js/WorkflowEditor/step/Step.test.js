@@ -94,7 +94,6 @@ describe('Step, not read-only mode', () => {
         isLessonHighlightCollapse={false}
         isLessonHighlightNotes={false}
         fetchModuleExists={false}
-        clearNotifications={jest.fn()}
         setSelectedStep={jest.fn()}
         setStepCollapsed={jest.fn()}
         setStepParams={jest.fn()}
@@ -179,7 +178,6 @@ describe('Step, not read-only mode', () => {
     })
 
     w.find('button.notifications').simulate('click')
-    expect(w.instance().props.clearNotifications).toHaveBeenCalledWith(999)
     expect(w.find(AlertsModal).length).toBe(1)
 
     w.find(AlertsModal).prop('onClose')()

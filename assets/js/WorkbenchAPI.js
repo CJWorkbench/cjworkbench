@@ -333,12 +333,6 @@ export default class WorkbenchAPI {
     return this._post(`/workflows/${workflowIdOrSecretId}/duplicate`, null)
   }
 
-  clearStepUnseenNotifications (stepId) {
-    return this._callExpectingNull('step.clear_unseen_notifications', {
-      stepId
-    })
-  }
-
   importModuleFromGitHub (url) {
     return this._post('/api/importfromgithub/', { url }).then(json => {
       // Turn OK {'error': 'no can do'} into a Promise Error

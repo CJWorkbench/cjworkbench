@@ -283,12 +283,6 @@ class StepUpdate(NamedTuple):
     is_notify_on_change: Optional[bool] = None
     """True if we are to email the user when the result changes."""
 
-    has_unseen_notification: Optional[bool] = None
-    """True if no user has viewed a notification.
-
-    TODO revisit this feature. It's not multi-user friendly.
-    """
-
     versions: Optional[FetchedVersionList] = None
     """Information about fetched versions.
 

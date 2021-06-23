@@ -8,7 +8,6 @@ import EditableNotes from '../../EditableNotes'
 import DeprecationNotice from './DeprecationNotice'
 import StatusLine from './StatusLine'
 import {
-  clearNotificationsAction,
   startCreateSecretAction,
   deleteSecretAction,
   maybeRequestStepFetchAction,
@@ -92,7 +91,6 @@ export class Step extends React.PureComponent {
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
-    clearNotifications: PropTypes.func.isRequired, // func() => undefined
     maybeRequestFetch: PropTypes.func.isRequired, // func(stepId) => undefined
     setSelectedStep: PropTypes.func.isRequired, // func(stepId) => undefined
     setStepCollapsed: PropTypes.func.isRequired, // func(stepId, isCollapsed, isReadOnly) => undefined
@@ -120,8 +118,6 @@ export class Step extends React.PureComponent {
   }
 
   handleClickAlert = () => {
-    this.props.clearNotifications(this.props.step.id)
-
     this.setState({
       isAlertsModalOpen: true
     })
@@ -392,10 +388,8 @@ export class Step extends React.PureComponent {
       !this.props.isAnonymous
     ) {
       const notifications = step.notifications
-      const hasUnseen = step.has_unseen_notification
       let className = 'notifications'
       if (notifications) className += ' enabled'
-      if (hasUnseen) className += ' has-unseen'
       const title = notifications
         ? t({
             id: 'js.WorkflowEditor.step.alert.enabled',
@@ -412,11 +406,7 @@ export class Step extends React.PureComponent {
           className={className}
           onClick={this.handleClickAlert}
         >
-          <i
-            className={` ${
-              hasUnseen ? 'icon-notification-filled' : 'icon-notification'
-            }`}
-          />
+          <i className='icon-notification' />
         </button>
       )
     }
@@ -731,7 +721,6 @@ function mapStateToProps (state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  clearNotifications: clearNotificationsAction,
   setSelectedStep: setSelectedStepAction,
   setStepCollapsed: setStepCollapsedAction,
   setStepParams: setStepParamsAction,
