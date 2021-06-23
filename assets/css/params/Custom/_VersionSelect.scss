@@ -146,8 +146,9 @@
   @include content-1; // because body font-size is 10px
   $indent: rem(3);
 
-  .modal-body {
+  .modal-content .modal-body {
     position: relative; // for .saving
+    padding-top: 2.25rem; // an extra .5rem for .saving. There's a .25rem overlap over the padding of the elements beneath
   }
 
   .saving {
@@ -155,7 +156,7 @@
     color: $text-muted;
     top: 0;
     left: 0;
-    padding: 0 $modal-inner-hpadding;
+    padding: .25rem $modal-inner-hpadding;
     width: 100%;
     background: white;
 
@@ -229,7 +230,6 @@
     h6 {
       margin: 0;
       font: inherit;
-      font-weight: bold;
 
       &::after {
         // Add no-text placeholder to size the same as .usage's .counts+.help

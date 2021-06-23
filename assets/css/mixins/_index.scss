@@ -131,7 +131,7 @@ $module-parameter-padding: 0.5rem 1rem;
     background: $primary;
 
     &::after {
-      left: calc(100% - #{2 * $toggle-border});
+      left: calc(100% - #{$toggle-border});
       transform: translateX(-100%);
     }
   }

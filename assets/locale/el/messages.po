@@ -515,11 +515,11 @@ msgstr "Αναζήτηση…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ΠΡΟΣΘΗΚΗ ΔΕΔΟΜΕΝΩΝ"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:137
+#: assets/js/WorkflowEditor/DataVersionModal.js:126
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Φόρτωση"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:111
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Εκδόσεις δεδομένων"
 
@@ -655,36 +655,36 @@ msgstr ""
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
 
-#: assets/js/WorkflowEditor/step/Step.js:371
+#: assets/js/WorkflowEditor/step/Step.js:367
 #, fuzzy
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Πληκτρολογήστε μια σημείωση..."
 
-#: assets/js/WorkflowEditor/step/Step.js:241
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "είσοδος σε λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:237
+#: assets/js/WorkflowEditor/step/Step.js:233
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "έξοδος από λειτουργία Zen"
 
-#: assets/js/WorkflowEditor/step/Step.js:404
+#: assets/js/WorkflowEditor/step/Step.js:398
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου έχουν απενεργοποιηθεί"
 
-#: assets/js/WorkflowEditor/step/Step.js:400
+#: assets/js/WorkflowEditor/step/Step.js:394
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Οι ειδοποιήσεις ηλ. ταχυδρομείου είναι ενεργοποιημένες"
 
-#: assets/js/WorkflowEditor/step/Step.js:465
+#: assets/js/WorkflowEditor/step/Step.js:455
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr "Διαγραφή"
 
-#: assets/js/WorkflowEditor/step/Step.js:428
+#: assets/js/WorkflowEditor/step/Step.js:418
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 
-#: assets/js/WorkflowEditor/step/Step.js:446
+#: assets/js/WorkflowEditor/step/Step.js:436
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
 
@@ -2157,27 +2157,27 @@ msgstr "Λήξη χρονικού ορίου κατά την ανανέωση τ
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "Σφάλμα HTTP κατά την ανανέωση του διακριτικού (τεκμηρίου) OAuth2: {error}"
 
-#: renderer/execute/step.py:393
+#: renderer/execute/step.py:391
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
 "Διαγράψτε αυτό το βήμα: ένας διαχειριστής απεγκατέστησε τον κώδικα του "
 "βήματος."
 
-#: renderer/execute/step.py:422
+#: renderer/execute/step.py:420
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr ""
 
-#: renderer/execute/step.py:434
+#: renderer/execute/step.py:432
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
 "Η επιλεγμένη καρτέλα εξαρτάται από αυτήν εδώ. Επιλέξτε διαφορετική "
 "καρτέλα."
 
-#: renderer/execute/step.py:446
+#: renderer/execute/step.py:444
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "Η επιλεγμένη καρτέλα δεν έχει έξοδο. Επιλέξτε μια άλλη."
 
-#: renderer/execute/step.py:489
+#: renderer/execute/step.py:487
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Παρουσιάστηκε ένα μη αναμενόμενο πρόβλημα. Έχουμε ενημερωθεί και "

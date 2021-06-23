@@ -121,7 +121,7 @@ test('User changes update interval', async () => {
     />
   )
 
-  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 3600 } })
+  fireEvent.change(getByLabelText('Check for new data and update this workflow every:'), { target: { value: 3600 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 3600)
 
@@ -312,7 +312,7 @@ test('User changes update interval', async () => {
     />
   )
 
-  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 3600 } })
+  fireEvent.change(getByLabelText('Check for new data and update this workflow every:'), { target: { value: 3600 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 3600)
 
@@ -396,7 +396,7 @@ test('Unpaid user tries to select hourly but is over limit; upgrades and then su
     />
   )
 
-  const select = getByLabelText('Check for new data and update this step every:')
+  const select = getByLabelText('Check for new data and update this workflow every:')
   const option = Array.from(select.childNodes).find(o => o.value === '3600')
 
   expect(option.disabled).toBe(true)
@@ -452,7 +452,7 @@ test('Paid user tries to select hourly but is over limit', () => {
     />
   )
 
-  const select = getByLabelText('Check for new data and update this step every:')
+  const select = getByLabelText('Check for new data and update this workflow every:')
   const option = Array.from(select.childNodes).find(o => o.value === '3600')
   expect(option.disabled).toBe(true)
   expect(option.textContent).toEqual('hour — over limit')
@@ -482,11 +482,11 @@ test('User over limit decreases usage', async () => {
     />
   )
 
-  const select = getByLabelText('Check for new data and update this step every:')
+  const select = getByLabelText('Check for new data and update this workflow every:')
   const optionHour = Array.from(select.childNodes).find(o => o.value === '3600')
   expect(optionHour.disabled).toBe(false)
 
-  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 86400 } })
+  fireEvent.change(getByLabelText('Check for new data and update this workflow every:'), { target: { value: 86400 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 86400)
 
@@ -549,11 +549,11 @@ test('User over limit decreases usage and remains over limit', async () => {
     />
   )
 
-  const select = getByLabelText('Check for new data and update this step every:')
+  const select = getByLabelText('Check for new data and update this workflow every:')
   const optionHour = Array.from(select.childNodes).find(o => o.value === '3600')
   expect(optionHour.disabled).toBe(false)
 
-  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 86400 } })
+  fireEvent.change(getByLabelText('Check for new data and update this workflow every:'), { target: { value: 86400 } })
 
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 86400)
 
@@ -811,7 +811,7 @@ test('User edits twice before server responds', async () => {
   getByText('Saving…')
   getByText('2 of 50 updates/day') // from state
 
-  fireEvent.change(getByLabelText('Check for new data and update this step every:'), { target: { value: 3600 } })
+  fireEvent.change(getByLabelText('Check for new data and update this workflow every:'), { target: { value: 3600 } })
   expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-2', true, 3600)
   getByLabelText('ON') // exists
   getByText('Saving…')

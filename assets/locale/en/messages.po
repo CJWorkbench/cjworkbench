@@ -488,11 +488,11 @@ msgstr "Search…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ADD DATA"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:137
+#: assets/js/WorkflowEditor/DataVersionModal.js:126
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Load"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:111
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Data Versions"
 
@@ -630,35 +630,35 @@ msgstr "Alerts are ON"
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Learn how to replace this step"
 
-#: assets/js/WorkflowEditor/step/Step.js:371
+#: assets/js/WorkflowEditor/step/Step.js:367
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Type a note…"
 
-#: assets/js/WorkflowEditor/step/Step.js:241
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "enter Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:237
+#: assets/js/WorkflowEditor/step/Step.js:233
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "exit Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:404
+#: assets/js/WorkflowEditor/step/Step.js:398
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Email alerts disabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:400
+#: assets/js/WorkflowEditor/step/Step.js:394
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Email alerts enabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:465
+#: assets/js/WorkflowEditor/step/Step.js:455
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr "Delete"
 
-#: assets/js/WorkflowEditor/step/Step.js:428
+#: assets/js/WorkflowEditor/step/Step.js:418
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Help for this module"
 
-#: assets/js/WorkflowEditor/step/Step.js:446
+#: assets/js/WorkflowEditor/step/Step.js:436
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Edit Note"
 
@@ -1419,7 +1419,7 @@ msgstr "ON"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:304
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
-msgstr "Check for new data and update this step every:"
+msgstr "Check for new data and update this workflow every:"
 
 #: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:69
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nDays"
@@ -2101,23 +2101,23 @@ msgstr "Timeout during OAuth2 token refresh"
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "HTTP error during OAuth2 token refresh: {error}"
 
-#: renderer/execute/step.py:393
+#: renderer/execute/step.py:391
 msgid "py.renderer.execute.step.noModule"
 msgstr "Please delete this step: an administrator uninstalled its code."
 
-#: renderer/execute/step.py:422
+#: renderer/execute/step.py:420
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr "Please Add Data before this step."
 
-#: renderer/execute/step.py:434
+#: renderer/execute/step.py:432
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
-#: renderer/execute/step.py:446
+#: renderer/execute/step.py:444
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
-#: renderer/execute/step.py:489
+#: renderer/execute/step.py:487
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "

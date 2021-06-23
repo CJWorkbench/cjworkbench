@@ -302,7 +302,7 @@ export default function UpdateFrequencySelectModal (props) {
           <fieldset className='fetch-interval' disabled={!currentIsAutofetch}>
             <label>
               <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label'>
-                Check for new data and update this step every:
+                Check for new data and update this workflow every:
               </Trans>
               <select
                 name='fetch-interval'
