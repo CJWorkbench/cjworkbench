@@ -33,7 +33,12 @@ User = get_user_model()
 #
 # do(), redo() and undo() work the same way as the real ones
 def do(cls, workflow_id: int, **kwargs) -> Optional[Delta]:
-    delta, _, __ = commands._first_forward_and_save_returning_clientside_update.func(
+    (
+        delta,
+        _,
+        __,
+        ___,
+    ) = commands._first_forward_and_save_returning_clientside_updates.func(
         cls, workflow_id, **kwargs
     )
     return delta

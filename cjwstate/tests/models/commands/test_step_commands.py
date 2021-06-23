@@ -1,8 +1,8 @@
 from unittest.mock import patch
 
 from cjwstate import commands, rabbitmq
-from cjwstate.models import Workflow
 from cjwstate.models.commands import AddStep, DeleteStep
+from cjwstate.models.workflow import Workflow
 from cjwstate.tests.utils import (
     DbTestCaseWithModuleRegistryAndMockKernel,
     create_module_zipfile,
@@ -14,7 +14,7 @@ async def async_noop(*args, **kwargs):
 
 
 @patch.object(rabbitmq, "queue_render", async_noop)
-@patch.object(commands, "websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class AddDeleteStepTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def assertStepVersions(self, expected_versions):
         positions = list(self.tab.live_steps.values_list("order", flat=True))

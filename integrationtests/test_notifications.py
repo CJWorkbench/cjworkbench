@@ -39,7 +39,7 @@ class TestNotifications(LoggedInIntegrationTest):
             b.click_button("Email alerts disabled", wait=True)
         # 'Turn on' is a checkbox, but it has display:none so Webdriver can't
         # see it.
-        b.click_whatever("label", text="Turn on", wait=True)  # wait for modal
+        b.click_whatever("label", text="Alerts are OFF", wait=True)  # wait for modal
         b.click_button("×")
 
         # Now change the fetched data. Since "Turn on" and "Update" both run

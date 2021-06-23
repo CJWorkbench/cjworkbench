@@ -7,7 +7,6 @@ from typing import Dict, Optional
 from dotenv import load_dotenv
 
 from cjworkbench.i18n import default_locale, supported_locales
-from server.settingsutils import workbench_user_display
 
 if sys.version_info[0] < 3:
     raise RuntimeError("CJ Workbench requires Python 3")
@@ -130,7 +129,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_USER_DISPLAY = workbench_user_display
+ACCOUNT_USER_DISPLAY = lambda user: user.email
 ACCOUNT_SIGNUP_FORM_CLASS = "cjworkbench.accounts.forms.WorkbenchSignupForm"
 SOCIALACCOUNT_ADAPTER = "cjworkbench.socialaccounts.adapter.SocialAccountAdapter"
 SOCIALACCOUNT_EMAIL_VERIFICATION = False

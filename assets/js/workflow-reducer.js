@@ -28,13 +28,11 @@ const SET_STEP_NOTES = 'SET_STEP_NOTES'
 const SET_STEP_COLLAPSED = 'SET_STEP_COLLAPSED'
 const REQUEST_STEP_FETCH = 'REQUEST_STEP_FETCH'
 const SET_STEP_PARAMS = 'SET_STEP_PARAMS'
-const TRY_SET_STEP_AUTOFETCH = 'TRY_SET_STEP_AUTOFETCH'
 const SET_STEP_NOTIFICATIONS = 'SET_STEP_NOTIFICATIONS'
 const SET_STEP_SECRET = 'SET_STEP_SECRET'
 
 // Data versions/notifications
 const SET_DATA_VERSION = 'SET_DATA_VERSION'
-const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS'
 
 // ---- Our Store ----
 // Master state for the workflow.
@@ -521,45 +519,6 @@ registerReducerFunc(SET_STEP_NOTIFICATIONS + '_PENDING', (state, action) => {
   }
 })
 
-/**
- * Set whether a Step auto-fetches every `interval` seconds.
- *
- * `interval` must be provided even if `isAutofetch` is false. (It's visible to
- * the user either way.)
- *
- * dispatching this action returns a Promise that either gives { isAutofetch,
- * fetchInterval } (the server has the final say); and if the server denies
- * the request, a `quotaExceeded` object with { maxFetchesPerDay,
- * nFetchesPerDay, autofetches }.
- */
-export function trySetStepAutofetchAction (stepSlug, isAutofetch, fetchInterval) {
-  return (dispatch, _, api) => {
-    return dispatch({
-      type: TRY_SET_STEP_AUTOFETCH,
-      payload: {
-        promise: api
-          .trySetStepAutofetch(stepSlug, isAutofetch, fetchInterval)
-          .then(obj => ({ stepSlug, ...obj }))
-      }
-    })
-  }
-}
-registerReducerFunc(TRY_SET_STEP_AUTOFETCH + '_FULFILLED', (state, action) => {
-  const { stepSlug, isAutofetch, fetchInterval } = action.payload
-  const step = Object.values(state.steps).find(s => s.slug === stepSlug)
-  return {
-    ...state,
-    steps: {
-      ...state.steps,
-      [String(step.id)]: {
-        ...step,
-        auto_update_data: isAutofetch,
-        update_interval: fetchInterval
-      }
-    }
-  }
-})
-
 export function setStepNotesAction (stepId, notes) {
   return (dispatch, getState, api) => {
     return dispatch({
@@ -709,36 +668,6 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
           ...step.versions,
           selected: selectedVersion
         }
-      }
-    }
-  }
-})
-
-export function clearNotificationsAction (stepId) {
-  return (dispatch, getState, api) => {
-    return dispatch({
-      type: CLEAR_NOTIFICATIONS,
-      payload: {
-        promise: api.clearStepUnseenNotifications(stepId),
-        data: {
-          stepId
-        }
-      }
-    })
-  }
-}
-registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
-  const { stepId } = action.payload
-  const step = state.steps[String(stepId)]
-  if (!step) return state
-
-  return {
-    ...state,
-    steps: {
-      ...state.steps,
-      [String(stepId)]: {
-        ...step,
-        has_unseen_notification: false
       }
     }
   }

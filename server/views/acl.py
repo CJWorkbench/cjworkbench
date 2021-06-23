@@ -14,7 +14,7 @@ from django.views import View
 
 from cjwstate.models.acl_entry import AclEntry
 from cjwstate.models.fields import Role
-from cjwstate.models.workflow import DbObjectCooperativeLock, Workflow
+from cjwstate.models.workflow import Workflow
 
 ALPHABET = string.ascii_letters + string.digits
 N_BITS_ENTROPY = 160  # kinda arbitrary, inspired by RFC4226 and SHA1
@@ -32,7 +32,7 @@ def generate_secret_id():
 @contextlib.contextmanager
 def authenticated_owned_workflow(
     request: HttpRequest, workflow_id: int
-) -> ContextManager[DbObjectCooperativeLock]:
+) -> ContextManager[Workflow]:
     """Find a Workflow based on its ID, with request owner as owner.
 
     Raise Http404 if the Workflow does not exist and PermissionDenied if the
@@ -40,7 +40,7 @@ def authenticated_owned_workflow(
     """
     with contextlib.ExitStack() as stack:
         try:
-            workflow_lock = stack.enter_context(
+            workflow = stack.enter_context(
                 Workflow.authorized_lookup_and_cooperative_lock(
                     "owner", user=request.user, session=None, id=workflow_id
                 )
@@ -49,7 +49,7 @@ def authenticated_owned_workflow(
             if err.args[0].endswith("access denied"):
                 raise PermissionDenied()
             raise Http404()
-        yield workflow_lock
+        yield workflow
 
 
 def lookup_workflow_and_auth(
@@ -94,8 +94,7 @@ class Index(View):
                 {"error": "bad-request", "messages": form.errors.as_json()}
             )
 
-        with authenticated_owned_workflow(request, workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
+        with authenticated_owned_workflow(request, workflow_id) as workflow:
             workflow.public = form.cleaned_data["public"]
             if form.cleaned_data["has_secret"]:
                 if not workflow.secret_id:
@@ -131,9 +130,7 @@ class Entry(View):
                 status=400,
             )
 
-        with authenticated_owned_workflow(request, workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
-
+        with authenticated_owned_workflow(request, workflow_id) as workflow:
             if form.cleaned_data["email"] == workflow.owner.email:
                 return JsonResponse({"errors": ["cannot-share-with-owner"]}, status=400)
 
@@ -156,9 +153,7 @@ class Entry(View):
                 status=400,
             )
 
-        with authenticated_owned_workflow(request, workflow_id) as workflow_lock:
-            workflow = workflow_lock.workflow
-
+        with authenticated_owned_workflow(request, workflow_id) as workflow:
             if form.cleaned_data["email"] == workflow.owner.email:
                 return JsonResponse({"errors": "cannot-share-with-owner"}, status=400)
 

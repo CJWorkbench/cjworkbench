@@ -1,9 +1,10 @@
 import asyncio
 from unittest.mock import patch
 
-from cjwstate import clientside, commands
-from cjwstate.models import Block, Workflow
+from cjwstate import clientside, commands, rabbitmq
+from cjwstate.models.block import Block
 from cjwstate.models.commands import SetBlockMarkdown
+from cjwstate.models.workflow import Workflow
 from cjworkbench.tests.utils import DbTestCase
 
 
@@ -12,7 +13,7 @@ async def async_noop(*args, **kwargs):
 
 
 class SetBlockMarkdownTest(DbTestCase):
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_set_block_markdown_happy_path(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -44,7 +45,7 @@ class SetBlockMarkdownTest(DbTestCase):
         delta2 = send_update.call_args[0][1]
         self.assertEqual(delta2.blocks, {"block-1": clientside.TextBlock("foo")})
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_block_markdown_empty_text_is_value_error(self):
         workflow = Workflow.create_and_init(has_custom_report=True)
         workflow.blocks.create(
@@ -61,7 +62,7 @@ class SetBlockMarkdownTest(DbTestCase):
                 )
             )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_block_markdown_same_text_is_no_op(self):
         workflow = Workflow.create_and_init(has_custom_report=True)
         workflow.blocks.create(
@@ -78,7 +79,7 @@ class SetBlockMarkdownTest(DbTestCase):
         )
         self.assertIsNone(cmd)
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_block_markdown_missing_block_is_does_not_exist(self):
         workflow = Workflow.create_and_init(has_custom_report=True)
         workflow.blocks.create(
@@ -95,7 +96,7 @@ class SetBlockMarkdownTest(DbTestCase):
                 )
             )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_block_markdown_block_not_text_is_does_not_exist(self):
         workflow = Workflow.create_and_init(has_custom_report=True)
         tab = workflow.tabs.first()

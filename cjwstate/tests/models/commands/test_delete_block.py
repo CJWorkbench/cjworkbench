@@ -1,7 +1,7 @@
 import asyncio
 from unittest.mock import patch
 
-from cjwstate import clientside, commands
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models.commands import DeleteBlock
 from cjwstate.models.workflow import Workflow
 from cjwstate.models.block import Block
@@ -16,7 +16,7 @@ async def async_noop(*args, **kwargs):
 
 
 class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_block_from_custom_report(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -64,7 +64,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
         self.assertEqual(delta2.clear_block_slugs, frozenset({}))
         self.assertEqual(delta2.blocks, {"block-1": clientside.TextBlock("1")})
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_restore_chart_block(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -92,7 +92,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             [("block-1", 0, "Text", None), ("block-2", 1, "Chart", step.id)],
         )
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_restore_table_block(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -119,7 +119,7 @@ class DeleteBlockTest(DbTestCaseWithModuleRegistryAndMockKernel):
             [("block-1", 0, "Text", None), ("block-2", 1, "Table", tab.id)],
         )
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_block_from_automatically_generated_report(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)

@@ -8,17 +8,19 @@ from cjwmodule.spec.paramfield import ParamField
 from dateutil.parser import isoparse
 from django.conf import settings
 
+import server.utils
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
-from cjwstate.models import Workflow, Step
 from cjwstate.models.commands import (
-    SetStepParams,
     DeleteStep,
     SetStepDataVersion,
     SetStepNote,
+    SetStepParams,
 )
+from cjwstate.models.dbutil import lock_user_by_id, query_user_usage
 from cjwstate.models.module_registry import MODULE_REGISTRY
-import server.utils
+from cjwstate.models.step import Step
+from cjwstate.models.workflow import Workflow
 from . import autofetch
 from .decorators import register_websockets_handler, websockets_handler
 from .util import lock_workflow_for_role
@@ -26,8 +28,7 @@ from .types import HandlerError
 
 
 class AutofetchQuotaExceeded(Exception):
-    def __init__(self, autofetches):
-        self.autofetches = autofetches
+    pass
 
 
 def _postgresize_dict_in_place(d: Dict[str, Any]) -> None:
@@ -240,19 +241,6 @@ async def set_notifications(
 
 
 @database_sync_to_async
-def _do_clear_unseen_notification(step: Step):
-    step.has_unseen_notification = False
-    step.save(update_fields=["has_unseen_notification"])
-
-
-@register_websockets_handler
-@websockets_handler("write")
-@_loading_step_by_id
-async def clear_unseen_notifications(step: Step, **kwargs):
-    await _do_clear_unseen_notification(step)
-
-
-@database_sync_to_async
 def _do_try_set_autofetch(
     scope,
     workflow: Workflow,
@@ -260,63 +248,47 @@ def _do_try_set_autofetch(
     auto_update_data: bool,
     update_interval: int,
 ) -> Dict[str, Any]:
-    try:
-        with lock_workflow_for_role(workflow, scope, role="owner"):
-            step = _load_step_by_slug_sync(workflow, step_slug)  # or raise HandlerError
+    with lock_workflow_for_role(workflow, scope, role="owner"):
+        step = _load_step_by_slug_sync(workflow, step_slug)  # or raise HandlerError
 
-            # We may ROLLBACK; if we do, we need to remember the old values
-            old_auto_update_data = step.auto_update_data
-            old_update_interval = step.update_interval
-            old_next_update = step.next_update
-            old_fetches_per_day = workflow.fetches_per_day
+        check_quota = (
+            auto_update_data
+            and step.auto_update_data
+            and update_interval < step.update_interval
+        ) or (auto_update_data and not step.auto_update_data)
 
-            check_quota = (
-                auto_update_data
-                and step.auto_update_data
-                and update_interval < step.update_interval
-            ) or (auto_update_data and not step.auto_update_data)
-
-            quota_exceeded = None
-
-            step.auto_update_data = auto_update_data
-            step.update_interval = update_interval
-            if auto_update_data:
-                step.next_update = datetime.datetime.now() + datetime.timedelta(
-                    seconds=update_interval
-                )
-            else:
-                step.next_update = None
-            step.save(
-                update_fields=["auto_update_data", "update_interval", "next_update"]
+        step.auto_update_data = auto_update_data
+        step.update_interval = update_interval
+        if auto_update_data:
+            step.next_update = datetime.datetime.now() + datetime.timedelta(
+                seconds=update_interval
             )
+        else:
+            step.next_update = None
+        step.save(update_fields=["auto_update_data", "update_interval", "next_update"])
 
-            workflow.recalculate_fetches_per_day()
-            workflow.save(update_fields=["fetches_per_day"])
+        workflow.recalculate_fetches_per_day()
+        workflow.save(update_fields=["fetches_per_day"])
 
-            # Now before we commit, let's see if we've surpassed the user's limit;
-            # roll back if we have.
-            #
-            # Only rollback if we're _increasing_ our fetch count. If we're
-            # lowering it, allow that -- even if the user is over limit, we still
-            # want to commit because it's an improvement.
-            if check_quota:
-                autofetches = autofetch.list_autofetches_json(scope)
-                if autofetches["nFetchesPerDay"] > autofetches["maxFetchesPerDay"]:
-                    raise AutofetchQuotaExceeded(autofetches)
-    except AutofetchQuotaExceeded as err:
-        step.auto_update_data = old_auto_update_data
-        step.next_update = old_next_update
-        step.update_interval = old_update_interval
-        workflow.fetches_per_day = old_fetches_per_day
-        quota_exceeded = err.autofetches
+        # Locking after write is fine, because we haven't called COMMIT
+        # yet so nobody else can tell the difference.
+        lock_user_by_id(
+            workflow.owner_id, for_write=True
+        )  # we're overwriting user's (calculated) fetches_per_day
+        usage = query_user_usage(workflow.owner_id)
 
-    retval = {
-        "isAutofetch": step.auto_update_data,
-        "fetchInterval": step.update_interval,
-    }
-    if quota_exceeded is not None:
-        retval["quotaExceeded"] = quota_exceeded  # a dict
-    return retval
+        # Now before we commit, let's see if we've surpassed the user's limit;
+        # roll back if we have.
+        #
+        # Only rollback if we're _increasing_ our fetch count. If we're
+        # lowering it, allow that -- even if the user is over limit, we still
+        # want to commit because it's an improvement.
+        if check_quota:
+            limit = workflow.owner.user_profile.effective_limits.max_fetches_per_day
+            if usage.fetches_per_day > limit:
+                raise AutofetchQuotaExceeded
+
+    return step, usage
 
 
 @register_websockets_handler
@@ -329,14 +301,58 @@ async def try_set_autofetch(
     scope,
     **kwargs,
 ):
+    """Set step's autofetch settings, or not; respond with temporary data.
+
+    Client-side, the amalgam of races looks like:
+
+        1. Submit form with these `try_set_autofetch()` parameters.
+        2. Server sends three pieces of data in parallel:
+            a. Update the client state's step
+            b. Update the client state's user usage
+            c. Respond "ok"
+        3. Client waits for all three messages, and shows "busy" until then.
+        4. Client resets the form (because the state holds correct data now).
+
+    Unfortunately, our client/server mechanism doesn't have a way to wait for
+    _both_ 2a and 2b. (We have a "mutation" mechanism, but it can only wait
+    for 2a, not both 2a and 2b.) [2021-06-17] this problem occurs nowhere else
+    in our codebase, so we aren't inspired to build a big solution.
+
+    Our hack: we assume that in practice, the client will usually receive
+    2a+2b+2c nearly at the same time (since RabbitMQ is fast and the Internet
+    is slow). So the client (3) waits for 2c and then waits a fixed duration;
+    then (4) assumes 2a and 2b have arrived and resets the form.
+    """
     step_slug = str(stepSlug)
     auto_update_data = bool(isAutofetch)
     try:
         update_interval = max(settings.MIN_AUTOFETCH_INTERVAL, int(fetchInterval))
     except (ValueError, TypeError):
         return HandlerError("BadRequest: fetchInterval must be an integer")
-    return await _do_try_set_autofetch(
-        scope, workflow, step_slug, auto_update_data, update_interval
+
+    try:
+        step, usage = await _do_try_set_autofetch(
+            scope, workflow, step_slug, auto_update_data, update_interval
+        )  # updates workflow, step
+    except AutofetchQuotaExceeded:
+        raise HandlerError("AutofetchQuotaExceeded")
+
+    await rabbitmq.send_user_update_to_user_clients(
+        workflow.owner_id, clientside.UserUpdate(usage=usage)
+    )
+    await rabbitmq.send_update_to_workflow_clients(
+        workflow.id,
+        clientside.Update(
+            workflow=clientside.WorkflowUpdate(
+                fetches_per_day=workflow.fetches_per_day
+            ),
+            steps={
+                step.id: clientside.StepUpdate(
+                    is_auto_fetch=step.auto_update_data,
+                    fetch_interval=step.update_interval,
+                )
+            },
+        ),
     )
 
 

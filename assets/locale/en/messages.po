@@ -488,39 +488,13 @@ msgstr "Search…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ADD DATA"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:256
+#: assets/js/WorkflowEditor/DataVersionModal.js:126
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Load"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:227
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Data Versions"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:128
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
-msgstr "You will receive an email if the output of this module changes"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:133
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
-msgstr "Turn alerts ON to receive an email if the output of this module changes"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:151
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
-msgstr "Turn off"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:156
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
-msgstr "Turn on"
-
-#. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:117
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
-msgstr "Alerts are <0>off</0>"
-
-#. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:109
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
-msgstr "Alerts are <0>on</0>"
 
 #. This should be all-caps for styling reasons
 #: assets/js/WorkflowEditor/ModuleSearch/Button.js:42
@@ -615,15 +589,15 @@ msgstr "This Tab has no Steps."
 msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
 msgstr "Create tab"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:32
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:33
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
 msgstr "Delete"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:27
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:28
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate"
 msgstr "Duplicate"
 
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:22
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:23
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
 msgstr "Rename"
 
@@ -634,41 +608,67 @@ msgstr "Rename"
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr "Tab"
 
+#: assets/js/WorkflowEditor/step/AlertsModal.js:45
+msgid "js.WorkflowEditor.step.AlertsModal.description"
+msgstr ""
+"When alerts are ON, Workbench emails you each time this step's output "
+"changes."
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:20
+msgid "js.WorkflowEditor.step.AlertsModal.header"
+msgstr "Alerts"
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:41
+msgid "js.WorkflowEditor.step.AlertsModal.off"
+msgstr "Alerts are OFF"
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:40
+msgid "js.WorkflowEditor.step.AlertsModal.on"
+msgstr "Alerts are ON"
+
 #: assets/js/WorkflowEditor/step/DeprecationNotice.js:11
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Learn how to replace this step"
 
-#: assets/js/WorkflowEditor/step/Step.js:371
+#: assets/js/WorkflowEditor/step/Step.js:367
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr "Type a note…"
 
-#: assets/js/WorkflowEditor/step/Step.js:241
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr "enter Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:237
+#: assets/js/WorkflowEditor/step/Step.js:233
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr "exit Zen mode"
 
-#: assets/js/WorkflowEditor/step/Step.js:404
+#: assets/js/WorkflowEditor/step/Step.js:398
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr "Email alerts disabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:400
+#: assets/js/WorkflowEditor/step/Step.js:394
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr "Email alerts enabled"
 
-#: assets/js/WorkflowEditor/step/Step.js:465
+#: assets/js/WorkflowEditor/step/Step.js:455
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr "Delete"
 
-#: assets/js/WorkflowEditor/step/Step.js:428
+#: assets/js/WorkflowEditor/step/Step.js:418
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr "Help for this module"
 
-#: assets/js/WorkflowEditor/step/Step.js:446
+#: assets/js/WorkflowEditor/step/Step.js:436
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Edit Note"
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:60
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton"
+msgstr "Close"
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:54
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton.hoverText"
+msgstr "Close"
 
 #: assets/js/WorkflowNavBar.js:23
 msgid "js.WorkflowNavBar.LessonCourse.Lesson.title"
@@ -741,23 +741,23 @@ msgstr "menu"
 msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr "Share"
 
-#: assets/js/Workflows/WorkflowList.js:122
+#: assets/js/Workflows/WorkflowList.js:149
 msgid "js.Workflows.WorkflowList.fetchesPerDay"
 msgstr "Auto updates"
 
-#: assets/js/Workflows/WorkflowList.js:110
+#: assets/js/Workflows/WorkflowList.js:130
 msgid "js.Workflows.WorkflowList.owner"
 msgstr "Owner"
 
-#: assets/js/Workflows/WorkflowList.js:113
+#: assets/js/Workflows/WorkflowList.js:139
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr "Privacy"
 
-#: assets/js/Workflows/WorkflowList.js:106
+#: assets/js/Workflows/WorkflowList.js:126
 msgid "js.Workflows.WorkflowList.title"
 msgstr "Title"
 
-#: assets/js/Workflows/WorkflowList.js:132
+#: assets/js/Workflows/WorkflowList.js:159
 msgid "js.Workflows.WorkflowList.updated"
 msgstr "Updated"
 
@@ -812,6 +812,18 @@ msgstr "Create Workflow"
 #: assets/js/Workflows/WorkflowContextMenu.js:29
 msgid "js.Workflows.delete.permanentyDeleteWarning"
 msgstr "Permanently delete this workflow?"
+
+#: assets/js/components/Saving.js:11
+msgid "js.components.Saving.failed"
+msgstr "Could not save"
+
+#: assets/js/components/Saving.js:17
+msgid "js.components.Saving.retry"
+msgstr "Retry"
+
+#: assets/js/components/Saving.js:23
+msgid "js.components.Saving.saving"
+msgstr "Saving…"
 
 #: assets/js/components/ShareUrl.js:47
 msgid "js.components.ShareUrl.copy"
@@ -1371,145 +1383,114 @@ msgstr "Version"
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr "{0} of {nVersions}"
 
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:121
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
-msgstr "Edit workflow"
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
-msgstr "#/day"
-
-#. The {1} argument is a tab name
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:145
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
-msgstr "Step {0} on {1} makes {2} updates per day."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
-msgstr ""
-"Here are the steps that count against your limit. Adjust their update "
-"times or set them to manual, then click \"Retry\" above."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
-msgstr "Need a higher limit? <0>Upgrade</0>"
-
-#. The two tags add emphasis
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:52
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
-msgstr ""
-"You're requesting<0>{0}</0>updates per day across all your workflows. "
-"Your daily limit is<1>{1}</1>."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:136
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
-msgstr "You asked for this step to make {0} updates per day."
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:106
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
-msgstr "This workflow"
-
-#. This must be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:44
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
-msgstr "AUTO-UPDATE QUOTA EXCEEDED"
-
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:87
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
-msgstr "Workflow"
-
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:95
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
-msgstr "Auto"
+msgstr "ON"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:86
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:68
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr "change auto-update settings"
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:115
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:96
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr "Checked <0>{0}</0>"
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:103
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:84
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
-msgstr "Manual"
+msgstr "OFF"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:62
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
-msgstr "Update"
+msgstr "Auto update"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:278
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
-msgstr "Apply"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:39
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.off"
+msgstr "OFF"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:203
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
-msgstr ""
-"Automatically update this workflow with the newest data (old versions "
-"will be saved)."
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:38
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.on"
+msgstr "ON"
 
-#. Refers to
-#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:193
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
-msgstr "Auto"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
-msgstr "days"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:250
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
-msgstr "hours"
-
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:209
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:304
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
-msgstr "Check for update every"
+msgstr "Check for new data and update this workflow every:"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:257
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
-msgstr "minutes"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:69
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nDays"
+msgstr "{n,plural,one {day} other {{n,number} days}}"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:236
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
-msgstr "weeks"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:76
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nHours"
+msgstr "{n,plural,one {hour} other {{n,number} hours}}"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:344
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
-msgstr "Email me when data changes"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:82
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nMinutes"
+msgstr "{n,plural,one {minute} other {{n,number} minutes}}"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:331
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdatesTip"
+msgstr ""
+"<0>Tip</0>: Use <1/> notifications on any step to receive an email when "
+"data changes."
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:374
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr "Close"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:354
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:368
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr "Close"
 
 #. This should be all-caps for styling reasons
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:266
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
-msgstr "WORKFLOW UPDATE"
+msgstr "AUTOMATIC UPDATES"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:326
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
-msgstr "Check for new data manually."
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:99
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimit"
+msgstr "over limit"
 
-#. Refers to
-#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:316
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
-msgstr "Manual"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:52
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimitDescription"
+msgstr "Reduce usage elsewhere to allow updates here"
 
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:273
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
-msgstr "Retry"
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:96
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgrade"
+msgstr "upgrade"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeButton"
+msgstr "Upgrade"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:44
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeLink"
+msgstr "<0>Upgrade</0> to increase your limit"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:286
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeToUndoDecreases"
+msgstr "You're using too many automatic updates. <0>Upgrade</0>"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:352
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.countDescription"
+msgstr "across all workflows"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:342
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.counts"
+msgstr "{fetchesPerDay,number} of {limit,number} updates/day"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:339
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.title"
+msgstr "Your usage"
+
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:282
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.warnCannotUndoDecreases"
+msgstr "You're using too many automatic updates. You cannot increase your usage."
 
 #: assets/js/params/String/Code/index.js:19
 msgid "js.params.Custom.code.loadingEditor"
@@ -2120,23 +2101,23 @@ msgstr "Timeout during OAuth2 token refresh"
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "HTTP error during OAuth2 token refresh: {error}"
 
-#: renderer/execute/step.py:393
+#: renderer/execute/step.py:391
 msgid "py.renderer.execute.step.noModule"
 msgstr "Please delete this step: an administrator uninstalled its code."
 
-#: renderer/execute/step.py:422
+#: renderer/execute/step.py:420
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr "Please Add Data before this step."
 
-#: renderer/execute/step.py:434
+#: renderer/execute/step.py:432
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
-#: renderer/execute/step.py:446
+#: renderer/execute/step.py:444
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
-#: renderer/execute/step.py:489
+#: renderer/execute/step.py:487
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "

@@ -42,7 +42,7 @@ def _finish_upload(data: Dict[str, Any]) -> Dict[str, Any]:
     final_key = None
 
     with upload.locked_and_loaded_step(workflow_id, step_slug) as (
-        workflow_lock,
+        workflow,
         step,
         param_id_name,
     ):  # raise UploadError

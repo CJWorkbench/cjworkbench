@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.test import override_settings
 from cjwmodule.arrow.testing import make_table, make_column
 
-from cjwstate import rabbitmq
+from cjworkbench.models.userprofile import UserProfile
+from cjworkbench.models.userusage import UserUsage
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.fields import Role
 from cjwstate.rendercache.testing import write_to_rendercache
@@ -18,7 +20,9 @@ async def async_noop(*args, **kwargs):
 
 
 def create_user(username: str, email: str):
-    return User.objects.create(username=username, email=email)
+    user = User.objects.create(username=username, email=email)
+    UserProfile.objects.create(user=user)
+    return user
 
 
 class WorkflowListTest(DbTestCase):
@@ -91,7 +95,7 @@ class WorkflowListTest(DbTestCase):
         )
 
 
-@patch("cjwstate.commands.websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class WorkflowViewTests(DbTestCase):
     def setUp(self):
         super().setUp()
@@ -142,17 +146,6 @@ class WorkflowViewTests(DbTestCase):
         self.workflow1.refresh_from_db()
         date2 = self.workflow1.last_viewed_at
         self.assertGreater(date2, date1)
-
-    @patch("cjwstate.models.Workflow.cooperative_lock")
-    def test_workflow_view_race_delete_after_auth(self, lock):
-        # cooperative_lock() is called _after_ auth. (Auth is optimized to be
-        # quick, which means no cooperative_lock().) Assume make_init_state()
-        # calls it, for serialization. Well, the Workflow may be deleted after
-        # auth and before make_init_state().
-        lock.side_effect = Workflow.DoesNotExist
-        self.client.force_login(self.user)
-        response = self.client.get("/workflows/%d/" % self.workflow1.id)
-        self.assertEqual(response.status_code, status.NOT_FOUND)
 
     def test_workflow_view_triggers_render_if_stale_cache(self):
         step = self.tab1.steps.create(
@@ -321,12 +314,29 @@ class WorkflowViewTests(DbTestCase):
         response = self.client.post("/workflows/%d/duplicate" % self.workflow1.id)
         self.assertEqual(response.status_code, status.CREATED)
 
-    def test_workflow_delete(self):
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
+    def test_workflow_delete(self, send_update):
+        send_update.side_effect = async_noop
+
         pk_workflow = self.workflow1.id
         self.client.force_login(self.user)
         response = self.client.delete("/api/workflows/%d/" % pk_workflow)
         self.assertEqual(response.status_code, status.NO_CONTENT)
         self.assertEqual(Workflow.objects.filter(name="Workflow 1").count(), 0)
+
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
+    def test_workflow_delete_send_user_update(self, send_update):
+        send_update.side_effect = async_noop
+
+        to_delete = Workflow.create_and_init(owner_id=self.user.id, fetches_per_day=2)
+        Workflow.create_and_init(owner_id=self.user.id, fetches_per_day=3)
+        self.client.force_login(self.user)
+        response = self.client.delete("/api/workflows/%d/" % to_delete.id)
+        self.assertEqual(response.status_code, status.NO_CONTENT)
+
+        send_update.assert_called_with(
+            self.user.id, clientside.UserUpdate(usage=UserUsage(fetches_per_day=3))
+        )
 
     def test_workflow_delete_missing_is_404(self):
         # It's okay because the thing that leads to this might be a user
@@ -531,7 +541,7 @@ class SecretLinkTests(DbTestCase):
         )
 
 
-@patch("cjwstate.commands.websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class ReportViewTests(DbTestCase):
     def setUp(self):
         super().setUp()

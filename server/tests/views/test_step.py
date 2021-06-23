@@ -9,7 +9,7 @@ from cjwmodule.arrow.testing import make_table, make_column
 from django.test import override_settings
 
 import cjwstate.modules
-from cjwstate import commands, rabbitmq
+from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.fields import Role
 from cjwstate.rendercache.io import delete_parquet_files_for_step
@@ -30,9 +30,9 @@ def read_streaming_json(response):
 
 
 @patch.object(rabbitmq, "queue_render", async_noop)
-@patch.object(commands, "websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class StepViewTestCase(DbTestCaseWithModuleRegistryAndMockKernel):
-    """Logged in, logging disabled, rabbitmq/commands disabled."""
+    """Logged in, logging disabled, rabbitmq disabled."""
 
     @classmethod
     def setUpClass(cls):

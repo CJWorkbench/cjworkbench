@@ -1,0 +1,31 @@
+.alerts-modal {
+  @include content-1;
+  $indent: rem(3);
+
+  .alerts-toggle {
+    display: flex;
+    align-items: center;
+
+    .toggle {
+      @include toggle-slider;
+      width: $indent;
+    }
+
+    label.onoff {
+      cursor: pointer;
+      margin: 0;
+      @include title-2;
+    }
+  }
+
+  p {
+    margin: 1.5rem 0 0 $indent;
+  }
+
+  .modal-footer {
+    button {
+      @include action-button;
+      @include button-gray;
+    }
+  }
+}

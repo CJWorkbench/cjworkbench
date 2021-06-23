@@ -13,6 +13,8 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
     of Workbench's API should pretend a soft-deleted Step does not exist.
     """
 
+    modifies_owner_usage = True
+
     def load_clientside_update(self, delta):
         ret = (
             super()
@@ -64,8 +66,12 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
             remove_gap_from_list(delta.workflow.blocks, "position", block.position)
 
         # Soft-delete the step
+        # Also, ensure auto_update_data=False so Undo won't add auto-update
+        # (If we didn't do this, Undo might help a user exceed his/her limit.)
         delta.step.is_deleted = True
-        delta.step.save(update_fields=["is_deleted"])
+        delta.step.auto_update_data = False
+        delta.step.next_update = None
+        delta.step.save(update_fields=["is_deleted", "auto_update_data", "next_update"])
         tab.live_steps.filter(order__gt=delta.step.order).update(order=F("order") - 1)
 
         delta.workflow.recalculate_fetches_per_day()
@@ -91,9 +97,6 @@ class DeleteStep(ChangesStepOutputs, BaseCommand):
 
         # Don't set tab.selected_step_position. We can't restore it, and
         # this operation can't invalidate any value that was there previously.
-
-        delta.workflow.recalculate_fetches_per_day()
-        delta.workflow.save(update_fields=["fetches_per_day"])
 
         self.backward_affected_delta_ids(delta)
 

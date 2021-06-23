@@ -1,14 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import propTypes from '../../propTypes'
-import DataVersionModal from '../DataVersionModal'
+import AlertsModal from './AlertsModal'
 import ErrorBoundary from '../../ErrorBoundary'
 import ParamsForm from '../../params/ParamsForm'
 import EditableNotes from '../../EditableNotes'
 import DeprecationNotice from './DeprecationNotice'
 import StatusLine from './StatusLine'
 import {
-  clearNotificationsAction,
   startCreateSecretAction,
   deleteSecretAction,
   maybeRequestStepFetchAction,
@@ -92,7 +91,6 @@ export class Step extends React.PureComponent {
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
-    clearNotifications: PropTypes.func.isRequired, // func() => undefined
     maybeRequestFetch: PropTypes.func.isRequired, // func(stepId) => undefined
     setSelectedStep: PropTypes.func.isRequired, // func(stepId) => undefined
     setStepCollapsed: PropTypes.func.isRequired, // func(stepId, isCollapsed, isReadOnly) => undefined
@@ -105,7 +103,7 @@ export class Step extends React.PureComponent {
 
   state = {
     editedNotes: null, // when non-null, input is focused
-    isDataVersionModalOpen: false,
+    isAlertsModalOpen: false,
     edits: {} // idName => newValue
   }
 
@@ -119,11 +117,9 @@ export class Step extends React.PureComponent {
     return Object.keys(this.state.edits).length > 0
   }
 
-  handleClickNotification = () => {
-    this.props.clearNotifications(this.props.step.id)
-
+  handleClickAlert = () => {
     this.setState({
-      isDataVersionModalOpen: true
+      isAlertsModalOpen: true
     })
   }
 
@@ -211,9 +207,9 @@ export class Step extends React.PureComponent {
     this.setState({ editedNotes: null })
   }
 
-  handleCloseDataVersionModal = () => {
+  handleCloseAlertsModal = () => {
     this.setState({
-      isDataVersionModalOpen: false
+      isAlertsModalOpen: false
     })
   }
 
@@ -392,10 +388,8 @@ export class Step extends React.PureComponent {
       !this.props.isAnonymous
     ) {
       const notifications = step.notifications
-      const hasUnseen = step.has_unseen_notification
       let className = 'notifications'
       if (notifications) className += ' enabled'
-      if (hasUnseen) className += ' has-unseen'
       const title = notifications
         ? t({
             id: 'js.WorkflowEditor.step.alert.enabled',
@@ -410,13 +404,9 @@ export class Step extends React.PureComponent {
         <button
           title={title}
           className={className}
-          onClick={this.handleClickNotification}
+          onClick={this.handleClickAlert}
         >
-          <i
-            className={` ${
-              hasUnseen ? 'icon-notification-filled' : 'icon-notification'
-            }`}
-          />
+          <i className='icon-notification' />
         </button>
       )
     }
@@ -476,12 +466,13 @@ export class Step extends React.PureComponent {
 
     const moduleIconClassName = 'icon-' + moduleIcon + ' module-icon'
 
-    let maybeDataVersionModal = null
-    if (this.state.isDataVersionModalOpen) {
-      maybeDataVersionModal = (
-        <DataVersionModal
+    let maybeAlertsModal = null
+    if (this.state.isAlertsModalOpen) {
+      maybeAlertsModal = (
+        <AlertsModal
           stepId={step.id}
-          onClose={this.handleCloseDataVersionModal}
+          checked={step.notifications}
+          onClose={this.handleCloseAlertsModal}
         />
       )
     }
@@ -598,7 +589,7 @@ export class Step extends React.PureComponent {
             </div>
           </div>
         </div>
-        {maybeDataVersionModal}
+        {maybeAlertsModal}
       </div>
     )
   }
@@ -730,7 +721,6 @@ function mapStateToProps (state, ownProps) {
 }
 
 const mapDispatchToProps = {
-  clearNotifications: clearNotificationsAction,
   setSelectedStep: setSelectedStepAction,
   setStepCollapsed: setStepCollapsedAction,
   setStepParams: setStepParamsAction,

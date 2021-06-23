@@ -3,10 +3,6 @@ import PropTypes from 'prop-types'
 import propTypes from '../../../propTypes'
 import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../../../utils'
-import {
-  trySetStepAutofetchAction,
-  setStepNotificationsAction
-} from '../../../workflow-reducer'
 import { connect } from 'react-redux'
 import { i18n } from '@lingui/core'
 import { Trans, t } from '@lingui/macro'
@@ -22,10 +18,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
     isOwner: PropTypes.bool.isRequired,
     lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
     isAutofetch: PropTypes.bool.isRequired,
-    fetchInterval: PropTypes.number.isRequired,
-    isEmailUpdates: PropTypes.bool.isRequired,
-    setEmailUpdates: PropTypes.func.isRequired, // func(stepId, isEmailUpdates) => undefined
-    trySetAutofetch: PropTypes.func.isRequired // func(stepSlug, isAutofetch, fetchInterval) => Promise[response]
+    fetchInterval: PropTypes.number.isRequired
   }
 
   state = {
@@ -49,22 +42,11 @@ export class UpdateFrequencySelect extends React.PureComponent {
     })
   }
 
-  setEmailUpdates = isEmailUpdates => {
-    const { setEmailUpdates, stepId } = this.props
-    setEmailUpdates(stepId, isEmailUpdates)
-  }
-
-  trySetAutofetch = (isAutofetch, fetchInterval) => {
-    const { trySetAutofetch, stepSlug } = this.props
-    return trySetAutofetch(stepSlug, isAutofetch, fetchInterval)
-  }
-
   render () {
     const {
       lastCheckDate,
       isAutofetch,
       fetchInterval,
-      isEmailUpdates,
       workflowId,
       isOwner,
       isAnonymous,
@@ -78,14 +60,13 @@ export class UpdateFrequencySelect extends React.PureComponent {
         <div className='update-option'>
           <span className='version-box-option'>
             <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelect.update'>
-              Update
+              Auto update
             </Trans>{' '}
           </span>
           <a
             href={isOwner && !isAnonymous ? '#' : undefined}
             title={t({
-              id:
-                'js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText',
+              id: 'js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText',
               message: 'change auto-update settings'
             })}
             onClick={this.handleClickOpenModal}
@@ -96,7 +77,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
                   id='js.params.Custom.VersionSelect.UpdateFrequencySelect.auto'
                   comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
                 >
-                  Auto
+                  ON
                 </Trans>
                 )
               : (
@@ -104,7 +85,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
                   id='js.params.Custom.VersionSelect.UpdateFrequencySelect.manual'
                   comment="Appears just after 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'"
                 >
-                  Manual
+                  OFF
                 </Trans>
                 )}
           </a>
@@ -130,11 +111,8 @@ export class UpdateFrequencySelect extends React.PureComponent {
               workflowId={workflowId}
               stepId={stepId}
               stepSlug={stepSlug}
-              isEmailUpdates={isEmailUpdates}
               isAutofetch={isAutofetch}
               fetchInterval={fetchInterval}
-              setEmailUpdates={this.setEmailUpdates}
-              trySetAutofetch={this.trySetAutofetch}
               onClose={this.handleCloseModal}
             />
             )
@@ -159,18 +137,9 @@ const mapStateToProps = (state, ownProps) => {
     workflowId: workflow.id,
     isOwner: selectLoggedInUserRole(state) === 'owner',
     isAnonymous: selectIsAnonymous(state),
-    isEmailUpdates: step.notifications || false,
     isAutofetch: step.auto_update_data || false,
     fetchInterval: step.update_interval || 86400
   }
 }
 
-const mapDispatchToProps = {
-  trySetAutofetch: trySetStepAutofetchAction,
-  setEmailUpdates: setStepNotificationsAction
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(UpdateFrequencySelect)
+export default connect(mapStateToProps)(UpdateFrequencySelect)

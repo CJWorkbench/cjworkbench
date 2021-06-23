@@ -1,12 +1,14 @@
 import datetime
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.db import connection, transaction
 import stripe
 
 from cjworkbench.models.price import Price
 from cjworkbench.models.subscription import Subscription
 from cjworkbench.models.userprofile import UserProfile
+from cjwstate.models.dbutil import lock_user_by_id
 
 
 def _unix_timestamp_to_datetime(timestamp: int) -> datetime.datetime:
@@ -27,9 +29,10 @@ def create_checkout_session(
 
     Re-raise Stripe error if creating a Customer or CheckoutSession fails.
     """
-    with UserProfile.lookup_and_cooperative_lock(user_id=user_id) as lock:
-        user_profile = lock.user_profile
-        user = user_profile.user
+    with transaction.atomic():
+        lock_user_by_id(user_id, for_write=True)
+        user = User.objects.select_related("user_profile").get(id=user_id)
+        user_profile = user.user_profile
         if user_profile.stripe_customer_id is None:
             stripe_customer = stripe.Customer.create(
                 email=user.email,
@@ -61,14 +64,28 @@ def create_billing_portal_session(
 
     Ref: https://stripe.com/docs/api/customer_portal/object
 
-    Raise UserProfile.DoesNotExist if the user does not have a Stripe customer ID.
+    Raise User.DoesNotExist or UserProfile.DoesNotExist if the user does not
+    have a Stripe customer ID.
+
     Re-raise Stripe error if creating a BillingPortalSession fails.
     """
     # raises UserProfile.DoesNotExist
-    with UserProfile.lookup_and_cooperative_lock(
-        user_id=user_id, stripe_customer_id__isnull=False
-    ) as lock:
-        stripe_customer_id = lock.user_profile.stripe_customer_id
+    with transaction.atomic():
+        lock_user_by_id(user_id, for_write=False)
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT stripe_customer_id
+                FROM cjworkbench_userprofile
+                WHERE user_id = %s
+                  AND stripe_customer_id IS NOT NULL
+                """,
+                [user_id],
+            )
+            try:
+                stripe_customer_id = cursor.fetchall()[0][0]
+            except IndexError:
+                raise UserProfile.DoesNotExist
 
     return stripe.billing_portal.Session.create(
         customer=stripe_customer_id,
@@ -107,11 +124,13 @@ def handle_checkout_session_completed(
     item = items[0]
     price = Price.objects.get(stripe_price_id=item.price.id)  # raise Price.DoesNotExist
 
-    with UserProfile.lookup_and_cooperative_lock(
-        stripe_customer_id=stripe_customer_id
-    ) as lock:  # raise UserProfile.NotFound
-        user = lock.user_profile.user
-        user.subscriptions.update_or_create(
+    with transaction.atomic():
+        user_profile = UserProfile.objects.get(
+            stripe_customer_id=stripe_customer_id
+        )  # raise UserProfile.DoesNotExist
+        lock_user_by_id(user_profile.user_id, for_write=True)  # raise User.DoesNotExist
+        Subscription.objects.update_or_create(
+            user_id=user_profile.user_id,
             stripe_subscription_id=stripe_subscription_id,
             defaults=dict(
                 price=price,

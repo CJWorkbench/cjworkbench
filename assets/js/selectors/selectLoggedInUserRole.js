@@ -1,11 +1,18 @@
 import { createSelector } from 'reselect'
-import selectOptimisticState from './selectOptimisticState'
 import selectWorkflowAclLookup from './selectWorkflowAclLookup'
+import selectLoggedInUser from './selectLoggedInUser'
 
-const selectLoggedInUser = (state) => state.loggedInUser
 const selectOwnerEmail = (state) => state.workflow.owner_email
 
-const selectLoggedInUserRoleFromOptimisticState = createSelector(
+/**
+ * Select the logged-in (or anonymous) user's role.
+ *
+ * Valid roles: "owner", "editor", "viewer".
+ *
+ * (The "report-viewer" role won't come up, because report viewers can't read
+ * the workflow or ACL in the first place.)
+ */
+const selectLoggedInUserRole = createSelector(
   selectLoggedInUser,
   selectOwnerEmail,
   selectWorkflowAclLookup,
@@ -24,16 +31,4 @@ const selectLoggedInUserRoleFromOptimisticState = createSelector(
   }
 )
 
-/**
- * Select the logged-in (or anonymous) user's role.
- *
- * Valid roles: "owner", "editor", "viewer".
- *
- * (The "report-viewer" role won't come up, because report viewers can't read
- * the workflow or ACL in the first place.)
- */
-const selectLoggedInUserRole = createSelector(
-  selectOptimisticState,
-  selectLoggedInUserRoleFromOptimisticState
-)
 export default selectLoggedInUserRole

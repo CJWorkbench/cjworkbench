@@ -13,7 +13,7 @@ i18n.loadLocaleData('en', { plurals: require('make-plural/plurals').en })
 i18n.load('en', {})
 i18n.activate('en')
 
-function I18nWrapper (props) {
+export function I18nWrapper (props) {
   return <I18nProvider i18n={i18n} {...props} />
 }
 

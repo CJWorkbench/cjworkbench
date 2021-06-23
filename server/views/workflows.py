@@ -10,6 +10,7 @@ from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Q
 from django.http import (
     Http404,
@@ -28,6 +29,12 @@ import server.utils
 from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
+from cjwstate.models.dbutil import (
+    lock_user_by_id,
+    query_user_usage,
+    query_clientside_user,
+    user_display_name,
+)
 from cjwstate.models import Step, Workflow
 from cjwstate.models.fields import Role
 from cjwstate.models.module_registry import MODULE_REGISTRY
@@ -38,10 +45,9 @@ from server.models.lesson import LessonLookup
 from server.serializers import (
     JsonizeContext,
     jsonize_clientside_init,
+    jsonize_clientside_user,
     jsonize_clientside_workflow,
-    jsonize_user,
 )
-from server.settingsutils import workbench_user_display
 
 
 class Http302(Exception):
@@ -163,12 +169,7 @@ def authorized_report_viewer(
 def _get_request_jsonize_context(
     request: HttpRequest, module_zipfiles: Dict[str, ModuleZipfile]
 ) -> JsonizeContext:
-    # Anonymous has no user_profile
-    user_profile = UserProfile.objects.filter(user_id=request.user.id).first()
     return JsonizeContext(
-        user=request.user,
-        user_profile=user_profile,
-        session=request.session,
         locale_id=request.locale_id,
         module_zipfiles=module_zipfiles,
     )
@@ -185,10 +186,17 @@ def make_init_state(
     """
     try:
         with workflow.cooperative_lock():  # raise DoesNotExist on race
+            if request.user.is_anonymous:
+                user = None
+            else:
+                lock_user_by_id(request.user.id, for_write=False)
+                user = query_clientside_user(request.user.id)
+
             workflow.last_viewed_at = datetime.datetime.now()
             workflow.save(update_fields=["last_viewed_at"])
 
             state = clientside.Init(
+                user=user,
                 workflow=workflow.to_clientside(),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
@@ -213,12 +221,12 @@ def make_init_state(
     except Workflow.DoesNotExist:
         raise Http404("Workflow was recently deleted")
 
-    ctx = _get_request_jsonize_context(request, modules)
+    ctx = JsonizeContext(request.locale_id, modules)
     return jsonize_clientside_init(state, ctx)
 
 
 def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
-    ctx = _get_request_jsonize_context(request, {})
+    ctx = JsonizeContext(request.locale_id, {})
 
     workflows = (
         Workflow.objects.filter(**kwargs)
@@ -235,12 +243,15 @@ def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
         for w in workflows
     ]
 
+    if request.user.is_anonymous:
+        json_user = None
+    else:
+        with transaction.atomic():
+            lock_user_by_id(request.user.id, for_write=False)
+            json_user = jsonize_clientside_user(query_clientside_user(request.user.id))
+
     init_state = {
-        "loggedInUser": (
-            None
-            if request.user.is_anonymous
-            else jsonize_user(request.user, ctx.user_profile)
-        ),
+        "loggedInUser": json_user,
         "workflows": json_workflows,
     }
 
@@ -384,10 +395,16 @@ class ApiDetail(View):
         try:
             with Workflow.authorized_lookup_and_cooperative_lock(
                 "owner", request.user, request.session, pk=workflow_id
-            ) as workflow_lock:
-                workflow = workflow_lock.workflow
+            ) as workflow:
                 workflow.delete()
-            return HttpResponse(status=status.NO_CONTENT)
+
+                if workflow.owner_id:
+                    # We lock after delete, but it's still correct. DB commits
+                    # are atomic: nothing is written yet.
+                    lock_user_by_id(workflow.owner_id, for_write=True)
+                    user_update = clientside.UserUpdate(
+                        usage=query_user_usage(workflow.owner_id)
+                    )
         except Workflow.DoesNotExist as err:
             if err.args[0] == "owner access denied":
                 return JsonResponse(
@@ -400,6 +417,12 @@ class ApiDetail(View):
                     status=status.NOT_FOUND,
                 )
 
+        if workflow.owner_id:
+            async_to_sync(rabbitmq.send_user_update_to_user_clients)(
+                workflow.owner_id, user_update
+            )
+        return HttpResponse(status=status.NO_CONTENT)
+
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
 class Duplicate(View):
@@ -409,7 +432,7 @@ class Duplicate(View):
             authorized_read, workflow_id_or_secret_id, request
         )
         workflow2 = workflow.duplicate(request.user)
-        ctx = _get_request_jsonize_context(request, MODULE_REGISTRY.all_latest())
+        ctx = JsonizeContext(request.locale_id, MODULE_REGISTRY.all_latest())
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
         )
@@ -453,7 +476,7 @@ class Report(View):
                 "workflow": workflow,
                 "workflow_path": workflow_path,
                 "blocks": blocks,
-                "owner_name": workbench_user_display(workflow.owner),
+                "owner_name": user_display_name(workflow.owner),
                 "can_view_workflow": can_view_workflow,
             },
         )

@@ -1,7 +1,7 @@
 // A fairly-common <select> style
-%custom-select {
-  @extend %module-parameter;
-  @extend %content-1;
+@mixin custom-select {
+  @include module-parameter;
+  @include content-1;
   cursor: pointer;
   color: $brand-text--darker;
   box-shadow: none;
@@ -27,7 +27,9 @@
     border-color: $data-action--border;
   }
 }
-
+%custom-select {
+  @include custom-select;
+}
 .custom-select {
   @extend %custom-select;
 }

@@ -579,45 +579,13 @@ msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/WorkflowEditor/DataVersionModal.js:256
+#: assets/js/WorkflowEditor/DataVersionModal.js:126
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
 #. default-message: Data Versions
-#: assets/js/WorkflowEditor/DataVersionModal.js:227
+#: assets/js/WorkflowEditor/DataVersionModal.js:100
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
-msgstr ""
-
-#. default-message: You will receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:128
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
-msgstr ""
-
-#. default-message: Turn alerts ON to receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:133
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
-msgstr ""
-
-#. default-message: Turn off
-#: assets/js/WorkflowEditor/DataVersionModal.js:151
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
-msgstr ""
-
-#. default-message: Turn on
-#: assets/js/WorkflowEditor/DataVersionModal.js:156
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
-msgstr ""
-
-#. The tag adds emphasis
-#. default-message: Alerts are <0>off</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:117
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
-msgstr ""
-
-#. The tag adds emphasis
-#. default-message: Alerts are <0>on</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:109
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 
 #. This should be all-caps for styling reasons
@@ -734,17 +702,17 @@ msgid "js.WorkflowEditor.Tabs.NewTabPrompt.createTab.title"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:32
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:33
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.delete"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:27
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:28
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.duplicate"
 msgstr ""
 
 #. default-message: Rename
-#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:22
+#: assets/js/WorkflowEditor/Tabs/TabDropdown.js:23
 msgid "js.WorkflowEditor.Tabs.TabDropdown.menu.rename"
 msgstr ""
 
@@ -756,49 +724,79 @@ msgstr ""
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr ""
 
+#. default-message: When alerts are ON, Workbench emails you each time this step's output changes.
+#: assets/js/WorkflowEditor/step/AlertsModal.js:45
+msgid "js.WorkflowEditor.step.AlertsModal.description"
+msgstr ""
+
+#. default-message: Alerts
+#: assets/js/WorkflowEditor/step/AlertsModal.js:20
+msgid "js.WorkflowEditor.step.AlertsModal.header"
+msgstr ""
+
+#. default-message: Alerts are OFF
+#: assets/js/WorkflowEditor/step/AlertsModal.js:41
+msgid "js.WorkflowEditor.step.AlertsModal.off"
+msgstr ""
+
+#. default-message: Alerts are ON
+#: assets/js/WorkflowEditor/step/AlertsModal.js:40
+msgid "js.WorkflowEditor.step.AlertsModal.on"
+msgstr ""
+
 #. default-message: Learn how to replace this step
 #: assets/js/WorkflowEditor/step/DeprecationNotice.js:11
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr ""
 
 #. default-message: Type a note…
-#: assets/js/WorkflowEditor/step/Step.js:371
+#: assets/js/WorkflowEditor/step/Step.js:367
 msgid "js.WorkflowEditor.step.EditableNotes.placeholder"
 msgstr ""
 
 #. default-message: enter Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:241
+#: assets/js/WorkflowEditor/step/Step.js:237
 msgid "js.WorkflowEditor.step.ZenMode.enter"
 msgstr ""
 
 #. default-message: exit Zen mode
-#: assets/js/WorkflowEditor/step/Step.js:237
+#: assets/js/WorkflowEditor/step/Step.js:233
 msgid "js.WorkflowEditor.step.ZenMode.exit"
 msgstr ""
 
 #. default-message: Email alerts disabled
-#: assets/js/WorkflowEditor/step/Step.js:404
+#: assets/js/WorkflowEditor/step/Step.js:398
 msgid "js.WorkflowEditor.step.alert.disabled"
 msgstr ""
 
 #. default-message: Email alerts enabled
-#: assets/js/WorkflowEditor/step/Step.js:400
+#: assets/js/WorkflowEditor/step/Step.js:394
 msgid "js.WorkflowEditor.step.alert.enabled"
 msgstr ""
 
 #. default-message: Delete
-#: assets/js/WorkflowEditor/step/Step.js:465
+#: assets/js/WorkflowEditor/step/Step.js:455
 msgid "js.WorkflowEditor.step.delete.hoverText"
 msgstr ""
 
 #. default-message: Help for this module
-#: assets/js/WorkflowEditor/step/Step.js:428
+#: assets/js/WorkflowEditor/step/Step.js:418
 msgid "js.WorkflowEditor.step.help.hoverText"
 msgstr ""
 
 #. default-message: Edit Note
-#: assets/js/WorkflowEditor/step/Step.js:446
+#: assets/js/WorkflowEditor/step/Step.js:436
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/WorkflowEditor/step/AlertsModal.js:60
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/WorkflowEditor/step/AlertsModal.js:54
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. default-message: Workbench basics
@@ -890,27 +888,27 @@ msgid "js.Workflows.WorkflowContextMenu.share"
 msgstr ""
 
 #. default-message: Auto updates
-#: assets/js/Workflows/WorkflowList.js:122
+#: assets/js/Workflows/WorkflowList.js:149
 msgid "js.Workflows.WorkflowList.fetchesPerDay"
 msgstr ""
 
 #. default-message: Owner
-#: assets/js/Workflows/WorkflowList.js:110
+#: assets/js/Workflows/WorkflowList.js:130
 msgid "js.Workflows.WorkflowList.owner"
 msgstr ""
 
 #. default-message: Privacy
-#: assets/js/Workflows/WorkflowList.js:113
+#: assets/js/Workflows/WorkflowList.js:139
 msgid "js.Workflows.WorkflowList.privacy"
 msgstr ""
 
 #. default-message: Title
-#: assets/js/Workflows/WorkflowList.js:106
+#: assets/js/Workflows/WorkflowList.js:126
 msgid "js.Workflows.WorkflowList.title"
 msgstr ""
 
 #. default-message: Updated
-#: assets/js/Workflows/WorkflowList.js:132
+#: assets/js/Workflows/WorkflowList.js:159
 msgid "js.Workflows.WorkflowList.updated"
 msgstr ""
 
@@ -977,6 +975,21 @@ msgstr ""
 #. default-message: Permanently delete this workflow?
 #: assets/js/Workflows/WorkflowContextMenu.js:29
 msgid "js.Workflows.delete.permanentyDeleteWarning"
+msgstr ""
+
+#. default-message: Could not save
+#: assets/js/components/Saving.js:11
+msgid "js.components.Saving.failed"
+msgstr ""
+
+#. default-message: Retry
+#: assets/js/components/Saving.js:17
+msgid "js.components.Saving.retry"
+msgstr ""
+
+#. default-message: Saving…
+#: assets/js/components/Saving.js:23
+msgid "js.components.Saving.saving"
 msgstr ""
 
 #. default-message: Copy
@@ -1650,168 +1663,136 @@ msgstr ""
 msgid "js.params.Custom.VersionSelect.DataVersionSelect.versionCount"
 msgstr ""
 
-#. default-message: Edit workflow
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:121
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.editWorkflow"
-msgstr ""
-
-#. default-message: #/day
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:82
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.fetchesPerDay.heading"
-msgstr ""
-
-#. The {1} argument is a tab name
-#. default-message: Step {0} on {1} makes {2} updates per day.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:145
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.otherStep.fetchesPerDay"
-msgstr ""
-
-#. default-message: Here are the steps that count against your limit. Adjust their update times or set them to manual, then click "Retry" above.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:73
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.quotasteps"
-msgstr ""
-
-#. default-message: Need a higher limit? <0>Upgrade</0>
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:68
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestLift"
-msgstr ""
-
-#. The two tags add emphasis
-#. default-message: You're requesting<0>{0}</0>updates per day across all your workflows. Your daily limit is<1>{1}</1>.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:52
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.requestsVsLimit"
-msgstr ""
-
-#. default-message: You asked for this step to make {0} updates per day.
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:136
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisStep.fetchesPerDay"
-msgstr ""
-
-#. default-message: This workflow
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:106
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.thisWorkflow"
-msgstr ""
-
-#. This must be all-caps for styling reasons
-#. default-message: AUTO-UPDATE QUOTA EXCEEDED
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:44
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.title"
-msgstr ""
-
-#. default-message: Workflow
-#: assets/js/params/Custom/VersionSelect/QuotaExceeded.js:87
-msgid "js.params.Custom.VersionSelect.QuotaExceeded.workFlow.heading"
-msgstr ""
-
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:95
+#. default-message: ON
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:76
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.auto"
 msgstr ""
 
 #. default-message: change auto-update settings
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:86
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:68
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.changeUpdateSettings.hoverText"
 msgstr ""
 
 #. The parameter is a time difference (i.e. something like '4h ago'. The tag is
 #. a <time> tag.
 #. default-message: Checked <0>{0}</0>
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:115
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:96
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.lastChecked"
 msgstr ""
 
 #. Appears just after
 #. 'js.params.Custom.VersionSelect.UpdateFrequencySelect.update'
-#. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:103
+#. default-message: OFF
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:84
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.manual"
 msgstr ""
 
-#. default-message: Update
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:80
+#. default-message: Auto update
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelect.js:62
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelect.update"
 msgstr ""
 
-#. default-message: Apply
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:278
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.apply"
+#. default-message: OFF
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:39
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.off"
 msgstr ""
 
-#. default-message: Automatically update this workflow with the newest data (old versions will be saved).
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:203
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.description"
+#. default-message: ON
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:38
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.on"
 msgstr ""
 
-#. Refers to
-#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#. default-message: Auto
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:193
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.auto.label"
-msgstr ""
-
-#. default-message: days
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:243
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.days.option"
-msgstr ""
-
-#. default-message: hours
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:250
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.hours.option"
-msgstr ""
-
-#. default-message: Check for update every
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:209
+#. default-message: Check for new data and update this workflow every:
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:304
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.label"
 msgstr ""
 
-#. default-message: minutes
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:257
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.minutes.option"
+#. default-message: {n,plural,one {day} other {{n,number} days}}
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:69
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nDays"
 msgstr ""
 
-#. default-message: weeks
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:236
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.weeks.option"
+#. default-message: {n,plural,one {hour} other {{n,number} hours}}
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:76
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nHours"
 msgstr ""
 
-#. default-message: Email me when data changes
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:344
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdates.label"
+#. default-message: {n,plural,one {minute} other {{n,number} minutes}}
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:82
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.checkEvery.nMinutes"
+msgstr ""
+
+#. default-message: <0>Tip</0>: Use <1/> notifications on any step to receive an email when data changes.
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:331
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.emailUpdatesTip"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:374
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton"
 msgstr ""
 
 #. default-message: Close
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:354
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:368
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. This should be all-caps for styling reasons
-#. default-message: WORKFLOW UPDATE
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:163
+#. default-message: AUTOMATIC UPDATES
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:266
 msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title"
 msgstr ""
 
-#. default-message: Check for new data manually.
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:326
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.description"
+#. default-message: over limit
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:99
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimit"
 msgstr ""
 
-#. Refers to
-#. 'js.params.Custom.VersionSelect.UpdateFrequencySelectModal.header.title'
-#. default-message: Manual
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:316
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.manual.label"
+#. default-message: Reduce usage elsewhere to allow updates here
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:52
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.overLimitDescription"
 msgstr ""
 
-#. default-message: Retry
-#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:273
-msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.retry"
+#. default-message: upgrade
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:96
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgrade"
+msgstr ""
+
+#. default-message: Upgrade
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:361
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeButton"
+msgstr ""
+
+#. default-message: <0>Upgrade</0> to increase your limit
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:44
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeLink"
+msgstr ""
+
+#. default-message: You're using too many automatic updates. <0>Upgrade</0>
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:286
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.upgradeToUndoDecreases"
+msgstr ""
+
+#. default-message: across all workflows
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:352
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.countDescription"
+msgstr ""
+
+#. default-message: {fetchesPerDay,number} of {limit,number} updates/day
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:342
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.counts"
+msgstr ""
+
+#. default-message: Your usage
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:339
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.usage.title"
+msgstr ""
+
+#. default-message: You're using too many automatic updates. You cannot increase your usage.
+#: assets/js/params/Custom/VersionSelect/UpdateFrequencySelectModal.js:282
+msgid "js.params.Custom.VersionSelect.UpdateFrequencySelectModal.warnCannotUndoDecreases"
 msgstr ""
 
 #. default-message: Loading editor...
@@ -2537,27 +2518,27 @@ msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr ""
 
 #. default-message: Please delete this step: an administrator uninstalled its code.
-#: renderer/execute/step.py:393
+#: renderer/execute/step.py:391
 msgid "py.renderer.execute.step.noModule"
 msgstr ""
 
 #. default-message: Please Add Data before this step.
-#: renderer/execute/step.py:422
+#: renderer/execute/step.py:420
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr ""
 
 #. default-message: The chosen tab depends on this one. Please choose another tab.
-#: renderer/execute/step.py:434
+#: renderer/execute/step.py:432
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr ""
 
 #. default-message: The chosen tab has no output. Please select another one.
-#: renderer/execute/step.py:446
+#: renderer/execute/step.py:444
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr ""
 
 #. default-message: Something unexpected happened. We have been notified and are working to fix it. If this persists, contact us. Error code: {message}
-#: renderer/execute/step.py:489
+#: renderer/execute/step.py:487
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 

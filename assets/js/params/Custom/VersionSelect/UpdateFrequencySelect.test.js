@@ -1,5 +1,4 @@
 /* globals afterEach, beforeEach, describe, expect, it, jest */
-import { mockStore } from '../../../test-utils'
 import ConnectedUpdateFrequencySelect, {
   UpdateFrequencySelect
 } from './UpdateFrequencySelect'
@@ -16,10 +15,7 @@ describe('UpdateFrequencySelect', () => {
       isAnonymous: false, // DELETEME
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
       isAutofetch: false, // start in Manual mode
-      isEmailUpdates: false,
-      fetchInterval: 300,
-      setEmailUpdates: jest.fn(),
-      trySetAutofetch: jest.fn()
+      fetchInterval: 300
     }
 
     let dateSpy
@@ -100,67 +96,6 @@ describe('UpdateFrequencySelect', () => {
         .prop('components')[0]
       expect(time.type).toEqual('time')
       expect(time.props.dateTime).toEqual('2018-05-28T19:00:54.154Z')
-      wrapper.find('a[title="change auto-update settings"]').simulate('click')
-      const modal = wrapper.find('UpdateFrequencySelectModal')
-      expect(modal.prop('fetchInterval')).toBe(3600)
-    })
-
-    it('should not crash on a placeholder', () => {
-      // can this even happen?
-      const store = {
-        getState: () => ({
-          loggedInUser: { email: 'alice@example.com' },
-          workflow: {
-            id: 123,
-            owner_email: 'alice@example.com',
-            steps: ['nonce_212']
-          },
-          steps: {}
-        }),
-        dispatch: jest.fn(),
-        subscribe: jest.fn()
-      }
-      wrapper = mountWithI18n(
-        <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' />
-        </Provider>
-      )
-      wrapper.find('a[title="change auto-update settings"]').simulate('click')
-      expect(true).toBe(true)
-    })
-
-    it('should set autofetch (calling API method)', () => {
-      const api = {
-        trySetStepAutofetch: jest.fn(() =>
-          Promise.resolve({ isAutofetch: true, fetchInterval: 7200 })
-        )
-      }
-      const store = mockStore(sampleState, api)
-      wrapper = mountWithI18n(
-        <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' lastCheckDate={null} />
-        </Provider>
-      )
-      wrapper.find('a[title="change auto-update settings"]').simulate('click')
-      const modal = wrapper.find('UpdateFrequencySelectModal')
-      modal.prop('trySetAutofetch')(true, 7600)
-      expect(api.trySetStepAutofetch).toHaveBeenCalledWith('step-x', true, 7600)
-    })
-
-    it('should dispatch setNotifications (and call the API method)', () => {
-      const api = {
-        setStepNotifications: jest.fn(() => Promise.resolve(null))
-      }
-      const store = mockStore(sampleState, api)
-      wrapper = mountWithI18n(
-        <Provider store={store}>
-          <ConnectedUpdateFrequencySelect stepId={212} stepSlug='step-x' lastCheckDate={null} />
-        </Provider>
-      )
-      wrapper.find('a[title="change auto-update settings"]').simulate('click')
-      const modal = wrapper.find('UpdateFrequencySelectModal')
-      modal.prop('setEmailUpdates')(false)
-      expect(api.setStepNotifications).toHaveBeenCalledWith(212, false)
     })
   })
 })

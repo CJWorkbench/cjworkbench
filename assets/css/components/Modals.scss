@@ -16,10 +16,13 @@
   @include modal-backdrop;
 }
 
+$modal-inner-hpadding: badrem(2.5);
+$modal-inner-vpadding: badrem(2);
+
 @mixin modal-header {
   border-radius: 0.5rem 0.5rem 0 0;
   height: 6rem;
-  padding: 2rem 2.5rem;
+  padding: $modal-inner-vpadding $modal-inner-hpadding;
   background-color: $modal-color;
   border-bottom: 0px;
   display: flex;
@@ -57,35 +60,35 @@
     border: 0;
     border-radius: 0.5rem;
     overflow: hidden; // for box shadow in footer
+  }
 
-    .modal-header {
-      @include modal-header;
+  .modal-header {
+    @include modal-header;
+  }
+
+  .modal-body {
+    background-color: white;
+    padding: $modal-inner-vpadding $modal-inner-hpadding;
+    overflow: auto; // scroll vertically if needed
+    max-height: 70vh;
+
+    .info {
+      @include info-2;
+      color: $brand-text--dark;
     }
 
-    .modal-body {
-      background-color: white;
-      padding: 2rem 2.5rem;
-      overflow: auto; // scroll vertically if needed
-      max-height: 70vh;
+    .code-snippet {
+      margin-top: 0.5rem;
+      background-color: $dark-accent--soft;
+      border-radius: 3px;
+      padding: 1.5rem;
 
-      .info {
-        @include info-2;
+      .chart-embed {
         color: $brand-text--dark;
-      }
-
-      .code-snippet {
-        margin-top: 0.5rem;
-        background-color: $dark-accent--soft;
+        @include content-1;
+        margin-bottom: 0;
         border-radius: 3px;
-        padding: 1.5rem;
-
-        .chart-embed {
-          color: $brand-text--dark;
-          @include content-1;
-          margin-bottom: 0;
-          border-radius: 3px;
-          word-wrap: break-word;
-        }
+        word-wrap: break-word;
       }
     }
   }
@@ -94,7 +97,7 @@
   .modal-footer {
     border-radius: 0 0 0.5rem 0.5rem;
     border-top: 0;
-    padding: 1.5rem 2rem;
+    padding: 1.5rem $modal-inner-hpadding;
     display: flex;
     justify-content: flex-end;
     background-color: $modal-footer;

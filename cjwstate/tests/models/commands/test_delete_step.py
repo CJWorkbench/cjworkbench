@@ -2,9 +2,13 @@ import asyncio
 import datetime
 from unittest.mock import patch
 
-from cjwstate import clientside, commands
-from cjwstate.models import Workflow, Block
+from django.contrib.auth.models import User
+
+from cjworkbench.models.userusage import UserUsage
+from cjwstate import clientside, commands, rabbitmq
+from cjwstate.models.block import Block
 from cjwstate.models.commands import DeleteStep
+from cjwstate.models.workflow import Workflow
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -13,7 +17,8 @@ async def async_noop(*args, **kwargs):
 
 
 class DeleteStepTest(DbTestCase):
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    @patch.object(rabbitmq, "send_user_update_to_user_clients", async_noop)
     def test_delete_lone_step(self):
         workflow = Workflow.create_and_init()  # tab-1
         tab1 = workflow.tabs.first()
@@ -43,7 +48,8 @@ class DeleteStepTest(DbTestCase):
         self.assertEqual(step.is_deleted, True)
         self.assertEqual(list(tab1.live_steps.values_list("slug", "order")), [])
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    @patch.object(rabbitmq, "send_user_update_to_user_clients", async_noop)
     def test_delete_custom_report_blocks(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -131,11 +137,13 @@ class DeleteStepTest(DbTestCase):
         block2.refresh_from_db()
         self.assertEqual(block2.position, 0)
 
-    @patch.object(commands, "websockets_notify")
-    def test_update_workflow_fetches_per_day(self, send_update):
-        send_update.side_effect = async_noop
+    @patch.object(rabbitmq, "send_user_update_to_user_clients")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
+    def test_update_workflow_fetches_per_day(self, send_user_update):
+        send_user_update.side_effect = async_noop
 
-        workflow = Workflow.create_and_init(fetches_per_day=3.0)
+        user = User.objects.create(email="a@example.org")
+        workflow = Workflow.create_and_init(owner_id=user.id, fetches_per_day=3.0)
         tab = workflow.tabs.first()
         tab.steps.create(
             slug="step-1",
@@ -157,10 +165,22 @@ class DeleteStepTest(DbTestCase):
         )
         workflow.refresh_from_db()
         self.assertEqual(workflow.fetches_per_day, 1.0)
+
+        send_user_update.assert_called_with(
+            user.id, clientside.UserUpdate(usage=UserUsage(1.0))
+        )
+        send_user_update.reset_mock()
+
+        # Undo doesn't increase usage (user might not expect it to)
         self.run_with_async_db(commands.undo(workflow.id))
+        send_user_update.assert_not_called()
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 1.0)
+        step2.refresh_from_db()
+        self.assertEqual(step2.auto_update_data, False)
 
 
-#      @patch.object(commands, "websockets_notify")
+#      @patch.object(rabbitmq, "send_update_to_workflow_clients")
 #      def test_clientside_update(self, send_update):
 #         future_none = asyncio.Future()
 #         future_none.set_result(None)

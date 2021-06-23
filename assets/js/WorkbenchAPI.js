@@ -1,4 +1,5 @@
 /* globals fetch */
+import React from 'react'
 import { csrfToken } from './utils'
 
 const apiHeaders = {
@@ -188,6 +189,21 @@ export default class WorkbenchAPI {
     )
   }
 
+  /**
+   * Set whether a Step auto-fetches every `interval` seconds.
+   *
+   * `interval` must be provided even if `isAutofetch` is false. (It's visible
+   * to the user either way.)
+   *
+   * There are three outcomes the caller can expect:
+   *
+   * A. The server responds ok -- but that doesn't mean the user or workflow
+   *    have been updated with the new settings! Sorry, you'll have to wait an
+   *    arbitrary amount of time after. (We expect it'll be very brief in
+   *    practice.)
+   * B. The server response with error 'AutofetchQuotaExceeded'
+   * C. HTTP or network error
+   */
   trySetStepAutofetch (stepSlug, isAutofetch, fetchInterval) {
     return this.websocket.callServerHandler('step.try_set_autofetch', {
       stepSlug,
@@ -315,12 +331,6 @@ export default class WorkbenchAPI {
 
   duplicateWorkflow (workflowIdOrSecretId) {
     return this._post(`/workflows/${workflowIdOrSecretId}/duplicate`, null)
-  }
-
-  clearStepUnseenNotifications (stepId) {
-    return this._callExpectingNull('step.clear_unseen_notifications', {
-      stepId
-    })
   }
 
   importModuleFromGitHub (url) {
@@ -472,4 +482,12 @@ export default class WorkbenchAPI {
   async createStripeBillingPortalSession () {
     return this._post('/stripe/create-billing-portal-session')
   }
+}
+
+const WorkbenchAPIContext = React.createContext()
+WorkbenchAPIContext.displayName = 'WorkbenchAPIContext'
+export { WorkbenchAPIContext }
+
+export function useWorkbenchAPI () {
+  return React.useContext(WorkbenchAPIContext)
 }

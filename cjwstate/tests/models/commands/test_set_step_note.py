@@ -1,7 +1,8 @@
 from unittest.mock import patch
+
 from cjwstate import commands, rabbitmq
-from cjwstate.models import Workflow
 from cjwstate.models.commands import SetStepNote
+from cjwstate.models.workflow import Workflow
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -10,7 +11,7 @@ async def async_noop(*args, **kwargs):
 
 
 @patch.object(rabbitmq, "queue_render", async_noop)
-@patch.object(commands, "websockets_notify", async_noop)
+@patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
 class SetStepNoteTests(DbTestCase):
     def test_change_notes(self):
         workflow = Workflow.create_and_init()

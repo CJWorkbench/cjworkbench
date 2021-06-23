@@ -3,15 +3,16 @@ import pickle
 from collections import namedtuple
 from typing import Any, ContextManager, Dict
 
+import websockets
 from channels.exceptions import DenyConnection
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
-import websockets
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Step, Workflow
+from cjwstate.models.dbutil import lock_user_by_id, query_clientside_user
+from cjwstate.models.step import Step
+from cjwstate.models.workflow import Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjworkbench.models.db_object_cooperative_lock import DbObjectCooperativeLock
 from server import handlers
 from server.serializers import JsonizeContext, jsonize_clientside_update
 
@@ -33,7 +34,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     def _lookup_requested_workflow_with_auth_and_cooperative_lock(
         self,
-    ) -> ContextManager[DbObjectCooperativeLock]:
+    ) -> ContextManager[Workflow]:
         """Either yield the requested workflow, or raise Workflow.DoesNotExist
 
         Workflow.DoesNotExist means "permission denied" or "workflow does not exist".
@@ -55,8 +56,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
     @database_sync_to_async
     def _read_requested_workflow_with_auth(self):
-        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow_lock:
-            return workflow_lock.workflow
+        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow:
+            return workflow
 
     @database_sync_to_async
     def _get_workflow_as_clientside_update(self) -> WorkflowUpdateData:
@@ -64,9 +65,16 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
         Raise Workflow.DoesNotExist if a race deletes the Workflow.
         """
-        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow_lock:
-            workflow = workflow_lock.workflow
+        with self._lookup_requested_workflow_with_auth_and_cooperative_lock() as workflow:
+            if self.scope["user"].is_anonymous:
+                user = None
+            else:
+                user_id = self.scope["user"].id
+                lock_user_by_id(user_id, for_write=False)
+                user = query_clientside_user(user_id)
+
             update = clientside.Update(
+                user=user,
                 workflow=workflow.to_clientside(),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
@@ -88,6 +96,14 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             self.workflow_channel_name, self.channel_name
         )
         logger.debug("Added to channel %s", self.workflow_channel_name)
+
+        if self.scope["user"].is_authenticated:
+            self.user_channel_name = "user-%d" % self.scope["user"].id
+            await self.channel_layer.group_add(
+                self.user_channel_name, self.channel_name
+            )
+            logger.debug("Added to channel %s", self.user_channel_name)
+
         await self.accept()
 
         # Solve a race:
@@ -98,7 +114,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         # 4. User connects over Websockets
         #
         # Expected results: user sees completed render
-        await self.send_whole_workflow_to_client()
+        await self._send_whole_workflow_to_client()
 
     async def disconnect(self, code):
         if hasattr(self, "workflow_channel_name"):
@@ -106,8 +122,13 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 self.workflow_channel_name, self.channel_name
             )
             logger.debug("Discarded from channel %s", self.workflow_channel_name)
+        if hasattr(self, "user_channel_name"):
+            await self.channel_layer.group_discard(
+                self.user_channel_name, self.channel_name
+            )
+            logger.debug("Discarded from channel %s", self.user_channel_name)
 
-    async def send_whole_workflow_to_client(self):
+    async def _send_whole_workflow_to_client(self):
         try:
             update, delta_id = await self._get_workflow_as_clientside_update()
         except Workflow.DoesNotExist:
@@ -131,20 +152,17 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             await rabbitmq.queue_render(self.workflow_id, delta_id)
 
     async def send_pickled_update(self, message: Dict[str, Any]) -> None:
-        # It's a bit of a security concern that we use pickle to send
-        # dataclasses, through RabbitMQ, as opposed to protobuf. It's also
-        # inefficient and makes for races when deploying new versions. But
-        # it's _so_ much less code!  Let's only add complexity if we detect
-        # a problem.
+        # It's a bit ugly that we use pickle (as opposed to protobuf) to send
+        # through RabbitMQ. It's also inefficient and makes races when deploying
+        # new versions. And security-wise, we're vulnerable to "AMQP injection"
+        # attacks (arbitrary code execution if someone controls RabbitMQ). But
+        # it's _so_ much less code! So there we have it.
         await self.send_update(pickle.loads(message["pickled_update"]))
 
     async def send_update(self, update: clientside.Update) -> None:
         logger.debug("Send update to Workflow %d", self.workflow_id)
         module_zipfiles = await _load_latest_modules()
         ctx = JsonizeContext(
-            user=self.scope["user"],
-            user_profile=None,  # [2021-02-05] no updates read it
-            session=self.scope["session"],
             locale_id=self.scope["locale_id"],
             module_zipfiles=module_zipfiles,
         )

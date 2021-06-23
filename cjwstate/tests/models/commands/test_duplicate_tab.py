@@ -16,7 +16,7 @@ async def async_noop(*args, **kwargs):
 
 class DuplicateTabTest(DbTestCase):
     @patch.object(rabbitmq, "queue_render")
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_duplicate_empty_tab(self, send_update, queue_render):
         send_update.side_effect = async_noop
         workflow = Workflow.create_and_init()
@@ -97,7 +97,7 @@ class DuplicateTabTest(DbTestCase):
         queue_render.assert_not_called()
 
     @patch.object(rabbitmq, "queue_render")
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_duplicate_nonempty_unrendered_tab(self, send_update, queue_render):
         send_update.side_effect = async_noop
         queue_render.side_effect = async_noop
@@ -185,7 +185,7 @@ class DuplicateTabTest(DbTestCase):
         queue_render.assert_called_with(workflow.id, cmd.id)
 
     @patch.object(rabbitmq, "queue_render")
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_duplicate_nonempty_rendered_tab(self, send_update, queue_render):
         send_update.side_effect = async_noop
         queue_render.side_effect = async_noop
@@ -239,7 +239,7 @@ class DuplicateTabTest(DbTestCase):
             )
 
     @patch.object(rabbitmq, "queue_render", async_noop)
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_position_after_tab(self):
         workflow = Workflow.create_and_init()
         tab1 = workflow.tabs.first()

@@ -1,9 +1,11 @@
 import asyncio
+import datetime
 from unittest.mock import patch
 
-from cjwstate import clientside, commands
-from cjwstate.models import Block, Workflow
+from cjwstate import clientside, commands, rabbitmq
+from cjwstate.models.block import Block
 from cjwstate.models.commands import DeleteTab
+from cjwstate.models.workflow import Workflow
 from cjwstate.tests.utils import DbTestCase
 
 
@@ -12,7 +14,7 @@ async def async_noop(*args, **kwargs):
 
 
 class DeleteTabTest(DbTestCase):
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete_tab(self):
         workflow = Workflow.create_and_init()  # tab-1
         tab2 = workflow.tabs.create(position=1, slug="tab-2")
@@ -44,7 +46,7 @@ class DeleteTabTest(DbTestCase):
             [("tab-1", 0), ("tab-3", 1)],
         )
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete_tab_before_selected_position_changes_position(self):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         tab1 = workflow.tabs.first()
@@ -61,7 +63,7 @@ class DeleteTabTest(DbTestCase):
         # On un-delete, we select the un-deleted tab
         self.assertEqual(workflow.selected_tab_position, 0)
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete_tab_after_selected_position_ignores_position(self):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         workflow.tabs.create(position=1, slug="tab-2")
@@ -78,7 +80,7 @@ class DeleteTabTest(DbTestCase):
         # On un-delete, we select the un-deleted tab
         self.assertEqual(workflow.selected_tab_position, 2)
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete_last_tab(self):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         tab2 = workflow.tabs.create(position=1)
@@ -97,7 +99,7 @@ class DeleteTabTest(DbTestCase):
         tab2.refresh_from_db()
         self.assertEqual(tab2.is_deleted, False)
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete_tab_0(self):
         workflow = Workflow.create_and_init(selected_tab_position=0)
         tab1 = workflow.tabs.first()
@@ -109,7 +111,7 @@ class DeleteTabTest(DbTestCase):
         workflow.refresh_from_db()
         self.assertEqual(workflow.selected_tab_position, 0)
 
-    @patch.object(commands, "websockets_notify", async_noop)
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_delete_last_tab_noop(self):
         workflow = Workflow.create_and_init(selected_tab_position=1)
         tab1 = workflow.tabs.first()
@@ -122,7 +124,51 @@ class DeleteTabTest(DbTestCase):
         tab1.refresh_from_db()
         self.assertEqual(tab1.is_deleted, False)
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_update_workflow_fetches_per_day(self, send_update):
+        send_update.side_effect = async_noop
+
+        workflow = Workflow.create_and_init(fetches_per_day=7.0)
+        tab1 = workflow.tabs.first()
+        step1 = tab1.steps.create(
+            slug="step-1",
+            order=0,
+            auto_update_data=True,
+            update_interval=86400,
+            next_update=datetime.datetime.now(),
+        )
+        step2 = tab1.steps.create(
+            slug="step-2",
+            order=1,
+            auto_update_data=True,
+            update_interval=43200,
+            next_update=datetime.datetime.now(),
+        )
+        tab2 = workflow.tabs.create(position=1, slug="tab-2")
+        tab2.steps.create(
+            slug="step-3",
+            order=0,
+            auto_update_data=True,
+            update_interval=21600,
+            next_update=datetime.datetime.now(),
+        )
+
+        self.run_with_async_db(
+            commands.do(DeleteTab, workflow_id=workflow.id, tab=tab1)
+        )
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 4.0)
+
+        # Undo doesn't increase usage (user might not expect it to)
+        self.run_with_async_db(commands.undo(workflow.id))
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.fetches_per_day, 4.0)
+        step1.refresh_from_db()
+        self.assertEqual(step1.auto_update_data, False)
+        step2.refresh_from_db()
+        self.assertEqual(step2.auto_update_data, False)
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_clientside_update(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -144,7 +190,7 @@ class DeleteTabTest(DbTestCase):
         self.assertEqual(list(delta2.tabs.keys()), ["tab-2"])
         self.assertFalse(delta2.clear_tab_slugs)
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_custom_report_table(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)
@@ -183,7 +229,7 @@ class DeleteTabTest(DbTestCase):
         self.assertEqual(delta2.blocks, {"block-2": clientside.TableBlock("tab-2")})
         self.assertEqual(delta2.clear_block_slugs, frozenset())
 
-    @patch.object(commands, "websockets_notify")
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
     def test_delete_custom_report_chart(self, send_update):
         future_none = asyncio.Future()
         future_none.set_result(None)

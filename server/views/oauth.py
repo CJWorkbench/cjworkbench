@@ -94,8 +94,7 @@ def start_authorize(request: HttpRequest, workflow_id: int, step_id: int, param:
             request.user,
             request.session,
             pk=workflow_id,
-        ) as workflow_lock:
-            workflow = workflow_lock.workflow
+        ) as workflow:
             # raises Step.DoesNotExist, ModuleVersion.DoesNotExist
             _, service = _load_step_and_service(workflow, step_id, param)
     except Workflow.DoesNotExist as err:
@@ -169,8 +168,7 @@ def finish_authorize(request: HttpRequest) -> HttpResponse:
             request.user,
             request.session,
             pk=scope.workflow_id,
-        ) as workflow_lock:
-            workflow = workflow_lock.workflow
+        ) as workflow:
             # raises Step.DoesNotExist, ModuleVersion.DoesNotExist
             step, _ = _load_step_and_service(workflow, scope.step_id, scope.param)
             step.secrets = {

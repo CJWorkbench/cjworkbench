@@ -29,9 +29,9 @@ def delete_stale_lesson_workflows() -> None:
 
     for workflow_id in to_delete:
         try:
-            with Workflow.lookup_and_cooperative_lock(id=workflow_id) as lock:
+            with Workflow.lookup_and_cooperative_lock(id=workflow_id) as workflow:
                 logger.info("Deleting workflow %d", workflow_id)
-                lock.workflow.delete()
+                workflow.delete()
         except Workflow.DoesNotExist:
             logger.info(
                 "Tried to delete workflow %d, but it was deleted before we could",
