@@ -10,8 +10,8 @@ import { Trans } from '@lingui/macro'
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
 let _formatDateUTCforTesting = false
-export function formatDateUTCForTesting () {
-  _formatDateUTCforTesting = true
+export function formatDateUTCForTesting (bool) {
+  _formatDateUTCforTesting = bool
 }
 
 /**
@@ -22,7 +22,6 @@ class FetchVersion extends PureComponent {
     id: PropTypes.string.isRequired, // version ID
     date: PropTypes.instanceOf(Date).isRequired, // version date
     isSelected: PropTypes.bool.isRequired,
-    isSeen: PropTypes.bool.isRequired, // has user selected this version ever
     onSelect: PropTypes.func.isRequired // func(versionId) => undefined
   }
 
@@ -33,13 +32,10 @@ class FetchVersion extends PureComponent {
   }
 
   render () {
-    const { id, date, isSeen, isSelected } = this.props
-
-    let className = isSeen ? 'seen' : 'unseen'
-    if (isSelected) className += ' selected'
+    const { id, date, isSelected } = this.props
 
     return (
-      <label className={className}>
+      <label className={isSelected ? 'selected' : ''}>
         <input
           type='radio'
           name='data-version'
@@ -54,6 +50,7 @@ class FetchVersion extends PureComponent {
             year: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
+            timeZoneName: 'short',
             hour12: true,
             timeZone: _formatDateUTCforTesting ? 'UTC' : undefined
           })}
@@ -69,8 +66,7 @@ export class DataVersionModal extends PureComponent {
     fetchVersions: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
-        date: PropTypes.instanceOf(Date).isRequired,
-        isSeen: PropTypes.bool.isRequired
+        date: PropTypes.instanceOf(Date).isRequired
       })
     ).isRequired,
     selectedFetchVersionId: PropTypes.string, // null for no selection
@@ -87,9 +83,7 @@ export class DataVersionModal extends PureComponent {
   }
 
   handleSubmit = () => {
-    if (
-      this.state.selectedFetchVersionId !== this.props.selectedFetchVersionId
-    ) {
+    if (this.state.selectedFetchVersionId !== this.props.selectedFetchVersionId) {
       const { stepId, onChangeFetchVersionId } = this.props
       onChangeFetchVersionId(stepId, this.state.selectedFetchVersionId)
     }
@@ -101,12 +95,7 @@ export class DataVersionModal extends PureComponent {
     const { fetchVersions, onClose } = this.props
 
     return (
-      <Modal
-        className='data-versions-modal'
-        isOpen
-        fade={false}
-        toggle={onClose}
-      >
+      <Modal className='data-versions-modal' isOpen toggle={onClose}>
         <ModalHeader toggle={onClose}>
           <Trans id='js.WorkflowEditor.DataVersionModal.ModalHeader'>
             Data Versions
@@ -146,17 +135,15 @@ export class DataVersionModal extends PureComponent {
 }
 
 /**
- * Parse `step.versions.versions` Array of { id, date, isSeen }.
+ * Parse `step.versions.versions` Array of { id, date }.
  *
- * step.versions.versions is an Array of [ dateString, isSeen ]
- * pairs.
+ * step.versions.versions is an Array of [ dateString ] arrays.
  */
 const getFetchVersions = memoize(versions => {
   return versions.map(version => {
-    const [id, isSeen] = version
+    const [id] = version
     return {
       id,
-      isSeen,
       date: new Date(id)
     }
   })

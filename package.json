@@ -94,6 +94,7 @@
       "./setupJest.js"
     ],
     "restoreMocks": true,
+    "slowTestThreshold": 1,
     "transformIgnorePatterns": [
       "node_modules/(?!(@popperjs)/)"
     ],

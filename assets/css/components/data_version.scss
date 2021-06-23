@@ -39,15 +39,6 @@
         background: $brand-workspace;
       }
 
-      &.unseen {
-        &::after {
-          @extend .icon;
-          content: '\e917'; // .icon-notification
-          position: relative;
-          top: 0.3rem;
-        }
-      }
-
       input {
         display: none;
       }
