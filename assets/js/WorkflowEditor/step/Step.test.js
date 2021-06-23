@@ -1,7 +1,7 @@
 /* globals describe, it, expect, jest, beforeEach, afterEach */
 import { act } from 'react-dom/test-utils'
 import ConnectedStep, { Step } from './Step'
-import DataVersionModal from '../DataVersionModal'
+import AlertsModal from './AlertsModal'
 import { mockStore } from '../../test-utils'
 import { shallowWithI18n, mountWithI18n } from '../../i18n/test-utils'
 import deepEqual from 'fast-deep-equal'
@@ -32,6 +32,7 @@ describe('Step, not read-only mode', () => {
     notes: '',
     is_collapsed: false, // false because we render more, so better test
     is_busy: false,
+    notifications: false,
     last_relevant_delta_id: 11,
     cached_render_result_delta_id: 11,
     output_status: 'ok',
@@ -179,11 +180,11 @@ describe('Step, not read-only mode', () => {
 
     w.find('button.notifications').simulate('click')
     expect(w.instance().props.clearNotifications).toHaveBeenCalledWith(999)
-    expect(w.find(DataVersionModal).length).toBe(1)
+    expect(w.find(AlertsModal).length).toBe(1)
 
-    w.find(DataVersionModal).prop('onClose')()
+    w.find(AlertsModal).prop('onClose')()
     w.update()
-    expect(w.find(DataVersionModal).length).toBe(0)
+    expect(w.find(AlertsModal).length).toBe(0)
   })
 
   it('hides notifications when !isOwner', () => {

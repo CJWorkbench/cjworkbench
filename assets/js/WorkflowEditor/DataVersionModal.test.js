@@ -28,13 +28,11 @@ describe('DataVersionModal', () => {
   const wrapper = extraProps => {
     _wrapper = mountWithI18n(
       <DataVersionModal
-        fetchStepId={123}
         fetchStepName='fetch'
         fetchVersions={Versions}
         selectedFetchVersionId='1000'
-        stepId={124}
+        stepId={123}
         isAnonymous={false}
-        notificationsEnabled={false}
         onClose={jest.fn()}
         onChangeFetchVersionId={jest.fn()}
         onChangeNotificationsEnabled={jest.fn()}
@@ -83,54 +81,11 @@ describe('DataVersionModal', () => {
     expect(w.prop('onClose')).toHaveBeenCalled()
   })
 
-  it('enables/disables notifications', () => {
-    const w = wrapper()
-
-    w.find('input[name="notifications-enabled"]').simulate('change', {
-      target: { checked: true }
-    })
-    expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(
-      124,
-      true
-    )
-    w.setProps({ notificationsEnabled: true }) // simulate onChangeNotificationsEnabled()
-    expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(
-      true
-    )
-
-    w.find('input[name="notifications-enabled"]').simulate('change', {
-      target: { checked: false }
-    })
-    expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(
-      124,
-      true
-    )
-    w.setProps({ notificationsEnabled: false }) // simulate onChangeNotificationsEnabled()
-    expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(
-      false
-    )
-  })
-
-  it('omits notifications settings when isAnonymous', () => {
-    const w = wrapper({ isAnonymous: true })
-    expect(w.find('form.notifications').length).toBe(0)
-  })
-
   describe('mapStateToProps', () => {
     // Assume this modal is never shown if there is no fetch module
     const IdealState = {
-      selectedPane: {
-        pane: 'tab',
-        tabSlug: 'tab-11'
-      },
-      workflow: {
-      },
-      tabs: {
-        'tab-11': { step_ids: [123, 124] }
-      },
       modules: {
-        fetch: { name: 'Fetch Stuff', loads_data: true },
-        filter: { name: 'Filter Stuff', loads_data: false }
+        fetch: { name: 'Fetch Stuff', loads_data: true }
       },
       steps: {
         123: {
@@ -144,12 +99,6 @@ describe('DataVersionModal', () => {
             ],
             selected: '2018-06-22T20:09:41.649Z'
           }
-        },
-        124: {
-          id: 124,
-          module: 'filter',
-          name: 'Filter Stuff',
-          notifications: true
         }
       }
     }
@@ -158,18 +107,11 @@ describe('DataVersionModal', () => {
       const store = configureMockStore([])(state)
       _wrapper = mountWithI18n(
         <Provider store={store}>
-          <ConnectedDataVersionModal stepId={124} onClose={jest.fn()} />
+          <ConnectedDataVersionModal stepId={123} onClose={jest.fn()} />
         </Provider>
       )
       return _wrapper
     }
-
-    it('should find notificationsEnabled', () => {
-      const w = connectedWrapper(IdealState)
-      expect(
-        w.find('input[name="notifications-enabled"]').prop('checked')
-      ).toBe(true)
-    })
 
     // it('should set fetchModuleName', () => {
     //  const w = connectedWrapper(IdealState)

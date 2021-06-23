@@ -3,14 +3,9 @@ import { i18n } from '@lingui/core'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/Modal'
 import memoize from 'memoize-one'
-import {
-  setDataVersionAction,
-  setStepNotificationsAction
-} from '../workflow-reducer'
+import { setDataVersionAction } from '../workflow-reducer'
 import { connect } from 'react-redux'
-import { createSelector } from 'reselect'
 import { Trans } from '@lingui/macro'
-import selectIsAnonymous from '../selectors/selectIsAnonymous'
 
 // Always print as if our time zone is UTC, when testing
 // (all other solutions are worse, including env vars and pre-adjusted test data)
@@ -68,106 +63,9 @@ class FetchVersion extends PureComponent {
   }
 }
 
-/**
- * Form that calls onSubmit(wantNotifications).
- *
- * Implemented as a checkbox with an onChange event. ([2018-06-22] it _looks_
- * like a <button>, but it's a checkbox in a <label>.)
- */
-class NotificationsForm extends PureComponent {
-  static propTypes = {
-    notificationsEnabled: PropTypes.bool.isRequired,
-    onSubmit: PropTypes.func.isRequired // func(bool) => undefined
-  }
-
-  handleChange = ev => {
-    this.props.onSubmit(ev.target.checked) // should change the state
-  }
-
-  handleSubmit = ev => {
-    ev.preventDefault()
-    ev.stopPropagation()
-  }
-
-  render () {
-    const checked = this.props.notificationsEnabled
-    const className = checked
-      ? 'notifications-enabled'
-      : 'notifications-disabled'
-    const iconAlert = checked ? 'icon-notification' : 'icon-no-notification'
-
-    return (
-      <form
-        onSubmit={this.handleSubmit}
-        className={`notifications ${className}`}
-      >
-        <div className='text'>
-          <p className='status'>
-            <i className={`icon ${iconAlert}`} />
-            {checked
-              ? (
-                <Trans
-                  id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn'
-                  comment='The tag adds emphasis'
-                >
-                  Alerts are <strong>on</strong>
-                </Trans>
-                )
-              : (
-                <Trans
-                  id='js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff'
-                  comment='The tag adds emphasis'
-                >
-                  Alerts are <strong>off</strong>
-                </Trans>
-                )}
-          </p>
-          <p className='description'>
-            {checked
-              ? (
-                <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange'>
-                  You will receive an email if the output of this module changes
-                </Trans>
-                )
-              : (
-                <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn'>
-                  Turn alerts ON to receive an email if the output of this module
-                  changes
-                </Trans>
-                )}
-          </p>
-        </div>
-        <div className='options'>
-          <label>
-            <input
-              name='notifications-enabled'
-              type='checkbox'
-              checked={checked}
-              onChange={this.handleChange}
-            />
-            <span className='action'>
-              {checked
-                ? (
-                  <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff'>
-                    Turn off
-                  </Trans>
-                  )
-                : (
-                  <Trans id='js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn'>
-                    Turn on
-                  </Trans>
-                  )}
-            </span>
-          </label>
-        </div>
-      </form>
-    )
-  }
-}
-
 export class DataVersionModal extends PureComponent {
   static propTypes = {
-    fetchStepId: PropTypes.number.isRequired,
+    stepId: PropTypes.number.isRequired,
     fetchVersions: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -176,21 +74,12 @@ export class DataVersionModal extends PureComponent {
       })
     ).isRequired,
     selectedFetchVersionId: PropTypes.string, // null for no selection
-    stepId: PropTypes.number.isRequired,
-    isAnonymous: PropTypes.bool.isRequired,
-    notificationsEnabled: PropTypes.bool.isRequired, // whether enabled on selectedStep
     onClose: PropTypes.func.isRequired, // func() => undefined
-    onChangeFetchVersionId: PropTypes.func.isRequired, // func(stepId, versionId) => undefined
-    onChangeNotificationsEnabled: PropTypes.func.isRequired // func(stepId, isEnabled) => undefined
+    onChangeFetchVersionId: PropTypes.func.isRequired // func(stepId, versionId) => undefined
   }
 
   state = {
     selectedFetchVersionId: this.props.selectedFetchVersionId
-  }
-
-  handleChangeNotificationsEnabled = isEnabled => {
-    const { onChangeNotificationsEnabled, stepId } = this.props
-    onChangeNotificationsEnabled(stepId, isEnabled)
   }
 
   handleSelectSelectedFetchVersionId = selectedFetchVersionId => {
@@ -201,20 +90,15 @@ export class DataVersionModal extends PureComponent {
     if (
       this.state.selectedFetchVersionId !== this.props.selectedFetchVersionId
     ) {
-      const { fetchStepId, onChangeFetchVersionId } = this.props
-      onChangeFetchVersionId(fetchStepId, this.state.selectedFetchVersionId)
+      const { stepId, onChangeFetchVersionId } = this.props
+      onChangeFetchVersionId(stepId, this.state.selectedFetchVersionId)
     }
 
     this.props.onClose()
   }
 
   render () {
-    const {
-      fetchVersions,
-      onClose,
-      isAnonymous,
-      notificationsEnabled
-    } = this.props
+    const { fetchVersions, onClose } = this.props
 
     return (
       <Modal
@@ -247,10 +131,7 @@ export class DataVersionModal extends PureComponent {
           <div className='actions'>
             <button
               name='load'
-              disabled={
-                this.state.selectedFetchVersionId ===
-                this.props.selectedFetchVersionId
-              }
+              disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
               onClick={this.handleSubmit}
             >
               <Trans id='js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton'>
@@ -258,52 +139,11 @@ export class DataVersionModal extends PureComponent {
               </Trans>
             </button>
           </div>
-          {isAnonymous
-            ? null
-            : (
-              <NotificationsForm
-                notificationsEnabled={notificationsEnabled}
-                onSubmit={this.handleChangeNotificationsEnabled}
-              />
-              )}
         </ModalFooter>
       </Modal>
     )
   }
 }
-
-const getTabs = ({ tabs }) => tabs
-const getSelectedPane = ({ selectedPane }) => selectedPane
-const getSelectedTab = createSelector(
-  [getTabs, getSelectedPane],
-  (tabs, selectedPane) => {
-    return tabs[selectedPane.tabSlug]
-  }
-)
-const getSteps = ({ steps }) => steps
-const getSelectedTabSteps = createSelector(
-  [getSelectedTab, getSteps],
-  (tab, steps) => {
-    return tab.step_ids.map(id => steps[String(id)] || null)
-  }
-)
-const getModules = ({ modules }) => modules
-/**
- * Find first (Step, Module) that has a `.loads_data` ModuleVersion.
- */
-const getFetchStep = createSelector(
-  [getSelectedTabSteps, getModules],
-  (steps, modules) => {
-    for (const step of steps) {
-      const module = modules[step.module] || {}
-      if (module.loads_data) {
-        return step
-      }
-    }
-
-    return null
-  }
-)
 
 /**
  * Parse `step.versions.versions` Array of { id, date, isSeen }.
@@ -323,24 +163,14 @@ const getFetchVersions = memoize(versions => {
 })
 
 function mapStateToProps (state, { stepId }) {
-  const fetchStep = getFetchStep(state)
   const step = state.steps[String(stepId)]
-  const notificationsEnabled = step ? step.notifications : false
 
   return {
-    fetchStepId: fetchStep ? fetchStep.id : null,
-    fetchVersions: fetchStep
-      ? getFetchVersions(fetchStep.versions.versions || [])
-      : null,
-    selectedFetchVersionId: fetchStep ? fetchStep.versions.selected : null,
-    isAnonymous: selectIsAnonymous(state),
-    notificationsEnabled
+    fetchVersions: getFetchVersions(step.versions.versions || []),
+    selectedFetchVersionId: step.versions.selected
   }
 }
 
-const mapDispatchToProps = {
-  onChangeFetchVersionId: setDataVersionAction,
-  onChangeNotificationsEnabled: setStepNotificationsAction
-}
+const mapDispatchToProps = { onChangeFetchVersionId: setDataVersionAction }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataVersionModal)

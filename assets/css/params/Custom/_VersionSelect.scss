@@ -183,64 +183,18 @@
     flex-direction: row;
     align-items: center;
 
-    label {
-      cursor: pointer;
-      margin: 0;
-    }
-
     * {
       display: inline-block;
     }
 
     div.toggle {
-      $toggle-size: rem(1);
-      $toggle-border: 1px;
+      @include toggle-slider;
       width: $indent;
-
-      // https://codepen.io/mburnette/pen/LxNxNg
-      input {
-        height: 0;
-        width: 0;
-        visibility: hidden;
-        position: absolute;
-      }
-
-      label {
-        width: 2 * $toggle-size;
-        height: $toggle-size;
-        position: relative;
-        display: block;
-        background: $text-muted;
-        border-radius: $toggle-size / 2;
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: $toggle-border;
-          left: $toggle-border;
-          width: calc(#{$toggle-size} - #{2 * $toggle-border});
-          height: calc(#{$toggle-size} - #{2 * $toggle-border});
-          background: white;
-          border-radius: calc(#{$toggle-size / 2} - #{$toggle-border / 2});
-          transition: 0.1s;
-        }
-      }
-
-      input:checked + label {
-        background: $primary;
-
-        &::after {
-          left: calc(100% - #{2 * $toggle-border});
-          transform: translateX(-100%);
-        }
-      }
-
-      label:active::after {
-        width: 1.25 * $toggle-size;
-      }
     }
 
     label.onoff {
+      cursor: pointer;
+      margin: 0;
       @include title-2;
     }
 

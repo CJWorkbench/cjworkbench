@@ -579,45 +579,13 @@ msgid "js.WorkflowEditor.AddData.button"
 msgstr ""
 
 #. default-message: Load
-#: assets/js/WorkflowEditor/DataVersionModal.js:256
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr ""
 
 #. default-message: Data Versions
-#: assets/js/WorkflowEditor/DataVersionModal.js:227
+#: assets/js/WorkflowEditor/DataVersionModal.js:111
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
-msgstr ""
-
-#. default-message: You will receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:128
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
-msgstr ""
-
-#. default-message: Turn alerts ON to receive an email if the output of this module changes
-#: assets/js/WorkflowEditor/DataVersionModal.js:133
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
-msgstr ""
-
-#. default-message: Turn off
-#: assets/js/WorkflowEditor/DataVersionModal.js:151
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
-msgstr ""
-
-#. default-message: Turn on
-#: assets/js/WorkflowEditor/DataVersionModal.js:156
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
-msgstr ""
-
-#. The tag adds emphasis
-#. default-message: Alerts are <0>off</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:117
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
-msgstr ""
-
-#. The tag adds emphasis
-#. default-message: Alerts are <0>on</0>
-#: assets/js/WorkflowEditor/DataVersionModal.js:109
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
 msgstr ""
 
 #. This should be all-caps for styling reasons
@@ -756,6 +724,26 @@ msgstr ""
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr ""
 
+#. default-message: When alerts are ON, Workbench emails you each time this step's output changes.
+#: assets/js/WorkflowEditor/step/AlertsModal.js:45
+msgid "js.WorkflowEditor.step.AlertsModal.description"
+msgstr ""
+
+#. default-message: Alerts
+#: assets/js/WorkflowEditor/step/AlertsModal.js:20
+msgid "js.WorkflowEditor.step.AlertsModal.header"
+msgstr ""
+
+#. default-message: Alerts are OFF
+#: assets/js/WorkflowEditor/step/AlertsModal.js:41
+msgid "js.WorkflowEditor.step.AlertsModal.off"
+msgstr ""
+
+#. default-message: Alerts are ON
+#: assets/js/WorkflowEditor/step/AlertsModal.js:40
+msgid "js.WorkflowEditor.step.AlertsModal.on"
+msgstr ""
+
 #. default-message: Learn how to replace this step
 #: assets/js/WorkflowEditor/step/DeprecationNotice.js:11
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
@@ -799,6 +787,16 @@ msgstr ""
 #. default-message: Edit Note
 #: assets/js/WorkflowEditor/step/Step.js:446
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/WorkflowEditor/step/AlertsModal.js:60
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton"
+msgstr ""
+
+#. default-message: Close
+#: assets/js/WorkflowEditor/step/AlertsModal.js:54
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton.hoverText"
 msgstr ""
 
 #. default-message: Workbench basics

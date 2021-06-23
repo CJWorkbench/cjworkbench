@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import propTypes from '../../propTypes'
-import DataVersionModal from '../DataVersionModal'
+import AlertsModal from './AlertsModal'
 import ErrorBoundary from '../../ErrorBoundary'
 import ParamsForm from '../../params/ParamsForm'
 import EditableNotes from '../../EditableNotes'
@@ -105,7 +105,7 @@ export class Step extends React.PureComponent {
 
   state = {
     editedNotes: null, // when non-null, input is focused
-    isDataVersionModalOpen: false,
+    isAlertsModalOpen: false,
     edits: {} // idName => newValue
   }
 
@@ -119,11 +119,11 @@ export class Step extends React.PureComponent {
     return Object.keys(this.state.edits).length > 0
   }
 
-  handleClickNotification = () => {
+  handleClickAlert = () => {
     this.props.clearNotifications(this.props.step.id)
 
     this.setState({
-      isDataVersionModalOpen: true
+      isAlertsModalOpen: true
     })
   }
 
@@ -211,9 +211,9 @@ export class Step extends React.PureComponent {
     this.setState({ editedNotes: null })
   }
 
-  handleCloseDataVersionModal = () => {
+  handleCloseAlertsModal = () => {
     this.setState({
-      isDataVersionModalOpen: false
+      isAlertsModalOpen: false
     })
   }
 
@@ -410,7 +410,7 @@ export class Step extends React.PureComponent {
         <button
           title={title}
           className={className}
-          onClick={this.handleClickNotification}
+          onClick={this.handleClickAlert}
         >
           <i
             className={` ${
@@ -476,12 +476,13 @@ export class Step extends React.PureComponent {
 
     const moduleIconClassName = 'icon-' + moduleIcon + ' module-icon'
 
-    let maybeDataVersionModal = null
-    if (this.state.isDataVersionModalOpen) {
-      maybeDataVersionModal = (
-        <DataVersionModal
+    let maybeAlertsModal = null
+    if (this.state.isAlertsModalOpen) {
+      maybeAlertsModal = (
+        <AlertsModal
           stepId={step.id}
-          onClose={this.handleCloseDataVersionModal}
+          checked={step.notifications}
+          onClose={this.handleCloseAlertsModal}
         />
       )
     }
@@ -598,7 +599,7 @@ export class Step extends React.PureComponent {
             </div>
           </div>
         </div>
-        {maybeDataVersionModal}
+        {maybeAlertsModal}
       </div>
     )
   }

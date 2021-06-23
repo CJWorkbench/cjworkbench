@@ -515,41 +515,13 @@ msgstr "Αναζήτηση…"
 msgid "js.WorkflowEditor.AddData.button"
 msgstr "ΠΡΟΣΘΗΚΗ ΔΕΔΟΜΕΝΩΝ"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:256
+#: assets/js/WorkflowEditor/DataVersionModal.js:137
 msgid "js.WorkflowEditor.DataVersionModal.ModalFooter.actions.loadButton"
 msgstr "Φόρτωση"
 
-#: assets/js/WorkflowEditor/DataVersionModal.js:227
+#: assets/js/WorkflowEditor/DataVersionModal.js:111
 msgid "js.WorkflowEditor.DataVersionModal.ModalHeader"
 msgstr "Εκδόσεις δεδομένων"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:128
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.emailOnOutputChange"
-msgstr "Θα πάρετε μήνυμα ηλ. ταχυδρομείου εάν αλλάξει η έξοδος αυτής της μονάδας"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:133
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
-msgstr ""
-"Ενεργοποιήστε τις ειδοποιήσεις για να παίρνετε μήνυμα ηλ. ταχυδρομείου "
-"όταν αλλάζει η έξοδος αυτής της μονάδας"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:151
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOff"
-msgstr "Απενεργοποίηση"
-
-#: assets/js/WorkflowEditor/DataVersionModal.js:156
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
-msgstr "Ενεργοποίηση"
-
-#. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:117
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
-msgstr "Οι ειδοποιήσεις είναι <0>απενεργοποιημένες</0>"
-
-#. The tag adds emphasis
-#: assets/js/WorkflowEditor/DataVersionModal.js:109
-msgid "js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOn"
-msgstr "Οι ειδοποιήσεις είναι <0>ενεργοποιημένες</0>"
 
 #. This should be all-caps for styling reasons
 #: assets/js/WorkflowEditor/ModuleSearch/Button.js:42
@@ -663,6 +635,22 @@ msgstr "Μετονομασία"
 msgid "js.WorkflowEditor.Tabs.create.defaultPrefix"
 msgstr "Καρτέλα"
 
+#: assets/js/WorkflowEditor/step/AlertsModal.js:45
+msgid "js.WorkflowEditor.step.AlertsModal.description"
+msgstr ""
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:20
+msgid "js.WorkflowEditor.step.AlertsModal.header"
+msgstr ""
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:41
+msgid "js.WorkflowEditor.step.AlertsModal.off"
+msgstr ""
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:40
+msgid "js.WorkflowEditor.step.AlertsModal.on"
+msgstr ""
+
 #: assets/js/WorkflowEditor/step/DeprecationNotice.js:11
 msgid "js.WorkflowEditor.step.DeprecationNotice.learnHowToReplace"
 msgstr "Μάθετε πώς να αντικαταστήσετε αυτό το βήμα"
@@ -699,6 +687,14 @@ msgstr "Βοήθεια για αυτή τη μονάδα (module)"
 #: assets/js/WorkflowEditor/step/Step.js:446
 msgid "js.WorkflowEditor.step.notes.edit.hoverText"
 msgstr "Επεξεργασία σημείωσης"
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:60
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton"
+msgstr ""
+
+#: assets/js/WorkflowEditor/step/AlertsModal.js:54
+msgid "js.WorkflowEditor.steps.AlertsModal.footer.closeButton.hoverText"
+msgstr ""
 
 #: assets/js/WorkflowNavBar.js:23
 #, fuzzy

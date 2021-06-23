@@ -2,7 +2,6 @@
 
 exports[`DataVersionModal matches snapshot 1`] = `
 <DataVersionModal
-  fetchStepId={123}
   fetchStepName="fetch"
   fetchVersions={
     Array [
@@ -19,12 +18,11 @@ exports[`DataVersionModal matches snapshot 1`] = `
     ]
   }
   isAnonymous={false}
-  notificationsEnabled={false}
   onChangeFetchVersionId={[MockFunction]}
   onChangeNotificationsEnabled={[MockFunction]}
   onClose={[MockFunction]}
   selectedFetchVersionId="1000"
-  stepId={124}
+  stepId={123}
 >
   <Modal
     className="data-versions-modal"
@@ -131,45 +129,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                         Load
                       </button>
                     </div>
-                    <form
-                      class="notifications notifications-disabled"
-                    >
-                      <div
-                        class="text"
-                      >
-                        <p
-                          class="status"
-                        >
-                          <i
-                            class="icon icon-no-notification"
-                          />
-                          Alerts are 
-                          <strong>
-                            off
-                          </strong>
-                        </p>
-                        <p
-                          class="description"
-                        >
-                          Turn alerts ON to receive an email if the output of this module changes
-                        </p>
-                      </div>
-                      <div
-                        class="options"
-                      >
-                        <label>
-                          <input
-                            name="notifications-enabled"
-                            type="checkbox"
-                          />
-                          <span
-                            class="action"
-                          >
-                            Turn on
-                          </span>
-                        </label>
-                      </div>
-                    </form>
                   </div>
                 </div>
               </div>
@@ -317,81 +276,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       </Trans>
                     </button>
                   </div>
-                  <NotificationsForm
-                    notificationsEnabled={false}
-                    onSubmit={[Function]}
-                  >
-                    <form
-                      className="notifications notifications-disabled"
-                      onSubmit={[Function]}
-                    >
-                      <div
-                        className="text"
-                      >
-                        <p
-                          className="status"
-                        >
-                          <i
-                            className="icon icon-no-notification"
-                          />
-                          <Trans
-                            comment="The tag adds emphasis"
-                            components={
-                              Object {
-                                "0": <strong />,
-                              }
-                            }
-                            id="js.WorkflowEditor.DataVersionModal.NotificationsForm.status.alertsOff"
-                            message="Alerts are <0>off</0>"
-                            values={Object {}}
-                          >
-                            Alerts are 
-                            <strong
-                              key="$lingui$_0"
-                            >
-                              off
-                            </strong>
-                          </Trans>
-                        </p>
-                        <p
-                          className="description"
-                        >
-                          <Trans
-                            components={Object {}}
-                            id="js.WorkflowEditor.DataVersionModal.NotificationsForm.description.turnAlertsOn"
-                            message="Turn alerts ON to receive an email if the output of this module changes"
-                            values={Object {}}
-                          >
-                            Turn alerts ON to receive an email if the output of this module changes
-                          </Trans>
-                        </p>
-                      </div>
-                      <div
-                        className="options"
-                      >
-                        <label>
-                          <input
-                            checked={false}
-                            name="notifications-enabled"
-                            onChange={[Function]}
-                            type="checkbox"
-                          />
-                          <span
-                            className="action"
-                          >
-                            <Trans
-                              components={Object {}}
-                              id="js.WorkflowEditor.DataVersionModal.NotificationsForm.options.turnOn"
-                              message="Turn on"
-                              values={Object {}}
-                            >
-                              Turn on
-                            </Trans>
-                          </span>
-                        </label>
-                      </div>
-                    </form>
-                  </NotificationsForm>
                 </div>
               </ModalFooter>
             </div>
