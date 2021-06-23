@@ -33,7 +33,7 @@ function AutofetchToggle (props) {
         />
         <label htmlFor='updateFrequencySelectModalAutofetchToggle' className='toggle' />
       </div>
-      <label className='onoff' htmlFor='updateFrequencySelectModalAutofetchToggle'>
+      <label className={`onoff${checked ? ' on' : ''}`} htmlFor='updateFrequencySelectModalAutofetchToggle'>
         {checked
           ? <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.on'>ON</Trans>
           : <Trans id='js.params.Custom.VersionSelect.UpdateFrequencySelectModal.AutofetchToggle.off'>OFF</Trans>}

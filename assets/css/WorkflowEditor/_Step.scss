@@ -67,16 +67,6 @@
       .module-card-details.collapsed {
         display: none;
       }
-
-      &:hover .context-buttons {
-        a.help-button,
-        button.edit-note,
-        button.delete-button,
-        button.notifications:not(.enabled),
-        label.toggle-zen-mode:not(.is-zen-mode) {
-          opacity: 1;
-        }
-      }
     }
   }
 
@@ -368,14 +358,6 @@
             color: $brand-text--dark;
             background-color: $dark-accent--soft;
           }
-        }
-
-        a.help-button,
-        button.edit-note,
-        button.delete-button,
-        label.toggle-zen-mode:not(.is-zen-mode),
-        button.notifications:not(.enabled) {
-          opacity: 0.2; // only show context buttons when hovering over step card
         }
 
         i.icon-help {

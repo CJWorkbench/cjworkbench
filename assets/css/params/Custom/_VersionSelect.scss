@@ -1,5 +1,6 @@
 .version-select {
   margin-top: 1rem;
+  font-size: 1.3rem;
 
   .update-frequency-select {
     display: flex;
@@ -7,12 +8,7 @@
     align-items: center;
     position: relative;
 
-    .version-box-option {
-      font-size: 1.3rem;
-    }
-
     a {
-      @include content-1;
       @include action-link;
 
       &:not(:link) {
@@ -197,6 +193,10 @@
       cursor: pointer;
       margin: 0;
       @include title-2;
+
+      &.on {
+        color: $primary;
+      }
     }
 
     .need-upgrade, .over-limit {
