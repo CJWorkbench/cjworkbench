@@ -142,32 +142,6 @@ async def delete(workflow: Workflow, step: Step, **kwargs):
     await commands.do(DeleteStep, workflow_id=workflow.id, step=step)
 
 
-@database_sync_to_async
-def _find_precise_version(step: Step, version: datetime.datetime) -> datetime.datetime:
-    # TODO maybe let's not use microsecond-precision numbers as
-    # StoredObject IDs and then send the client
-    # millisecond-precision identifiers. We _could_ just pass
-    # clients the IDs, for instance.
-    #
-    # Select a version within 1ms of the (rounded _or_ truncated)
-    # version we sent the client.
-    #
-    # (Let's not change the way we JSON-format dates just to avoid
-    # this hack. That would be even worse.)
-    try:
-        return step.stored_objects.filter(
-            stored_at__gte=version - datetime.timedelta(microseconds=500),
-            stored_at__lt=version + datetime.timedelta(milliseconds=1),
-        ).values_list("stored_at", flat=True)[0]
-    except IndexError:
-        return version
-
-
-@database_sync_to_async
-def _mark_stored_object_read(step: Step, version: datetime.datetime) -> None:
-    step.stored_objects.filter(stored_at=version).update(read=True)
-
-
 @register_websockets_handler
 @websockets_handler("write")
 @_loading_step_by_id
@@ -181,16 +155,12 @@ async def set_stored_data_version(
     except (ValueError, OverflowError, TypeError):
         raise HandlerError("BadRequest: version must be an ISO8601 String")
 
-    version = await _find_precise_version(step, version)
-
     await commands.do(
         SetStepDataVersion,
         workflow_id=workflow.id,
         step=step,
         new_version=version,
     )
-
-    await _mark_stored_object_read(step, version)
 
 
 @register_websockets_handler

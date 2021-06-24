@@ -10,15 +10,6 @@ from cjwstate.tests.utils import DbTestCase, get_s3_object_with_data
 
 # Set up a simple pipeline on test data
 class StepTests(DbTestCase):
-    def test_list_data_versions(self):
-        workflow = Workflow.create_and_init()
-        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
-        so1 = step.stored_objects.create(read=False)
-        so2 = step.stored_objects.create(read=True)
-
-        result = step.list_fetched_data_versions()
-        self.assertEqual(result, [(so2.stored_at, True), (so1.stored_at, False)])
-
     def test_step_duplicate(self):
         workflow = Workflow.create_and_init()
         step1 = workflow.tabs.first().steps.create(order=0, slug="step-1")

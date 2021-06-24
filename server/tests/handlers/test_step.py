@@ -265,12 +265,12 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
-    def test_set_stored_data_version_command_set_read(self):
-        version = "2018-12-12T21:30:00.000"
+    def test_set_stored_data_version_microsecond_date(self):
+        version = "2018-12-12T21:30:00.000123Z"  # this is how "id" looks in JS
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(order=0, slug="step-1")
-        so = step.stored_objects.create(stored_at=isoparse(version), size=0, read=False)
+        step.stored_objects.create(stored_at=isoparse(version), size=0)
 
         response = self.run_handler(
             set_stored_data_version,
@@ -280,31 +280,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             version=version,
         )
         self.assertResponse(response, data=None)
-        so.refresh_from_db()
-        self.assertEqual(so.read, True)
-
-    @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
-    @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
-    def test_set_stored_data_version_microsecond_date(self):
-        version_precise = "2018-12-12T21:30:00.000123"
-        version_js = "2018-12-12T21:30:00.000"
-        user = User.objects.create(username="a", email="a@example.org")
-        workflow = Workflow.create_and_init(owner=user)
-        step = workflow.tabs.first().steps.create(order=0, slug="step-1")
-        # Postgres will store this with microsecond precision
-        step.stored_objects.create(stored_at=isoparse(version_precise), size=0)
-
-        # JS may request it with millisecond precision
-        response = self.run_handler(
-            set_stored_data_version,
-            user=user,
-            workflow=workflow,
-            stepId=step.id,
-            version=version_js,
-        )
-        self.assertResponse(response, data=None)
         step.refresh_from_db()
-        self.assertEqual(step.stored_data_version, isoparse(version_precise))
+        self.assertEqual(step.stored_data_version, isoparse(version[:-1]))
 
     def test_set_stored_data_version_invalid_date(self):
         user = User.objects.create(username="a", email="a@example.org")
@@ -316,7 +293,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
             user=user,
             workflow=workflow,
             stepId=step.id,
-            version=["not a date"],
+            version="not a date",
         )
         self.assertResponse(
             response, error="BadRequest: version must be an ISO8601 String"

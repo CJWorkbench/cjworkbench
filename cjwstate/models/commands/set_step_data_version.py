@@ -10,7 +10,7 @@ class SetStepDataVersion(ChangesStepOutputs, BaseCommand):
     def forward(self, delta):
         delta.step.stored_data_version = dateutil.parser.isoparse(
             delta.values_for_forward["version"]
-        )
+        ).replace(tzinfo=None)
         delta.step.save(update_fields=["stored_data_version"])
         self.forward_affected_delta_ids(delta)
 
@@ -19,7 +19,7 @@ class SetStepDataVersion(ChangesStepOutputs, BaseCommand):
         if old_version_str is None:
             old_version = None
         else:
-            old_version = dateutil.parser.isoparse(old_version_str)
+            old_version = dateutil.parser.isoparse(old_version_str).replace(tzinfo=None)
         delta.step.stored_data_version = old_version
         delta.step.save(update_fields=["stored_data_version"])
         self.backward_affected_delta_ids(delta)

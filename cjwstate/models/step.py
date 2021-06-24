@@ -228,19 +228,6 @@ class Step(models.Model):
             tab__workflow_id=workflow_id, tab__is_deleted=False, is_deleted=False
         ).order_by("tab__position", "order")
 
-    # ---- Authorization ----
-    # User can access step if they can access workflow
-    def request_authorized_read(self, request):
-        return self.workflow.request_authorized_read(request)
-
-    def request_authorized_write(self, request):
-        return self.workflow.request_authorized_write(request)
-
-    def list_fetched_data_versions(self):
-        return list(
-            self.stored_objects.order_by("-stored_at").values_list("stored_at", "read")
-        )
-
     @property
     def secret_metadata(self) -> Dict[str, Any]:
         """Dict keyed by secret name, with values {'name': '...'}.
@@ -417,8 +404,7 @@ class Step(models.Model):
         return result
 
     def get_stale_cached_render_result(self):
-        """
-        Build a CachedRenderResult with this Step's stale rendered output.
+        """Build a CachedRenderResult with this Step's stale rendered output.
 
         Return `None` if there is a cached result but it is fresh.
 
@@ -505,12 +491,11 @@ class Step(models.Model):
 
     def get_clientside_fetched_version_list(self) -> clientside.FetchedVersionList:
         return clientside.FetchedVersionList(
-            versions=[
-                clientside.FetchedVersion(created_at=created_at, is_seen=is_seen)
-                for created_at, is_seen in self.stored_objects.order_by(
-                    "-stored_at"
-                ).values_list("stored_at", "read")
-            ],
+            versions=list(
+                self.stored_objects.order_by("-stored_at").values_list(
+                    "stored_at", flat=True
+                )
+            ),
             selected=self.stored_data_version,
         )
 

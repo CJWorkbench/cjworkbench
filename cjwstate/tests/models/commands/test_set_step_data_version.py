@@ -2,6 +2,8 @@ import asyncio
 import datetime
 from unittest.mock import patch
 
+from dateutil.parser import isoparse
+
 from cjwstate import commands, rabbitmq
 from cjwstate.models.commands import SetStepDataVersion
 from cjwstate.models.workflow import Workflow
@@ -26,17 +28,20 @@ class SetStepParamsTests(DbTestCase):
             order=0, slug="step-1", last_relevant_delta_id=self.workflow.last_delta_id
         )
 
-    def _store_fetched_table(self) -> datetime.datetime:
-        return self.step.stored_objects.create(key="fake", size=10).stored_at
+    def _store_fetched_table(self, stored_at=None) -> datetime.datetime:
+        if stored_at is None:
+            stored_at = datetime.datetime.now()
+        self.step.stored_objects.create(key="fake", size=10, stored_at=stored_at)
+        return stored_at
 
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     def test_change_data_version(self):
         # Create two data versions, use the second
-        date1 = self._store_fetched_table()
-        date2 = self._store_fetched_table()
+        date1 = self._store_fetched_table(stored_at=datetime.datetime(2021, 6, 24))
+        date2 = self._store_fetched_table(stored_at=datetime.datetime(2021, 6, 23))
 
         self.step.stored_data_version = date2
-        self.step.save()
+        self.step.save(update_fields=["stored_data_version"])
 
         self.workflow.refresh_from_db()
         v1 = self.workflow.last_delta_id
@@ -47,7 +52,7 @@ class SetStepParamsTests(DbTestCase):
                 SetStepDataVersion,
                 workflow_id=self.workflow.id,
                 step=self.step,
-                new_version=date1,
+                new_version=isoparse("2021-06-24T00:00:00.000000Z"),
             )
         )
         self.assertEqual(self.step.stored_data_version, date1)
@@ -95,12 +100,6 @@ class SetStepParamsTests(DbTestCase):
     @patch.object(rabbitmq, "queue_render_if_consumers_are_listening", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
     def test_accept_deleted_version(self):
-        """
-        Let the user choose whichever version is desired, even if it does not
-        exist.
-
-        The errors will be user-visible ... _later_.
-        """
         date1 = self._store_fetched_table()
         date2 = self._store_fetched_table()
 

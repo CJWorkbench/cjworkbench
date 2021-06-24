@@ -54,13 +54,8 @@ class UploadedFile(NamedTuple):
     created_at: datetime.datetime
 
 
-class FetchedVersion(NamedTuple):
-    created_at: datetime.datetime
-    is_seen: bool
-
-
 class FetchedVersionList(NamedTuple):
-    versions: List[FetchedVersion]
+    versions: List[datetime.datetime]
     selected: Optional[datetime.datetime]
 
 

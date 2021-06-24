@@ -35,10 +35,6 @@ class StoredObject(models.Model):
     hash = models.CharField(max_length=32)
     size = models.IntegerField(default=0)  # file size
 
-    # keeping track of whether this version of the data has ever been loaded
-    # and delivered to the frontend
-    read = models.BooleanField(default=False)
-
     # make a deep copy for another Step
     def duplicate(self, to_step):
         basename = self.key.split("/")[-1]

@@ -629,11 +629,8 @@ def jsonize_fetched_version_list(
     versions: clientside.FetchedVersionList,
 ) -> Dict[str, Any]:
     return {
-        "versions": [
-            # TODO pass Objects, not Arrays
-            [jsonize_datetime(v.created_at), v.is_seen]
-            for v in versions.versions
-        ],
+        # TODO pass Objects, not Arrays
+        "versions": [[jsonize_datetime(v)] for v in versions.versions],
         "selected": jsonize_datetime(versions.selected),
     }
 
