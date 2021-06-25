@@ -1,0 +1,31 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [ "s3:ListBucket", "s3:GetBucketLocation" ],
+      "Resource": [
+        "arn:aws:s3:::cached-render-results",
+        "arn:aws:s3:::external-modules",
+        "arn:aws:s3:::stored-objects",
+        "arn:aws:s3:::user-files"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [ "s3:GetObject" ],
+      "Resource": [
+        "arn:aws:s3:::cached-render-results/*",
+        "arn:aws:s3:::external-modules/*",
+        "arn:aws:s3:::user-files/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [ "s3:DeleteObject", "s3:GetObject", "s3:PutObject" ],
+      "Resource": [
+        "arn:aws:s3:::stored-objects/*"
+      ]
+    }
+  ]
+}
