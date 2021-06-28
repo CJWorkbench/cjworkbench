@@ -88,7 +88,20 @@ spec:
                 secretKeyRef:
                   name: frontend-intercom-secret
                   key: IDENTITY_VERIFICATION_SECRET
-            - name: CJW_SENDGRID_API_KEY
+            - name: CJW_SMTP_HOST
+              value: "smtp.sendgrid.net"
+            - name: CJW_SMTP_USER
+              value: "apikey"
+            - name: CJW_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-sendgrid-api-key
+                  key: value
+            - name: CJW_SMTP_PORT
+              value: "587"
+            - name: CJW_SMTP_USE_TLS
+              value: "true"
+            - name: CJW_SENDGRID_API_KEY  # TODO nix
               valueFrom:
                 secretKeyRef:
                   name: cjw-sendgrid-api-key
@@ -108,10 +121,6 @@ spec:
                 secretKeyRef:
                   name: cjw-stripe-secret
                   key: STRIPE_WEBHOOK_SIGNING_SECRET
-            - name: CJW_SENDGRID_CONFIRMATION_ID
-              value: d-cf03717d432e46d38e0b6b5b19f80b57
-            - name: CJW_SENDGRID_PASSWORD_RESET_ID
-              value: d-7cc8e91286bb4c87a9484f331407568a
             - name: HTTPS
               value: 'on'
             - name: CJW_GOOGLE_CLIENT_SECRETS

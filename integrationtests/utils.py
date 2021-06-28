@@ -32,21 +32,6 @@ class WorkbenchBase(unittest.TestCase):
         super().setUp()
 
         self.account_admin.clear_data_from_previous_tests()
-
-        # self.current_site = Site.objects.get_current()
-        # self.SocialApp1 = self.current_site.socialapp_set.create(
-        #     provider="facebook",
-        #     name="Facebook",
-        #     client_id="1234567890",
-        #     secret="0987654321",
-        # )
-        # self.SocialApp2 = self.current_site.socialapp_set.create(
-        #     provider="google",
-        #     name="Google",
-        #     client_id="1234567890",
-        #     secret="0987654321",
-        # )
-
         self.browser = Browser(base_url=self.live_server_url)
 
     def tearDown(self):

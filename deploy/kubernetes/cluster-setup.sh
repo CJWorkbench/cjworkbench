@@ -249,13 +249,13 @@ kubectl create secret generic frontend-intercom-secret \
 kubectl create secret generic cjw-intercom-sink-intercom-secret \
   --from-literal=ACCESS_TOKEN=$CJW_INTERCOM_ACCESS_TOKEN
 
-: ${CJW_SENDGRID_API_KEY:?"Muset set CJW_SENDGRID_API_KEY"}
+: ${CJW_SENDGRID_API_KEY:?"Must set CJW_SENDGRID_API_KEY"}
 kubectl create secret generic cjw-sendgrid-api-key \
   --from-literal=value=$CJW_SENDGRID_API_KEY
 
-: ${STRIPE_PUBLIC_API_KEY:?"Muset set STRIPE_PUBLIC_API_KEY"}
-: ${STRIPE_API_KEY:?"Muset set STRIPE_API_KEY"}
-: ${STRIPE_WEBHOOK_SIGNING_SECRET:?"Muset set STRIPE_WEBHOOK_SIGNING_SECRET"}
+: ${STRIPE_PUBLIC_API_KEY:?"Must set STRIPE_PUBLIC_API_KEY"}
+: ${STRIPE_API_KEY:?"Must set STRIPE_API_KEY"}
+: ${STRIPE_WEBHOOK_SIGNING_SECRET:?"Must set STRIPE_WEBHOOK_SIGNING_SECRET"}
 kubectl create secret generic cjw-stripe-secret \
   --from-literal=STRIPE_PUBLIC_API_KEY="$STRIPE_PUBLIC_API_KEY" \
   --from-literal=STRIPE_API_KEY="$STRIPE_API_KEY" \

@@ -83,12 +83,18 @@ spec:
                   key: password
             - name: CJW_SECRET_KEY
               value: fetcher-needs-no-secret-key
-            - name: CJW_SENDGRID_API_KEY
-              value: fetcher-needs-no-sendgrid-config
-            - name: CJW_SENDGRID_CONFIRMATION_ID
-              value: fetcher-needs-no-sendgrid-config
-            - name: CJW_SENDGRID_PASSWORD_RESET_ID
-              value: fetcher-needs-no-sendgrid-config
+            - name: CJW_SMTP_HOST
+              value: fetcher-needs-no-smtp
+            - name: CJW_SMTP_USER
+              value: fetcher-needs-no-smtp
+            - name: CJW_SMTP_PASSWORD
+              value: fetcher-needs-no-smtp
+            - name: CJW_SMTP_PORT
+              value: "25"
+            - name: CJW_SMTP_USE_TLS
+              value: "true"
+            - name: CJW_SENDGRID_API_KEY  # TODO nix
+              value: fetcher-needs-no-smtp
             - name: CJW_GOOGLE_CLIENT_SECRETS
               value: secrets/google-oauth-secret/google-oauth-secret.json
             - name: CJW_INTERCOM_CLIENT_SECRETS
