@@ -120,6 +120,16 @@ spec:
               value: secrets/intercom-oauth-secret/intercom-oauth-secret.json
             - name: CJW_TWITTER_CLIENT_SECRETS
               value: secrets/twitter-oauth-secret/twitter-oauth-secret.json
+            - name: CJW_FACEBOOK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-facebook-secret
+                  key: client_id
+            - name: CJW_FACEBOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-facebook-secret
+                  key: secret
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:

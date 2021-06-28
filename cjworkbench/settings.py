@@ -137,6 +137,7 @@ SOCIALACCOUNT_FORMS = {
     "signup": "cjworkbench.socialaccounts.forms.WorkbenchSocialaccountSignupForm"
 }
 SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_PROVIDERS = {}
 
 # EMAIL_BACKEND
 #
@@ -195,14 +196,7 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "allauth",
     "allauth.account",
-    "allauth.socialaccount",
-    # These providers appear in _ALL ENVIRONMENTS_ for now.
-    # see https://github.com/pennersr/django-allauth/issues/2343
-    # ... so don't add a provider that doesn't belong on production!
-    # (On dev/unittest/integrationtest, the buttons will appear but
-    # clicking one will get a 404 page unless the SocialApp is added.)
-    "allauth.socialaccount.providers.facebook",
-    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount",  # providers are inserted below depending on env
     "cjworkbench",
     "cron",
     "fetcher",
@@ -403,6 +397,31 @@ def _parse_google_oauth(d):
 _maybe_load_oauth_service(
     "google", "CJW_GOOGLE_CLIENT_SECRETS", "client_secret.json", _parse_google_oauth
 )
+if "google" in OAUTH_SERVICES:
+    INSTALLED_APPS.insert(
+        INSTALLED_APPS.index("allauth.socialaccount") + 1,
+        "allauth.socialaccount.providers.google",
+    )
+    SOCIALACCOUNT_PROVIDERS["google"] = {
+        "APP": dict(
+            client_id=OAUTH_SERVICES["google"]["client_id"],
+            secret=OAUTH_SERVICES["google"]["client_secret"],
+            key="",
+        )
+    }
+
+if "CJW_FACEBOOK_CLIENT_ID" in os.environ:
+    INSTALLED_APPS.insert(
+        INSTALLED_APPS.index("allauth.socialaccount") + 1,
+        "allauth.socialaccount.providers.facebook",  # before Google
+    )
+    SOCIALACCOUNT_PROVIDERS["facebook"] = {
+        "APP": dict(
+            client_id=os.environ["CJW_FACEBOOK_CLIENT_ID"],
+            secret=os.environ["CJW_FACEBOOK_SECRET"],
+            key="",
+        )
+    }
 
 # Intercom, for Intercom module
 def _parse_intercom_oauth(d):
