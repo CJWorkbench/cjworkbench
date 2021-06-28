@@ -18,7 +18,7 @@ User = get_user_model()
 FREE_PRODUCT = Product(
     stripe_product_id=None,
     stripe_product_name="Free Plan",
-    **UserLimits()._asdict(),
+    **UserLimits.free_user_limits()._asdict(),
 )
 
 

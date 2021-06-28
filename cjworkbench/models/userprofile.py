@@ -27,7 +27,7 @@ class UserProfile(models.Model):
     """
 
     max_fetches_per_day = models.IntegerField(
-        default=UserLimits().max_fetches_per_day,
+        default=UserLimits.free_user_limits().max_fetches_per_day,
         help_text=(
             "Applies to the sum of all this user's Workflows. "
             "One fetch every 5min = 288 fetches per day."
@@ -64,7 +64,7 @@ class UserProfile(models.Model):
         )
         max_delta_age_in_days = max(
             [
-                UserLimits().max_delta_age_in_days,
+                UserLimits.free_user_limits().max_delta_age_in_days,
                 *(product.max_delta_age_in_days for product in products),
             ]
         )

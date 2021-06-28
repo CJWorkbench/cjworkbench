@@ -119,7 +119,7 @@ def find_workflows_with_stale_deltas(
             """,
             dict(
                 now=now,
-                default_max_delta_age_in_days=UserLimits().max_delta_age_in_days,
+                default_max_delta_age_in_days=UserLimits.free_user_limits().max_delta_age_in_days,
                 limit=MaxNWorkflowsPerCycle,
             ),
         )

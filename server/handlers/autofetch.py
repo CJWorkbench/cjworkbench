@@ -40,7 +40,7 @@ def list_autofetches_json(scope):
         user_limits = scope["user"].user_profile.effective_limits
     except AttributeError:
         # scope["user"].user_profile is None ... e.g. anonymous user
-        user_limits = UserLimits()
+        user_limits = UserLimits.free_user_limits()
 
     n_fetches_per_day = sum([86400.0 / row["update_interval"] for row in autofetches])
 

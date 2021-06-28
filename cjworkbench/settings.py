@@ -50,6 +50,20 @@ MAX_BYTES_FILES_PER_STEP = 2 * 1024 * 1024 * 1024
 When storing a new File, we delete old Files that exceed this limit.
 """
 
+FREE_TIER_USER_LIMITS = {}
+if "CJW_FREE_TIER_CAN_CREATE_SECRET_LINK" in os.environ:
+    FREE_TIER_USER_LIMITS["can_create_secret_link"] = (
+        os.environ["CJW_FREE_TIER_CAN_CREATE_SECRET_LINK"] not in FalsyStrings
+    )
+if "CJW_FREE_TIER_MAX_FETCHES_PER_DAY" in os.environ:
+    FREE_TIER_USER_LIMITS["max_fetches_per_day"] = int(
+        os.environ["CJW_FREE_TIER_MAX_FETCHES_PER_DAY"]
+    )
+if "CJW_FREE_TIER_MAX_DELTA_AGE_IN_DAYS" in os.environ:
+    FREE_TIER_USER_LIMITS["max_delta_age_in_days"] = int(
+        os.environ["CJW_FREE_TIER_MAX_DELTA_AGE_IN_DAYS"]
+    )
+
 
 # ----- App Boilerplate -----
 
@@ -76,27 +90,21 @@ if "CJW_FORCE_SSL" in os.environ:
 DEFAULT_FROM_EMAIL = "Workbench <hello@workbenchdata.com>"
 
 # SECRET_KEY
-try:
-    SECRET_KEY = os.environ["CJW_SECRET_KEY"]
-except KeyError:
-    sys.exit("Must set CJW_SECRET_KEY")
+SECRET_KEY = os.environ["CJW_SECRET_KEY"]
 
 # DATABASES
-try:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": "cjworkbench",
-            "USER": "cjworkbench",
-            "HOST": os.environ["CJW_DB_HOST"],
-            "PASSWORD": os.environ["CJW_DB_PASSWORD"],
-            "PORT": "5432",
-            "CONN_MAX_AGE": 30,
-            "TEST": {"SERIALIZE": False, "NAME": "cjworkbench", "MIGRATE": False},
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "cjworkbench",
+        "USER": "cjworkbench",
+        "HOST": os.environ["CJW_DB_HOST"],
+        "PASSWORD": os.environ["CJW_DB_PASSWORD"],
+        "PORT": "5432",
+        "CONN_MAX_AGE": 30,
+        "TEST": {"SERIALIZE": False, "NAME": "cjworkbench", "MIGRATE": False},
     }
-except KeyError:
-    sys.exit("Must set CJW_DB_HOST and CJW_DB_PASSWORD")
+}
 
 N_SYNC_DATABASE_CONNECTIONS = 3
 """
@@ -201,7 +209,6 @@ ROOT_URLCONF = "cjworkbench.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {

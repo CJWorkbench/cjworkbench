@@ -292,7 +292,9 @@ class DeleteWorkflowStaleDeltasTest(DbTestCaseWithModuleRegistryAndMockKernel):
 
 class FindWorkflowsWithStaleDeltasTest(DbTestCase):
     def test_find_workflow_using_default_max_age(self):
-        default_max_age = datetime.timedelta(days=UserLimits().max_delta_age_in_days)
+        default_max_age = datetime.timedelta(
+            days=UserLimits.free_user_limits().max_delta_age_in_days
+        )
         workflow = Workflow.create_and_init()
         with freeze_time("1970-01-01"):
             do(SetWorkflowTitle, workflow.id, new_value="1")
