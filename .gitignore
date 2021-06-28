@@ -5,35 +5,22 @@ __pycache__/
 
 # Django stuff:
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-dbdata/
 local_mail/
-client_secret.json
-stripe.env
 
 # Asset bundles, downloaded modules, saved data
 /node_modules/
 /assets/bundles/
-/media/
 /assets/locale/_build
 
 #pycharm
 .idea/
-.idea
-tmp/
-.cache/
 
 #atom-ide
 .ropeproject/
 
-# imported modules
-importedmodules/
-
 client_secret.json
 intercom_secret.json
-socialaccounts_secrets.json
 twitter_secret.json
+stripe.env
 
 .DS_Store

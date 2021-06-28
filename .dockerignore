@@ -5,15 +5,10 @@ __pycache__/
 assets/bundles/
 .cache/
 client_secret.json
-config/modules/dynamic
-db.sqlite3
 .idea/
-importedmodules/
 local_mail/
 *.log
-media/
 node_modules/
 tmp/
 .DS_Store
-stresstest/
 assets/locale/_build
