@@ -40,20 +40,6 @@ spec:
                 secretKeyRef:
                   name: postgres-cjworkbench-credentials
                   key: password
-            - name: CJW_SECRET_KEY
-              value: cron-needs-no-secret-key
-            - name: CJW_SMTP_HOST
-              value: cron-needs-no-smtp
-            - name: CJW_SMTP_USER
-              value: cron-needs-no-smtp
-            - name: CJW_SMTP_PASSWORD
-              value: cron-needs-no-smtp
-            - name: CJW_SMTP_PORT
-              value: "25"
-            - name: CJW_SMTP_USE_TLS
-              value: "true"
-            - name: CJW_SENDGRID_API_KEY  # TODO nix
-              value: cron-needs-no-smtp
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
