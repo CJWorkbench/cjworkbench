@@ -95,12 +95,16 @@ services:
       - SYS_ADMIN # for cjwkernel.kernel to overlay-mount chroots (on k8s we use an init container instead)
       - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
-      <<: *django-env
+      PYTHONUNBUFFERED: '1'
+      ASGI_THREADS: '3'
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      AWS_ACCESS_KEY_ID: minio_access
+      AWS_SECRET_ACCESS_KEY: minio_secret
       TUS_CREATE_UPLOAD_URL: http://testtusd:8080/files
       CJW_DB_HOST: testdatabase
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq/
       AWS_S3_ENDPOINT: http://testminio:9000
-      S3_BUCKET_NAME_PATTERN: "unittest-%s"
     networks: [ 'test' ]
     depends_on: [ 'testdatabase', 'testrabbitmq', 'testminio', 'testtusd' ]
     entrypoint: 'bin/unittest-entrypoint.sh'

@@ -32,13 +32,12 @@ def _minio_connect():
 def _clear_minio():
     mc = _minio_connect()
 
-    for bucket_name in (
+    for bucket in [
         "user-files",
         "stored-objects",
         "external-modules",
         "cached-render-results",
-    ):
-        bucket = f"integrationtest-{bucket_name}"
+    ]:
         keys = [
             minio.deleteobjects.DeleteObject(o.object_name)
             for o in mc.list_objects(bucket, "", recursive=True)

@@ -39,13 +39,12 @@ services:
       - sh
       - '-c'
       - |
-        PREFIX=unittest
         for bucket in user-files static stored-objects external-modules cached-render-results upload; do
-            mkdir -p /data/$$PREFIX-$$bucket
+            mkdir -p /data/$$bucket
         done
         rm -rf /data/.minio.sys
-        mkdir -p /data/.minio.sys/buckets/$$PREFIX-static/
-        cat > /data/.minio.sys/buckets/$$PREFIX-static/policy.json <<EOT
+        mkdir -p /data/.minio.sys/buckets/static/
+        cat > /data/.minio.sys/buckets/static/policy.json <<EOT
         {
             "Version": "2012-10-17",
             "Statement": [
@@ -54,14 +53,14 @@ services:
                     "Effect": "Allow",
                     "Principal": {"AWS": "*"},
                     "Action": ["s3:GetBucketLocation", "s3:ListBucket"],
-                    "Resource": ["arn:aws:s3:::$$PREFIX-static"]
+                    "Resource": ["arn:aws:s3:::static"]
                 },
                 {
                     "Sid": "",
                     "Effect": "Allow",
                     "Principal": {"AWS": "*"},
                     "Action": ["s3:GetObject"],
-                    "Resource": ["arn:aws:s3:::$$PREFIX-static/*"]
+                    "Resource": ["arn:aws:s3:::static/*"]
                 }
             ]
         }
@@ -78,7 +77,7 @@ services:
       '-port=8080',
       # no hooks in unit tests
       '-s3-endpoint=http://testminio:9000',
-      '-s3-bucket=unittest-upload',
+      '-s3-bucket=upload',
     ]
 
   migrate:
@@ -101,7 +100,7 @@ services:
     # WHY privileged? Woe is we! SYS_ADMIN and special seccomp aren't enough to
     # make /app/cjwkernel/setup-sandboxes.sh work on Cloud Build servers. But
     # [2019-11-06, adamhooper] they work on my machine. The big difference
-    # is Docker version; so maybe if/wen Cloud Build upgrades its Docker daemon
+    # is Docker version; so maybe if/when Cloud Build upgrades its Docker daemon
     # to 19.03 we can try deleting "privileged".
     privileged: true  # WHY?
     environment:
@@ -116,5 +115,4 @@ services:
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_S3_ENDPOINT: http://testminio:9000
-      S3_BUCKET_NAME_PATTERN: "unittest-%s"
       TUS_CREATE_UPLOAD_URL: http://testtusd:8080/files

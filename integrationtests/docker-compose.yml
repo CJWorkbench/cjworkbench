@@ -30,7 +30,7 @@ services:
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_S3_ENDPOINT: http://minio:9000
-      BUCKET_NAME: "integrationtest-static"
+      BUCKET_NAME: static
 
   migrate:
     #image:
@@ -56,13 +56,12 @@ services:
       - sh
       - '-c'
       - |
-        PREFIX=integrationtest
         for bucket in user-files static stored-objects external-modules cached-render-results upload; do
-            mkdir -p /data/$$PREFIX-$$bucket
+            mkdir -p /data/$$bucket
         done
         rm -rf /data/.minio.sys
-        mkdir -p /data/.minio.sys/buckets/$$PREFIX-static/
-        cat > /data/.minio.sys/buckets/$$PREFIX-static/policy.json <<EOT
+        mkdir -p /data/.minio.sys/buckets/static/
+        cat > /data/.minio.sys/buckets/static/policy.json <<EOT
         {
             "Version": "2012-10-17",
             "Statement": [
@@ -71,14 +70,14 @@ services:
                     "Effect": "Allow",
                     "Principal": {"AWS": "*"},
                     "Action": ["s3:GetBucketLocation", "s3:ListBucket"],
-                    "Resource": ["arn:aws:s3:::$$PREFIX-static"]
+                    "Resource": ["arn:aws:s3:::static"]
                 },
                 {
                     "Sid": "",
                     "Effect": "Allow",
                     "Principal": {"AWS": "*"},
                     "Action": ["s3:GetObject"],
-                    "Resource": ["arn:aws:s3:::$$PREFIX-static/*"]
+                    "Resource": ["arn:aws:s3:::static/*"]
                 }
             ]
         }
@@ -113,12 +112,9 @@ services:
       CJW_DB_HOST: db
       CJW_DB_PASSWORD: cjworkbench
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
-      CJW_SECRET_KEY: a-secret-key
-      CJW_MOCK_EMAIL: 'True'
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_S3_ENDPOINT: http://minio:9000
-      S3_BUCKET_NAME_PATTERN: "integrationtest-%s"
 
   renderer:
     #image:
@@ -128,7 +124,9 @@ services:
     security_opt:
       - seccomp=docker/pyspawner-seccomp-profile.json
     privileged: true  # for setup-sandboxes.sh
-    environment: *common_env
+    environment:
+      <<: *common_env
+      CJW_MOCK_EMAIL: "True"
     volumes:
       - local_mail:/app/local_mail
 
@@ -171,8 +169,9 @@ services:
     privileged: true  # for setup-sandboxes.sh
     environment:
       <<: *common_env
-      STATIC_URL: http://minio.django-issue-32304.com:9000/integrationtest-static/
+      STATIC_URL: http://minio.django-issue-32304.com:9000/static/
       TUS_CREATE_UPLOAD_URL: http://tusd:8080/files
+      CJW_MOCK_EMAIL: "True"
     volumes:
       - local_mail:/app/local_mail
 
@@ -188,7 +187,7 @@ services:
       '-hooks-http=http://frontend:8080/tusd-hooks',
       '-hooks-enabled-events=pre-finish',
       '-s3-endpoint=http://minio:9000',
-      '-s3-bucket=integrationtest-upload',
+      '-s3-bucket=upload',
     ]
 
   intercom-sink:
@@ -225,7 +224,6 @@ services:
       MINIO_ACCESS_KEY: minio_access
       MINIO_SECRET_KEY: minio_secret
       MINIO_URL: http://minio:9000
-      S3_BUCKET_NAME_PATTERN: "integrationtest-%s"
 
 volumes:
   local_mail: {}  # renderer/frontend write emails; integration-test reads them

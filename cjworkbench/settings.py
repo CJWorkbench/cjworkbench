@@ -283,6 +283,7 @@ LOGGING = {
         # modules that we think are now better off as INFO.
         "asyncio": {"level": "INFO"},
         "botocore": {"level": "INFO"},
+        "botocore.credentials": {"level": "WARNING"},
         "carehare": {"level": "INFO"},
         "channels_rabbitmq": {"level": "INFO"},
         "intercom": {"level": "INFO"},
@@ -455,10 +456,7 @@ TUS_EXTERNAL_URL_PREFIX_OVERRIDE = os.environ.get(
 )
 
 AWS_S3_ENDPOINT = os.environ.get("AWS_S3_ENDPOINT")  # None means AWS default
-if "S3_BUCKET_NAME_PATTERN" in os.environ:
-    S3_BUCKET_NAME_PATTERN = os.environ["S3_BUCKET_NAME_PATTERN"]
-else:
-    S3_BUCKET_NAME_PATTERN = "%s" + os.environ.get("MINIO_BUCKET_SUFFIX", "")
+S3_BUCKET_NAME_PATTERN = os.environ.get("S3_BUCKET_NAME_PATTERN", "%s")
 
 LESSON_FILES_URL = "https://static.workbenchdata.com"
 """URL where we publish data for users to fetch in lessons.
