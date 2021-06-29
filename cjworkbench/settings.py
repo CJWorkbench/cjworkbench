@@ -454,36 +454,11 @@ TUS_EXTERNAL_URL_PREFIX_OVERRIDE = os.environ.get(
     "TUS_EXTERNAL_URL_PREFIX_OVERRIDE", TUS_CREATE_UPLOAD_URL
 )
 
-if "MINIO_URL" not in os.environ and "AWS_S3_ENDPOINT" not in os.environ:
-    sys.exit("Must set AWS_S3_ENDPOINT")
-if "MINIO_ACCESS_KEY" not in os.environ and "AWS_ACCESS_KEY_ID" not in os.environ:
-    sys.exit("Must set AWS_ACCESS_KEY_ID")
-if "MINIO_SECRET_KEY" not in os.environ and "AWS_SECRET_ACCESS_KEY" not in os.environ:
-    sys.exit("Must set AWS_SECRET_ACCESS_KEY")
-if (
-    "MINIO_BUCKET_PREFIX" not in os.environ
-    and "S3_BUCKET_NAME_PATTERN" not in os.environ
-):
-    sys.exit("Must set S3_BUCKET_NAME_PATTERN")
-AWS_S3_ENDPOINT = os.environ.get("AWS_S3_ENDPOINT", os.environ.get("MINIO_URL"))
-AWS_ACCESS_KEY_ID = os.environ.get(
-    "AWS_ACCESS_KEY_ID", os.environ.get("MINIO_ACCESS_KEY")
-)
-AWS_SECRET_ACCESS_KEY = os.environ.get(
-    "AWS_SECRET_ACCESS_KEY", os.environ.get("MINIO_SECRET_KEY")
-)
+AWS_S3_ENDPOINT = os.environ.get("AWS_S3_ENDPOINT")  # None means AWS default
 if "S3_BUCKET_NAME_PATTERN" in os.environ:
     S3_BUCKET_NAME_PATTERN = os.environ["S3_BUCKET_NAME_PATTERN"]
-elif len(os.environ["MINIO_BUCKET_PREFIX"]) > 0:
-    S3_BUCKET_NAME_PATTERN = (
-        os.environ["MINIO_BUCKET_PREFIX"]
-        + "-%s"
-        + os.environ.get("MINIO_BUCKET_SUFFIX", "")
-    )
 else:
     S3_BUCKET_NAME_PATTERN = "%s" + os.environ.get("MINIO_BUCKET_SUFFIX", "")
-if "MINIO_STATIC_URL_PATTERN" in os.environ:
-    STATIC_URL = os.environ["MINIO_STATIC_URL_PATTERN"]
 
 LESSON_FILES_URL = "https://static.workbenchdata.com"
 """URL where we publish data for users to fetch in lessons.
