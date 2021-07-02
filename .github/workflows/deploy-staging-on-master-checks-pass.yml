@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.check_suite.conclusion == 'success'
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-
       - name: Notify Slack we are about to start
         uses: CJWorkbench/slack-postmessage@9a028913e74e93a19032da68a9b4def4106a46e3
         env:
@@ -21,13 +18,23 @@ jobs:
         with:
           message: '{"channel": "#staging-status", "text": "Deploying `${{ github.sha }}` to staging…"}'
 
-      - name: Install GCloud API
-        uses: google-github-actions/setup-gcloud@master
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          version: '343.0.0'
+          repository: CJWorkbench/cjworkbench-deploy@master
+
+      - name: Install GCloud API
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          version: '347.0.0'
           service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT }}
+
+      - name: Set up Kustomize
+        run: |-
+          curl -sfLo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v4.0.6/kustomize_4.0.6_linux_amd64
+          chmod +x /usr/local/bin/kustomize
 
       - name: Run kubectl
         env:
