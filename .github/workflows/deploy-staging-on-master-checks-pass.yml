@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          repository: CJWorkbench/cjworkbench-deploy@master
+          repository: CJWorkbench/cjworkbench-deploy@main
 
       - name: Install GCloud API
         uses: google-github-actions/setup-gcloud@v0.2.0
