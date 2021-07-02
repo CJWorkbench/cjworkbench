@@ -2,11 +2,9 @@ import asyncio
 import logging
 import os
 import signal
+from typing import Awaitable, Callable, Optional
 
-import cjwstate.modules
-from cjworkbench.sync import database_sync_to_async
 from cjwstate import rabbitmq
-from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.rabbitmq.connection import (
     maintain_global_connection,
     stop_global_connection,
@@ -66,11 +64,15 @@ async def _create_rabbitmq_maintainer() -> asyncio.Task:
     return task
 
 
-class LifespanMiddleware:
+class RabbitmqLifespanMiddleware:
     """Connect to RabbitMQ on startup; disconnect on shutdown."""
 
-    def __init__(self, inner):
+    def __init__(
+        self, inner, extra_init: Optional[Callable[[], Awaitable[None]]] = None
+    ):
         self.inner = inner
+        if extra_init is not None:
+            self.extra_init = extra_init
 
     async def __call__(self, scope, receive, send):
         if scope["type"] != "lifespan":
@@ -88,27 +90,15 @@ class LifespanMiddleware:
                     await send({"type": "lifespan.startup.failed", "message": str(err)})
                     return
 
-                try:
-                    cjwstate.modules.init_module_system()
-                except Exception as err:
-                    logger.exception("Error initializing kernel")
-                    await send({"type": "lifespan.startup.failed", "message": str(err)})
-                    return
-
-                try:
-                    # Load static modules on startup.
-                    #
-                    # This means starting a kernel and validating all static modules.
-                    # Good reasons to load during startup:
-                    #
-                    # 1. In dev mode, this reports errors in modules ASAP.
-                    # 2. In production, this warms up our cache so the first requests
-                    #    won't be served too slowly.
-                    await database_sync_to_async(MODULE_REGISTRY.all_latest)()
-                except Exception as err:
-                    logger.exception("Error initializing modules")
-                    await send({"type": "lifespan.startup.failed", "message": str(err)})
-                    return
+                if hasattr(self, "extra_init"):
+                    try:
+                        await self.extra_init()
+                    except Exception as err:
+                        logger.exception("Error initializing")
+                        await send(
+                            {"type": "lifespan.startup.failed", "message": str(err)}
+                        )
+                        return
 
                 await send({"type": "lifespan.startup.complete"})
                 return

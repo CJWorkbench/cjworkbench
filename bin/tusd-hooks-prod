@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DIR="$(dirname "$0")"/..
+
+set -e
+
+"$DIR"/bin/wait-for-database
+
+exec /opt/venv/django/bin/python -m uvicorn \
+  --host 0.0.0.0 \
+  --port 8080 \
+  --forwarded-allow-ips 0.0.0.0 \
+  tusdhooks.asgi:application

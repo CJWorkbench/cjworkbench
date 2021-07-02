@@ -257,6 +257,54 @@ services:
       '--exec', 'bin/cron-delta-deleter'
     ]
 
+  tusd-hooks:
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
+    environment: *django-env
+    networks: [ 'dev' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio' ]
+    # we need all this sandboxing stuff just to invoke migrate_params(). Rrgh.
+    security_opt:
+      - seccomp=docker/pyspawner-seccomp-profile.json
+    privileged: true
+    cap_add: [ SYS_ADMIN ] # for setup-sandboxes.sh to overlay-mount chroots (on k8s we use an init container instead)
+    command: [
+      'sh',
+      '-c',
+      'cjwkernel/setup-sandboxes.sh only-readonly && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjwstate/**/*.py" "server/**/*.py" "cjworkbench/**/*.py" "tusdhooks/**/*.py" --exec bin/tusd-hooks-prod'
+    ]
+
+  staticfiles:
+    build:
+      context: .
+      target: pydev
+    volumes:
+      - type: bind
+        source: ./
+        target: /app/
+        consistency: cached
+    ports: [ '8003:8003' ]
+    networks: [ 'dev' ]
+    environment:
+      DJANGO_SETTINGS_MODULE: staticfilesdev.settings
+    command: [
+      '/opt/venv/django/bin/python',
+      '-m',
+      'uvicorn',
+      '--host',
+      '0.0.0.0',
+      '--port',
+      '8003',
+      '--use-colors',
+      'staticfilesdev.asgi:application'
+    ]
+
   intercom-sink:
     image: gcr.io/workbenchdata-ci/cjw-intercom-sink:38d0dfbb2dc90a1c978b4bb80ea5b145cdfe3591
     networks: [ 'dev' ]
@@ -268,7 +316,7 @@ services:
   tusd:
     image: tusproject/tusd:v1.4.0
     networks: [ 'dev' ]
-    depends_on: [ 'minio' ]
+    depends_on: [ 'minio', 'tusd-hooks' ]
     ports: [ '8002:80' ]
     environment:
       AWS_ACCESS_KEY_ID: minio_access
@@ -279,7 +327,7 @@ services:
       '-port=80',
       # Use frontend:8080 -- the Django app, not the proxy. The proxy tries to
       # keep connections alive and clients can sometimes notice.
-      '-hooks-http=http://frontend:8080/tusd-hooks',
+      '-hooks-http=http://tusd-hooks:8080/tusd-hooks',
       '-hooks-enabled-events=pre-finish',
       '-s3-endpoint=http://minio:9000',
       '-s3-bucket=dev-upload',
