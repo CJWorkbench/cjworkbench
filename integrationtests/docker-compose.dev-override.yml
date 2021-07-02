@@ -43,9 +43,11 @@ services:
       target: cron
 
   frontend:
-    # Allow debugging at http://localhost:8080
-    # Port 8080 is what we use on prod, so let's expose the same one on localhost
-    ports: [ '8080:8080' ]
+    build:
+      context: ..
+      target: frontend
+
+  tusd-hooks:
     build:
       context: ..
       target: frontend

@@ -33,5 +33,8 @@ services:
   frontend:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
 
+  tusd-hooks:
+    image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
+
   integration-test:
     image: 'gcr.io/${PROJECT_ID}/integration-test:${COMMIT_SHA}'

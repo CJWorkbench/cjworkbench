@@ -176,16 +176,34 @@ services:
     volumes:
       - local_mail:/app/local_mail
 
+  tusd-hooks:
+    #image:
+    #build:
+    #no ports: on cloudbuild
+    command: [ 'sh', '-c', '/app/cjwkernel/setup-sandboxes.sh only-readonly && exec bin/tusd-hooks-prod' ]
+    depends_on: [ 'db', 'rabbitmq', 'minio' ]
+    security_opt:
+      - seccomp=docker/pyspawner-seccomp-profile.json
+    privileged: true  # for setup-sandboxes.sh
+    environment:
+      <<: *common_env
+      CJW_SECRET_KEY: a-secret-key
+      STATIC_URL: http://minio.django-issue-32304.com:9000/static/
+      TUS_CREATE_UPLOAD_URL: http://tusd:8080/files
+      CJW_MOCK_EMAIL: "True"
+    volumes:
+      - local_mail:/app/local_mail
+
   tusd:
     image: tusproject/tusd:v1.4.0
-    depends_on: [ 'minio' ]
+    depends_on: [ 'minio', 'tusd-hooks' ]
     environment:
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
       AWS_REGION: us-east-1
     command: [
       '-port=8080',
-      '-hooks-http=http://frontend:8080/tusd-hooks',
+      '-hooks-http=http://tusd-hooks:8080/tusd-hooks',
       '-hooks-enabled-events=pre-finish',
       '-s3-endpoint=http://minio:9000',
       '-s3-bucket=upload',
@@ -197,7 +215,6 @@ services:
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_INTERCOM_API_TOKEN: mock
       CJW_INTERCOM_QUEUE_NAME: intercom
-
 
   integration-test:
     #image:

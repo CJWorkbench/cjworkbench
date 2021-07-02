@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sites",
     "cjworkbench",  # UserProfile model, etc.
-    "tusdhooks.apps.TusdHooksConfig",
+    "tusdhooks",
 ]
 
 MIDDLEWARE = []
