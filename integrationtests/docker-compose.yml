@@ -195,7 +195,7 @@ services:
       - local_mail:/app/local_mail
 
   tusd:
-    image: tusproject/tusd:v1.4.0
+    image: tusproject/tusd:v1.6.0
     depends_on: [ 'minio', 'tusd-hooks' ]
     environment:
       AWS_ACCESS_KEY_ID: minio_access

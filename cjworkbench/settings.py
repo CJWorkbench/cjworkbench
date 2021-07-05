@@ -182,10 +182,11 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",  # providers are inserted below depending on env
     "cjworkbench",
-    "cron",
-    "fetcher",
-    "renderer",
-    "server",
+    "cron",  # for unittest
+    "fetcher",  # for unittest
+    "renderer",  # for unittest
+    "server",  # for unittest
+    "tusdhooks",  # for unittest
 ]
 
 # Disable Django migrations (we use Flyway)

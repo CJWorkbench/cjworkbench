@@ -314,7 +314,7 @@ services:
       CJW_INTERCOM_QUEUE_NAME: intercom
 
   tusd:
-    image: tusproject/tusd:v1.4.0
+    image: tusproject/tusd:v1.6.0
     networks: [ 'dev' ]
     depends_on: [ 'minio', 'tusd-hooks' ]
     ports: [ '8002:80' ]
@@ -402,7 +402,7 @@ services:
         minio server /data
 
   testtusd:
-    image: tusproject/tusd:v1.4.0
+    image: tusproject/tusd:v1.6.0
     networks: [ 'test' ]
     depends_on: [ 'testminio' ]
     environment:

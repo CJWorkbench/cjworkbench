@@ -50,7 +50,7 @@ services:
   tusd-hooks:
     build:
       context: ..
-      target: frontend
+      target: tusd-hooks
 
   integration-test:
     build:

@@ -31,7 +31,7 @@ steps:
       docker build . # build everything, _and_ run npm test and black
 
       # Tag images for production
-      for target in upload-assets migrate fetcher renderer cron frontend; do
+      for target in upload-assets migrate fetcher renderer cron frontend tusd-hooks; do
         docker build \
           --target $$target \
           --tag gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA \
@@ -105,4 +105,5 @@ images:
 - 'gcr.io/$PROJECT_ID/renderer:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/tusd-hooks:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/integration-test:latest' # cache this layer -- we can pull it to speed up future builds

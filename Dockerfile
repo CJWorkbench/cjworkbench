@@ -249,3 +249,12 @@ EXPOSE 8080
 # Beware: uvicorn does not serve static files! Use upload-assets to push them
 # to GCS and publish them there.
 CMD [ "bin/frontend-prod" ]
+
+# 3.7. tusd-hooks: finishes file uploads
+# It requires the whole module-loader system, merely to set a parameter.
+# TODO make migrate-params far more lightweight, so cjwkernel won't be needed.
+FROM base AS tusd-hooks
+COPY tusdhooks/ /app/tusdhooks/
+# 8080 is Kubernetes' conventional web-server port
+EXPOSE 8080
+CMD [ "bin/tusd-hooks-prod" ]
