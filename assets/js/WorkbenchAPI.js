@@ -226,23 +226,6 @@ export default class WorkbenchAPI {
     })
   }
 
-  getStepResultTableSlice (stepSlug, deltaId, startRow, endRow) {
-    const path = `/workflows/${this.workflowIdOrSecretId}/steps/${stepSlug}/delta-${deltaId}/result-table-slice.json`
-
-    const params = new URLSearchParams()
-    if (startRow) {
-      params.set('startrow', String(startRow))
-    }
-    if (endRow) {
-      params.set('endrow', String(endRow))
-    }
-    const queryString = params.toString()
-
-    const url = path + (queryString ? ('?' + queryString) : '')
-
-    return this._fetch(url)
-  }
-
   stepResultColumnValueCounts (stepSlug, deltaId, column) {
     return this._fetch(
       `/workflows/${this.workflowIdOrSecretId}/steps/${stepSlug}/delta-${deltaId}/result-column-value-counts.json?column=${encodeURIComponent(column)}`

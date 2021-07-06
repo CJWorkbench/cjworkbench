@@ -107,16 +107,8 @@ urlpatterns = [
                     include(
                         [
                             path(
-                                "delta-<int:delta_id>/",
-                                include(
-                                    [
-                                        path("result-json.json", steps.result_json),
-                                        path(
-                                            "result-table-slice.json",
-                                            steps.result_table_slice,
-                                        ),
-                                    ]
-                                ),
+                                "delta-<int:delta_id>/result-json.json",
+                                steps.result_json,
                             ),
                             path(
                                 "current-result-table.csv",

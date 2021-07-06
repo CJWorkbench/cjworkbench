@@ -13,7 +13,6 @@ import selectWorkflowIdOrSecretId from '../selectors/selectWorkflowIdOrSecretId'
  */
 export class OutputPane extends React.Component {
   static propTypes = {
-    loadRows: PropTypes.func.isRequired, // func(stepSlug, deltaId, startRowInclusive, endRowExclusive) => Promise[Array[Object] or error]
     workflowIdOrSecretId: propTypes.workflowId.isRequired,
     stepBeforeError: PropTypes.shape({
       id: PropTypes.number.isRequired,
@@ -100,7 +99,7 @@ export class OutputPane extends React.Component {
   }
 
   render () {
-    const { isReadOnly, loadRows, step, stepBeforeError, workflowIdOrSecretId } = this.props
+    const { isReadOnly, step, stepBeforeError, workflowIdOrSecretId } = this.props
     const stepForTable = this.stepForTable
     const className =
       'outputpane module-' + (step ? step.status : 'unreachable')
@@ -128,7 +127,6 @@ export class OutputPane extends React.Component {
           columns={stepForTable ? stepForTable.columns : null}
           nRows={stepForTable ? stepForTable.nRows : null}
           isReadOnly={isReadOnly}
-          loadRows={loadRows}
         />
       </div>
     )
@@ -220,14 +218,4 @@ function mapStateToProps (state) {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    loadRows: (stepSlug, deltaId, startRow, endRow) => {
-      return dispatch((_, __, api) => {
-        return api.getStepResultTableSlice(stepSlug, deltaId, startRow, endRow)
-      })
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(OutputPane)
+export default connect(mapStateToProps)(OutputPane)

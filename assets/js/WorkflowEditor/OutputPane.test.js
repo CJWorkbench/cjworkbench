@@ -1,4 +1,4 @@
-/* global describe, it, expect, jest */
+/* global describe, it, expect */
 import { OutputPane } from './OutputPane'
 import OutputIframe from '../OutputIframe'
 import DelayedTableSwitcher from '../table/DelayedTableSwitcher'
@@ -8,7 +8,6 @@ describe('OutputPane', () => {
   const wrapper = function (extraProps = {}) {
     return shallowWithI18n(
       <OutputPane
-        loadRows={jest.fn()}
         workflowIdOrSecretId={123}
         step={{ id: 987, slug: 'step-1', deltaId: 1, status: 'ok', htmlOutput: false }}
         isPublic={false}

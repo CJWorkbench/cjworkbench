@@ -87,9 +87,7 @@ describe('DataGrid', () => {
           setDropdownAction={jest.fn()}
           onSetSelectedRowIndexes={jest.fn()}
           reorderColumn={jest.fn()}
-          {
-            ...extraProps /* may include new loadRows */
-          }
+          {...extraProps}
         />
       </Provider>
     )

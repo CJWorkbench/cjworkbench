@@ -34,8 +34,6 @@ from ..serializers import (
     jsonize_clientside_workflow,
 )
 
-_MaxNRowsPerRequest = 300
-
 
 def _load_workflow_and_step_sync(
     request: HttpRequest,
@@ -143,66 +141,6 @@ def _load_step_by_id_oops_where_is_workflow(
         raise Http404("step not found")
 
     return _load_workflow_and_step_sync(request, workflow_id, step_slug, accessing)
-
-
-def int_or_none(x):
-    return int(x) if x is not None else None
-
-
-async def result_table_slice(
-    request: HttpRequest, workflow_id_or_secret_id: int, step_slug: str, delta_id: int
-) -> HttpResponse:
-    # Get first and last row from query parameters, or default to all if not
-    # specified
-    try:
-        startrow = int_or_none(request.GET.get("startrow"))
-        endrow = int_or_none(request.GET.get("endrow"))
-    except ValueError:
-        return JsonResponse(
-            {"message": "bad row number", "status_code": 400},
-            status=status.BAD_REQUEST,
-        )
-
-    # raise Http404, PermissionDenied
-    _, step = await _load_workflow_and_step(
-        request, workflow_id_or_secret_id, step_slug, "table"
-    )
-    cached_result = step.cached_render_result
-    if cached_result is None or cached_result.delta_id != delta_id:
-        # assume we'll get another request after execute finishes
-        return JsonResponse([], safe=False)
-
-    # startrow/endrow can be None, and these still work
-    startrow = max(0, startrow or 0)
-    endrow = max(
-        startrow,
-        min(
-            cached_result.table_metadata.n_rows,
-            endrow or 2 ** 60,
-            startrow + _MaxNRowsPerRequest,
-        ),
-    )
-
-    try:
-        # Return one more column than configured, so client can detect "too many
-        # columns"
-        output = await _step_to_text_stream(
-            step,
-            "json",
-            "--column-range",
-            "0-%d" % (settings.MAX_COLUMNS_PER_CLIENT_REQUEST + 1),
-            "--row-range",
-            "%d-%d" % (startrow, endrow),
-        )
-    except CorruptCacheError:
-        # assume we'll get another request after execute finishes
-        return JsonResponse([], safe=False)
-
-    response = FileResponse(
-        output, as_attachment=False, content_type="application/json"
-    )
-    patch_response_headers(response, cache_timeout=600)
-    return response
 
 
 # /tiles/:slug/v:delta_id/:tile_row,:tile_column.json: table data
