@@ -7,6 +7,7 @@ from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Union
 from allauth.account.utils import user_display
 from cjwmodule.i18n import I18nMessage
 from cjwmodule.spec.paramfield import ParamField
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from icu import ICUError
 
@@ -18,7 +19,6 @@ from cjworkbench.i18n.trans import (
 )
 from cjworkbench.models.userlimits import UserLimits
 from cjworkbench.models.userprofile import UserProfile
-from cjworkbench.settings import KB_ROOT_URL
 from cjwstate import clientside
 
 User = get_user_model()
@@ -424,7 +424,7 @@ def jsonize_clientside_module(
         or help_url.startswith("https://")
         or help_url.startswith("//")
     ):
-        help_url = KB_ROOT_URL + help_url
+        help_url = settings.KB_ROOT_URL + help_url
 
     return {
         "id_name": spec.id_name,

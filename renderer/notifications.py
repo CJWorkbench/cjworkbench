@@ -6,12 +6,12 @@ from typing import NamedTuple
 from allauth.account.utils import user_display
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-from cjworkbench.i18n.templates import get_i18n_context
-from cjwstate.models import Step, Workflow
-from server.utils import get_absolute_url
+from cjwstate.models.step import Step
+from cjwstate.models.workflow import Workflow
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ class OutputDelta(NamedTuple):
     user: User
     workflow: Workflow
     step: Step
+    locale_id: str
 
     @property
     def workflow_name(self) -> str:
@@ -37,29 +38,30 @@ class OutputDelta(NamedTuple):
         return self.step.module_id_name
 
     @property
-    def workflow_url(self) -> str:
-        return get_absolute_url(self.workflow.get_absolute_url())
+    def workflow_id(self) -> str:
+        return self.workflow.id
 
 
 def email_output_delta(output_delta: OutputDelta, updated_at: datetime.datetime):
-    user = output_delta.user
+    domain = Site.objects.get_current().domain
+    workflow_url = f"https://${domain}/workflows/{output_delta.workflow_id}/"
 
     ctx = {
-        **get_i18n_context(user=user),
-        "user_name": user_display(user),
+        "i18n": {"locale_id": output_delta.locale_id},
+        "user_name": user_display(output_delta.user),
         "module_name": output_delta.module_name,
         "workflow_name": output_delta.workflow_name,
-        "workflow_url": output_delta.workflow_url,
+        "workflow_url": workflow_url,
         "date": updated_at,
     }
-    subject = render_to_string("notifications/new_data_version_subject.txt", ctx)
+    subject = render_to_string("new_data_version_subject.txt", ctx)
     subject = "".join(subject.splitlines())
-    message = render_to_string("notifications/new_data_version.txt", ctx)
+    message = render_to_string("new_data_version.txt", ctx)
     mail = EmailMultiAlternatives(
         subject=subject,
         body=message,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[user.email],
+        to=[output_delta.user.email],
     )
     mail.attach_alternative(message, "text/html")
 

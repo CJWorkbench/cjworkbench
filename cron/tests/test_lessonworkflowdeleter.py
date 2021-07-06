@@ -3,8 +3,8 @@ import logging
 
 from cjwstate.models import Workflow
 from cjwstate.tests.utils import DbTestCase
-from cron import lessonworkflowdeleter
 
+import cron.lessonworkflowdeleter.__main__ as lessonworkflowdeleter
 
 StaleTimedelta = datetime.timedelta(days=30.1)
 FreshTimedelta = datetime.timedelta(days=29.1)

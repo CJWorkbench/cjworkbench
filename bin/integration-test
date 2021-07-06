@@ -6,8 +6,6 @@ set -e
 cd "$(dirname "$0")"/..
 
 docker_compose() {
-  DOCKER_BUILDKIT=1 \
-  COMPOSE_DOCKER_CLI_BUILD=1 \
   docker-compose \
     -p 'cjworkbench_integrationtest' \
     -f integrationtests/docker-compose.yml \
@@ -61,7 +59,7 @@ echo 'Tearing down old environment (if it exists)…' >&2
 docker_compose down -v
 
 echo 'Building…' >&2
-docker_compose build
+TAG="integrationtest" docker buildx bake -f docker-bake.hcl
 
 echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run --rm upload-assets

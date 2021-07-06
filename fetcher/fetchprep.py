@@ -5,8 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 from cjwmodule.spec.paramschema import ParamSchema
 
 from cjwkernel.types import ColumnType, TableMetadata
-from renderer.execute.renderprep import PromptErrorAggregator
-from renderer.execute.types import PromptingError
+from cjwstate.errors import PromptingError, PromptingErrorAggregator
 
 
 # singledispatch primer: `clean_value(schema, value, context)` will choose its
@@ -106,7 +105,7 @@ def _(
     if schema.tab_parameter:
         raise RuntimeError("Unsupported: fetch multicolumn with tab_parameter")
 
-    error_agg = PromptErrorAggregator()
+    error_agg = PromptingErrorAggregator()
     requested_colnames = set(value)
 
     valid_colnames = []
@@ -153,7 +152,7 @@ def clean_value_list(
 ) -> List[Any]:
     inner_clean = partial(clean_value, schema.inner_schema)
     ret = []
-    error_agg = PromptErrorAggregator()
+    error_agg = PromptingErrorAggregator()
     for v in value:
         try:
             ret.append(inner_clean(v, input_metadata))
@@ -175,7 +174,7 @@ def _(
     schema: ParamSchema.Dict, value: Dict[str, Any], input_metadata: TableMetadata
 ) -> Dict[str, Any]:
     ret = {}
-    error_agg = PromptErrorAggregator()
+    error_agg = PromptingErrorAggregator()
 
     for k, v in value.items():
         try:

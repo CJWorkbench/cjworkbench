@@ -3,16 +3,13 @@ from __future__ import annotations
 from contextlib import contextmanager
 from typing import ContextManager
 
-from allauth.account.utils import user_display
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.db import models
 
 from cjworkbench import i18n
 
 from .product import Product
 from .userlimits import UserLimits
-
-User = get_user_model()
 
 
 class UserProfile(models.Model):
@@ -27,7 +24,7 @@ class UserProfile(models.Model):
     """
 
     max_fetches_per_day = models.IntegerField(
-        default=UserLimits.free_user_limits().max_fetches_per_day,
+        default=lambda: UserLimits.free_user_limits().max_fetches_per_day,
         help_text=(
             "Applies to the sum of all this user's Workflows. "
             "One fetch every 5min = 288 fetches per day."
@@ -78,4 +75,4 @@ class UserProfile(models.Model):
         )
 
     def __str__(self):
-        return user_display(self.user) + " (" + self.user.email + ")"
+        return self.user.email

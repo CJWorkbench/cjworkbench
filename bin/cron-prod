@@ -7,8 +7,6 @@ set -e
 "$DIR"/bin/wait-for-database
 
 export PYTHONPATH="$DIR"
-export DJANGO_SETTINGS_MODULE="cjworkbench.settings"
-export CJW_MOCK_EMAIL="not-for-cron"
-export CJW_SECRET_KEY="not-for-cron"
+export DJANGO_SETTINGS_MODULE="cron.settings"
 
 exec /opt/venv/django/bin/python -m cron.main

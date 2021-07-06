@@ -7,7 +7,7 @@ class Tab(models.Model):
     """A sequence of Steps in a Workflow."""
 
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "tab"
         ordering = ["position"]
         unique_together = (("workflow", "slug"),)

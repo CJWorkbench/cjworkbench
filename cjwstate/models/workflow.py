@@ -21,7 +21,7 @@ from cjwstate.modules.util import gather_param_tab_slugs
 
 class Workflow(models.Model):
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "workflow"
 
     # TODO when we upgrade to Django 2.2, uncomment this and figure out
@@ -427,9 +427,6 @@ class Workflow(models.Model):
                 )
 
         return wf
-
-    def get_absolute_url(self):
-        return reverse("workflow", args=[str(self.pk)])
 
     def __str__(self):
         return self.name + " - id: " + str(self.id)

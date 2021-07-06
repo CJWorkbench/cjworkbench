@@ -176,25 +176,14 @@ COPY pyproject.toml pyproject.toml
 COPY cjwkernel/ /app/cjwkernel/
 COPY cjwstate/ /app/cjwstate/
 COPY cjworkbench/ /app/cjworkbench/
-# TODO make server/ frontend-specific
-COPY server/ /app/server/
-# cron/, fetcher/ and renderer/ are referenced in settings.py, so they must be
-# in all Django apps. TODO make them _not_ Django apps. (change ORM)
-COPY cron/ /app/cron/
-COPY fetcher/ /app/fetcher/
-COPY renderer/ /app/renderer/
 COPY bin/ /app/bin/
 COPY manage.py /app/
-# templates are used in renderer for notifications emails and in frontend for
-# views. TODO move renderer templates elsewhere.
-COPY templates/ /app/templates/
-COPY assets/locale/ /app/assets/locale/
 
 # Inject code-style tests into our continuous integration.
 # This catches style errors that accidentally got past somebody's
 # pre-commit hook.
-FROM python:3.8.8-slim-buster AS pylint
-RUN python -m pip install --no-cache-dir black==20.8b1
+FROM python:3.9.6-slim-buster AS pylint
+RUN python -m pip install --no-cache-dir black==21.6b0
 COPY --from=base /app /app
 RUN black --check /app
 
@@ -204,12 +193,21 @@ COPY venv/django-dev-requirements.txt /app/venv/
 RUN /opt/venv/django/bin/python -m pip install --no-cache-dir -r /app/venv/django-dev-requirements.txt
 COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
 COPY daphne/ /app/daphne/
+COPY fetcher/ /app/fetcher/
+COPY renderer/ /app/renderer/
+COPY server/ /app/server/
+COPY templates/ /app/templates/
+COPY cron/ /app/cron/
+COPY tusdhooks/ /app/tusdhooks/
 COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 
 # 3.1. assets: uploads assets to S3 (frontend will point end users there)
 FROM base AS compile-assets
 COPY staticfilesdev/ /app/staticfilesdev/
 COPY assets/ /app/assets/
+RUN mkdir /app/server
+COPY server/lessons/ /app/server/lessons/
+COPY server/courses/ /app/server/courses/
 COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
 RUN DJANGO_SETTINGS_MODULE=staticfilesdev.settings /opt/venv/django/bin/python ./manage.py collectstatic
 RUN find /app/static -type f -printf "%s\t%P\n"
@@ -227,22 +225,32 @@ CMD [ "migrate" ]
 
 # 3.3. fetcher: runs fetch
 FROM base AS fetcher
+COPY fetcher/ /app/fetcher/
 STOPSIGNAL SIGKILL
 CMD [ "bin/fetcher-prod" ]
 
 # 3.4. fetcher: runs fetch
 FROM base AS renderer
+COPY renderer/ /app/renderer/
+# i18n for notifications emails
+COPY assets/locale/ /app/assets/locale/
 STOPSIGNAL SIGKILL
 CMD [ "bin/renderer-prod" ]
 
 # 3.5. cron: schedules fetches and runs cleanup SQL
 FROM base AS cron
+COPY cron/ /app/cron/
 STOPSIGNAL SIGKILL
 CMD [ "bin/cron-prod" ]
 
 # 3.6. frontend: serves website
 FROM base AS frontend
 COPY assets/icons/ /app/assets/icons/
+COPY server/ /app/server/
+# templates are used in renderer for notifications emails and in frontend for
+# views.
+COPY templates/ /app/templates/
+COPY assets/locale/ /app/assets/locale/
 COPY --from=jsbuild /app/assets/bundles/webpack-manifest.json /app/assets/bundles/webpack-manifest.json
 # 8080 is Kubernetes' conventional web-server port
 EXPOSE 8080

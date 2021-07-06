@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import pyarrow as pa
 from cjwmodule.arrow.testing import make_column, make_table
+from django.contrib.auth.models import User
 
 from cjwkernel.chroot import EDITABLE_CHROOT
 from cjwkernel.types import I18nMessage, RenderError
@@ -13,14 +14,19 @@ from cjwkernel.tests.util import parquet_file
 from cjwstate import s3, rabbitmq, rendercache
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.storedobjects import create_stored_object
-from cjwstate.models import Workflow
-from cjwstate.tests.utils import (
-    DbTestCaseWithModuleRegistry,
-    create_module_zipfile,
-    create_test_user,
-)
+from cjwstate.models.workflow import Workflow
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
+from cjworkbench.models.userprofile import UserProfile
 from renderer import notifications
 from renderer.execute.step import execute_step
+
+
+def create_test_user(
+    username="username", email="user@example.org", password="password"
+):
+    user = User.objects.create(username=username, email=email, password=password)
+    UserProfile.objects.create(user=user)
+    return user
 
 
 async def noop(*args, **kwargs):

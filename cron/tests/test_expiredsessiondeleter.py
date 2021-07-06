@@ -6,7 +6,7 @@ from django.contrib.sessions.models import Session
 
 from cjwstate.models import Workflow
 from cjworkbench.tests.utils import DbTestCase
-from cron import expiredsessiondeleter
+import cron.expiredsessiondeleter.__main__ as expiredsessiondeleter
 
 
 class ExpiredSessionDeleterTest(DbTestCase):

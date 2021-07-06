@@ -8,22 +8,28 @@ from unittest.mock import patch
 
 import pyarrow as pa
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
+from django.contrib.auth.models import User
 
 from cjwkernel.kernel import Kernel
 from cjwkernel.i18n import TODO_i18n
 from cjwkernel.types import RenderError, RenderResult
 from cjwkernel.tests.util import arrow_table_context
 from cjwstate import clientside, rabbitmq
-from cjwstate.models import Workflow
+from cjwstate.models.workflow import Workflow
 from cjwstate.rendercache import open_cached_render_result
 from cjwstate.rendercache.testing import write_to_rendercache
-from cjwstate.tests.utils import (
-    DbTestCaseWithModuleRegistry,
-    create_module_zipfile,
-    create_test_user,
-)
+from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
+from cjworkbench.models.userprofile import UserProfile
 from renderer.execute.types import UnneededExecution
 from renderer.execute.workflow import execute_workflow, partition_ready_and_dependent
+
+
+def create_test_user(
+    username="username", email="user@example.org", password="password"
+):
+    user = User.objects.create(username=username, email=email, password=password)
+    UserProfile.objects.create(user=user)
+    return user
 
 
 async def fake_send(*args, **kwargs):

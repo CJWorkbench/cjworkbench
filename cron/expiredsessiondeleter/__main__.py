@@ -52,16 +52,6 @@ def delete_expired_sessions_and_workflows() -> None:
 if __name__ == "__main__":
     django.setup()
 
-    if settings.SESSION_ENGINE != "django.contrib.sessions.backends.db":
-        warnings.warn(
-            "WARNING: not deleting anonymous workflows because we do not know "
-            "which sessions are expired. Rewrite "
-            "delete_expired_sessions_and_workflows() to fix this problem."
-        )
-        # Run forever
-        while True:
-            time.sleep(999999)
-
     while True:
         django.db.close_old_connections()
         with benchmark_sync(logger, "Deleting expired sessions"):

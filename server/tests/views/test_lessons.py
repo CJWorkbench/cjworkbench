@@ -126,7 +126,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="load-public-data"
         )
-        response = self.client.get(workflow.get_absolute_url())
+        response = self.client.get(f"/workflows/{workflow.id}/")
         self.assertRedirects(response, "/lessons/en/load-public-data")
 
     def test_get_public_workflow_with_lesson_slug(self):
@@ -136,7 +136,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
             owner=self.other_user, lesson_slug="load-public-data", public=True
         )  # not 404
         workflow.save()
-        response = self.client.get(workflow.get_absolute_url())
+        response = self.client.get(f"/workflows/{workflow.id}/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
 
@@ -146,7 +146,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="missing-lesson"
         )
-        response = self.client.get(workflow.get_absolute_url())
+        response = self.client.get(f"/workflows/{workflow.id}/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
 
@@ -156,7 +156,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
         workflow = Workflow.create_and_init(
             owner=self.user, lesson_slug="course/missing-lesson"
         )
-        response = self.client.get(workflow.get_absolute_url())
+        response = self.client.get(f"/workflows/{workflow.id}/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("workflow.html")
 
@@ -166,7 +166,7 @@ class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
             owner=self.user, lesson_slug="intro-to-data-journalism/filter"
         )
         self.kernel.migrate_params.side_effect = lambda m, p: p
-        response = self.client.get(workflow.get_absolute_url())
+        response = self.client.get(f"/workflows/{workflow.id}/")
         self.assertRedirects(response, "/courses/en/intro-to-data-journalism/filter")
 
     @patch.object(rabbitmq, "queue_render")

@@ -1,7 +1,7 @@
 import unittest
 
 from cjwkernel.types import I18nMessage, QuickFix, QuickFixAction, RenderError
-from renderer.execute.types import PromptingError
+from cjwstate.errors import PromptingError
 
 
 class PromptingErrorTest(unittest.TestCase):

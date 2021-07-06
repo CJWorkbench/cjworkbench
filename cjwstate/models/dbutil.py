@@ -1,11 +1,9 @@
+from __future__ import annotations
 from typing import List
 
 from django.db import connection
 from django.db.models import F, QuerySet, Sum
-from django.contrib.auth.models import User
 
-from cjworkbench.models.userlimits import UserLimits
-from cjworkbench.models.userprofile import UserProfile
 from cjworkbench.models.userusage import UserUsage
 
 from ..clientside import Null, UserUpdate
@@ -75,7 +73,7 @@ def reorder_list_by_slugs(queryset: QuerySet, field: str, slugs: List[str]) -> N
         queryset.filter(slug=slug).update(**{field: position})
 
 
-def user_display_name(user: User) -> str:
+def user_display_name(user: "User") -> str:
     return (user.first_name + " " + user.last_name).strip() or user.email
 
 
@@ -95,6 +93,9 @@ def lock_user_by_id(user_id: int, *, for_write: bool) -> None:
 
     Raise RuntimeError if the caller didn't wrap us in `transaction.atomic()`.
     """
+    # import here, not file-scope, so apps needn't rely on django.crontrib.auth
+    from django.contrib.auth.models import User
+
     if not connection.in_atomic_block:
         raise RuntimeError(
             "lock_user_by_id() must be called within transaction.atomic()"
@@ -136,6 +137,11 @@ def query_clientside_user(user_id: int) -> UserUpdate:
 
     You must call `lock_user_by_id()` before calling this.
     """
+    # import here, not file-scope, so apps needn't rely on django.crontrib.auth
+    from django.contrib.auth.models import User
+    import cjworkbench.models.price  # define Subscription.price
+    import cjworkbench.models.product  # define Price.product
+    import cjworkbench.models.subscription  # define User.subscriptions
 
     user = User.objects.get(id=user_id)
     subscribed_stripe_product_ids = list(

@@ -7,8 +7,7 @@ Iso8601DateFormat = "%Y-%m-%dT%H:%M:%S"
 
 
 class JsonFormatter(logging.Formatter):
-    """
-    Logger tuned for StackDriver.
+    """Logger tuned for StackDriver.
 
     Docs:
     - https://cloud.google.com/error-reporting/docs/formatting-error-messages

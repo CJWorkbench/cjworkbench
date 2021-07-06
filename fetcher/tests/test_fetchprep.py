@@ -3,8 +3,8 @@ import unittest
 from cjwmodule.spec.paramschema import ParamSchema
 
 from cjwkernel.types import Column, ColumnType, TableMetadata
+from cjwstate.errors import PromptingError
 from fetcher.fetchprep import clean_value
-from renderer.execute.types import PromptingError
 
 
 class CleanValueTests(unittest.TestCase):

@@ -1,5 +1,4 @@
 from cjwstate.models.module_registry import MODULE_REGISTRY
-from cjwstate.params import invoke_migrate_params
 from .base import BaseCommand
 from .util import ChangesStepOutputs
 
@@ -68,6 +67,10 @@ class SetStepParams(ChangesStepOutputs, BaseCommand):
         old_values = step.params
 
         module_spec = module_zipfile.get_spec()
+
+        # [2021-07-05, adamhooper] nested here to prevent circular import error
+        # in fetcher. Didn't bother to find the circle.
+        from cjwstate.params import invoke_migrate_params
 
         # New values: store _migrated_ old_values, with new_values applied on
         # top

@@ -19,7 +19,7 @@ class StoredObject(models.Model):
     """
 
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "stored_object"
 
     # delete stored data if Step deleted

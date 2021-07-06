@@ -15,7 +15,7 @@ now = datetime.datetime.now
 
 class Delta(models.Model):
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "delta"
         ordering = ["id"]  # we read workflow.deltas.last() in tests
         indexes = [

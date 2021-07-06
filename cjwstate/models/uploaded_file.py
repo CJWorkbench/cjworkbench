@@ -12,7 +12,7 @@ from .step import Step
 
 class UploadedFile(models.Model):
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "uploaded_file"
         ordering = ["-created_at"]
 

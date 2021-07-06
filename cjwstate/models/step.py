@@ -22,7 +22,7 @@ class Step(models.Model):
     """An instance of a Module in a Tab."""
 
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "step"
         ordering = ["order"]
         constraints = [

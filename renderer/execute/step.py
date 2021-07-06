@@ -10,6 +10,7 @@ from typing import Any, Dict, List, NamedTuple, Optional
 
 import cjwparquet
 import pyarrow as pa
+from django.db import connection
 
 from cjworkbench.sync import database_sync_to_async
 from cjwkernel.chroot import ChrootContext
@@ -26,13 +27,13 @@ from cjwkernel.types import (
 from cjwkernel.validate import ValidateError, load_untrusted_arrow_file_with_columns
 from cjwkernel.util import tempfile_context
 from cjwstate import clientside, s3, rabbitmq, rendercache
+from cjwstate.errors import PromptingError
 from cjwstate.models import StoredObject, Step, Workflow
 import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
 from renderer import notifications
 from .types import (
     NoLoadedDataError,
-    PromptingError,
     Tab,
     TabCycleError,
     TabOutputUnreachableError,
@@ -297,7 +298,7 @@ def _execute_step_save(
     # raises UnneededExecution
     with contextlib.ExitStack() as exit_stack:
         safe_step = exit_stack.enter_context(locked_step(workflow, step))
-        if safe_step.notifications:
+        if safe_step.notifications and workflow.owner_id is not None:
             stale_crr = safe_step.get_stale_cached_render_result()
             if stale_crr is None:
                 stale_parquet_file = None
@@ -350,10 +351,25 @@ def _execute_step_save(
                 )
 
         if is_changed:
+            with connection.cursor() as cursor:
+                # Don't import cjworkbench.models.userprofile: it relies on
+                # settings.FREE_TIER_USAGE_LIMITS, buy renderer doesn't set it.
+                #
+                # TODO nix django-ORM.
+                cursor.execute(
+                    """
+                    SELECT locale_id
+                    FROM cjworkbench_userprofile
+                    WHERE user_id = %s
+                    """,
+                    [safe_step.workflow.owner_id],
+                )
+                locale_id = cursor.fetchone()[0]
             maybe_delta = notifications.OutputDelta(
-                safe_step.workflow.owner,
-                safe_step.workflow,
-                safe_step,
+                user=safe_step.workflow.owner,
+                workflow=safe_step.workflow,
+                step=safe_step,
+                locale_id=locale_id,
             )
         else:
             maybe_delta = None

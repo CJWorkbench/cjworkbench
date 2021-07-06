@@ -1,19 +1,12 @@
-from cjworkbench.settings import (
-    AWS_S3_ENDPOINT,
-    DATABASES,
-    DEBUG,
-    DJANGO_ROOT,
-    FREE_TIER_USER_LIMITS,
-    LOGGING,
-    MAX_BYTES_FILES_PER_STEP,
-    MAX_N_FILES_PER_STEP,
-    MIGRATION_MODULES,
-    N_SYNC_DATABASE_CONNECTIONS,
-    RABBITMQ_HOST,
-    S3_BUCKET_NAME_PATTERN,
-    SECRET_KEY,
-    TIME_ZONE,
-)
+from cjworkbench.settings.s3 import *
+from cjworkbench.settings.rabbitmq import *
+from cjworkbench.settings.database import *
+from cjworkbench.settings.debug import DEBUG
+from cjworkbench.settings.logging import *
+from cjworkbench.settings.userlimits import *
+from cjworkbench.settings.hardlimits import *
+
+SECRET_KEY = "internal-only-so-no-secret-key"
 
 INSTALLED_APPS = [
     "django.contrib.auth",  # cjwstate.models.workflow imports User
@@ -26,3 +19,5 @@ INSTALLED_APPS = [
 MIDDLEWARE = []
 
 ROOT_URLCONF = "tusdhooks.urls"
+
+ALLOWED_HOSTS = ["*"]

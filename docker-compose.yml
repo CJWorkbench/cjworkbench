@@ -277,7 +277,7 @@ services:
     command: [
       'sh',
       '-c',
-      'cjwkernel/setup-sandboxes.sh only-readonly && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjwstate/**/*.py" "server/**/*.py" "cjworkbench/**/*.py" "tusdhooks/**/*.py" --exec bin/tusd-hooks-prod'
+      'cjwkernel/setup-sandboxes.sh only-readonly && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjwstate/**/*.py" "cjworkbench/**/*.py" "tusdhooks/**/*.py" --exec bin/tusd-hooks-prod'
     ]
 
   staticfiles:

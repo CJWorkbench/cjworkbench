@@ -8,10 +8,11 @@ This app serves two purposes:
 The rules: any request to this server must serve the most up-to-date file
 possible.
 """
+import os
 import os.path
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from cjworkbench.settings.util import DJANGO_ROOT
+
 SECRET_KEY = "no-key-because-this-is-dev-mode-only"
 DEBUG = True  # log a bit more
 
@@ -27,11 +28,6 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    # These providers appear in _ALL ENVIRONMENTS_ for now.
-    # see https://github.com/pennersr/django-allauth/issues/2343
-    # ... so don't add a provider that doesn't belong on production!
-    # (On dev/unittest/integrationtest, the buttons will appear but
-    # clicking one will get a 404 page unless the SocialApp is added.)
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.google",
 ]
@@ -65,11 +61,9 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     "staticfilesdev.finders.LessonSupportDataFinder",
 ]
-STATIC_ROOT = os.path.normpath(
-    os.path.join(BASE_DIR, "static")
-)  # collectstatic writes here
+STATIC_ROOT = os.path.join(DJANGO_ROOT, "static")  # collectstatic writes here
 STATICFILES_DIRS = (
-    ("bundles", os.path.join(BASE_DIR, "assets", "bundles")),
-    ("fonts", os.path.join(BASE_DIR, "assets", "fonts")),
-    ("images", os.path.join(BASE_DIR, "assets", "images")),
+    ("bundles", os.path.join(DJANGO_ROOT, "assets", "bundles")),
+    ("fonts", os.path.join(DJANGO_ROOT, "assets", "fonts")),
+    ("images", os.path.join(DJANGO_ROOT, "assets", "images")),
 )

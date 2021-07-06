@@ -15,14 +15,9 @@ from cjwkernel.types import (
     UploadedFile,
 )
 from cjwstate import s3
+from cjwstate.errors import PromptingError, PromptingErrorAggregator
 from cjwstate.models import UploadedFile as UploadedFileModel
-from .types import (
-    StepResult,
-    Tab,
-    TabCycleError,
-    TabOutputUnreachableError,
-    PromptingError,
-)
+from .types import StepResult, Tab, TabCycleError, TabOutputUnreachableError
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -55,54 +50,6 @@ def _validate_iso8601_string(s):
         raise ValueError("Date and time must be separated by T")
     if SingleDigitMonthOrDay.match(s):
         raise ValueError("Month and day must have a leading 0")
-
-
-PromptingErrorSubtype = Union[
-    PromptingError.WrongColumnType,
-    PromptingError.CannotCoerceValueToNumber,
-    PromptingError.CannotCoerceValueToTimestamp,
-]
-
-
-class PromptErrorAggregator:
-    def __init__(self):
-        self.groups = {}  # found_type => { wanted_types => column_names }
-        self.ungrouped_errors = []
-        # Errors are first-come-first-reported, per type. We get that because
-        # Python 3.7+ dicts iterate in insertion order.
-
-    def extend(self, errors: List[PromptingErrorSubtype]) -> None:
-        for error in errors:
-            self.add(error)
-
-    def add(self, error: PromptingErrorSubtype) -> None:
-        if isinstance(error, PromptingError.WrongColumnType):
-            if "text" in error.wanted_types:
-                found_type = None
-            else:
-                found_type = error.found_type
-            group = self.groups.setdefault(found_type, {})
-            names = group.setdefault(error.wanted_types, [])
-            for name in error.column_names:
-                if name not in names:
-                    names.append(name)
-        else:
-            self.ungrouped_errors.append(error)
-
-    def raise_if_nonempty(self):
-        if not self.groups and not self.ungrouped_errors:
-            return
-
-        errors = []
-        for found_type, group in self.groups.items():
-            for wanted_types, column_names in group.items():
-                errors.append(
-                    PromptingError.WrongColumnType(
-                        column_names, found_type, wanted_types
-                    )
-                )
-        errors.extend(self.ungrouped_errors)
-        raise PromptingError(errors)
 
 
 class _TabData(NamedTuple):
@@ -211,7 +158,7 @@ class _Cleaner:
                 for column in self.input_table_columns
             },
         )
-        error_agg = PromptErrorAggregator()
+        error_agg = PromptingErrorAggregator()
         for error in errors:
             error_agg.add(error)
         error_agg.raise_if_nonempty()
@@ -307,7 +254,7 @@ class _Cleaner:
     def _(self, schema: ParamSchema.Multicolumn, value: List[str]) -> str:
         valid_columns = self.output_columns_for_tab_parameter(schema.tab_parameter)
 
-        error_agg = PromptErrorAggregator()
+        error_agg = PromptingErrorAggregator()
         requested_colnames = set(value)
 
         valid_colnames = []
@@ -350,7 +297,7 @@ class _Cleaner:
         )
 
         ret = []
-        error_agg = PromptErrorAggregator()
+        error_agg = PromptingErrorAggregator()
 
         for v in value:
             try:
@@ -367,7 +314,7 @@ class _Cleaner:
     @clean_value.register(ParamSchema.List)
     def clean_value_list(self, schema: ParamSchema.List, value: List[Any]) -> List[Any]:
         ret = []
-        error_agg = PromptErrorAggregator()
+        error_agg = PromptingErrorAggregator()
         for v in value:
             try:
                 ret.append(self.clean_value(schema.inner_schema, v))
@@ -393,7 +340,7 @@ class _Cleaner:
     @clean_value.register(ParamSchema.Dict)
     def _(self, schema: ParamSchema.Dict, value: Dict[str, Any]) -> Dict[str, Any]:
         ret = {}
-        error_agg = PromptErrorAggregator()
+        error_agg = PromptingErrorAggregator()
 
         for k, v in value.items():
             try:

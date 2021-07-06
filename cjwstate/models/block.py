@@ -32,7 +32,7 @@ class Block(models.Model):
     """
 
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "block"
         ordering = ["workflow_id", "position"]
         constraints = [
@@ -70,7 +70,7 @@ class Block(models.Model):
     objects = BlockManager()
 
     workflow = models.ForeignKey(
-        "server.Workflow", related_name="blocks", on_delete=models.CASCADE
+        "cjworkbench.Workflow", related_name="blocks", on_delete=models.CASCADE
     )
 
     slug = models.SlugField(db_index=True)
@@ -95,7 +95,7 @@ class Block(models.Model):
     """Markdown, for a Text block."""
 
     tab = models.ForeignKey(
-        "server.Tab",
+        "cjworkbench.Tab",
         null=True,
         blank=True,
         related_name="blocks",
@@ -108,7 +108,7 @@ class Block(models.Model):
     """
 
     step = models.ForeignKey(
-        "server.Step",
+        "cjworkbench.Step",
         null=True,
         blank=True,
         related_name="blocks",

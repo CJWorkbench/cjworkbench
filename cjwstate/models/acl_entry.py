@@ -10,13 +10,13 @@ class AclEntry(models.Model):
     """Access-control-list entry granting a user access to a workflow."""
 
     class Meta:
-        app_label = "server"
+        app_label = "cjworkbench"
         db_table = "acl_entry"
         ordering = ["email"]
         unique_together = ("workflow", "email")
 
     workflow = models.ForeignKey(
-        "server.Workflow", related_name="acl", on_delete=models.CASCADE
+        "cjworkbench.Workflow", related_name="acl", on_delete=models.CASCADE
     )
 
     email = models.EmailField("email", db_index=True)  # so user can list workflows

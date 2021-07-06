@@ -509,7 +509,7 @@ msgstr "Close Search"
 msgid "js.WorkflowEditor.ModuleSearch.Prompt.placeholder"
 msgstr "Search…"
 
-#: assets/js/WorkflowEditor/OutputPane.js:114
+#: assets/js/WorkflowEditor/OutputPane.js:113
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 "This was the data that led to an error. Please correct the error in the "
@@ -2071,6 +2071,72 @@ msgstr "Last name"
 msgid "py.forms.signup.lastName.placeholder"
 msgstr "Last name"
 
+#: cjwstate/errors.py:44
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
+msgstr "“{value}” is not a number. Please enter a number."
+
+#: cjwstate/errors.py:59
+msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
+msgstr ""
+"“{value}” is not a timestamp. Please enter a value with the format “YYYY-"
+"MM-DD” or “YYYY-MM-DDThh:mmZ”."
+
+#. i18n: The parameter {columns} will contain the total number of columns that
+#. need to be converted; you will also receive the column names as {0}, {1},
+#. {2}, etc.
+#: cjwstate/errors.py:129
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
+msgstr ""
+"{ columns, plural, offset:2 =1 {“{0}” is not Text.} =2 {“{0}” and “{1}” "
+"are not Text.} =3 {“{0}”, “{1}” and “{2}” are not Text.} other {“{0}”, "
+"“{1}” and # others are not Text.}}"
+
+#: cjwstate/errors.py:142
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
+msgstr "Convert to Text"
+
+#. i18n: The parameter {wanted_type} will have values among "text", "number",
+#. "date", "timestamp" or "other". ("other" may translate to "".)
+#: cjwstate/errors.py:165
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.quick_fix"
+msgstr ""
+"Convert to {wanted_type, select, text {Text} number {Number} date {Date} "
+"timestamp {Timestamp} other {}}"
+
+#. i18n: The parameter {columns} will contain the total number of columns that
+#. need to be converted; you will also receive the column names: {0}, {1}, {2},
+#. etc. The parameter {found_type} will be "date", "text", "number",
+#. "timestamp" or "other". ("other" may translate to "".)
+#: cjwstate/errors.py:178
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.message.before_convert_buttons"
+msgstr ""
+"{columns, plural, offset:2 =1 {“{0}” is {found_type, select, text {Text} "
+"number {Number} timestamp {Timestamp} date {Date} other {}}.} =2 {“{0}” "
+"and “{1}” are {found_type, select, text {Text} number {Number} date "
+"{Date} timestamp {Timestamp} other {}}.} =3 {“{0}”, “{1}” and “{2}” are "
+"{found_type, select, text {Text} number {Number} date {Date} timestamp "
+"{Timestamp} other {}}.} other {“{0}”, “{1}” and # others are {found_type,"
+" select, text {Text} number {Number} date {Date} timestamp {Timestamp} "
+"other {}}.}}"
+
+#: cjwstate/errors.py:196
+msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.message.without_convert_buttons"
+msgstr ""
+"{columns, plural, offset:2 =1 {“{0}” is {found_type, select, text {Text} "
+"number {Number} timestamp {Timestamp} date {Date} other {}}. Select "
+"{best_wanted_type, select, text {Text} number {Number} date {Date} "
+"timestamp {Timestamp} other {}}.} =2 {“{0}” and “{1}” are {found_type, "
+"select, text {Text} number {Number} date {Date} timestamp {Timestamp} "
+"other {}}. Select {best_wanted_type, select, text {Text} number {Number} "
+"date {Date} timestamp {Timestamp} other {}}.} =3 {“{0}”, “{1}” and “{2}” "
+"are {found_type, select, text {Text} number {Number} date {Date} "
+"timestamp {Timestamp} other {}}. Select {best_wanted_type, select, text "
+"{Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} "
+"other {“{0}”, “{1}” and # others are {found_type, select, text {Text} "
+"number {Number} date {Date} timestamp {Timestamp} other {}}. Select "
+"{best_wanted_type, select, text {Text} number {Number} date {Date} "
+"timestamp {Timestamp} other {}}.}}"
+
 #: fetcher/fetch.py:180
 msgid "py.fetcher.fetch.user_visible_bug_during_fetch"
 msgstr ""
@@ -2101,93 +2167,43 @@ msgstr "Timeout during OAuth2 token refresh"
 msgid "py.fetcher.secrets._refresh_oauth2_token.client_error"
 msgstr "HTTP error during OAuth2 token refresh: {error}"
 
-#: renderer/execute/step.py:391
+#: renderer/execute/step.py:407
 msgid "py.renderer.execute.step.noModule"
 msgstr "Please delete this step: an administrator uninstalled its code."
 
-#: renderer/execute/step.py:420
+#: renderer/execute/step.py:436
 msgid "py.renderer.execute.step.NoLoadedDataError"
 msgstr "Please Add Data before this step."
 
-#: renderer/execute/step.py:432
+#: renderer/execute/step.py:448
 msgid "py.renderer.execute.step.TabCycleError"
 msgstr "The chosen tab depends on this one. Please choose another tab."
 
-#: renderer/execute/step.py:444
+#: renderer/execute/step.py:460
 msgid "py.renderer.execute.step.TabOutputUnreachableError"
 msgstr "The chosen tab has no output. Please select another one."
 
-#: renderer/execute/step.py:487
+#: renderer/execute/step.py:503
 msgid "py.renderer.execute.step.user_visible_bug_during_render"
 msgstr ""
 "Something unexpected happened. We have been notified and are working to "
 "fix it. If this persists, contact us. Error code: {message}"
 
-#: renderer/execute/types.py:90
-msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToNumber"
-msgstr "“{value}” is not a number. Please enter a number."
+#: renderer/templates/new_data_version.txt:1
+msgid "py.templates.notifications.new_data_version.hello"
+msgstr "Hi {userName},"
 
-#: renderer/execute/types.py:105
-msgid "py.renderer.execute.types.PromptingError.CannotCoerceValueToTimestamp"
+#. The tag is a url
+#: renderer/templates/new_data_version.txt:2
+msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
 msgstr ""
-"“{value}” is not a timestamp. Please enter a value with the format “YYYY-"
-"MM-DD” or “YYYY-MM-DDThh:mmZ”."
+"Your workflow <a0>{workflowName}</a0> has been updated with new data on "
+"{date, date, medium} at {date, time, short}{date, time, z}. Its "
+"{moduleName} module has new output."
 
-#. i18n: The parameter {columns} will contain the total number of columns that
-#. need to be converted; you will also receive the column names as {0}, {1},
-#. {2}, etc.
-#: renderer/execute/types.py:175
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_error_message.shouldBeText"
-msgstr ""
-"{ columns, plural, offset:2 =1 {“{0}” is not Text.} =2 {“{0}” and “{1}” "
-"are not Text.} =3 {“{0}”, “{1}” and “{2}” are not Text.} other {“{0}”, "
-"“{1}” and # others are not Text.}}"
-
-#: renderer/execute/types.py:188
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.as_quick_fixes.shouldBeText"
-msgstr "Convert to Text"
-
-#. i18n: The parameter {wanted_type} will have values among "text", "number",
-#. "date", "timestamp" or "other". ("other" may translate to "".)
-#: renderer/execute/types.py:211
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.quick_fix"
-msgstr ""
-"Convert to {wanted_type, select, text {Text} number {Number} date {Date} "
-"timestamp {Timestamp} other {}}"
-
-#. i18n: The parameter {columns} will contain the total number of columns that
-#. need to be converted; you will also receive the column names: {0}, {1}, {2},
-#. etc. The parameter {found_type} will be "date", "text", "number",
-#. "timestamp" or "other". ("other" may translate to "".)
-#: renderer/execute/types.py:224
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.message.before_convert_buttons"
-msgstr ""
-"{columns, plural, offset:2 =1 {“{0}” is {found_type, select, text {Text} "
-"number {Number} timestamp {Timestamp} date {Date} other {}}.} =2 {“{0}” "
-"and “{1}” are {found_type, select, text {Text} number {Number} date "
-"{Date} timestamp {Timestamp} other {}}.} =3 {“{0}”, “{1}” and “{2}” are "
-"{found_type, select, text {Text} number {Number} date {Date} timestamp "
-"{Timestamp} other {}}.} other {“{0}”, “{1}” and # others are {found_type,"
-" select, text {Text} number {Number} date {Date} timestamp {Timestamp} "
-"other {}}.}}"
-
-#: renderer/execute/types.py:242
-msgid "py.renderer.execute.types.PromptingError.WrongColumnType.general.message.without_convert_buttons"
-msgstr ""
-"{columns, plural, offset:2 =1 {“{0}” is {found_type, select, text {Text} "
-"number {Number} timestamp {Timestamp} date {Date} other {}}. Select "
-"{best_wanted_type, select, text {Text} number {Number} date {Date} "
-"timestamp {Timestamp} other {}}.} =2 {“{0}” and “{1}” are {found_type, "
-"select, text {Text} number {Number} date {Date} timestamp {Timestamp} "
-"other {}}. Select {best_wanted_type, select, text {Text} number {Number} "
-"date {Date} timestamp {Timestamp} other {}}.} =3 {“{0}”, “{1}” and “{2}” "
-"are {found_type, select, text {Text} number {Number} date {Date} "
-"timestamp {Timestamp} other {}}. Select {best_wanted_type, select, text "
-"{Text} number {Number} date {Date} timestamp {Timestamp} other {}}.} "
-"other {“{0}”, “{1}” and # others are {found_type, select, text {Text} "
-"number {Number} date {Date} timestamp {Timestamp} other {}}. Select "
-"{best_wanted_type, select, text {Text} number {Number} date {Date} "
-"timestamp {Timestamp} other {}}.}}"
+#: renderer/templates/new_data_version_subject.txt:1
+msgid "py.templates.notifications.new_data_version_subject"
+msgstr "New data available in {workflow_name}"
 
 #: templates/403.html:7
 msgid "py.templates.403.title"
@@ -2621,22 +2637,6 @@ msgstr "In case you forgot, your username is {username}."
 #: templates/account/email/password_reset_key_subject.txt:3
 msgid "py.templates.account.email.password_reset_key_subject"
 msgstr "Password Reset E-mail"
-
-#: templates/notifications/new_data_version.txt:1
-msgid "py.templates.notifications.new_data_version.hello"
-msgstr "Hi {userName},"
-
-#. The tag is a url
-#: templates/notifications/new_data_version.txt:2
-msgid "py.templates.notifications.new_data_version.workflowHasBeenUpdated"
-msgstr ""
-"Your workflow <a0>{workflowName}</a0> has been updated with new data on "
-"{date, date, medium} at {date, time, short}{date, time, z}. Its "
-"{moduleName} module has new output."
-
-#: templates/notifications/new_data_version_subject.txt:1
-msgid "py.templates.notifications.new_data_version_subject"
-msgstr "New data available in {workflow_name}"
 
 #: templates/openid/login.html:5
 msgid "py.templates.openid.login.title"

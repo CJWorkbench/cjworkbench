@@ -8,6 +8,7 @@ from cjwmodule.spec.paramschema import ParamSchema
 from cjwkernel.types import Column, ColumnType, TabOutput, UploadedFile
 from cjwkernel.util import tempdir_context
 from cjwstate import s3
+from cjwstate.errors import PromptingError
 from cjwstate.models.workflow import Workflow
 from cjwstate.models.uploaded_file import UploadedFile as UploadedFileModel
 from cjwstate.tests.utils import DbTestCase
@@ -17,7 +18,6 @@ from renderer.execute.types import (
     Tab,
     TabCycleError,
     TabOutputUnreachableError,
-    PromptingError,
 )
 
 

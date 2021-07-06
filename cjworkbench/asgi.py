@@ -1,7 +1,5 @@
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cjworkbench.settings")
-
 from django.conf import settings
 
 if not settings.I_AM_TESTING:
@@ -40,6 +38,17 @@ async def init_modules() -> None:
     await database_sync_to_async(MODULE_REGISTRY.all_latest)()
 
 
+def init_django_signals():
+    from cjworkbench.models import (
+        intercom_helpers,
+    )  # when user is created, notify Intercom
+
+
+async def extra_init():
+    init_django_signals()
+    await init_modules()
+
+
 # used in unit tests
 _url_router = AuthMiddlewareStack(
     SetCurrentLocaleAsgiMiddleware(
@@ -62,5 +71,5 @@ application = RabbitmqLifespanMiddleware(
             "websocket": _url_router,
         }
     ),
-    extra_init=init_modules,
+    extra_init=extra_init,
 )

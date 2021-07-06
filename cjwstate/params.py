@@ -1,10 +1,11 @@
 import logging
 import time
 from typing import Any, Dict
+
+import cjwstate.modules
 from cjwkernel.errors import ModuleError
 from cjwstate.models import Step
 from cjwstate.models.module_registry import MODULE_REGISTRY
-import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
 
 

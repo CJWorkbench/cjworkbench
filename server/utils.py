@@ -4,17 +4,12 @@ from typing import Any, Dict, Iterable, Optional, Tuple
 
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.http.request import HttpRequest
 
 from cjwstate import rabbitmq
 
 
 logger = logging.getLogger(__name__)
-
-
-def get_absolute_url(abs_url):
-    return "https://%s%s" % (Site.objects.get_current().domain, abs_url)
 
 
 class Headers:

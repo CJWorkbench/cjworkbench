@@ -22,7 +22,7 @@ from cjwstate.tests.utils import (
 )
 from cjworkbench.tests.utils import DbTestCase
 
-from cron.deltadeleter import (
+from cron.deltadeleter.__main__ import (
     delete_workflow_stale_deltas,
     find_workflows_with_stale_deltas,
 )

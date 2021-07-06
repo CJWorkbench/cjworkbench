@@ -1,14 +1,16 @@
 import logging
 import re
-from django.test import SimpleTestCase
-from server.templatetags.i18n_icu import trans_html
+
 from babel.messages.catalog import Catalog
-from cjworkbench.tests.i18n.util import mock_app_catalogs
 from django.template import Context, Template
+from django.test import SimpleTestCase
+
+from cjworkbench.templatetags.i18n_icu import trans_html
+from cjworkbench.tests.i18n.util import mock_app_catalogs
 
 
-def mock_context(**kwargs):
-    return {"i18n": {"locale_id": kwargs.get("locale_id", "en")}}
+def mock_context(locale_id="en"):
+    return {"i18n": {"locale_id": locale_id}}
 
 
 class TransTemplateTagTests(SimpleTestCase):
@@ -71,7 +73,7 @@ class TransTemplateTagTests(SimpleTestCase):
         catalog.add("id", "Hello")
         with mock_app_catalogs({"en": catalog, "el": Catalog()}):
             self.assertEqual(
-                trans_html(mock_context(locale_id="el"), "id", default="Hello"), "Hello"
+                trans_html(mock_context("el"), "id", default="Hello"), "Hello"
             )
 
     # Tests that when a message does not exist in the catalogs, `None` is returned
@@ -132,7 +134,7 @@ class TransTemplateTagTests(SimpleTestCase):
             self.assertRegex(
                 cm.output[0],
                 re.escape(
-                    "ERROR:server.templatetags.i18n_icu:"
+                    "ERROR:cjworkbench.templatetags.i18n_icu:"
                     "Missing context['i18n']['locale_id'] translating message_id id"
                 ),
             )

@@ -3,54 +3,34 @@ version: '3.4'
 
 services:
   upload-assets:
-    build:
-      context: ..
-      target: upload-assets
+    image: 'gcr.io/workbenchdata-ci/upload-assets:integrationtest'
 
   migrate:
-    build:
-      context: ..
-      target: migrate
+    image: 'gcr.io/workbenchdata-ci/migrate:integrationtest'
 
   fetcher:
-    build:
-      context: ..
-      target: fetcher
+    image: 'gcr.io/workbenchdata-ci/fetcher:integrationtest'
 
   renderer:
-    build:
-      context: ..
-      target: renderer
+    image: 'gcr.io/workbenchdata-ci/renderer:integrationtest'
 
   cron:
-    build:
-      context: ..
-      target: cron
+    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
 
   cron-delta-deleter:
-    build:
-      context: ..
-      target: cron
+    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
 
   cron-expired-session-deleter:
-    build:
-      context: ..
-      target: cron
+    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
 
   cron-lesson-workflow-deleter:
-    build:
-      context: ..
-      target: cron
+    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
 
   frontend:
-    build:
-      context: ..
-      target: frontend
+    image: 'gcr.io/workbenchdata-ci/frontend:integrationtest'
 
   tusd-hooks:
-    build:
-      context: ..
-      target: tusd-hooks
+    image: 'gcr.io/workbenchdata-ci/tusd-hooks:integrationtest'
 
   integration-test:
     build:

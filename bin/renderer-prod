@@ -7,7 +7,6 @@ set -e
 "$DIR"/bin/wait-for-database
 
 export PYTHONPATH="$DIR"
-export DJANGO_SETTINGS_MODULE="cjworkbench.settings"
-export CJW_SECRET_KEY="not-for-renderer"
+export DJANGO_SETTINGS_MODULE="renderer.settings"
 
 exec /opt/venv/django/bin/python -m renderer.main

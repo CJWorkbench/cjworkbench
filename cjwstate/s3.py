@@ -90,12 +90,22 @@ class Layer:
 
 layer = Layer()
 
+BucketNames = {
+    "UserFilesBucket": "user-files",
+    "StoredObjectsBucket": "stored-objects",
+    "ExternalModulesBucket": "external-modules",
+    "CachedRenderResultsBucket": "cached-render-results",
+    "TusUploadBucket": "upload",
+}
 
-UserFilesBucket = settings.S3_BUCKET_NAME_PATTERN % "user-files"
-StoredObjectsBucket = settings.S3_BUCKET_NAME_PATTERN % "stored-objects"
-ExternalModulesBucket = settings.S3_BUCKET_NAME_PATTERN % "external-modules"
-CachedRenderResultsBucket = settings.S3_BUCKET_NAME_PATTERN % "cached-render-results"
-TusUploadBucket = settings.S3_BUCKET_NAME_PATTERN % "upload"
+
+def __getattr__(name: str):
+    """Calculate S3 bucket names at runtime, not import time.
+
+    This reads settings.S3_BUCKET_NAME_PATTERN on demand, so apps that don't use
+    S3 can import this module.
+    """
+    return settings.S3_BUCKET_NAME_PATTERN % BucketNames[name]
 
 
 def list_file_keys(bucket: str, prefix: str):
