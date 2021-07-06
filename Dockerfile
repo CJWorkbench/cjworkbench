@@ -192,6 +192,8 @@ FROM base AS unittest
 COPY venv/django-dev-requirements.txt /app/venv/
 RUN /opt/venv/django/bin/python -m pip install --no-cache-dir -r /app/venv/django-dev-requirements.txt
 COPY bin/unittest-entrypoint.sh /app/bin/unittest-entrypoint.sh
+RUN mkdir assets
+COPY assets/locale/ /app/assets/locale/
 COPY daphne/ /app/daphne/
 COPY fetcher/ /app/fetcher/
 COPY renderer/ /app/renderer/
