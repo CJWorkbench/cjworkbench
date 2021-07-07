@@ -14,7 +14,7 @@ from cjworkbench.settings.rabbitmq import *  # incl. RABBITMQ_HOST
 from cjworkbench.settings.smtp import *
 from cjworkbench.settings.s3 import *
 from cjworkbench.settings.userlimits import FREE_TIER_USER_LIMITS
-from cjworkbench.settings.util import DJANGO_ROOT
+from cjworkbench.settings.util import DJANGO_ROOT, FalsyStrings
 
 SITE_ID = 1  # for allauth
 ALLOWED_HOSTS = ["*"]
@@ -25,8 +25,6 @@ if "HTTPS" in os.environ and os.environ["HTTPS"] not in FalsyStrings:
     CSRF_COOKIE_SECURE = True
     USE_X_FORWARDED_HOST = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-if "CJW_FORCE_SSL" in os.environ:
     SECURE_SSL_REDIRECT = bool(os.environ["CJW_FORCE_SSL"])
 
 INSTALLED_APPS = [
