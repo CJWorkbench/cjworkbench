@@ -9,6 +9,7 @@ from django.db.models import Q
 
 from cjwkernel.types import TableMetadata
 from cjwstate import clientside, s3
+from cjwstate.modules.types import ModuleZipfile
 
 from .cached_render_result import CachedRenderResult
 from .fields import ColumnsField, FetchErrorsField, RenderErrorsField
@@ -479,34 +480,56 @@ class Step(models.Model):
         # no directory hierarchy. The object lifecycle policy will delete them.
         super().delete(*args, **kwargs)
 
-    def get_clientside_files(self) -> List[clientside.UploadedFile]:
-        return [
-            clientside.UploadedFile(
-                name=name, uuid=uuid, size=size, created_at=created_at
-            )
-            for name, uuid, size, created_at in self.uploaded_files.order_by(
-                "-created_at"
-            ).values_list("name", "uuid", "size", "created_at")
-        ]
+    def _get_clientside_files(
+        self, module_zipfile: Optional[ModuleZipfile]
+    ) -> List[clientside.UploadedFile]:
+        if module_zipfile and any(
+            p.type == "file" for p in module_zipfile.get_spec().param_fields
+        ):
+            return [
+                clientside.UploadedFile(
+                    name=name, uuid=uuid, size=size, created_at=created_at
+                )
+                for name, uuid, size, created_at in self.uploaded_files.order_by(
+                    "-created_at"
+                ).values_list("name", "uuid", "size", "created_at")
+            ]
+        else:
+            # Skip the database query
+            return []
 
-    def get_clientside_fetched_version_list(self) -> clientside.FetchedVersionList:
-        return clientside.FetchedVersionList(
-            versions=list(
+    def _get_clientside_fetched_version_list(
+        self, module_zipfile: Optional[ModuleZipfile]
+    ) -> clientside.FetchedVersionList:
+        if module_zipfile and any(
+            p.type == "custom" and p.id_name == "version_select"
+            for p in module_zipfile.get_spec().param_fields
+        ):
+            versions = list(
                 self.stored_objects.order_by("-stored_at").values_list(
                     "stored_at", flat=True
                 )
-            ),
-            selected=self.stored_data_version,
-        )
+            )
+            return clientside.FetchedVersionList(
+                versions=versions, selected=self.stored_data_version
+            )
+        else:
+            # Skip the database query
+            return clientside.FetchedVersionList([], None)
 
-    def to_clientside(self) -> clientside.StepUpdate:
-        # params
-        from cjwstate.models.module_registry import MODULE_REGISTRY
+    def to_clientside(
+        self, *, force_module_zipfile: Optional[ModuleZipfile] = None
+    ) -> clientside.StepUpdate:
+        # module_zipfile, for params
+        if force_module_zipfile:
+            module_zipfile = force_module_zipfile
+        else:
+            from cjwstate.models.module_registry import MODULE_REGISTRY
 
-        try:
-            module_zipfile = MODULE_REGISTRY.latest(self.module_id_name)
-        except KeyError:
-            module_zipfile = None
+            try:
+                module_zipfile = MODULE_REGISTRY.latest(self.module_id_name)
+            except KeyError:
+                module_zipfile = None
 
         if module_zipfile is None:
             params = {}
@@ -538,7 +561,7 @@ class Step(models.Model):
             tab_slug=self.tab_slug,
             is_busy=self.is_busy,
             render_result=crr,
-            files=self.get_clientside_files(),
+            files=self._get_clientside_files(module_zipfile),
             params=params,
             secrets=self.secret_metadata,
             is_collapsed=self.is_collapsed,
@@ -548,5 +571,5 @@ class Step(models.Model):
             last_fetched_at=self.last_update_check,
             is_notify_on_change=self.notifications,
             last_relevant_delta_id=self.last_relevant_delta_id,
-            versions=self.get_clientside_fetched_version_list(),
+            versions=self._get_clientside_fetched_version_list(module_zipfile),
         )

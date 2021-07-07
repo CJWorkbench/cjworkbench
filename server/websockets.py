@@ -73,13 +73,17 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
                 lock_user_by_id(user_id, for_write=False)
                 user = query_clientside_user(user_id)
 
+            latest_modules = MODULE_REGISTRY.all_latest()
+
             update = clientside.Update(
                 user=user,
                 workflow=workflow.to_clientside(),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
-                    step.id: step.to_clientside()
-                    for step in Step.live_in_workflow(workflow)
+                    step.id: step.to_clientside(
+                        force_module_zipfile=latest_modules.get(step.module_id_name)
+                    )
+                    for step in Step.live_in_workflow(workflow).prefetch_related("tab")
                 },
             )
             return WorkflowUpdateData(update, workflow.last_delta_id)

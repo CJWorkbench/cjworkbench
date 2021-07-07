@@ -145,9 +145,7 @@ def query_clientside_user(user_id: int) -> UserUpdate:
 
     user = User.objects.get(id=user_id)
     subscribed_stripe_product_ids = list(
-        user.subscriptions.select_related("price__product").values_list(
-            "price__product__stripe_product_id", flat=True
-        )
+        user.subscriptions.values_list("price__product__stripe_product_id", flat=True)
     )
 
     return UserUpdate(
