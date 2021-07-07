@@ -34,7 +34,7 @@ jobs:
 
       - name: Set up Kustomize
         run: |-
-          curl -sfLo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v4.0.6/kustomize_4.0.6_linux_amd64
+          curl -sfLo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.0.5/kustomize_v4.0.5_linux_amd64.tar.gz
           chmod +x /usr/local/bin/kustomize
 
       - name: Run kubectl
