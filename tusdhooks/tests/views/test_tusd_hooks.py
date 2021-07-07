@@ -4,6 +4,7 @@ import logging
 from unittest.mock import patch
 
 from django.test import override_settings
+from tusdhooks import settings as tusdhooks_settings
 
 from cjwstate import clientside, s3, rabbitmq
 from cjwstate.models import ModuleVersion, Workflow
@@ -26,6 +27,11 @@ def _init_module(id_name, param_id_name="file", param_type="file"):
     )
 
 
+@override_settings(
+    ROOT_URLCONF=tusdhooks_settings.ROOT_URLCONF,
+    INSTALLED_APPS=tusdhooks_settings.INSTALLED_APPS,
+    MIDDLEWARE=tusdhooks_settings.MIDDLEWARE,
+)
 class UploadTest(DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_render")

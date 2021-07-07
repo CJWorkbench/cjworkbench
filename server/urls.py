@@ -15,7 +15,6 @@ from .views import (
     modules,
     oauth,
     steps,
-    tusd_hooks,
     workflows,
 )
 
@@ -87,7 +86,6 @@ urlpatterns = [
         "api/v1/workflows/<int:workflow_id>/steps/<slug:step_slug>/files",
         files.create_tus_upload_for_workflow_and_step,
     ),
-    path("tusd-hooks", tusd_hooks.tusd_hooks),  # haproxy blocks this one
     # Not-really-an-API API endpoints
     # TODO rename all these so they don't start with `/api`. (The only way to
     # use them is as a logged-in user.)
