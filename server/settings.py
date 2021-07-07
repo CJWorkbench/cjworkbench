@@ -25,7 +25,7 @@ if "HTTPS" in os.environ and os.environ["HTTPS"] not in FalsyStrings:
     CSRF_COOKIE_SECURE = True
     USE_X_FORWARDED_HOST = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = bool(os.environ["CJW_FORCE_SSL"])
+    SECURE_SSL_REDIRECT = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
