@@ -2,14 +2,13 @@ name: Deploy staging on master checks pass
 
 on:
   check_suite:
-    branches: [master]
     types: [completed]
 
 jobs:
   kubectl-deploy:
     name: Deploy to staging Kubernetes cluster
     runs-on: ubuntu-latest
-    if: github.event.check_suite.conclusion == 'success'
+    if: github.event.check_suite.conclusion == 'success' && github.event.check_suite.head_branch == 'master'
     steps:
       - name: Notify Slack we are about to start
         uses: CJWorkbench/slack-postmessage@9a028913e74e93a19032da68a9b4def4106a46e3
@@ -32,23 +31,25 @@ jobs:
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           project_id: ${{ secrets.GCP_PROJECT }}
 
-      - name: Set up Kustomize
+      - name: Install kubectl
+        run: gcloud --quiet components install kubectl
+
+      - name: Install Kustomize
         run: |-
-          curl -sfLo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.0.5/kustomize_v4.0.5_linux_amd64.tar.gz
-          chmod +x /usr/local/bin/kustomize
+          curl -sfLo ./kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.0.5/kustomize_v4.0.5_linux_amd64.tar.gz
+          chmod u+x ./kustomize
+
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v0.3.0
+        with:
+          cluster_name: ${{ secrets.GKE_CLUSTER }}
+          location: ${{ secrets.GCP_REGION }}
+          project_id: ${{ secrets.GCP_PROJECT }}
 
       - name: Run kubectl
         env:
-          GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-          GCP_REGION: ${{ secrets.GCP_REGION }}
-          GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
           GITHUB_SHA: ${{ github.sha }}
-        run: |
-          gcloud container clusters get-credentials "$GKE_CLUSTER" \
-            --region "$GCP_REGION" \
-            --project "$GCP_PROJECT"
-          gcloud --quiet components install kubectl
-          deploy/advanced-deploy staging "$GITHUB_SHA"
+        run: ./advanced-deploy staging "$GITHUB_SHA"
 
       - name: Notify Slack we did it
         uses: CJWorkbench/slack-postmessage@9a028913e74e93a19032da68a9b4def4106a46e3
