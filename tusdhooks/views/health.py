@@ -1,5 +1,5 @@
 import asyncio
-from channels.layers import get_channel_layer
+
 from django.db import connection
 from django.http import HttpResponse
 
@@ -26,16 +26,10 @@ async def _assert_carehare_ok():
     await cjwstate.rabbitmq.connection.get_global_connection()
 
 
-async def _assert_channels_ok():
-    """Crash if channels is not connected."""
-    await get_channel_layer().carehare_connection
-
-
 _assertions = [
     _assert_database_ok,
     _assert_s3_ok,
     _assert_carehare_ok,
-    _assert_channels_ok,
 ]
 
 
