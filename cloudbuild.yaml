@@ -2,54 +2,21 @@
 # instructions.
 #
 # The copy/paste-able command:
-# cloud-build-local --dryrun=false --substitutions COMMIT_SHA=abc123,BRANCH_NAME=branch .
+# gcloud config configurations activate workbenchdata-ci  # set PROJECT_ID
+# cloud-build-local --dryrun=false --substitutions COMMIT_SHA=abc123 .
 timeout: 2400s
 options:
   machineType: N1_HIGHCPU_8
 steps:
 
-# Build new Docker images
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: sh
-  args:
-    - -e
-    - -c
-    - |
-      # --cache-from doesn't work well with multi-stage builds yet: see
-      # https://github.com/moby/moby/issues/32612. We don't win if we pull down
-      # migrate/renderer/fetcher/cron/frontend and try to build using their
-      # caches.
-      #
-      # One alternative win for build speed: author pull requests for each Python
-      # library that uses C, so they push bdist with manylinux. That way our
-      # Dockerfile won't need apt-get or gcc calls, saving oodles of time.
-      #
-      # We can at least pull the latest integration test: our integration tests
-      # don't use multi-stage build so they play nice with cache. (That's a great
-      # win because installing Firefox deps is particularly slow.)
-
-      docker build . # build everything, _and_ run npm test and black
-
-      # Tag images for production
-      for target in upload-assets migrate fetcher renderer cron frontend tusd-hooks; do
-        docker build \
-          --target $$target \
-          --tag gcr.io/$PROJECT_ID/$$target:$COMMIT_SHA \
-          --tag gcr.io/$PROJECT_ID/$$target:$BRANCH_NAME \
-          --tag gcr.io/$PROJECT_ID/$$target:latest \
-          .
-      done
-
-      docker build --target unittest --tag gcr.io/$PROJECT_ID/unittest:$COMMIT_SHA .
-
-      # Build integration-test image -- first pulling from cache if it can be used
-      docker pull gcr.io/$PROJECT_ID/integration-test:latest || true
-      docker build --pull \
-        --file Dockerfile.integrationtest \
-        --target cloudbuild \
-        --tag gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA \
-        --tag gcr.io/$PROJECT_ID/integration-test:latest \
-        .
+# Build new Docker images.
+#
+# Does in-process verifications like `npm test` and `black`.
+- name: 'gcr.io/cloud-builders/docker:20.10.3'
+  args: [ 'buildx', 'bake', '-f', 'docker-bake.hcl', 'default', 'unittest', 'integration-test' ]
+  env:
+  - 'PROJECT_ID=$PROJECT_ID'
+  - 'TAG=$COMMIT_SHA'
 
 # Unit-test
 - name: 'docker/compose:1.28.6'
@@ -68,6 +35,7 @@ steps:
   env:
     - 'PROJECT_ID=$PROJECT_ID'
     - 'COMMIT_SHA=$COMMIT_SHA'
+
 # Integration-test: upload-assets+migrate, then run the integration-test image
 - name: 'docker/compose:1.28.6'
   args: [ '-f', 'integrationtests/docker-compose.yml',
@@ -106,4 +74,3 @@ images:
 - 'gcr.io/$PROJECT_ID/cron:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/tusd-hooks:$COMMIT_SHA'
-- 'gcr.io/$PROJECT_ID/integration-test:latest' # cache this layer -- we can pull it to speed up future builds
