@@ -56,18 +56,6 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 ROOT_URLCONF = "cjworkbench.urls"
 
-# EMAIL_BACKEND (copied in renderer/settings.py)
-if DEBUG or os.environ.get("CJW_MOCK_EMAIL"):
-    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-    EMAIL_FILE_PATH = os.path.join(DJANGO_ROOT, "local_mail")
-else:
-    # Default EMAIL_BACKEND => SMTP
-    EMAIL_HOST = os.environ["CJW_SMTP_HOST"]
-    EMAIL_HOST_USER = os.environ["CJW_SMTP_USER"]
-    EMAIL_HOST_PASSWORD = os.environ["CJW_SMTP_PASSWORD"]
-    EMAIL_PORT = int(os.environ["CJW_SMTP_PORT"])
-    EMAIL_USE_TLS = os.environ["CJW_SMTP_USE_TLS"] not in FalsyStrings
-
 # For django-allauth
 ACCOUNT_ADAPTER = "cjworkbench.accounts.adapter.AccountAdapter"
 ACCOUNT_EMAIL_REQUIRED = True
