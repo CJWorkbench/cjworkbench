@@ -50,6 +50,7 @@ jobs:
       - name: Run kubectl
         env:
           GITHUB_SHA: ${{ github.sha }}
+          PROJECT_ID: ${{ secrets.GCP_PROJECT }}
         run: ./advanced-deploy staging "$GITHUB_SHA"
 
       - name: Notify Slack we did it
