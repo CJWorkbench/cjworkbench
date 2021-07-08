@@ -3,12 +3,10 @@ from __future__ import annotations
 import datetime
 import functools
 import json
-import logging
 from http import HTTPStatus as status
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 from asgiref.sync import async_to_sync
-from cjworkbench.util import benchmark_sync
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -50,9 +48,6 @@ from server.serializers import (
     jsonize_clientside_user,
     jsonize_clientside_workflow,
 )
-
-
-logger = logging.getLogger(__name__)
 
 
 class Http302(Exception):
@@ -235,35 +230,28 @@ def make_init_state(
 def _render_workflows(request: HttpRequest, **kwargs) -> TemplateResponse:
     ctx = JsonizeContext(request.locale_id, {})
 
-    with benchmark_sync(logger, "Querying"):
-        workflows = list(
-            Workflow.objects.filter(**kwargs)
-            .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=""))
-            .prefetch_related("acl", "owner")
-            .order_by("-updated_at")
-        )
+    workflows = list(
+        Workflow.objects.filter(**kwargs)
+        .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=""))
+        .prefetch_related("acl", "owner")
+        .order_by("-updated_at")
+    )
 
-    with benchmark_sync(logger, "Clientsiding"):
-        clientside_workflows = [
-            w.to_clientside(include_tab_slugs=False, include_block_slugs=False)
-            for w in workflows
-        ]
+    clientside_workflows = [
+        w.to_clientside(include_tab_slugs=False, include_block_slugs=False)
+        for w in workflows
+    ]
 
-    with benchmark_sync(logger, "Jsonizing"):
-        json_workflows = [
-            jsonize_clientside_workflow(w, ctx, is_init=True)
-            for w in clientside_workflows
-        ]
+    json_workflows = [
+        jsonize_clientside_workflow(w, ctx, is_init=True) for w in clientside_workflows
+    ]
 
-    with benchmark_sync(logger, "Jsonizing user"):
-        if request.user.is_anonymous:
-            json_user = None
-        else:
-            with transaction.atomic():
-                lock_user_by_id(request.user.id, for_write=False)
-                json_user = jsonize_clientside_user(
-                    query_clientside_user(request.user.id)
-                )
+    if request.user.is_anonymous:
+        json_user = None
+    else:
+        with transaction.atomic():
+            lock_user_by_id(request.user.id, for_write=False)
+            json_user = jsonize_clientside_user(query_clientside_user(request.user.id))
 
     init_state = {
         "loggedInUser": json_user,
