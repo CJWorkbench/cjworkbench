@@ -45,6 +45,7 @@ jobs:
           cluster_name: ${{ secrets.GKE_CLUSTER }}
           location: ${{ secrets.GCP_REGION }}
           project_id: ${{ secrets.GCP_PROJECT }}
+          credentials: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Run kubectl
         env:
