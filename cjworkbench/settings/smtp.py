@@ -15,4 +15,4 @@ else:
     EMAIL_HOST_USER = _os.environ["CJW_SMTP_USER"]
     EMAIL_HOST_PASSWORD = _os.environ["CJW_SMTP_PASSWORD"]
     EMAIL_PORT = int(_os.environ["CJW_SMTP_PORT"])
-    EMAIL_USE_TLS = _os.environ["CJW_SMTP_USE_TLS"] not in FalsyStrings
+    EMAIL_USE_TLS = _os.environ["CJW_SMTP_USE_TLS"] not in _falsy_strings
