@@ -38,6 +38,7 @@ jobs:
         run: |-
           curl -sfLo ./kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.0.5/kustomize_v4.0.5_linux_amd64.tar.gz
           chmod u+x ./kustomize
+          echo "." >> $GITHUB_PATH
 
       - name: Run kubectl
         env:
@@ -49,7 +50,6 @@ jobs:
           gcloud container clusters get-credentials "$GKE_CLUSTER" \
             --region "$GCP_REGION" \
             --project "$GCP_PROJECT"
-          export PATH=.:"$PATH"  # HACK: add kustomize to $PATH
           ./advanced-deploy staging "$GITHUB_SHA"
 
       - name: Notify Slack we did it
