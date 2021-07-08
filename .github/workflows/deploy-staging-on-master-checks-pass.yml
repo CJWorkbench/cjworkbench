@@ -50,7 +50,7 @@ jobs:
             --region "$GCP_REGION" \
             --project "$GCP_PROJECT"
           export PATH=.:"$PATH"  # HACK: add kustomize to $PATH
-          PATH=. ./advanced-deploy staging "$GITHUB_SHA"
+          ./advanced-deploy staging "$GITHUB_SHA"
 
       - name: Notify Slack we did it
         uses: CJWorkbench/slack-postmessage@9a028913e74e93a19032da68a9b4def4106a46e3
