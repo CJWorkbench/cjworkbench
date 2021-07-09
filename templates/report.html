@@ -32,7 +32,7 @@
         <span class="author"><a rel="author">{% trans_html "py.templates.report.author" default="by {workflowOwner}" arg_workflowOwner=owner_name %}</a></span>
         <span class="updated-at">{% trans_html "py.templates.report.updated" default="Updated <time0>{timeAgo}</time0> ago" arg_timeAgo=workflow.updated_at|timesince tag_time0_datetime=workflow.last_delta.datetime|date:"c" %}</span>
         {% if can_view_workflow %}
-          <a href="{{workflow_path}}/">{% trans_html "py.templates.report.sourceDataLink.link" default="Source data" comment="This is a link to a workflow" %}</a>
+          <a href="{{workflow_path}}/">{% trans_html "py.templates.report.sourceDataLink.link" default="Source workflow" comment="This is a link to a workflow" %}</a>
         {% endif %}
       </div>
     </header>

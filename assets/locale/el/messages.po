@@ -2348,6 +2348,7 @@ msgstr "Ενημερώθηκε πριν από <time0>{timeAgo}</time0>"
 
 #. This is a link to a workflow
 #: templates/report.html:35
+#, fuzzy
 msgid "py.templates.report.sourceDataLink.link"
 msgstr "Δεδομένα προέλευσης"
 
