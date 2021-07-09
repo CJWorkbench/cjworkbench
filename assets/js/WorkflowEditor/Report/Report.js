@@ -46,7 +46,6 @@ export default function Report ({
         isReadOnly ? 'report-read-only' : 'report-read-write'
       }`}
     >
-      <ReportHeader title={workflow.name} />
       {isReadOnly
         ? null
         : (
