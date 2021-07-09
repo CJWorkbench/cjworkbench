@@ -2753,3 +2753,4 @@ msgstr "The social account has been disconnected."
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr "Use {providerName} account"
+
