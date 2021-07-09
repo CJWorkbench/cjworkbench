@@ -54,7 +54,7 @@ export default function ShareCard ({ workflowId, secretId, isPublic }) {
             id='js.Report.ShareCard.reportUrl.header'
             comment="As in 'URL of report'"
           >
-            Report Sharing URL
+            Report URL
           </Trans>
         </h4>
         <ShareUrl url={url} go />

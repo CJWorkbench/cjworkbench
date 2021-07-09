@@ -246,7 +246,7 @@ msgstr "Edit privacy"
 #. As in 'URL of report'
 #: assets/js/WorkflowEditor/Report/ShareCard.js:53
 msgid "js.Report.ShareCard.reportUrl.header"
-msgstr "Report Sharing URL"
+msgstr "Report URL"
 
 #: assets/js/WorkflowEditor/Report/ShareCard.js:11
 msgid "js.Report.ShareCard.sharingSTatus.secret"
@@ -2753,4 +2753,3 @@ msgstr "The social account has been disconnected."
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr "Use {providerName} account"
-
