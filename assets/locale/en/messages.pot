@@ -2723,7 +2723,7 @@ msgid "py.templates.report.updated"
 msgstr ""
 
 #. This is a link to a workflow
-#. default-message: Source data
+#. default-message: Source workflow
 #: templates/report.html:35
 msgid "py.templates.report.sourceDataLink.link"
 msgstr ""
@@ -3251,4 +3251,3 @@ msgstr ""
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr ""
-

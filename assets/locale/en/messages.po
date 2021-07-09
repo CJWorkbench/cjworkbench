@@ -2306,7 +2306,7 @@ msgstr "Updated <time0>{timeAgo}</time0> ago"
 #. This is a link to a workflow
 #: templates/report.html:35
 msgid "py.templates.report.sourceDataLink.link"
-msgstr "Source data"
+msgstr "Source workflow"
 
 #: templates/report.html:55
 msgid "py.templates.report.table.download"
@@ -2753,4 +2753,3 @@ msgstr "The social account has been disconnected."
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr "Use {providerName} account"
-

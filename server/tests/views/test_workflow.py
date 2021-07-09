@@ -572,21 +572,21 @@ class ReportViewTests(DbTestCase):
         self.client.force_login(self.user)
         response = self.client.get("/workflows/%d/report" % self.workflow1.id)
         self.assertEqual(response.status_code, status.OK)
-        self.assertIn(b"Source data</a>", response.content)
+        self.assertIn(b"Source workflow</a>", response.content)
 
     def test_viewer_200(self):
         self.workflow1.acl.create(email="user2@example.com", role=Role.VIEWER)
         self.client.force_login(self.otheruser)
         response = self.client.get("/workflows/%d/report" % self.workflow1.id)
         self.assertEqual(response.status_code, status.OK)
-        self.assertIn(b"Source data</a>", response.content)
+        self.assertIn(b"Source workflow</a>", response.content)
 
     def test_report_viewer_200(self):
         self.workflow1.acl.create(email="user2@example.com", role=Role.REPORT_VIEWER)
         self.client.force_login(self.otheruser)
         response = self.client.get("/workflows/%d/report" % self.workflow1.id)
         self.assertEqual(response.status_code, status.OK)
-        self.assertNotIn(b"Source data</a>", response.content)
+        self.assertNotIn(b"Source workflow</a>", response.content)
 
     def test_403(self):
         response = self.client.get("/workflows/%d/report" % self.workflow1.id)
