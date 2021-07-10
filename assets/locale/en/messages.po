@@ -518,7 +518,7 @@ msgstr ""
 #. This is a link to a report
 #: assets/js/WorkflowEditor/PaneSelect.js:22
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
-msgstr "Report"
+msgstr "Report Editor"
 
 #: assets/js/WorkflowEditor/PaneSelect.js:14
 msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
