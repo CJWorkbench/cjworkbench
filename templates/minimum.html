@@ -1,6 +1,4 @@
-{% load static %}
-{% load i18n_icu %}
-<!DOCTYPE html>
+{% load static %}{% load i18n_icu %}{% load json_filters %}{% load workbench %}{% workbench_config as workbench_config %}<!DOCTYPE html>
 <html lang="{{ i18n.locale_id }}">
   <head>
     <meta charset="utf-8">
@@ -8,13 +6,14 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/app-icons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/app-icons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/app-icons/favicon-16x16.png' %}">
-    <link rel="manifest" href="{% static 'images/app-icons/manifest.json' %}">
+    <link rel="manifest" href="/manifest.json">
     <link rel="mask-icon" href="{% static 'images/app-icons/safari-pinned-tab.svg' %}" color="#5bbad5">
     <link rel="shortcut icon" href="{% static 'images/app-icons/favicon.ico' %}">
     <meta name="msapplication-config" content="{% static 'images/app-icons/browserconfig.xml' %}">
     <meta name="theme-color" content="white">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>window.STATIC_URL = '{% get_static_prefix %}'</script>
+    <script>window.workbenchConfig = { helpEmail: {{workbench_config.help_email|json_in_script_tag}} }</script>
     {% block headscripts_globals %}{% endblock %}
     {% block headscripts %}{% endblock %}
     {% block headscripts_init_state %}{% endblock %}

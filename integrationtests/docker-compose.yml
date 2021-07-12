@@ -173,6 +173,7 @@ services:
       STATIC_URL: http://minio.django-issue-32304.com:9000/static/
       TUS_CREATE_UPLOAD_URL: http://tusd:8080/files
       CJW_MOCK_EMAIL: "True"
+      CJW_HELP_EMAIL: root@localhost
     volumes:
       - local_mail:/app/local_mail
 

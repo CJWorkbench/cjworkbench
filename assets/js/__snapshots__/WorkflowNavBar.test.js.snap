@@ -61,13 +61,11 @@ exports[`WorkflowNavBar should duplicate the workflow when user is logged in and
               "duplicateWorkflow": [MockFunction],
             }
           }
-          isReadOnly={false}
           user={
             Object {
               "id": 1,
             }
           }
-          workflowId={12}
         />
       </div>
     </div>

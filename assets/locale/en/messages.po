@@ -2411,22 +2411,22 @@ msgstr ""
 "(If you know you never clicked any confirmation link before, <a0>sign "
 "up</a0> to start over.)"
 
-#: templates/account/email_confirmation_sent.html:5
+#: templates/account/email_confirmation_sent.html:6
 msgid "py.templates.account.email_confirmation_sent.title"
 msgstr "Confirmation Email Sent"
 
-#: templates/account/email_confirmation_sent.html:8
+#: templates/account/email_confirmation_sent.html:9
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr "Confirm your email address"
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#: templates/account/email_confirmation_sent.html:10
+#: templates/account/email_confirmation_sent.html:11
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
 "We have sent an email to <b0>{email}</b0> for verification. If you do not"
 " receive it within a few minutes, contact us at <a0>{contactMail}</a0>."
 
-#: templates/account/email_confirmation_sent.html:11
+#: templates/account/email_confirmation_sent.html:12
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
 msgstr "Go back"
 
@@ -2492,26 +2492,26 @@ msgstr "Send me instructions"
 msgid "py.templates.account.password_reset.backToLogin.link"
 msgstr "Back to login"
 
-#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:7
 msgid "py.templates.account.password_reset_done.title"
 msgstr "Password reset sent"
 
-#: templates/account/password_reset_done.html:9
+#: templates/account/password_reset_done.html:10
 msgid "py.templates.account.password_reset_done.header"
 msgstr "Instructions sent!"
 
-#: templates/account/password_reset_done.html:11
+#: templates/account/password_reset_done.html:12
 msgid "py.templates.account.password_reset_done.checkYourEmail"
 msgstr "Check your email to reset your password."
 
 #. The a0 tag is a mailto link to the email
-#: templates/account/password_reset_done.html:14
+#: templates/account/password_reset_done.html:15
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
 "We have resent the password email. If you do not receive it within a few "
 "minutes, contact us at <a0>{email}</a0>."
 
-#: templates/account/password_reset_done.html:16
+#: templates/account/password_reset_done.html:17
 msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr "Back to login"
 
@@ -2591,21 +2591,22 @@ msgstr ""
 msgid "py.templates.account.signup.registerButton"
 msgstr "Register"
 
-#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:6
 msgid "py.templates.account.verification_sent.title"
 msgstr "Verify Your E-mail Address"
 
-#: templates/account/verification_sent.html:8
+#: templates/account/verification_sent.html:9
 msgid "py.templates.account.verification_sent.header"
 msgstr "Verify Your E-mail Address"
 
-#: templates/account/verification_sent.html:9
+#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
+#: templates/account/verification_sent.html:10
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
-"We have sent you an e-mail to verify your account. Contact us if you do "
-"not receive it within a few minutes."
+"We have sent an email to <b0>{email}</b0> for verification. If you do not"
+" receive it within a few minutes, contact us at <a0>{contactMail}</a0>."
 
-#: templates/account/verification_sent.html:10
+#: templates/account/verification_sent.html:11
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr "Back to login"
 

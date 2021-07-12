@@ -169,25 +169,6 @@ export default class WorkflowNavBar extends Component {
   render () {
     const { api, isReadOnly, loggedInUser, lesson, workflow, setWorkflowName } = this.props
 
-    // menu only if there is a logged-in user
-    let contextMenu
-    if (loggedInUser) {
-      contextMenu = (
-        <WfHamburgerMenu
-          workflowId={workflow.id}
-          api={api}
-          isReadOnly={isReadOnly}
-          user={loggedInUser}
-        />
-      )
-    } else {
-      contextMenu = (
-        <a href='/account/login' className='nav--link'>
-          <Trans id='js.WorkflowNavBar.signIn.accountLink'>Sign in</Trans>
-        </a>
-      )
-    }
-
     const spinner = this.state.spinnerVisible
       ? (
         <div className='spinner-container'>
@@ -227,7 +208,12 @@ export default class WorkflowNavBar extends Component {
               {lesson
                 ? null // We haven't yet designed what it means to share a lesson workflow
                 : <ShareButton><Trans id='js.WorkflowNavBar.share.shareButton'>Share</Trans></ShareButton>}
-              {contextMenu}
+              {loggedInUser
+                ? <WfHamburgerMenu api={api} user={loggedInUser} />
+                : (
+                  <a href='/account/login' className='nav--link'>
+                    <Trans id='js.WorkflowNavBar.signIn.accountLink'>Sign in</Trans>
+                  </a>)}
             </div>
           </div>
         </nav>

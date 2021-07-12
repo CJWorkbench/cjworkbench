@@ -1,15 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
+exports[`WfHamburgerMenu renders 1`] = `
 <WfHamburgerMenu
   api={Object {}}
-  isReadOnly={false}
   user={
     Object {
       "id": 100,
     }
   }
-  workflowId={1}
 >
   <UncontrolledDropdown>
     <Dropdown

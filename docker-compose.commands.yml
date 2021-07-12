@@ -97,6 +97,7 @@ services:
     environment:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
+      CJW_HELP_EMAIL: 'root@localhost'
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       AWS_ACCESS_KEY_ID: minio_access

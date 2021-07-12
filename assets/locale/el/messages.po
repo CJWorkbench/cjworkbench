@@ -2453,23 +2453,23 @@ msgstr ""
 msgid "py.templates.account.email_confirm.notFound2"
 msgstr ""
 
-#: templates/account/email_confirmation_sent.html:5
+#: templates/account/email_confirmation_sent.html:6
 msgid "py.templates.account.email_confirmation_sent.title"
 msgstr "Στάλθηκε email επιβεβαίωσης"
 
-#: templates/account/email_confirmation_sent.html:8
+#: templates/account/email_confirmation_sent.html:9
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr "Επιβεβαιώστε το email σας"
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#: templates/account/email_confirmation_sent.html:10
+#: templates/account/email_confirmation_sent.html:11
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
 "Έχουμε στείλει μήνυμα ηλ. ταχυδρομείου στη διεύθυνση <b0>{email}</b0> για"
 " επαλήθευση. Εάν δεν το λάβετε μέσα στα επόμενα λεπτά, επικοινωνήστε μαζί"
 " μας στη διεύθυνση <a0>{contactMail}</a0>."
 
-#: templates/account/email_confirmation_sent.html:11
+#: templates/account/email_confirmation_sent.html:12
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
 msgstr "Επιστροφή"
 
@@ -2535,27 +2535,27 @@ msgstr "Στείλτε μου οδηγίες"
 msgid "py.templates.account.password_reset.backToLogin.link"
 msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
-#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:7
 msgid "py.templates.account.password_reset_done.title"
 msgstr "Στάλθηκε η ανανέωση κωδικού πρόσβασης"
 
-#: templates/account/password_reset_done.html:9
+#: templates/account/password_reset_done.html:10
 msgid "py.templates.account.password_reset_done.header"
 msgstr "Στάλθηκαν οδηγίες!"
 
-#: templates/account/password_reset_done.html:11
+#: templates/account/password_reset_done.html:12
 msgid "py.templates.account.password_reset_done.checkYourEmail"
 msgstr "Ελέγξτε το ηλ. ταχυδρομείο σας για να δημιουργήσετε νέο κωδικό πρόσβασης."
 
 #. The a0 tag is a mailto link to the email
-#: templates/account/password_reset_done.html:14
+#: templates/account/password_reset_done.html:15
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
 "Στείλαμε ξανά το ηλ. μήνυμα με τον κωδικό πρόσβασης. Εάν δεν το λάβετε "
 "μέσα σε λίγα λεπτά, επικοινωνήστε μαζί μας στη διεύθυνση "
 "<a0>{email}</a0>."
 
-#: templates/account/password_reset_done.html:16
+#: templates/account/password_reset_done.html:17
 msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
@@ -2637,22 +2637,24 @@ msgstr ""
 msgid "py.templates.account.signup.registerButton"
 msgstr "Εγγραφή"
 
-#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:6
 msgid "py.templates.account.verification_sent.title"
 msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
 
-#: templates/account/verification_sent.html:8
+#: templates/account/verification_sent.html:9
 msgid "py.templates.account.verification_sent.header"
 msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
 
-#: templates/account/verification_sent.html:9
+#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
+#: templates/account/verification_sent.html:10
+#, fuzzy
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
 "Σας έχουμε στείλει μήνυμα ηλ. ταχυδρομείου για την επαλήθευση του "
 "λογαριασμού σας. Επικοινωνήστε μαζί μας αν δεν το λάβετε μέσα στα επόμενα"
 " λεπτά."
 
-#: templates/account/verification_sent.html:10
+#: templates/account/verification_sent.html:11
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr "Επιστροφή στη σελίδα σύνδεσης"
 

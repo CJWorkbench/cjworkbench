@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import propTypes from './propTypes'
 import {
   UncontrolledDropdown,
   DropdownDivider,
@@ -16,10 +15,10 @@ import { Trans, t } from '@lingui/macro'
 const DisplayNoneStyle = { display: 'none' }
 
 /**
- * "Hamburger" drop down on workflow and workflows page.
+ * "Hamburger" drop down on workflow page.
  */
 export default function WfHamburgerMenu (props) {
-  const { api = null, workflowId = null, user = null } = props
+  const { api, user } = props
 
   const [isImportModalOpen, setImportModalOpen] = React.useState(false)
   const [isLocaleSwitcherOpen, setLocaleSwitcherOpen] = React.useState(false)
@@ -47,8 +46,6 @@ export default function WfHamburgerMenu (props) {
     }
   }, [logoutFormRef])
 
-  const loggedIn = !!user
-
   return (
     <>
       <UncontrolledDropdown>
@@ -67,40 +64,26 @@ export default function WfHamburgerMenu (props) {
             <i className='icon icon-language' />
             <Trans id='js.WfHamburgerMenu.menu.language'>Language</Trans>
           </DropdownItem>
+
           <DropdownDivider />
-          {loggedIn && workflowId
+
+          <DropdownItem href='/workflows/'>
+            <Trans id='js.WfHamburgerMenu.menu.myWorkflows'>
+              My Workflows
+            </Trans>
+          </DropdownItem>
+          <DropdownItem href='/settings/billing'>
+            <Trans id='js.WfHamburgerMenu.menu.billing'>Billing</Trans>
+          </DropdownItem>
+          <DropdownItem href='/settings/plan'>
+            <Trans id='js.WfHamburgerMenu.menu.plan'>Upgrade</Trans>
+          </DropdownItem>
+
+          {user.is_staff
             ? (
-          // "Workflows"
-              <DropdownItem href='/workflows/'>
-                <Trans id='js.WfHamburgerMenu.menu.myWorkflows'>
-                  My Workflows
-                </Trans>
-              </DropdownItem>
-              )
-            : (
-          // "Home"
-              <DropdownItem href='//workbenchdata.com'>
-                <Trans id='js.WfHamburgerMenu.menu.home'>Home</Trans>
-              </DropdownItem>
-              )}
-          {loggedIn
-            ? (
-          // "Billing", "Plan"
-              <>
-                <DropdownItem href='/settings/billing'>
-                  <Trans id='js.WfHamburgerMenu.menu.billing'>Billing</Trans>
-                </DropdownItem>
-                <DropdownItem href='/settings/plan'>
-                  <Trans id='js.WfHamburgerMenu.menu.plan'>Upgrade</Trans>
-                </DropdownItem>
-              </>
-              )
-            : null}
-          {loggedIn && user.is_staff
-            ? (
-          // "Import Module"
               <>
                 <DropdownDivider />
+
                 <DropdownItem onClick={handleClickOpenImportModal}>
                   <Trans id='js.WfHamburgerMenu.menu.importModule'>
                     Import Module
@@ -109,32 +92,23 @@ export default function WfHamburgerMenu (props) {
               </>
               )
             : null}
-          {loggedIn
-            ? (
-          // "Log Out" button
-              <>
-                <DropdownDivider />
-                <DropdownItem onClick={handleClickLogOut}>
-                  <Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans>
-                </DropdownItem>
-              </>
-              )
-            : null}
+
+          <DropdownDivider />
+
+          <DropdownItem onClick={handleClickLogOut}>
+            <Trans id='js.WfHamburgerMenu.menu.logout'>Log Out</Trans>
+          </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
-      {loggedIn
-        ? (
-          <form
-            ref={logoutFormRef}
-            style={DisplayNoneStyle}
-            method='post'
-            action='/account/logout/'
-          >
-            <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
-            <input type='submit' />
-          </form>
-          )
-        : null}
+      <form
+        ref={logoutFormRef}
+        style={DisplayNoneStyle}
+        method='post'
+        action='/account/logout/'
+      >
+        <input type='hidden' name='csrfmiddlewaretoken' value={csrfToken} />
+        <input type='submit' />
+      </form>
       {isImportModalOpen
         ? <ImportModuleFromGitHub closeModal={handleCloseImportModal} api={api} />
         : null}
@@ -145,7 +119,6 @@ export default function WfHamburgerMenu (props) {
   )
 }
 WfHamburgerMenu.propTypes = {
-  api: PropTypes.object, // not required: WorkflowListNavBar doesn't allow import from github
-  workflowId: propTypes.workflowId, // not required: WorkflowListNavBar has no workflow
-  user: PropTypes.object // if null/undefined, user is not logged in
+  api: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 }

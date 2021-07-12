@@ -45,7 +45,7 @@ export function UnhandledErrorReport ({ error }) {
       )
     }, [])
   } else {
-    const email = 'hello@workbenchdata.com'
+    const email = window.workbenchConfig ? window.workbenchConfig.helpEmail : 'root@localhost'
     const url =
       `mailto:${email}` +
       '?subject=' +

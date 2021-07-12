@@ -12,6 +12,7 @@ from .views import (
     importfromgithub,
     jsdata,
     lessons,
+    manifest,
     modules,
     oauth,
     steps,
@@ -168,4 +169,5 @@ urlpatterns = [
     url(r"^oauth/?$", oauth.finish_authorize),
     url(r"^healthz$", health.healthz),  # kubernetes
     path("jsdata/timezones.json", jsdata.timezones.index),  # JavaScript support data
+    path("manifest.json", manifest.manifest),  # Web app manifest
 ]

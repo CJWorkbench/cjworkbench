@@ -102,6 +102,7 @@ services:
       PYTHONUNBUFFERED: '1'
       PYTHONPYCACHEPREFIX: /tmp/pycache
       ASGI_THREADS: '3'
+      CJW_HELP_EMAIL: root@localhost
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       CJW_DB_PASSWORD: cjworkbench

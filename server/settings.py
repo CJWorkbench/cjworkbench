@@ -211,3 +211,6 @@ CHANNEL_LAYERS = {
         "CONFIG": {"host": RABBITMQ_HOST, "local_capacity": 2000},
     }
 }
+
+HELP_EMAIL = os.environ["CJW_HELP_EMAIL"]
+"""Whom users should email when they need help."""
