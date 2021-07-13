@@ -23,7 +23,7 @@ export default function PaneSelect ({ selectedPane, selectReportPane }) {
             id='js.WorkflowEditor.PaneSelect.nav.report'
             comment='This is a link to a report'
           >
-            Report
+            Report Editor
           </Trans>
         </button>
       </div>

@@ -610,7 +610,7 @@ msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
 #. This is a link to a report
-#. default-message: Report
+#. default-message: Report Editor
 #: assets/js/WorkflowEditor/PaneSelect.js:22
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
 msgstr ""
