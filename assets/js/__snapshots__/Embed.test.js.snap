@@ -19,10 +19,12 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       </Trans>
     </p>
     <footer>
-      <Logo>
+      <Logo
+        href="/"
+      >
         <a
           className="logo"
-          href="https://workbenchdata.com"
+          href="/"
           rel="noopener noreferrer"
           target="_blank"
         >

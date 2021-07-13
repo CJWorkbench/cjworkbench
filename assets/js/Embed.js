@@ -21,7 +21,7 @@ function Logo (props) {
   return (
     <a
       className='logo'
-      href='https://workbenchdata.com'
+      href={props.href}
       target='_blank'
       rel='noopener noreferrer'
     >
@@ -84,7 +84,7 @@ function Footer (props) {
 
   return (
     <footer>
-      <Logo />
+      <Logo href={`/workflows/${workflow.id}`} />
       <div className='metadata'>
         <h1>
           <a
@@ -125,7 +125,7 @@ function NotAvailable () {
         </Trans>
       </p>
       <footer>
-        <Logo />
+        <Logo href='/' />
         <div className='embed-footer-meta'>
           <h1>
             <Trans id='js.Embed.workflowNotAvailable.footer.logo'>
