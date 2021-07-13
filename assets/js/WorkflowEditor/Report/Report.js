@@ -1,12 +1,10 @@
 import { useCallback, Fragment } from 'react'
 import PropTypes from 'prop-types'
-import ReportHeader from './ReportHeader'
 import Block from './Block'
 import AddBlockPrompt from './AddBlockPrompt'
 import propTypes from '../../propTypes'
 
 export default function Report ({
-  workflow,
   workflowIdOrSecretId,
   blocks,
   reportableTabs,
@@ -85,9 +83,6 @@ export default function Report ({
 Report.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   workflowIdOrSecretId: propTypes.workflowId.isRequired,
-  workflow: PropTypes.shape({
-    name: PropTypes.string.isRequired
-  }).isRequired,
   blocks: PropTypes.array.isRequired,
   reportableTabs: PropTypes.array.isRequired,
   addBlock: PropTypes.func.isRequired, // func(position, { type, ... }) => undefined

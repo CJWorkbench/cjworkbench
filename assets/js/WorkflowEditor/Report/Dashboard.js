@@ -24,7 +24,6 @@ export default function Dashboard ({
       />
       <Report
         workflowIdOrSecretId={workflowIdOrSecretId}
-        workflow={workflow}
         isReadOnly={isReadOnly}
         blocks={blocks}
         reportableTabs={reportableTabs}
