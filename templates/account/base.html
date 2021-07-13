@@ -1,6 +1,7 @@
 {% extends 'minimum.html' %}
 {% load bundle_path from webpack %}
 {% load static %}
+{% load workbench %}
 
 {% block headscripts %}
   <script defer src="{% bundle_path 'login.js' %}"></script>
@@ -15,7 +16,7 @@
     <div class="background"></div>
     <div class="container">
       <div class="account-bigbrand">
-        <a class="logo-container" href="http://workbenchdata.com">
+        <a class="logo-container" href="{{ workbench_config.home_url }}">
           <img src="{% static 'images/workbench-logo-with-white-text.svg' %}" class="logo"/>
         </a>
       </div>

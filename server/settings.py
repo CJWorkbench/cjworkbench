@@ -212,5 +212,12 @@ CHANNEL_LAYERS = {
     }
 }
 
+HOME_URL = os.environ["CJW_HOME_URL"]
+"""Where users should land when they click our logo.
+
+This is temporary: eventually, it will be `/`. For now, our landing page is a
+Wordpress site at a separate domain; so want to point to it.
+"""
+
 HELP_EMAIL = os.environ["CJW_HELP_EMAIL"]
 """Whom users should email when they need help."""

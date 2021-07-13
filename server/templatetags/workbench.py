@@ -11,4 +11,5 @@ def workbench_config() -> Dict[str, str]:
     return dict(
         help_email=settings.HELP_EMAIL,
         help_mailto="mailto:" + settings.HELP_EMAIL,
+        home_url=settings.HOME_URL,
     )

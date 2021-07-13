@@ -108,6 +108,7 @@ services:
       ASGI_THREADS: '3'
       CJW_RABBITMQ_HOST: amqp://guest:guest@testrabbitmq
       CJW_HELP_EMAIL: root@localhost
+      CJW_HOME_URL: 'http://localhost:8000'
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: testdb
       CJW_DB_PASSWORD: cjworkbench

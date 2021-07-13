@@ -98,6 +98,7 @@ services:
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
       CJW_HELP_EMAIL: 'root@localhost'
+      CJW_HOME_URL: 'http://localhost:8000'
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       AWS_ACCESS_KEY_ID: minio_access
