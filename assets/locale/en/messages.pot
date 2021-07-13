@@ -280,7 +280,7 @@ msgid "js.Report.ShareCard.editPrivacy.sharebutton"
 msgstr ""
 
 #. As in 'URL of report'
-#. default-message: Report Sharing URL
+#. default-message: Report URL
 #: assets/js/WorkflowEditor/Report/ShareCard.js:53
 msgid "js.Report.ShareCard.reportUrl.header"
 msgstr ""
@@ -3252,4 +3252,3 @@ msgstr ""
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr ""
-
