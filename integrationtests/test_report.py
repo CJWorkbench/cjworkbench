@@ -154,7 +154,6 @@ class TestReport(LoggedInIntegrationTest):
         # Share report with public
         b = self.browser
         b.click_button("Report Editor")  # switch to report
-        b.assert_element("h1", text="Example Workflow", wait=True)
 
         b.click_button("Share")
         with b.scope(".share-modal", wait=True):  # wait for dialog
@@ -168,7 +167,6 @@ class TestReport(LoggedInIntegrationTest):
         accounts.logout(b)
         b.visit(url)
         b.click_button("Report Editor", wait=True)  # switch to report
-        b.assert_element("h1", text="Example Workflow", wait=True)
         b.assert_no_element(".add-block-prompt")
 
         # anonymous user can view the report iframe
@@ -199,7 +197,6 @@ class TestReport(LoggedInIntegrationTest):
         accounts.logout(b)
         b.visit(url)
         b.click_button("Report Editor", wait=True)  # switch to report
-        b.assert_element("h1", text="Example Workflow", wait=True)
         b.assert_no_element(".add-block-prompt")
 
         # anonymous user can view the report iframe
