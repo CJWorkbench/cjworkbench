@@ -214,11 +214,13 @@ COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
 RUN DJANGO_SETTINGS_MODULE=staticfilesdev.settings /opt/venv/django/bin/python ./manage.py collectstatic
 RUN find /app/static -type f -printf "%s\t%P\n"
 
-FROM amazon/aws-cli:2.1.30 AS upload-assets
+FROM amazon/aws-cli:2.2.18 AS upload-assets
 COPY --from=compile-assets /app/static/ /app/static/
 ENTRYPOINT []
+RUN aws configure set default.s3.preferred_transfer_client crt
+ENV AWS_DEFAULT_REGION=us-east-1
 # We use /bin/sh to substitute environment variables
-CMD [ "/bin/sh", "-c", "exec aws s3 cp --recursive \"--endpoint-url=${AWS_S3_ENDPOINT:-https://s3.us-east-1.amazonaws.com}\" /app/static/ \"s3://${BUCKET_NAME:?must set BUCKET_NAME environment variable}/\"" ]
+CMD [ "/bin/sh", "-c", "exec aws s3 cp --recursive --no-progress \"--endpoint-url=${AWS_S3_ENDPOINT:-https://s3.us-east-1.amazonaws.com}\" /app/static/ \"s3://${BUCKET_NAME:?must set BUCKET_NAME environment variable}/\"" ]
 
 # 3.2. migrate: modifies database schema
 FROM flyway/flyway:7.7.0-alpine AS migrate

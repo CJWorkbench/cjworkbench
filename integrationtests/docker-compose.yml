@@ -29,7 +29,7 @@ services:
     environment:
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
-      AWS_S3_ENDPOINT: http://minio:9000
+      AWS_S3_ENDPOINT: http://minio
       BUCKET_NAME: static
 
   migrate:
@@ -82,7 +82,7 @@ services:
             ]
         }
         EOT
-        minio server /data
+        minio server /data --address :80
 
   # In Kubernetes, we use sidecar processes to manage chroots. But we can't
   # mimic those in pure Docker, because we can't adjust mount propagation.
@@ -114,7 +114,7 @@ services:
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
       AWS_ACCESS_KEY_ID: minio_access
       AWS_SECRET_ACCESS_KEY: minio_secret
-      AWS_S3_ENDPOINT: http://minio:9000
+      AWS_S3_ENDPOINT: http://minio
 
   renderer:
     #image:

@@ -23,13 +23,13 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
     "django.contrib.sites",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.facebook",
     "allauth.socialaccount.providers.google",
+    "staticfilesdev.apps.StaticFilesDevConfig",  # inherits django.contrib.staticfiles
 ]
 
 # Enable middleware+templates to load django.contrib.admin. We need its
