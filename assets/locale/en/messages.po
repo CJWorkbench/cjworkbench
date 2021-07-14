@@ -246,7 +246,7 @@ msgstr "Edit privacy"
 #. As in 'URL of report'
 #: assets/js/WorkflowEditor/Report/ShareCard.js:53
 msgid "js.Report.ShareCard.reportUrl.header"
-msgstr "Report Sharing URL"
+msgstr "Report URL"
 
 #: assets/js/WorkflowEditor/Report/ShareCard.js:11
 msgid "js.Report.ShareCard.sharingSTatus.secret"
@@ -413,35 +413,31 @@ msgstr ""
 "It helps if you can describe what you were doing before you ran into the "
 "bug."
 
-#: assets/js/WfHamburgerMenu.js:91
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.billing"
 msgstr "Billing"
 
-#: assets/js/WfHamburgerMenu.js:83
-msgid "js.WfHamburgerMenu.menu.home"
-msgstr "Home"
-
-#: assets/js/WfHamburgerMenu.js:105
+#: assets/js/WfHamburgerMenu.js:88
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Import Module"
 
-#: assets/js/WfHamburgerMenu.js:68
+#: assets/js/WfHamburgerMenu.js:65
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Language"
 
-#: assets/js/WfHamburgerMenu.js:118
+#: assets/js/WfHamburgerMenu.js:99
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Log Out"
 
-#: assets/js/WfHamburgerMenu.js:75
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "My Workflows"
 
-#: assets/js/WfHamburgerMenu.js:94
+#: assets/js/WfHamburgerMenu.js:79
 msgid "js.WfHamburgerMenu.menu.plan"
 msgstr "Upgrade"
 
-#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:56
+#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "menu"
 
@@ -515,14 +511,10 @@ msgstr ""
 "This was the data that led to an error. Please correct the error in the "
 "left pane."
 
-#. This is a link to a report
-#: assets/js/WorkflowEditor/PaneSelect.js:22
+#. Link to the report editor
+#: assets/js/WorkflowEditor/PaneSelect.js:18
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
-msgstr "Report"
-
-#: assets/js/WorkflowEditor/PaneSelect.js:14
-msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
-msgstr "Report"
+msgstr "Report Editor"
 
 #: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:64
 msgid "js.WorkflowEditor.Report.AddChartBlockPrompt.empty"
@@ -691,15 +683,15 @@ msgstr "Private"
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr "Public"
 
-#: assets/js/WorkflowNavBar.js:225
+#: assets/js/WorkflowNavBar.js:206
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr "Duplicate"
 
-#: assets/js/WorkflowNavBar.js:229
+#: assets/js/WorkflowNavBar.js:210
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr "Share"
 
-#: assets/js/WorkflowNavBar.js:186
+#: assets/js/WorkflowNavBar.js:215
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Sign in"
 
@@ -2273,7 +2265,7 @@ msgstr "This workflow is not available :("
 msgid "py.templates.title"
 msgstr "Workbench"
 
-#: templates/minimum.html:7
+#: templates/minimum.html:5
 msgid "py.templates.minimum.title"
 msgstr "Workbench"
 
@@ -2415,18 +2407,18 @@ msgstr ""
 msgid "py.templates.account.email_confirmation_sent.title"
 msgstr "Confirmation Email Sent"
 
-#: templates/account/email_confirmation_sent.html:9
+#: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr "Confirm your email address"
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#: templates/account/email_confirmation_sent.html:11
+#: templates/account/email_confirmation_sent.html:12
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
 "We have sent an email to <b0>{email}</b0> for verification. If you do not"
 " receive it within a few minutes, contact us at <a0>{contactMail}</a0>."
 
-#: templates/account/email_confirmation_sent.html:12
+#: templates/account/email_confirmation_sent.html:13
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
 msgstr "Go back"
 
@@ -2505,13 +2497,13 @@ msgid "py.templates.account.password_reset_done.checkYourEmail"
 msgstr "Check your email to reset your password."
 
 #. The a0 tag is a mailto link to the email
-#: templates/account/password_reset_done.html:15
+#: templates/account/password_reset_done.html:16
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
 "We have resent the password email. If you do not receive it within a few "
 "minutes, contact us at <a0>{email}</a0>."
 
-#: templates/account/password_reset_done.html:17
+#: templates/account/password_reset_done.html:18
 msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr "Back to login"
 
@@ -2595,18 +2587,18 @@ msgstr "Register"
 msgid "py.templates.account.verification_sent.title"
 msgstr "Verify Your E-mail Address"
 
-#: templates/account/verification_sent.html:9
+#: templates/account/verification_sent.html:10
 msgid "py.templates.account.verification_sent.header"
 msgstr "Verify Your E-mail Address"
 
-#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#: templates/account/verification_sent.html:10
+#. The a0 tag is a mailto link for the contactMail.
+#: templates/account/verification_sent.html:11
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
-"We have sent an email to <b0>{email}</b0> for verification. If you do not"
-" receive it within a few minutes, contact us at <a0>{contactMail}</a0>."
+"We have sent an email for verification. If you do not receive it within a"
+" few minutes, contact us at <a0>{contactMail}</a0>."
 
-#: templates/account/verification_sent.html:11
+#: templates/account/verification_sent.html:12
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr "Back to login"
 

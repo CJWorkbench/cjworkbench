@@ -15,7 +15,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker:20.10.3'
   args: [ 'buildx', 'bake', '-f', 'docker-bake.hcl', 'default', 'unittest', 'integration-test' ]
   env:
-  - 'PROJECT_ID=$PROJECT_ID'
+  - 'REPOSITORY=gcr.io/$PROJECT_ID'
   - 'TAG=$COMMIT_SHA'
 
 # Unit-test

@@ -440,35 +440,31 @@ msgstr ""
 "Βοηθά αν μπορείτε να περιγράψετε τι κάνατε προτού εμφανιστεί αυτό το "
 "σφάλμα."
 
-#: assets/js/WfHamburgerMenu.js:91
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.billing"
 msgstr ""
 
-#: assets/js/WfHamburgerMenu.js:83
-msgid "js.WfHamburgerMenu.menu.home"
-msgstr "Αρχική"
-
-#: assets/js/WfHamburgerMenu.js:105
+#: assets/js/WfHamburgerMenu.js:88
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr "Εισαγωγή Μονάδας (Module)"
 
-#: assets/js/WfHamburgerMenu.js:68
+#: assets/js/WfHamburgerMenu.js:65
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr "Γλώσσα"
 
-#: assets/js/WfHamburgerMenu.js:118
+#: assets/js/WfHamburgerMenu.js:99
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr "Αποσύνδεση"
 
-#: assets/js/WfHamburgerMenu.js:75
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr "Οι ροές εργασιών μου"
 
-#: assets/js/WfHamburgerMenu.js:94
+#: assets/js/WfHamburgerMenu.js:79
 msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
-#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:56
+#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr "μενού"
 
@@ -542,13 +538,10 @@ msgstr ""
 "Αυτά ήταν τα δεδομένα που οδήγησαν σε σφάλμα. Διορθώστε το σφάλμα στο "
 "αριστερό πλαίσιο."
 
-#. This is a link to a report
-#: assets/js/WorkflowEditor/PaneSelect.js:22
+#. Link to the report editor
+#: assets/js/WorkflowEditor/PaneSelect.js:18
+#, fuzzy
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
-msgstr "Αναφορά"
-
-#: assets/js/WorkflowEditor/PaneSelect.js:14
-msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
 msgstr "Αναφορά"
 
 #: assets/js/WorkflowEditor/Report/AddChartBlockPrompt.js:64
@@ -718,15 +711,15 @@ msgstr "Ιδιωτική"
 msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr "Δημόσια"
 
-#: assets/js/WorkflowNavBar.js:225
+#: assets/js/WorkflowNavBar.js:206
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr "Δημιουργία αντιγράφου"
 
-#: assets/js/WorkflowNavBar.js:229
+#: assets/js/WorkflowNavBar.js:210
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr "Κοινοποίηση"
 
-#: assets/js/WorkflowNavBar.js:186
+#: assets/js/WorkflowNavBar.js:215
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr "Σύνδεση"
 
@@ -2316,7 +2309,7 @@ msgstr "Αυτή η ροή εργασιών δεν είναι διαθέσιμη
 msgid "py.templates.title"
 msgstr "Workbench"
 
-#: templates/minimum.html:7
+#: templates/minimum.html:5
 msgid "py.templates.minimum.title"
 msgstr "Workbench"
 
@@ -2457,19 +2450,19 @@ msgstr ""
 msgid "py.templates.account.email_confirmation_sent.title"
 msgstr "Στάλθηκε email επιβεβαίωσης"
 
-#: templates/account/email_confirmation_sent.html:9
+#: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr "Επιβεβαιώστε το email σας"
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#: templates/account/email_confirmation_sent.html:11
+#: templates/account/email_confirmation_sent.html:12
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
 "Έχουμε στείλει μήνυμα ηλ. ταχυδρομείου στη διεύθυνση <b0>{email}</b0> για"
 " επαλήθευση. Εάν δεν το λάβετε μέσα στα επόμενα λεπτά, επικοινωνήστε μαζί"
 " μας στη διεύθυνση <a0>{contactMail}</a0>."
 
-#: templates/account/email_confirmation_sent.html:12
+#: templates/account/email_confirmation_sent.html:13
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
 msgstr "Επιστροφή"
 
@@ -2548,14 +2541,14 @@ msgid "py.templates.account.password_reset_done.checkYourEmail"
 msgstr "Ελέγξτε το ηλ. ταχυδρομείο σας για να δημιουργήσετε νέο κωδικό πρόσβασης."
 
 #. The a0 tag is a mailto link to the email
-#: templates/account/password_reset_done.html:15
+#: templates/account/password_reset_done.html:16
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
 "Στείλαμε ξανά το ηλ. μήνυμα με τον κωδικό πρόσβασης. Εάν δεν το λάβετε "
 "μέσα σε λίγα λεπτά, επικοινωνήστε μαζί μας στη διεύθυνση "
 "<a0>{email}</a0>."
 
-#: templates/account/password_reset_done.html:17
+#: templates/account/password_reset_done.html:18
 msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr "Επιστροφή στη σελίδα σύνδεσης"
 
@@ -2641,12 +2634,12 @@ msgstr "Εγγραφή"
 msgid "py.templates.account.verification_sent.title"
 msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
 
-#: templates/account/verification_sent.html:9
+#: templates/account/verification_sent.html:10
 msgid "py.templates.account.verification_sent.header"
 msgstr "Επιβεβαιώστε τη διεύθυνση του ηλ. ταχυδρομείου σας"
 
-#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#: templates/account/verification_sent.html:10
+#. The a0 tag is a mailto link for the contactMail.
+#: templates/account/verification_sent.html:11
 #, fuzzy
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
@@ -2654,7 +2647,7 @@ msgstr ""
 "λογαριασμού σας. Επικοινωνήστε μαζί μας αν δεν το λάβετε μέσα στα επόμενα"
 " λεπτά."
 
-#: templates/account/verification_sent.html:11
+#: templates/account/verification_sent.html:12
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr "Επιστροφή στη σελίδα σύνδεσης"
 

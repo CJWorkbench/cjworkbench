@@ -33,7 +33,7 @@ class TestReport(LoggedInIntegrationTest):
         self._build_chart()
 
         b = self.browser
-        b.click_button("Report")  # switch to report
+        b.click_button("Report Editor")  # switch to report
         b.assert_element(".add-block-prompt")
         url = b.value(".share-url input", wait=True)
         b.visit(url)
@@ -54,7 +54,7 @@ class TestReport(LoggedInIntegrationTest):
 
         # Share report with user1, but not user2
         b = self.browser
-        b.click_button("Report")  # switch to report
+        b.click_button("Report Editor")  # switch to report
         with b.scope(".share-card"):
             b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
@@ -85,7 +85,7 @@ class TestReport(LoggedInIntegrationTest):
         self._build_chart()
 
         b = self.browser
-        b.click_button("Report")  # switch to report
+        b.click_button("Report Editor")  # switch to report
         # Add a table (we'll test that it appears on the page)
         with b.scope(".block-chart + .add-block-prompt"):
             b.click_button("Add table from tab")
@@ -125,7 +125,7 @@ class TestReport(LoggedInIntegrationTest):
 
         # Share report with public
         b = self.browser
-        b.click_button("Report")  # switch to report
+        b.click_button("Report Editor")  # switch to report
         with b.scope(".share-card"):
             b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
@@ -153,7 +153,7 @@ class TestReport(LoggedInIntegrationTest):
 
         # Share report with public
         b = self.browser
-        b.click_button("Report")  # switch to report
+        b.click_button("Report Editor")  # switch to report
 
         b.click_button("Share")
         with b.scope(".share-modal", wait=True):  # wait for dialog
@@ -166,7 +166,7 @@ class TestReport(LoggedInIntegrationTest):
         url = b.get_url()
         accounts.logout(b)
         b.visit(url)
-        b.click_button("Report", wait=True)  # switch to report
+        b.click_button("Report Editor", wait=True)  # switch to report
         b.assert_no_element(".add-block-prompt")
 
         # anonymous user can view the report iframe
@@ -182,7 +182,7 @@ class TestReport(LoggedInIntegrationTest):
 
         # Share report with public
         b = self.browser
-        b.click_button("Report")  # switch to report
+        b.click_button("Report Editor")  # switch to report
         with b.scope(".share-card"):
             b.click_button("Edit privacy", wait=True)
         with b.scope(".share-modal", wait=True):  # wait for dialog
@@ -196,7 +196,7 @@ class TestReport(LoggedInIntegrationTest):
         # anonymous user can view the report UI
         accounts.logout(b)
         b.visit(url)
-        b.click_button("Report", wait=True)  # switch to report
+        b.click_button("Report Editor", wait=True)  # switch to report
         b.assert_no_element(".add-block-prompt")
 
         # anonymous user can view the report iframe
