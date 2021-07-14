@@ -486,42 +486,37 @@ msgid "js.UnhandledErrorReport.helpText.pleaseDescribeYourActions"
 msgstr ""
 
 #. default-message: Billing
-#: assets/js/WfHamburgerMenu.js:91
+#: assets/js/WfHamburgerMenu.js:76
 msgid "js.WfHamburgerMenu.menu.billing"
 msgstr ""
 
-#. default-message: Home
-#: assets/js/WfHamburgerMenu.js:83
-msgid "js.WfHamburgerMenu.menu.home"
-msgstr ""
-
 #. default-message: Import Module
-#: assets/js/WfHamburgerMenu.js:105
+#: assets/js/WfHamburgerMenu.js:88
 msgid "js.WfHamburgerMenu.menu.importModule"
 msgstr ""
 
 #. default-message: Language
-#: assets/js/WfHamburgerMenu.js:68
+#: assets/js/WfHamburgerMenu.js:65
 msgid "js.WfHamburgerMenu.menu.language"
 msgstr ""
 
 #. default-message: Log Out
-#: assets/js/WfHamburgerMenu.js:118
+#: assets/js/WfHamburgerMenu.js:99
 msgid "js.WfHamburgerMenu.menu.logout"
 msgstr ""
 
 #. default-message: My Workflows
-#: assets/js/WfHamburgerMenu.js:75
+#: assets/js/WfHamburgerMenu.js:71
 msgid "js.WfHamburgerMenu.menu.myWorkflows"
 msgstr ""
 
 #. default-message: Upgrade
-#: assets/js/WfHamburgerMenu.js:94
+#: assets/js/WfHamburgerMenu.js:79
 msgid "js.WfHamburgerMenu.menu.plan"
 msgstr ""
 
 #. default-message: menu
-#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:56
+#: assets/js/Page/MainNav/MainNavHeader.js:22 assets/js/WfHamburgerMenu.js:53
 msgid "js.WfHamburgerMenu.toggle.hoverText"
 msgstr ""
 
@@ -609,15 +604,10 @@ msgstr ""
 msgid "js.WorkflowEditor.OutputPane.showingInput.becauseError"
 msgstr ""
 
-#. This is a link to a report
+#. Link to the report editor
 #. default-message: Report Editor
-#: assets/js/WorkflowEditor/PaneSelect.js:22
+#: assets/js/WorkflowEditor/PaneSelect.js:18
 msgid "js.WorkflowEditor.PaneSelect.nav.report"
-msgstr ""
-
-#. default-message: Report
-#: assets/js/WorkflowEditor/PaneSelect.js:14
-msgid "js.WorkflowEditor.PaneSelect.nav.reportPlaceholder"
 msgstr ""
 
 #. default-message: This workflow has no charts
@@ -826,17 +816,17 @@ msgid "js.WorkflowNavBar.OwnedWorkflowTitleAndMetadata.visibility.public"
 msgstr ""
 
 #. default-message: Duplicate
-#: assets/js/WorkflowNavBar.js:225
+#: assets/js/WorkflowNavBar.js:206
 msgid "js.WorkflowNavBar.duplicate.button"
 msgstr ""
 
 #. default-message: Share
-#: assets/js/WorkflowNavBar.js:229
+#: assets/js/WorkflowNavBar.js:210
 msgid "js.WorkflowNavBar.share.shareButton"
 msgstr ""
 
 #. default-message: Sign in
-#: assets/js/WorkflowNavBar.js:186
+#: assets/js/WorkflowNavBar.js:215
 msgid "js.WorkflowNavBar.signIn.accountLink"
 msgstr ""
 
@@ -2688,7 +2678,7 @@ msgid "py.templates.title"
 msgstr ""
 
 #. default-message: Workbench
-#: templates/minimum.html:7
+#: templates/minimum.html:5
 msgid "py.templates.minimum.title"
 msgstr ""
 
@@ -2855,18 +2845,18 @@ msgid "py.templates.account.email_confirmation_sent.title"
 msgstr ""
 
 #. default-message: Confirm your email address
-#: templates/account/email_confirmation_sent.html:9
+#: templates/account/email_confirmation_sent.html:10
 msgid "py.templates.account.email_confirmation_sent.header"
 msgstr ""
 
 #. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
 #. default-message: We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{contactMail}</a0>.
-#: templates/account/email_confirmation_sent.html:11
+#: templates/account/email_confirmation_sent.html:12
 msgid "py.templates.account.email_confirmation_sent.verificationEmail"
 msgstr ""
 
 #. default-message: Go back
-#: templates/account/email_confirmation_sent.html:12
+#: templates/account/email_confirmation_sent.html:13
 msgid "py.templates.account.email_confirmation_sent.goBack.link"
 msgstr ""
 
@@ -2964,12 +2954,12 @@ msgstr ""
 
 #. The a0 tag is a mailto link to the email
 #. default-message: We have resent the password email. If you do not receive it within a few minutes, contact us at <a0>{email}</a0>.
-#: templates/account/password_reset_done.html:15
+#: templates/account/password_reset_done.html:16
 msgid "py.templates.account.password_reset_done.weHaveResentThePass"
 msgstr ""
 
 #. default-message: Back to login
-#: templates/account/password_reset_done.html:17
+#: templates/account/password_reset_done.html:18
 msgid "py.templates.account.password_reset_done.backToLogin.link"
 msgstr ""
 
@@ -3071,18 +3061,18 @@ msgid "py.templates.account.verification_sent.title"
 msgstr ""
 
 #. default-message: Verify Your E-mail Address
-#: templates/account/verification_sent.html:9
+#: templates/account/verification_sent.html:10
 msgid "py.templates.account.verification_sent.header"
 msgstr ""
 
-#. The b0 tag adds emphasis. The a0 tag is a mailto link for the contactMail.
-#. default-message: We have sent an email to <b0>{email}</b0> for verification. If you do not receive it within a few minutes, contact us at <a0>{contactMail}</a0>.
-#: templates/account/verification_sent.html:10
+#. The a0 tag is a mailto link for the contactMail.
+#. default-message: We have sent an email for verification. If you do not receive it within a few minutes, contact us at <a0>{contactMail}</a0>.
+#: templates/account/verification_sent.html:11
 msgid "py.templates.account.verification_sent.description"
 msgstr ""
 
 #. default-message: Back to login
-#: templates/account/verification_sent.html:11
+#: templates/account/verification_sent.html:12
 msgid "py.templates.account.verification_sent.backToLogin.link"
 msgstr ""
 
@@ -3252,3 +3242,4 @@ msgstr ""
 #: templates/socialaccount/snippets/provider_list.html:22
 msgid "py.templates.socialaccount.snippets.provider_list.useAccount"
 msgstr ""
+
