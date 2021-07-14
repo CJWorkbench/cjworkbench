@@ -3,40 +3,37 @@ version: '3.4'
 
 services:
   upload-assets:
-    image: 'gcr.io/workbenchdata-ci/upload-assets:integrationtest'
+    image: 'cjworkbench_integrationtest/upload-assets:integrationtest'
 
   migrate:
-    image: 'gcr.io/workbenchdata-ci/migrate:integrationtest'
+    image: 'cjworkbench_integrationtest/migrate:integrationtest'
 
   fetcher:
-    image: 'gcr.io/workbenchdata-ci/fetcher:integrationtest'
+    image: 'cjworkbench_integrationtest/fetcher:integrationtest'
 
   renderer:
-    image: 'gcr.io/workbenchdata-ci/renderer:integrationtest'
+    image: 'cjworkbench_integrationtest/renderer:integrationtest'
 
   cron:
-    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
+    image: 'cjworkbench_integrationtest/cron:integrationtest'
 
   cron-delta-deleter:
-    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
+    image: 'cjworkbench_integrationtest/cron:integrationtest'
 
   cron-expired-session-deleter:
-    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
+    image: 'cjworkbench_integrationtest/cron:integrationtest'
 
   cron-lesson-workflow-deleter:
-    image: 'gcr.io/workbenchdata-ci/cron:integrationtest'
+    image: 'cjworkbench_integrationtest/cron:integrationtest'
 
   frontend:
-    image: 'gcr.io/workbenchdata-ci/frontend:integrationtest'
+    image: 'cjworkbench_integrationtest/frontend:integrationtest'
 
   tusd-hooks:
-    image: 'gcr.io/workbenchdata-ci/tusd-hooks:integrationtest'
+    image: 'cjworkbench_integrationtest/tusd-hooks:integrationtest'
 
   integration-test:
-    build:
-      context: ..
-      dockerfile: Dockerfile.integrationtest
-      target: dev
+    image: 'cjworkbench_integrationtest/integration-test:integrationtest'
     # Allow access using vncviewer
     ports: [ '5901:5901' ]
     volumes:

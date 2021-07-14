@@ -59,7 +59,7 @@ echo 'Tearing down old environment (if it exists)…' >&2
 docker_compose down -v
 
 echo 'Building…' >&2
-TAG="integrationtest" docker buildx bake -f docker-bake.hcl
+REPOSITORY="cjworkbench_integrationtest" TAG="integrationtest" docker buildx bake -f docker-bake.hcl default integration-test
 
 echo 'Migrating (and starting database and RabbitMQ)…' >&2
 docker_compose run --rm upload-assets
