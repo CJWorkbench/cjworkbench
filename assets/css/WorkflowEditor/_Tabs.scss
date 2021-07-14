@@ -14,6 +14,7 @@
   .invisible-size-setter {
     display: block;
     visibility: hidden;
+    white-space: pre;
 
     &:empty::before {
       // Never let invisible-size-setter be empty: that will change the height
