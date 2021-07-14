@@ -136,7 +136,18 @@ class UploadedFileSelectModal extends PureComponent {
   }
 }
 
-export default function UploadedFileSelect ({ value, files, onChange }) {
+function SpanOrButton (props) {
+  const { className, onClick = undefined, title = undefined, children } = props
+
+  if (onClick !== undefined) {
+    return <button className={className} onClick={onClick} title={title}>{children}</button>
+  } else {
+    return <span className={className}>{children}</span>
+  }
+}
+
+export default function UploadedFileSelect (props) {
+  const { value, files, isReadOnly, onChange } = props
   const [isOpen, setOpen] = useState(false)
   const open = useCallback(() => setOpen(true))
   const close = useCallback(() => setOpen(false))
@@ -144,15 +155,15 @@ export default function UploadedFileSelect ({ value, files, onChange }) {
   if (files.length === 0) return null // no files selected; maybe we're uploading our first
 
   const valueIndex = files.findIndex(({ uuid }) => uuid === value)
-  const canOpen = files.findIndex(({ uuid }) => uuid !== value) !== -1 // do not open when nothing to select
+  const canOpen = !isReadOnly && files.findIndex(({ uuid }) => uuid !== value) !== -1 // do not open when nothing to select
   const nFiles = files.length
   const fileNumber = valueIndex + 1
 
   return (
     <>
-      <button
+      <SpanOrButton
         className='uploaded-file-select'
-        onClick={open}
+        onClick={canOpen ? open : undefined}
         title={
           canOpen
             ? t({
@@ -162,7 +173,6 @@ export default function UploadedFileSelect ({ value, files, onChange }) {
               })
             : undefined
         }
-        disabled={!canOpen}
       >
         {valueIndex === -1
           ? t({
@@ -179,7 +189,7 @@ export default function UploadedFileSelect ({ value, files, onChange }) {
             message: 'File {fileNumber} of {nFiles}',
             values: { fileNumber, nFiles }
           })}
-      </button>
+      </SpanOrButton>
       {isOpen
         ? (
           <UploadedFileSelectModal
@@ -203,5 +213,6 @@ UploadedFileSelect.propTypes = {
       createdAt: PropTypes.string.isRequired
     }).isRequired
   ).isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired // func(uuid) => undefined
 }

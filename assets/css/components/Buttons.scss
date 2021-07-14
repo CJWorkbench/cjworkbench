@@ -139,26 +139,27 @@ button:focus {
   }
 }
 
+@mixin _texty-button-common {
+  display: inline-block;
+  @include content-1;
+  font-weight: bold;
+}
+
 @mixin _texty-button {
+  @include _texty-button-common;
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
-  display: inline-block;
   padding: 0;
   margin: 0;
   border: 0;
   box-shadow: none;
   background: transparent;
-  cursor: pointer;
 
-  @include content-1;
   color: $workspace-action;
-  font-weight: bold;
-
   &:hover {
     color: $brand-workspace;
   }
-
   &[disabled] {
     color: $text-muted;
   }
@@ -166,6 +167,12 @@ button:focus {
   &:not([disabled]) {
     cursor: pointer;
   }
+}
+
+// For a <span> that looks like a <button> that has _texty-button
+@mixin _texty-button-disabled-span {
+  @include _texty-button-common;
+  color: $text-muted;
 }
 
 @-webkit-keyframes spinner-in-button {

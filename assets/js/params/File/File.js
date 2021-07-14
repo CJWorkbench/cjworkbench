@@ -89,6 +89,10 @@ export default class File extends PureComponent {
   }
 
   handleDragEnter = ev => {
+    if (!ev.dataTransfer.types.includes("Files")) {
+      return
+    }
+
     // DO NOT use `this.state`!
     //
     // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element

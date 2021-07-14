@@ -23,11 +23,6 @@ import Timezone from './Timezone'
 import List from './List'
 import { QuickFixPropTypes } from '../WorkflowEditor/step/QuickFix'
 
-function onDragStartPreventDrag (dragEvent) {
-  dragEvent.preventDefault()
-  dragEvent.stopPropagation()
-}
-
 export default class Param extends PureComponent {
   static propTypes = {
     isOwner: PropTypes.bool.isRequired, // if set, !isReadOnly and the user may edit secrets
@@ -173,12 +168,7 @@ export default class Param extends PureComponent {
     if (!deepEqual(value, upstreamValue)) className += ' editing'
 
     return (
-      <div
-        data-name={name}
-        className={className}
-        draggable
-        onDragStart={onDragStartPreventDrag}
-      >
+      <div data-name={name} className={className}>
         <this.innerComponent
           {...this.props}
           fieldId={safeFieldId}
