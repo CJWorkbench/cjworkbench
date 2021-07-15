@@ -44,7 +44,7 @@ class OutputDelta(NamedTuple):
 
 def email_output_delta(output_delta: OutputDelta, updated_at: datetime.datetime):
     domain = Site.objects.get_current().domain
-    workflow_url = f"https://${domain}/workflows/{output_delta.workflow_id}/"
+    workflow_url = f"https://{domain}/workflows/{output_delta.workflow_id}/"
 
     ctx = {
         "i18n": {"locale_id": output_delta.locale_id},
