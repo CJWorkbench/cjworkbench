@@ -14,7 +14,7 @@ from cjwstate.modules.types import ModuleZipfile
 from cjwstate.modules.util import gather_param_tab_slugs
 from cjwstate.rendercache import load_cached_render_result, CorruptCacheError
 from .step import execute_step, locked_step
-from .types import StepResult, Tab
+from .types import StepResult, Tab, TabResult
 
 
 logger = logging.getLogger(__name__)
@@ -138,9 +138,9 @@ async def execute_tab_flow(
     chroot_context: ChrootContext,
     workflow: Workflow,
     flow: TabFlow,
-    tab_results: Dict[Tab, Optional[StepResult]],
+    tab_results: Dict[str, Optional[TabResult]],
     output_path: Path,
-) -> StepResult:
+) -> TabResult:
     """Ensure `flow.tab.live_steps` all cache fresh render results.
 
     `tab_results.keys()` must be ordered as the Workflow's tabs are.
@@ -249,4 +249,4 @@ async def execute_tab_flow(
             )
             last_result = output
 
-        return last_result
+        return TabResult(tab_name=flow.tab.name, **last_result)

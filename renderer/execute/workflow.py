@@ -9,7 +9,7 @@ from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.params import get_migrated_params
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
-from .types import StepResult, Tab, UnneededExecution
+from .types import StepResult, Tab, TabResult, UnneededExecution
 
 
 logger = logging.getLogger(__name__)
@@ -145,8 +145,8 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     #
     # `tab_results.keys()` returns tab slugs in the Workflow's tab order -- that
     # is, the order the user determines.
-    tab_results: Dict[Tab, Optional[StepResult]] = {
-        flow.tab: None for flow in pending_tab_flows
+    tab_results: Dict[str, Optional[TabResult]] = {
+        flow.tab.slug: None for flow in pending_tab_flows
     }
     output_paths = []
 
@@ -159,7 +159,7 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
     with EDITABLE_CHROOT.acquire_context() as chroot_context:
         with chroot_context.tempdir_context("render-") as basedir:
 
-            async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> StepResult:
+            async def execute_tab_flow_into_new_file(tab_flow: TabFlow) -> TabResult:
                 nonlocal workflow, tab_results, output_paths
                 output_path = basedir / (
                     "tab-output-%s.arrow" % tab_flow.tab_slug.replace("/", "-")
@@ -180,7 +180,7 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
 
                 for tab_flow in ready_flows:
                     tab_result = await execute_tab_flow_into_new_file(tab_flow)
-                    tab_results[tab_flow.tab] = tab_result
+                    tab_results[tab_flow.tab.slug] = tab_result
 
                 pending_tab_flows = dependent_flows  # iterate
 
@@ -188,4 +188,14 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
             # them. No need to update `tab_results`: If tab1 and tab 2 depend on
             # each other, they should have the same error ("Cycle").
             for tab_flow in pending_tab_flows:
-                await execute_tab_flow_into_new_file(tab_flow)
+                tab_result = await execute_tab_flow_into_new_file(tab_flow)
+                tab_results[tab_flow.tab.slug] = tab_result
+
+            if publish_dataset_spec:
+                await publish_dataset(
+                    readme_md=publish_dataset_spec.readme_md,
+                    tabs={
+                        filename_slug: tab_results[tab_slug]
+                        for filename_slug, tab_slug in publish_dataset_spec.tabs.items()
+                    },
+                )

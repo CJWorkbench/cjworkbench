@@ -28,6 +28,23 @@ class StepResult(NamedTuple):
     """Shape of the Arrow file."""
 
 
+class TabResult(NamedTuple):
+    """All the renderer needs to render dependent tabs and publish datasets.
+
+    A TabResult with no columns has status "error" or "unreachable". Subsequent
+    steps won't render.
+    """
+
+    tab_name: str
+    """Tab name."""
+
+    path: Path
+    """Trusted Arrow file containing the output."""
+
+    columns: List[Column]
+    """Shape of the Arrow file."""
+
+
 class UnneededExecution(Exception):
     """A render would produce useless results."""
 

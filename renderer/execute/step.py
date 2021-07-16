@@ -12,7 +12,7 @@ import cjwparquet
 import pyarrow as pa
 from django.db import connection
 
-from cjworkbench.sync import database_sync_to_async
+import cjwstate.modules
 from cjwkernel.chroot import ChrootContext
 from cjwkernel.errors import ModuleError, ModuleExitedError, format_for_user_debugging
 from cjwkernel.i18n import trans
@@ -24,23 +24,23 @@ from cjwkernel.types import (
     TabOutput,
     UploadedFile,
 )
-from cjwkernel.validate import ValidateError, load_untrusted_arrow_file_with_columns
 from cjwkernel.util import tempfile_context
-from cjwstate import clientside, s3, rabbitmq, rendercache
+from cjwkernel.validate import ValidateError, load_untrusted_arrow_file_with_columns
+from cjworkbench.sync import database_sync_to_async
 from cjwstate.errors import PromptingError
+from cjwstate import clientside, s3, rabbitmq, rendercache
 from cjwstate.models import StoredObject, Step, Workflow
-import cjwstate.modules
 from cjwstate.modules.types import ModuleZipfile
 from renderer import notifications
 from .types import (
     NoLoadedDataError,
-    Tab,
+    StepResult,
     TabCycleError,
+    TabResult,
     TabOutputUnreachableError,
     UnneededExecution,
 )
 from . import renderprep
-from .types import StepResult
 
 
 logger = logging.getLogger(__name__)
@@ -239,7 +239,7 @@ def _execute_step_pre(
     raw_params: Dict[str, Any],
     input_path: Path,
     input_table_columns: List[Column],
-    tab_results: Dict[Tab, Optional[StepResult]],
+    tab_results: Dict[str, Optional[TabResult]],
 ) -> ExecuteStepPreResult:
     """First step of execute_step().
 
@@ -386,7 +386,7 @@ async def _render_step(
     tab_name: str,
     input_path: Path,
     input_table_columns: List[Column],
-    tab_results: Dict[Tab, Optional[StepResult]],
+    tab_results: Dict[str, Optional[TabResult]],
     output_path: Path,
 ) -> LoadedRenderResult:
     """Prepare and call `step`'s `render()`; return a LoadedRenderResult.
@@ -517,7 +517,7 @@ async def execute_step(
     tab_name: str,
     input_path: Path,
     input_table_columns: List[Column],
-    tab_results: Dict[Tab, Optional[StepResult]],
+    tab_results: Dict[str, Optional[TabResult]],
     output_path: Path,
 ) -> StepResult:
     """Render a single Step; cache, broadcast and return output.

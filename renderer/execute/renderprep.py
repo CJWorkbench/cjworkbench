@@ -17,7 +17,7 @@ from cjwkernel.types import (
 from cjwstate import s3
 from cjwstate.errors import PromptingError, PromptingErrorAggregator
 from cjwstate.models import UploadedFile as UploadedFileModel
-from .types import StepResult, Tab, TabCycleError, TabOutputUnreachableError
+from .types import StepResult, TabResult, TabCycleError, TabOutputUnreachableError
 
 
 FilesystemUnsafeChars = re.compile("[^-_.,()a-zA-Z0-9]")
@@ -52,22 +52,13 @@ def _validate_iso8601_string(s):
         raise ValueError("Month and day must have a leading 0")
 
 
-class _TabData(NamedTuple):
-    tab: Tab
-    result: Optional[LoadedRenderResult]
-
-    @property
-    def slug(self) -> str:
-        return self.tab.slug
-
-
 class _Cleaner:
     def __init__(
         self,
         step_id: int,
         input_table_columns: List[Column],
         # assume tab_results keys are ordered the way the user ordered the tabs.
-        tab_results: Dict[Tab, Optional[StepResult]],
+        tab_results: Dict[str, Optional[TabResult]],
         basedir: Path,
         params: Dict[str, Any],
         schema: ParamSchema,
@@ -76,9 +67,7 @@ class _Cleaner:
     ):
         self.step_id = step_id
         self.input_table_columns = input_table_columns
-        self.tabs: Dict[str, _TabData] = {
-            k.slug: _TabData(k, v) for k, v in tab_results.items()
-        }
+        self.tab_results = tab_results
         self.basedir = basedir
         self.params = params
         self.schema = schema
@@ -95,9 +84,9 @@ class _Cleaner:
 
         cleaned_params = self.clean_value(self.schema, self.params)
         tab_outputs = {
-            td.slug: TabOutput(td.tab.name, td.result.path.name)
-            for td in self.tabs.values()
-            if td.slug in self.used_tab_slugs
+            tab_slug: TabOutput(tab_result.tab_name, tab_result.path.name)
+            for tab_slug, tab_result in self.tab_results.items()
+            if tab_slug in self.used_tab_slugs
         }
         self.result = PrepParamsResult(cleaned_params, tab_outputs, self.uploaded_files)
         return self.result
@@ -114,15 +103,15 @@ class _Cleaner:
         tab_slug = self.params[tab_parameter]
 
         try:
-            tab_data = self.tabs[tab_slug]
+            tab_result = self.tab_results[tab_slug]
         except KeyError:
             # Tab does not exist
             return {}
-        if tab_data.result is None or not tab_data.result.columns:
+        if tab_result is None or not tab_result.columns:
             # Tab has a cycle or other error.
             return {}
 
-        return {c.name: c for c in tab_data.result.columns}
+        return {c.name: c for c in tab_result.columns}
 
     @singledispatchmethod
     def clean_value(self, schema: ParamSchema, value: Any) -> Any:
@@ -210,11 +199,10 @@ class _Cleaner:
     def _(self, schema: ParamSchema.Tab, value: str) -> str:
         tab_slug = value
         try:
-            tab_data = self.tabs[tab_slug]
+            tab_result = self.tab_results[tab_slug]
         except KeyError:
             # It's a tab that doesn't exist.
             return None
-        tab_result = tab_data.result
         if tab_result is None:
             # It's an un-rendered tab. Or at least, the executor _tells_ us it's
             # un-rendered. That means there's a tab-cycle.
@@ -334,8 +322,8 @@ class _Cleaner:
             if slug is not None
         )
 
-        # Order based on `self.tabs`.
-        return [slug for slug in self.tabs.keys() if slug in slugs]
+        # Order based on `self.tab_results`.
+        return [slug for slug in self.tab_results.keys() if slug in slugs]
 
     @clean_value.register(ParamSchema.Dict)
     def _(self, schema: ParamSchema.Dict, value: Dict[str, Any]) -> Dict[str, Any]:
@@ -360,7 +348,7 @@ def prep_params(
     *,
     step_id: int,
     input_table_columns: List[Column],
-    tab_results: Dict[Tab, Optional[StepResult]],
+    tab_results: Dict[str, Optional[TabResult]],
     basedir: Path,
     exit_stack: ExitStack,
     schema: ParamSchema.Dict,
