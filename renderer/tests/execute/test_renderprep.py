@@ -15,7 +15,7 @@ from cjwstate.tests.utils import DbTestCase
 from renderer.execute.renderprep import PrepParamsResult, prep_params
 from renderer.execute.types import (
     StepResult,
-    Tab,
+    TabResult,
     TabCycleError,
     TabOutputUnreachableError,
 )
@@ -450,9 +450,7 @@ class CleanValueTests(DbTestCase):
         result = self._call_prep_params(
             ParamSchema.Dict({"x": ParamSchema.Tab()}),
             {"x": "tab-1"},
-            tab_results={
-                Tab("tab-1", "Tab 1"): StepResult(Path("tab-1.arrow"), [TEXT("A")])
-            },
+            tab_results={"tab-1": TabResult("Tab 1", Path("tab-1.arrow"), [TEXT("A")])},
         )
         self.assertEqual(
             result,
@@ -468,9 +466,9 @@ class CleanValueTests(DbTestCase):
             ParamSchema.Dict({"x": ParamSchema.Tab()}),
             {"x": "tab-1"},
             tab_results={
-                Tab("tab-1", "Tab 1"): StepResult(Path("tab-1.arrow"), [TEXT("A")]),
-                Tab("tab-2", "Tab 2"): StepResult(Path("tab-2.arrow"), [TEXT("A")]),
-                Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [TEXT("A")]),
+                "tab-1": TabResult("Tab 1", Path("tab-1.arrow"), [TEXT("A")]),
+                "tab-2": TabResult("Tab 2", Path("tab-2.arrow"), [TEXT("A")]),
+                "tab-3": TabResult("Tab 3", Path("tab-3.arrow"), [TEXT("A")]),
             },
         )
         self.assertEqual(
@@ -490,8 +488,8 @@ class CleanValueTests(DbTestCase):
             params,
             input_table_columns=[NUMBER("A-from-tab-1")],
             tab_results={
-                Tab("tab-2", "Tab 2"): StepResult(
-                    Path("tab-2.arrow"), [NUMBER("A-from-tab-2")]
+                "tab-2": TabResult(
+                    "Tab 2", Path("tab-2.arrow"), [NUMBER("A-from-tab-2")]
                 )
             },
         )
@@ -524,17 +522,19 @@ class CleanValueTests(DbTestCase):
         self.assertIsNone(self._call_clean_value(ParamSchema.Tab(), "tab-XXX"))
 
     def test_clean_tab_cycle(self):
-        tab = Tab("tab-1", "Tab 1")
         with self.assertRaises(TabCycleError):
-            self._call_clean_value(ParamSchema.Tab(), "tab-1", tab_results={tab: None})
+            self._call_clean_value(
+                ParamSchema.Tab(), "tab-1", tab_results={"tab-1": None}
+            )
 
     def test_clean_tab_unreachable(self):
-        tab = Tab("tab-error", "Buggy Tab")
         with self.assertRaises(TabOutputUnreachableError):
             self._call_clean_value(
                 ParamSchema.Tab(),
                 "tab-error",
-                tab_results={tab: StepResult(Path("tab-error.arrow"), [])},
+                tab_results={
+                    "tab-error": TabResult("Buggy Tab", Path("tab-error.arrow"), [])
+                },
             )
 
     def test_clean_tabs_happy_path(self):
@@ -543,12 +543,8 @@ class CleanValueTests(DbTestCase):
                 ParamSchema.Dict({"x": ParamSchema.Multitab()}),
                 {"x": ["tab-2", "tab-3"]},
                 tab_results={
-                    Tab("tab-2", "Tab 2"): StepResult(
-                        Path("tab-2.arrow"), [NUMBER("B")]
-                    ),
-                    Tab("tab-3", "Tab 3"): StepResult(
-                        Path("tab-3.arrow"), [NUMBER("C")]
-                    ),
+                    "tab-2": TabResult("Tab 2", Path("tab-2.arrow"), [NUMBER("B")]),
+                    "tab-3": TabResult("Tab 3", Path("tab-3.arrow"), [NUMBER("C")]),
                 },
             ),
             PrepParamsResult(
@@ -567,8 +563,8 @@ class CleanValueTests(DbTestCase):
             ParamSchema.Dict({"x": ParamSchema.Multitab()}),
             {"x": ["tab-2", "tab-3"]},
             tab_results={
-                Tab("tab-3", "Tab 3"): StepResult(Path("tab-3.arrow"), [NUMBER("C")]),
-                Tab("tab-2", "Tab 2"): StepResult(Path("tab-2.arrow"), [NUMBER("B")]),
+                "tab-3": TabResult("Tab 3", Path("tab-3.arrow"), [NUMBER("C")]),
+                "tab-2": TabResult("Tab 2", Path("tab-2.arrow"), [NUMBER("B")]),
             },
         )
         self.assertEqual(
@@ -591,9 +587,7 @@ class CleanValueTests(DbTestCase):
     def test_clean_tabs_tab_cycle(self):
         with self.assertRaises(TabCycleError):
             self._call_clean_value(
-                ParamSchema.Multitab(),
-                ["tab-1"],
-                tab_results={Tab("tab-1", "Tab 1"): None},
+                ParamSchema.Multitab(), ["tab-1"], tab_results={"tab-1": None}
             )
 
     def test_clean_tabs_tab_unreachable(self):
@@ -601,9 +595,7 @@ class CleanValueTests(DbTestCase):
             self._call_clean_value(
                 ParamSchema.Multitab(),
                 ["tab-1"],
-                tab_results={
-                    Tab("tab-1", "Tab 1"): StepResult(Path("tab-1.arrow"), [])
-                },
+                tab_results={"tab-1": TabResult("Tab 1", Path("tab-1.arrow"), [])},
             )
 
     def test_clean_condition_empty_and_and_or_are_none(self):

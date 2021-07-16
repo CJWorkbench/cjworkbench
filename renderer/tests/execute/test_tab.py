@@ -16,7 +16,7 @@ from cjwstate.models import Workflow
 from cjwstate.rendercache.testing import write_to_rendercache
 from cjwstate.tests.utils import DbTestCaseWithModuleRegistry, create_module_zipfile
 from renderer.execute.tab import execute_tab_flow, ExecuteStep, TabFlow
-from renderer.execute.types import StepResult, Tab
+from renderer.execute.types import Tab, TabResult
 
 
 async def fake_send(*args, **kwargs):
@@ -66,7 +66,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         tab = workflow.tabs.first()
         tab_flow = TabFlow(Tab(tab.slug, tab.name), [])
         with self._execute(workflow, tab_flow, {}) as (result, path):
-            self.assertEqual(result, StepResult(path, []))
+            self.assertEqual(result, TabResult(tab.name, path, []))
             self.assertEqual(load_trusted_arrow_file(path), make_table())
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
@@ -98,7 +98,9 @@ class TabTests(DbTestCaseWithModuleRegistry):
             with self._execute(workflow, tab_flow, {}) as (result, path):
                 self.assertEqual(
                     result,
-                    StepResult(path, [Column("B", ColumnType.Number(format="${:,}"))]),
+                    TabResult(
+                        tab.name, path, [Column("B", ColumnType.Number(format="${:,}"))]
+                    ),
                 )
                 assert_arrow_table_equals(load_trusted_arrow_file(path), cached_table2)
 
@@ -135,7 +137,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         with patch.object(Kernel, "render", side_effect=mock_render(table)):
             with self._execute(workflow, tab_flow, {}) as (result, path):
                 self.assertEqual(
-                    result, StepResult(path, [Column("A", ColumnType.Text())])
+                    result, TabResult(tab.name, path, [Column("A", ColumnType.Text())])
                 )
                 assert_arrow_table_equals(load_trusted_arrow_file(path), table)
 
@@ -188,7 +190,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
         with patch.object(Kernel, "render", side_effect=mock_render(new_table)):
             with self._execute(workflow, tab_flow, {}) as (result, path):
                 self.assertEqual(
-                    result, StepResult(path, [Column("C", ColumnType.Text())])
+                    result, TabResult(tab.name, path, [Column("C", ColumnType.Text())])
                 )
                 assert_arrow_table_equals(load_trusted_arrow_file(path), new_table)
 
@@ -240,7 +242,7 @@ class TabTests(DbTestCaseWithModuleRegistry):
                 workflow, tab_flow, {}, expect_log_level=logging.ERROR
             ) as (result, path):
                 self.assertEqual(
-                    result, StepResult(path, [Column("B", ColumnType.Text())])
+                    result, TabResult(tab.name, path, [Column("B", ColumnType.Text())])
                 )
 
             self.assertEqual(

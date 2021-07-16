@@ -249,4 +249,6 @@ async def execute_tab_flow(
             )
             last_result = output
 
-        return TabResult(tab_name=flow.tab.name, **last_result)
+        return TabResult(
+            tab_name=flow.tab.name, path=last_result.path, columns=last_result.columns
+        )
