@@ -16,7 +16,7 @@ its Django Channels channel layer.
 """
 import logging
 import pickle
-from typing import Any, Dict, NamedTuple
+from typing import Any, Dict
 
 import carehare
 import msgpack
@@ -67,26 +67,11 @@ def _user_group_name(user_id: int) -> str:
     return f"user-{str(user_id)}"
 
 
-class PublishDatasetSpec(NamedTuple):
-    readme_md: str
-    """README.md the user wants in the dataset."""
-
-    tabs: Dict[str, str]
-    """Mapping from _filename_ "slug" (user-visible) to Tab.slug."""
-
-
-async def queue_render(
-    workflow_id: int,
-    delta_id: int,
-    publish_dataset_spec: Optional[PublishDatasetSpec] = None,
-) -> None:
+async def queue_render(workflow_id: int, delta_id: int) -> None:
     """Queue render in RabbitMQ.
 
     Spurious renders are fine: these messages are tiny, and renderers ignore
     them gracefully.
-
-    If publish_dataset_spec is set, a successful render will also publish
-    results as a Frictionless data package.
 
     `maintain_global_connection()` must be running.
 
@@ -95,17 +80,7 @@ async def queue_render(
     """
     connection = await get_global_connection()
     await connection.publish(
-        msgpack.packb(
-            dict(
-                workflow_id=workflow_id,
-                delta_id=delta_id,
-                publish_dataset_spec=(
-                    None
-                    if publish_dataset_spec is None
-                    else publish_dataset_spec._asdict()
-                ),
-            )
-        ),
+        msgpack.packb(dict(workflow_id=workflow_id, delta_id=delta_id)),
         routing_key=Render,
     )
 
