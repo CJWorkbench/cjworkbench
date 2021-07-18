@@ -22,9 +22,10 @@
   .buttons {
     display: flex;
     justify-content: flex-end;
+    padding: 1em 0 1em 0;
 
     button {
-      margin: 1em 0 1em 1em;
+      margin-left: 1em;
     }
   }
 }
