@@ -89,7 +89,7 @@ export default class File extends PureComponent {
   }
 
   handleDragEnter = ev => {
-    if (!ev.dataTransfer.types.includes("Files")) {
+    if (!ev.dataTransfer.types.includes('Files')) {
       return
     }
 
