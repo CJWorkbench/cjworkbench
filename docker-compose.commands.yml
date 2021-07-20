@@ -75,6 +75,8 @@ services:
       - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
+      CJW_HELP_EMAIL: root@localhost
+      CJW_HOME_URL: 'http://localhost:8000'
     networks: [ 'dev' ]
 
   unittest:
