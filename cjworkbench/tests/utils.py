@@ -56,8 +56,7 @@ class DbTestCase(SimpleTestCase):
         super().tearDown()
 
     def run_with_async_db(self, task):
-        """
-        Runs async tasks, using the main thread's database connection.
+        """Run async task, using the main thread's database connection.
 
         See
         https://github.com/django/channels/issues/1091#issuecomment-436067763.
@@ -69,7 +68,10 @@ class DbTestCase(SimpleTestCase):
         # This hack is just for unit tests: the test suite will end with a
         # "delete the entire database" call, and we want it to succeed; that
         # means there need to be no other connections using the database.
-        old_loop = asyncio.get_event_loop()
+        try:
+            old_loop = asyncio.get_event_loop()
+        except RuntimeError:
+            old_loop = None
         asyncio.set_event_loop(None)
         try:
             return asyncio.run(task)

@@ -73,7 +73,10 @@ class RenderTest(DbTestCase):
         with self.assertLogs():
             self.run_with_async_db(
                 render_workflow_and_maybe_requeue(
-                    SuccessfulRenderLocker(), workflow.id, 123
+                    SuccessfulRenderLocker(),
+                    workflow.id,
+                    123,
+                    publish_dataset_spec=None,
                 )
             )
 
@@ -88,7 +91,7 @@ class RenderTest(DbTestCase):
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
                 await render_workflow_and_maybe_requeue(
-                    FailedRenderLocker(), workflow.id, 123
+                    FailedRenderLocker(), workflow.id, 123, publish_dataset_spec=None
                 )
                 self.assertEqual(
                     cm.output,
@@ -119,6 +122,7 @@ class RenderTest(DbTestCase):
                     SuccessfulRenderLocker(),
                     workflow.id,
                     123,
+                    publish_dataset_spec=None,
                 )
                 self.assertRegex(
                     cm.output[0],
@@ -142,9 +146,7 @@ class RenderTest(DbTestCase):
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
                 await render_workflow_and_maybe_requeue(
-                    SuccessfulRenderLocker(),
-                    12345,
-                    1,
+                    SuccessfulRenderLocker(), 12345, 1, publish_dataset_spec=None
                 )
                 self.assertEqual(
                     cm.output,
@@ -169,7 +171,10 @@ class RenderTest(DbTestCase):
         async def inner():
             with self.assertLogs("renderer", level="INFO") as cm:
                 await render_workflow_and_maybe_requeue(
-                    SuccessfulRenderLocker(), workflow.id, 123
+                    SuccessfulRenderLocker(),
+                    workflow.id,
+                    123,
+                    publish_dataset_spec=None,
                 )
                 self.assertRegex(
                     cm.output[0],

@@ -56,7 +56,7 @@ services:
       - sh
       - '-c'
       - |
-        for bucket in user-files static stored-objects external-modules cached-render-results upload; do
+        for bucket in datasets user-files static stored-objects external-modules cached-render-results upload; do
             mkdir -p /data/$$bucket
         done
         rm -rf /data/.minio.sys

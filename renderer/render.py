@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import carehare
 from django.db import DatabaseError, InterfaceError
@@ -29,9 +29,13 @@ class RenderResult(Enum):
     MUST_NOT_REQUEUE = 3
 
 
-async def render_workflow_once(workflow: Workflow, delta_id: int):
-    """
-    Render a workflow, returning `RenderResult`.
+async def render_workflow_once(
+    workflow: Workflow,
+    delta_id: int,
+    *,
+    publish_dataset_spec: Optional[rabbitmq.PublishDatasetSpec],
+):
+    """Render a workflow, returning `RenderResult`.
 
     Considers all conceivable errors:
 
@@ -95,9 +99,10 @@ async def render_workflow_and_maybe_requeue(
     pg_render_locker: PgRenderLocker,
     workflow_id: int,
     delta_id: int,
+    *,
+    publish_dataset_spec: Optional[rabbitmq.PublishDatasetSpec] = None,
 ) -> None:
-    """
-    Acquire an advisory lock and render, or re-queue task if the lock is held.
+    """Acquire an advisory lock and render, or re-queue if the lock is held.
 
     If a render is requested on a Workflow that's already being rendered,
     there's no point in wasting CPU cycles starting from scratch. Wait for the
@@ -116,7 +121,9 @@ async def render_workflow_and_maybe_requeue(
     try:
         async with pg_render_locker.render_lock(workflow_id) as lock:
             # any error leads to undefined behavior
-            result = await render_workflow_once(workflow, delta_id)
+            result = await render_workflow_once(
+                workflow, delta_id, publish_dataset_spec=publish_dataset_spec
+            )
 
             # requeue if needed
             await lock.stall_others()
@@ -159,6 +166,11 @@ async def handle_render(
     try:
         workflow_id = int(message["workflow_id"])
         delta_id = int(message["delta_id"])
+        publish_dataset_spec = (
+            None
+            if message.get("publish_dataset_spec") is None
+            else rabbitmq.PublishDatasetSpec(**message["publish_dataset_spec"])
+        )
     except (TypeError, ValueError, KeyError):
         # Message has invalid types. Ignore it.
         logger.info(
@@ -170,4 +182,9 @@ async def handle_render(
         )
         return
 
-    await render_workflow_and_maybe_requeue(pg_render_locker, workflow_id, delta_id)
+    await render_workflow_and_maybe_requeue(
+        pg_render_locker,
+        workflow_id,
+        delta_id,
+        publish_dataset_spec=publish_dataset_spec,
+    )

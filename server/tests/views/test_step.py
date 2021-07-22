@@ -506,7 +506,7 @@ class CurrentTableTest(StepViewTestCase):
             f"/workflows/{self.workflow.id}/steps/step-2/current-result-table.csv"
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
+        self.assertEqual(b"".join(response.streaming_content), b"A\r\na\r\nb")
 
     def test_deprecated_current_table_csv(self):
         write_to_rendercache(
@@ -515,7 +515,7 @@ class CurrentTableTest(StepViewTestCase):
 
         response = self.client.get(f"/public/moduledata/live/{self.step2.id}.csv")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
+        self.assertEqual(b"".join(response.streaming_content), b"A\r\na\r\nb")
 
     def test_secret_link(self):
         write_to_rendercache(
@@ -536,4 +536,4 @@ class CurrentTableTest(StepViewTestCase):
             "/workflows/wsecret/steps/step-2/current-result-table.csv"
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(b"".join(response.streaming_content), b"A\na\nb")
+        self.assertEqual(b"".join(response.streaming_content), b"A\r\na\r\nb")

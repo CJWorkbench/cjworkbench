@@ -1,6 +1,6 @@
-"""High-level storage backed by AWS S3, Google GCS, or Minio.
-"""
+"""High-level storage backed by AWS S3, Google GCS, or Minio."""
 
+import datetime
 import errno
 import json
 import logging
@@ -9,7 +9,7 @@ import sys
 import urllib3
 import urllib.parse
 from contextlib import contextmanager
-from typing import ContextManager, NamedTuple
+from typing import ContextManager, Dict, NamedTuple
 
 import boto3
 import botocore
@@ -91,11 +91,12 @@ class Layer:
 layer = Layer()
 
 BucketNames = {
-    "UserFilesBucket": "user-files",
-    "StoredObjectsBucket": "stored-objects",
-    "ExternalModulesBucket": "external-modules",
     "CachedRenderResultsBucket": "cached-render-results",
+    "DatasetsBucket": "datasets",
+    "ExternalModulesBucket": "external-modules",
+    "StoredObjectsBucket": "stored-objects",
     "TusUploadBucket": "upload",
+    "UserFilesBucket": "user-files",
 }
 
 
@@ -109,16 +110,14 @@ def __getattr__(name: str):
 
 
 def list_file_keys(bucket: str, prefix: str):
-    """List keys of non-directory objects, non-recursively, in `prefix`.
+    """List keys of non-directory objects, recursively, in `prefix`.
 
     >>> s3.list_file_keys('bucket', 'filter/a132b3f/')
     ['filter/a132b3f/spec.json', 'filter/a132b3f/filter.py']
     """
     # Use list_objects, not list_objects_v2, because Google Cloud Storage's
     # AWS emulation doesn't support v2.
-    response = layer.client.list_objects(
-        Bucket=bucket, Prefix=prefix, Delimiter="/"  # avoid recursive
-    )
+    response = layer.client.list_objects(Bucket=bucket, Prefix=prefix)
     if response.get("IsTruncated"):
         # ... I guess we should paginate?
         raise NotImplementedError("list_objects() returned truncated result")
@@ -155,7 +154,7 @@ class Stat(NamedTuple):
 def stat(bucket: str, key: str) -> Stat:
     """Return an object's metadata or raise an error."""
     response = layer.client.head_object(Bucket=bucket, Key=key)
-    return Stat(response["ContentLength"])
+    return Stat(size=response["ContentLength"])
 
 
 def remove(bucket: str, key: str) -> None:

@@ -33,6 +33,7 @@ def _clear_minio():
     mc = _minio_connect()
 
     for bucket in [
+        "datasets",
         "user-files",
         "stored-objects",
         "external-modules",

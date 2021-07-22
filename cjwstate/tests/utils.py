@@ -123,16 +123,8 @@ def create_module_zipfile(
 
 
 def clear_s3():
-    buckets = (
-        s3.UserFilesBucket,
-        s3.StoredObjectsBucket,
-        s3.ExternalModulesBucket,
-        s3.CachedRenderResultsBucket,
-        s3.TusUploadBucket,
-    )
-
-    for bucket in buckets:
-        s3.remove_recursive(bucket, "/", force=True)
+    for bucket in s3.BucketNames.keys():
+        s3.remove_recursive(getattr(s3, bucket), "/", force=True)
 
 
 def get_s3_object_with_data(bucket: str, key: str, **kwargs) -> Dict[str, Any]:

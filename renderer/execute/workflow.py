@@ -188,4 +188,15 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
             # them. No need to update `tab_results`: If tab1 and tab 2 depend on
             # each other, they should have the same error ("Cycle").
             for tab_flow in pending_tab_flows:
-                await execute_tab_flow_into_new_file(tab_flow)
+                tab_result = await execute_tab_flow_into_new_file(tab_flow)
+                tab_results[tab_flow.tab.slug] = tab_result
+
+
+#             if publish_dataset_spec:
+#                 await publish_dataset(
+#                     readme_md=publish_dataset_spec.readme_md,
+#                     tabs={
+#                         filename_slug: tab_results[tab_slug]
+#                         for filename_slug, tab_slug in publish_dataset_spec.tabs.items()
+#                     },
+#                 )

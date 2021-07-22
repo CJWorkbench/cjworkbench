@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
 import NullCell from './NullCell'
 
-const ZeroEndOfDate = /(?:(?:T00:00)?:00)?\.000Z$/
-
 export default function TimestampCell (props) {
   const { value } = props
 
@@ -10,14 +8,18 @@ export default function TimestampCell (props) {
     return <NullCell type='timestamp' />
   }
 
-  // Strip the end of the ISO string if it's all-zero. Restore the 'Z' at
-  // the very end iff there's no time component. (The time component starts
-  // with 'T'.)
-  const text = value.replace(ZeroEndOfDate, m => (m[0][0] === 'T' ? '' : 'Z'))
+  // Assume input value is an ISO8601 string as compact as can be -- i.e., no
+  // ":00" or ".000" when they aren't needed.
+  // HTML5 time *requires* "HH:MM", whereas RFC3339 allows simply "HH". Add
+  // the :00 where it's needed.
+  const htmlValue = value.replace(/(T\d\d)Z/, '$1:00Z')
+
+  // ISO8601 datetime always has a time component. Nix it if it's zero.
+  const textValue = value.replace(/T00(?::00(?::00)?(?:\.0+)?)?Z/, '')
 
   return (
-    <time className='cell-timestamp' dateTime={value}>
-      {text}
+    <time className='cell-timestamp' dateTime={htmlValue}>
+      {textValue}
     </time>
   )
 }

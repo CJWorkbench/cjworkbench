@@ -159,5 +159,5 @@ class RendercacheIoTests(DbTestCase):
         crr = self.step.cached_render_result
         self.assertEqual(
             read_cached_render_result_slice_as_text(crr, "csv", range(2), range(3)),
-            "A\n2037-08-18T13:03:32.341232967Z\n",
+            "A\r\n2037-08-18T13:03:32.341232967Z\r\n",
         )

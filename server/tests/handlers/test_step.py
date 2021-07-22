@@ -609,11 +609,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "queue_fetch")
     def test_fetch(self, queue_fetch, send_update):
-        future_none = asyncio.Future()
-        future_none.set_result(None)
-
-        queue_fetch.return_value = future_none
-        send_update.return_value = future_none
+        queue_fetch.side_effect = async_noop
+        send_update.side_effect = async_noop
 
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
