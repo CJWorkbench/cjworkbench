@@ -6,6 +6,6 @@ export const selectedPane = PropTypes.oneOfType([
     tabSlug: PropTypes.string.isRequired
   }),
   PropTypes.exact({
-    pane: PropTypes.oneOf(['report']).isRequired
+    pane: PropTypes.oneOf(['report', 'dataset']).isRequired
   })
 ])

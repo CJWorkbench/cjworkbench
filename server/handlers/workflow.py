@@ -2,7 +2,7 @@ from typing import List
 from .decorators import register_websockets_handler, websockets_handler
 from .types import HandlerError
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import commands
+from cjwstate import commands, rabbitmq
 from cjwstate.models import Tab, Workflow, Step
 from cjwstate.models.commands import SetWorkflowTitle, ReorderTabs
 
@@ -78,6 +78,26 @@ async def set_selected_tab(workflow: Workflow, tabSlug: str, **kwargs):
         await _write_tab_position(workflow, tabSlug)
     except (Workflow.DoesNotExist, Tab.DoesNotExist):
         raise HandlerError("Invalid tab slug")
+
+
+@database_sync_to_async
+def _get_tab_slugs_for_dataset(workflow: Workflow) -> List[str]:
+    return list(workflow.live_tabs.values_list("slug", flat=True))
+
+
+@register_websockets_handler
+@websockets_handler("owner")
+async def begin_publish_dataset(workflow: Workflow, requestId: str, **kwargs):
+    await rabbitmq.queue_render(
+        workflow.id,
+        workflow.last_delta_id,
+        rabbitmq.PublishDatasetSpec(
+            request_id=str(requestId),
+            workflow_name=workflow.name,
+            readme_md=workflow.dataset_readme_md,
+            tab_slugs=await _get_tab_slugs_for_dataset(workflow),
+        ),
+    )
 
 
 @register_websockets_handler

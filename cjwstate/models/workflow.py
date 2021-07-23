@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import json
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import ContextManager, Dict, FrozenSet, List, Set, Tuple
@@ -99,6 +100,11 @@ class Workflow(models.Model):
 
     in_all_users_workflow_lists = models.BooleanField(default=False)
     """If true, all users will see this."""
+
+    dataset_readme_md = models.TextField(
+        "dataset_readme_md", max_length=65535, null=False, blank=True, default=""
+    )
+    """Markdown README.md to publish the next time the workflow is published."""
 
     lesson_slug = models.CharField("lesson_slug", max_length=100, null=True, blank=True)
     """A string like 'a-lesson' or 'a-course/a-lesson', or NULL.
@@ -515,6 +521,7 @@ class Workflow(models.Model):
         include_tab_slugs: bool = True,
         include_block_slugs: bool = True,
         include_acl: bool = True,
+        include_dataset: bool = False,
     ) -> clientside.WorkflowUpdate:
         if include_tab_slugs:
             tab_slugs = list(self.live_tabs.values_list("slug", flat=True))
@@ -534,6 +541,17 @@ class Workflow(models.Model):
         else:
             acl = None  # more privacy (for report-viewer)
 
+        if include_dataset:
+            try:
+                with s3.temporarily_download(
+                    s3.DatasetsBucket, f"/wf-{self.id}/datapackage.json"
+                ) as path:
+                    dataset = json.loads(path.read_bytes())
+            except FileNotFoundError:
+                dataset = None
+        else:
+            dataset = None
+
         return clientside.WorkflowUpdate(
             id=self.id,
             secret_id=self.secret_id,  # if you can read it, you can link to it
@@ -548,6 +566,7 @@ class Workflow(models.Model):
             updated_at=self.updated_at,
             fetches_per_day=self.fetches_per_day,
             acl=acl,
+            dataset=dataset,
         )
 
 

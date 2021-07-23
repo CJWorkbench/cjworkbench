@@ -125,10 +125,12 @@ def list_file_keys(bucket: str, prefix: str):
 
 
 def fput_file(bucket: str, key: str, path: pathlib.Path) -> None:
+    logger.info("fput_file(%r, %r)", bucket, key)
     layer.uploader.upload_file(str(path.resolve()), bucket, key)
 
 
 def put_bytes(bucket: str, key: str, body: bytes, **kwargs) -> None:
+    logger.info("put_bytes(%r, %r)", bucket, key)
     layer.client.put_object(
         Bucket=bucket, Key=key, Body=body, ContentLength=len(body), **kwargs
     )
@@ -166,6 +168,7 @@ def remove(bucket: str, key: str) -> None:
 
 
 def copy(bucket: str, key: str, copy_source: str, **kwargs) -> None:
+    logger.debug("copy(%r, %r)", bucket, key)
     layer.client.copy_object(Bucket=bucket, Key=key, CopySource=copy_source, **kwargs)
 
 

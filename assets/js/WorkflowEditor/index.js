@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { selectReportPaneAction } from './actions'
+import { selectDatasetPublisherPaneAction, selectReportPaneAction } from './actions'
 import WorkflowEditor from './WorkflowEditor'
 
 const mapStateToProps = ({ selectedPane }) => {
@@ -7,7 +7,8 @@ const mapStateToProps = ({ selectedPane }) => {
 }
 
 const mapDispatchToProps = {
-  selectReportPane: selectReportPaneAction
+  selectDatasetPublisherPane: selectDatasetPublisherPaneAction,
+  selectReportEditorPane: selectReportPaneAction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkflowEditor)

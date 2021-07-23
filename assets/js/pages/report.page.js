@@ -12,7 +12,8 @@ import selectWorkflowIdOrSecretId from '../selectors/selectWorkflowIdOrSecretId'
 const workflowIdOrSecretId = selectWorkflowIdOrSecretId(window.initState) // TODO select dynamically in WorkbenchAPI?
 const websocket = new WorkflowWebsocket(
   workflowIdOrSecretId,
-  delta => store.dispatch(applyDeltaAction(delta))
+  delta => store.dispatch(applyDeltaAction(delta)),
+  publishDatasetResult => null
 )
 websocket.connect()
 

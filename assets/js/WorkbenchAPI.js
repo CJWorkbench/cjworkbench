@@ -147,6 +147,10 @@ export default class WorkbenchAPI {
     })
   }
 
+  beginPublishDataset ({ requestId }) {
+    return this._callExpectingNull('workflow.begin_publish_dataset', { requestId })
+  }
+
   createTab (slug, name) {
     return this._callExpectingNull('tab.create', { slug, name })
   }

@@ -77,7 +77,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
             update = clientside.Update(
                 user=user,
-                workflow=workflow.to_clientside(),
+                workflow=workflow.to_clientside(include_dataset=True),
                 tabs={tab.slug: tab.to_clientside() for tab in workflow.live_tabs},
                 steps={
                     step.id: step.to_clientside(
@@ -176,6 +176,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def send_publish_dataset_result(self, message: Dict[str, Any]) -> None:
+        result = message["result"]
         # It's a bit ugly that we use pickle (as opposed to protobuf) to send
         # through RabbitMQ. It's also inefficient and makes races when deploying
         # new versions. And security-wise, we're vulnerable to "AMQP injection"
@@ -185,9 +186,9 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             {
                 "type": "publish-dataset-result",
                 "data": dict(
-                    requestId=message["request_id"],
-                    error=message["error"],
-                    datapackage=message["datapackage"],
+                    requestId=result["request_id"],
+                    error=result["error"],
+                    datapackage=result["datapackage"],
                 ),
             }
         )

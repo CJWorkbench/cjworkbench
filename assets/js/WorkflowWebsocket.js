@@ -19,7 +19,7 @@ export class ErrorResponse extends Error {
 }
 
 export default class WorkflowWebsocket {
-  constructor (workflowIdOrSecretId, onDelta, createSocket = null) {
+  constructor (workflowIdOrSecretId, onDelta, onPublishDatasetResult, createSocket = null) {
     if (!createSocket) {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
       const url = `${protocol}//${window.location.host}/workflows/${workflowIdOrSecretId}`
@@ -32,6 +32,7 @@ export default class WorkflowWebsocket {
 
     this.workflowIdOrSecretId = workflowIdOrSecretId
     this.onDelta = onDelta
+    this.onPublishDatasetResult = onPublishDatasetResult
     this.createSocket = createSocket
     this.hasConnectedBefore = false
     this.reconnectDelay = 1000
@@ -72,6 +73,9 @@ export default class WorkflowWebsocket {
       switch (data.type) {
         case 'apply-delta':
           this.onDelta(data.data)
+          break
+        case 'publish-dataset-result':
+          this.onPublishDatasetResult(data.data)
           break
         default:
           console.error('Unhandled websocket message', data)

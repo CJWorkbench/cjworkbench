@@ -5,6 +5,7 @@ import OutputPane from './OutputPane'
 import PaneSelect from './PaneSelect'
 import * as propTypes from './propTypes'
 import Report from './Report'
+import DatasetPublisher from './DatasetPublisher'
 
 /**
  * The Workflow editing interface.
@@ -22,7 +23,8 @@ import Report from './Report'
 const WorkflowEditor = memo(function WorkflowEditor ({
   api,
   selectedPane,
-  selectReportPane
+  selectDatasetPublisherPane,
+  selectReportEditorPane
 }) {
   const paneRef = useRef(null)
 
@@ -30,7 +32,8 @@ const WorkflowEditor = memo(function WorkflowEditor ({
     <>
       <PaneSelect
         selectedPane={selectedPane}
-        selectReportPane={selectReportPane}
+        selectDatasetPublisherPane={selectDatasetPublisherPane}
+        selectReportEditorPane={selectReportEditorPane}
       />
 
       {selectedPane.pane === 'tab'
@@ -40,13 +43,16 @@ const WorkflowEditor = memo(function WorkflowEditor ({
             <OutputPane />
           </div>
           )
-        : <Report />}
+        : null}
+      {selectedPane.pane === 'report' ? <Report /> : null}
+      {selectedPane.pane === 'dataset' ? <DatasetPublisher /> : null}
     </>
   )
 })
 WorkflowEditor.propTypes = {
   api: PropTypes.object.isRequired,
   selectedPane: propTypes.selectedPane.isRequired,
-  selectReportPane: PropTypes.func.isRequired // func() => undefined
+  selectDatasetPublisherPane: PropTypes.func.isRequired, // func() => undefined
+  selectReportEditorPane: PropTypes.func.isRequired // func() => undefined
 }
 export default WorkflowEditor

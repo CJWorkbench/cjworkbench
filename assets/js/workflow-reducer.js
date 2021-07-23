@@ -8,6 +8,7 @@ import { reducerFunctions as TabReducerFunctions } from './WorkflowEditor/Tabs/a
 import { reducerFunctions as WorkflowEditorReducerFunctions } from './WorkflowEditor/actions'
 import { reducerFunctions as ShareReducerFunctions } from './ShareModal/actions'
 import { reducerFunctions as FileReducerFunctions } from './params/File/actions'
+import { reducerFunctions as DatasetPublisherFunctions } from './WorkflowEditor/DatasetPublisher/actions'
 import selectIsReadOnly from './selectors/selectIsReadOnly'
 
 // Workflow
@@ -68,6 +69,7 @@ function handleError (state, action) {
 }
 
 const reducerFunc = {
+  ...DatasetPublisherFunctions,
   ...FileReducerFunctions,
   ...ReportReducerFunctions,
   ...ShareReducerFunctions,

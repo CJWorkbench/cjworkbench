@@ -3,15 +3,18 @@ import * as propTypes from './propTypes'
 import Tabs from './Tabs'
 import { Trans } from '@lingui/macro'
 import IconReport from '../../icons/report.svg'
+import IconDataset from '../../icons/dataset.svg'
 
-export default function PaneSelect ({ selectedPane, selectReportPane }) {
+export default function PaneSelect (props) {
+  const { selectedPane, selectDatasetPublisherPane, selectReportEditorPane } = props
+
   return (
     <nav className={`pane-select selected-${selectedPane.pane}`}>
       <Tabs />
       <div className='report'>
         <button
           type='button'
-          onClick={selectReportPane}
+          onClick={selectReportEditorPane}
           disabled={selectedPane.pane === 'report'}
         >
           <IconReport />
@@ -22,11 +25,25 @@ export default function PaneSelect ({ selectedPane, selectReportPane }) {
             Report Editor
           </Trans>
         </button>
+        <button
+          type='button'
+          onClick={selectDatasetPublisherPane}
+          disabled={selectedPane.pane === 'dataset'}
+        >
+          <IconDataset />
+          <Trans
+            id='js.WorkflowEditor.PaneSelect.nav.dataset'
+            comment='Link to the dataset publisher'
+          >
+            Dataset Publisher
+          </Trans>
+        </button>
       </div>
     </nav>
   )
 }
 PaneSelect.propTypes = {
   selectedPane: propTypes.selectedPane.isRequired,
-  selectReportPane: PropTypes.func.isRequired // func() => undefined
+  selectDatasetPublisherPane: PropTypes.func.isRequired, // func() => undefined
+  selectReportEditorPane: PropTypes.func.isRequired // func() => undefined
 }

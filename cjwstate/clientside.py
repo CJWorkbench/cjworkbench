@@ -180,6 +180,9 @@ class WorkflowUpdate(NamedTuple):
     acl: Optional[List[AclEntry]] = None
     """Non-owners' permissions."""
 
+    dataset: Optional[Dict[str, Any]] = None
+    """Frictionless data-package JSON to replace."""
+
 
 class StepUpdate(NamedTuple):
     """Data for a new or existing Step with the given id (TODO use slug, nix id).

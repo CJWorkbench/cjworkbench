@@ -266,7 +266,7 @@ async def send_update_to_workflow_clients(
 
 
 async def send_publish_dataset_result_to_workflow_clients(
-    workflow_id: int, response: PublishDatasetResult
+    workflow_id: int, result: PublishDatasetResult
 ) -> None:
     """Send a message *from* any async service *to* a Django Channels group.
 
