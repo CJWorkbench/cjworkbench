@@ -8,6 +8,8 @@ from cjwstate.models import Step, Workflow
 from cjwstate.models.module_registry import MODULE_REGISTRY
 from cjwstate.modules.types import ModuleZipfile
 from cjwstate.params import get_migrated_params
+from cjwstate import rabbitmq
+from ..publish import publish_dataset
 from .tab import ExecuteStep, TabFlow, execute_tab_flow
 from .types import StepResult, Tab, TabResult, UnneededExecution
 
@@ -125,7 +127,12 @@ def partition_ready_and_dependent(
     return (ready, dependent)
 
 
-async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
+async def execute_workflow(
+    workflow: Workflow,
+    delta_id: int,
+    *,
+    publish_dataset_spec: Optional[rabbitmq.PublishDatasetSpec] = None,
+) -> None:
     """Ensure all `workflow.tabs[*].live_steps` cache fresh render results.
 
     Raise UnneededExecution if the inputs become stale (at which point we don't
@@ -191,12 +198,25 @@ async def execute_workflow(workflow: Workflow, delta_id: int) -> None:
                 tab_result = await execute_tab_flow_into_new_file(tab_flow)
                 tab_results[tab_flow.tab.slug] = tab_result
 
+            if publish_dataset_spec:
+                # We won't raise UnneededExecution any more
 
-#             if publish_dataset_spec:
-#                 await publish_dataset(
-#                     readme_md=publish_dataset_spec.readme_md,
-#                     tabs={
-#                         filename_slug: tab_results[tab_slug]
-#                         for filename_slug, tab_slug in publish_dataset_spec.tabs.items()
-#                     },
-#                 )
+                # Any S3 error leads to iffy behavior. We'll be notified of the
+                # exception, so if it's common we can solidify our code.
+                dataset_spec = await publish_dataset(
+                    workflow_id=workflow.id,
+                    workflow_name=publish_dataset_spec.workflow_name,
+                    readme_md=publish_dataset_spec.readme_md,
+                    tab_results=[
+                        tab_results[tab_slug]
+                        for tab_slug in publish_dataset_spec.tab_slugs
+                    ],
+                )
+                await rabbitmq.send_publish_dataset_result_to_workflow_clients(
+                    workflow.id,
+                    rabbitmq.PublishDatasetResult(
+                        request_id=publish_dataset_spec.request_id,
+                        error=None,
+                        datapackage=dataset_spec,
+                    ),
+                )

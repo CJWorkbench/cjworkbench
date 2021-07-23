@@ -61,7 +61,11 @@ def mock_render(arrow_table: pa.Table):
 class WorkflowTests(DbTestCaseWithModuleRegistry):
     def _execute(self, workflow):
         with self.assertLogs(level=logging.DEBUG):
-            self.run_with_async_db(execute_workflow(workflow, workflow.last_delta_id))
+            self.run_with_async_db(
+                execute_workflow(
+                    workflow, workflow.last_delta_id, publish_dataset_spec=None
+                )
+            )
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     def test_execute_new_revision(self):
@@ -367,6 +371,47 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         self._execute(workflow)
 
         email.assert_not_called()
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
+    @patch.object(rabbitmq, "send_publish_dataset_result_to_workflow_clients")
+    def test_publish_dataset(self, send_result):
+        workflow = Workflow.objects.create(name="My Workflow")
+        tab = workflow.tabs.create(position=0, slug="tab-1", name="Tab X")
+        create_module_zipfile(
+            "mod",
+            spec_kwargs={"loads_data": True},
+            python_code='import pandas as pd\ndef render(table, params): return pd.DataFrame({"A": [1]})',
+        )
+        tab.steps.create(
+            order=0,
+            slug="step-1",
+            module_id_name="mod",
+            notifications=True,
+        )
+
+        with self.assertLogs(level=logging.DEBUG):
+            self.run_with_async_db(
+                execute_workflow(
+                    workflow,
+                    workflow.last_delta_id,
+                    publish_dataset_spec=rabbitmq.PublishDatasetSpec(
+                        request_id="req-1",
+                        workflow_name="My Workflow",
+                        readme_md="# README\n\nthank you",
+                        tab_slugs=["tab-1"],
+                    ),
+                )
+            )
+
+        send_result.assert_called()
+        self.assertEqual(send_result.call_args.args[0], workflow.id)
+        result = send_result.call_args.args[1]
+        self.assertEqual(result.request_id, "req-1")
+        self.assertIsNone(result.error)
+        self.assertEqual(
+            result.datapackage["path"],
+            f"https://api.workbenchdata.com/v1/datasets/{workflow.id}-my-workflow/r1/datapackage.json",
+        )
 
 
 class PartitionReadyAndDependentTests(unittest.TestCase):

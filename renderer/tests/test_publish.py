@@ -51,7 +51,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab1_result},
+                tab_results=[tab1_result],
             )
         )
 
@@ -85,7 +85,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="data-resource",
                 name="tab-1_parquet",
-                path="https://api.workbenchdata.com/v1/datasets/wf-123/r1/data/tab-1_parquet.parquet",
+                path="https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/data/tab-1_parquet.parquet",
                 title="Tab 1",
                 format="parquet",
                 schema={"fields": [{"name": "A", "type": "string"}]},
@@ -107,7 +107,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab1_result, "tab-2": tab2_result},
+                tab_results=[tab1_result, tab2_result],
             )
         )
 
@@ -148,7 +148,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab1_result},
+                tab_results=[tab1_result],
             )
         )
         # Now, r2 is a revision that "failed" to upload: some files are there,
@@ -166,7 +166,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab1_result2},
+                tab_results=[tab1_result2],
             )
         )
 
@@ -191,7 +191,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab1_result},
+                tab_results=[tab1_result],
             )
         )
 
@@ -222,7 +222,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="tabular-data-resource",
                 name="tab-1_csv",
-                path="https://api.workbenchdata.com/v1/datasets/wf-123/r1/data/tab-1_csv.csv.gz",
+                path="https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/data/tab-1_csv.csv.gz",
                 title="Tab 1",
                 format="csv",
                 compression="gz",
@@ -247,7 +247,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab1_result},
+                tab_results=[tab1_result],
             )
         )
 
@@ -278,7 +278,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="data-resource",
                 name="tab-1_json",
-                path="https://api.workbenchdata.com/v1/datasets/wf-123/r1/data/tab-1_json.json.gz",
+                path="https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/data/tab-1_json.json.gz",
                 title="Tab 1",
                 format="json",
                 compression="gz",
@@ -302,7 +302,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab_result1},
+                tab_results=[tab_result1],
             )
         )
         tab_result2 = self._write_tab_result(
@@ -314,7 +314,7 @@ class PublishTests(DbTestCase):
                 workflow_id=123,
                 workflow_name="Workflow 1",
                 readme_md="",
-                tabs={"tab-1": tab_result2},
+                tab_results=[tab_result2],
             )
         )
 
@@ -339,15 +339,38 @@ class PublishTests(DbTestCase):
                 f"{key} expiry must come before {expire_before_or_at}",
             )
 
-    def test_error_tab_error_or_unreachable(self):
-        pass
+    def test_return_frictionless_datapackage_spec(self):
+        tab_result = self._write_tab_result(
+            "Tab 1", make_table(make_column("A", ["a"]))
+        )
+        ret = asyncio.run(
+            publish_dataset(
+                workflow_id=123,
+                workflow_name="Workflow 1",
+                readme_md="",
+                tab_results=[tab_result],
+            )
+        )
+        self.assertEqual(
+            ret["path"],
+            "https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/datapackage.json",
+        )
 
-    def test_publish_race_tab_missing(self):
-        # TODO this actually belongs somewhere else:
-        #
-        # 1. Alice clicks "publish" with a tab
-        # 2. Bob deletes the tab
-        # 3. Renderer renders
-        #
-        # Expected results: Alice sees an error
-        pass
+    def test_publish_readme_md(self):
+        tab_result = self._write_tab_result(
+            "Tab 1", make_table(make_column("A", ["a"]))
+        )
+        asyncio.run(
+            publish_dataset(
+                workflow_id=123,
+                workflow_name="Workflow 1",
+                readme_md="# Heading\n\nbody",
+                tab_results=[tab_result],
+            )
+        )
+        s3.download(
+            s3.DatasetsBucket, "wf-123/r1/README.md", self.basedir / "README.md"
+        )
+        self.assertEqual(
+            (self.basedir / "README.md").read_bytes(), b"# Heading\n\nbody"
+        )

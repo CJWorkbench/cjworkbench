@@ -16,7 +16,7 @@ its Django Channels channel layer.
 """
 import logging
 import pickle
-from typing import Any, Dict, NamedTuple, Optional
+from typing import Any, Dict, List, Literal, NamedTuple, Optional
 
 import carehare
 import msgpack
@@ -67,11 +67,44 @@ def _user_group_name(user_id: int) -> str:
     return f"user-{str(user_id)}"
 
 
-class PublishDatasetSpec(NamedTuple):
-    package_name: str
-    """Unique identifier of datapackage, URL-usable.
+class PublishDatasetResult(NamedTuple):
+    request_id: str
+    """ID of the request (unique string).
 
-    ref: https://specs.frictionlessdata.io/data-package/#metadata
+    This is copied from the PublishDatasetSpec.
+    """
+
+    error: Optional[Literal["delta-id-mismatch", "unknown"]]
+    """Message indicating a problem.
+
+    None if `datapackage` is set.
+
+    Possible values:
+
+    * delta-id-mismatch: by the time the render finished, the requested delta
+      ID is not the workflow's current delta ID. (The user clicked "publish";
+      then the workflow changed; then renderer tried to publish.)
+    * unknown: an error was sent to a developer and we'll look into it.
+
+    We *don't* handle the case of a user clicking "Publish" on a workflow that
+    ends up having errors -- e.g., duplicate tab slugs or empty tabs. These
+    problems aren't technically "errors": if the client asks for them, the
+    client gets them. (The client shouldn't ask for them.)
+    """
+
+    datapackage: Optional[Dict[str, Any]]
+    """Frictionless data-package specification.
+
+    None if `error` is set.
+    """
+
+
+class PublishDatasetSpec(NamedTuple):
+    request_id: str
+    """ID of request (unique string).
+
+    The sender generates this ID and then waits for a matching response to be
+    sent to all listeners on the workflow.
     """
 
     workflow_name: str
@@ -80,8 +113,12 @@ class PublishDatasetSpec(NamedTuple):
     readme_md: str
     """README.md the user wants in the dataset."""
 
-    tabs: Dict[str, str]
-    """Mapping from _filename_ "slug" (user-visible) to Tab.slug."""
+    tab_slugs: List[str]
+    """List of tab slugs.
+
+    Order is unimportant. We'd prefer FrozenSet; we use List because it's
+    JSON-serializable.
+    """
 
 
 async def queue_render(
@@ -225,6 +262,31 @@ async def send_update_to_workflow_clients(
     group = _workflow_group_name(workflow_id)
     await _queue_for_group(
         group, type="send_pickled_update", pickled_update=pickled_update
+    )
+
+
+async def send_publish_dataset_result_to_workflow_clients(
+    workflow_id: int, response: PublishDatasetResult
+) -> None:
+    """Send a message *from* any async service *to* a Django Channels group.
+
+    `maintain_global_connection()` must be running.
+
+    Django Channels will call Websockets consumers'
+    `send_publish_dataset_result()` method.
+
+    If one of those queues is full, we may warn about a DeliveryError
+    error. The message will still be delivered to other queues. (See
+    https://www.rabbitmq.com/maxlength.html#overflow-behaviour.) Since
+    "full queue" usually means "shaky HTTP connection" or "stalled web
+    browser", the user probably won't notice that we drop the message.
+
+    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
+    shut down our process in that case.)
+    """
+    group = _workflow_group_name(workflow_id)
+    await _queue_for_group(
+        group, type="send_publish_dataset_result", result=result._asdict()
     )
 
 

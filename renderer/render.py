@@ -57,13 +57,24 @@ async def render_workflow_once(
     # `execute_workflow()` _anticipates_ that `workflow` data may be
     # stale.
     try:
-        task = execute.execute_workflow(workflow, delta_id)
+        task = execute.execute_workflow(
+            workflow, delta_id, publish_dataset_spec=publish_dataset_spec
+        )
         await benchmark(logger, task, "execute_workflow(%d, %d)", workflow.id, delta_id)
         return RenderResult.CHECK_TO_REQUEUE
     except execute.UnneededExecution:
         logger.info(
             "UnneededExecution in execute_workflow(%d, %d)", workflow.id, delta_id
         )
+        if publish_dataset_spec:
+            await rabbitmq.send_publish_dataset_result_to_workflow_clients(
+                workflow.id,
+                rabbitmq.PublishDatasetResult(
+                    request_id=publish_dataset_spec.request_id,
+                    error="delta-id-mismatch",
+                    datapackage=None,
+                ),
+            )
         return RenderResult.MUST_REQUEUE
     except asyncio.CancelledError:
         raise
@@ -147,7 +158,9 @@ async def render_workflow_and_maybe_requeue(
                     logger.info("Skipping requeue of deleted Workflow %d", workflow_id)
                     want_requeue = False
             if want_requeue:
-                await rabbitmq.queue_render(workflow_id, workflow.last_delta_id)
+                await rabbitmq.queue_render(
+                    workflow_id, workflow.last_delta_id, publish_dataset_spec=None
+                )
                 # This is why we used `lock.stall_others()`: after requeue,
                 # another renderer may try to lock this workflow and we want
                 # that lock to _succeed_ -- not raise WorkflowAlreadyLocked.

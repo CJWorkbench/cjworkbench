@@ -17,8 +17,7 @@ from cjwstate import s3
 from .execute.types import TabResult
 
 
-DATASETS_ROOT_URL = "https://api.workbenchdata.com/v1/datasets"
-DATASET_URL_PATTERN = DATASETS_ROOT_URL + "/wf-{0}/r{1}"
+API_ROOT_URL = "https://api.workbenchdata.com/v1"
 
 DELAY_FROM_DATASET_EXPIRED_TO_DELETED = datetime.timedelta(days=1)
 
@@ -192,8 +191,9 @@ def _publish_tab_json_resource(
 
 
 def _publish_tab_resources(
-    *, url_prefix: str, s3_prefix: str, slug: str, tab_result: TabResult
+    *, url_prefix: str, s3_prefix: str, tab_result: TabResult
 ) -> List[Dict[str, Any]]:
+    slug = slugify(tab_result.tab_name)
     with tempfile_context(suffix=".parquet") as parquet_path:
         with pa.ipc.open_file(tab_result.path) as arrow_reader:
             arrow_table = arrow_reader.read_all()
@@ -236,21 +236,21 @@ def _publish_datapackage(
     workflow_name: str,
     revision: int,
     resources: List[Dict[str, Any]],
-) -> None:
+) -> Dict[str, Any]:
     package_name = f"{workflow_id}-{slugify(workflow_name)}"
-    contents = json_encode(
-        dict(
-            profile="data-package",
-            version=f"0.1.{revision}",
-            path=url_prefix + "/datapackage.json",
-            title=workflow_name,
-            name=package_name,
-            created=datetime.datetime.utcnow().isoformat() + "Z",
-            resources=resources,
-            _workbenchRevision=revision,
-        )
-    ).encode("utf-8")
+    datapackage = dict(
+        profile="data-package",
+        version=f"0.1.{revision}",
+        path=url_prefix + "/datapackage.json",
+        title=workflow_name,
+        name=package_name,
+        created=datetime.datetime.utcnow().isoformat() + "Z",
+        resources=resources,
+        _workbenchRevision=revision,
+    )
+    contents = json_encode(datapackage).encode("utf-8")
     s3.put_bytes(s3.DatasetsBucket, s3_prefix + "/datapackage.json", contents)
+    return datapackage
 
 
 async def publish_dataset(
@@ -258,12 +258,14 @@ async def publish_dataset(
     workflow_id: int,
     workflow_name: str,
     readme_md: str,
-    tabs: Dict[str, TabResult],
-) -> None:
+    tab_results: List[TabResult],
+) -> Dict[str, Any]:
     """Write Frictionless datasets to S3: Parquet, CSV and JSON.
 
     The workflow must be locked: this function cannot be called twice on the
     same workflow at the same time.
+
+    Return a Frictionless Data spec
     """
     try:
         last_revision = _get_latest_revision(workflow_id)
@@ -273,25 +275,28 @@ async def publish_dataset(
         revision = 1
 
     s3_prefix = f"wf-{workflow_id}/r{revision}"
-    url_prefix = DATASET_URL_PATTERN.format(workflow_id, revision)
+    url_prefix = (
+        f"{API_ROOT_URL}/datasets/{workflow_id}-{slugify(workflow_name)}/r{revision}"
+    )
 
     s3.remove_recursive(s3.DatasetsBucket, s3_prefix + "/")
 
+    if readme_md:
+        # Don't publish empty README.md: boto3 can't upload empty files to minio
+        # https://github.com/minio/minio/issues/11245
+        s3.put_bytes(
+            s3.DatasetsBucket, s3_prefix + "/README.md", readme_md.encode("utf-8")
+        )
+
     resources = []
-    for slug, tab_result in tabs.items():
+    for tab_result in tab_results:
         resources.extend(
             _publish_tab_resources(
-                url_prefix=url_prefix,
-                s3_prefix=s3_prefix,
-                slug=slug,
-                tab_result=tab_result,
+                url_prefix=url_prefix, s3_prefix=s3_prefix, tab_result=tab_result
             )
         )
 
-    if readme_md:
-        _publish_readme_resource(workflow_id, revision, readme_md)
-
-    _publish_datapackage(
+    frictionless_datapackage_spec = _publish_datapackage(
         url_prefix=url_prefix,
         s3_prefix=s3_prefix,
         workflow_id=workflow_id,
@@ -325,3 +330,5 @@ async def publish_dataset(
                 MetadataDirective="REPLACE",
                 Metadata={"cjw-expires": expires.isoformat() + "Z"},
             )
+
+    return frictionless_datapackage_spec

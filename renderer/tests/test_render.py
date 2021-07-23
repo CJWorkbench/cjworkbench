@@ -80,7 +80,7 @@ class RenderTest(DbTestCase):
                 )
             )
 
-        execute.assert_called_with(workflow, 123)
+        execute.assert_called_with(workflow, 123, publish_dataset_spec=None)
         queue_render.assert_not_called()
 
     @patch("cjwstate.rabbitmq.queue_render")
@@ -190,4 +190,38 @@ class RenderTest(DbTestCase):
                 )
 
         self.run_with_async_db(inner())
-        queue_render.assert_called_with(workflow.id, 123)
+        queue_render.assert_called_with(workflow.id, 123, publish_dataset_spec=None)
+
+    @patch("cjwstate.rabbitmq.queue_render")
+    @patch("renderer.execute.execute_workflow")
+    @patch.object(rabbitmq, "send_publish_dataset_result_to_workflow_clients")
+    def test_send_publish_dataset_error(self, send_result, mock_execute, queue_render):
+        send_result.side_effect = async_noop
+        mock_execute.side_effect = async_err(execute.UnneededExecution)
+        queue_render.side_effect = async_noop
+
+        workflow = Workflow.objects.create(last_delta_id=123)
+
+        async def inner():
+            with self.assertLogs("renderer", level="INFO") as cm:
+                await render_workflow_and_maybe_requeue(
+                    SuccessfulRenderLocker(),
+                    workflow.id,
+                    123,
+                    publish_dataset_spec=rabbitmq.PublishDatasetSpec(
+                        request_id="req-1",
+                        workflow_name="My Workflow",
+                        readme_md="",
+                        tab_slugs=["tab-1"],
+                    ),
+                )
+
+        self.run_with_async_db(inner())
+        send_result.assert_called_with(
+            workflow.id,
+            rabbitmq.PublishDatasetResult(
+                request_id="req-1", error="delta-id-mismatch", datapackage=None
+            ),
+        )
+        # The re-queue won't publish a dataset -- we already sent a result!
+        queue_render.assert_called_with(workflow.id, 123, publish_dataset_spec=None)

@@ -175,6 +175,23 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
             {"type": "apply-delta", "data": json_dict}
         )
 
+    async def send_publish_dataset_result(self, message: Dict[str, Any]) -> None:
+        # It's a bit ugly that we use pickle (as opposed to protobuf) to send
+        # through RabbitMQ. It's also inefficient and makes races when deploying
+        # new versions. And security-wise, we're vulnerable to "AMQP injection"
+        # attacks (arbitrary code execution if someone controls RabbitMQ). But
+        # it's _so_ much less code! So there we have it.
+        await self.send_json_ignoring_connection_closed(
+            {
+                "type": "publish-dataset-result",
+                "data": dict(
+                    requestId=message["request_id"],
+                    error=message["error"],
+                    datapackage=message["datapackage"],
+                ),
+            }
+        )
+
     async def send_json_ignoring_connection_closed(self, message) -> None:
         """Call AsyncJsonWebsocketConsumer.send_json(message); ignore an error.
 
