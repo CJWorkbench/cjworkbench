@@ -33,6 +33,7 @@ class Tab(models.Model):
     position = models.IntegerField()
     selected_step_position = models.IntegerField(null=True)
     is_deleted = models.BooleanField(default=False)
+    is_in_dataset = models.BooleanField(default=False)
 
     @property
     def live_steps(self):

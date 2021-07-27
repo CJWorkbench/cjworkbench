@@ -147,8 +147,22 @@ export default class WorkbenchAPI {
     })
   }
 
-  beginPublishDataset ({ requestId }) {
-    return this._callExpectingNull('workflow.begin_publish_dataset', { requestId })
+  /**
+   * Try publishing the dataset.
+   *
+   * Parameters:
+   *
+   * * workflowUpdatedAt: the value of workflow.updated_at when the user
+   *                      clicked. If the value on the server didn't match, then
+   *                      the user clicked mid-change, so we'll throw an
+   *                      ErrorResponse('updated-at-mismatch').
+   * * requestId: random string for Workbench to tag its eventual
+   *              { error, dataset } message. Workbench will do its best to send
+   *              this method after render/error, sometime after this call
+   *              succeeds.
+   */
+  beginPublishDataset ({ requestId, workflowUpdatedAt }) {
+    return this._callExpectingNull('workflow.begin_publish_dataset', { requestId, workflowUpdatedAt })
   }
 
   createTab (slug, name) {
