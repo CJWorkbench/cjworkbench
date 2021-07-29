@@ -45,6 +45,8 @@ services:
     environment: &django-env
       PYTHONUNBUFFERED: '1'
       ASGI_THREADS: '3'
+      CJW_HELP_EMAIL: root@localhost
+      CJW_HOME_URL: 'http://localhost:8000'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -75,8 +77,6 @@ services:
       - NET_ADMIN # for pyspawner to create new network namespace without access to private network
     environment:
       <<: *django-env
-      CJW_HELP_EMAIL: root@localhost
-      CJW_HOME_URL: 'http://localhost:8000'
     networks: [ 'dev' ]
 
   unittest:
