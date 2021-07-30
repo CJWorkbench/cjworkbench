@@ -100,6 +100,7 @@ export class Step extends React.PureComponent {
   }
 
   notesInputRef = React.createRef()
+  cardRef = React.createRef()
 
   state = {
     editedNotes: null, // when non-null, input is focused
@@ -149,6 +150,7 @@ export class Step extends React.PureComponent {
       tabSlug: this.props.currentTab
     }
     ev.dataTransfer.setData('application/json', JSON.stringify(dragObject))
+    ev.dataTransfer.setDragImage(this.cardRef.current, 0, 0)
     ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.dropEffect = 'move'
     this.props.onDragStart(dragObject)
@@ -496,13 +498,13 @@ export class Step extends React.PureComponent {
         {notes}
         <h3>{i18n.number(index + 1)}</h3>
         <div className='module-card-and-link'>
-          <div
-            className='module-card'
-            draggable={!isReadOnly && !!this.props.onDragStart}
-            onDragStart={this.handleDragStart}
-            onDragEnd={this.handleDragEnd}
-          >
-            <div className='module-card-header'>
+          <div className='module-card' ref={this.cardRef}>
+            <div
+              className='module-card-header'
+              draggable={!isReadOnly && !!this.props.onDragStart}
+              onDragStart={this.handleDragStart}
+              onDragEnd={this.handleDragEnd}
+            >
               <div className='controls'>
                 <StepCollapseButton
                   isCollapsed={step.is_collapsed}

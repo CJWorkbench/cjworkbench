@@ -93,18 +93,17 @@
     justify-content: space-between; // .upload-progress at left; action at right
     padding-top: 0.5rem;
 
-    button {
-      // .uploaded-file-select and [name=cancel-upload]
+    button.uploaded-file-select {
       @include _texty-button;
     }
 
-    button.uploaded-file-select {
-      // in .uploading-file and .existing-file -- text "File 1 of 2"
-      // [disabled] if there is no point in opening a modal
-      // Render as text, not as a button
+    span.uploaded-file-select {
+      // not clickable -- e.g., read-only selector
+      @include _texty-button-disabled-span;
     }
 
     button[name='cancel-upload'] {
+      @include _texty-button;
       // in .uploading-file
       color: $brand-orange;
       &:hover {
