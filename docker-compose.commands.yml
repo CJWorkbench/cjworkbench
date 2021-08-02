@@ -47,6 +47,7 @@ services:
       ASGI_THREADS: '3'
       CJW_HELP_EMAIL: root@localhost
       CJW_HOME_URL: 'http://localhost:8000'
+      CJW_API_URL: 'http://localhost:8004'
       CJW_DB_HOST: database
       CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq/
       CJW_DB_PASSWORD: cjworkbench
@@ -101,6 +102,7 @@ services:
       ASGI_THREADS: '3'
       CJW_HELP_EMAIL: 'root@localhost'
       CJW_HOME_URL: 'http://localhost:8000'
+      CJW_API_URL: 'http://api.local'
       CJW_DB_PASSWORD: cjworkbench
       CJW_SECRET_KEY: cjw-secret-key
       AWS_ACCESS_KEY_ID: minio_access

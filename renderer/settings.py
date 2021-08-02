@@ -28,3 +28,12 @@ TEMPLATES = [
         "DIRS": ["/app/renderer/templates"],
     }
 ]
+
+API_URL = os.environ["CJW_API_URL"]
+"""Where the API server is, from users' perspective.
+
+For example: https://api.workbenchdata.com
+
+The renderer does not interact with the API server; but it writes its URL into
+datapackages.
+"""

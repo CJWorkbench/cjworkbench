@@ -1,0 +1,108 @@
+@import 'variables'; // including $font-family-sans-serif
+@import 'fonts';
+
+// Bootstrap
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+
+@import './components/ShareUrl';
+
+/*
+ * This stylesheet does _not_ import import 'reset.scss'.
+ *
+ * TODO make every _other_ stylesheet behave like _this_ one.
+ */
+body {
+  background: white;
+  @include font-sans-regular;
+  color: $brand-text--darker;
+}
+
+header, section {
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+header {
+  padding: 1.5rem 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    transform: translateY(1.5rem); // flush with header's bottom padding
+    border-bottom: 1px solid $item-border;
+  }
+}
+
+h1 {
+  @include font-sans-bold;
+  margin-bottom: 0;
+
+  & + p {
+    font-size: .8rem;
+    color: $brand-text--medium;
+    margin: .25rem 0;
+  }
+}
+
+section {
+  h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 1.5rem 0;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+section.files {
+  tt {
+    font-size: .9rem;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+
+    h4 {
+      display: none;
+    }
+
+    tt.name, span.download {
+      padding-right: 1rem;
+    }
+
+    span.size {
+      color: $brand-text--medium;
+      font-size: .8rem;
+      padding-left: .5rem;
+    }
+  }
+}
+
+section.datapackages {
+  li {
+    margin-top: 1.5rem; // meld into <p> margin-bottom
+  }
+
+  h4, small {
+    display: inline;
+  }
+
+  h4 {
+    font-size: inherit;
+    padding-right: 1rem;
+  }
+
+  small {
+    font-size: .9rem;
+  }
+}

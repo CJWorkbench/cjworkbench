@@ -1,0 +1,28 @@
+{% extends 'minimum.html' %}
+{% load bundle_path from webpack %}
+{% load json_filters %}
+{% load markdown %}
+{% load static %}
+
+{% block title %}
+  {{ workflow.name }} API | Workbench
+{% endblock %}
+
+{% block headscripts_globals %}
+  <script>
+    window.initState = {{initState | json_in_script_tag}}
+    window.i18nConfig = {locale: '{{ i18n.locale_id }}', localesData: {{ i18n.locales_data|json_in_script_tag }}}
+  </script>
+{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{% bundle_path 'workflow-api-styles.css' %}" />
+{% endblock %}
+
+{% block headscripts %}
+  <script defer src="{% bundle_path 'workflow-api.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+  <main />
+{% endblock %}

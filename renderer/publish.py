@@ -17,8 +17,6 @@ from cjwstate import s3
 from .execute.types import TabResult
 
 
-API_ROOT_URL = "https://api.workbenchdata.com/v1"
-
 DELAY_FROM_DATASET_EXPIRED_TO_DELETED = datetime.timedelta(days=1)
 
 
@@ -275,9 +273,7 @@ async def publish_dataset(
         revision = 1
 
     s3_prefix = f"wf-{workflow_id}/r{revision}"
-    url_prefix = (
-        f"{API_ROOT_URL}/datasets/{workflow_id}-{slugify(workflow_name)}/r{revision}"
-    )
+    url_prefix = f"{settings.API_URL}/v1/datasets/{workflow_id}-{slugify(workflow_name)}/r{revision}"
 
     s3.remove_recursive(s3.DatasetsBucket, s3_prefix + "/")
 

@@ -16,14 +16,14 @@ test('beginPublishDataset() sends API request', async () => {
 
 test.todo('beginPublishDataset() handles delta-id-mismatch error')
 
-test('PUBLISH_DATASET_END with success', async () => {
+test('PUBLISH_DATASET_RESULT with success', async () => {
   generateSlug.mockImplementationOnce(prefix => prefix + 'X')
   const store = mockStore({
     workflow: { id: 123 },
     lastPublishDatasetRequest: { requestId: 'publish-dataset-X' }
   })
   await store.dispatch({
-    type: 'DATASET_PUBLISH_END',
+    type: 'PUBLISH_DATASET_RESULT',
     payload: {
       requestId: 'publish-dataset-X',
       error: null,
@@ -38,14 +38,14 @@ test('PUBLISH_DATASET_END with success', async () => {
   expect(store.getState().dataset).toEqual({ path: 'https://api-platform/foo/bar' })
 })
 
-test('PUBLISH_DATASET_END with error', async () => {
+test('PUBLISH_DATASET_RESULT with error', async () => {
   generateSlug.mockImplementationOnce(prefix => prefix + 'X')
   const store = mockStore({
     workflow: { id: 123 },
     lastPublishDatasetRequest: { requestId: 'publish-dataset-X' }
   })
   await store.dispatch({
-    type: 'DATASET_PUBLISH_END',
+    type: 'PUBLISH_DATASET_RESULT',
     payload: {
       requestId: 'publish-dataset-X',
       error: 'delta-id-mismatch',
@@ -59,14 +59,14 @@ test('PUBLISH_DATASET_END with error', async () => {
   })
 })
 
-test('PUBLISH_DATASET_END with not-the-most-recent requestId', async () => {
+test('PUBLISH_DATASET_RESULT with not-the-most-recent requestId', async () => {
   generateSlug.mockImplementationOnce(prefix => prefix + 'X')
   const store = mockStore({
     workflow: { id: 123 },
     lastPublishDatasetRequest: { requestId: 'publish-dataset-X' }
   })
   await store.dispatch({
-    type: 'DATASET_PUBLISH_END',
+    type: 'PUBLISH_DATASET_RESULT',
     payload: {
       requestId: 'publish-dataset-Y',
       error: 'delta-id-mismatch',

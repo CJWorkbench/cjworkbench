@@ -515,6 +515,19 @@ class Workflow(models.Model):
 
         super().delete(*args, **kwargs)
 
+    def get_datapackage(self) -> Optional[Dict[str, Any]]:
+        """Return latest Frictionless Datapackage, if one is published.
+
+        Return None if it is not published.
+        """
+        try:
+            with s3.temporarily_download(
+                s3.DatasetsBucket, f"/wf-{self.id}/datapackage.json"
+            ) as path:
+                return json.loads(path.read_bytes())
+        except FileNotFoundError:
+            return None
+
     def to_clientside(
         self,
         *,
@@ -542,13 +555,7 @@ class Workflow(models.Model):
             acl = None  # more privacy (for report-viewer)
 
         if include_dataset:
-            try:
-                with s3.temporarily_download(
-                    s3.DatasetsBucket, f"/wf-{self.id}/datapackage.json"
-                ) as path:
-                    dataset = json.loads(path.read_bytes())
-            except FileNotFoundError:
-                dataset = None
+            dataset = self.get_datapackage()
         else:
             dataset = None
 

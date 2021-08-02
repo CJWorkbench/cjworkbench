@@ -485,3 +485,41 @@ class Report(View):
         )
         add_never_cache_headers(response)
         return response
+
+
+class ApiInstructions(View):
+    """Render instructions for accessing this workflow's dataset."""
+
+    @method_decorator(redirect_on_http302(status=status.TEMPORARY_REDIRECT))
+    def get(self, request: HttpRequest, workflow_id_or_secret_id: Union[int, str]):
+        workflow = lookup_workflow_and_auth(
+            authorized_report_viewer, workflow_id_or_secret_id, request
+        )
+        assert request.path_info.endswith("/api")
+        workflow_path = request.path_info[: -len("/api")]
+
+        if request.user.is_anonymous:
+            json_user = None
+        else:
+            with transaction.atomic():
+                lock_user_by_id(request.user.id, for_write=False)
+                json_user = jsonize_clientside_user(
+                    query_clientside_user(request.user.id)
+                )
+
+        init_state = {
+            "loggedInUser": json_user,
+            "workflow": {
+                "id": workflow.id,
+                "secret_id": workflow.secret_id,
+                "name": workflow.name,
+                "public": workflow.public,
+                "dataset": workflow.get_datapackage(),  # may be None
+            },
+        }
+
+        return TemplateResponse(
+            request,
+            "workflow-api.html",
+            {"workflow": workflow, "initState": init_state},
+        )

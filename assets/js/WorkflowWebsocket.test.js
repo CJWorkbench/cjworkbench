@@ -42,7 +42,7 @@ class MockSocket {
 
 describe('WorkflowWebsocket', () => {
   it('should connect', async () => {
-    const api = new WorkflowWebsocket(1, jest.fn(), () => new MockSocket())
+    const api = new WorkflowWebsocket(1, jest.fn(), jest.fn(), () => new MockSocket())
     api.connect()
     await tick()
     expect(api.socket).toBeDefined()
@@ -51,7 +51,7 @@ describe('WorkflowWebsocket', () => {
   it('should reconnect on close and reload workflow again', async () => {
     const spy = jest.spyOn(global.console, 'log').mockImplementation(() => {})
     try {
-      const api = new WorkflowWebsocket(1, jest.fn(), () => new MockSocket())
+      const api = new WorkflowWebsocket(1, jest.fn(), jest.fn(), () => new MockSocket())
       const socket1 = api.socket
       api.reconnectDelay = 0
       api.connect()
@@ -69,7 +69,7 @@ describe('WorkflowWebsocket', () => {
   it('should callServerHandler() and  await successful response', async () => {
     const socket = new MockSocket()
     await tick() // so socket setTimeout finishes
-    const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
+    const api = new WorkflowWebsocket(1, jest.fn(), jest.fn(), () => socket)
     api.connect() // set api.socket
     const future = api.callServerHandler('foo.bar', { x: 'y' })
     expect(socket.sends.map(JSON.parse)).toEqual([
@@ -85,7 +85,7 @@ describe('WorkflowWebsocket', () => {
   it('should callServerHandler() and  await error response', async () => {
     const socket = new MockSocket()
     await tick() // so socket setTimeout finishes
-    const api = new WorkflowWebsocket(1, jest.fn(), () => socket)
+    const api = new WorkflowWebsocket(1, jest.fn(), jest.fn(), () => socket)
     api.connect() // set api.socket
     const future = api.callServerHandler('foo/bar', { x: 'y' })
     expect(socket.sends.map(JSON.parse)).toEqual([
@@ -111,7 +111,7 @@ describe('WorkflowWebsocket', () => {
       socket = new MockSocket()
       return socket
     }
-    const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
+    const api = new WorkflowWebsocket(1, jest.fn(), jest.fn(), buildSocket)
     const future = api.callServerHandler('foo.bar', { x: 'y' })
     api.connect()
     expect(socket.sends.length).toEqual(0) // not connected yet
@@ -132,7 +132,7 @@ describe('WorkflowWebsocket', () => {
       socket = new MockSocket()
       return socket
     }
-    const api = new WorkflowWebsocket(1, jest.fn(), buildSocket)
+    const api = new WorkflowWebsocket(1, jest.fn(), jest.fn(), buildSocket)
     api.connect()
     const future = api.callServerHandler('foo.bar', { x: 'y' }) // onopen not called yet
     expect(socket.sends.length).toEqual(0) // not connected yet
@@ -147,16 +147,29 @@ describe('WorkflowWebsocket', () => {
     expect(data).toEqual('ok')
   })
 
-  it('should handle async requests from server', async () => {
+  it('should handle apply-delta requests from server', async () => {
     const socket = new MockSocket()
     await tick() // so socket setTimeout finishes
     const onDelta = jest.fn()
-    const api = new WorkflowWebsocket(1, onDelta, () => socket)
+    const api = new WorkflowWebsocket(1, onDelta, jest.fn(), () => socket)
     api.connect() // set api.socket
 
     socket.onmessage({
       data: JSON.stringify({ type: 'apply-delta', data: 'data' })
     })
-    expect(onDelta).toHaveBeenCalled()
+    expect(onDelta).toHaveBeenCalledWith('data')
+  })
+
+  it('should handle publish-dataset-result requests from server', async () => {
+    const socket = new MockSocket()
+    await tick() // so socket setTimeout finishes
+    const onPublishDatasetResult = jest.fn()
+    const api = new WorkflowWebsocket(1, jest.fn(), onPublishDatasetResult, () => socket)
+    api.connect() // set api.socket
+
+    socket.onmessage({
+      data: JSON.stringify({ type: 'publish-dataset-result', data: 'data' })
+    })
+    expect(onPublishDatasetResult).toHaveBeenCalledWith('data')
   })
 })

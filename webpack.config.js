@@ -19,6 +19,8 @@ module.exports = {
     style: './assets/css/style.scss',
     'workflow-403-styles': './assets/css/workflow-403.scss',
     workflow: './assets/js/pages/workflow.page',
+    'workflow-api': './assets/js/pages/workflow-api.page',
+    'workflow-api-styles': './assets/css/workflow-api.scss',
     workflows: './assets/js/pages/workflows.page'
   },
 

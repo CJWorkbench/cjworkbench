@@ -44,6 +44,7 @@ LOGGING = {
         "django.db.backends": {"level": "INFO"},
         "websockets.protocol": {"level": "INFO"},
         "websockets.server": {"level": "INFO"},
+        "cjwstate.s3": {"level": ("WARNING" if I_AM_TESTING else "INFO")},
         "cjwstate.models.module_registry": {
             "level": ("WARNING" if I_AM_TESTING else "INFO")
         },

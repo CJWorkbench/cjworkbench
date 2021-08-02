@@ -101,6 +101,7 @@ urlpatterns = [
             [
                 path("duplicate", workflows.Duplicate.as_view()),
                 path("report", workflows.Report.as_view()),
+                path("api", workflows.ApiInstructions.as_view()),
                 path(
                     "steps/<slug:step_slug>/",
                     include(
