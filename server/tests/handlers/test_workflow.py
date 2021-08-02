@@ -1,13 +1,17 @@
+import datetime
 from unittest.mock import patch
+
 from django.contrib.auth.models import User
+
+from cjwstate import rabbitmq
+from cjwstate.models import Workflow
 from server.handlers.workflow import (
+    begin_publish_dataset,
     set_name,
     set_position,
     set_tab_order,
     set_selected_tab,
 )
-from cjwstate import rabbitmq
-from cjwstate.models import Workflow
 from .util import HandlerTestCase
 
 
@@ -16,6 +20,91 @@ async def async_noop(*args, **kwargs):
 
 
 class WorkflowTest(HandlerTestCase):
+    @patch.object(rabbitmq, "queue_render")
+    def test_begin_publish_dataset(self, queue_render):
+        queue_render.side_effect = async_noop
+
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(
+            owner=user,
+            name="A",
+            dataset_readme_md="Readme",
+            updated_at=datetime.datetime(2021, 7, 27, 18, 1, 2, 123456),
+        )
+        workflow.tabs.update(is_in_dataset=True)
+
+        response = self.run_handler(
+            begin_publish_dataset,
+            user=user,
+            workflow=workflow,
+            requestId="req-1",
+            workflowUpdatedAt="2021-07-27T18:01:02.123456Z",
+        )
+        queue_render.assert_called_with(
+            workflow.id,
+            workflow.last_delta_id,
+            rabbitmq.PublishDatasetSpec(
+                request_id="req-1",
+                workflow_name="A",
+                readme_md="Readme",
+                tab_slugs=["tab-1"],
+            ),
+        )
+        self.assertResponse(response, data=None)
+
+    @patch.object(rabbitmq, "queue_render")
+    def test_begin_publish_dataset_ignore_unincluded_tabs(self, queue_render):
+        queue_render.side_effect = async_noop
+
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(
+            owner=user,
+            name="A",
+            dataset_readme_md="Readme",
+            updated_at=datetime.datetime(2021, 7, 27, 18, 1, 2, 123456),
+        )
+        workflow.tabs.create(position=1, slug="tab-2", is_in_dataset=True)
+        workflow.tabs.create(position=2, slug="tab-3", is_in_dataset=False)
+
+        response = self.run_handler(
+            begin_publish_dataset,
+            user=user,
+            workflow=workflow,
+            requestId="req-1",
+            workflowUpdatedAt="2021-07-27T18:01:02.123456Z",
+        )
+        queue_render.assert_called_with(
+            workflow.id,
+            workflow.last_delta_id,
+            rabbitmq.PublishDatasetSpec(
+                request_id="req-1",
+                workflow_name="A",
+                readme_md="Readme",
+                tab_slugs=["tab-2"],
+            ),
+        )
+        self.assertResponse(response, data=None)
+
+    def test_begin_publish_dataset_check_workflow_updated_at(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(
+            owner=user,
+            name="A",
+            dataset_readme_md="Readme",
+            updated_at=datetime.datetime(2021, 7, 27, 18, 1, 2, 123456),
+        )
+        workflow.tabs.update(is_in_dataset=True)
+
+        # Send a request with the wrong updated_at
+        response = self.run_handler(
+            begin_publish_dataset,
+            user=user,
+            workflow=workflow,
+            requestId="req-1",
+            workflowUpdatedAt="2021-07-21T18:01:01.111111",
+        )
+        self.assertResponse(response, error="updated-at-mismatch")
+
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     def test_set_name(self):
         user = User.objects.create(username="a", email="a@example.org")

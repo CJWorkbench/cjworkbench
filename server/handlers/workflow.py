@@ -82,12 +82,19 @@ async def set_selected_tab(workflow: Workflow, tabSlug: str, **kwargs):
 
 @database_sync_to_async
 def _get_tab_slugs_for_dataset(workflow: Workflow) -> List[str]:
-    return list(workflow.live_tabs.values_list("slug", flat=True))
+    return list(
+        workflow.live_tabs.filter(is_in_dataset=True).values_list("slug", flat=True)
+    )
 
 
 @register_websockets_handler
 @websockets_handler("owner")
-async def begin_publish_dataset(workflow: Workflow, requestId: str, **kwargs):
+async def begin_publish_dataset(
+    workflow: Workflow, requestId: str, workflowUpdatedAt: str, **kwargs
+):
+    if str(workflowUpdatedAt) != workflow.updated_at.isoformat() + "Z":
+        raise HandlerError("updated-at-mismatch")
+
     await rabbitmq.queue_render(
         workflow.id,
         workflow.last_delta_id,
