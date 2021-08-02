@@ -1,10 +1,14 @@
-from typing import List
-from .decorators import register_websockets_handler, websockets_handler
-from .types import HandlerError
+import datetime
+from typing import List, Optional
+
+from django.db.models import Case, When
+
 from cjworkbench.sync import database_sync_to_async
-from cjwstate import commands, rabbitmq
+from cjwstate import clientside, commands, rabbitmq
 from cjwstate.models import Tab, Workflow, Step
 from cjwstate.models.commands import SetWorkflowTitle, ReorderTabs
+from .decorators import register_websockets_handler, websockets_handler
+from .types import HandlerError
 
 
 @register_websockets_handler
@@ -105,6 +109,65 @@ async def begin_publish_dataset(
             tab_slugs=await _get_tab_slugs_for_dataset(workflow),
         ),
     )
+
+
+@database_sync_to_async
+def _do_update_next_dataset(
+    workflow: Workflow,
+    readme_md: Optional[str] = None,
+    include_tab_slugs: Optional[List[str]] = None,
+) -> clientside.Update:
+    with workflow.cooperative_lock():
+        workflow.updated_at = datetime.datetime.now()
+        workflow_fields = ["updated_at"]
+
+        if readme_md is not None:
+            workflow.dataset_readme_md = readme_md
+            workflow_fields.append("dataset_readme_md")
+
+        if include_tab_slugs is not None:
+            # update all tabs (not just live ones). It's not obvious what should
+            # happen with deleted tags; our arbitrary choice is to make it so we
+            # try and save whatever the user sees.
+            workflow.tabs.update(
+                is_in_dataset=Case(
+                    When(slug__in=include_tab_slugs, then=True), default=False
+                )
+            )
+
+        workflow.save(update_fields=workflow_fields)
+        return clientside.Update(
+            workflow=clientside.WorkflowUpdate(
+                updated_at=workflow.updated_at,
+                next_dataset_readme_md=readme_md,  # or None
+                next_dataset_tab_slugs=include_tab_slugs,  # or None
+            )
+        )
+
+
+@register_websockets_handler
+@websockets_handler("write")
+async def update_next_dataset(
+    workflow: Workflow,
+    readmeMd: Optional[str] = None,
+    tabSlugs: Optional[List[str]] = None,
+    **kwargs,
+):
+    kwargs = {}
+
+    if tabSlugs is not None:
+        if not isinstance(tabSlugs, list):
+            raise HandlerError("tabSlugs must be a list")
+        kwargs["include_tab_slugs"] = [str(x) for x in tabSlugs]
+
+    if readmeMd is not None:
+        kwargs["readme_md"] = str(readmeMd)
+
+    if not kwargs:
+        raise HandlerError("BadRequest: must set readmeMd or tabSlugs")
+
+    update = await _do_update_next_dataset(workflow, **kwargs)
+    await rabbitmq.send_update_to_workflow_clients(workflow, update)
 
 
 @register_websockets_handler

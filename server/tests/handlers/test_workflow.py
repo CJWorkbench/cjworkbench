@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from django.contrib.auth.models import User
 
-from cjwstate import rabbitmq
+from cjwstate import clientside, rabbitmq
 from cjwstate.models import Workflow
 from server.handlers.workflow import (
     begin_publish_dataset,
@@ -11,6 +11,7 @@ from server.handlers.workflow import (
     set_position,
     set_tab_order,
     set_selected_tab,
+    update_next_dataset,
 )
 from .util import HandlerTestCase
 
@@ -265,3 +266,64 @@ class WorkflowTest(HandlerTestCase):
             set_tab_order, user=user, workflow=workflow, tabSlugs=[1, 2]
         )
         self.assertResponse(response, error="tabSlugs must be an Array of slugs")
+
+    def test_update_next_dataset_no_data(self):
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)
+
+        response = self.run_handler(update_next_dataset, user=user, workflow=workflow)
+        self.assertResponse(response, error="BadRequest: must set readmeMd or tabSlugs")
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_update_next_dataset_readme_md(self, send_update):
+        send_update.side_effect = async_noop
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)
+
+        response = self.run_handler(
+            update_next_dataset, user=user, workflow=workflow, readmeMd="# New readme"
+        )
+        self.assertResponse(response, data=None)
+        workflow.refresh_from_db()  # update updated_at
+        self.assertEqual(workflow.dataset_readme_md, "# New readme")
+        send_update.assert_called_with(
+            workflow,
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(
+                    updated_at=workflow.updated_at,
+                    next_dataset_readme_md="# New readme",
+                )
+            ),
+        )
+
+    @patch.object(rabbitmq, "send_update_to_workflow_clients")
+    def test_update_next_dataset_tab_slugs(self, send_update):
+        send_update.side_effect = async_noop
+        user = User.objects.create(username="a", email="a@example.org")
+        workflow = Workflow.create_and_init(owner=user)
+        workflow.tabs.create(position=1, slug="tab-2")
+        workflow.tabs.create(position=2, slug="tab-3")
+
+        response = self.run_handler(
+            update_next_dataset,
+            user=user,
+            workflow=workflow,
+            tabSlugs=["tab-1", "tab-3"],
+        )
+        self.assertResponse(response, data=None)
+        workflow.refresh_from_db()  # update updated_at
+        self.assertEqual(
+            list(
+                workflow.tabs.filter(is_in_dataset=True).values_list("slug", flat=True)
+            ),
+            ["tab-1", "tab-3"],
+        )
+        send_update.assert_called_with(
+            workflow,
+            clientside.Update(
+                workflow=clientside.WorkflowUpdate(
+                    updated_at=workflow.updated_at,
+                    next_dataset_tab_slugs=["tab-1", "tab-3"],
+                )
+            ),
+        )

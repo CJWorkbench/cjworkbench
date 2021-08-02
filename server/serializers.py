@@ -382,6 +382,9 @@ def jsonize_clientside_workflow(
         ("hasCustomReport", workflow.has_custom_report),
         ("blockSlugs", workflow.block_slugs),
         ("fetchesPerDay", workflow.fetches_per_day),
+        ("dataset", workflow.dataset),
+        ("nextDatasetReadmeMd", workflow.next_dataset_readme_md),
+        ("nextDatasetTabSlugs", workflow.next_dataset_tab_slugs),
     ):
         _maybe_set(d, k, v)
     for updated_at in _maybe_yield(workflow.updated_at):

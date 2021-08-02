@@ -537,9 +537,12 @@ class Workflow(models.Model):
         include_dataset: bool = False,
     ) -> clientside.WorkflowUpdate:
         if include_tab_slugs:
-            tab_slugs = list(self.live_tabs.values_list("slug", flat=True))
+            tabs = list(self.live_tabs.values_list("slug", "is_in_dataset", named=True))
+            tab_slugs = [tab.slug for tab in tabs]
+            next_dataset_tab_slugs = [tab.slug for tab in tabs if tab.is_in_dataset]
         else:
-            tab_slugs = None  # faster (for index page)
+            tab_slugs = None
+            next_dataset_tab_slugs = None
 
         if include_block_slugs:
             block_slugs = list(self.blocks.values_list("slug", flat=True))
@@ -574,6 +577,8 @@ class Workflow(models.Model):
             fetches_per_day=self.fetches_per_day,
             acl=acl,
             dataset=dataset,
+            next_dataset_readme_md=self.dataset_readme_md,
+            next_dataset_tab_slugs=next_dataset_tab_slugs,
         )
 
 

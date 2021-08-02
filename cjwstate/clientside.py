@@ -183,6 +183,12 @@ class WorkflowUpdate(NamedTuple):
     dataset: Optional[Dict[str, Any]] = None
     """Frictionless data-package JSON to replace."""
 
+    next_dataset_readme_md: Optional[str] = None
+    """Markdown to replace."""
+
+    next_dataset_tab_slugs: Optional[List[str]] = None
+    """Replacement tab slugs to include in the next dataset we publish."""
+
 
 class StepUpdate(NamedTuple):
     """Data for a new or existing Step with the given id (TODO use slug, nix id).
