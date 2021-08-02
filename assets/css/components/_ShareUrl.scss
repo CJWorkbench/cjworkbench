@@ -3,8 +3,8 @@
 
   display: flex;
   color: $brand-text--dark;
-  font-size: 1.4rem;
-  line-height: 2rem;
+  font-size: badrem(1.4);
+  line-height: badrem(2);
   border-radius: 3px;
   border: $share-url-border-width solid $item-border;
   background: $Vlight-gray;
@@ -49,8 +49,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     border: 0;
+    outline: 0; // .share-url:focus-within will highlight
     background-color: inherit;
-    padding: 0.5rem 0 0.5rem 1rem;
+    padding: badrem(0.5) 0 badrem(0.5) badrem(1);
   }
 
   button,
@@ -63,7 +64,7 @@
     font: inherit;
     line-height: inherit;
     margin-left: $share-url-border-width;
-    padding: 0.5rem 1rem;
+    padding: badrem(0.5) badrem(1);
     text-decoration: none;
 
     &:last-child {
