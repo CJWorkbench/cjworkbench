@@ -271,7 +271,9 @@ class WorkflowTest(HandlerTestCase):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
 
-        response = self.run_handler(update_next_dataset, user=user, workflow=workflow)
+        response = self.run_handler(
+            update_next_dataset, user=user, workflow=workflow, mutationId="mutation-1"
+        )
         self.assertResponse(response, error="BadRequest: must set readmeMd or tabSlugs")
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
@@ -281,18 +283,23 @@ class WorkflowTest(HandlerTestCase):
         workflow = Workflow.create_and_init(owner=user)
 
         response = self.run_handler(
-            update_next_dataset, user=user, workflow=workflow, readmeMd="# New readme"
+            update_next_dataset,
+            user=user,
+            workflow=workflow,
+            mutationId="mutation-1",
+            readmeMd="# New readme",
         )
         self.assertResponse(response, data=None)
         workflow.refresh_from_db()  # update updated_at
         self.assertEqual(workflow.dataset_readme_md, "# New readme")
         send_update.assert_called_with(
-            workflow,
+            workflow.id,
             clientside.Update(
+                mutation_id="mutation-1",
                 workflow=clientside.WorkflowUpdate(
                     updated_at=workflow.updated_at,
                     next_dataset_readme_md="# New readme",
-                )
+                ),
             ),
         )
 
@@ -308,6 +315,7 @@ class WorkflowTest(HandlerTestCase):
             update_next_dataset,
             user=user,
             workflow=workflow,
+            mutationId="mutation-1",
             tabSlugs=["tab-1", "tab-3"],
         )
         self.assertResponse(response, data=None)
@@ -319,11 +327,12 @@ class WorkflowTest(HandlerTestCase):
             ["tab-1", "tab-3"],
         )
         send_update.assert_called_with(
-            workflow,
+            workflow.id,
             clientside.Update(
+                mutation_id="mutation-1",
                 workflow=clientside.WorkflowUpdate(
                     updated_at=workflow.updated_at,
                     next_dataset_tab_slugs=["tab-1", "tab-3"],
-                )
+                ),
             ),
         )

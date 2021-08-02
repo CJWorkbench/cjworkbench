@@ -1,3 +1,4 @@
+import datasetPublisherMutations from './WorkflowEditor/DatasetPublisher/mutations'
 import reportMutations from './WorkflowEditor/Report/mutations'
 import stepListMutations from './WorkflowEditor/StepList/mutations'
 
@@ -42,6 +43,7 @@ import stepListMutations from './WorkflowEditor/StepList/mutations'
  * successfully, anyway.
  */
 export default {
+  ...datasetPublisherMutations,
   ...reportMutations,
   ...stepListMutations
 }

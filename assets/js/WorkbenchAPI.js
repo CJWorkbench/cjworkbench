@@ -148,6 +148,16 @@ export default class WorkbenchAPI {
   }
 
   /**
+   * Set values for the next call to beginPublishDataset().
+   *
+   * This is a "CMS"-style updater. Everybody shares a set of checkboxes and
+   * a textarea.
+   */
+  setNextDatasetParams ({ mutationId, readmeMd, tabSlugs }) {
+    return this._callExpectingNull('workflow.update_next_dataset', { mutationId, readmeMd, tabSlugs })
+  }
+
+  /**
    * Try publishing the dataset.
    *
    * Parameters:

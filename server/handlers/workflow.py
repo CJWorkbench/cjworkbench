@@ -114,6 +114,7 @@ async def begin_publish_dataset(
 @database_sync_to_async
 def _do_update_next_dataset(
     workflow: Workflow,
+    mutation_id: str,
     readme_md: Optional[str] = None,
     include_tab_slugs: Optional[List[str]] = None,
 ) -> clientside.Update:
@@ -137,11 +138,12 @@ def _do_update_next_dataset(
 
         workflow.save(update_fields=workflow_fields)
         return clientside.Update(
+            mutation_id=mutation_id,
             workflow=clientside.WorkflowUpdate(
                 updated_at=workflow.updated_at,
                 next_dataset_readme_md=readme_md,  # or None
                 next_dataset_tab_slugs=include_tab_slugs,  # or None
-            )
+            ),
         )
 
 
@@ -149,10 +151,14 @@ def _do_update_next_dataset(
 @websockets_handler("write")
 async def update_next_dataset(
     workflow: Workflow,
+    mutationId: str,
     readmeMd: Optional[str] = None,
     tabSlugs: Optional[List[str]] = None,
     **kwargs,
 ):
+    if not isinstance(mutationId, str):
+        raise HandlerError("BadRequest: mutationId must be String")
+
     kwargs = {}
 
     if tabSlugs is not None:
@@ -166,8 +172,8 @@ async def update_next_dataset(
     if not kwargs:
         raise HandlerError("BadRequest: must set readmeMd or tabSlugs")
 
-    update = await _do_update_next_dataset(workflow, **kwargs)
-    await rabbitmq.send_update_to_workflow_clients(workflow, update)
+    update = await _do_update_next_dataset(workflow, mutationId, **kwargs)
+    await rabbitmq.send_update_to_workflow_clients(workflow.id, update)
 
 
 @register_websockets_handler
