@@ -9,6 +9,7 @@ from typing import Any, Dict, List
 
 import cjwparquet
 import pyarrow as pa
+from django.conf import settings
 from django.utils.text import slugify
 
 from cjwkernel.util import json_encode, tempfile_context

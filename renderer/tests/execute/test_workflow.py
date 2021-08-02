@@ -9,6 +9,7 @@ from unittest.mock import patch
 import pyarrow as pa
 from cjwmodule.arrow.testing import assert_arrow_table_equals, make_column, make_table
 from django.contrib.auth.models import User
+from django.test import override_settings
 
 from cjwkernel.kernel import Kernel
 from cjwkernel.i18n import TODO_i18n
@@ -372,6 +373,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
 
         email.assert_not_called()
 
+    @override_settings(API_URL="https://api.test")
     @patch.object(rabbitmq, "send_update_to_workflow_clients", fake_send)
     @patch.object(rabbitmq, "send_publish_dataset_result_to_workflow_clients")
     def test_publish_dataset(self, send_result):
@@ -410,7 +412,7 @@ class WorkflowTests(DbTestCaseWithModuleRegistry):
         self.assertIsNone(result.error)
         self.assertEqual(
             result.datapackage["path"],
-            f"https://api.workbenchdata.com/v1/datasets/{workflow.id}-my-workflow/r1/datapackage.json",
+            f"https://api.test/v1/datasets/{workflow.id}-my-workflow/r1/datapackage.json",
         )
 
 

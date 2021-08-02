@@ -9,6 +9,7 @@ from contextlib import ExitStack
 import pyarrow as pa
 import cjwparquet
 from cjwmodule.arrow.testing import make_column, make_table
+from django.test import override_settings
 
 from cjwkernel.tests.util import arrow_table_context
 from cjwkernel.util import tempdir_context
@@ -25,6 +26,7 @@ def md5digest(data: bytes) -> str:
     return md5.hexdigest()
 
 
+@override_settings(API_URL="https://api.test")
 class PublishTests(DbTestCase):
     def setUp(self):
         super().setUp()
@@ -85,7 +87,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="data-resource",
                 name="tab-1_parquet",
-                path="https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/data/tab-1_parquet.parquet",
+                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1_parquet.parquet",
                 title="Tab 1",
                 format="parquet",
                 schema={"fields": [{"name": "A", "type": "string"}]},
@@ -222,7 +224,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="tabular-data-resource",
                 name="tab-1_csv",
-                path="https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/data/tab-1_csv.csv.gz",
+                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1_csv.csv.gz",
                 title="Tab 1",
                 format="csv",
                 compression="gz",
@@ -278,7 +280,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="data-resource",
                 name="tab-1_json",
-                path="https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/data/tab-1_json.json.gz",
+                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1_json.json.gz",
                 title="Tab 1",
                 format="json",
                 compression="gz",
@@ -353,7 +355,7 @@ class PublishTests(DbTestCase):
         )
         self.assertEqual(
             ret["path"],
-            "https://api.workbenchdata.com/v1/datasets/123-workflow-1/r1/datapackage.json",
+            "https://api.test/v1/datasets/123-workflow-1/r1/datapackage.json",
         )
 
     def test_publish_readme_md(self):

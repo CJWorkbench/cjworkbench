@@ -1,3 +1,5 @@
+import os
+
 from cjworkbench.settings.database import *
 from cjworkbench.settings.logging import *
 from cjworkbench.settings.rabbitmq import *
