@@ -40,18 +40,7 @@ export default function WorkflowApiPage (props) {
       <section className='datapackages'>
         <h2>Frictionless Data Package URLs</h2>
         <p>To download all tables and column information, use one of these URLs with a tool like <ExternalLink href='https://github.com/datopian/data-cli'>data-cli</ExternalLink>:</p>
-        <ul>
-          <li>
-            <h4>Live-updating URL</h4>
-            <small>always the latest-published dataset</small>
-            <ShareUrl url={workflow.dataset.path.replace(/\/r\d+/, '')} download={false} go={false} />
-          </li>
-          <li>
-            <h4>Immutable URL</h4>
-            <small>exactly these files; unavailable once newer data is published</small>
-            <ShareUrl url={workflow.dataset.path} download={false} go={false} />
-          </li>
-        </ul>
+        <ShareUrl url={workflow.dataset.path.replace(/\/r\d+/, '')} download={false} go={false} />
       </section>
       <section className='code'>
         <CodePandas datapackage={workflow.dataset} />
@@ -62,7 +51,5 @@ export default function WorkflowApiPage (props) {
 WorkflowApiPage.propTypes = {
   workflow: PropTypes.shape({
     dataset: PropTypes.object // or null
-  }).isRequired,
-  loggedInUser: PropTypes.shape({
-  }) // or null
+  }).isRequired
 }

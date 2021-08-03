@@ -6,10 +6,13 @@ export default function CodePandas (props) {
   const { resources } = datapackage
   const parquetResources = resources
     .filter(r => r.format === 'parquet')
-    .map(({ name, path }) => ({
+    .map(({ name, path, title }) => ({
       name: name.substring(0, name.indexOf('_')),
-      path
+      path,
+      title
     }))
+
+  const url = datapackage.path.replace(/\/r\d+/, '')
 
   return (
     <>
@@ -23,16 +26,24 @@ export default function CodePandas (props) {
       <h3>Load data in Python</h3>
       <pre className='lang-python'>
         {[
+          'import json',
+          'from urllib.request import urlopen',
+          '',
           'import pandas',
           '',
+          `datapackage_url = "${url}"`,
+          '',
+          'with urlopen(datapackage_url) as f:',
+          '    datapackage = json.load(f)',
+          'resources = [r for r in datapackage["resources"] if r["format"] == "parquet"]',
           'tables = {',
-          '  name: pandas.read_parquet(path, use_nullable_dtypes=True)',
-          '  for name, path in [',
-          ...parquetResources.map(({ name, path }) => `    ("${name}", "${path}"),`),
-          '  ]',
+          '  resource["name"].replace("_parquet", ""): pandas.read_parquet(',
+          '    resource["path"], use_nullable_dtypes=True',
+          '  )',
+          '  for resource in resources',
           '}',
           '',
-          `print(tables["${parquetResources[0].name}"])`
+          ...parquetResources.map(({ name, title }) => `print(tables["${name}"])  # ${title}`)
         ].join('\n')}
       </pre>
     </>
@@ -40,6 +51,7 @@ export default function CodePandas (props) {
 }
 CodePandas.propTypes = {
   datapackage: PropTypes.shape({
+    path: PropTypes.string.isRequired,
     resources: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
       path: PropTypes.string.isRequired,
