@@ -2,10 +2,9 @@ import datetime
 import gzip
 import hashlib
 import json
-import shutil
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, NamedTuple
 
 import cjwparquet
 import pyarrow as pa
@@ -72,7 +71,7 @@ def _publish_tab_parquet_resource(
     parquet_path: Path,
     arrow_schema: pa.Schema,
 ):
-    inner_path = f"/data/{slug}_parquet.parquet"
+    inner_path = f"/data/{slug}.parquet"
     s3.fput_file(s3.DatasetsBucket, s3_prefix + inner_path, parquet_path)
     md5sum = _md5sum(parquet_path)
     size = parquet_path.stat().st_size
@@ -89,7 +88,17 @@ def _publish_tab_parquet_resource(
     )
 
 
-def run_subprocess_and_pipe_stdout_to_file_object(cmd, *, stdout, **kwargs):
+class FileWriteResult(NamedTuple):
+    n: int
+    """Number of bytes written"""
+
+    md5sum: str
+    """md5sum, as a hex string"""
+
+
+def run_subprocess_and_pipe_stdout_to_file_object(
+    cmd: List[str], *, stdout, **kwargs
+) -> FileWriteResult:
     """Like subprocess.run(cmd, stdout=stdout, **kwargs) ... with a file object.
 
     subprocess.run() will normally pass a file descriptor to the subprocess.
@@ -99,14 +108,27 @@ def run_subprocess_and_pipe_stdout_to_file_object(cmd, *, stdout, **kwargs):
         # This would be too complicated.
         raise TypeError("Cannot stream from subprocess if stdin or stderr are provided")
 
+    n = 0
+    md5 = hashlib.md5()
+    BUFSIZE = 64 * 1024  # inspired by shutil.COPY_BUFSIZE
+
     with subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=0, **kwargs) as proc:
-        shutil.copyfileobj(proc.stdout, stdout)
+        while True:
+            block = proc.stdout.read(BUFSIZE)
+            if not block:
+                break
+            stdout.write(block)
+            md5.update(block)
+            n += len(block)
+
         proc.wait()
 
         if proc.returncode != 0:
             raise RuntimeError(
                 "%r returned non-zero returncode: %d" % (args, proc.returncode)
             )
+
+    return FileWriteResult(n, md5.hexdigest())
 
 
 def _publish_tab_csv_resource(
@@ -118,34 +140,31 @@ def _publish_tab_csv_resource(
     arrow_schema: pa.Schema,
     parquet_path: Path,
 ):
-    inner_path = f"/data/{slug}_csv.csv.gz"
+    inner_path = f"/data/{slug}.csv"
 
     with tempfile_context(suffix=".csv.gz") as csv_path:
         with open(csv_path, "wb", buffering=0) as wf, gzip.GzipFile(
-            filename=f"{slug}_csv.csv",
+            filename=f"{slug}.csv",
             mode="wb",
             fileobj=wf,
             compresslevel=3,
             mtime=0,
         ) as wzf:
-            run_subprocess_and_pipe_stdout_to_file_object(
+            write_result = run_subprocess_and_pipe_stdout_to_file_object(
                 ["/usr/bin/parquet-to-text-stream", parquet_path, "csv"],
                 stdout=wzf,
             )
 
-        s3.fput_file(s3.DatasetsBucket, s3_prefix + inner_path, csv_path)
-        md5sum = _md5sum(csv_path)
-        size = csv_path.stat().st_size
+        s3.fput_file(s3.DatasetsBucket, s3_prefix + inner_path + ".gz", csv_path)
     return dict(
         profile="tabular-data-resource",
         name=slug + "_csv",
         path=url_prefix + inner_path,
         title=title,
         format="csv",
-        compression="gz",
         schema=_build_frictionless_table_schema(arrow_schema),
-        hash=md5sum,
-        bytes=size,
+        hash=write_result.md5sum,
+        bytes=write_result.n,
     )
 
 
@@ -158,34 +177,31 @@ def _publish_tab_json_resource(
     arrow_schema: pa.Schema,
     parquet_path: Path,
 ):
-    inner_path = f"/data/{slug}_json.json.gz"
+    inner_path = f"/data/{slug}.json"
 
-    with tempfile_context(suffix=".json") as json_path:
+    with tempfile_context(suffix=".json.gz") as json_path:
         with json_path.open("wb") as wf, gzip.GzipFile(
-            filename=f"{slug}_json.json",
+            filename=f"{slug}.json",
             mode="wb",
             fileobj=wf,
             compresslevel=3,
             mtime=0,
         ) as wzf:
-            run_subprocess_and_pipe_stdout_to_file_object(
+            write_result = run_subprocess_and_pipe_stdout_to_file_object(
                 ["/usr/bin/parquet-to-text-stream", parquet_path, "json"],
                 stdout=wzf,
             )
 
-        s3.fput_file(s3.DatasetsBucket, s3_prefix + inner_path, json_path)
-        md5sum = _md5sum(json_path)
-        size = json_path.stat().st_size
+        s3.fput_file(s3.DatasetsBucket, s3_prefix + inner_path + ".gz", json_path)
     return dict(
         profile="data-resource",
         name=slug + "_json",
         path=url_prefix + inner_path,
         title=title,
         format="json",
-        compression="gz",
         schema=_build_frictionless_table_schema(arrow_schema),
-        hash=md5sum,
-        bytes=size,
+        hash=write_result.md5sum,
+        bytes=write_result.n,
     )
 
 

@@ -62,7 +62,7 @@ class PublishTests(DbTestCase):
         )
         s3.download(
             s3.DatasetsBucket,
-            "wf-123/r1/data/tab-1_parquet.parquet",
+            "wf-123/r1/data/tab-1.parquet",
             self.basedir / "actual.parquet",
         )
         self.assertTrue(
@@ -87,7 +87,7 @@ class PublishTests(DbTestCase):
             dict(
                 profile="data-resource",
                 name="tab-1_parquet",
-                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1_parquet.parquet",
+                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1.parquet",
                 title="Tab 1",
                 format="parquet",
                 schema={"fields": [{"name": "A", "type": "string"}]},
@@ -121,12 +121,12 @@ class PublishTests(DbTestCase):
         )
         s3.download(
             s3.DatasetsBucket,
-            "wf-123/r1/data/tab-1_parquet.parquet",
+            "wf-123/r1/data/tab-1.parquet",
             self.basedir / "actual-1.parquet",
         )
         s3.download(
             s3.DatasetsBucket,
-            "wf-123/r1/data/tab-2_parquet.parquet",
+            "wf-123/r1/data/tab-2.parquet",
             self.basedir / "actual-2.parquet",
         )
         self.assertTrue(
@@ -155,9 +155,7 @@ class PublishTests(DbTestCase):
         )
         # Now, r2 is a revision that "failed" to upload: some files are there,
         # but they aren't referenced
-        s3.put_bytes(
-            s3.DatasetsBucket, "wf-123/r2/data/tab-x_parquet.parquet", b"corrupt"
-        )
+        s3.put_bytes(s3.DatasetsBucket, "wf-123/r2/data/tab-x.parquet", b"corrupt")
 
         # Publish a new revision
         tab1_result2 = self._write_tab_result(
@@ -172,16 +170,10 @@ class PublishTests(DbTestCase):
             )
         )
 
-        self.assertFalse(
-            s3.exists(s3.DatasetsBucket, "wf-123/r2/data/tab-x_parquet.parquet")
-        )
-        self.assertTrue(
-            s3.exists(s3.DatasetsBucket, "wf-123/r2/data/tab-1_parquet.parquet")
-        )
+        self.assertFalse(s3.exists(s3.DatasetsBucket, "wf-123/r2/data/tab-x.parquet"))
+        self.assertTrue(s3.exists(s3.DatasetsBucket, "wf-123/r2/data/tab-1.parquet"))
         # And the old revision wasn't touched...
-        self.assertTrue(
-            s3.exists(s3.DatasetsBucket, "wf-123/r1/data/tab-1_parquet.parquet")
-        )
+        self.assertTrue(s3.exists(s3.DatasetsBucket, "wf-123/r1/data/tab-1.parquet"))
 
     def test_publish_csv(self):
         tab1_result = self._write_tab_result(
@@ -200,7 +192,7 @@ class PublishTests(DbTestCase):
         expected_data = b"A,B\r\na,2\r\n,3"
         s3.download(
             s3.DatasetsBucket,
-            "wf-123/r1/data/tab-1_csv.csv.gz",
+            "wf-123/r1/data/tab-1.csv.gz",
             self.basedir / "actual.csv.gz",
         )
         self.assertEqual(
@@ -224,18 +216,17 @@ class PublishTests(DbTestCase):
             dict(
                 profile="tabular-data-resource",
                 name="tab-1_csv",
-                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1_csv.csv.gz",
+                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1.csv",
                 title="Tab 1",
                 format="csv",
-                compression="gz",
                 schema={
                     "fields": [
                         {"name": "A", "type": "string"},
                         {"name": "B", "type": "number"},
                     ]
                 },
-                hash=md5digest((self.basedir / "actual.csv.gz").read_bytes()),
-                bytes=(self.basedir / "actual.csv.gz").stat().st_size,
+                hash=md5digest(expected_data),
+                bytes=len(expected_data),
             ),
         )
 
@@ -256,7 +247,7 @@ class PublishTests(DbTestCase):
         expected_data = b'[{"A":"a","B":2},{"A":null,"B":3}]'
         s3.download(
             s3.DatasetsBucket,
-            "wf-123/r1/data/tab-1_json.json.gz",
+            "wf-123/r1/data/tab-1.json.gz",
             self.basedir / "actual.json.gz",
         )
         self.assertEqual(
@@ -280,18 +271,17 @@ class PublishTests(DbTestCase):
             dict(
                 profile="data-resource",
                 name="tab-1_json",
-                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1_json.json.gz",
+                path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1.json",
                 title="Tab 1",
                 format="json",
-                compression="gz",
                 schema={
                     "fields": [
                         {"name": "A", "type": "string"},
                         {"name": "B", "type": "number"},
                     ]
                 },
-                hash=md5digest((self.basedir / "actual.json.gz").read_bytes()),
-                bytes=(self.basedir / "actual.json.gz").stat().st_size,
+                hash=md5digest(expected_data),
+                bytes=len(expected_data),
             ),
         )
 
@@ -326,9 +316,9 @@ class PublishTests(DbTestCase):
 
         for key in [
             "wf-123/r1/datapackage.json",
-            "wf-123/r1/data/tab-1_csv.csv.gz",
-            "wf-123/r1/data/tab-1_json.json.gz",
-            "wf-123/r1/data/tab-1_parquet.parquet",
+            "wf-123/r1/data/tab-1.csv.gz",
+            "wf-123/r1/data/tab-1.json.gz",
+            "wf-123/r1/data/tab-1.parquet",
         ]:
             # Assert the object has an "expired" tag and a creation date _after_
             # r2 was published. This is enough for us to create a lifecycle rule
