@@ -6,9 +6,7 @@ function gatherTables (resources) {
   const byName = {}
 
   resources.forEach(resource => {
-    const match = /^(.*)_(parquet|csv|json)$/.exec(resource.name)
-    const name = match[1]
-    const format = match[2]
+    const name = resource.name.replace(/_(csv|json)$/, '')
     if (!(name in byName)) {
       names.push(name)
       byName[name] = {
@@ -17,7 +15,7 @@ function gatherTables (resources) {
         paths: {}
       }
     }
-    byName[name].paths[format] = {
+    byName[name].paths[resource.format] = {
       href: resource.path,
       bytes: resource.bytes
     }

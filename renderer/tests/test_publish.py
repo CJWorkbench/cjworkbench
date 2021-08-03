@@ -80,13 +80,13 @@ class PublishTests(DbTestCase):
             for resource in json.loads(
                 (self.basedir / "datapackage.json").read_bytes()
             )["resources"]
-            if resource["name"] == "tab-1_parquet"
+            if resource["format"] == "parquet"
         )
         self.assertEqual(
             resource,
             dict(
                 profile="data-resource",
-                name="tab-1_parquet",
+                name="tab-1",
                 path="https://api.test/v1/datasets/123-workflow-1/r1/data/tab-1.parquet",
                 title="Tab 1",
                 format="parquet",

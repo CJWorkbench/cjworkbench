@@ -78,7 +78,7 @@ def _publish_tab_parquet_resource(
 
     return dict(
         profile="data-resource",
-        name=slug + "_parquet",
+        name=slug,
         path=url_prefix + inner_path,
         title=title,
         format="parquet",
