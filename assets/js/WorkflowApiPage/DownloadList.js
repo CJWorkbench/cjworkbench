@@ -44,7 +44,7 @@ function formatNBytes (bytes) {
     n = bytes
   }
 
-  return new Intl.NumberFormat('en-US', { style: 'unit', unit, maximumSignificantDigits: 4 }).format(n)
+  return new Intl.NumberFormat('en-US', { style: 'unit', unit }).format(n.toFixed(n >= 5 ? 0 : 1))
 }
 
 function DownloadLink (props) {
