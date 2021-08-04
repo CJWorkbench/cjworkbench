@@ -1,4 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import { Trans } from '@lingui/macro'
 import { useDispatch, useSelector } from 'react-redux'
 import selectOptimisticState from '../../selectors/selectOptimisticState'
 import TabsField from './TabsField'
@@ -42,22 +44,36 @@ function selectTabs (state) {
       }
     }
   })
+  console.log('selectTabs', tabsPass1.filter(t => t.isInDataset).map(t => t.slug))
   return tabsPass1.map(tab => ({
     ...tab,
-    filenameConflict: filenameConflicts[tab.slug] || false
+    filenameConflict: filenameConflicts[tab.filename] || false
   }))
 }
 
 export default function DatasetPublisherForm (props) {
+  const { onClickPublish } = props
   const dispatch = useDispatch()
   const tabs = useSelector(selectTabs)
   const onChangeTabs = React.useCallback(
     slugs => { dispatch(setTabSlugs(slugs)) },
-    [dispatch]
+    [dispatch, setTabSlugs]
   )
 
+  console.log('DatasetPublisherForm', tabs.filter(t => t.isInDataset).map(t => t.slug))
+
   return (
-    <TabsField tabs={tabs} onChange={onChangeTabs} />
+    <div className='dataset-publisher-form'>
+      <TabsField tabs={tabs} onChange={onChangeTabs} />
+      <button
+        type='button'
+        onClick={onClickPublish}
+      >
+        <Trans id='js.WorkflowEditor.DatasetPublisher.Form.submit'>Publish</Trans>
+      </button>
+    </div>
   )
 }
-DatasetPublisherForm.propTypes = {}
+DatasetPublisherForm.propTypes = {
+  onClickPublish: PropTypes.func.isRequired // func() => undefined
+}

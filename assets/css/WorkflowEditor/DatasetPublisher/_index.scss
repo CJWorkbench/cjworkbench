@@ -1,0 +1,26 @@
+$dataset-publisher-max-width: 112rem;
+
+.dataset-publisher {
+  flex: 1 1 auto;
+  overflow-y: auto; // allow scrolling (report-container is variable height)
+  padding: 0 2rem 3.2rem;
+  background-color: $WF-background;
+
+  font-size: rem(1);
+
+  header {
+    margin: 2rem 0;
+  }
+
+  .dataset-publisher-form {
+    max-width: $dataset-publisher-max-width;
+    margin: 2rem auto 0;
+    border: 2px solid $item-border;
+    border-radius: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: visible;
+    background: white;
+  }
+}
+
+@import './Form';

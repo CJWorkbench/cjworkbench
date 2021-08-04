@@ -1,0 +1,35 @@
+.dataset-publisher-form {
+  padding: rem(2);
+
+  .tabs-field {
+    table {
+      width: 100%;
+    }
+
+    .checkbox {
+      width: 1px;
+    }
+
+    .tab-name {
+      width: 20%; // unless it needs to be wider
+      white-space: nowrap;
+    }
+
+    .filename {
+      width: 1px;
+      padding-left: rem(1);
+
+      tt {
+        white-space: nowrap;
+      }
+    }
+
+    td.errors:not(:empty) { // the <th> always takes maximum space
+      padding-left: rem(1);
+    }
+
+    tr:not(.checked) .filename tt {
+      display: none;
+    }
+  }
+}

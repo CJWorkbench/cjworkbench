@@ -26,8 +26,14 @@ export default function WorkflowApiPage (props) {
         <h1>{workflow.name} API</h1>
         <p className='subheading'>Access these tables with any toolkit</p>
       </header>
+      <section className='datapackages'>
+        <h2>Frictionless Data Package URLs</h2>
+        <p>To download all tables and column information, use one of these URLs with a tool like <ExternalLink href='https://github.com/datopian/data-cli'>data-cli</ExternalLink>:</p>
+        <ShareUrl url={workflow.dataset.path.replace(/\/r\d+/, '')} download={false} go={false} />
+        <p>This URL gives a consistent file list: all files are from the same click to "publish".</p>
+      </section>
       <section className='files'>
-        <h2>Download files</h2>
+        <h2>File list</h2>
         <DownloadList datapackage={workflow.dataset} />
         <h3>Do I want CSV, JSON or Parquet?</h3>
         <ul>
@@ -36,11 +42,6 @@ export default function WorkflowApiPage (props) {
           <li><strong>CSV</strong> otherwise.</li>
         </ul>
         <p>See <ExternalLink href='https://github.com/CJWorkbench/cjworkbench/wiki/Exported-tables-and-their-columns'>file-format documentation</ExternalLink>.</p>
-      </section>
-      <section className='datapackages'>
-        <h2>Frictionless Data Package URLs</h2>
-        <p>To download all tables and column information, use one of these URLs with a tool like <ExternalLink href='https://github.com/datopian/data-cli'>data-cli</ExternalLink>:</p>
-        <ShareUrl url={workflow.dataset.path.replace(/\/r\d+/, '')} download={false} go={false} />
       </section>
       <section className='code'>
         <CodePandas datapackage={workflow.dataset} />

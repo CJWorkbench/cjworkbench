@@ -4,13 +4,7 @@ import PropTypes from 'prop-types'
 export default function CodePandas (props) {
   const { datapackage } = props
   const { resources } = datapackage
-  const parquetResources = resources
-    .filter(r => r.format === 'parquet')
-    .map(({ name, path, title }) => ({
-      name: name.substring(0, name.indexOf('_')),
-      path,
-      title
-    }))
+  const parquetResources = resources.filter(r => r.format === 'parquet')
 
   const url = datapackage.path.replace(/\/r\d+/, '')
 
