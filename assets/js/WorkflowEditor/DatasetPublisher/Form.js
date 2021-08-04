@@ -44,7 +44,6 @@ function selectTabs (state) {
       }
     }
   })
-  console.log('selectTabs', tabsPass1.filter(t => t.isInDataset).map(t => t.slug))
   return tabsPass1.map(tab => ({
     ...tab,
     filenameConflict: filenameConflicts[tab.filename] || false
@@ -59,8 +58,6 @@ export default function DatasetPublisherForm (props) {
     slugs => { dispatch(setTabSlugs(slugs)) },
     [dispatch, setTabSlugs]
   )
-
-  console.log('DatasetPublisherForm', tabs.filter(t => t.isInDataset).map(t => t.slug))
 
   return (
     <div className='dataset-publisher-form'>

@@ -6,7 +6,7 @@ function TabRow (props) {
   const { slug, name, filename, filenameConflict, checked, onChange } = props
   const handleChange = React.useCallback(
     (ev) => { onChange(slug, ev.target.checked) },
-    [slug, checked]
+    [slug, checked, onChange]
   )
 
   const classNames = []
@@ -74,16 +74,15 @@ TabRow.propTypes = {
 
 export default function TabsField (props) {
   const { tabs, onChange } = props
-  const handleChangeTabIncluded = (slug, included) => {
-    console.log('actually call handler', tabs.filter(t => t.isInDataset).map(t => t.slug), slug, included)
-    const newTabs = tabs
-      .filter(tab => tab.slug === slug ? included : tab.isInDataset)
-      .map(tab => tab.slug)
-    console.log(newTabs)
-    onChange(newTabs)
-  }
-
-  console.log('TabsField', tabs.filter(t => t.isInDataset).map(t => t.slug))
+  const handleChangeTabIncluded = React.useCallback(
+    (slug, included) => {
+      const newTabs = tabs
+        .filter(tab => tab.slug === slug ? included : tab.isInDataset)
+        .map(tab => tab.slug)
+      onChange(newTabs)
+    },
+    [tabs, onChange]
+  )
 
   return (
     <div className='tabs-field'>
