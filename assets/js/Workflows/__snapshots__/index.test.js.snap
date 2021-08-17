@@ -64,6 +64,20 @@ exports[`render Examples correctly 1`] = `
           </li>
         </ul>
         <div
+          class="shutting-down-public-site-2021"
+        >
+          Workbench will go offline 
+          <strong>
+            October 15, 2021
+          </strong>
+          . 
+          <a
+            href="https://workbenchdata.com/2021/08/17/workbench-is-shutting-down-october-15-2021/"
+          >
+            details
+          </a>
+        </div>
+        <div
           class="user-paths"
         >
           <h3
@@ -296,6 +310,20 @@ exports[`render My workflows correctly 1`] = `
             </a>
           </li>
         </ul>
+        <div
+          class="shutting-down-public-site-2021"
+        >
+          Workbench will go offline 
+          <strong>
+            October 15, 2021
+          </strong>
+          . 
+          <a
+            href="https://workbenchdata.com/2021/08/17/workbench-is-shutting-down-october-15-2021/"
+          >
+            details
+          </a>
+        </div>
         <div
           class="user-paths"
         >
@@ -689,6 +717,20 @@ exports[`render Shared correctly 1`] = `
             </a>
           </li>
         </ul>
+        <div
+          class="shutting-down-public-site-2021"
+        >
+          Workbench will go offline 
+          <strong>
+            October 15, 2021
+          </strong>
+          . 
+          <a
+            href="https://workbenchdata.com/2021/08/17/workbench-is-shutting-down-october-15-2021/"
+          >
+            details
+          </a>
+        </div>
         <div
           class="user-paths"
         >

@@ -1,6 +1,7 @@
 import { useReducer } from 'react'
 import PropTypes from 'prop-types'
 import MainNavHeader from './MainNavHeader'
+import ShuttingDownPublicSite2021 from '../../ShuttingDownPublicSite2021'
 import TopPaths from './TopPaths'
 import UserPaths from './UserPaths'
 
@@ -16,6 +17,7 @@ export default function MainNavFragment (props) {
       />
       <div className={`details${open ? ' open' : ''}`}>
         <TopPaths courses={courses} currentPath={currentPath} />
+        <ShuttingDownPublicSite2021 />
         <UserPaths user={user} currentPath={currentPath} />
       </div>
     </>

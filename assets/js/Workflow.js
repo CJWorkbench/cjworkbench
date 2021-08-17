@@ -7,6 +7,7 @@ import Lesson from './lessons/Lesson'
 import WorkflowEditor from './WorkflowEditor'
 import { connect } from 'react-redux'
 import { setWorkflowNameAction } from './workflow-reducer'
+import ShuttingDownPublicSite2021 from './ShuttingDownPublicSite2021'
 import selectIsAnonymous from './selectors/selectIsAnonymous'
 import selectIsReadOnly from './selectors/selectIsReadOnly'
 import { Trans } from '@lingui/macro'
@@ -14,7 +15,7 @@ import { Trans } from '@lingui/macro'
 export function MaybeNotYourWorkflow (props) {
   const { isReadOnly, isAnonymous, isLoggedIn } = props
   if (!isReadOnly && !isAnonymous) {
-    return null // it's your workflow
+    return <ShuttingDownPublicSite2021 /> // it's your workflow
   }
 
   return (

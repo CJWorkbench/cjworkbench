@@ -1,0 +1,37 @@
+.shutting-down-public-site-2021 {
+  display: block;
+  color: $brand-text--dark;
+  font-size: rem(1.2);
+  font-family: $font-family-sans-serif;
+  border: 3px solid $dark-orange;
+  background: $brand-orange--light;
+
+  &.account-page-notice {
+    text-align: center;
+    margin: 0 auto;
+    padding: rem(.5) rem(2);
+    border-radius: 999px;
+    display: table; // width of content
+    margin: rem(1) auto;
+
+    a {
+      font: inherit;
+      color: $brand-workspace;
+    }
+  }
+
+  .main-nav & {
+    border-left-width: 0;
+    border-right-width: 0;
+    padding: rem(0.75) $main-nav-padding;
+    font-size: rem(1);
+  }
+
+  .workflow-root & {
+    text-align: center;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    padding: rem(.5) rem(1);
+  }
+}
