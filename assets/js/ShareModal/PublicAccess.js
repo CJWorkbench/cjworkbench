@@ -4,7 +4,7 @@ import { Trans, t } from '@lingui/macro'
 import ShareableLink from './ShareableLink'
 
 function ShareableLinks (props) {
-  const { url, isPublic, logShare } = props
+  const { url, isPublic } = props
 
   return (
     <ul className='shareable-links'>
@@ -14,7 +14,6 @@ function ShareableLinks (props) {
         url={url}
         showShareHeader
         isPublic={isPublic}
-        logShare={logShare}
       />
       <ShareableLink
         component='li'
@@ -22,7 +21,6 @@ function ShareableLinks (props) {
         url={`${url}/report`}
         showShareHeader={false}
         isPublic={isPublic}
-        logShare={logShare}
       />
     </ul>
   )
@@ -30,7 +28,6 @@ function ShareableLinks (props) {
 ShareableLinks.propTypes = {
   url: PropTypes.string.isRequired, // e.g., `/workflows/1`
   isPublic: PropTypes.bool.isRequired,
-  logShare: PropTypes.func.isRequired // func('Facebook'|'Twitter'|'URL copied') => undefined
 }
 
 export default function PublicAccess (props) {
@@ -40,7 +37,6 @@ export default function PublicAccess (props) {
     secretId,
     canCreateSecretLink,
     setWorkflowPublicAccess,
-    logShare,
     isReadOnly
   } = props
   // submitState:
@@ -188,10 +184,10 @@ export default function PublicAccess (props) {
       </fieldset>
 
       {isPublic
-        ? <ShareableLinks url={`${window.origin}/workflows/${workflowId}`} isPublic logShare={logShare} />
+        ? <ShareableLinks url={`${window.origin}/workflows/${workflowId}`} isPublic />
         : null}
       {!isPublic && secretId
-        ? <ShareableLinks url={`${window.origin}/workflows/${secretId}`} isPublic={false} logShare={logShare} />
+        ? <ShareableLinks url={`${window.origin}/workflows/${secretId}`} isPublic={false} />
         : null}
     </>
   )
@@ -202,6 +198,5 @@ PublicAccess.propTypes = {
   isPublic: PropTypes.bool.isRequired,
   secretId: PropTypes.string.isRequired, // "" for no-secret
   canCreateSecretLink: PropTypes.bool.isRequired,
-  setWorkflowPublicAccess: PropTypes.func.isRequired, // func(isPublic, hasSecret) => Promise[undefined]
-  logShare: PropTypes.func.isRequired // func('Facebook'|'Twitter'|'URL copied') => undefined
+  setWorkflowPublicAccess: PropTypes.func.isRequired // func(isPublic, hasSecret) => Promise[undefined]
 }

@@ -4,7 +4,6 @@ import time
 from django import forms
 from django.contrib.auth import get_user_model
 
-from cjworkbench.models.intercom_helpers import notify_intercom_of_new_user
 from cjworkbench.models.userprofile import UserProfile
 from cjworkbench.i18n.trans import trans_lazy
 from cjwstate import rabbitmq

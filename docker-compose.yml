@@ -118,7 +118,7 @@ services:
       S3_BUCKET_NAME_PATTERN: "dev-%s"
     ports: [ '8000:8080' ]
     networks: [ 'dev' ]
-    depends_on: [ 'database', 'rabbitmq', 'minio', 'tusd', 'intercom-sink' ]
+    depends_on: [ 'database', 'rabbitmq', 'minio', 'tusd' ]
     command: [
       'sh',
       '-c',
@@ -306,14 +306,6 @@ services:
       '--use-colors',
       'staticfilesdev.asgi:application'
     ]
-
-  intercom-sink:
-    image: gcr.io/workbenchdata-ci/cjw-intercom-sink:38d0dfbb2dc90a1c978b4bb80ea5b145cdfe3591
-    networks: [ 'dev' ]
-    environment:
-      CJW_RABBITMQ_HOST: amqp://guest:guest@rabbitmq
-      CJW_INTERCOM_API_TOKEN: mock
-      CJW_INTERCOM_QUEUE_NAME: intercom
 
   tusd:
     image: tusproject/tusd:v1.6.0

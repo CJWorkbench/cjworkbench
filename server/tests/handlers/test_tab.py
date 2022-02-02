@@ -29,7 +29,6 @@ def noop(*args, **kwargs):
 class TabTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
     @patch.object(rabbitmq, "send_update_to_workflow_clients", async_noop)
     @patch.object(rabbitmq, "queue_render", async_noop)
-    @patch.object(rabbitmq, "queue_intercom_message", async_noop)
     def test_add_module(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)  # with tab-1

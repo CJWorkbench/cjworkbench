@@ -46,15 +46,6 @@ class StepViewTestCase(DbTestCaseWithModuleRegistryAndMockKernel):
         self.user = create_test_user()
         self.client.force_login(self.user)
 
-        self.intercom_patcher = patch.object(
-            rabbitmq, "queue_intercom_message", async_noop
-        )
-        self.intercom_patcher.start()
-
-    def tearDown(self):
-        self.intercom_patcher.stop()
-        super().tearDown()
-
 
 class EmbedTest(StepViewTestCase):
     def setUp(self):

@@ -40,13 +40,6 @@ This magic string is described at
 https://github.com/CJWorkbench/channels_rabbitmq#groups_exchange.
 """
 
-Intercom = "intercom"
-"""Name of queue that 'intercom-sink' listens to.
-
-Intercom messages are fire-and-forget. We send them through a queue because our
-RabbitMQ cluster is faster (and more reliable) than Intercom's API.
-"""
-
 
 def _workflow_group_name(workflow_id: int) -> str:
     """Build a channel_layer group name, given a workflow ID.
@@ -106,23 +99,6 @@ async def queue_fetch(workflow_id: int, step_id: int) -> None:
     await connection.publish(
         msgpack.packb(dict(workflow_id=workflow_id, step_id=step_id)),
         routing_key=Fetch,
-    )
-
-
-async def queue_intercom_message(
-    *, http_method: str, http_path: str, data: Dict[str, Any]
-) -> None:
-    """Queue a message for sending to Intercom.
-
-    `maintain_global_connection()` must be running.
-
-    Raise if our RabbitMQ connection is in turmoil. (Some other caller should
-    shut down our process in that case.)
-    """
-    connection = await get_global_connection()
-    await connection.publish(
-        msgpack.packb(dict(method=http_method, path=http_path, data=data)),
-        routing_key=Intercom,
     )
 
 

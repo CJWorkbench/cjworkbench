@@ -6,7 +6,7 @@ import FacebookIcon from '../../icons/facebook.svg'
 import TwitterIcon from '../../icons/twitter.svg'
 
 export default function ShareableLink (props) {
-  const { title, url, isPublic, logShare, showShareHeader, component: Component = 'div' } = props
+  const { title, url, isPublic, showShareHeader, component: Component = 'div' } = props
   const shareText = t({
     id: 'js.ShareModal.Url.socialLinks.shareText',
     comment:
@@ -16,9 +16,6 @@ export default function ShareableLink (props) {
   })
   const facebookUrl = `https://www.facebook.com/sharer.php?u=${encodeURIComponent(url)}`
   const twitterUrl = `https://www.twitter.com/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`
-
-  const handleClickFacebook = React.useCallback(() => logShare('Facebook'), [logShare])
-  const handleClickTwitter = React.useCallback(() => logShare('Twitter'), [logShare])
 
   return (
     <Component className='shareable-link'>
@@ -36,7 +33,6 @@ export default function ShareableLink (props) {
           <a
             key='twitter'
             href={twitterUrl}
-            onClick={handleClickTwitter}
             className='twitter-share'
             target='_blank'
             rel='noopener noreferrer'
@@ -46,7 +42,6 @@ export default function ShareableLink (props) {
           <a
             key='facebook'
             href={facebookUrl}
-            onClick={handleClickFacebook}
             className='facebook-share'
             target='_blank'
             rel='noopener noreferrer'
@@ -62,7 +57,6 @@ ShareableLink.propTypes = {
   title: PropTypes.string.isRequired, // already i18n-ized
   url: PropTypes.string.isRequired, // e.g., `/workflows/1`
   isPublic: PropTypes.bool.isRequired,
-  logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
   showShareHeader: PropTypes.bool.isRequired,
   component: PropTypes.any
 }

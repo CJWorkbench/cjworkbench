@@ -14,74 +14,42 @@ export function UnhandledErrorReport ({ error }) {
     `Server message: ${error.serverError}`
   ].join('\n')
 
-  if (typeof window.Intercom === 'function') {
-    helpText = (
-      <ol>
-        <li>
-          <Trans
-            id='js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow'
-            comment='The tag adds emphasis'
-          >
-            We opened a messaging window and included details for our developers
-            to fix the issue. <em>Please send the message</em>.
-          </Trans>
-        </li>
-        <li>
-          <Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>
-            It helps if you can describe what you were doing before you ran into
-            the bug.
-          </Trans>
-        </li>
-      </ol>
+  const email = window.workbenchConfig ? window.workbenchConfig.helpEmail : 'root@localhost'
+  const url =
+    `mailto:${email}` +
+    '?subject=' +
+    encodeURIComponent('I encountered an error') +
+    '&body=' +
+    encodeURIComponent(
+      [
+        'Hi there,',
+        'I encountered an error while I was using Workbench.',
+        '[PLEASE DESCRIBE WHAT YOU WERE DOING HERE]',
+        'Debugging details (for Workbench developers):\n' + bugReportText
+      ].join('\n\n')
     )
-    useEffect(() => {
-      window.Intercom(
-        'showNewMessage',
-        [
-          'Could you please help me with this bug?',
-          'Debugging details (for developers):',
-          bugReportText
-        ].join('\n')
-      )
-    }, [])
-  } else {
-    const email = window.workbenchConfig ? window.workbenchConfig.helpEmail : 'root@localhost'
-    const url =
-      `mailto:${email}` +
-      '?subject=' +
-      encodeURIComponent('I encountered an error') +
-      '&body=' +
-      encodeURIComponent(
-        [
-          'Hi there,',
-          'I encountered an error while I was using Workbench.',
-          '[PLEASE DESCRIBE WHAT YOU WERE DOING HERE]',
-          'Debugging details (for Workbench developers):\n' + bugReportText
-        ].join('\n\n')
-      )
-    helpText = (
-      <ol>
-        <li>
-          <Trans
-            id='js.UnhandledErrorReport.helpText.debuggingDetails'
-            comment="The parameter is an email address and the tag is a 'mailto:' url"
-          >
-            Copy the debugging details below and send them to{' '}
-            <a href={url} target='_blank' rel='noopener noreferrer'>
-              {email}
-            </a>
-            .
-          </Trans>
-        </li>
-        <li>
-          <Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>
-            It helps if you can describe what you were doing before you ran into
-            the bug.
-          </Trans>
-        </li>
-      </ol>
-    )
-  }
+  helpText = (
+    <ol>
+      <li>
+        <Trans
+          id='js.UnhandledErrorReport.helpText.debuggingDetails'
+          comment="The parameter is an email address and the tag is a 'mailto:' url"
+        >
+          Copy the debugging details below and send them to{' '}
+          <a href={url} target='_blank' rel='noopener noreferrer'>
+            {email}
+          </a>
+          .
+        </Trans>
+      </li>
+      <li>
+        <Trans id='js.UnhandledErrorReport.helpText.pleaseDescribeYourActions'>
+          It helps if you can describe what you were doing before you ran into
+          the bug.
+        </Trans>
+      </li>
+    </ol>
+  )
 
   return (
     <div className='unhandled-error-report'>

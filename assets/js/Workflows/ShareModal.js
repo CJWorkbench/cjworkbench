@@ -1,11 +1,6 @@
 import { useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { logUserEvent } from '../utils'
 import Modal from '../ShareModal/Modal'
-
-function logShare (type) {
-  logUserEvent('Share workflow ' + type)
-}
 
 export default function ShareModal (props) {
   const {
@@ -60,7 +55,6 @@ export default function ShareModal (props) {
       workflowId={workflow.id}
       isPublic={workflow.public}
       secretId={workflow.secret_id}
-      logShare={logShare}
       ownerEmail={workflow.owner_email}
       acl={workflow.acl}
       setWorkflowPublicAccess={setPublicAccess}

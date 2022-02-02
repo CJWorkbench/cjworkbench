@@ -443,12 +443,6 @@ msgstr ""
 msgid "js.UndoRedoButtons.undo.hoverText"
 msgstr ""
 
-#. The tag adds emphasis
-#. default-message: We opened a messaging window and included details for our developers to fix the issue. <0>Please send the message</0>.
-#: assets/js/UnhandledErrorReport.js:21
-msgid "js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow"
-msgstr ""
-
 #. default-message: Refresh page
 #: assets/js/UnhandledErrorReport.js:113
 msgid "js.UnhandledErrorReport.actions.refreshPageButton"

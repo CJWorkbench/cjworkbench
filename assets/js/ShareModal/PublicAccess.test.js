@@ -11,8 +11,7 @@ const DefaultProps = {
   isPublic: false,
   secretId: '',
   canCreateSecretLink: true,
-  setWorkflowPublicAccess: jest.fn(),
-  logShare: jest.fn()
+  setWorkflowPublicAccess: jest.fn()
 }
 
 test('private => public', async () => {

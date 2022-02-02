@@ -8,7 +8,6 @@ from cjwmodule.spec.paramfield import ParamField
 from dateutil.parser import isoparse
 from django.conf import settings
 
-import server.utils
 from cjworkbench.sync import database_sync_to_async
 from cjwstate import clientside, commands, oauth, rabbitmq
 from cjwstate.models.commands import (
@@ -204,10 +203,6 @@ async def set_notifications(
 ):
     notifications = bool(notifications)  # cannot error from JSON input
     await _do_set_notifications(scope, step, notifications)
-    if notifications:
-        await server.utils.log_user_event_from_scope(
-            scope, "Enabled email notifications", {"stepId": step.id}
-        )
 
 
 @database_sync_to_async

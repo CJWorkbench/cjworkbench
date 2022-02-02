@@ -395,14 +395,6 @@ msgstr "Επανάληψη"
 msgid "js.UndoRedoButtons.undo.hoverText"
 msgstr "Αναίρεση"
 
-#. The tag adds emphasis
-#: assets/js/UnhandledErrorReport.js:21
-msgid "js.UnhandledErrorReport.Intercom.helpText.weOpenedAWindow"
-msgstr ""
-"Ανοίξαμε ένα παράθυρο μηνύματος και συμπεριλάβαμε λεπτομέρειες για τους "
-"προγραμματιστές μας για να διορθώσουν το πρόβλημα. <0>Στείλτε το "
-"μήνυμα<0>."
-
 #: assets/js/UnhandledErrorReport.js:113
 msgid "js.UnhandledErrorReport.actions.refreshPageButton"
 msgstr "Ανανέωση σελίδας"

@@ -10,16 +10,6 @@ export function goToUrl (url) {
 // Current CSRF token
 export const csrfToken = Cookies.get('csrftoken')
 
-// Log to Intercom, if installed
-export function logUserEvent (name, metadata) {
-  if (!window.APP_ID) return
-
-  // If we're in a lesson, drop the event.
-  if (window.initState && window.initState.lessonData) return
-
-  window.Intercom('trackEvent', name, metadata)
-}
-
 export function timeDifference (start, end, i18n) {
   const ms = new Date(end) - new Date(start)
   const seconds = Math.floor(ms / 1000)

@@ -12,7 +12,6 @@ export default function _Modal (props) {
     isPublic,
     secretId,
     setWorkflowPublicAccess,
-    logShare,
     ownerEmail,
     acl,
     updateAclEntry,
@@ -48,7 +47,6 @@ export default function _Modal (props) {
           secretId={secretId}
           canCreateSecretLink={canCreateSecretLink}
           setWorkflowPublicAccess={setWorkflowPublicAccess}
-          logShare={logShare}
         />
       </ModalBody>
       <ModalFooter>
@@ -70,7 +68,6 @@ _Modal.propTypes = {
   workflowId: PropTypes.number.isRequired,
   isPublic: PropTypes.bool.isRequired,
   secretId: PropTypes.string.isRequired, // "" for no secret ID
-  logShare: PropTypes.func.isRequired, // func('Facebook'|'Twitter'|'URL copied') => undefined
   canCreateSecretLink: PropTypes.bool.isRequired,
   ownerEmail: PropTypes.string.isRequired,
   acl: PropTypes.arrayOf(

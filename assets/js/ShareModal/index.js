@@ -1,12 +1,7 @@
 import { connect } from 'react-redux'
-import { logUserEvent } from '../utils'
 import * as actions from './actions'
 import Modal from './Modal'
 import selectLoggedInUserRole from '../selectors/selectLoggedInUserRole'
-
-function logShare (type) {
-  logUserEvent('Share workflow ' + type)
-}
 
 function mapStateToProps (state) {
   const { loggedInUser, workflow } = state
@@ -19,7 +14,6 @@ function mapStateToProps (state) {
     isReadOnly: selectLoggedInUserRole(state) !== 'owner',
     ownerEmail: workflow.owner_email,
     canCreateSecretLink: loggedInUser.limits.can_create_secret_link,
-    logShare
   }
 }
 

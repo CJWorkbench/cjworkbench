@@ -9,7 +9,6 @@ from django.http.response import HttpResponseServerError
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 
-import server.utils
 from cjwstate import rabbitmq
 from cjwstate.models import Workflow
 from cjwstate.models.dbutil import lock_user_by_id, query_clientside_user
@@ -220,9 +219,6 @@ def _render_get_lesson_detail(request, lesson):
             course_slug = lesson.course.slug
         else:
             course_slug = "None"
-        server.utils.log_user_event_from_request(
-            request, "Start lesson in course %s" % (course_slug)
-        )
 
     return TemplateResponse(request, "workflow.html", {"initState": init_state})
 

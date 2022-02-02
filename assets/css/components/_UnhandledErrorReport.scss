@@ -1,7 +1,5 @@
 .unhandled-error-report {
   // Take up the entire page (which takes up 100% of viewport height)
-  //
-  // No position:fixed -- we want Intercom bubble to show up on top of this.
   position: absolute;
   top: 0;
   bottom: 0;

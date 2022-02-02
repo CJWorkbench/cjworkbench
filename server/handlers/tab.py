@@ -15,7 +15,6 @@ from cjwstate.models.commands import (
     SetTabName,
 )
 from cjwstate.modules.types import ModuleZipfile
-import server.utils
 
 from .types import HandlerError
 from .decorators import register_websockets_handler, websockets_handler
@@ -90,10 +89,6 @@ async def add_module(
         raise HandlerError("BadRequest: module does not exist")
     except ValueError as err:
         raise HandlerError("BadRequest: param validation failed: %s" % str(err))
-
-    await server.utils.log_user_event_from_scope(
-        scope, "add step", dict(module=moduleIdName)
-    )
 
 
 SlugRegex = re.compile(r"\A[-a-zA-Z0-9_]+\Z")

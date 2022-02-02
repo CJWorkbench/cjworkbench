@@ -21,7 +21,6 @@ async def async_noop(*args, **kwargs):
     pass
 
 
-@patch.object(rabbitmq, "queue_intercom_message", async_noop)
 class LessonDetailTests(DbTestCaseWithModuleRegistryAndMockKernel):
     def log_in(self):
         self.user = create_test_user_with_profile()

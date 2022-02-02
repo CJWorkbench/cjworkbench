@@ -28,7 +28,6 @@ LOGGING = {
         "botocore.credentials": {"level": "WARNING"},
         "carehare": {"level": "INFO"},
         "channels_rabbitmq": {"level": "INFO"},
-        "intercom": {"level": "INFO"},
         "oauthlib": {"level": "INFO"},
         "urllib3": {"level": "INFO"},
         "requests_oauthlib": {"level": "INFO"},
@@ -48,7 +47,6 @@ LOGGING = {
             "level": ("WARNING" if I_AM_TESTING else "INFO")
         },
         "cjworkbench.pg_render_locker": {"level": "INFO"},
-        "server.utils": {"level": "INFO"},
         "stripe": {"level": "INFO"},
     },
 }

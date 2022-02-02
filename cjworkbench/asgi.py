@@ -21,7 +21,7 @@ from server.websockets import WorkflowConsumer
 register_converter(WorkflowIdOrSecretIdConverter, "workflow_id_or_secret_id")
 
 
-async def init_modules() -> None:
+async def extra_init() -> None:
     """Load all modules on startup, or raise an Exception.
 
     This means starting a kernel and validating all static modules.
@@ -36,17 +36,6 @@ async def init_modules() -> None:
 
     cjwstate.modules.init_module_system()
     await database_sync_to_async(MODULE_REGISTRY.all_latest)()
-
-
-def init_django_signals():
-    from cjworkbench.models import (
-        intercom_helpers,
-    )  # when user is created, notify Intercom
-
-
-async def extra_init():
-    init_django_signals()
-    await init_modules()
 
 
 # used in unit tests

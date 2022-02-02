@@ -412,10 +412,7 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
         step.refresh_from_db()
         self.assertEqual(step.is_collapsed, True)
 
-    @patch.object(rabbitmq, "queue_intercom_message")
-    def test_set_notifications_to_false(self, queue_intercom_message):
-        queue_intercom_message.side_effect = async_noop
-
+    def test_set_notifications_to_false(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(
@@ -433,12 +430,8 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
         step.refresh_from_db()
         self.assertEqual(step.notifications, False)
-        queue_intercom_message.assert_not_called()  # only log if setting to true
 
-    @patch.object(rabbitmq, "queue_intercom_message")
-    def test_set_notifications(self, queue_intercom_message):
-        queue_intercom_message.side_effect = async_noop
-
+    def test_set_notifications(self):
         user = User.objects.create(username="a", email="a@example.org")
         workflow = Workflow.create_and_init(owner=user)
         step = workflow.tabs.first().steps.create(
@@ -456,7 +449,6 @@ class StepTest(HandlerTestCase, DbTestCaseWithModuleRegistryAndMockKernel):
 
         step.refresh_from_db()
         self.assertEqual(step.notifications, True)
-        queue_intercom_message.assert_called()
 
     @patch.object(rabbitmq, "send_update_to_workflow_clients")
     @patch.object(rabbitmq, "send_user_update_to_user_clients")

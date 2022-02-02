@@ -104,11 +104,6 @@ class WorkflowViewTests(DbTestCase):
         self.queue_render = self.queue_render_patcher.start()
         self.queue_render.side_effect = async_noop
 
-        self.queue_intercom_message_patcher = patch.object(
-            rabbitmq, "queue_intercom_message", async_noop
-        )
-        self.queue_intercom_message_patcher.start()
-
         self.user = create_user("user", "user@example.com")
 
         self.workflow1 = Workflow.create_and_init(name="Workflow 1", owner=self.user)
@@ -118,7 +113,6 @@ class WorkflowViewTests(DbTestCase):
         self.otheruser = create_user("user2", "user2@example.com")
 
     def tearDown(self):
-        self.queue_intercom_message_patcher.stop()
         self.queue_render_patcher.stop()
         super().tearDown()
 
@@ -222,7 +216,6 @@ class WorkflowViewTests(DbTestCase):
             "CJW_HEAP_ANALYTICS_ID": "myHeapId",
         },
     )
-    @override_settings(INTERCOM_APP_ID="myIntercomId")
     def test_workflow_init_state(self):
         self.client.force_login(self.user)
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
@@ -237,7 +230,6 @@ class WorkflowViewTests(DbTestCase):
         self.assertContains(response, '"workflow"')
         self.assertContains(response, '"modules"')
 
-        self.assertContains(response, "myIntercomId")
         self.assertContains(response, "myGaId")
         self.assertContains(response, "myHeapId")
 
@@ -387,11 +379,6 @@ class SecretLinkTests(DbTestCase):
         self.queue_render = self.queue_render_patcher.start()
         self.queue_render.side_effect = async_noop
 
-        self.queue_intercom_message_patcher = patch.object(
-            rabbitmq, "queue_intercom_message", async_noop
-        )
-        self.queue_intercom_message_patcher.start()
-
         self.owner = create_user("owner", "owner@example.com")
         self.viewer = create_user("viewer", "viewer@example.com")
         self.report_viewer = create_user("report_viewer", "report_viewer@example.com")
@@ -404,7 +391,6 @@ class SecretLinkTests(DbTestCase):
         )
 
     def tearDown(self):
-        self.queue_intercom_message_patcher.stop()
         self.queue_render_patcher.stop()
         super().tearDown()
 
@@ -550,11 +536,6 @@ class ReportViewTests(DbTestCase):
         self.queue_render = self.queue_render_patcher.start()
         self.queue_render.side_effect = async_noop
 
-        self.queue_intercom_message_patcher = patch.object(
-            rabbitmq, "queue_intercom_message", async_noop
-        )
-        self.queue_intercom_message_patcher.start()
-
         self.user = create_user("user", "user@example.com")
 
         self.workflow1 = Workflow.create_and_init(name="Workflow 1", owner=self.user)
@@ -564,7 +545,6 @@ class ReportViewTests(DbTestCase):
         self.otheruser = create_user("user2", "user2@example.com")
 
     def tearDown(self):
-        self.queue_intercom_message_patcher.stop()
         self.queue_render_patcher.stop()
         super().tearDown()
 

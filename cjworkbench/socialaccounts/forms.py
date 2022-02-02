@@ -8,7 +8,6 @@ from django.db import transaction
 
 from cjwstate import rabbitmq
 from ..i18n.trans import trans_lazy
-from ..models.intercom_helpers import notify_intercom_of_new_user
 from ..models.userprofile import UserProfile
 
 User = get_user_model()
@@ -38,5 +37,4 @@ class WorkbenchSocialaccountSignupForm(forms.Form):
                 locale_id=request.locale_id,
                 get_newsletter=self.cleaned_data["get_newsletter"],
             )
-        notify_intercom_of_new_user(user, user_profile)
         return user

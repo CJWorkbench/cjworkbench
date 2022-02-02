@@ -25,7 +25,6 @@ from django.utils.decorators import method_decorator
 from django.utils.cache import add_never_cache_headers
 from django.views import View
 
-import server.utils
 from cjworkbench.i18n import default_locale
 from cjworkbench.models.userprofile import UserProfile
 from cjwstate import clientside, rabbitmq
@@ -438,10 +437,6 @@ class Duplicate(View):
         ctx = JsonizeContext(request.locale_id, MODULE_REGISTRY.all_latest())
         json_dict = jsonize_clientside_workflow(
             workflow2.to_clientside(), ctx, is_init=True
-        )
-
-        server.utils.log_user_event_from_request(
-            request, "Duplicate Workflow", {"name": workflow.name}
         )
 
         async_to_sync(rabbitmq.queue_render)(workflow2.id, workflow2.last_delta_id)
