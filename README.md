@@ -13,8 +13,6 @@
 
 Welcome to Workbench!
 
-- Our [public server](https://workbenchdata.com).
-
 Workbench is a platform that helps you make sense of data tables. Code like a pro -- without code.
 
 Features include:
@@ -28,9 +26,7 @@ Features include:
 
 # Try it
 
-To see what Workbench does, try our [public server](https://workbenchdata.com).
-
-Or run your [own server](https://github.com/CJWorkbench/cjworkbench/wiki/Deployment).
+To see what Workbench does, run your [own server](https://github.com/CJWorkbench/cjworkbench/wiki/Deployment).
 
 <div align="center">
   <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/demoSignup.gif"><br>
