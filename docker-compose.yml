@@ -75,7 +75,7 @@ services:
       context: .
       target: jsbase
     volumes:
-      # Migrate 
+      # Migrate
       - type: bind
         source: ./
         target: /app/
@@ -280,31 +280,6 @@ services:
       'sh',
       '-c',
       'cjwkernel/setup-sandboxes.sh only-readonly && /opt/venv/django/bin/python bin/watch-and-restart --exclude "**/*.pyc" "**/tests/**/*" --pattern "cjwstate/**/*.py" "cjworkbench/**/*.py" "tusdhooks/**/*.py" --exec bin/tusd-hooks-prod'
-    ]
-
-  staticfiles:
-    build:
-      context: .
-      target: pydev
-    volumes:
-      - type: bind
-        source: ./
-        target: /app/
-        consistency: cached
-    ports: [ '8003:8003' ]
-    networks: [ 'dev' ]
-    environment:
-      DJANGO_SETTINGS_MODULE: staticfilesdev.settings
-    command: [
-      '/opt/venv/django/bin/python',
-      '-m',
-      'uvicorn',
-      '--host',
-      '0.0.0.0',
-      '--port',
-      '8003',
-      '--use-colors',
-      'staticfilesdev.asgi:application'
     ]
 
   tusd:
