@@ -7,7 +7,7 @@ cjwparse~=2.0.1
 formulas~=1.0.0
 google-re2~=0.1.20210401
 html5lib==1.0.1
-lxml~=4.6.1
+lxml~=4.9.1
 lz4
 nltk
 oauthlib
