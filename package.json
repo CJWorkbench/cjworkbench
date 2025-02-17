@@ -58,7 +58,7 @@
     "jest": "^27.0.5",
     "memoize-one": "^5.2.1",
     "mini-css-extract-plugin": "^1.6.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "prop-types": "^15.6.2",
     "react": "^17.0.2",
     "react-ace": "^9.4.1",
